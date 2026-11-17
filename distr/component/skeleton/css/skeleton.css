@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) */
   .sf-skeleton {
@@ -30,8 +30,6 @@
     --sf-skeleton-text--bar: calc(var(--sf-skeleton-text--height) * 0.727);
     position: relative;
     overflow: hidden;
-    background: var(--sf-skeleton-base);
-    background: var(--sf-skeleton-background-color, var(--sf-skeleton-base));
     border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-skeleton-radius, var(--sf-radius--ui));
     height: var(--sf-skeleton-text--height);
@@ -305,11 +303,21 @@
   }
   @media (forced-colors: active) {
     .sf-skeleton-text {
-      background: CanvasText;
       opacity: var(--sf-opacity-30);
     }
     .sf-skeleton--animation-wave .sf-skeleton-text::after {
       display: none;
+    }
+  }
+}
+@layer sf.paint {
+  .sf-skeleton-text {
+    background: var(--sf-skeleton-base);
+    background: var(--sf-skeleton-background-color, var(--sf-skeleton-base));
+  }
+  @media (forced-colors: active) {
+    .sf-skeleton-text {
+      background: CanvasText;
     }
   }
 }

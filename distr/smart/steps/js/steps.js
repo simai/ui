@@ -13,8 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_items__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("4af731b7c247");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("fce42b338f4d");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("6c14d599ff24");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("892d49d25ed0");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("1c14a9acc1b6");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("64757399a9d0");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _js_items__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _js_items__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -25,16 +24,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__.runtime
-}; // sf-steps from its component.json (standard simai.smart-component 1.3.8 §3,
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-steps from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §8, §11): its settings are attributes and properties made by
 // core/js/element-manifest.js, its words are lang/<locale>.json (a product adds
 // another language through SF.language.register("sf-steps", code, words)), and
@@ -49,10 +43,7 @@ const ru = {
 
 const StepsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__
 });
@@ -782,6 +773,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "64757399a9d0"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("892d49d25ed0");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "6c14d599ff24"
 (module) {
 
@@ -792,7 +805,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-steps
 /***/ "fce42b338f4d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.steps","tag":"sf-steps","version":"1.4.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1","1/2"],"default":"1"},"items":{"type":"list","default":[],"of":{"label":"string","text":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"state":{"type":"enum","values":["done","ahead","skipped","running","error","completed","default"],"optional":true}}},"marker":{"type":"enum","values":["number","dot"],"default":"number"},"layout":{"type":"enum","values":["auto","row","column","count"],"default":"auto"},"navigation":{"type":"enum","values":["","visited","free"],"default":""},"error-step":{"type":"number","integer":true,"min":0,"nullable":true,"default":null},"separator-icon":{"type":"icon","default":""},"completed-label":{"type":"string","default-from":"runtime.completed-label"},"current-label":{"type":"string","default-from":"runtime.current-label"},"ahead-label":{"type":"string","default-from":"runtime.ahead-label"},"error-label":{"type":"string","default-from":"runtime.error-label"},"skipped-label":{"type":"string","default-from":"runtime.skipped-label"},"running-label":{"type":"string","default-from":"runtime.running-label"},"count-label":{"type":"string","default-from":"runtime.count-label"}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","item":"object","items":"list"}}},"actions":{"go-to-step":{"with":{"index":"number"}}},"css-variables":{"--sf-steps-gap":{"type":"length","state":"default"},"--sf-steps-separator-color":{"type":"color","state":"default"},"--sf-steps-step-color":{"type":"color","state":"default"},"--sf-steps-step-border-color":{"type":"color","state":"default"},"--sf-steps-step-radius":{"type":"length","state":"default"},"--sf-steps-current-border-color":{"type":"color","state":"current"},"--sf-steps-completed-icon-color":{"type":"color","state":"completed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.steps","tag":"sf-steps","version":"1.4.5","kind":"leaf","settings":{"size":{"type":"enum","values":["1","1/2"],"default":"1"},"items":{"type":"list","default":[],"of":{"label":"string","text":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"state":{"type":"enum","values":["done","ahead","skipped","running","error","completed","default"],"optional":true}}},"marker":{"type":"enum","values":["number","dot"],"default":"number"},"layout":{"type":"enum","values":["auto","row","column","count"],"default":"auto"},"navigation":{"type":"enum","values":["","visited","free"],"default":""},"error-step":{"type":"number","integer":true,"min":0,"nullable":true,"default":null},"separator-icon":{"type":"icon","default":""},"completed-label":{"type":"string","default-from":"runtime.completed-label"},"current-label":{"type":"string","default-from":"runtime.current-label"},"ahead-label":{"type":"string","default-from":"runtime.ahead-label"},"error-label":{"type":"string","default-from":"runtime.error-label"},"skipped-label":{"type":"string","default-from":"runtime.skipped-label"},"running-label":{"type":"string","default-from":"runtime.running-label"},"count-label":{"type":"string","default-from":"runtime.count-label"}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","item":"object","items":"list"}}},"actions":{"go-to-step":{"with":{"index":"number"}}},"css-variables":{"--sf-steps-gap":{"type":"length","state":"default"},"--sf-steps-separator-color":{"type":"color","state":"default"},"--sf-steps-step-color":{"type":"color","state":"default"},"--sf-steps-step-border-color":{"type":"color","state":"default"},"--sf-steps-step-radius":{"type":"length","state":"default"},"--sf-steps-current-border-color":{"type":"color","state":"current"},"--sf-steps-completed-icon-color":{"type":"color","state":"completed"}}}');
 
 /***/ },
 
@@ -800,13 +813,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.steps","tag":"sf-steps","
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Steps","runtime":{"aria-label":"Steps","completed-label":"Completed","current-label":"Current","ahead-label":"Upcoming","error-label":"Error","skipped-label":"Skipped","running-label":"In progress","count-label":"Step {n} of {count}"}}');
-
-/***/ },
-
-/***/ "1c14a9acc1b6"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Шаги","runtime":{"aria-label":"Шаги","completed-label":"Пройден","current-label":"Текущий","ahead-label":"Впереди","error-label":"Ошибка","skipped-label":"Пропущен","running-label":"Выполняется","count-label":"Шаг {n} из {count}"}}');
 
 /***/ }
 

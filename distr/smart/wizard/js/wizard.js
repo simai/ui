@@ -376,9 +376,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("51250bf01ab0");
 /* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("1373e294ec38");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c784a72456f7");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("79fe483bc03d");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4415f022eb61");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("97e6d3ece1f6");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("ba786af14a68");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("97e6d3ece1f6");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -417,16 +416,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__.runtime
-};
 
 const TYPES = ['info', 'form', 'action', 'review', 'result'];
 const STATES = ['done', 'skipped', 'running', 'error']; // The progress draws a row up to this many steps, the count above (owner);
@@ -636,10 +630,7 @@ function answersOf(root) {
 }
 const WizardElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__.files,
   source: 'ru',
   actions: {
     open() {
@@ -2100,10 +2091,32 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "ba786af14a68"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("79fe483bc03d");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "c784a72456f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.wizard","tag":"sf-wizard","version":"1.4.7","kind":"leaf","settings":{"place":{"type":"enum","values":["inline","modal","drawer","pages"],"default":"inline"},"navigation":{"type":"enum","values":["linear","free","visited"],"default":"linear"},"progress":{"type":"enum","values":["auto","row","count","column"],"default":"auto"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"level":{"type":"number","integer":true,"min":1,"max":6,"default":2},"for":{"type":"string","default":""},"later":{"type":"boolean","default":false},"later-href":{"type":"string","default":""},"remember":{"type":"string","default":""},"done-href":{"type":"string","default":""},"action-name":{"type":"string","default":"wizard-action"},"running-text":{"type":"string","default-from":"runtime.running-text"},"focus-title":{"type":"boolean","default":false}},"values":{"current":{"type":"id","default":""},"open":{"type":"boolean","default":false},"value":{"type":"object","default":{}}},"events":{"change":{"x-native":false,"carries":{"previous":"string","current":"string","value":"object"}},"submit":{"carries":{"step":"string","action":{"type":"enum","values":["next","run","retry","apply","done","skip"]},"values":"object","value":"object"},"cancelable":true},"invalid":{"carries":{"step":"string","fields":"list"},"own-verb":true},"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"open":{"carries":{},"cancelable":true},"close":{"carries":{"reason":{"type":"enum","values":["later","close","escape","outside","api"]},"current":"string","steps":"list","value":"object"},"cancelable":true},"completed":{"carries":{"steps":"list","value":"object"}}},"actions":{"open":{},"close":{},"go-to-step":{"with":{"name":"string"}},"next":{}},"host-states":{"data-place":"string","data-busy":"boolean","data-dirty":"boolean"},"css-variables":{"--sf-wizard-gap":{"type":"length","state":"default"},"--sf-wizard-padding":{"type":"length","state":"default"},"--sf-wizard-background-color":{"type":"color","state":"default"},"--sf-wizard-border-color":{"type":"color","state":"default"},"--sf-wizard-radius":{"type":"length","state":"default"},"--sf-wizard-max-width":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.wizard","tag":"sf-wizard","version":"1.5.3","kind":"leaf","settings":{"place":{"type":"enum","values":["inline","modal","drawer","pages"],"default":"inline"},"navigation":{"type":"enum","values":["linear","free","visited"],"default":"linear"},"progress":{"type":"enum","values":["auto","row","count","column"],"default":"auto"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"level":{"type":"number","integer":true,"min":1,"max":6,"default":2},"for":{"type":"string","default":""},"later":{"type":"boolean","default":false},"later-href":{"type":"string","default":""},"remember":{"type":"string","default":""},"done-href":{"type":"string","default":""},"action-name":{"type":"string","default":"wizard-action"},"running-text":{"type":"string","default-from":"runtime.running-text"},"focus-title":{"type":"boolean","default":false}},"values":{"current":{"type":"id","default":""},"open":{"type":"boolean","default":false},"value":{"type":"object","default":{}}},"events":{"change":{"x-native":false,"carries":{"previous":"string","current":"string","value":"object"}},"submit":{"carries":{"step":"string","action":{"type":"enum","values":["next","run","retry","apply","done","skip"]},"values":"object","value":"object"},"cancelable":true},"invalid":{"carries":{"step":"string","fields":"list"},"own-verb":true},"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"open":{"carries":{},"cancelable":true},"close":{"carries":{"reason":{"type":"enum","values":["later","close","escape","outside","api"]},"current":"string","steps":"list","value":"object"},"cancelable":true},"completed":{"carries":{"steps":"list","value":"object"}}},"actions":{"open":{},"close":{},"go-to-step":{"with":{"name":"string"}},"next":{}},"host-states":{"data-place":"string","data-busy":"boolean","data-dirty":"boolean"},"css-variables":{"--sf-wizard-gap":{"type":"length","state":"default"},"--sf-wizard-padding":{"type":"length","state":"default"},"--sf-wizard-background-color":{"type":"color","state":"default"},"--sf-wizard-border-color":{"type":"color","state":"default"},"--sf-wizard-radius":{"type":"length","state":"default"},"--sf-wizard-max-width":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -2111,13 +2124,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.wizard","tag":"sf-wizard"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Wizard","runtime":{"label":"Step-by-step setup","running-text":"Working…","position":"Step {n} of {count}","moved":"Step {n} of {count}: {step}","back":"Back","skip":"Skip","next":"Next","run":"Run","retry":"Try again","apply":"Apply","done":"Done","later":"Continue later","steps":"Steps","all-steps":"All steps","hide-steps":"Hide steps","progress":"Wizard progress","state-done":"Done","state-skipped":"Skipped","state-running":"In progress","state-error":"Error","required":"Fill in this field","invalid":"Check the value","saved":"Draft saved at {time}"},"events":{"close":{"label":"Continue later"}}}');
-
-/***/ },
-
-/***/ "4415f022eb61"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Мастер","runtime":{"label":"Пошаговая настройка","running-text":"Выполняется…","position":"Шаг {n} из {count}","moved":"Шаг {n} из {count}: {step}","back":"Назад","skip":"Пропустить","next":"Далее","run":"Запустить","retry":"Повторить","apply":"Применить","done":"Готово","later":"Продолжить позже","steps":"Шаги","all-steps":"Все шаги","hide-steps":"Скрыть шаги","progress":"Ход мастера","state-done":"Сделан","state-skipped":"Пропущен","state-running":"Выполняется","state-error":"Ошибка","required":"Заполните поле","invalid":"Проверьте значение","saved":"Черновик сохранён в {time}"},"events":{"close":{"label":"Продолжить позже"}}}');
 
 /***/ }
 

@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* sf-pager (standard simai.smart-component 1.3.13 §6). One ladder
      (docs/foundation-composition-geometry.md): at a rung S the title is the
@@ -30,7 +30,6 @@
     box-sizing: border-box;
     min-width: 0;
     min-inline-size: 0;
-    color: var(--sf-on-surface);
     font-size: var(--sf-pager--text);
     line-height: var(--sf-pager--line);
   }
@@ -74,7 +73,6 @@
   }
   .sf-pager-meta,
   .sf-pager-place {
-    color: var(--sf-pager--meta-color);
     font-size: var(--sf-pager--note-text);
     line-height: var(--sf-pager--note-line);
   }
@@ -104,8 +102,7 @@
   .sf-pager-side {
     margin: 0;
     border: 0;
-    background: none;
-    color: var(--sf-pager--link-color);
+    border-color: revert-layer;
     font: inherit;
     text-align: start;
     text-decoration: none;
@@ -139,12 +136,9 @@
     padding-left: var(--sf-pager--space-x);
     padding-right: var(--sf-pager--space-x);
     padding-inline: var(--sf-pager--space-x);
-    border: var(--sf-px) solid var(--sf-pager--card-border-color);
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-pager--card-radius);
-    background: var(--sf-pager--card-background);
-  }
-  .sf-pager--cards .sf-pager-side:hover {
-    border-color: var(--sf-primary-outline);
   }
   .sf-pager--cards .sf-pager-side--prev {
     grid-column: 1;
@@ -180,7 +174,6 @@
     display: flex;
     align-items: center;
     gap: var(--sf-pager--text-space);
-    color: var(--sf-pager--meta-color);
     font-size: var(--sf-pager--note-text);
     line-height: var(--sf-pager--note-line);
   }
@@ -291,7 +284,8 @@
   }
   .sf-pager-track {
     display: flex;
-    gap: var(--sf-a4);
+    /* The track's segments are plates side by side: H5 4 (C105). */
+    gap: var(--sf-space-1\/4);
     width: 100%;
     inline-size: 100%;
   }
@@ -300,10 +294,6 @@
     height: var(--sf-a4);
     block-size: var(--sf-a4);
     border-radius: var(--sf-a2);
-    background: var(--sf-pager--track-color);
-  }
-  .sf-pager-segment--done {
-    background: var(--sf-pager--fill-color);
   }
   /* ── course: the dots and the place, then the next lesson's card. ── */
   .sf-pager--course {
@@ -322,7 +312,8 @@
     display: flex;
     flex: none;
     align-items: center;
-    gap: var(--sf-a4);
+    /* Dots are plates side by side: H5 4 (C105). */
+    gap: var(--sf-space-1\/4);
   }
   .sf-pager-dot {
     width: var(--sf-a8);
@@ -330,15 +321,10 @@
     height: var(--sf-a8);
     block-size: var(--sf-a8);
     border-radius: 50%;
-    background: var(--sf-pager--track-color);
-  }
-  .sf-pager-dot--done {
-    background: var(--sf-pager--fill-color);
   }
   .sf-pager-dot--current {
-    border: var(--sf-a2) solid var(--sf-pager--fill-color);
-    /* A ring: its middle is the place the dots stand on (C16). */
-    background: var(--sf-surface-place);
+    border-width: var(--sf-a2);
+    border-style: solid;
   }
   .sf-pager-lesson {
     display: flex;
@@ -350,9 +336,9 @@
     padding-left: var(--sf-pager--space-x);
     padding-right: var(--sf-pager--space-x);
     padding-inline: var(--sf-pager--space-x);
-    border: var(--sf-px) solid var(--sf-pager--card-border-color);
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-pager--card-radius);
-    background: var(--sf-pager--card-background);
   }
   .sf-pager-lesson-number {
     display: inline-flex;
@@ -364,8 +350,6 @@
     height: var(--sf-pager--line);
     block-size: var(--sf-pager--line);
     border-radius: 50%;
-    background: var(--sf-primary-container);
-    color: var(--sf-on-primary-container);
     font-size: var(--sf-pager--note-text);
     font-weight: var(--sf-font-weight-medium);
     line-height: 1;
@@ -431,7 +415,6 @@
   .sf-pager--counter .sf-pager-place {
     min-width: 7ch;
     min-inline-size: 7ch;
-    color: var(--sf-on-surface);
     font-size: var(--sf-pager--text);
     line-height: var(--sf-pager--line);
     -webkit-font-feature-settings: "tnum";
@@ -478,13 +461,72 @@
     .sf-pager-side:focus-visible {
       outline: var(--sf-focus--width) solid currentColor;
     }
+    .sf-pager-segment,
+    .sf-pager-dot {
+      border-width: var(--sf-px);
+      border-style: solid;
+    }
+  }
+}
+@layer sf.paint {
+  .sf-pager {
+    color: var(--sf-on-surface);
+  }
+  .sf-pager-meta,
+  .sf-pager-place {
+    color: var(--sf-pager--meta-color);
+  }
+  .sf-pager-side {
+    border: 0;
+    background: none;
+    color: var(--sf-pager--link-color);
+  }
+  .sf-pager--cards .sf-pager-side {
+    border-color: var(--sf-pager--card-border-color);
+    background: var(--sf-pager--card-background);
+  }
+  .sf-pager--cards .sf-pager-side:hover {
+    border-color: var(--sf-primary-outline);
+  }
+  .sf-pager--cards .sf-pager-direction {
+    color: var(--sf-pager--meta-color);
+  }
+  .sf-pager-segment {
+    background: var(--sf-pager--track-color);
+  }
+  .sf-pager-segment--done {
+    background: var(--sf-pager--fill-color);
+  }
+  .sf-pager-dot {
+    background: var(--sf-pager--track-color);
+  }
+  .sf-pager-dot--done {
+    background: var(--sf-pager--fill-color);
+  }
+  .sf-pager-dot--current {
+    border-color: var(--sf-pager--fill-color);
+    /* A ring: its middle is the place the dots stand on (C16). */
+    background: var(--sf-surface-place);
+  }
+  .sf-pager-lesson {
+    border-color: var(--sf-pager--card-border-color);
+    background: var(--sf-pager--card-background);
+  }
+  .sf-pager-lesson-number {
+    background: var(--sf-primary-container);
+    color: var(--sf-on-primary-container);
+  }
+  .sf-pager--counter .sf-pager-place {
+    color: var(--sf-on-surface);
+  }
+  @media (forced-colors: active) {
     .sf-pager-segment--done,
     .sf-pager-dot--done {
       background: Highlight;
     }
     .sf-pager-segment,
     .sf-pager-dot {
-      border: var(--sf-px) solid CanvasText;
+      border-color: CanvasText;
     }
   }
 }

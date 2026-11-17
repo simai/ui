@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
     /* sf-tag-group (owner decision C145 (3)): the row of tags. The host is
        the box (index.js writes display: flex); the tags stand 4 apart (C105

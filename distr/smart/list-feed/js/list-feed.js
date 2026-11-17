@@ -266,8 +266,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6978f1cc153b");
 /* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("93ae64e644ce");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("7595f2639ad9");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("22eb8f8fb40c");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("1002fcd319ac");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fa9a4d3ef042");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -320,16 +319,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__.runtime
-}; // A finished entry is announced whole only up to this length; a screen
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// A finished entry is announced whole only up to this length; a screen
 // reader reading a long answer in one breath is not a summary of it.
 
 const ANNOUNCE_LIMIT = 240;
@@ -455,10 +449,7 @@ function overlay(target, source) {
 
 const FeedElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__.files,
   source: "ru"
 });
 
@@ -1503,10 +1494,32 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "fa9a4d3ef042"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("22eb8f8fb40c");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "7595f2639ad9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-feed","tag":"sf-list-feed","version":"1.4.1","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","author":{"type":"string","optional":true},"author-name":{"type":"string","optional":true},"own":{"type":"boolean","optional":true},"text":{"type":"string","optional":true},"revision":{"type":"string","optional":true},"growing":{"type":"boolean","optional":true},"date":{"type":"date","optional":true},"unread":{"type":"boolean","optional":true},"wait":{"type":"enum","values":["delayed","stopped","network","none"],"nullable":true,"optional":true},"error":{"type":"object","optional":true}},"entries":{"key":"id","changes":"content"}},"changes":{"type":"enum","values":["content","revision"],"default":"content"},"has-more":{"type":"boolean","default":false},"label":{"type":"string","default-from":"runtime.region-label"},"live":{"type":"enum","values":["polite","off"],"default":"polite"}},"values":{},"events":{"load-more":{"carries":{"direction":{"type":"enum","values":["before"],"optional":true},"before":{"type":"id","nullable":true}},"cancelable":true},"begun":{"carries":{"id":"id"}},"chunk":{"carries":{"id":"id","revision":{"type":"string","optional":true}}},"completed":{"carries":{"id":"id"}},"failed":{"carries":{"id":"id","reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id"}}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"prepend-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}},"view":{"type":"object","optional":true},"options":{"type":"object","optional":true,"schema":{"properties":{"replaces":{"type":["string","number","null"]}}}}}},"set-view":{"with":{"id":"id","view":{"type":"object"}}},"detach":{"with":{"id":"id"}},"cancel":{"with":{"id":"id"}},"redraw":{"with":{"id":{"type":"id","optional":true,"nullable":true}}},"request-earlier":{},"earlier-failed":{},"scroll-to-latest":{"with":{"options":{"type":"object","optional":true,"schema":{"properties":{"instant":{"type":"boolean"},"focus":{"type":"boolean"},"settle":{"type":"boolean"}}}}}},"announce":{"with":{"text":"string"}}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-feed-column-width":{"type":"length","state":"default"},"--sf-list-feed-inset":{"type":"length","state":"default"},"--sf-list-feed-run-gap":{"type":"length","state":"default"},"--sf-list-feed-turn-gap":{"type":"length","state":"default"},"--sf-list-feed-fade-size":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-feed","tag":"sf-list-feed","version":"1.5.3","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","author":{"type":"string","optional":true},"author-name":{"type":"string","optional":true},"own":{"type":"boolean","optional":true},"text":{"type":"string","optional":true},"revision":{"type":"string","optional":true},"growing":{"type":"boolean","optional":true},"date":{"type":"date","optional":true},"unread":{"type":"boolean","optional":true},"wait":{"type":"enum","values":["delayed","stopped","network","none"],"nullable":true,"optional":true},"error":{"type":"object","optional":true}},"entries":{"key":"id","changes":"content"}},"changes":{"type":"enum","values":["content","revision"],"default":"content"},"has-more":{"type":"boolean","default":false},"label":{"type":"string","default-from":"runtime.region-label"},"live":{"type":"enum","values":["polite","off"],"default":"polite"}},"values":{},"events":{"load-more":{"carries":{"direction":{"type":"enum","values":["before"],"optional":true},"before":{"type":"id","nullable":true}},"cancelable":true},"begun":{"carries":{"id":"id"}},"chunk":{"carries":{"id":"id","revision":{"type":"string","optional":true}}},"completed":{"carries":{"id":"id"}},"failed":{"carries":{"id":"id","reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id"}}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"prepend-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"author":{"type":"string"},"author-name":{"type":"string"},"own":{"type":"boolean"},"growing":{"type":"boolean"},"text":{"type":"string"}},"required":["id"]}},"view":{"type":"object","optional":true},"options":{"type":"object","optional":true,"schema":{"properties":{"replaces":{"type":["string","number","null"]}}}}}},"set-view":{"with":{"id":"id","view":{"type":"object"}}},"detach":{"with":{"id":"id"}},"cancel":{"with":{"id":"id"}},"redraw":{"with":{"id":{"type":"id","optional":true,"nullable":true}}},"request-earlier":{},"earlier-failed":{},"scroll-to-latest":{"with":{"options":{"type":"object","optional":true,"schema":{"properties":{"instant":{"type":"boolean"},"focus":{"type":"boolean"},"settle":{"type":"boolean"}}}}}},"announce":{"with":{"text":"string"}}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-feed-column-width":{"type":"length","state":"default"},"--sf-list-feed-inset":{"type":"length","state":"default"},"--sf-list-feed-run-gap":{"type":"length","state":"default"},"--sf-list-feed-turn-gap":{"type":"length","state":"default"},"--sf-list-feed-fade-size":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -1514,13 +1527,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-feed","tag":"sf-list
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Feed","runtime":{"earlier-text":"Show earlier","empty-text":"No entries yet","latest-label":"To the latest","loading-earlier-text":"Loading earlier entries","new-text":"New","log-label":"Entries","region-label":"Feed","you-text":"You"}}');
-
-/***/ },
-
-/***/ "1002fcd319ac"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Лента","runtime":{"earlier-text":"Показать предыдущие","empty-text":"Записей пока нет","latest-label":"К последней записи","loading-earlier-text":"Загружаю предыдущие записи","new-text":"Новые","log-label":"Записи","region-label":"Лента","you-text":"Вы"}}');
 
 /***/ }
 

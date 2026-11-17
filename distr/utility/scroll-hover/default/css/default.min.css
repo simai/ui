@@ -1,2 +1,2 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities{.scroll-hover{--sf-scroll-bg-thumb: var(--sf-transparent)}.scroll-hover:hover{--sf-scroll-bg-thumb: var(--sf-outline)}.scroll-hover[focus-within]{--sf-scroll-bg-thumb: var(--sf-outline)}.scroll-hover:hover{--sf-scroll-bg-thumb: var(--sf-outline)}.scroll-hover[focus-within]{--sf-scroll-bg-thumb: var(--sf-outline)}.scroll-hover:focus-within{--sf-scroll-bg-thumb: var(--sf-outline)}}

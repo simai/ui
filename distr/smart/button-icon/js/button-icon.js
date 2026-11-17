@@ -54,10 +54,7 @@ _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_depende
 // {count, dot}); a count written as «a|b|c» (an author's label, a product's
 // word from before) still reads in the order of the categories.
 
-const ANCHORED_BADGE_TEXT = {
-  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en,
-  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru
-};
+const ANCHORED_BADGE_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"];
 const ANCHORED_BADGE_COMPONENT = 'sf-badge';
 const DEFAULT_BADGE_CAP = 99;
 const CATEGORIES = ['zero', 'one', 'two', 'few', 'many', 'other'];
@@ -552,8 +549,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_button_set__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d9c5a43b5214");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("79f8b9b70d88");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("c402762d3a76");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("65ba19e2ea5c");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("78f638fb05ab");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("a2fbabeb2195");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_9__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -572,16 +568,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__.runtime
-};
 const COMPONENT_ATTRIBUTES = new Set(['template', 'kind', 'variant', 'size', 'height', 'appearance', 'type', 'scheme', 'status', 'icon', 'filled', 'spacing', 'tightness', 'radius', 'segment', 'root-class', 'loading', 'disabled', 'native-type', 'href', 'target', 'rel', 'download', 'pressed', 'label-pressed', 'tooltip', // The host's title is the name tooltip's text (C160 (1)), not forwarded.
 'title', 'cycle', 'theme-cycle', 'value', 'button-attributes', 'aria-label', ..._helpers_anchored_badge__WEBPACK_IMPORTED_MODULE_4__.ANCHORED_BADGE_ATTRIBUTES, 'class', 'style', 'id', 'slot']);
 
@@ -620,10 +611,7 @@ function linkRelation(target, rel) {
 
 const IconButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__
 }); // The name tooltip (owner decision C160 (1)): the icon button shows its name
@@ -1289,10 +1277,11 @@ const ICON_BUTTON_LOOK = {
 function statusClasses(status, scheme) {
   if (status === 'danger' || status === 'error') return ['sf-icon-button--danger', 'sf-icon-button--error']; // secondary was retired (C15): drawn as on-surface-variant.
 
-  const colour = scheme === 'secondary' ? 'on-surface-variant' : scheme || 'primary'; // on-surface-variant is the on-surface family one step quieter: both
-  // classes, so every on-surface rule holds and one rule quietens it.
+  const colour = scheme === 'secondary' ? 'on-surface-variant' : scheme || 'primary'; // on-surface-variant is the on-surface family one step quieter, one class
+  // (SM-CPY-2): the class sheet lists it with every on-surface rule
+  // (component.icon-buttons), so on-surface is not written beside it.
 
-  return colour === 'on-surface-variant' ? ['sf-icon-button--on-surface-variant', 'sf-icon-button--on-surface'] : [`sf-icon-button--${colour}`];
+  return colour === 'on-surface-variant' ? ['sf-icon-button--on-surface-variant'] : [`sf-icon-button--${colour}`];
 }
 
 function renderIconButtonTemplate(context) {
@@ -1346,8 +1335,8 @@ function renderIconButtonTemplate(context) {
   const iconContent = loading ? (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_2__.createInlineSpinner)({
     className: 'sf-icon-button-spinner'
   }) : context.component?.hasSlotContent?.('icon') ? context.component.getSlotContent('icon') : (kind ?? variant) === 'close' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                            <sf-button-close root-class="pointer-event-none" size="${size || '1'}"></sf-button-close>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                            <sf-icon filled="${filled || context.pressed === true || Boolean(context.cycleView?.pressedLook)}" root-class="pointer-event-none" icon="${context.cycleView?.icon || icon}" weight="400" aria-hidden="true"></sf-icon>`; // href (1.9.0, decision C51): a link with the icon button's look, as
+                            <sf-button-close root-class="pointer-events-none" size="${size || '1'}"></sf-button-close>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                            <sf-icon filled="${filled || context.pressed === true || Boolean(context.cycleView?.pressedLook)}" root-class="pointer-events-none" icon="${context.cycleView?.icon || icon}" weight="400" aria-hidden="true"></sf-icon>`; // href (1.9.0, decision C51): a link with the icon button's look, as
   // sf-button's -- the quiet «Скачать <name>» of a table row. Disabled or
   // loading, the link has no href, so it is not reached or followed, and
   // says aria-disabled; pressed and native-type do not apply to a link.
@@ -2127,16 +2116,41 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
 /* harmony export */ });
 /* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7f9642eacf1b");
-/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8714e4691010");
-// The component's words for the bundle and for Node alike (localization study
-// LC-4/LC-5): the runtime words of its language files, by language.
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
 
 
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "a2fbabeb2195"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("65ba19e2ea5c");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
 
 
 /***/ },
@@ -2145,13 +2159,6 @@ __webpack_require__.r(__webpack_exports__);
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} unread","other":"{count} unread"},"dot":"new"}}');
-
-/***/ },
-
-/***/ "8714e4691010"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} непрочитанное","few":"{count} непрочитанных","many":"{count} непрочитанных","other":"{count} непрочитанного"},"dot":"есть новое"}}');
 
 /***/ },
 
@@ -2165,7 +2172,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "79f8b9b70d88"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.13.3","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost","plain"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"download":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"},"pressed":{"type":"boolean","optional":true},"label-pressed":{"type":"string","default":""},"tooltip":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"value":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"},"--sf-icon-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-icon-button-pressed-color":{"type":"color","state":"pressed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.13.8","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost","plain"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"download":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"},"pressed":{"type":"boolean","optional":true},"label-pressed":{"type":"string","default":""},"tooltip":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"value":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"},"--sf-icon-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-icon-button-pressed-color":{"type":"color","state":"pressed"}}}');
 
 /***/ },
 
@@ -2173,13 +2180,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-bu
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Icon Buttons","runtime":{"theme":"Theme","theme-system":"system","theme-light":"light","theme-dark":"dark","theme-system-now":"system (now {theme})","cycle-next":"{name}. Press for {next}"}}');
-
-/***/ },
-
-/***/ "78f638fb05ab"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Кнопки с иконкой","runtime":{"theme":"Тема","theme-system":"как в системе","theme-light":"светлая","theme-dark":"тёмная","theme-system-now":"как в системе (сейчас {theme})","cycle-next":"{name}. Нажмите — {next}"}}');
 
 /***/ }
 

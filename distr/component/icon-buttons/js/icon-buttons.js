@@ -75,9 +75,10 @@ const KINDS = {
     toggle: BUTTON_TOGGLE,
     iconOnly: BUTTON_ICON_ONLY
   },
+  // The plain look draws a pressed glyph too (C232: sf-highlight's wrap toggle).
   'sf-icon-button': {
     pressedClass: 'sf-icon-button--pressed',
-    toggle: ICON_BUTTON_TOGGLE,
+    toggle: `${ICON_BUTTON_TOGGLE}, .sf-icon-button--plain`,
     iconOnly: null
   }
 };

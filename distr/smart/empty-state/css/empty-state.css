@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* The block form is drawn from sf-placeholder's parts (RG-PH-2, owner
      decision C19: a Smart is built on the class layer, not beside it): the
@@ -42,7 +42,12 @@
      outline's, heading-level): 1/2 rung 1 (heading-6), 1 rung 2 (heading-4),
      2 rung 3 (heading-3, whose size is that rung, so a compact region keeps
      it, C44). Set on the title, where the placeholder sets the level's rung.
-     The sentence takes the text step of the size. */
+     The sentence takes the text step of the size. At size 1/2 the title's
+     line is the text ladder's for its size, the card title's line: 16/24 on a
+     desktop, 14/20 on a phone (Pro chat+mail pass, msg-bdf82830: the heading
+     line 18/16 set a 16/18 and 14/16 title over 14/20 sentences, off the
+     ladder the rows around it stand on). The size stays heading-6's (C21),
+     and neither moves with density (C44). */
   .sf-empty-state .sf-empty-state-title {
     --sf-placeholder--title-size: var(--sf-heading-4--size);
     --sf-placeholder--title-height: var(--sf-heading-4--height);
@@ -53,7 +58,7 @@
   }
   .sf-empty-state--size-1-2 .sf-empty-state-title {
     --sf-placeholder--title-size: var(--sf-heading-6--size);
-    --sf-placeholder--title-height: var(--sf-heading-6--height);
+    --sf-placeholder--title-height: var(--sf-title--height-card);
   }
   .sf-empty-state.sf-empty-state--size-1 {
     --sf-placeholder--description-size: var(--sf-text-medium--size);
@@ -125,7 +130,6 @@
   .sf-empty-state-spinner {
     display: inline-flex;
     line-height: 0;
-    color: var(--sf-featured-icon--foreground-color);
   }
   /* processing with a known share (owner decision C120 (2)): an
      sf-progress-ring at the featured icon's size step (the template), whose
@@ -145,8 +149,6 @@
   .sf-empty-state-icon--ring .sf-progress-ring {
     --sf-progress-ring--track: var(--sf-progress-ring-track-color, var(--sf-featured-icon--container));
     --sf-progress-ring--fill: var(--sf-progress-ring-fill-color, var(--sf-featured-icon--foreground-color));
-    color: var(--sf-featured-icon--foreground-color);
-    color: var(--sf-progress-ring-color, var(--sf-featured-icon--foreground-color));
   }
   /* The inline form: one line at a list row's height and inset, so it sits in
      a menu, a dropdown or a search without a frame of its own. The icon is the
@@ -246,17 +248,12 @@
     padding-inline: var(--sf-a8) var(--sf-a8);
     padding-inline: var(--sf-context-menu--inset-start, var(--sf-a8)) var(--sf-context-menu--inset-end, var(--sf-a8));
     text-align: start;
-    color: var(--sf-on-surface-variant);
     font-size: var(--sf-text-small--size);
     line-height: var(--sf-text-small--height);
   }
   .sf-empty-state--inline .sf-empty-state-icon {
     flex: none;
-    color: var(--sf-on-surface-variant);
     font-size: var(--sf-text-small--height);
-  }
-  .sf-empty-state--inline .sf-empty-state-spinner {
-    color: var(--sf-on-surface-variant);
   }
   .sf-empty-state--inline .sf-empty-state-line {
     min-width: 0;
@@ -296,5 +293,23 @@
   }
   .sf-empty-state--inline.sf-empty-state--size-1 .sf-empty-state-icon {
     font-size: var(--sf-text-medium--height);
+  }
+}
+@layer sf.paint {
+  .sf-empty-state-spinner {
+    color: var(--sf-featured-icon--foreground-color);
+  }
+  .sf-empty-state-icon--ring .sf-progress-ring {
+    color: var(--sf-featured-icon--foreground-color);
+    color: var(--sf-progress-ring-color, var(--sf-featured-icon--foreground-color));
+  }
+  .sf-empty-state.sf-empty-state--inline {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-empty-state--inline .sf-empty-state-icon {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-empty-state--inline .sf-empty-state-spinner {
+    color: var(--sf-on-surface-variant);
   }
 }

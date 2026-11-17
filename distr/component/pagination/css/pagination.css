@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
 *
@@ -17,7 +17,7 @@
      look: no plate at rest (RG-NV 8: the surface-page plate was a white square
      on a card, C42 (2)), the button's hover and press fills, the current page
      primary-container with on-primary-container words and no frame.
-     utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-b0) justify-content/center (.justify-center) align-items/center (.items-center) */
+     utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-ui-1--text-space-x) justify-content/center (.justify-center) align-items/center (.items-center) */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
     border-top-left-radius: var(--sf-radius--ui);
     border-top-left-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
@@ -138,8 +138,10 @@
     font-size: var(--sf-page-number--font-size, var(--sf-text-size-1));
     font-weight: var(--sf-font-weight-medium);
     font-weight: var(--sf-page-number--font-weight, var(--sf-font-weight-medium));
-    gap: var(--sf-b0);
-    gap: var(--sf-page-number--gap, var(--sf-b0));
+    /* A page number is the page button: its picture-to-words gap is the
+       button's label inset (C105 H1; it was --sf-b0, 10, no space step). */
+    gap: var(--sf-ui-1--text-space-x);
+    gap: var(--sf-page-number--gap, var(--sf-ui-1--text-space-x));
     /* A page number is a size 1 control, like the arrows beside it: it was a
        text-height-4 box, which on mobile is shorter than the arrows. */
     height: var(--sf-ui-1--control-height);
@@ -182,12 +184,7 @@
     border-end-start-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
     border-end-end-radius: var(--sf-radius--ui);
     border-end-end-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-    background-color: var(--sf-page-number--background-color);
-    color: var(--sf-page-number--color);
     box-shadow: var(--sf-page-number--box-shadow);
-    /* The button's frame: one pixel, transparent unless a look draws it. */
-    border-color: transparent;
-    border-color: var(--sf-page-number--border-color, transparent);
     border-style: solid;
     border-style: var(--sf-page-number--border-style, solid);
     border-width: var(--sf-px);
@@ -262,14 +259,25 @@
       outline: var(--sf-a2) solid Highlight;
       outline-offset: var(--sf-focus--offset);
     }
-    .sf-page-number.selected,
-    .sf-page-number[aria-current=page] {
-      border-color: Highlight;
-    }
   }
   @media (prefers-reduced-motion: reduce) {
     .sf-page-number {
       transition-duration: 0s;
+    }
+  }
+}
+@layer sf.paint {
+  .sf-page-number {
+    background-color: var(--sf-page-number--background-color);
+    color: var(--sf-page-number--color);
+    /* The button's frame: one pixel, transparent unless a look draws it. */
+    border-color: transparent;
+    border-color: var(--sf-page-number--border-color, transparent);
+  }
+  @media (forced-colors: active) {
+    .sf-page-number.selected,
+    .sf-page-number[aria-current=page] {
+      border-color: Highlight;
     }
   }
 }
@@ -325,19 +333,6 @@
   }
 }
 @layer sf.components {
-  /*
-  * _var__component_name.scss
-  * 
-  * SCSS file containing variables for component styling.
-  * 
-  * Used to define default parameters (color, size, etc.)
-  * that can be overridden in other parts of the project.
-  * 
-  * Example usage:
-  * --sf-icon--fill: 0; // Fill for icon
-  */
-}
-@layer sf.components {
   /* The page row's box, published so a page can hold the room of a list and
      its pages before they draw (sf-view-table publishes its rows the same way):
      the control height of the step, the row's padding above and below it, and
@@ -353,10 +348,6 @@
   }
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-pagination {
-    /* The public variables of sf-pagination (component.json css-variables,
-       standard 1.3.8 §6) over the role tokens. */
-    background-color: transparent;
-    background-color: var(--sf-pagination-background-color, var(--sf-pagination--background-color, transparent));
     min-width: 0;
     min-inline-size: 0;
     /* One size ladder: the page row is the control height of its step plus
@@ -439,8 +430,6 @@
   /* field: «из 12» after the field, quiet text. */
   .sf-pagination .sf-pagination-of,
   .sf-pagination .sf-pagination-place {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-pagination-color, var(--sf-on-surface-variant));
     white-space: nowrap;
   }
   .sf-pagination .sf-pagination-of {
@@ -460,14 +449,63 @@
   }
   /* numbers: every place is as wide as the widest page number there is (at
      least the control height), so the row keeps one width while a person
-     pages; the number sits in the middle of its place. */
-  .sf-pagination .sf-pagination-slot {
-    --sf-pagination--digits: 2;
-    width: max(var(--sf-pagination--control-height), var(--sf-pagination--digits) * 1ch + 2 * var(--sf-pagination--space-x));
-    inline-size: max(var(--sf-pagination--control-height), var(--sf-pagination--digits) * 1ch + 2 * var(--sf-pagination--space-x));
+     pages; the number sits in the middle of its place. The widest number's
+     digits are the row's --sf-pagination--digits: sf-pagination writes it on
+     its list, a class row may write it; without it a place counts two digits.
+
+     A narrow box takes the places down (SM-PN-1, EX-3): the width above is
+     the place's basis, and it shrinks when the row has no more room -- a
+     phone column, or a narrow column of a wide page, with no query of the
+     screen or of a container (C181) -- but never below its own number
+     (RG-NV 9: a number is square at least and as wide as its digits with the
+     place's padding, it never spills): its floor is its content, so a one- or
+     two-digit place goes down to square and «10240» keeps its five digits.
+     With the button's side padding a two-digit place could not shrink below
+     46: two arrows, five places and six gaps of 8 needed 350 in the 326
+     column of a 390 screen and the row scrolled; now the same row is 300. The
+     number's own padding is the label's (--sf-ui-<S>--text-space-x), so its
+     words never reach the place's edge. The plain twin's sf-page-number is
+     the same place (C251), and its width is RG-NV 9's one rule
+     (_css__page_number.scss) with that padding. */
+  .sf-pagination {
+    --sf-pagination--place-x: var(--sf-ui-1--text-space-x);
+  }
+  .sf-pagination.sf-pagination--size-1\/2 {
+    --sf-pagination--place-x: var(--sf-ui-1\/2--text-space-x);
+  }
+  /* Item and slot classes both (0,3,0): the item's flex: 0 0 auto below must
+     not take the place's shrinking back. The digits are the row's, never set
+     here (a place that set two drew «10240» in a two-digit place, 48 wide,
+     and the number spilled). */
+  .sf-pagination .sf-pagination-item.sf-pagination-slot,
+  .sf-pagination .sf-pagination-item:has(> .sf-page-number) {
+    flex: 0 1 max(var(--sf-pagination--control-height), 2 * 1ch + 2 * var(--sf-pagination--space-x));
+    flex: 0 1 max(var(--sf-pagination--control-height), var(--sf-pagination--digits, 2) * 1ch + 2 * var(--sf-pagination--space-x));
+    min-width: -webkit-min-content;
+    min-width: -moz-min-content;
+    min-width: min-content;
+    min-inline-size: -webkit-min-content;
+    min-inline-size: -moz-min-content;
+    min-inline-size: min-content;
     justify-content: center;
   }
+  /* sf-pagination writes the row's digits on its list, so its places keep one
+     floor too: the widest number with the place's padding, measured in the
+     place's own text (RG-NV 9). A shrunk row of «1 … 59 60 61 … 120» had a 45
+     place among 40 ones. */
+  .sf-pagination .sf-pagination-item.sf-pagination-slot {
+    min-width: max(var(--sf-pagination--control-height), 2 * 1ch + 2 * var(--sf-pagination--place-x));
+    min-inline-size: max(var(--sf-pagination--control-height), 2 * 1ch + 2 * var(--sf-pagination--place-x));
+    min-width: max(var(--sf-pagination--control-height), 2 * 1ch + 2 * var(--sf-pagination--place-x));
+    min-width: max(var(--sf-pagination--control-height), var(--sf-pagination--digits, 2) * 1ch + 2 * var(--sf-pagination--place-x));
+    min-inline-size: max(var(--sf-pagination--control-height), var(--sf-pagination--digits, 2) * 1ch + 2 * var(--sf-pagination--place-x));
+  }
   .sf-pagination .sf-pagination-slot > .sf-pagination-page {
+    --sf-button--padding-inline-start: var(--sf-pagination--place-x);
+    --sf-button--padding-inline-end: var(--sf-pagination--place-x);
+    /* Square at least, as the plain twin's sf-page-number (RG-NV 9). */
+    min-width: var(--sf-pagination--control-height);
+    min-inline-size: var(--sf-pagination--control-height);
     width: 100%;
     inline-size: 100%;
     justify-content: center;
@@ -484,6 +522,12 @@
     --sf-button-text-container--padding-inline-end: 0;
     white-space: nowrap;
   }
+  .sf-pagination .sf-pagination-item > .sf-page-number {
+    --sf-page-number--space-x: var(--sf-pagination--place-x);
+    --sf-page-number--width: var(--sf-pagination--control-height);
+    width: 100%;
+    inline-size: 100%;
+  }
   /* The gap is not a control: a mark of the pages left out. */
   .sf-pagination .sf-pagination-gap {
     display: inline-flex;
@@ -493,8 +537,6 @@
     block-size: var(--sf-pagination--control-height);
     min-width: var(--sf-pagination--control-height);
     min-inline-size: var(--sf-pagination--control-height);
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-pagination-color, var(--sf-on-surface-variant));
   }
   /* more: the button, then «Показано 40 из 240» and a thin bar, centred. */
   .sf-pagination.sf-pagination--more {
@@ -506,8 +548,6 @@
     inline-size: 100%;
   }
   .sf-pagination .sf-pagination-shown {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-pagination-color, var(--sf-on-surface-variant));
     white-space: nowrap;
   }
   /* The line takes the focus when the last portion removes the button
@@ -538,7 +578,7 @@
   .sf-pagination a.sf-pagination-link.disabled {
     cursor: not-allowed;
   }
-  /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-b0) justify-content/center (.justify-center) align-items/center (.items-center) */
+  /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-gap--actions) justify-content/center (.justify-center) align-items/center (.items-center) */
   .sf-pagination .sf-pagination-top {
     --sf-pagination-top--background-color: transparent;
     --sf-pagination-top--border-bottom-width: var(--sf-px);
@@ -549,13 +589,12 @@
        by --sf-space-3, and the page row already pads itself by --sf-space-1, so
        this row contributes only the difference. */
     --sf-pagination-top--padding-bottom: calc(var(--sf-space-3) - var(--sf-space-1));
-    background-color: var(--sf-pagination-top--background-color);
     border-bottom-width: var(--sf-pagination-top--border-bottom-width);
-    border-color: transparent;
-    border-color: var(--sf-pagination-top--border-color, transparent);
     border-style: solid;
     border-style: var(--sf-pagination-top--border-style, solid);
-    gap: var(--sf-b0);
+    /* The buttons of the row (Show more): one group, H5 8 (C105; it was
+       --sf-b0, 10, no space step). */
+    gap: var(--sf-gap--actions);
     padding-bottom: var(--sf-pagination-top--padding-bottom);
   }
   /* The page row wraps. It used to hold every part on one line whatever its
@@ -573,10 +612,7 @@
     --sf-pagination-main--border-style: solid;
     --sf-pagination-main--padding-bottom: var(--sf-pagination--padding-block);
     --sf-pagination-main--padding-top: var(--sf-pagination--padding-block);
-    background-color: var(--sf-pagination-main--background-color);
     border-bottom-width: var(--sf-pagination-main--border-bottom-width);
-    border-color: transparent;
-    border-color: var(--sf-pagination-main--border-color, transparent);
     border-style: solid;
     border-style: var(--sf-pagination-main--border-style, solid);
     gap: var(--sf-space-1);
@@ -632,7 +668,6 @@
   .sf-pagination .sf-pagination-left {
     --sf-pagination-left--background-color: transparent;
     --sf-pagination-left--gap: var(--sf-space-1);
-    background-color: var(--sf-pagination-left--background-color);
     gap: var(--sf-pagination-left--gap);
     min-width: 0;
     min-inline-size: 0;
@@ -641,7 +676,6 @@
   .sf-pagination .sf-pagination-marked {
     --sf-pagination-marked--background-color: transparent;
     --sf-pagination-marked--gap: var(--sf-space-1\/3);
-    background-color: var(--sf-pagination-marked--background-color);
     gap: var(--sf-pagination-marked--gap);
   }
   .sf-pagination .sf-pagination-marked-text {
@@ -654,7 +688,6 @@
     --sf-pagination-marked-text--line-height: var(--sf-text-height-1\/2);
   }
   .sf-pagination .sf-pagination-marked-text {
-    color: var(--sf-pagination-marked-text--color);
     font-family: var(--sf-pagination-marked-text--font-family);
     font-size: var(--sf-pagination-marked-text--font-size);
     font-weight: var(--sf-pagination-marked-text--font-weight);
@@ -664,9 +697,6 @@
   .sf-pagination .sf-pagination-total {
     --sf-pagination-total--background-color: transparent;
     --sf-pagination-total--gap: var(--sf-space-1\/3);
-    background-color: var(--sf-pagination-total--background-color);
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-pagination-total--color, var(--sf-pagination-color, var(--sf-on-surface-variant)));
     font-family: var(--sf-text--family);
     font-family: var(--sf-pagination-total--font-family, var(--sf-text--family));
     font-size: var(--sf-text-size-1);
@@ -684,9 +714,6 @@
     flex-wrap: wrap;
     --sf-pagination-container--background-color: transparent;
     --sf-pagination-container--gap: var(--sf-pagination-gap, var(--sf-space-1\/3));
-    background-color: var(--sf-pagination-container--background-color);
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-pagination-container--color, var(--sf-pagination-color, var(--sf-on-surface-variant)));
     font-family: var(--sf-text--family);
     font-family: var(--sf-pagination-container--font-family, var(--sf-text--family));
     font-size: var(--sf-text-size-1);
@@ -828,9 +855,6 @@
   .sf-pagination .sf-pagination-count {
     --sf-pagination-count--background-color: transparent;
     --sf-pagination-count--gap: var(--sf-space-1\/3);
-    background-color: var(--sf-pagination-count--background-color);
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-pagination-count--color, var(--sf-on-surface-variant));
     font-family: var(--sf-text--family);
     font-family: var(--sf-pagination-count--font-family, var(--sf-text--family));
     font-size: var(--sf-text-size-1);
@@ -847,7 +871,6 @@
     --sf-pagination-bottom--gap: var(--sf-space-1\/2);
     --sf-pagination-bottom--padding-bottom: var(--sf-space-1);
     --sf-pagination-bottom--padding-top: var(--sf-space-1);
-    background-color: var(--sf-pagination-bottom--background-color);
     gap: var(--sf-pagination-bottom--gap);
     padding-bottom: var(--sf-pagination-bottom--padding-bottom);
     padding-top: var(--sf-pagination-bottom--padding-top);
@@ -870,7 +893,6 @@
   .sf-pagination-actions {
     /* It floats over the rows (sticky): the raised place (C20), not the page. */
     --sf-pagination-actions--background-color: var(--sf-surface-raised);
-    --sf-on-surface-variant: var(--sf-on-surface-raised-variant);
     --sf-pagination-actions--border-color: var(--sf-outline-variant);
     --sf-pagination-actions--gap: var(--sf-gap--groups);
     --sf-pagination-actions--padding-block: var(--sf-space-1);
@@ -889,10 +911,10 @@
     padding-left: var(--sf-pagination-actions--padding-inline);
     padding-right: var(--sf-pagination-actions--padding-inline);
     padding-inline: var(--sf-pagination-actions--padding-inline);
-    background-color: var(--sf-pagination-actions--background-color);
-    border-top: var(--sf-px) solid var(--sf-pagination-actions--border-color);
-    -webkit-border-before: var(--sf-px) solid var(--sf-pagination-actions--border-color);
-            border-block-start: var(--sf-px) solid var(--sf-pagination-actions--border-color);
+    border-top-width: var(--sf-px);
+    border-block-start-width: var(--sf-px);
+    border-top-style: solid;
+    border-block-start-style: solid;
     /* It is a surface of its own -- it floats over the rows and holds the bottom
        of the card -- so it is rounded like one. */
     border-radius: var(--sf-pagination-actions--radius);
@@ -964,7 +986,6 @@
     text-align: center;
   }
   .sf-pagination-actions-count {
-    color: var(--sf-on-surface);
     font-weight: var(--sf-font-weight-medium);
     white-space: nowrap;
   }
@@ -972,7 +993,6 @@
     align-self: stretch;
     width: var(--sf-px);
     inline-size: var(--sf-px);
-    background-color: var(--sf-outline-variant);
   }
   .sf-pagination .sf-pagination-marked-text:nth-child(1) {
     --sf-pagination-marked-text--color: var(--sf-on-surface-variant);
@@ -1020,6 +1040,76 @@
       align-items: stretch;
       flex-direction: column;
     }
+  }
+}
+@layer sf.paint {
+  .sf-pagination {
+    /* The public variables of sf-pagination (component.json css-variables,
+       standard 1.3.8 §6) over the role tokens. */
+    background-color: transparent;
+    background-color: var(--sf-pagination-background-color, var(--sf-pagination--background-color, transparent));
+  }
+  .sf-pagination .sf-pagination-of,
+  .sf-pagination .sf-pagination-place {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-pagination-color, var(--sf-on-surface-variant));
+  }
+  .sf-pagination .sf-pagination-gap {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-pagination-color, var(--sf-on-surface-variant));
+  }
+  .sf-pagination .sf-pagination-shown {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-pagination-color, var(--sf-on-surface-variant));
+  }
+  .sf-pagination .sf-pagination-top {
+    background-color: var(--sf-pagination-top--background-color);
+    border-color: transparent;
+    border-color: var(--sf-pagination-top--border-color, transparent);
+  }
+  .sf-pagination .sf-pagination-main {
+    background-color: var(--sf-pagination-main--background-color);
+    border-color: transparent;
+    border-color: var(--sf-pagination-main--border-color, transparent);
+  }
+  .sf-pagination .sf-pagination-left {
+    background-color: var(--sf-pagination-left--background-color);
+  }
+  .sf-pagination .sf-pagination-marked {
+    background-color: var(--sf-pagination-marked--background-color);
+  }
+  .sf-pagination .sf-pagination-marked-text {
+    color: var(--sf-pagination-marked-text--color);
+  }
+  .sf-pagination .sf-pagination-total {
+    background-color: var(--sf-pagination-total--background-color);
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-pagination-total--color, var(--sf-pagination-color, var(--sf-on-surface-variant)));
+  }
+  .sf-pagination .sf-pagination-container {
+    background-color: var(--sf-pagination-container--background-color);
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-pagination-container--color, var(--sf-pagination-color, var(--sf-on-surface-variant)));
+  }
+  .sf-pagination .sf-pagination-count {
+    background-color: var(--sf-pagination-count--background-color);
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-pagination-count--color, var(--sf-on-surface-variant));
+  }
+  .sf-pagination .sf-pagination-bottom {
+    background-color: var(--sf-pagination-bottom--background-color);
+  }
+  .sf-pagination-actions {
+    --sf-on-surface-variant: var(--sf-on-surface-raised-variant);
+    background-color: var(--sf-pagination-actions--background-color);
+    border-top-color: var(--sf-pagination-actions--border-color);
+    border-block-start-color: var(--sf-pagination-actions--border-color);
+  }
+  .sf-pagination-actions-count {
+    color: var(--sf-on-surface);
+  }
+  .sf-pagination-actions-separator {
+    background-color: var(--sf-outline-variant);
   }
 }
 /* C77 (owner 2026-11-11, dispatcher 2026-11-12): the page box is a number box,

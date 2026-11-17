@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* sf-input-choice (standard simai.smart-component 1.3.15 §6; owner decision
      C28, prototype input-choice-world.html): options as cards in one of three
@@ -43,11 +43,12 @@
     font-weight: var(--sf-font-weight-regular);
     font-size: var(--sf-text-size-1\/2);
     line-height: var(--sf-text-height-1\/2);
-    color: var(--sf-on-surface-variant);
   }
-  .sf-choice .sf-choice-required,
-  .sf-choice.sf-choice--invalid .sf-choice-message {
-    color: var(--sf-error);
+  @media not all and (min-width: 60rem) {
+    .sf-choice .sf-choice-label {
+      font-size: var(--sf-text-size-1);
+      line-height: var(--sf-text-height-1);
+    }
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice .sf-choice-required{
     margin-left: var(--sf-space-1\/4);
@@ -133,10 +134,9 @@
     min-width: 0;
     min-inline-size: 0;
     padding: var(--sf-choice--padding);
-    border: var(--sf-px) solid var(--sf-choice--border-color);
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-choice--radius);
-    background-color: var(--sf-choice--background-color);
-    color: var(--sf-on-surface);
     cursor: pointer;
     transition-property: background-color, border-color, box-shadow;
     transition-duration: var(--sf-duration-fast);
@@ -268,7 +268,6 @@
     font-size: var(--sf-text-size-1\/2);
     font-weight: var(--sf-font-weight-regular);
     line-height: var(--sf-text-height-1\/2);
-    color: var(--sf-on-surface-variant);
     word-wrap: anywhere;
   }
   /* List: price and term a column at the end of the name line -- the price on
@@ -338,7 +337,6 @@
     font-size: var(--sf-text-size-1\/2);
     font-weight: var(--sf-font-weight-regular);
     line-height: var(--sf-text-height-1\/2);
-    color: var(--sf-on-surface-variant);
   }
   /* Tile and picture: the price at the foot, after a divider; the term on its
      line. */
@@ -352,7 +350,6 @@
     margin-top: var(--sf-space-1\/3);
     -webkit-margin-before: var(--sf-space-1\/3);
             margin-block-start: var(--sf-space-1\/3);
-    background-color: var(--sf-outline-variant);
   }
   .sf-choice .sf-choice-price {
     display: flex;
@@ -375,16 +372,10 @@
     outline-offset: var(--sf-focus--offset);
   }
   .sf-choice .sf-choice-card:not(.sf-choice-card--disabled):not(.sf-choice-card--checked):hover {
-    border-color: var(--sf-outline);
-    background-color: var(--sf-surface-state-hover);
     /* A translucent fill, as the checked card (C43 D4). */
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-surface-state-hover);
   }
   .sf-choice .sf-choice-card--checked,
   .sf-choice .sf-choice-card--checked:hover {
-    border-color: var(--sf-choice--selected-border-color);
-    background-color: var(--sf-choice--selected-background-color);
     box-shadow: inset 0 0 0 var(--sf-px) var(--sf-choice--selected-border-color);
     /* No solid underlay for what stands on it (input-choice audit 2026-11-11,
        item 2): the card's fill is the lowest step of primary-container, the
@@ -394,31 +385,17 @@
        the agreed composition draws it (C28, prototypes/input-choice-world.html:
        12 % plate over 12 % fill). */
   }
-  .sf-choice.sf-choice--invalid .sf-choice-card:not(.sf-choice-card--checked):not(.sf-choice-card--disabled) {
-    border-color: var(--sf-error);
-  }
   /* Disabled: the disable roles on the edge and the words, the control and the
      badge in their own disabled look, no hover; distinct from a card not
      chosen, which keeps on-surface words and the outline-variant edge. */
   .sf-choice .sf-choice-card--disabled {
-    border-color: var(--sf-outline-disabled);
-    color: var(--sf-on-surface-disabled);
     cursor: default;
-  }
-  .sf-choice .sf-choice-card--disabled .sf-choice-caption {
-    color: inherit;
-  }
-  .sf-choice .sf-choice-card--disabled .sf-choice-term {
-    color: inherit;
   }
   .sf-choice .sf-choice-card--disabled .sf-choice-title {
     font-weight: var(--sf-font-weight-regular);
   }
   .sf-choice .sf-choice-card--disabled .sf-choice-icon {
     --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-choice .sf-choice-card--disabled .sf-choice-rule {
-    background-color: var(--sf-outline-disabled);
   }
   /* ---------------------------------------------------------------- list
      One frame, rows divided by lines (Stripe Checkout, Shopify checkout): each
@@ -541,11 +518,6 @@
   .sf-choice[data-layout=list] .sf-choice-card:has(.sf-choice-input:focus-visible) {
     z-index: 1;
   }
-  /* Inside the frame a hover or a disabled row keeps the frame's line. */
-  .sf-choice[data-layout=list] .sf-choice-card:not(.sf-choice-card--checked):hover,
-  .sf-choice[data-layout=list] .sf-choice-card--disabled {
-    border-color: var(--sf-choice--border-color);
-  }
   /* ---------------------------------------------------------------- picture
      The image runs to the card's edges, the caption under it with the card's
      padding; the chosen edge is drawn over the image. */
@@ -583,10 +555,10 @@
     display: block;
     aspect-ratio: 16/10;
     overflow: hidden;
-    border-bottom: var(--sf-px) solid var(--sf-outline-variant);
-    -webkit-border-after: var(--sf-px) solid var(--sf-outline-variant);
-            border-block-end: var(--sf-px) solid var(--sf-outline-variant);
-    background-color: var(--sf-surface-area);
+    border-bottom-width: var(--sf-px);
+    border-block-end-width: var(--sf-px);
+    border-bottom-style: solid;
+    border-block-end-style: solid;
   }
   .sf-choice .sf-choice-media img {
     display: block;
@@ -647,26 +619,48 @@
               margin-block-end: 0;
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice[data-layout=picture] .sf-choice-media{
-      border-right: var(--sf-px) solid var(--sf-outline-variant);
+      border-right-width: var(--sf-px);
     }
-    @supports not (border-inline-end: initial){
+    @supports not (border-inline-end-width: initial){
     html:not([dir="rtl"]) .sf-choice[data-layout=picture] .sf-choice-media{
-      border-right: var(--sf-px) solid var(--sf-outline-variant);
+      border-right-width: var(--sf-px);
       }
     }
     .sf-choice[data-layout=picture] .sf-choice-media:where(:dir(ltr)){
-      border-right: var(--sf-px) solid var(--sf-outline-variant);
+      border-right-width: var(--sf-px);
     }
     _:-ms-input-placeholder, [dir="rtl"] .sf-choice[data-layout=picture] .sf-choice-media{
-      border-left: var(--sf-px) solid var(--sf-outline-variant);
+      border-left-width: var(--sf-px);
     }
-    @supports not (border-inline-end: initial){
+    @supports not (border-inline-end-width: initial){
     [dir="rtl"] .sf-choice[data-layout=picture] .sf-choice-media{
-      border-left: var(--sf-px) solid var(--sf-outline-variant);
+      border-left-width: var(--sf-px);
       }
     }
     .sf-choice[data-layout=picture] .sf-choice-media:where(:dir(rtl)){
-      border-left: var(--sf-px) solid var(--sf-outline-variant);
+      border-left-width: var(--sf-px);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice[data-layout=picture] .sf-choice-media{
+      border-right-style: solid;
+    }
+    @supports not (border-inline-end-style: initial){
+    html:not([dir="rtl"]) .sf-choice[data-layout=picture] .sf-choice-media{
+      border-right-style: solid;
+      }
+    }
+    .sf-choice[data-layout=picture] .sf-choice-media:where(:dir(ltr)){
+      border-right-style: solid;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-choice[data-layout=picture] .sf-choice-media{
+      border-left-style: solid;
+    }
+    @supports not (border-inline-end-style: initial){
+    [dir="rtl"] .sf-choice[data-layout=picture] .sf-choice-media{
+      border-left-style: solid;
+      }
+    }
+    .sf-choice[data-layout=picture] .sf-choice-media:where(:dir(rtl)){
+      border-left-style: solid;
     }
     .sf-choice[data-layout=picture] .sf-choice-media {
       grid-row: 1/-1;
@@ -676,8 +670,10 @@
       border-bottom: 0;
       -webkit-border-after: 0;
               border-block-end: 0;
-      -webkit-border-end: var(--sf-px) solid var(--sf-outline-variant);
-              border-inline-end: var(--sf-px) solid var(--sf-outline-variant);
+      border-bottom-color: revert-layer;
+      border-block-end-color: revert-layer;
+      border-inline-end-width: var(--sf-px);
+      border-inline-end-style: solid;
     }
     .sf-choice[data-layout=picture] .sf-choice-card > :not(.sf-choice-media) {
       grid-column: 2;
@@ -710,11 +706,6 @@
     font-size: var(--sf-text-size-1);
     line-height: var(--sf-text-height-1);
     font-weight: var(--sf-font-weight-medium);
-    color: var(--sf-on-surface);
-  }
-  /* «*» in the heading's ink, hidden from assistive technology (C153 (2)). */
-  .sf-choice--list .sf-choice-heading .sf-choice-required {
-    color: inherit;
   }
   /* The «?» keeps the line it stands on (C103, C153 (8)): its box is that
      line, the mark centred in it. The same beside the cards' label. */
@@ -752,7 +743,6 @@
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1\/2);
     line-height: var(--sf-text-height-1\/2);
-    color: var(--sf-on-surface-variant);
   }
   .sf-choice--list .sf-choice-options {
     display: flex;
@@ -809,13 +799,121 @@
     display: flex;
     align-items: flex-start;
     gap: var(--sf-space-1\/4);
-    color: var(--sf-error);
   }
   .sf-choice--list .sf-choice-message-icon {
     --sf-icon--color: var(--sf-error);
     --sf-icon--font-size: var(--sf-text-height-1\/2);
     --sf-icon--height: var(--sf-text-height-1\/2);
     --sf-icon--width: var(--sf-text-height-1\/2);
+  }
+}
+@layer sf.paint {
+  .sf-choice .sf-choice-label,
+  .sf-choice .sf-choice-message {
+    color: var(--sf-on-surface-variant);
+  }
+  /* C153 (1), SM-ICH-1: the label in the text ink, as sf-input's; the message
+     keeps the hint's ink. On a phone (below 60rem, the text tokens' own break) the label of size 1 stays 14, the value's step there, as sf-input's (the choice has one size). */
+  .sf-choice .sf-choice-label {
+    color: var(--sf-on-surface);
+  }
+  .sf-choice .sf-choice-required,
+  .sf-choice.sf-choice--invalid .sf-choice-message {
+    color: var(--sf-error);
+  }
+  .sf-choice .sf-choice-card {
+    border-color: var(--sf-choice--border-color);
+    background-color: var(--sf-choice--background-color);
+    color: var(--sf-on-surface);
+  }
+  .sf-choice .sf-choice-caption {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-choice .sf-choice-term {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-choice .sf-choice-rule {
+    background-color: var(--sf-outline-variant);
+  }
+  .sf-choice .sf-choice-card:not(.sf-choice-card--disabled):not(.sf-choice-card--checked):hover {
+    border-color: var(--sf-outline);
+    background-color: var(--sf-surface-state-hover);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-surface-state-hover);
+  }
+  .sf-choice .sf-choice-card--checked,
+  .sf-choice .sf-choice-card--checked:hover {
+    border-color: var(--sf-choice--selected-border-color);
+    background-color: var(--sf-choice--selected-background-color);
+  }
+  .sf-choice.sf-choice--invalid .sf-choice-card:not(.sf-choice-card--checked):not(.sf-choice-card--disabled) {
+    border-color: var(--sf-error);
+  }
+  .sf-choice .sf-choice-card--disabled {
+    border-color: var(--sf-outline-disabled);
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-choice .sf-choice-card--disabled .sf-choice-caption {
+    color: inherit;
+  }
+  .sf-choice .sf-choice-card--disabled .sf-choice-term {
+    color: inherit;
+  }
+  .sf-choice .sf-choice-card--disabled .sf-choice-rule {
+    background-color: var(--sf-outline-disabled);
+  }
+  /* Inside the frame a hover or a disabled row keeps the frame's line. */
+  .sf-choice[data-layout=list] .sf-choice-card:not(.sf-choice-card--checked):hover,
+  .sf-choice[data-layout=list] .sf-choice-card--disabled {
+    border-color: var(--sf-choice--border-color);
+  }
+  .sf-choice .sf-choice-media {
+    border-bottom-color: var(--sf-outline-variant);
+    border-block-end-color: var(--sf-outline-variant);
+    background-color: var(--sf-surface-area);
+  }
+  @container sf-choice (inline-size < 30rem) {
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice[data-layout=picture] .sf-choice-media{
+      border-right-color: var(--sf-outline-variant);
+    }
+    @supports not (border-inline-end-color: initial){
+    html:not([dir="rtl"]) .sf-choice[data-layout=picture] .sf-choice-media{
+      border-right-color: var(--sf-outline-variant);
+      }
+    }
+    .sf-choice[data-layout=picture] .sf-choice-media:where(:dir(ltr)){
+      border-right-color: var(--sf-outline-variant);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-choice[data-layout=picture] .sf-choice-media{
+      border-left-color: var(--sf-outline-variant);
+    }
+    @supports not (border-inline-end-color: initial){
+    [dir="rtl"] .sf-choice[data-layout=picture] .sf-choice-media{
+      border-left-color: var(--sf-outline-variant);
+      }
+    }
+    .sf-choice[data-layout=picture] .sf-choice-media:where(:dir(rtl)){
+      border-left-color: var(--sf-outline-variant);
+    }
+    .sf-choice[data-layout=picture] .sf-choice-media {
+      border-bottom: 0;
+      -webkit-border-after: 0;
+              border-block-end: 0;
+      border-inline-end-color: var(--sf-outline-variant);
+    }
+  }
+  .sf-choice--list .sf-choice-heading {
+    color: var(--sf-on-surface);
+  }
+  /* «*» in the heading's ink, hidden from assistive technology (C153 (2)). */
+  .sf-choice--list .sf-choice-heading .sf-choice-required {
+    color: inherit;
+  }
+  .sf-choice--list .sf-choice-hint {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-choice--list .sf-choice-message {
+    color: var(--sf-error);
   }
 }
 /* The card owns the focus ring: the control gives its own up (one component,

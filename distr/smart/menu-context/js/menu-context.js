@@ -1376,6 +1376,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getInitials: () => (/* binding */ getInitials),
 /* harmony export */   normalizeInitialsWords: () => (/* binding */ normalizeInitialsWords)
 /* harmony export */ });
+// c282-allow-start: input parsing (initials read from Russian names, C152)
 const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]); // Words a name carries that are not the person's or the organisation's own
 // (owner decision C152 (3), 2026-11-14): legal forms (ООО «Ромашка» → Р),
 // titles (Dr. John Smith → JS) and name particles (Мария фон Штейн → МШ) are
@@ -1385,7 +1386,8 @@ const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "д
 const INITIALS_SERVICE_WORDS = new Set([// legal forms
 "ооо", "оао", "зао", "пао", "ао", "нао", "ип", "нко", "ано", "гуп", "муп", "фгуп", "гбу", "мбу", "чоп", "llc", "inc", "ltd", "gmbh", "ag", "corp", "co", "llp", "plc", "lp", "bv", "oy", "ab", "srl", "sarl", // titles
 "dr", "prof", "mr", "mrs", "ms", "mx", "miss", "sir", "jr", "sr", "phd", "д-р", "проф", "акад", "г-н", "г-жа", "доц", // particles
-"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]);
+"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]); // c282-allow-end
+
 function normalizeInitialsWords(value = "") {
   return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
 } // The first character a reader sees: a whole grapheme, so a letter written
@@ -1485,8 +1487,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_sheet_swipe_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("42f1649d1a1b");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("4ff97a05802b");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("68b68beb66a3");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("25e9776cb404");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("c19f070ad532");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("eab34f3f2b10");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -1506,26 +1507,18 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__.runtime
-}; // sf-menu-context from its component.json (standard simai.smart-component 1.3.8
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-menu-context from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §8, §19): its settings are attributes and properties made by
 // core/js/element-manifest.js, its words are lang/<locale>.json, and its events
 // go out by their verbs through sfEmit. aria-label and role stay the host's.
 
 const ContextMenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__.files,
   source: "ru",
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__,
   // openFor(anchor, options), toggleFor(anchor, options), openAt(x, y, options) and chooseTab(index)
@@ -1648,7 +1641,46 @@ const BROWSER_KEEPS = 'a[href], input, select, textarea, [contenteditable=""], [
 const LONG_PRESS_MS = 500;
 const LONG_PRESS_SLOP = 10;
 
-const ids = value => String(value ?? "").trim().split(/\s+/u).filter(Boolean);
+const ids = value => String(value ?? "").trim().split(/\s+/u).filter(Boolean); // An area may stand in a shadow root -- a view's own table (sf-menu-context
+// 1.27.0). The page's events come to the document retargeted to the shadow
+// host; the node the event really came from is the first of its composed
+// path. Each area reads it in its own tree: the node walks up through the
+// hosts to the root the area stands in -- for an area of the document that is
+// event.target, as it always was; for an area in a shadow root, the row.
+
+
+const origin = event => {
+  const node = event.composedPath?.()[0] ?? event.target;
+  return node instanceof Element ? node : node?.parentElement ?? event.target;
+};
+
+const hostOf = node => {
+  const root = node?.getRootNode?.();
+  return root && root !== node && root.host ? root.host : null;
+};
+
+const inTreeOf = (node, element) => {
+  const root = element.getRootNode();
+  let at = node;
+
+  while (at && at.getRootNode() !== root) at = hostOf(at);
+
+  return at;
+};
+
+const holds = (outer, node) => {
+  const at = node && inTreeOf(node, outer);
+  return Boolean(at && outer.contains(at));
+}; // The focused element itself, inside the shadow roots it stands in.
+
+
+const deepActive = () => {
+  let active = document.activeElement;
+
+  while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement;
+
+  return active;
+};
 
 const selected = element => element?.getAttribute?.("aria-selected") === "true"; // ─── drilling (1.5.0) ────────────────────────────────────────────────────────
 // A row's path in the tree, the way the template writes it into the markup:
@@ -1889,6 +1921,13 @@ class SfContextMenu extends ContextMenuElement {
       const early = this.search;
       delete this.search;
       this._search = early && typeof early === "object" ? early : null;
+    } // Areas given as the property before the element was defined (1.27.0).
+
+
+    if (Object.prototype.hasOwnProperty.call(this, "for")) {
+      const early = this.for;
+      delete this.for;
+      this.for = early;
     }
 
     if (Object.prototype.hasOwnProperty.call(this, "entries")) {
@@ -2950,10 +2989,40 @@ class SfContextMenu extends ContextMenuElement {
       ...options
     });
   } // ─── the areas named by `for` (C164) ─────────────────────────────────────
+  // `for` is the areas' ids in the attribute; the property also takes a list
+  // of the areas themselves, or of ids, for an area the page cannot name by
+  // an id the document sees -- a table in a shadow root (1.27.0). A list set
+  // as the property is kept until a string is set.
+
+
+  get for() {
+    return Array.isArray(this._forList) ? this._forList.slice() : this.getAttribute("for") ?? "";
+  }
+
+  set for(value) {
+    if (Array.isArray(value)) {
+      this._forList = value.slice();
+      return;
+    }
+
+    this._forList = null;
+    if (value === null || value === undefined || value === "") this.removeAttribute("for");else this.setAttribute("for", String(value));
+  } // The areas named by `for`: the elements it was given, and each id found
+  // in the menu's own root, in the root of the control it is open for, then
+  // in the document.
 
 
   areas() {
-    return ids(this.getAttribute("for") ?? this.for).map(id => document.getElementById(id)).filter(Boolean);
+    const given = Array.isArray(this._forList) ? this._forList : ids(this.getAttribute("for"));
+    const roots = [...new Set([this.getRootNode?.(), this._owned?.anchor?.getRootNode?.(), document])].filter(root => typeof root?.getElementById === "function");
+    const areas = [];
+
+    for (const one of given) {
+      const area = one instanceof Element ? one : typeof one === "string" ? roots.map(root => root.getElementById(one)).find(Boolean) : null;
+      if (area?.isConnected && !areas.includes(area)) areas.push(area);
+    }
+
+    return areas;
   } // The object a node of the page stands in: {area, target}, or null outside
   // every area.
 
@@ -2962,8 +3031,9 @@ class SfContextMenu extends ContextMenuElement {
     if (!(node instanceof Element)) return null;
 
     for (const area of this.areas()) {
-      if (!area.contains(node)) continue;
-      const row = node.closest(TARGETS);
+      const at = inTreeOf(node, area);
+      if (!at || !area.contains(at)) continue;
+      const row = at.closest(TARGETS);
       return {
         area,
         target: row && row !== area && area.contains(row) ? row : area
@@ -3014,9 +3084,11 @@ class SfContextMenu extends ContextMenuElement {
 
   browserKeeps(event, target) {
     if (event.shiftKey && event.type === "contextmenu" && event.button === 2) return true;
-    if (event.target?.closest?.(BROWSER_KEEPS) && target.contains(event.target.closest(BROWSER_KEEPS))) return true;
-    const selection = document.getSelection?.();
-    return Boolean(selection && !selection.isCollapsed && String(selection).trim() && selection.anchorNode && target.contains(selection.anchorNode));
+    const from = inTreeOf(origin(event), target);
+    if (from?.closest?.(BROWSER_KEEPS) && target.contains(from.closest(BROWSER_KEEPS))) return true;
+    const root = target.getRootNode?.();
+    const selection = (typeof root?.getSelection === "function" ? root : document).getSelection?.();
+    return Boolean(selection && !selection.isCollapsed && String(selection).trim() && selection.anchorNode && holds(target, selection.anchorNode));
   } // The menu at an object opened from the keyboard: under its start.
 
 
@@ -3066,16 +3138,20 @@ class SfContextMenu extends ContextMenuElement {
       return;
     } // The menu's own rows, when the page placed the menu inside its area,
     // are not objects of the area.
+    // An area in a shadow root sends its events retargeted to the host: the
+    // node they came from is read from the composed path (1.27.0).
 
 
-    if (event.defaultPrevented || this.contains(event.target)) return;
-    const found = this.targetOf(event.target);
+    const node = origin(event);
+    if (event.defaultPrevented || holds(this, node)) return;
+    const found = this.targetOf(node);
     if (!found) return;
+    const from = inTreeOf(node, found.area);
 
     if (type === "pointerdown") {
       this.cancelPress();
       if (event.pointerType !== "touch" || event.button > 0 || !event.isPrimary) return;
-      if (event.target.closest?.(BROWSER_KEEPS)) return;
+      if (from.closest?.(BROWSER_KEEPS)) return;
       const press = {
         x: event.clientX,
         y: event.clientY,
@@ -3096,7 +3172,7 @@ class SfContextMenu extends ContextMenuElement {
 
     if (type === "keydown") {
       if (event.key !== "ContextMenu" && !(event.shiftKey && event.key === "F10")) return;
-      if (event.target.closest?.(BROWSER_KEEPS)) return;
+      if (from.closest?.(BROWSER_KEEPS)) return;
       event.preventDefault();
       this._keyAt = Date.now();
       this.openAtTarget(found.target);
@@ -3226,9 +3302,13 @@ class SfContextMenu extends ContextMenuElement {
     // some browsers, and the menu returned it there. A host element is not
     // itself focusable; its native control is.
 
-    const focusable = element => element?.matches?.("button, a[href], input, select, textarea, [tabindex]") ? element : element?.querySelector?.("button, a[href], input, select, textarea, [tabindex]") ?? element;
+    const focusable = element => element?.matches?.("button, a[href], input, select, textarea, [tabindex]") ? element : element?.querySelector?.("button, a[href], input, select, textarea, [tabindex]") ?? element; // The focus inside an area's shadow root is the element itself, not the
+    // host the document names (1.27.0).
 
-    const active = document.activeElement;
+
+    const shallow = document.activeElement,
+          deep = deepActive();
+    const active = found && deep !== shallow && !found.target.contains(shallow) && holds(found.target, deep) ? deep : shallow;
     const somewhere = active instanceof HTMLElement && active !== document.body && active !== document.documentElement; // Opened at the pointer for an object (openAt, C164), the focus goes back
     // to the object it acted on -- where it was inside it, else the object
     // itself, lent a tabindex when it takes none (CM-2: it fell to the page).
@@ -4799,6 +4879,28 @@ function resolveAvatarTone(setting, name) {
 
 /***/ },
 
+/***/ "eab34f3f2b10"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("25e9776cb404");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "68b68beb66a3"
 (module) {
 
@@ -4809,7 +4911,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu-
 /***/ "4ff97a05802b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.25.5","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"width":{"type":"string","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true},"value-text":{"type":"string","optional":true},"warning-at":{"type":"number","optional":true},"error-at":{"type":"number","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false},"for":{"type":"string","default":""}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{"target":{"type":"object","nullable":true},"targets":{"type":"list"}},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"open-at":{"with":{"x":"number","y":"number","options":{"type":"object","optional":true,"schema":{"properties":{"target":{"type":"object"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"}}}}},"waits":true,"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.27.0","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"width":{"type":"string","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true},"value-text":{"type":"string","optional":true},"warning-at":{"type":"number","optional":true},"error-at":{"type":"number","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false},"for":{"type":"string","default":""}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{"target":{"type":"object","nullable":true},"targets":{"type":"list"}},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"open-at":{"with":{"x":"number","y":"number","options":{"type":"object","optional":true,"schema":{"properties":{"target":{"type":"object"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"}}}}},"waits":true,"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -4817,13 +4919,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-m
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Context Menu","runtime":{"close":"Close","back":"Back","on":"On","off":"Off","selected":"{count} selected"},"events":{"search":{"label":"Search the menu"},"tab":{"label":"Choose a tab"},"reset":{"label":"Put the settings back"}}}');
-
-/***/ },
-
-/***/ "c19f070ad532"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Контекстное меню","runtime":{"close":"Закрыть","back":"Назад","on":"Вкл.","off":"Выкл.","selected":"Выбрано {count}"},"events":{"search":{"label":"Искать в меню"},"tab":{"label":"Выбрать вкладку"},"reset":{"label":"Вернуть настройки"}}}');
 
 /***/ }
 

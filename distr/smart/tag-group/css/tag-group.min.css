@@ -1,2 +1,2 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components{sf-tag-group{align-items:center;-webkit-column-gap:var(--sf-gap--tags);-moz-column-gap:var(--sf-gap--tags);column-gap:var(--sf-gap--tags);flex-wrap:nowrap;min-width:0;min-inline-size:0;row-gap:var(--sf-space-1\/4)}sf-tag-group[layout=wrap]{flex-wrap:wrap}sf-tag-group>[data-sf-tag-group-more]{display:inline-flex;flex-shrink:0}.sf-tag-group__panel{padding:var(--sf-space-1\/3)}}

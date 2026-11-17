@@ -688,8 +688,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("831ef45545b2");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("e0fa46ed075f");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("97168578e30d");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("33262fd5308c");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("15d5a97ca4e8");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("6524dc930b5f");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -738,16 +737,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_13__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__.runtime
-}; // Prefer the helper Core published; an isolated bundle uses its own copy.
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// Prefer the helper Core published; an isolated bundle uses its own copy.
 
 const positioning = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default()); // From its component.json (standard simai.smart-component 1.3.8 §3, §4, §8,
 // §11): the settings are attributes and properties made by
@@ -758,10 +752,7 @@ const positioning = () => globalThis.SF?.Position || (_core_js_position_js__WEBP
 
 const MenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_12__
 }); // open('catalog') and open({id: 'catalog'}) both name an item (§4.4).
@@ -2981,6 +2972,7 @@ function foldWords(value) {
   let folded = '';
   for (const unit of text(value)) {
     const lower = unit.toLowerCase();
+    // c282-allow: input parsing (ё is searched as е)
     folded += lower === 'ё' ? 'е' : lower.length === unit.length ? lower : unit;
   }
   return folded;
@@ -3036,6 +3028,28 @@ function filterItems(items, query) {
 
 /***/ },
 
+/***/ "6524dc930b5f"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("33262fd5308c");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "97168578e30d"
 (module) {
 
@@ -3046,7 +3060,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu 
 /***/ "e0fa46ed075f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.13.5","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"count":{"type":"number","optional":true},"status":{"type":"enum","values":["success","warning","error","info","neutral"],"optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true},"region":{"type":"string","optional":true},"target":{"type":"string","optional":true},"external":{"type":"boolean","optional":true},"group":{"type":"boolean","optional":true},"collapsible":{"type":"boolean","optional":true},"items":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","rail","navigation","framed"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","narrow","none"],"default":"auto"},"overflow":{"type":"enum","values":["more","collapse","none"],"default":"collapse"},"more-label":{"type":"string","default-from":"runtime.more-label"},"open-on":{"type":"enum","values":["click","hover"],"default":"hover"},"indicator":{"type":"enum","values":["line","fill"],"default":"line"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"},"sticky":{"type":"boolean","default":false},"bordered":{"type":"boolean","default":false},"search":{"type":"boolean","default":false},"search-placeholder":{"type":"string","default-from":"runtime.search-placeholder"}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}},"overflow":{"carries":{"hidden":{"type":"list","of":"id"}}},"search":{"carries":{"query":"string","count":"number"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"},"--sf-menu-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.14.2","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"count":{"type":"number","optional":true},"status":{"type":"enum","values":["success","warning","error","info","neutral"],"optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true},"region":{"type":"string","optional":true},"target":{"type":"string","optional":true},"external":{"type":"boolean","optional":true},"group":{"type":"boolean","optional":true},"collapsible":{"type":"boolean","optional":true},"items":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","rail","navigation","framed"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","narrow","none"],"default":"auto"},"overflow":{"type":"enum","values":["more","collapse","none"],"default":"collapse"},"more-label":{"type":"string","default-from":"runtime.more-label"},"open-on":{"type":"enum","values":["click","hover"],"default":"hover"},"indicator":{"type":"enum","values":["line","fill"],"default":"line"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"},"sticky":{"type":"boolean","default":false},"bordered":{"type":"boolean","default":false},"search":{"type":"boolean","default":false},"search-placeholder":{"type":"string","default-from":"runtime.search-placeholder"}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}},"overflow":{"carries":{"hidden":{"type":"list","of":"id"}}},"search":{"carries":{"query":"string","count":"number"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"},"--sf-menu-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -3054,13 +3068,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","ve
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Menu","runtime":{"toggle-label":"Menu","more-label":"More","status-success":"all good","status-warning":"needs attention","status-error":"error","status-info":"something new","status-neutral":"no data","subsections":"subsections","search-placeholder":"Search","search-found":"Found: {n}","search-empty":"Nothing found","new-tab":"opens in a new tab"}}');
-
-/***/ },
-
-/***/ "15d5a97ca4e8"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Меню","runtime":{"toggle-label":"Меню","more-label":"Ещё","status-success":"в порядке","status-warning":"внимание","status-error":"ошибка","status-info":"есть новое","status-neutral":"нет данных","subsections":"подразделы","search-placeholder":"Поиск","search-found":"Найдено: {n}","search-empty":"Ничего не найдено","new-tab":"откроется в новой вкладке"}}');
 
 /***/ }
 

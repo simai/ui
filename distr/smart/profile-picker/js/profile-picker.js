@@ -90,9 +90,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4a548d247667");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("816c0ad0728a");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("9ad70024c464");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ad1b3554788b");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("0c5af1be4f82");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("9b0fd2c3adba");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("dc3fe1efc927");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("9b0fd2c3adba");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
@@ -134,23 +133,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__.runtime
-};
 
 const ProfilePickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
 });
@@ -1142,6 +1133,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "dc3fe1efc927"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ad1b3554788b");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "9ad70024c464"
 (module) {
 
@@ -1152,7 +1165,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-profi
 /***/ "816c0ad0728a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.profile-picker","tag":"sf-profile-picker","version":"1.7.7","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"resettable":{"type":"boolean","default":false},"message":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"profiles":{"type":"list","of":{"id":"id","label":"string","shared":"boolean","builtin":"boolean","editable":"boolean"}},"rights":{"type":"object"}},"values":{"current":{"type":"string","default":""}},"events":{"select":{"carries":{"id":"string","ids":"list"}},"create":{"carries":{"label":"string","shared":"boolean","from":"string","kind":{"type":"enum","values":["personal","shared"]}}},"rename":{"carries":{"id":"string","label":"string","title":"string"}},"delete":{"carries":{"id":"string","ids":"list"}},"reset":{"carries":{"id":"string"}}},"actions":{"open":{},"close":{},"toggle":{}},"presentation":{"skeleton":{"file":"skeleton.html","late":["profiles"]}},"css-variables":{"--sf-profile-picker-background-color":{"type":"color","state":"default"},"--sf-profile-picker-border-color":{"type":"color","state":"default"},"--sf-profile-picker-radius":{"type":"length","state":"default"},"--sf-profile-picker-color":{"type":"color","state":"default"},"--sf-profile-picker-panel-background-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.profile-picker","tag":"sf-profile-picker","version":"1.8.3","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"resettable":{"type":"boolean","default":false},"message":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"profiles":{"type":"list","of":{"id":"id","label":"string","shared":"boolean","builtin":"boolean","editable":"boolean"}},"rights":{"type":"object"}},"values":{"current":{"type":"string","default":""}},"events":{"select":{"carries":{"id":"string","ids":"list"}},"create":{"carries":{"label":"string","shared":"boolean","from":"string","kind":{"type":"enum","values":["personal","shared"]}}},"rename":{"carries":{"id":"string","label":"string","title":"string"}},"delete":{"carries":{"id":"string","ids":"list"}},"reset":{"carries":{"id":"string"}}},"actions":{"open":{},"close":{},"toggle":{}},"presentation":{"skeleton":{"file":"skeleton.html","late":["profiles"]}},"css-variables":{"--sf-profile-picker-background-color":{"type":"color","state":"default"},"--sf-profile-picker-border-color":{"type":"color","state":"default"},"--sf-profile-picker-radius":{"type":"length","state":"default"},"--sf-profile-picker-color":{"type":"color","state":"default"},"--sf-profile-picker-panel-background-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
@@ -1160,13 +1173,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.profile-picker","tag":"sf
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Settings profiles","runtime":{"actions":"Actions","builtin":"standard","cancel":"Cancel","close":"Close","copy-of":"A copy of «{name}».","create":"Create","kind":"Who sees the profile","label":"Profile","locked":"You cannot change it","name":"Profile name","name-empty":"Give the profile a name.","new-profile":"New profile…","personal":"Personal","personal-taken":"You already have a personal profile","remove":"Delete","remove-ask":"Delete…","remove-question":"Delete «{name}»?","remove-shared":"It goes for everyone on the site.","rename":"Rename","reset":"Reset to standard","save":"Save","seen-by-all":"Seen by everyone on the site.","seen-by-you":"Seen only by you.","shared":"For everyone","shared-denied":"You cannot make shared profiles"}}');
-
-/***/ },
-
-/***/ "0c5af1be4f82"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Профили настроек","runtime":{"actions":"Действия","builtin":"стандартный","cancel":"Отмена","close":"Закрыть","copy-of":"Копия профиля «{name}».","create":"Создать","kind":"Кому виден профиль","label":"Профиль","locked":"Нет прав на изменение","name":"Название профиля","name-empty":"Дайте профилю название.","new-profile":"Новый профиль…","personal":"Личный","personal-taken":"Личный профиль уже есть","remove":"Удалить","remove-ask":"Удалить…","remove-question":"Удалить «{name}»?","remove-shared":"Он исчезнет у всех на сайте.","rename":"Переименовать","reset":"Сбросить к стандартному","save":"Сохранить","seen-by-all":"Виден всем на сайте.","seen-by-you":"Виден только вам.","shared":"Для всех","shared-denied":"Нет прав на общие профили"}}');
 
 /***/ }
 

@@ -528,9 +528,10 @@ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_resu
 // effects (format-intl.js). The same functions as core/js/format.js,
 // composition/file-size.mjs and SF.format.fileSize.
  // The four words of a size live in core's language files
-// (core/js/lang/file-size, localization study LC-3): ru and en ship; any
-// other language takes the words a product registers for `sf-file-size`
-// (SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
+// (core/js/lang/file-size, localization study LC-3): English ships in the
+// bundle; Russian and any other language take the words their language file
+// or a product registers for `sf-file-size` (owner decision C282;
+// SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
 // English words with its own digits. A component with words of its own passes
 // them as `units`. The registry is read from the shared global the page
 // language keeps (core/js/page-language.js), so this module still runs
@@ -543,17 +544,28 @@ function unitsOf(words) {
   return Object.freeze(UNIT_KEYS.map(key => words[key]));
 }
 
-const FILE_SIZE_UNITS = /* @__PURE__ */Object.freeze({
-  en: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en),
-  ru: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru)
-});
-
 function registeredUnits(code) {
   const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-file-size')?.get?.(code);
   return words && UNIT_KEYS.every(key => typeof words[key] === 'string') ? unitsOf(words) : null;
-}
-/** The unit words for a locale: registered for it, its own, its language's, else English. */
+} // The built-in languages' units (English; owner decision C282), and `ru` as
+// before for a reader of SF.format.FILE_SIZE_UNITS.ru: the units the ru
+// language file registered, null until it is on the page.
 
+
+function unitTable(words) {
+  const table = {};
+
+  for (const [code, own] of Object.entries(words)) table[code] = unitsOf(own);
+
+  if (!table.ru) Object.defineProperty(table, 'ru', {
+    enumerable: true,
+    get: () => registeredUnits('ru')
+  });
+  return Object.freeze(table);
+}
+
+const FILE_SIZE_UNITS = /* @__PURE__ */unitTable(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]);
+/** The unit words for a locale: registered for it, its own, its language's, else English. */
 
 function fileSizeUnits(locale = 'en') {
   const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
@@ -2113,9 +2125,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _value_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("a5c6bf6ad612");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("1a493783d3b8");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("8278668e929b");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("6e7f9092a98a");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("c317333b88f8");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("8ddd5798abe5");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("5157836d86e8");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("8ddd5798abe5");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _component_field_contract__WEBPACK_IMPORTED_MODULE_7__, _component_field_size__WEBPACK_IMPORTED_MODULE_8__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__, _value_mjs__WEBPACK_IMPORTED_MODULE_11__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _component_field_contract__WEBPACK_IMPORTED_MODULE_7__, _component_field_size__WEBPACK_IMPORTED_MODULE_8__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__, _value_mjs__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -2170,16 +2181,12 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_14__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__.runtime
-};
+const en = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_14__.files.en;
  // Every word this component says is lang/<locale>.json runtime (standard
 // 1.3.8 §11). A word that names a file says where the name goes and how the
 // language quotes it: «{name}» in Russian, “{name}” in English.
@@ -2241,10 +2248,7 @@ const FORMER_FILE_LEADS = {
 
 const ImageFieldElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_14__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_13__,
   actions: {
@@ -4402,16 +4406,41 @@ __webpack_async_result__();
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
 /* harmony export */ });
 /* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3694b5e2bf39");
-/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("220979cc98c6");
-// The unit words of a file size (localization study LC-3), for the bundle and
-// for Node alike: the runtime words of the language files, by language.
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
 
 
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "5157836d86e8"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6e7f9092a98a");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
 
 
 /***/ },
@@ -4592,13 +4621,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"B","kb":"KB","mb":"MB
 
 /***/ },
 
-/***/ "220979cc98c6"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"Б","kb":"КБ","mb":"МБ","gb":"ГБ"}}');
-
-/***/ },
-
 /***/ "8278668e929b"
 (module) {
 
@@ -4609,7 +4631,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "1a493783d3b8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-image","tag":"sf-input-image","version":"1.9.1","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"max-size":{"type":"number","default":0},"min-width":{"type":"number","default":0},"min-height":{"type":"number","default":0},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"layout":{"type":"enum","values":["row","preview"],"default":"row"},"shape":{"type":"enum","values":["square","circle"],"default":"square"},"aspect":{"type":"string","default":""},"fit":{"type":"enum","values":["cover","contain"],"default":"cover"},"sources":{"type":"string","default":"device"},"library-label":{"type":"string","default":""},"edit":{"type":"string","default":""},"alt":{"type":"enum","values":["none","field","required"],"default":"none"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop","paste"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","rejected":"list","accept":"string","source":"string"}},"library":{"carries":{"value":{"type":"object","nullable":true},"name":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-image","tag":"sf-input-image","version":"1.10.5","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"max-size":{"type":"number","default":0},"min-width":{"type":"number","default":0},"min-height":{"type":"number","default":0},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"layout":{"type":"enum","values":["row","preview"],"default":"row"},"shape":{"type":"enum","values":["square","circle"],"default":"square"},"aspect":{"type":"string","default":""},"fit":{"type":"enum","values":["cover","contain"],"default":"cover"},"sources":{"type":"string","default":"device"},"library-label":{"type":"string","default":""},"edit":{"type":"string","default":""},"alt":{"type":"enum","values":["none","field","required"],"default":"none"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop","paste"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","rejected":"list","accept":"string","source":"string"}},"library":{"carries":{"value":{"type":"object","nullable":true},"name":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 
@@ -4617,13 +4639,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-image","tag":"sf-in
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Image field","runtime":{"alt-hint":"For screen readers and search engines.","alt-hint-required":"A screen reader reads it, and mail shows it when images are off.","alt-label":"Image description","alt-missing":"Describe the image or mark it decorative.","alt-placeholder":"What the picture shows","bytes":"B","cancel-upload":"Cancel","cancel-upload-name":"Cancel the upload","choose":"Choose…","choose-menu":"Choose","choose-name":"Choose an image","chosen-file":"Image chosen: “{name}”","replace-file":"Replace the image “{name}”","remove-file":"Remove the image “{name}”","edit-file":"Edit the frame of “{name}”","cancel-upload-file":"Cancel the upload of “{name}”","retry-file":"Try the upload of “{name}” again","crop":"Frame","crop-hint":"Drag the picture or use the arrows; zoom with the buttons or + and −. Enter to finish, Esc to cancel.","crop-state":"Frame {aspect}, zoom {zoom} %, centre {x} % across, {y} % down","decorative":"Decorative — no description needed","drop":"Drop the file to use it","edit":"Edit","edit-cancel":"Cancel","edit-done":"Done","edit-name":"Edit the frame","edit-title":"Edit the image","empty":"No image chosen","empty-hint":"Drop or paste an image","empty-hint-coarse":"Take a photo or choose one","focus":"Focal point","focus-hint":"Click the main part of the picture or move the point with the arrows: it stays in the frame at any width.","focus-state":"Focal point: {x} % across, {y} % down","formats-audio":"audio","formats-image":"images","formats-video":"video","gigabytes":"GB","group":"Image","kilobytes":"KB","megabytes":"MB","reject-count":"“{name}” was not added: this field holds one image","reject-empty":"“{name}” is empty","reject-min-height":"“{name}” is {width}×{height} px; it must be at least {min} px high","reject-min-width":"“{name}” is {width}×{height} px; it must be at least {min} px wide","reject-size":"“{name}” is {size}; the limit is {max}","reject-type":"“{name}” is not accepted: allowed {formats}","reject-unreadable":"“{name}” does not open as an image","rejected":"This file is not accepted","remove":"Remove","remove-name":"Remove the image","removed":"Image removed","replace":"Replace…","replace-menu":"Replace","replace-name":"Replace the image","retry":"Try again","retry-name":"Try the upload again","source-device":"From this computer","source-device-coarse":"From this device","source-library":"From the library","source-url":"By address","sources-name":"Where to take the image from","stage-name":"frame","taken-first":"The first image of {n} was taken: this field holds one","upload-cancelled":"Upload cancelled","upload-failed-line":"Not uploaded: {message}","upload-failed-plain":"Not uploaded","upload-failed-validity":"The image was not uploaded: try again or choose another","upload-name":"Uploading {name}","uploaded":"Image uploaded","uploading":"Uploading · {n} %","uploading-plain":"Uploading…","url-close":"Close the address field","url-failed":"The image at this address could not be opened. Check the address.","url-label":"Image address","url-take":"Use","value-missing":"Choose an image.","wait-for-upload":"Wait until the image is uploaded","zoom-in":"Zoom in","zoom-out":"Zoom out","help":"More about: {label}"}}');
-
-/***/ },
-
-/***/ "c317333b88f8"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Поле изображения","runtime":{"alt-hint":"Для незрячих и поисковиков.","alt-hint-required":"Его прочитает диктор и покажет почта, если картинки выключены.","alt-label":"Описание изображения","alt-missing":"Опишите изображение или отметьте его декоративным.","alt-placeholder":"Что на картинке","bytes":"Б","cancel-upload":"Отменить","cancel-upload-name":"Отменить загрузку","choose":"Выбрать…","choose-menu":"Выбрать","choose-name":"Выбрать изображение","chosen-file":"Выбрано изображение «{name}»","replace-file":"Заменить изображение «{name}»","remove-file":"Убрать изображение «{name}»","edit-file":"Изменить кадр «{name}»","cancel-upload-file":"Отменить загрузку «{name}»","retry-file":"Повторить загрузку «{name}»","crop":"Кадр","crop-hint":"Перетащите картинку или нажимайте стрелки; масштаб — кнопками или + и −. Enter — готово, Esc — отмена.","crop-state":"Кадр {aspect}, масштаб {zoom} %, центр {x} % по ширине, {y} % по высоте","decorative":"Декоративная — описание не нужно","drop":"Отпустите файл, чтобы поставить его","edit":"Изменить","edit-cancel":"Отмена","edit-done":"Готово","edit-name":"Изменить кадр","edit-title":"Изменить изображение","empty":"Изображение не выбрано","empty-hint":"Перетащите или вставьте изображение","empty-hint-coarse":"Сфотографируйте или выберите","focus":"Точка фокуса","focus-hint":"Щёлкните главное на картинке или двигайте точку стрелками: оно останется в кадре при любой ширине.","focus-state":"Точка фокуса: {x} % по ширине, {y} % по высоте","formats-audio":"аудио","formats-image":"изображения","formats-video":"видео","gigabytes":"ГБ","group":"Изображение","kilobytes":"КБ","megabytes":"МБ","reject-count":"«{name}» не добавлен: в этом поле одно изображение","reject-empty":"«{name}» пустой — в нём нет данных","reject-min-height":"«{name}» — {width}×{height} px, а нужно от {min} px в высоту","reject-min-width":"«{name}» — {width}×{height} px, а нужно от {min} px в ширину","reject-size":"«{name}» — {size}, а можно до {max}","reject-type":"«{name}» не подходит: можно {formats}","reject-unreadable":"«{name}» не открывается как изображение","rejected":"Этот файл не подходит","remove":"Убрать","remove-name":"Убрать изображение","removed":"Изображение убрано","replace":"Заменить…","replace-menu":"Заменить","replace-name":"Заменить изображение","retry":"Повторить","retry-name":"Повторить загрузку","source-device":"С компьютера","source-device-coarse":"С устройства","source-library":"Из библиотеки","source-url":"По ссылке","sources-name":"Откуда взять изображение","stage-name":"кадр","taken-first":"Взято первое изображение из {n}: в этом поле одно","upload-cancelled":"Загрузка отменена","upload-failed-line":"Не загрузилось: {message}","upload-failed-plain":"Не загрузилось","upload-failed-validity":"Изображение не загрузилось: повторите или выберите другое","upload-name":"Загрузка {name}","uploaded":"Изображение загружено","uploading":"Загружается · {n} %","uploading-plain":"Загружается…","url-close":"Закрыть ввод адреса","url-failed":"Не удалось открыть изображение по ссылке. Проверьте адрес.","url-label":"Адрес изображения","url-take":"Взять","value-missing":"Выберите изображение.","wait-for-upload":"Дождитесь, пока изображение загрузится","zoom-in":"Увеличить","zoom-out":"Уменьшить","help":"Подробнее: {label}"}}');
 
 /***/ }
 

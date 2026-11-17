@@ -738,8 +738,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("47e9950fb20b");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("0f14f861d828");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("0ae1a29b7840");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("56e00394ab1f");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("38f4a3b01f2c");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_checkbox_js_checkbox__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_checkbox_js_checkbox__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -753,16 +752,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-}; // sf-checkbox from its component.json (standard simai.smart-component 1.3.8
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-checkbox from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §17.1, §17.2). The settings and the values checked and
 // indeterminate are made by core/js/element-manifest.js; `error` is a dated
 // alias of `invalid` (§17.2, aliases.json); the host is the form control
@@ -772,10 +766,7 @@ const ru = {
 
 const CheckboxElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
 });
@@ -1929,6 +1920,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "38f4a3b01f2c"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0ae1a29b7840");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "2eddfed602cd"
 (module) {
 
@@ -1946,7 +1959,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-check
 /***/ "47e9950fb20b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.5.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"controls":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.5.5","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"controls":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
@@ -1954,13 +1967,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-check
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Checkbox","runtime":{"help":"More about: {label}"}}');
-
-/***/ },
-
-/***/ "56e00394ab1f"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Флажок","runtime":{"help":"Подробнее: {label}"}}');
 
 /***/ }
 

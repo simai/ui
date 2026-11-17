@@ -15,10 +15,11 @@ function statusClasses(status, scheme) {
     if (status === 'danger' || status === 'error') return ['sf-icon-button--danger', 'sf-icon-button--error'];
     // secondary was retired (C15): drawn as on-surface-variant.
     const colour = scheme === 'secondary' ? 'on-surface-variant' : (scheme || 'primary');
-    // on-surface-variant is the on-surface family one step quieter: both
-    // classes, so every on-surface rule holds and one rule quietens it.
+    // on-surface-variant is the on-surface family one step quieter, one class
+    // (SM-CPY-2): the class sheet lists it with every on-surface rule
+    // (component.icon-buttons), so on-surface is not written beside it.
     return colour === 'on-surface-variant'
-        ? ['sf-icon-button--on-surface-variant', 'sf-icon-button--on-surface']
+        ? ['sf-icon-button--on-surface-variant']
         : [`sf-icon-button--${colour}`];
 }
 
@@ -94,9 +95,9 @@ export function renderIconButtonTemplate(context) {
             ? context.component.getSlotContent('icon')
             : (kind ?? variant) === 'close'
                 ? html`
-                            <sf-button-close root-class="pointer-event-none" size="${size || '1'}"></sf-button-close>`
+                            <sf-button-close root-class="pointer-events-none" size="${size || '1'}"></sf-button-close>`
                 : html`
-                            <sf-icon filled="${filled || context.pressed === true || Boolean(context.cycleView?.pressedLook)}" root-class="pointer-event-none" icon="${context.cycleView?.icon || icon}" weight="400" aria-hidden="true"></sf-icon>`;
+                            <sf-icon filled="${filled || context.pressed === true || Boolean(context.cycleView?.pressedLook)}" root-class="pointer-events-none" icon="${context.cycleView?.icon || icon}" weight="400" aria-hidden="true"></sf-icon>`;
 
     // href (1.9.0, decision C51): a link with the icon button's look, as
     // sf-button's -- the quiet «Скачать <name>» of a table row. Disabled or

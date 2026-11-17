@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
   .accent-transparent {
     accent-color: var(--sf-transparent);
@@ -276,6 +276,24 @@
   .aspect-1x1 {
     aspect-ratio: 1 / 1;
   }
+  .aspect-4x3 {
+    aspect-ratio: 4 / 3;
+  }
+  .aspect-3x2 {
+    aspect-ratio: 3 / 2;
+  }
+  .aspect-16x9 {
+    aspect-ratio: 16 / 9;
+  }
+  .aspect-21x9 {
+    aspect-ratio: 21 / 9;
+  }
+  .aspect-3x4 {
+    aspect-ratio: 3 / 4;
+  }
+  .aspect-auto {
+    aspect-ratio: auto;
+  }
   .aspect-1x2 {
     aspect-ratio: 1 / 2;
   }
@@ -288,20 +306,8 @@
   .aspect-3x1 {
     aspect-ratio: 3 / 1;
   }
-  .aspect-3x2 {
-    aspect-ratio: 3 / 2;
-  }
-  .aspect-3x4 {
-    aspect-ratio: 3 / 4;
-  }
   .aspect-4x1 {
     aspect-ratio: 4 / 1;
-  }
-  .aspect-4x3 {
-    aspect-ratio: 4 / 3;
-  }
-  .aspect-16x9 {
-    aspect-ratio: 16 / 9;
   }
   .aspect-9x16 {
     aspect-ratio: 9 / 16;
@@ -3900,6 +3906,30 @@
   }
   .bg-soundcloud {
     background-color: #FF5500;
+  }
+  .bg-tiktok:not(.focus-visible) {
+    outline: var(--sf-line--border) solid light-dark(transparent, var(--sf-outline-variant));
+    outline-offset: calc(-1 * var(--sf-line--border));
+  }
+  .bg-tiktok:not(:focus-visible) {
+    outline: var(--sf-line--border) solid light-dark(transparent, var(--sf-outline-variant));
+    outline-offset: calc(-1 * var(--sf-line--border));
+  }
+  .bg-qq:not(.focus-visible) {
+    outline: var(--sf-line--border) solid light-dark(transparent, var(--sf-outline-variant));
+    outline-offset: calc(-1 * var(--sf-line--border));
+  }
+  .bg-qq:not(:focus-visible) {
+    outline: var(--sf-line--border) solid light-dark(transparent, var(--sf-outline-variant));
+    outline-offset: calc(-1 * var(--sf-line--border));
+  }
+  .bg-tumblr:not(.focus-visible) {
+    outline: var(--sf-line--border) solid light-dark(transparent, var(--sf-outline-variant));
+    outline-offset: calc(-1 * var(--sf-line--border));
+  }
+  .bg-tumblr:not(:focus-visible) {
+    outline: var(--sf-line--border) solid light-dark(transparent, var(--sf-outline-variant));
+    outline-offset: calc(-1 * var(--sf-line--border));
   }
 }
 @layer sf.utilities {
@@ -10642,43 +10672,36 @@
 }
 @layer sf.utilities {
   .break-after-auto {
-    page-break-after: auto;
     -webkit-column-break-after: auto;
        -moz-column-break-after: auto;
             break-after: auto;
   }
   .break-after-avoid {
-    page-break-after: avoid;
     -webkit-column-break-after: avoid;
        -moz-column-break-after: avoid;
             break-after: avoid;
   }
   .break-after-all {
-    page-break-after: all;
     -webkit-column-break-after: all;
        -moz-column-break-after: all;
             break-after: all;
   }
   .break-after-avoid-page {
-    page-break-after: avoid;
     -webkit-column-break-after: avoid;
        -moz-column-break-after: avoid;
             break-after: avoid-page;
   }
   .break-after-page {
-    page-break-after: always;
     -webkit-column-break-after: page;
        -moz-column-break-after: page;
             break-after: page;
   }
   .break-after-left {
-    page-break-after: left;
     -webkit-column-break-after: left;
        -moz-column-break-after: left;
             break-after: left;
   }
   .break-after-right {
-    page-break-after: right;
     -webkit-column-break-after: right;
        -moz-column-break-after: right;
             break-after: right;
@@ -10691,43 +10714,36 @@
 }
 @layer sf.utilities {
   .break-before-auto {
-    page-break-before: auto;
     -webkit-column-break-before: auto;
        -moz-column-break-before: auto;
             break-before: auto;
   }
   .break-before-avoid {
-    page-break-before: avoid;
     -webkit-column-break-before: avoid;
        -moz-column-break-before: avoid;
             break-before: avoid;
   }
   .break-before-all {
-    page-break-before: all;
     -webkit-column-break-before: all;
        -moz-column-break-before: all;
             break-before: all;
   }
   .break-before-avoid-page {
-    page-break-before: avoid;
     -webkit-column-break-before: avoid;
        -moz-column-break-before: avoid;
             break-before: avoid-page;
   }
   .break-before-page {
-    page-break-before: always;
     -webkit-column-break-before: page;
        -moz-column-break-before: page;
             break-before: page;
   }
   .break-before-left {
-    page-break-before: left;
     -webkit-column-break-before: left;
        -moz-column-break-before: left;
             break-before: left;
   }
   .break-before-right {
-    page-break-before: right;
     -webkit-column-break-before: right;
        -moz-column-break-before: right;
             break-before: right;
@@ -10740,19 +10756,16 @@
 }
 @layer sf.utilities {
   .break-inside-auto {
-    page-break-inside: auto;
     -webkit-column-break-inside: auto;
        -moz-column-break-inside: auto;
             break-inside: auto;
   }
   .break-inside-avoid {
-    page-break-inside: avoid;
     -webkit-column-break-inside: avoid;
        -moz-column-break-inside: avoid;
             break-inside: avoid;
   }
   .break-inside-avoid-page {
-    page-break-inside: avoid;
     break-inside: avoid-page;
   }
   .break-inside-avoid-column {
@@ -49250,6 +49263,30 @@
     -o-object-position: top;
        object-position: top;
   }
+  .object-inline-start:where(:dir(rtl)) {
+    -o-object-position: right;
+       object-position: right;
+  }
+  .object-inline-start-bottom:where(:dir(rtl)) {
+    -o-object-position: right bottom;
+       object-position: right bottom;
+  }
+  .object-inline-start-top:where(:dir(rtl)) {
+    -o-object-position: right top;
+       object-position: right top;
+  }
+  .object-inline-end:where(:dir(rtl)) {
+    -o-object-position: left;
+       object-position: left;
+  }
+  .object-inline-end-bottom:where(:dir(rtl)) {
+    -o-object-position: left bottom;
+       object-position: left bottom;
+  }
+  .object-inline-end-top:where(:dir(rtl)) {
+    -o-object-position: left top;
+       object-position: left top;
+  }
 }
 @layer sf.utilities {
   _:-ms-input-placeholder, html:not([dir="rtl"]) .offset-1\/12 {
@@ -49709,7 +49746,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -49725,7 +49762,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -49741,7 +49778,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -49757,7 +49794,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -49773,7 +49810,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -57630,9 +57667,11 @@
   }
 }
 @layer sf.utilities {
+  .pointer-events-none,
   .pointer-event-none {
     pointer-events: none;
   }
+  .pointer-events-auto,
   .pointer-event-auto {
     pointer-events: auto;
   }
@@ -57801,12 +57840,14 @@
   .scroll-m-0 {
     scroll-margin: var(--sf-space-0);
   }
+  .scroll-m-top-0,
   .scroll-mt-0 {
     scroll-margin-top: var(--sf-space-0);
   }
   .scroll-m-inline-end-0 {
     scroll-margin-inline-end: var(--sf-space-0);
   }
+  .scroll-m-bottom-0,
   .scroll-mb-0 {
     scroll-margin-bottom: var(--sf-space-0);
   }
@@ -57817,6 +57858,7 @@
     scroll-margin-inline-end: var(--sf-space-0);
     scroll-margin-inline-start: var(--sf-space-0);
   }
+  .scroll-m-block-0,
   .scroll-my-0 {
     scroll-margin-top: var(--sf-space-0);
     scroll-margin-bottom: var(--sf-space-0);
@@ -57824,12 +57866,14 @@
   .scroll-m-1\/4 {
     scroll-margin: var(--sf-space-1\/4);
   }
+  .scroll-m-top-1\/4,
   .scroll-mt-1\/4 {
     scroll-margin-top: var(--sf-space-1\/4);
   }
   .scroll-m-inline-end-1\/4 {
     scroll-margin-inline-end: var(--sf-space-1\/4);
   }
+  .scroll-m-bottom-1\/4,
   .scroll-mb-1\/4 {
     scroll-margin-bottom: var(--sf-space-1\/4);
   }
@@ -57840,6 +57884,7 @@
     scroll-margin-inline-end: var(--sf-space-1\/4);
     scroll-margin-inline-start: var(--sf-space-1\/4);
   }
+  .scroll-m-block-1\/4,
   .scroll-my-1\/4 {
     scroll-margin-top: var(--sf-space-1\/4);
     scroll-margin-bottom: var(--sf-space-1\/4);
@@ -57847,12 +57892,14 @@
   .scroll-m-1\/3 {
     scroll-margin: var(--sf-space-1\/3);
   }
+  .scroll-m-top-1\/3,
   .scroll-mt-1\/3 {
     scroll-margin-top: var(--sf-space-1\/3);
   }
   .scroll-m-inline-end-1\/3 {
     scroll-margin-inline-end: var(--sf-space-1\/3);
   }
+  .scroll-m-bottom-1\/3,
   .scroll-mb-1\/3 {
     scroll-margin-bottom: var(--sf-space-1\/3);
   }
@@ -57863,6 +57910,7 @@
     scroll-margin-inline-end: var(--sf-space-1\/3);
     scroll-margin-inline-start: var(--sf-space-1\/3);
   }
+  .scroll-m-block-1\/3,
   .scroll-my-1\/3 {
     scroll-margin-top: var(--sf-space-1\/3);
     scroll-margin-bottom: var(--sf-space-1\/3);
@@ -57870,12 +57918,14 @@
   .scroll-m-1\/2 {
     scroll-margin: var(--sf-space-1\/2);
   }
+  .scroll-m-top-1\/2,
   .scroll-mt-1\/2 {
     scroll-margin-top: var(--sf-space-1\/2);
   }
   .scroll-m-inline-end-1\/2 {
     scroll-margin-inline-end: var(--sf-space-1\/2);
   }
+  .scroll-m-bottom-1\/2,
   .scroll-mb-1\/2 {
     scroll-margin-bottom: var(--sf-space-1\/2);
   }
@@ -57886,6 +57936,7 @@
     scroll-margin-inline-end: var(--sf-space-1\/2);
     scroll-margin-inline-start: var(--sf-space-1\/2);
   }
+  .scroll-m-block-1\/2,
   .scroll-my-1\/2 {
     scroll-margin-top: var(--sf-space-1\/2);
     scroll-margin-bottom: var(--sf-space-1\/2);
@@ -57893,12 +57944,14 @@
   .scroll-m-1 {
     scroll-margin: var(--sf-space-1);
   }
+  .scroll-m-top-1,
   .scroll-mt-1 {
     scroll-margin-top: var(--sf-space-1);
   }
   .scroll-m-inline-end-1 {
     scroll-margin-inline-end: var(--sf-space-1);
   }
+  .scroll-m-bottom-1,
   .scroll-mb-1 {
     scroll-margin-bottom: var(--sf-space-1);
   }
@@ -57909,6 +57962,7 @@
     scroll-margin-inline-end: var(--sf-space-1);
     scroll-margin-inline-start: var(--sf-space-1);
   }
+  .scroll-m-block-1,
   .scroll-my-1 {
     scroll-margin-top: var(--sf-space-1);
     scroll-margin-bottom: var(--sf-space-1);
@@ -57916,12 +57970,14 @@
   .scroll-m-2 {
     scroll-margin: var(--sf-space-2);
   }
+  .scroll-m-top-2,
   .scroll-mt-2 {
     scroll-margin-top: var(--sf-space-2);
   }
   .scroll-m-inline-end-2 {
     scroll-margin-inline-end: var(--sf-space-2);
   }
+  .scroll-m-bottom-2,
   .scroll-mb-2 {
     scroll-margin-bottom: var(--sf-space-2);
   }
@@ -57932,6 +57988,7 @@
     scroll-margin-inline-end: var(--sf-space-2);
     scroll-margin-inline-start: var(--sf-space-2);
   }
+  .scroll-m-block-2,
   .scroll-my-2 {
     scroll-margin-top: var(--sf-space-2);
     scroll-margin-bottom: var(--sf-space-2);
@@ -57939,12 +57996,14 @@
   .scroll-m-3 {
     scroll-margin: var(--sf-space-3);
   }
+  .scroll-m-top-3,
   .scroll-mt-3 {
     scroll-margin-top: var(--sf-space-3);
   }
   .scroll-m-inline-end-3 {
     scroll-margin-inline-end: var(--sf-space-3);
   }
+  .scroll-m-bottom-3,
   .scroll-mb-3 {
     scroll-margin-bottom: var(--sf-space-3);
   }
@@ -57955,6 +58014,7 @@
     scroll-margin-inline-end: var(--sf-space-3);
     scroll-margin-inline-start: var(--sf-space-3);
   }
+  .scroll-m-block-3,
   .scroll-my-3 {
     scroll-margin-top: var(--sf-space-3);
     scroll-margin-bottom: var(--sf-space-3);
@@ -57962,12 +58022,14 @@
   .scroll-m-4 {
     scroll-margin: var(--sf-space-4);
   }
+  .scroll-m-top-4,
   .scroll-mt-4 {
     scroll-margin-top: var(--sf-space-4);
   }
   .scroll-m-inline-end-4 {
     scroll-margin-inline-end: var(--sf-space-4);
   }
+  .scroll-m-bottom-4,
   .scroll-mb-4 {
     scroll-margin-bottom: var(--sf-space-4);
   }
@@ -57978,6 +58040,7 @@
     scroll-margin-inline-end: var(--sf-space-4);
     scroll-margin-inline-start: var(--sf-space-4);
   }
+  .scroll-m-block-4,
   .scroll-my-4 {
     scroll-margin-top: var(--sf-space-4);
     scroll-margin-bottom: var(--sf-space-4);
@@ -57985,12 +58048,14 @@
   .scroll-m-5 {
     scroll-margin: var(--sf-space-5);
   }
+  .scroll-m-top-5,
   .scroll-mt-5 {
     scroll-margin-top: var(--sf-space-5);
   }
   .scroll-m-inline-end-5 {
     scroll-margin-inline-end: var(--sf-space-5);
   }
+  .scroll-m-bottom-5,
   .scroll-mb-5 {
     scroll-margin-bottom: var(--sf-space-5);
   }
@@ -58001,6 +58066,7 @@
     scroll-margin-inline-end: var(--sf-space-5);
     scroll-margin-inline-start: var(--sf-space-5);
   }
+  .scroll-m-block-5,
   .scroll-my-5 {
     scroll-margin-top: var(--sf-space-5);
     scroll-margin-bottom: var(--sf-space-5);
@@ -58008,12 +58074,14 @@
   .scroll-m-6 {
     scroll-margin: var(--sf-space-6);
   }
+  .scroll-m-top-6,
   .scroll-mt-6 {
     scroll-margin-top: var(--sf-space-6);
   }
   .scroll-m-inline-end-6 {
     scroll-margin-inline-end: var(--sf-space-6);
   }
+  .scroll-m-bottom-6,
   .scroll-mb-6 {
     scroll-margin-bottom: var(--sf-space-6);
   }
@@ -58024,6 +58092,7 @@
     scroll-margin-inline-end: var(--sf-space-6);
     scroll-margin-inline-start: var(--sf-space-6);
   }
+  .scroll-m-block-6,
   .scroll-my-6 {
     scroll-margin-top: var(--sf-space-6);
     scroll-margin-bottom: var(--sf-space-6);
@@ -58031,12 +58100,14 @@
   .scroll-m-7 {
     scroll-margin: var(--sf-space-7);
   }
+  .scroll-m-top-7,
   .scroll-mt-7 {
     scroll-margin-top: var(--sf-space-7);
   }
   .scroll-m-inline-end-7 {
     scroll-margin-inline-end: var(--sf-space-7);
   }
+  .scroll-m-bottom-7,
   .scroll-mb-7 {
     scroll-margin-bottom: var(--sf-space-7);
   }
@@ -58047,6 +58118,7 @@
     scroll-margin-inline-end: var(--sf-space-7);
     scroll-margin-inline-start: var(--sf-space-7);
   }
+  .scroll-m-block-7,
   .scroll-my-7 {
     scroll-margin-top: var(--sf-space-7);
     scroll-margin-bottom: var(--sf-space-7);
@@ -58054,12 +58126,14 @@
   .scroll-m-8 {
     scroll-margin: var(--sf-space-8);
   }
+  .scroll-m-top-8,
   .scroll-mt-8 {
     scroll-margin-top: var(--sf-space-8);
   }
   .scroll-m-inline-end-8 {
     scroll-margin-inline-end: var(--sf-space-8);
   }
+  .scroll-m-bottom-8,
   .scroll-mb-8 {
     scroll-margin-bottom: var(--sf-space-8);
   }
@@ -58070,6 +58144,7 @@
     scroll-margin-inline-end: var(--sf-space-8);
     scroll-margin-inline-start: var(--sf-space-8);
   }
+  .scroll-m-block-8,
   .scroll-my-8 {
     scroll-margin-top: var(--sf-space-8);
     scroll-margin-bottom: var(--sf-space-8);
@@ -60781,22 +60856,28 @@
   .scroll-p-0 {
     scroll-padding: var(--sf-space-0);
   }
+  .scroll-p-top-0,
   .scroll-pt-0 {
     scroll-padding-top: var(--sf-space-0);
   }
+  .scroll-p-inline-end-0,
   .scroll-pr-0 {
     scroll-padding-inline-end: var(--sf-space-0);
   }
+  .scroll-p-bottom-0,
   .scroll-pb-0 {
     scroll-padding-bottom: var(--sf-space-0);
   }
+  .scroll-p-inline-start-0,
   .scroll-pl-0 {
     scroll-padding-inline-start: var(--sf-space-0);
   }
+  .scroll-p-x-0,
   .scroll-px-0 {
     scroll-padding-inline-end: var(--sf-space-0);
     scroll-padding-inline-start: var(--sf-space-0);
   }
+  .scroll-p-y-0,
   .scroll-py-0 {
     scroll-padding-top: var(--sf-space-0);
     scroll-padding-bottom: var(--sf-space-0);
@@ -60804,22 +60885,28 @@
   .scroll-p-1\/4 {
     scroll-padding: var(--sf-space-1\/4);
   }
+  .scroll-p-top-1\/4,
   .scroll-pt-1\/4 {
     scroll-padding-top: var(--sf-space-1\/4);
   }
+  .scroll-p-inline-end-1\/4,
   .scroll-pr-1\/4 {
     scroll-padding-inline-end: var(--sf-space-1\/4);
   }
+  .scroll-p-bottom-1\/4,
   .scroll-pb-1\/4 {
     scroll-padding-bottom: var(--sf-space-1\/4);
   }
+  .scroll-p-inline-start-1\/4,
   .scroll-pl-1\/4 {
     scroll-padding-inline-start: var(--sf-space-1\/4);
   }
+  .scroll-p-x-1\/4,
   .scroll-px-1\/4 {
     scroll-padding-inline-end: var(--sf-space-1\/4);
     scroll-padding-inline-start: var(--sf-space-1\/4);
   }
+  .scroll-p-y-1\/4,
   .scroll-py-1\/4 {
     scroll-padding-top: var(--sf-space-1\/4);
     scroll-padding-bottom: var(--sf-space-1\/4);
@@ -60827,22 +60914,28 @@
   .scroll-p-1\/3 {
     scroll-padding: var(--sf-space-1\/3);
   }
+  .scroll-p-top-1\/3,
   .scroll-pt-1\/3 {
     scroll-padding-top: var(--sf-space-1\/3);
   }
+  .scroll-p-inline-end-1\/3,
   .scroll-pr-1\/3 {
     scroll-padding-inline-end: var(--sf-space-1\/3);
   }
+  .scroll-p-bottom-1\/3,
   .scroll-pb-1\/3 {
     scroll-padding-bottom: var(--sf-space-1\/3);
   }
+  .scroll-p-inline-start-1\/3,
   .scroll-pl-1\/3 {
     scroll-padding-inline-start: var(--sf-space-1\/3);
   }
+  .scroll-p-x-1\/3,
   .scroll-px-1\/3 {
     scroll-padding-inline-end: var(--sf-space-1\/3);
     scroll-padding-inline-start: var(--sf-space-1\/3);
   }
+  .scroll-p-y-1\/3,
   .scroll-py-1\/3 {
     scroll-padding-top: var(--sf-space-1\/3);
     scroll-padding-bottom: var(--sf-space-1\/3);
@@ -60850,22 +60943,28 @@
   .scroll-p-1\/2 {
     scroll-padding: var(--sf-space-1\/2);
   }
+  .scroll-p-top-1\/2,
   .scroll-pt-1\/2 {
     scroll-padding-top: var(--sf-space-1\/2);
   }
+  .scroll-p-inline-end-1\/2,
   .scroll-pr-1\/2 {
     scroll-padding-inline-end: var(--sf-space-1\/2);
   }
+  .scroll-p-bottom-1\/2,
   .scroll-pb-1\/2 {
     scroll-padding-bottom: var(--sf-space-1\/2);
   }
+  .scroll-p-inline-start-1\/2,
   .scroll-pl-1\/2 {
     scroll-padding-inline-start: var(--sf-space-1\/2);
   }
+  .scroll-p-x-1\/2,
   .scroll-px-1\/2 {
     scroll-padding-inline-end: var(--sf-space-1\/2);
     scroll-padding-inline-start: var(--sf-space-1\/2);
   }
+  .scroll-p-y-1\/2,
   .scroll-py-1\/2 {
     scroll-padding-top: var(--sf-space-1\/2);
     scroll-padding-bottom: var(--sf-space-1\/2);
@@ -60873,22 +60972,28 @@
   .scroll-p-1 {
     scroll-padding: var(--sf-space-1);
   }
+  .scroll-p-top-1,
   .scroll-pt-1 {
     scroll-padding-top: var(--sf-space-1);
   }
+  .scroll-p-inline-end-1,
   .scroll-pr-1 {
     scroll-padding-inline-end: var(--sf-space-1);
   }
+  .scroll-p-bottom-1,
   .scroll-pb-1 {
     scroll-padding-bottom: var(--sf-space-1);
   }
+  .scroll-p-inline-start-1,
   .scroll-pl-1 {
     scroll-padding-inline-start: var(--sf-space-1);
   }
+  .scroll-p-x-1,
   .scroll-px-1 {
     scroll-padding-inline-end: var(--sf-space-1);
     scroll-padding-inline-start: var(--sf-space-1);
   }
+  .scroll-p-y-1,
   .scroll-py-1 {
     scroll-padding-top: var(--sf-space-1);
     scroll-padding-bottom: var(--sf-space-1);
@@ -60896,22 +61001,28 @@
   .scroll-p-2 {
     scroll-padding: var(--sf-space-2);
   }
+  .scroll-p-top-2,
   .scroll-pt-2 {
     scroll-padding-top: var(--sf-space-2);
   }
+  .scroll-p-inline-end-2,
   .scroll-pr-2 {
     scroll-padding-inline-end: var(--sf-space-2);
   }
+  .scroll-p-bottom-2,
   .scroll-pb-2 {
     scroll-padding-bottom: var(--sf-space-2);
   }
+  .scroll-p-inline-start-2,
   .scroll-pl-2 {
     scroll-padding-inline-start: var(--sf-space-2);
   }
+  .scroll-p-x-2,
   .scroll-px-2 {
     scroll-padding-inline-end: var(--sf-space-2);
     scroll-padding-inline-start: var(--sf-space-2);
   }
+  .scroll-p-y-2,
   .scroll-py-2 {
     scroll-padding-top: var(--sf-space-2);
     scroll-padding-bottom: var(--sf-space-2);
@@ -60919,22 +61030,28 @@
   .scroll-p-3 {
     scroll-padding: var(--sf-space-3);
   }
+  .scroll-p-top-3,
   .scroll-pt-3 {
     scroll-padding-top: var(--sf-space-3);
   }
+  .scroll-p-inline-end-3,
   .scroll-pr-3 {
     scroll-padding-inline-end: var(--sf-space-3);
   }
+  .scroll-p-bottom-3,
   .scroll-pb-3 {
     scroll-padding-bottom: var(--sf-space-3);
   }
+  .scroll-p-inline-start-3,
   .scroll-pl-3 {
     scroll-padding-inline-start: var(--sf-space-3);
   }
+  .scroll-p-x-3,
   .scroll-px-3 {
     scroll-padding-inline-end: var(--sf-space-3);
     scroll-padding-inline-start: var(--sf-space-3);
   }
+  .scroll-p-y-3,
   .scroll-py-3 {
     scroll-padding-top: var(--sf-space-3);
     scroll-padding-bottom: var(--sf-space-3);
@@ -60942,22 +61059,28 @@
   .scroll-p-4 {
     scroll-padding: var(--sf-space-4);
   }
+  .scroll-p-top-4,
   .scroll-pt-4 {
     scroll-padding-top: var(--sf-space-4);
   }
+  .scroll-p-inline-end-4,
   .scroll-pr-4 {
     scroll-padding-inline-end: var(--sf-space-4);
   }
+  .scroll-p-bottom-4,
   .scroll-pb-4 {
     scroll-padding-bottom: var(--sf-space-4);
   }
+  .scroll-p-inline-start-4,
   .scroll-pl-4 {
     scroll-padding-inline-start: var(--sf-space-4);
   }
+  .scroll-p-x-4,
   .scroll-px-4 {
     scroll-padding-inline-end: var(--sf-space-4);
     scroll-padding-inline-start: var(--sf-space-4);
   }
+  .scroll-p-y-4,
   .scroll-py-4 {
     scroll-padding-top: var(--sf-space-4);
     scroll-padding-bottom: var(--sf-space-4);
@@ -60965,22 +61088,28 @@
   .scroll-p-5 {
     scroll-padding: var(--sf-space-5);
   }
+  .scroll-p-top-5,
   .scroll-pt-5 {
     scroll-padding-top: var(--sf-space-5);
   }
+  .scroll-p-inline-end-5,
   .scroll-pr-5 {
     scroll-padding-inline-end: var(--sf-space-5);
   }
+  .scroll-p-bottom-5,
   .scroll-pb-5 {
     scroll-padding-bottom: var(--sf-space-5);
   }
+  .scroll-p-inline-start-5,
   .scroll-pl-5 {
     scroll-padding-inline-start: var(--sf-space-5);
   }
+  .scroll-p-x-5,
   .scroll-px-5 {
     scroll-padding-inline-end: var(--sf-space-5);
     scroll-padding-inline-start: var(--sf-space-5);
   }
+  .scroll-p-y-5,
   .scroll-py-5 {
     scroll-padding-top: var(--sf-space-5);
     scroll-padding-bottom: var(--sf-space-5);
@@ -60988,22 +61117,28 @@
   .scroll-p-6 {
     scroll-padding: var(--sf-space-6);
   }
+  .scroll-p-top-6,
   .scroll-pt-6 {
     scroll-padding-top: var(--sf-space-6);
   }
+  .scroll-p-inline-end-6,
   .scroll-pr-6 {
     scroll-padding-inline-end: var(--sf-space-6);
   }
+  .scroll-p-bottom-6,
   .scroll-pb-6 {
     scroll-padding-bottom: var(--sf-space-6);
   }
+  .scroll-p-inline-start-6,
   .scroll-pl-6 {
     scroll-padding-inline-start: var(--sf-space-6);
   }
+  .scroll-p-x-6,
   .scroll-px-6 {
     scroll-padding-inline-end: var(--sf-space-6);
     scroll-padding-inline-start: var(--sf-space-6);
   }
+  .scroll-p-y-6,
   .scroll-py-6 {
     scroll-padding-top: var(--sf-space-6);
     scroll-padding-bottom: var(--sf-space-6);
@@ -61011,22 +61146,28 @@
   .scroll-p-7 {
     scroll-padding: var(--sf-space-7);
   }
+  .scroll-p-top-7,
   .scroll-pt-7 {
     scroll-padding-top: var(--sf-space-7);
   }
+  .scroll-p-inline-end-7,
   .scroll-pr-7 {
     scroll-padding-inline-end: var(--sf-space-7);
   }
+  .scroll-p-bottom-7,
   .scroll-pb-7 {
     scroll-padding-bottom: var(--sf-space-7);
   }
+  .scroll-p-inline-start-7,
   .scroll-pl-7 {
     scroll-padding-inline-start: var(--sf-space-7);
   }
+  .scroll-p-x-7,
   .scroll-px-7 {
     scroll-padding-inline-end: var(--sf-space-7);
     scroll-padding-inline-start: var(--sf-space-7);
   }
+  .scroll-p-y-7,
   .scroll-py-7 {
     scroll-padding-top: var(--sf-space-7);
     scroll-padding-bottom: var(--sf-space-7);
@@ -61034,22 +61175,28 @@
   .scroll-p-8 {
     scroll-padding: var(--sf-space-8);
   }
+  .scroll-p-top-8,
   .scroll-pt-8 {
     scroll-padding-top: var(--sf-space-8);
   }
+  .scroll-p-inline-end-8,
   .scroll-pr-8 {
     scroll-padding-inline-end: var(--sf-space-8);
   }
+  .scroll-p-bottom-8,
   .scroll-pb-8 {
     scroll-padding-bottom: var(--sf-space-8);
   }
+  .scroll-p-inline-start-8,
   .scroll-pl-8 {
     scroll-padding-inline-start: var(--sf-space-8);
   }
+  .scroll-p-x-8,
   .scroll-px-8 {
     scroll-padding-inline-end: var(--sf-space-8);
     scroll-padding-inline-start: var(--sf-space-8);
   }
+  .scroll-p-y-8,
   .scroll-py-8 {
     scroll-padding-top: var(--sf-space-8);
     scroll-padding-bottom: var(--sf-space-8);
@@ -65253,7 +65400,9 @@
     inline-size: 100%;
     overflow: auto;
     scroll-padding: var(--sf-focus-room);
-    border: var(--sf-px) solid var(--sf-table-frame-border-color);
+    border-width: var(--sf-px);
+    border-style: solid;
+    border-color: var(--sf-table-frame-border-color);
     border-radius: var(--sf-table-frame-radius);
     background-color: var(--sf-table-frame-background);
   }
@@ -65262,6 +65411,8 @@
     inline-size: 100%;
     margin: 0;
     border: 0;
+    border-color: revert-layer;
+    border: 0;
     border-radius: 0;
     border-collapse: separate;
     border-spacing: 0;
@@ -65269,26 +65420,70 @@
     word-wrap: normal;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-right: var(--sf-px) solid var(--sf-table-frame-border-color);
+    border-right-width: var(--sf-px);
   }
-  @supports not (border-inline-end: initial) {
+  @supports not (border-inline-end-width: initial) {
   html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-right: var(--sf-px) solid var(--sf-table-frame-border-color);
+    border-right-width: var(--sf-px);
     }
   }
   .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(ltr)) {
-    border-right: var(--sf-px) solid var(--sf-table-frame-border-color);
+    border-right-width: var(--sf-px);
   }
   _:-ms-input-placeholder, [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-left: var(--sf-px) solid var(--sf-table-frame-border-color);
+    border-left-width: var(--sf-px);
   }
-  @supports not (border-inline-end: initial) {
+  @supports not (border-inline-end-width: initial) {
   [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-left: var(--sf-px) solid var(--sf-table-frame-border-color);
+    border-left-width: var(--sf-px);
     }
   }
   .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(rtl)) {
-    border-left: var(--sf-px) solid var(--sf-table-frame-border-color);
+    border-left-width: var(--sf-px);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
+    border-right-style: solid;
+  }
+  @supports not (border-inline-end-style: initial) {
+  html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
+    border-right-style: solid;
+    }
+  }
+  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(ltr)) {
+    border-right-style: solid;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
+    border-left-style: solid;
+  }
+  @supports not (border-inline-end-style: initial) {
+  [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
+    border-left-style: solid;
+    }
+  }
+  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(rtl)) {
+    border-left-style: solid;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
+    border-right-color: var(--sf-table-frame-border-color);
+  }
+  @supports not (border-inline-end-color: initial) {
+  html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
+    border-right-color: var(--sf-table-frame-border-color);
+    }
+  }
+  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(ltr)) {
+    border-right-color: var(--sf-table-frame-border-color);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
+    border-left-color: var(--sf-table-frame-border-color);
+  }
+  @supports not (border-inline-end-color: initial) {
+  [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
+    border-left-color: var(--sf-table-frame-border-color);
+    }
+  }
+  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(rtl)) {
+    border-left-color: var(--sf-table-frame-border-color);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
     text-align: left;
@@ -65322,11 +65517,15 @@
     padding-right: var(--sf-table-frame-cell-padding-inline);
     padding-inline: var(--sf-table-frame-cell-padding-inline);
     border-width: var(--sf-0);
-    -webkit-border-end: var(--sf-px) solid var(--sf-table-frame-border-color);
-            border-inline-end: var(--sf-px) solid var(--sf-table-frame-border-color);
-    border-bottom: var(--sf-px) solid var(--sf-table-frame-border-color);
-    -webkit-border-after: var(--sf-px) solid var(--sf-table-frame-border-color);
-            border-block-end: var(--sf-px) solid var(--sf-table-frame-border-color);
+    border-inline-end-width: var(--sf-px);
+    border-inline-end-style: solid;
+    border-inline-end-color: var(--sf-table-frame-border-color);
+    border-bottom-width: var(--sf-px);
+    border-block-end-width: var(--sf-px);
+    border-bottom-style: solid;
+    border-block-end-style: solid;
+    border-bottom-color: var(--sf-table-frame-border-color);
+    border-block-end-color: var(--sf-table-frame-border-color);
     text-align: start;
     vertical-align: top;
   }
@@ -65529,7 +65728,9 @@
       inline-size: 100%;
       overflow: auto;
       scroll-padding: var(--sf-focus-room);
-      border: var(--sf-px) solid var(--sf-table-frame-border-color);
+      border-width: var(--sf-px);
+      border-style: solid;
+      border-color: var(--sf-table-frame-border-color);
       border-radius: var(--sf-table-frame-radius);
       background-color: var(--sf-table-frame-background);
     }
@@ -65538,6 +65739,8 @@
       inline-size: 100%;
       margin: 0;
       border: 0;
+      border-color: revert-layer;
+      border: 0;
       border-radius: 0;
       border-collapse: separate;
       border-spacing: 0;
@@ -65545,26 +65748,70 @@
       word-wrap: normal;
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
-      border-right: var(--sf-px) solid var(--sf-table-frame-border-color);
+      border-right-width: var(--sf-px);
     }
-    @supports not (border-inline-end: initial) {
+    @supports not (border-inline-end-width: initial) {
     html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
-      border-right: var(--sf-px) solid var(--sf-table-frame-border-color);
+      border-right-width: var(--sf-px);
       }
     }
     .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(ltr)) {
-      border-right: var(--sf-px) solid var(--sf-table-frame-border-color);
+      border-right-width: var(--sf-px);
     }
     _:-ms-input-placeholder, [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
-      border-left: var(--sf-px) solid var(--sf-table-frame-border-color);
+      border-left-width: var(--sf-px);
     }
-    @supports not (border-inline-end: initial) {
+    @supports not (border-inline-end-width: initial) {
     [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
-      border-left: var(--sf-px) solid var(--sf-table-frame-border-color);
+      border-left-width: var(--sf-px);
       }
     }
     .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(rtl)) {
-      border-left: var(--sf-px) solid var(--sf-table-frame-border-color);
+      border-left-width: var(--sf-px);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+      border-right-style: solid;
+    }
+    @supports not (border-inline-end-style: initial) {
+    html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+      border-right-style: solid;
+      }
+    }
+    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(ltr)) {
+      border-right-style: solid;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+      border-left-style: solid;
+    }
+    @supports not (border-inline-end-style: initial) {
+    [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+      border-left-style: solid;
+      }
+    }
+    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(rtl)) {
+      border-left-style: solid;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+      border-right-color: var(--sf-table-frame-border-color);
+    }
+    @supports not (border-inline-end-color: initial) {
+    html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+      border-right-color: var(--sf-table-frame-border-color);
+      }
+    }
+    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(ltr)) {
+      border-right-color: var(--sf-table-frame-border-color);
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+      border-left-color: var(--sf-table-frame-border-color);
+    }
+    @supports not (border-inline-end-color: initial) {
+    [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+      border-left-color: var(--sf-table-frame-border-color);
+      }
+    }
+    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(rtl)) {
+      border-left-color: var(--sf-table-frame-border-color);
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
       text-align: left;
@@ -65598,11 +65845,15 @@
       padding-right: var(--sf-table-frame-cell-padding-inline);
       padding-inline: var(--sf-table-frame-cell-padding-inline);
       border-width: var(--sf-0);
-      -webkit-border-end: var(--sf-px) solid var(--sf-table-frame-border-color);
-              border-inline-end: var(--sf-px) solid var(--sf-table-frame-border-color);
-      border-bottom: var(--sf-px) solid var(--sf-table-frame-border-color);
-      -webkit-border-after: var(--sf-px) solid var(--sf-table-frame-border-color);
-              border-block-end: var(--sf-px) solid var(--sf-table-frame-border-color);
+      border-inline-end-width: var(--sf-px);
+      border-inline-end-style: solid;
+      border-inline-end-color: var(--sf-table-frame-border-color);
+      border-bottom-width: var(--sf-px);
+      border-block-end-width: var(--sf-px);
+      border-bottom-style: solid;
+      border-block-end-style: solid;
+      border-bottom-color: var(--sf-table-frame-border-color);
+      border-block-end-color: var(--sf-table-frame-border-color);
       text-align: start;
       vertical-align: top;
     }
@@ -69089,6 +69340,90 @@
   .scale-y-0 {
     -webkit-transform: scaleY(0);
             transform: scaleY(0);
+  }
+  .scale-80 {
+    -webkit-transform: scale(0.8);
+            transform: scale(0.8);
+  }
+  .scale-x-80 {
+    -webkit-transform: scaleX(0.8);
+            transform: scaleX(0.8);
+  }
+  .scale-y-80 {
+    -webkit-transform: scaleY(0.8);
+            transform: scaleY(0.8);
+  }
+  .scale-90 {
+    -webkit-transform: scale(0.9);
+            transform: scale(0.9);
+  }
+  .scale-x-90 {
+    -webkit-transform: scaleX(0.9);
+            transform: scaleX(0.9);
+  }
+  .scale-y-90 {
+    -webkit-transform: scaleY(0.9);
+            transform: scaleY(0.9);
+  }
+  .scale-95 {
+    -webkit-transform: scale(0.95);
+            transform: scale(0.95);
+  }
+  .scale-x-95 {
+    -webkit-transform: scaleX(0.95);
+            transform: scaleX(0.95);
+  }
+  .scale-y-95 {
+    -webkit-transform: scaleY(0.95);
+            transform: scaleY(0.95);
+  }
+  .scale-100 {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  .scale-x-100 {
+    -webkit-transform: scaleX(1);
+            transform: scaleX(1);
+  }
+  .scale-y-100 {
+    -webkit-transform: scaleY(1);
+            transform: scaleY(1);
+  }
+  .scale-105 {
+    -webkit-transform: scale(1.05);
+            transform: scale(1.05);
+  }
+  .scale-x-105 {
+    -webkit-transform: scaleX(1.05);
+            transform: scaleX(1.05);
+  }
+  .scale-y-105 {
+    -webkit-transform: scaleY(1.05);
+            transform: scaleY(1.05);
+  }
+  .scale-110 {
+    -webkit-transform: scale(1.1);
+            transform: scale(1.1);
+  }
+  .scale-x-110 {
+    -webkit-transform: scaleX(1.1);
+            transform: scaleX(1.1);
+  }
+  .scale-y-110 {
+    -webkit-transform: scaleY(1.1);
+            transform: scaleY(1.1);
+  }
+  .scale-120 {
+    -webkit-transform: scale(1.2);
+            transform: scale(1.2);
+  }
+  .scale-x-120 {
+    -webkit-transform: scaleX(1.2);
+            transform: scaleX(1.2);
+  }
+  .scale-y-120 {
+    -webkit-transform: scaleY(1.2);
+            transform: scaleY(1.2);
   }
   .scale-1\/4 {
     -webkit-transform: scale(0.8);
@@ -73279,6 +73614,24 @@
     .sm\:aspect-1x1 {
       aspect-ratio: 1 / 1;
     }
+    .sm\:aspect-4x3 {
+      aspect-ratio: 4 / 3;
+    }
+    .sm\:aspect-3x2 {
+      aspect-ratio: 3 / 2;
+    }
+    .sm\:aspect-16x9 {
+      aspect-ratio: 16 / 9;
+    }
+    .sm\:aspect-21x9 {
+      aspect-ratio: 21 / 9;
+    }
+    .sm\:aspect-3x4 {
+      aspect-ratio: 3 / 4;
+    }
+    .sm\:aspect-auto {
+      aspect-ratio: auto;
+    }
     .sm\:aspect-1x2 {
       aspect-ratio: 1 / 2;
     }
@@ -73291,20 +73644,8 @@
     .sm\:aspect-3x1 {
       aspect-ratio: 3 / 1;
     }
-    .sm\:aspect-3x2 {
-      aspect-ratio: 3 / 2;
-    }
-    .sm\:aspect-3x4 {
-      aspect-ratio: 3 / 4;
-    }
     .sm\:aspect-4x1 {
       aspect-ratio: 4 / 1;
-    }
-    .sm\:aspect-4x3 {
-      aspect-ratio: 4 / 3;
-    }
-    .sm\:aspect-16x9 {
-      aspect-ratio: 16 / 9;
     }
     .sm\:aspect-9x16 {
       aspect-ratio: 9 / 16;
@@ -78528,43 +78869,36 @@
 @layer sf.utilities {
   @media (min-width: 32rem) {
     .sm\:break-after-auto {
-      page-break-after: auto;
       -webkit-column-break-after: auto;
          -moz-column-break-after: auto;
               break-after: auto;
     }
     .sm\:break-after-avoid {
-      page-break-after: avoid;
       -webkit-column-break-after: avoid;
          -moz-column-break-after: avoid;
               break-after: avoid;
     }
     .sm\:break-after-all {
-      page-break-after: all;
       -webkit-column-break-after: all;
          -moz-column-break-after: all;
               break-after: all;
     }
     .sm\:break-after-avoid-page {
-      page-break-after: avoid;
       -webkit-column-break-after: avoid;
          -moz-column-break-after: avoid;
               break-after: avoid-page;
     }
     .sm\:break-after-page {
-      page-break-after: always;
       -webkit-column-break-after: page;
          -moz-column-break-after: page;
               break-after: page;
     }
     .sm\:break-after-left {
-      page-break-after: left;
       -webkit-column-break-after: left;
          -moz-column-break-after: left;
               break-after: left;
     }
     .sm\:break-after-right {
-      page-break-after: right;
       -webkit-column-break-after: right;
          -moz-column-break-after: right;
               break-after: right;
@@ -78579,43 +78913,36 @@
 @layer sf.utilities {
   @media (min-width: 32rem) {
     .sm\:break-before-auto {
-      page-break-before: auto;
       -webkit-column-break-before: auto;
          -moz-column-break-before: auto;
               break-before: auto;
     }
     .sm\:break-before-avoid {
-      page-break-before: avoid;
       -webkit-column-break-before: avoid;
          -moz-column-break-before: avoid;
               break-before: avoid;
     }
     .sm\:break-before-all {
-      page-break-before: all;
       -webkit-column-break-before: all;
          -moz-column-break-before: all;
               break-before: all;
     }
     .sm\:break-before-avoid-page {
-      page-break-before: avoid;
       -webkit-column-break-before: avoid;
          -moz-column-break-before: avoid;
               break-before: avoid-page;
     }
     .sm\:break-before-page {
-      page-break-before: always;
       -webkit-column-break-before: page;
          -moz-column-break-before: page;
               break-before: page;
     }
     .sm\:break-before-left {
-      page-break-before: left;
       -webkit-column-break-before: left;
          -moz-column-break-before: left;
               break-before: left;
     }
     .sm\:break-before-right {
-      page-break-before: right;
       -webkit-column-break-before: right;
          -moz-column-break-before: right;
               break-before: right;
@@ -78630,19 +78957,16 @@
 @layer sf.utilities {
   @media (min-width: 32rem) {
     .sm\:break-inside-auto {
-      page-break-inside: auto;
       -webkit-column-break-inside: auto;
          -moz-column-break-inside: auto;
               break-inside: auto;
     }
     .sm\:break-inside-avoid {
-      page-break-inside: avoid;
       -webkit-column-break-inside: avoid;
          -moz-column-break-inside: avoid;
               break-inside: avoid;
     }
     .sm\:break-inside-avoid-page {
-      page-break-inside: avoid;
       break-inside: avoid-page;
     }
     .sm\:break-inside-avoid-column {
@@ -107472,6 +107796,30 @@
       -o-object-position: top;
          object-position: top;
     }
+    .sm\:object-inline-start:where(:dir(rtl)) {
+      -o-object-position: right;
+         object-position: right;
+    }
+    .sm\:object-inline-start-bottom:where(:dir(rtl)) {
+      -o-object-position: right bottom;
+         object-position: right bottom;
+    }
+    .sm\:object-inline-start-top:where(:dir(rtl)) {
+      -o-object-position: right top;
+         object-position: right top;
+    }
+    .sm\:object-inline-end:where(:dir(rtl)) {
+      -o-object-position: left;
+         object-position: left;
+    }
+    .sm\:object-inline-end-bottom:where(:dir(rtl)) {
+      -o-object-position: left bottom;
+         object-position: left bottom;
+    }
+    .sm\:object-inline-end-top:where(:dir(rtl)) {
+      -o-object-position: left top;
+         object-position: left top;
+    }
   }
 }
 @layer sf.utilities {
@@ -116821,6 +117169,24 @@
     .md\:aspect-1x1 {
       aspect-ratio: 1 / 1;
     }
+    .md\:aspect-4x3 {
+      aspect-ratio: 4 / 3;
+    }
+    .md\:aspect-3x2 {
+      aspect-ratio: 3 / 2;
+    }
+    .md\:aspect-16x9 {
+      aspect-ratio: 16 / 9;
+    }
+    .md\:aspect-21x9 {
+      aspect-ratio: 21 / 9;
+    }
+    .md\:aspect-3x4 {
+      aspect-ratio: 3 / 4;
+    }
+    .md\:aspect-auto {
+      aspect-ratio: auto;
+    }
     .md\:aspect-1x2 {
       aspect-ratio: 1 / 2;
     }
@@ -116833,20 +117199,8 @@
     .md\:aspect-3x1 {
       aspect-ratio: 3 / 1;
     }
-    .md\:aspect-3x2 {
-      aspect-ratio: 3 / 2;
-    }
-    .md\:aspect-3x4 {
-      aspect-ratio: 3 / 4;
-    }
     .md\:aspect-4x1 {
       aspect-ratio: 4 / 1;
-    }
-    .md\:aspect-4x3 {
-      aspect-ratio: 4 / 3;
-    }
-    .md\:aspect-16x9 {
-      aspect-ratio: 16 / 9;
     }
     .md\:aspect-9x16 {
       aspect-ratio: 9 / 16;
@@ -122070,43 +122424,36 @@
 @layer sf.utilities {
   @media (min-width: 44rem) {
     .md\:break-after-auto {
-      page-break-after: auto;
       -webkit-column-break-after: auto;
          -moz-column-break-after: auto;
               break-after: auto;
     }
     .md\:break-after-avoid {
-      page-break-after: avoid;
       -webkit-column-break-after: avoid;
          -moz-column-break-after: avoid;
               break-after: avoid;
     }
     .md\:break-after-all {
-      page-break-after: all;
       -webkit-column-break-after: all;
          -moz-column-break-after: all;
               break-after: all;
     }
     .md\:break-after-avoid-page {
-      page-break-after: avoid;
       -webkit-column-break-after: avoid;
          -moz-column-break-after: avoid;
               break-after: avoid-page;
     }
     .md\:break-after-page {
-      page-break-after: always;
       -webkit-column-break-after: page;
          -moz-column-break-after: page;
               break-after: page;
     }
     .md\:break-after-left {
-      page-break-after: left;
       -webkit-column-break-after: left;
          -moz-column-break-after: left;
               break-after: left;
     }
     .md\:break-after-right {
-      page-break-after: right;
       -webkit-column-break-after: right;
          -moz-column-break-after: right;
               break-after: right;
@@ -122121,43 +122468,36 @@
 @layer sf.utilities {
   @media (min-width: 44rem) {
     .md\:break-before-auto {
-      page-break-before: auto;
       -webkit-column-break-before: auto;
          -moz-column-break-before: auto;
               break-before: auto;
     }
     .md\:break-before-avoid {
-      page-break-before: avoid;
       -webkit-column-break-before: avoid;
          -moz-column-break-before: avoid;
               break-before: avoid;
     }
     .md\:break-before-all {
-      page-break-before: all;
       -webkit-column-break-before: all;
          -moz-column-break-before: all;
               break-before: all;
     }
     .md\:break-before-avoid-page {
-      page-break-before: avoid;
       -webkit-column-break-before: avoid;
          -moz-column-break-before: avoid;
               break-before: avoid-page;
     }
     .md\:break-before-page {
-      page-break-before: always;
       -webkit-column-break-before: page;
          -moz-column-break-before: page;
               break-before: page;
     }
     .md\:break-before-left {
-      page-break-before: left;
       -webkit-column-break-before: left;
          -moz-column-break-before: left;
               break-before: left;
     }
     .md\:break-before-right {
-      page-break-before: right;
       -webkit-column-break-before: right;
          -moz-column-break-before: right;
               break-before: right;
@@ -122172,19 +122512,16 @@
 @layer sf.utilities {
   @media (min-width: 44rem) {
     .md\:break-inside-auto {
-      page-break-inside: auto;
       -webkit-column-break-inside: auto;
          -moz-column-break-inside: auto;
               break-inside: auto;
     }
     .md\:break-inside-avoid {
-      page-break-inside: avoid;
       -webkit-column-break-inside: avoid;
          -moz-column-break-inside: avoid;
               break-inside: avoid;
     }
     .md\:break-inside-avoid-page {
-      page-break-inside: avoid;
       break-inside: avoid-page;
     }
     .md\:break-inside-avoid-column {
@@ -151014,6 +151351,30 @@
       -o-object-position: top;
          object-position: top;
     }
+    .md\:object-inline-start:where(:dir(rtl)) {
+      -o-object-position: right;
+         object-position: right;
+    }
+    .md\:object-inline-start-bottom:where(:dir(rtl)) {
+      -o-object-position: right bottom;
+         object-position: right bottom;
+    }
+    .md\:object-inline-start-top:where(:dir(rtl)) {
+      -o-object-position: right top;
+         object-position: right top;
+    }
+    .md\:object-inline-end:where(:dir(rtl)) {
+      -o-object-position: left;
+         object-position: left;
+    }
+    .md\:object-inline-end-bottom:where(:dir(rtl)) {
+      -o-object-position: left bottom;
+         object-position: left bottom;
+    }
+    .md\:object-inline-end-top:where(:dir(rtl)) {
+      -o-object-position: left top;
+         object-position: left top;
+    }
   }
 }
 @layer sf.utilities {
@@ -160363,6 +160724,24 @@
     .lg\:aspect-1x1 {
       aspect-ratio: 1 / 1;
     }
+    .lg\:aspect-4x3 {
+      aspect-ratio: 4 / 3;
+    }
+    .lg\:aspect-3x2 {
+      aspect-ratio: 3 / 2;
+    }
+    .lg\:aspect-16x9 {
+      aspect-ratio: 16 / 9;
+    }
+    .lg\:aspect-21x9 {
+      aspect-ratio: 21 / 9;
+    }
+    .lg\:aspect-3x4 {
+      aspect-ratio: 3 / 4;
+    }
+    .lg\:aspect-auto {
+      aspect-ratio: auto;
+    }
     .lg\:aspect-1x2 {
       aspect-ratio: 1 / 2;
     }
@@ -160375,20 +160754,8 @@
     .lg\:aspect-3x1 {
       aspect-ratio: 3 / 1;
     }
-    .lg\:aspect-3x2 {
-      aspect-ratio: 3 / 2;
-    }
-    .lg\:aspect-3x4 {
-      aspect-ratio: 3 / 4;
-    }
     .lg\:aspect-4x1 {
       aspect-ratio: 4 / 1;
-    }
-    .lg\:aspect-4x3 {
-      aspect-ratio: 4 / 3;
-    }
-    .lg\:aspect-16x9 {
-      aspect-ratio: 16 / 9;
     }
     .lg\:aspect-9x16 {
       aspect-ratio: 9 / 16;
@@ -165612,43 +165979,36 @@
 @layer sf.utilities {
   @media (min-width: 60rem) {
     .lg\:break-after-auto {
-      page-break-after: auto;
       -webkit-column-break-after: auto;
          -moz-column-break-after: auto;
               break-after: auto;
     }
     .lg\:break-after-avoid {
-      page-break-after: avoid;
       -webkit-column-break-after: avoid;
          -moz-column-break-after: avoid;
               break-after: avoid;
     }
     .lg\:break-after-all {
-      page-break-after: all;
       -webkit-column-break-after: all;
          -moz-column-break-after: all;
               break-after: all;
     }
     .lg\:break-after-avoid-page {
-      page-break-after: avoid;
       -webkit-column-break-after: avoid;
          -moz-column-break-after: avoid;
               break-after: avoid-page;
     }
     .lg\:break-after-page {
-      page-break-after: always;
       -webkit-column-break-after: page;
          -moz-column-break-after: page;
               break-after: page;
     }
     .lg\:break-after-left {
-      page-break-after: left;
       -webkit-column-break-after: left;
          -moz-column-break-after: left;
               break-after: left;
     }
     .lg\:break-after-right {
-      page-break-after: right;
       -webkit-column-break-after: right;
          -moz-column-break-after: right;
               break-after: right;
@@ -165663,43 +166023,36 @@
 @layer sf.utilities {
   @media (min-width: 60rem) {
     .lg\:break-before-auto {
-      page-break-before: auto;
       -webkit-column-break-before: auto;
          -moz-column-break-before: auto;
               break-before: auto;
     }
     .lg\:break-before-avoid {
-      page-break-before: avoid;
       -webkit-column-break-before: avoid;
          -moz-column-break-before: avoid;
               break-before: avoid;
     }
     .lg\:break-before-all {
-      page-break-before: all;
       -webkit-column-break-before: all;
          -moz-column-break-before: all;
               break-before: all;
     }
     .lg\:break-before-avoid-page {
-      page-break-before: avoid;
       -webkit-column-break-before: avoid;
          -moz-column-break-before: avoid;
               break-before: avoid-page;
     }
     .lg\:break-before-page {
-      page-break-before: always;
       -webkit-column-break-before: page;
          -moz-column-break-before: page;
               break-before: page;
     }
     .lg\:break-before-left {
-      page-break-before: left;
       -webkit-column-break-before: left;
          -moz-column-break-before: left;
               break-before: left;
     }
     .lg\:break-before-right {
-      page-break-before: right;
       -webkit-column-break-before: right;
          -moz-column-break-before: right;
               break-before: right;
@@ -165714,19 +166067,16 @@
 @layer sf.utilities {
   @media (min-width: 60rem) {
     .lg\:break-inside-auto {
-      page-break-inside: auto;
       -webkit-column-break-inside: auto;
          -moz-column-break-inside: auto;
               break-inside: auto;
     }
     .lg\:break-inside-avoid {
-      page-break-inside: avoid;
       -webkit-column-break-inside: avoid;
          -moz-column-break-inside: avoid;
               break-inside: avoid;
     }
     .lg\:break-inside-avoid-page {
-      page-break-inside: avoid;
       break-inside: avoid-page;
     }
     .lg\:break-inside-avoid-column {
@@ -194556,6 +194906,30 @@
       -o-object-position: top;
          object-position: top;
     }
+    .lg\:object-inline-start:where(:dir(rtl)) {
+      -o-object-position: right;
+         object-position: right;
+    }
+    .lg\:object-inline-start-bottom:where(:dir(rtl)) {
+      -o-object-position: right bottom;
+         object-position: right bottom;
+    }
+    .lg\:object-inline-start-top:where(:dir(rtl)) {
+      -o-object-position: right top;
+         object-position: right top;
+    }
+    .lg\:object-inline-end:where(:dir(rtl)) {
+      -o-object-position: left;
+         object-position: left;
+    }
+    .lg\:object-inline-end-bottom:where(:dir(rtl)) {
+      -o-object-position: left bottom;
+         object-position: left bottom;
+    }
+    .lg\:object-inline-end-top:where(:dir(rtl)) {
+      -o-object-position: left top;
+         object-position: left top;
+    }
   }
 }
 @layer sf.utilities {
@@ -203971,6 +204345,24 @@
     .xl\:aspect-1x1 {
       aspect-ratio: 1 / 1;
     }
+    .xl\:aspect-4x3 {
+      aspect-ratio: 4 / 3;
+    }
+    .xl\:aspect-3x2 {
+      aspect-ratio: 3 / 2;
+    }
+    .xl\:aspect-16x9 {
+      aspect-ratio: 16 / 9;
+    }
+    .xl\:aspect-21x9 {
+      aspect-ratio: 21 / 9;
+    }
+    .xl\:aspect-3x4 {
+      aspect-ratio: 3 / 4;
+    }
+    .xl\:aspect-auto {
+      aspect-ratio: auto;
+    }
     .xl\:aspect-1x2 {
       aspect-ratio: 1 / 2;
     }
@@ -203983,20 +204375,8 @@
     .xl\:aspect-3x1 {
       aspect-ratio: 3 / 1;
     }
-    .xl\:aspect-3x2 {
-      aspect-ratio: 3 / 2;
-    }
-    .xl\:aspect-3x4 {
-      aspect-ratio: 3 / 4;
-    }
     .xl\:aspect-4x1 {
       aspect-ratio: 4 / 1;
-    }
-    .xl\:aspect-4x3 {
-      aspect-ratio: 4 / 3;
-    }
-    .xl\:aspect-16x9 {
-      aspect-ratio: 16 / 9;
     }
     .xl\:aspect-9x16 {
       aspect-ratio: 9 / 16;
@@ -204007,6 +204387,24 @@
   @media (min-width: 80rem) {
     .xxl\:aspect-1x1 {
       aspect-ratio: 1 / 1;
+    }
+    .xxl\:aspect-4x3 {
+      aspect-ratio: 4 / 3;
+    }
+    .xxl\:aspect-3x2 {
+      aspect-ratio: 3 / 2;
+    }
+    .xxl\:aspect-16x9 {
+      aspect-ratio: 16 / 9;
+    }
+    .xxl\:aspect-21x9 {
+      aspect-ratio: 21 / 9;
+    }
+    .xxl\:aspect-3x4 {
+      aspect-ratio: 3 / 4;
+    }
+    .xxl\:aspect-auto {
+      aspect-ratio: auto;
     }
     .xxl\:aspect-1x2 {
       aspect-ratio: 1 / 2;
@@ -204020,20 +204418,8 @@
     .xxl\:aspect-3x1 {
       aspect-ratio: 3 / 1;
     }
-    .xxl\:aspect-3x2 {
-      aspect-ratio: 3 / 2;
-    }
-    .xxl\:aspect-3x4 {
-      aspect-ratio: 3 / 4;
-    }
     .xxl\:aspect-4x1 {
       aspect-ratio: 4 / 1;
-    }
-    .xxl\:aspect-4x3 {
-      aspect-ratio: 4 / 3;
-    }
-    .xxl\:aspect-16x9 {
-      aspect-ratio: 16 / 9;
     }
     .xxl\:aspect-9x16 {
       aspect-ratio: 9 / 16;
@@ -214471,43 +214857,36 @@
 @layer sf.utilities {
   @media (min-width: 72rem) {
     .xl\:break-after-auto {
-      page-break-after: auto;
       -webkit-column-break-after: auto;
          -moz-column-break-after: auto;
               break-after: auto;
     }
     .xl\:break-after-avoid {
-      page-break-after: avoid;
       -webkit-column-break-after: avoid;
          -moz-column-break-after: avoid;
               break-after: avoid;
     }
     .xl\:break-after-all {
-      page-break-after: all;
       -webkit-column-break-after: all;
          -moz-column-break-after: all;
               break-after: all;
     }
     .xl\:break-after-avoid-page {
-      page-break-after: avoid;
       -webkit-column-break-after: avoid;
          -moz-column-break-after: avoid;
               break-after: avoid-page;
     }
     .xl\:break-after-page {
-      page-break-after: always;
       -webkit-column-break-after: page;
          -moz-column-break-after: page;
               break-after: page;
     }
     .xl\:break-after-left {
-      page-break-after: left;
       -webkit-column-break-after: left;
          -moz-column-break-after: left;
               break-after: left;
     }
     .xl\:break-after-right {
-      page-break-after: right;
       -webkit-column-break-after: right;
          -moz-column-break-after: right;
               break-after: right;
@@ -214522,43 +214901,36 @@
 @layer sf.utilities {
   @media (min-width: 80rem) {
     .xxl\:break-after-auto {
-      page-break-after: auto;
       -webkit-column-break-after: auto;
          -moz-column-break-after: auto;
               break-after: auto;
     }
     .xxl\:break-after-avoid {
-      page-break-after: avoid;
       -webkit-column-break-after: avoid;
          -moz-column-break-after: avoid;
               break-after: avoid;
     }
     .xxl\:break-after-all {
-      page-break-after: all;
       -webkit-column-break-after: all;
          -moz-column-break-after: all;
               break-after: all;
     }
     .xxl\:break-after-avoid-page {
-      page-break-after: avoid;
       -webkit-column-break-after: avoid;
          -moz-column-break-after: avoid;
               break-after: avoid-page;
     }
     .xxl\:break-after-page {
-      page-break-after: always;
       -webkit-column-break-after: page;
          -moz-column-break-after: page;
               break-after: page;
     }
     .xxl\:break-after-left {
-      page-break-after: left;
       -webkit-column-break-after: left;
          -moz-column-break-after: left;
               break-after: left;
     }
     .xxl\:break-after-right {
-      page-break-after: right;
       -webkit-column-break-after: right;
          -moz-column-break-after: right;
               break-after: right;
@@ -214573,43 +214945,36 @@
 @layer sf.utilities {
   @media (min-width: 72rem) {
     .xl\:break-before-auto {
-      page-break-before: auto;
       -webkit-column-break-before: auto;
          -moz-column-break-before: auto;
               break-before: auto;
     }
     .xl\:break-before-avoid {
-      page-break-before: avoid;
       -webkit-column-break-before: avoid;
          -moz-column-break-before: avoid;
               break-before: avoid;
     }
     .xl\:break-before-all {
-      page-break-before: all;
       -webkit-column-break-before: all;
          -moz-column-break-before: all;
               break-before: all;
     }
     .xl\:break-before-avoid-page {
-      page-break-before: avoid;
       -webkit-column-break-before: avoid;
          -moz-column-break-before: avoid;
               break-before: avoid-page;
     }
     .xl\:break-before-page {
-      page-break-before: always;
       -webkit-column-break-before: page;
          -moz-column-break-before: page;
               break-before: page;
     }
     .xl\:break-before-left {
-      page-break-before: left;
       -webkit-column-break-before: left;
          -moz-column-break-before: left;
               break-before: left;
     }
     .xl\:break-before-right {
-      page-break-before: right;
       -webkit-column-break-before: right;
          -moz-column-break-before: right;
               break-before: right;
@@ -214624,43 +214989,36 @@
 @layer sf.utilities {
   @media (min-width: 80rem) {
     .xxl\:break-before-auto {
-      page-break-before: auto;
       -webkit-column-break-before: auto;
          -moz-column-break-before: auto;
               break-before: auto;
     }
     .xxl\:break-before-avoid {
-      page-break-before: avoid;
       -webkit-column-break-before: avoid;
          -moz-column-break-before: avoid;
               break-before: avoid;
     }
     .xxl\:break-before-all {
-      page-break-before: all;
       -webkit-column-break-before: all;
          -moz-column-break-before: all;
               break-before: all;
     }
     .xxl\:break-before-avoid-page {
-      page-break-before: avoid;
       -webkit-column-break-before: avoid;
          -moz-column-break-before: avoid;
               break-before: avoid-page;
     }
     .xxl\:break-before-page {
-      page-break-before: always;
       -webkit-column-break-before: page;
          -moz-column-break-before: page;
               break-before: page;
     }
     .xxl\:break-before-left {
-      page-break-before: left;
       -webkit-column-break-before: left;
          -moz-column-break-before: left;
               break-before: left;
     }
     .xxl\:break-before-right {
-      page-break-before: right;
       -webkit-column-break-before: right;
          -moz-column-break-before: right;
               break-before: right;
@@ -214675,19 +215033,16 @@
 @layer sf.utilities {
   @media (min-width: 72rem) {
     .xl\:break-inside-auto {
-      page-break-inside: auto;
       -webkit-column-break-inside: auto;
          -moz-column-break-inside: auto;
               break-inside: auto;
     }
     .xl\:break-inside-avoid {
-      page-break-inside: avoid;
       -webkit-column-break-inside: avoid;
          -moz-column-break-inside: avoid;
               break-inside: avoid;
     }
     .xl\:break-inside-avoid-page {
-      page-break-inside: avoid;
       break-inside: avoid-page;
     }
     .xl\:break-inside-avoid-column {
@@ -214700,19 +215055,16 @@
 @layer sf.utilities {
   @media (min-width: 80rem) {
     .xxl\:break-inside-auto {
-      page-break-inside: auto;
       -webkit-column-break-inside: auto;
          -moz-column-break-inside: auto;
               break-inside: auto;
     }
     .xxl\:break-inside-avoid {
-      page-break-inside: avoid;
       -webkit-column-break-inside: avoid;
          -moz-column-break-inside: avoid;
               break-inside: avoid;
     }
     .xxl\:break-inside-avoid-page {
-      page-break-inside: avoid;
       break-inside: avoid-page;
     }
     .xxl\:break-inside-avoid-column {
@@ -272324,6 +272676,30 @@
       -o-object-position: top;
          object-position: top;
     }
+    .xl\:object-inline-start:where(:dir(rtl)) {
+      -o-object-position: right;
+         object-position: right;
+    }
+    .xl\:object-inline-start-bottom:where(:dir(rtl)) {
+      -o-object-position: right bottom;
+         object-position: right bottom;
+    }
+    .xl\:object-inline-start-top:where(:dir(rtl)) {
+      -o-object-position: right top;
+         object-position: right top;
+    }
+    .xl\:object-inline-end:where(:dir(rtl)) {
+      -o-object-position: left;
+         object-position: left;
+    }
+    .xl\:object-inline-end-bottom:where(:dir(rtl)) {
+      -o-object-position: left bottom;
+         object-position: left bottom;
+    }
+    .xl\:object-inline-end-top:where(:dir(rtl)) {
+      -o-object-position: left top;
+         object-position: left top;
+    }
   }
 }
 @layer sf.utilities {
@@ -272363,6 +272739,30 @@
     .xxl\:object-top {
       -o-object-position: top;
          object-position: top;
+    }
+    .xxl\:object-inline-start:where(:dir(rtl)) {
+      -o-object-position: right;
+         object-position: right;
+    }
+    .xxl\:object-inline-start-bottom:where(:dir(rtl)) {
+      -o-object-position: right bottom;
+         object-position: right bottom;
+    }
+    .xxl\:object-inline-start-top:where(:dir(rtl)) {
+      -o-object-position: right top;
+         object-position: right top;
+    }
+    .xxl\:object-inline-end:where(:dir(rtl)) {
+      -o-object-position: left;
+         object-position: left;
+    }
+    .xxl\:object-inline-end-bottom:where(:dir(rtl)) {
+      -o-object-position: left bottom;
+         object-position: left bottom;
+    }
+    .xxl\:object-inline-end-top:where(:dir(rtl)) {
+      -o-object-position: left top;
+         object-position: left top;
     }
   }
 }
@@ -292138,7 +292538,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -292154,7 +292554,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -292170,7 +292570,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -292186,7 +292586,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -292202,7 +292602,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -292762,6 +293162,90 @@
   .hover\:scale-y-0:hover {
     -webkit-transform: scaleY(0);
             transform: scaleY(0);
+  }
+  .hover\:scale-80:hover {
+    -webkit-transform: scale(0.8);
+            transform: scale(0.8);
+  }
+  .hover\:scale-x-80:hover {
+    -webkit-transform: scaleX(0.8);
+            transform: scaleX(0.8);
+  }
+  .hover\:scale-y-80:hover {
+    -webkit-transform: scaleY(0.8);
+            transform: scaleY(0.8);
+  }
+  .hover\:scale-90:hover {
+    -webkit-transform: scale(0.9);
+            transform: scale(0.9);
+  }
+  .hover\:scale-x-90:hover {
+    -webkit-transform: scaleX(0.9);
+            transform: scaleX(0.9);
+  }
+  .hover\:scale-y-90:hover {
+    -webkit-transform: scaleY(0.9);
+            transform: scaleY(0.9);
+  }
+  .hover\:scale-95:hover {
+    -webkit-transform: scale(0.95);
+            transform: scale(0.95);
+  }
+  .hover\:scale-x-95:hover {
+    -webkit-transform: scaleX(0.95);
+            transform: scaleX(0.95);
+  }
+  .hover\:scale-y-95:hover {
+    -webkit-transform: scaleY(0.95);
+            transform: scaleY(0.95);
+  }
+  .hover\:scale-100:hover {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  .hover\:scale-x-100:hover {
+    -webkit-transform: scaleX(1);
+            transform: scaleX(1);
+  }
+  .hover\:scale-y-100:hover {
+    -webkit-transform: scaleY(1);
+            transform: scaleY(1);
+  }
+  .hover\:scale-105:hover {
+    -webkit-transform: scale(1.05);
+            transform: scale(1.05);
+  }
+  .hover\:scale-x-105:hover {
+    -webkit-transform: scaleX(1.05);
+            transform: scaleX(1.05);
+  }
+  .hover\:scale-y-105:hover {
+    -webkit-transform: scaleY(1.05);
+            transform: scaleY(1.05);
+  }
+  .hover\:scale-110:hover {
+    -webkit-transform: scale(1.1);
+            transform: scale(1.1);
+  }
+  .hover\:scale-x-110:hover {
+    -webkit-transform: scaleX(1.1);
+            transform: scaleX(1.1);
+  }
+  .hover\:scale-y-110:hover {
+    -webkit-transform: scaleY(1.1);
+            transform: scaleY(1.1);
+  }
+  .hover\:scale-120:hover {
+    -webkit-transform: scale(1.2);
+            transform: scale(1.2);
+  }
+  .hover\:scale-x-120:hover {
+    -webkit-transform: scaleX(1.2);
+            transform: scaleX(1.2);
+  }
+  .hover\:scale-y-120:hover {
+    -webkit-transform: scaleY(1.2);
+            transform: scaleY(1.2);
   }
   .hover\:scale-1\/4:hover {
     -webkit-transform: scale(0.8);
@@ -296201,7 +296685,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296217,7 +296701,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296233,7 +296717,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296249,7 +296733,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296265,7 +296749,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296827,7 +297311,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296843,7 +297327,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296860,7 +297344,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296876,7 +297360,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296892,7 +297376,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296909,7 +297393,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296925,7 +297409,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296941,7 +297425,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296958,7 +297442,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296974,7 +297458,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -296990,7 +297474,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -297007,7 +297491,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -297023,7 +297507,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -297039,7 +297523,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)
@@ -297056,7 +297540,7 @@
         color-mix(
             in srgb,
             transparent,
-            var(--sf-ring-color, currentColor)
+            var(--sf-ring-color, var(--sf-focus--color, var(--sf-focus)))
             calc(var(--sf-ring--alpha, var(--sf-ring--alfa, 1)) * 100%)
         ),
         0 0 0 var(--sf-ring-offset-width, 0px)

@@ -1132,8 +1132,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("72cabd0f91e5");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("686f52293091");
 /* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("e1c707506370");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("fb3a1cbd7459");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("0eadcd89fc76");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("0d10ff01494f");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _core_js_layer_stack_js__WEBPACK_IMPORTED_MODULE_8__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -1190,16 +1189,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
  // The panel look's sheet (C106); the menu looks draw nothing of their own.
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_16__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_17__.runtime
-}; // The menu it draws, found under its current name and its former one.
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// The menu it draws, found under its current name and its former one.
 
 const MENU = `:scope > .sf-settings-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__.tagSelector)('sf-menu-context')}`; // The colour window of the colour rows (C85): sf-input-color's own, opened on «Своё».
 
@@ -1240,10 +1234,7 @@ const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js_
 const rememberKey = name => text(name) ? `sf-settings/${text(name)}` : '';
 const SettingsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_13__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_16__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_14__
 }); // A row of the rows look fits when its name stands on one line, whole, and its
@@ -3132,6 +3123,7 @@ function panelLayout(items, {
   if (!search || groups.length < 2) return 'sections';
   return groups.some(group => group.items.some(item => item.type === 'fields')) ? 'tabs' : 'sections';
 } // A search's words: no case, ё as е.
+// c282-allow: input parsing (ё is searched as е)
 
 const folded = value => String(value ?? '').toLocaleLowerCase().replace(/ё/gu, 'е').trim();
 /** Whether a row's words hold the query (no case, ё as е). An empty query holds every row. */
@@ -3684,6 +3676,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "0d10ff01494f"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fb3a1cbd7459");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "686f52293091"
 (module) {
 
@@ -3694,7 +3708,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-setti
 /***/ "72cabd0f91e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.6.5","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","color","heading","separator","group","fields"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"custom":{"type":"boolean"},"disabled":{"type":"boolean"},"sortable":{"type":"boolean"},"pinnable":{"type":"boolean"},"keywords":{"type":"array"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","panel"],"default":"drill"},"apply":{"type":"enum","values":["instant","button"],"default":"instant"},"search":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"}},"values":{"values":{"type":"object"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.7.4","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","color","heading","separator","group","fields"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"custom":{"type":"boolean"},"disabled":{"type":"boolean"},"sortable":{"type":"boolean"},"pinnable":{"type":"boolean"},"keywords":{"type":"array"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","panel"],"default":"drill"},"apply":{"type":"enum","values":["instant","button"],"default":"instant"},"search":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"}},"values":{"values":{"type":"object"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"}}');
 
 /***/ },
 
@@ -3702,13 +3716,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-setti
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Settings","runtime":{"label":"Settings","hue-red":"Red","hue-orange":"Orange","hue-amber":"Amber","hue-yellow":"Yellow","hue-lime":"Lime","hue-green":"Green","hue-teal":"Teal","hue-cyan":"Cyan","hue-sky":"Sky","hue-blue":"Blue","hue-indigo":"Indigo","hue-violet":"Violet","hue-purple":"Purple","hue-pink":"Pink","hue-brown":"Brown","hue-gray":"Grey","own-color":"Own colour…","own-color-value":"Own: {value}","close":"Close","reset":"Reset","apply":"Apply","search":"Find","empty":"Nothing found","pin":"Pin","unpin":"Unpin","move-hint":"Alt with the up and down arrows changes the order","position":"{text}: {index} of {count}"}}');
-
-/***/ },
-
-/***/ "0eadcd89fc76"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Настройки","runtime":{"label":"Настройки","hue-red":"Красный","hue-orange":"Оранжевый","hue-amber":"Янтарный","hue-yellow":"Жёлтый","hue-lime":"Лайм","hue-green":"Зелёный","hue-teal":"Бирюзовый","hue-cyan":"Голубой","hue-sky":"Небесный","hue-blue":"Синий","hue-indigo":"Индиго","hue-violet":"Фиолетовый","hue-purple":"Пурпурный","hue-pink":"Розовый","hue-brown":"Коричневый","hue-gray":"Серый","own-color":"Свой цвет…","own-color-value":"Свой: {value}","close":"Закрыть","reset":"Сбросить","apply":"Применить","search":"Найти","empty":"Ничего не найдено","pin":"Закрепить","unpin":"Открепить","move-hint":"Alt и стрелки вверх и вниз меняют порядок","position":"{text}: {index} из {count}"}}');
 
 /***/ }
 

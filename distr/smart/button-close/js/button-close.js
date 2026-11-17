@@ -12,8 +12,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5f040406bc17");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("02dfc60c5026");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("2bfad53665b2");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("7ca134cd1790");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3e9ace110bb6");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("928b37738810");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -23,16 +22,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__.runtime
-}; // sf-button-close from its component.json (standard simai.smart-component 1.3.8 §3,
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-button-close from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4): the close button of the SIMAI Framework (owner decision C14, 1.2.0). The
 // settings are the attributes and properties core/js/element-manifest.js makes
 // from the manifest; a value outside an enum reads as its default.
@@ -48,10 +42,7 @@ const ru = {
 
 const CloseElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
 }); // A containing button: a native one, a role="button", or the icon button's
@@ -169,7 +160,7 @@ function renderCloseTemplate(context) {
     style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     aria-label=${context.label}
     ?disabled=${context.disabled}
-  >${renderCross(size, 'pointer-event-none', '')}</button>`;
+  >${renderCross(size, 'pointer-events-none', '')}</button>`;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -206,6 +197,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "928b37738810"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7ca134cd1790");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "2bfad53665b2"
 (module) {
 
@@ -216,7 +229,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "02dfc60c5026"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-close","tag":"sf-button-close","version":"1.4.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1/3"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["ghost","plain","media"],"default":"ghost"},"radius":{"type":"enum","values":["default","rounded"],"default":"default"},"scheme":{"type":"enum","values":["on-surface","on-surface-variant"],"default":"on-surface"},"backdrop":{"type":"enum","values":["surface","color"],"default":"surface"},"disabled":{"type":"boolean","default":false}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-close-color":{"type":"color","state":"default"},"--sf-close-background-color":{"type":"color","state":"default"},"--sf-close-glyph-size":{"type":"length","state":"default"},"--sf-close-padding-inline":{"type":"length","state":"default"},"--sf-close-padding-block":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-close","tag":"sf-button-close","version":"1.4.6","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":"1/3"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["ghost","plain","media"],"default":"ghost"},"radius":{"type":"enum","values":["default","rounded"],"default":"default"},"scheme":{"type":"enum","values":["on-surface","on-surface-variant"],"default":"on-surface"},"backdrop":{"type":"enum","values":["surface","color"],"default":"surface"},"disabled":{"type":"boolean","default":false}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-close-color":{"type":"color","state":"default"},"--sf-close-background-color":{"type":"color","state":"default"},"--sf-close-glyph-size":{"type":"length","state":"default"},"--sf-close-padding-inline":{"type":"length","state":"default"},"--sf-close-padding-block":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -224,13 +237,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-close","tag":"sf-b
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Close","runtime":{"close":"Close"}}');
-
-/***/ },
-
-/***/ "3e9ace110bb6"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Закрытие","runtime":{"close":"Закрыть"}}');
 
 /***/ }
 

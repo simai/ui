@@ -142,10 +142,7 @@ __webpack_require__.r(__webpack_exports__);
 // SF.language.register('sf-file-upload', code, words); a ternary on «ru» allowed two
 // and no more.
 
-const FILE_UPLOAD_ITEM_TEXT = {
-  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__["default"].en,
-  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__["default"].ru
-};
+const FILE_UPLOAD_ITEM_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__["default"];
 const FILE_UPLOAD_SELECTOR = '.sf-file-upload';
 const FILE_UPLOAD_BOUND_FLAG = 'sfFileUploadBound';
 
@@ -631,11 +628,11 @@ function createUploadProgressItem(item, owner = null) {
     retry.className = 'sf-button sf-button--size-1 sf-button--ghost sf-button--link sf-button--primary flex items-cross-center';
     retry.dataset.action = 'retry';
     const retryIcon = document.createElement('i');
-    retryIcon.className = 'sf-icon pointer-event-none';
+    retryIcon.className = 'sf-icon pointer-events-none';
     retryIcon.setAttribute('aria-hidden', 'true');
     retryIcon.textContent = 'refresh';
     const retryText = document.createElement('span');
-    retryText.className = 'sf-button-text-container text-center pointer-event-none';
+    retryText.className = 'sf-button-text-container text-center pointer-events-none';
     retryText.textContent = row.retryText;
     retry.append(retryIcon, retryText);
     retryHost.append(retry);
@@ -2298,9 +2295,10 @@ __webpack_require__.r(__webpack_exports__);
 // effects (format-intl.js). The same functions as core/js/format.js,
 // composition/file-size.mjs and SF.format.fileSize.
  // The four words of a size live in core's language files
-// (core/js/lang/file-size, localization study LC-3): ru and en ship; any
-// other language takes the words a product registers for `sf-file-size`
-// (SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
+// (core/js/lang/file-size, localization study LC-3): English ships in the
+// bundle; Russian and any other language take the words their language file
+// or a product registers for `sf-file-size` (owner decision C282;
+// SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
 // English words with its own digits. A component with words of its own passes
 // them as `units`. The registry is read from the shared global the page
 // language keeps (core/js/page-language.js), so this module still runs
@@ -2313,17 +2311,28 @@ function unitsOf(words) {
   return Object.freeze(UNIT_KEYS.map(key => words[key]));
 }
 
-const FILE_SIZE_UNITS = /* @__PURE__ */Object.freeze({
-  en: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en),
-  ru: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru)
-});
-
 function registeredUnits(code) {
   const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-file-size')?.get?.(code);
   return words && UNIT_KEYS.every(key => typeof words[key] === 'string') ? unitsOf(words) : null;
-}
-/** The unit words for a locale: registered for it, its own, its language's, else English. */
+} // The built-in languages' units (English; owner decision C282), and `ru` as
+// before for a reader of SF.format.FILE_SIZE_UNITS.ru: the units the ru
+// language file registered, null until it is on the page.
 
+
+function unitTable(words) {
+  const table = {};
+
+  for (const [code, own] of Object.entries(words)) table[code] = unitsOf(own);
+
+  if (!table.ru) Object.defineProperty(table, 'ru', {
+    enumerable: true,
+    get: () => registeredUnits('ru')
+  });
+  return Object.freeze(table);
+}
+
+const FILE_SIZE_UNITS = /* @__PURE__ */unitTable(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]);
+/** The unit words for a locale: registered for it, its own, its language's, else English. */
 
 function fileSizeUnits(locale = 'en') {
   const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
@@ -2846,6 +2855,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("feccc97e5d7d");
 // What language a component speaks, and how a product adds one.
 //
 // The Framework speaks English by default and whatever the page says otherwise:
@@ -2880,6 +2890,9 @@ __webpack_require__.r(__webpack_exports__);
 // was published from core's copy, the table read its own, and registering a
 // language changed nothing on screen. Only a browser shows that, and it did
 // (2026-10-11).
+ // The languages built into the bundles (owner decision C282): English; every
+// other language, Russian too, is a language file (core/js/language-packs.js).
+
 
 
 const STORE = (() => {
@@ -2898,9 +2911,10 @@ const STORE = (() => {
 })();
 
 const LISTENERS = STORE.listeners;
-const REGISTERED = STORE.registered; // Language packs (owner decision C177, 2026-11-14): every language but the two
-// built in is one file per language and delivery, fetched only by a page that
-// speaks it. A pack's words go into the same registry as words registered one
+const REGISTERED = STORE.registered; // Language packs (owner decision C177, 2026-11-14; C282, 2026-11-17): every
+// language but English, the one built in, is one file per language and
+// delivery, fetched only by a page that speaks it (or included before core as
+// its script form, core/lang/<code>.js). A pack's words go into the same registry as words registered one
 // by one -- so a bundle built before packs existed reads them too -- a
 // Framework pack's beneath what is there, any other pack's over it: a product
 // overrides a Framework word whichever arrived first. The fetching is core's
@@ -2911,12 +2925,13 @@ const PACKS = STORE.packs ??= {
   loaded: new Map(),
   pending: new Map(),
   request: null
-};
+}; // The languages built into the bundles: English, and in a rollback build Russian
+// too (src/core/lang/built-in.json, C282).
 
-const isBuiltIn = code => code === 'ru' || code === 'en';
+const isBuiltIn = code => code === 'en' || (_lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]?.built_in ?? []).includes(code);
 /**
- * Ask core for the pack of a language this page speaks (nothing for ru and
- * en), and for the part that holds `component`'s words: the Framework's pack
+ * Ask core for the pack of a language this page speaks (nothing for a
+ * built-in language), and for the part that holds `component`'s words: the Framework's pack
  * comes in parts by family (core/js/language-packs.js). A core from before
  * parts takes the language alone.
  */
@@ -3996,16 +4011,19 @@ function acceptFormats(accept, kindWord = (kind) => kind) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
 /* harmony export */ });
 /* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d4b3cd9346d9");
-/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6e4269348082");
-// The component's words for the bundle and for Node alike (localization study
-// LC-4/LC-5): the runtime words of its language files, by language.
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
 
 
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
 
 
 /***/ },
@@ -4082,16 +4100,38 @@ function fileIcon(mime) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
 /* harmony export */ });
 /* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3694b5e2bf39");
-/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("220979cc98c6");
-// The unit words of a file size (localization study LC-3), for the bundle and
-// for Node alike: the runtime words of the language files, by language.
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
 
 
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "feccc97e5d7d"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _built_in_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6a56aa4367e4");
+// The languages built into the component bundles (owner decision C282),
+// for page-language.js: built-in.json, the build switch
+// scripts/build-language-packs.mjs reads too. A module, as lang/index.mjs, so
+// the bundle and Node read the JSON alike.
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_built_in_json__WEBPACK_IMPORTED_MODULE_0__);
 
 
 /***/ },
@@ -4103,13 +4143,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Remove","uploadi
 
 /***/ },
 
-/***/ "6e4269348082"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Убрать","uploading":"Загрузка","uploading-name":"Загрузка {name}","retry":"Повторить","remove-name":"Убрать {name}","retry-name":"Повторить {name}","linkText":"Выберите файл","text":"или перетащите его сюда","not-added":"Не добавлено {n}:","reject-type":"«{name}» не подходит: можно {formats}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-size":"«{name}» — {size}, а можно до {max}","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","formats-image":"изображения","formats-video":"видео","formats-audio":"аудио","done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}","said-added":"«{name}» добавлен","said-added-many":{"one":"Добавлен {n} файл","few":"Добавлено {n} файла","many":"Добавлено {n} файлов","other":"Добавлено {n} файла"},"said-done":"«{name}» загружен","said-error":"«{name}» не загрузился","said-error-line":"«{name}» не загрузился: {message}"}}');
-
-/***/ },
-
 /***/ "3694b5e2bf39"
 (module) {
 
@@ -4117,10 +4150,10 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"B","kb":"KB","mb":"MB
 
 /***/ },
 
-/***/ "220979cc98c6"
+/***/ "6a56aa4367e4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"Б","kb":"КБ","mb":"МБ","gb":"ГБ"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-built-in","schema_version":1,"$comment":"The languages built into the component bundles (owner decision C282, 2026-11-17): English only. Russian and every other language ship as language files (core/lang/<code>.js before core.js, or the parts core/lang/<code>/<family>.json core fetches). complete: the languages that must say every word (scripts/language-coverage.mjs exits 1 on a gap). Rollback: built_in [\\"en\\", \\"ru\\"], then node scripts/build-language-packs.mjs and a rebuild put Russian back into the bundles (the language files still ship, so a page that includes ru.js stays right).","built_in":["en"],"complete":["en","ru"]}');
 
 /***/ }
 

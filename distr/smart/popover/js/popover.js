@@ -841,8 +841,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("18fc6da7e766");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("fcb18992f3bb");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("d8578a2cb338");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("0f5fc1613e82");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("947fffd789ac");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("ddeb2e55b250");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_float_anchor_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_float_anchor_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -862,16 +861,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
-}; // sf-popover from its component.json (standard simai.smart-component 1.3.8
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-popover from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §8, §19): placement, label, width, dismissible, surface-role and the
 // value open are attributes and properties made by core/js/element-manifest.js;
 // the old host attribute role is a dated alias of surface-role.
@@ -939,10 +933,7 @@ for (const [name, side] of [['start', 'inline-start'], ['end', 'inline-end']]) {
 const ARROW_OFFSET = 'var(--sf-space-1\\/2)';
 const PopoverElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
 }); // A surface anchored to a control the consumer supplies: a field's settings, a
@@ -1488,6 +1479,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "ddeb2e55b250"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0f5fc1613e82");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "d8578a2cb338"
 (module) {
 
@@ -1498,7 +1511,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-popov
 /***/ "fcb18992f3bb"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.popover","tag":"sf-popover","version":"1.6.5","kind":"leaf","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end","bottom","top","start","start-start","start-end","end","end-start","end-end"],"default":"bottom-end"},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"offset":{"type":"string","default":""},"arrow":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}}},"show":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"return-focus":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.popover","tag":"sf-popover","version":"1.7.3","kind":"leaf","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end","bottom","top","start","start-start","start-end","end","end-start","end-end"],"default":"bottom-end"},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"offset":{"type":"string","default":""},"arrow":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}}},"show":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"return-focus":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -1506,13 +1519,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.popover","tag":"sf-popove
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Popover","runtime":{}}');
-
-/***/ },
-
-/***/ "947fffd789ac"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Всплывающая панель","runtime":{}}');
 
 /***/ }
 

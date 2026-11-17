@@ -1,8 +1,10 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
+  .pointer-events-none,
   .pointer-event-none {
     pointer-events: none;
   }
+  .pointer-events-auto,
   .pointer-event-auto {
     pointer-events: auto;
   }

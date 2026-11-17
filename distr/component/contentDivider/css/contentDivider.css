@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
 *
@@ -50,7 +50,6 @@
     --sf-divider-content--color: var(--sf-on-surface-variant);
     --sf-divider-content--font-size: var(--sf-text-size-1\/2);
     --sf-divider-content--line-height: var(--sf-text-height-1\/2);
-    color: var(--sf-divider-content--color);
     text-align: center;
   }
   /* An empty divider is one continuous boundary. With content, two flex lines
@@ -63,7 +62,6 @@
     display: block;
     height: var(--sf-divider--thickness);
     block-size: var(--sf-divider--thickness);
-    background-color: var(--sf-divider--background-color);
   }
   .sf-divider-horizontal:not(:empty) {
     display: flex;
@@ -78,7 +76,6 @@
     min-inline-size: 0;
     height: var(--sf-divider--thickness);
     block-size: var(--sf-divider--thickness);
-    background-color: var(--sf-divider--background-color);
   }
   .sf-divider-vertical {
     display: inline-block;
@@ -87,7 +84,6 @@
     inline-size: var(--sf-divider--thickness);
     min-height: var(--sf-divider--length);
     min-block-size: var(--sf-divider--length);
-    background-color: var(--sf-divider--background-color);
   }
   /* Backward-compatible double-boundary presentation. */
   .sf-divider-borders {
@@ -102,9 +98,12 @@
     left: 0;
     inset: 0;
     z-index: 2;
-    border-top: var(--sf-divider--thickness) solid var(--sf-divider--border-color);
-    border-bottom: var(--sf-divider--thickness) solid var(--sf-divider--border-color);
-    border-block: var(--sf-divider--thickness) solid var(--sf-divider--border-color);
+    border-top-width: var(--sf-divider--thickness);
+    border-bottom-width: var(--sf-divider--thickness);
+    border-block-width: var(--sf-divider--thickness);
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-block-style: solid;
     pointer-events: none;
   }
   .sf-divider-content {
@@ -115,8 +114,6 @@
     min-width: 0;
     min-inline-size: 0;
     padding: var(--sf-divider-content--padding);
-    background-color: var(--sf-divider-content--background-color);
-    color: var(--sf-divider-content--color);
     font-size: var(--sf-divider-content--font-size);
     line-height: var(--sf-divider-content--line-height);
   }
@@ -128,6 +125,7 @@
      SF.deprecations (journal class-content-divider-c188-aliases). */
   .sf-divider-content-border {
     border: 0;
+    border-color: revert-layer;
   }
   /* The small caption is an alias until 2027-01-01 (owner decision C233,
      2026-11-16): the caption on the line is already small (C188 (3)), so
@@ -193,10 +191,9 @@
     min-height: var(--sf-ui-1--control-height);
     min-block-size: var(--sf-ui-1--control-height);
     padding: var(--sf-0) var(--sf-space-1);
-    border: var(--sf-divider--thickness) solid var(--sf-outline);
+    border-width: var(--sf-divider--thickness);
+    border-style: solid;
     border-inline-end-width: 0;
-    background-color: var(--sf-transparent);
-    color: var(--sf-on-surface);
     font-family: inherit;
     font-size: var(--sf-text-size-1);
     line-height: var(--sf-text-height-1);
@@ -612,6 +609,50 @@
     outline-offset: var(--sf-focus--inset);
   }
   @media (forced-colors: active) {
+    .sf-divider-button.focus-visible {
+      outline: var(--sf-focus--width) solid Highlight;
+      outline-offset: var(--sf-focus--inset);
+      box-shadow: none;
+    }
+    .sf-divider-button:focus-visible {
+      outline: var(--sf-focus--width) solid Highlight;
+      outline-offset: var(--sf-focus--inset);
+      box-shadow: none;
+    }
+  }
+}
+@layer sf.paint {
+  .sf-divider {
+    color: var(--sf-divider-content--color);
+  }
+  .sf-divider-horizontal:empty {
+    background-color: var(--sf-divider--background-color);
+  }
+  .sf-divider-horizontal:not(:empty)::before,
+  .sf-divider-horizontal:not(:empty)::after {
+    background-color: var(--sf-divider--background-color);
+  }
+  .sf-divider-vertical {
+    background-color: var(--sf-divider--background-color);
+  }
+  .sf-divider-borders::after {
+    border-top-color: var(--sf-divider--border-color);
+    border-bottom-color: var(--sf-divider--border-color);
+    border-block-color: var(--sf-divider--border-color);
+  }
+  .sf-divider-content {
+    background-color: var(--sf-divider-content--background-color);
+    color: var(--sf-divider-content--color);
+  }
+  .sf-divider-content-border {
+    border: 0;
+  }
+  .sf-divider-button {
+    border-color: var(--sf-outline);
+    background-color: var(--sf-transparent);
+    color: var(--sf-on-surface);
+  }
+  @media (forced-colors: active) {
     .sf-divider-horizontal:empty,
     .sf-divider-horizontal:not(:empty)::before,
     .sf-divider-horizontal:not(:empty)::after,
@@ -622,16 +663,6 @@
     .sf-divider-content-border,
     .sf-divider-button {
       border-color: CanvasText;
-    }
-    .sf-divider-button.focus-visible {
-      outline: var(--sf-focus--width) solid Highlight;
-      outline-offset: var(--sf-focus--inset);
-      box-shadow: none;
-    }
-    .sf-divider-button:focus-visible {
-      outline: var(--sf-focus--width) solid Highlight;
-      outline-offset: var(--sf-focus--inset);
-      box-shadow: none;
     }
   }
 }

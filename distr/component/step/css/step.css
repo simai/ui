@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
  * Main SCSS file for including styles for component.
  *
@@ -36,7 +36,6 @@
     font-family: var(--sf-text--family);
     font-size: var(--sf-step--font-size);
     line-height: var(--sf-step--line-height);
-    color: var(--sf-on-surface);
   }
   /* Size 1 is named too: the template writes sf-step--size-1 (and the class
      markup in the docs), and a class the sheets never name is unknown to a
@@ -73,7 +72,6 @@
     gap: calc(var(--sf-a8) + var(--sf-step--ring) * 2);
     min-width: 0;
     min-inline-size: 0;
-    color: inherit;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-step .sf-step-control{
     text-align: left;
@@ -104,9 +102,8 @@
     margin: 0;
     padding: 0;
     border: 0;
-    background: none;
+    border-color: revert-layer;
     font: inherit;
-    color: inherit;
     text-align: start;
     cursor: pointer;
     border-radius: var(--sf-radius--ui);
@@ -135,8 +132,6 @@
     -webkit-font-feature-settings: "tnum";
             font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-steps-step-color, var(--sf-on-surface-variant));
   }
   .sf-step .sf-step-marker .sf-icon {
     /* Given through the icon's own variables: the icon sheet's size rule is
@@ -145,28 +140,16 @@
     --sf-icon--height: var(--sf-step--icon);
     --sf-icon--width: var(--sf-step--icon);
     --sf-icon--color: currentColor;
-    color: currentColor;
   }
   /* Numbers: an outlined circle; done and current filled, error in its colour. */
   .sf-steps--marker-number .sf-step .sf-step-marker {
-    border: var(--sf-px) solid var(--sf-outline);
-    border: var(--sf-px) solid var(--sf-steps-step-border-color, var(--sf-outline));
-  }
-  .sf-steps--marker-number .sf-step--state-done .sf-step-marker,
-  .sf-steps--marker-number .sf-step--state-current .sf-step-marker {
-    border-color: var(--sf-step--progress);
-    background-color: var(--sf-step--progress);
-    color: var(--sf-on-primary);
+    border-width: var(--sf-px);
+    border-style: solid;
   }
   .sf-steps--marker-number .sf-step--state-current .sf-step-marker {
     outline: var(--sf-step--ring) solid var(--sf-step--progress);
     outline: var(--sf-step--ring) solid var(--sf-steps-current-border-color, var(--sf-step--progress));
     outline-offset: var(--sf-step--ring);
-  }
-  .sf-steps--marker-number .sf-step--state-error .sf-step-marker {
-    border-color: var(--sf-error);
-    background-color: var(--sf-error);
-    color: var(--sf-on-error);
   }
   .sf-steps--marker-number .sf-step--state-skipped .sf-step-marker {
     border-style: dashed;
@@ -183,22 +166,13 @@
     block-size: var(--sf-step--dot);
     border-radius: var(--sf-radius-circle);
     border-radius: var(--sf-steps-step-radius, var(--sf-radius-circle));
-    border: var(--sf-step--ring) solid var(--sf-outline);
-    border: var(--sf-step--ring) solid var(--sf-steps-step-border-color, var(--sf-outline));
-  }
-  .sf-steps--marker-dot .sf-step--state-done .sf-step-marker::before,
-  .sf-steps--marker-dot .sf-step--state-current .sf-step-marker::before {
-    border-color: var(--sf-step--progress);
-    background-color: var(--sf-step--progress);
+    border-width: var(--sf-step--ring);
+    border-style: solid;
   }
   .sf-steps--marker-dot .sf-step--state-current .sf-step-marker::before {
     outline: var(--sf-step--ring) solid var(--sf-step--progress);
     outline: var(--sf-step--ring) solid var(--sf-steps-current-border-color, var(--sf-step--progress));
     outline-offset: var(--sf-step--ring);
-  }
-  .sf-steps--marker-dot .sf-step--state-error .sf-step-marker::before {
-    border-color: var(--sf-error);
-    background-color: var(--sf-error);
   }
   .sf-steps--marker-dot .sf-step--state-skipped .sf-step-marker::before {
     border-style: dashed;
@@ -208,9 +182,8 @@
      than the marker and off centre). */
   .sf-steps .sf-step--state-running .sf-step-marker {
     border: 0;
-    background: none;
+    border-color: revert-layer;
     outline: 0;
-    color: var(--sf-step--progress);
   }
   .sf-steps .sf-step--state-running .sf-step-marker::before {
     content: none;
@@ -225,7 +198,6 @@
     inline-size: var(--sf-step--marker);
     height: var(--sf-step--marker);
     block-size: var(--sf-step--marker);
-    color: inherit;
   }
   /* The label and its second line: whole words only, never broken inside a
      word (R185 ST-1). */
@@ -241,18 +213,79 @@
     -webkit-hyphens: manual;
         -ms-hyphens: manual;
             hyphens: manual;
-    color: var(--sf-on-surface);
   }
   .sf-step .sf-step-text {
     font-size: var(--sf-step--small-size);
     line-height: var(--sf-step--small-height);
-    color: var(--sf-on-surface-variant);
     word-wrap: normal;
     word-break: normal;
   }
   .sf-step.sf-step--state-current .sf-step-container,
   .sf-step.sf-step--state-running .sf-step-container {
     font-weight: var(--sf-font-weight-medium);
+  }
+}
+@layer sf.paint {
+  .sf-step {
+    color: var(--sf-on-surface);
+  }
+  .sf-step .sf-step-body {
+    color: inherit;
+  }
+  .sf-step .sf-step-control {
+    border: 0;
+    background: none;
+    color: inherit;
+  }
+  .sf-step .sf-step-marker {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-steps-step-color, var(--sf-on-surface-variant));
+  }
+  .sf-step .sf-step-marker .sf-icon {
+    color: currentColor;
+  }
+  .sf-steps--marker-number .sf-step .sf-step-marker {
+    border-color: var(--sf-outline);
+    border-color: var(--sf-steps-step-border-color, var(--sf-outline));
+  }
+  .sf-steps--marker-number .sf-step--state-done .sf-step-marker,
+  .sf-steps--marker-number .sf-step--state-current .sf-step-marker {
+    border-color: var(--sf-step--progress);
+    background-color: var(--sf-step--progress);
+    color: var(--sf-on-primary);
+  }
+  .sf-steps--marker-number .sf-step--state-error .sf-step-marker {
+    border-color: var(--sf-error);
+    background-color: var(--sf-error);
+    color: var(--sf-on-error);
+  }
+  .sf-steps--marker-dot .sf-step .sf-step-marker::before {
+    border-color: var(--sf-outline);
+    border-color: var(--sf-steps-step-border-color, var(--sf-outline));
+  }
+  .sf-steps--marker-dot .sf-step--state-done .sf-step-marker::before,
+  .sf-steps--marker-dot .sf-step--state-current .sf-step-marker::before {
+    border-color: var(--sf-step--progress);
+    background-color: var(--sf-step--progress);
+  }
+  .sf-steps--marker-dot .sf-step--state-error .sf-step-marker::before {
+    border-color: var(--sf-error);
+    background-color: var(--sf-error);
+  }
+  .sf-steps .sf-step--state-running .sf-step-marker {
+    border: 0;
+    background: none;
+    color: var(--sf-step--progress);
+  }
+  .sf-step .sf-step-marker sf-spinner,
+  .sf-step .sf-step-marker .sf-loader-container {
+    color: inherit;
+  }
+  .sf-step .sf-step-container {
+    color: var(--sf-on-surface);
+  }
+  .sf-step .sf-step-text {
+    color: var(--sf-on-surface-variant);
   }
   .sf-step.sf-step--state-ahead .sf-step-container,
   .sf-step.sf-step--state-skipped .sf-step-container {
@@ -331,7 +364,7 @@
     padding-block: calc(var(--sf-step--ring) * 2);
     margin: 0;
     border: 0;
-    background: none;
+    border-color: revert-layer;
     font: inherit;
     font-family: var(--sf-text--family);
     font-size: var(--sf-step--font-size);
@@ -372,7 +405,7 @@
     padding-block: calc(var(--sf-step--ring) * 2);
     margin: 0;
     border: 0;
-    background: none;
+    border-color: revert-layer;
     font: inherit;
     font-family: var(--sf-text--family);
     font-size: var(--sf-step--font-size);
@@ -413,7 +446,7 @@
     padding-block: calc(var(--sf-step--ring) * 2);
     margin: 0;
     border: 0;
-    background: none;
+    border-color: revert-layer;
     font: inherit;
     font-family: var(--sf-text--family);
     font-size: var(--sf-step--font-size);
@@ -445,8 +478,8 @@
     inline-size: var(--sf-step--marker);
     height: var(--sf-step--marker);
     block-size: var(--sf-step--marker);
-    border: var(--sf-px) solid var(--sf-outline);
-    border: var(--sf-px) solid var(--sf-steps-step-border-color, var(--sf-outline));
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-radius-circle);
     border-radius: var(--sf-steps-step-radius, var(--sf-radius-circle));
     font-size: var(--sf-step--small-size);
@@ -454,8 +487,6 @@
     -webkit-font-feature-settings: "tnum";
             font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-steps-step-color, var(--sf-on-surface-variant));
   }
   .sf-step.sf-step--stage-completed:not(:has(> .sf-icon))::before {
     content: counter(sf-step-legacy);
@@ -469,8 +500,8 @@
     inline-size: var(--sf-step--marker);
     height: var(--sf-step--marker);
     block-size: var(--sf-step--marker);
-    border: var(--sf-px) solid var(--sf-outline);
-    border: var(--sf-px) solid var(--sf-steps-step-border-color, var(--sf-outline));
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-radius-circle);
     border-radius: var(--sf-steps-step-radius, var(--sf-radius-circle));
     font-size: var(--sf-step--small-size);
@@ -478,8 +509,6 @@
     -webkit-font-feature-settings: "tnum";
             font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-steps-step-color, var(--sf-on-surface-variant));
   }
   .sf-step.sf-step--stage-error:not(:has(> .sf-icon))::before {
     content: counter(sf-step-legacy);
@@ -493,8 +522,8 @@
     inline-size: var(--sf-step--marker);
     height: var(--sf-step--marker);
     block-size: var(--sf-step--marker);
-    border: var(--sf-px) solid var(--sf-outline);
-    border: var(--sf-px) solid var(--sf-steps-step-border-color, var(--sf-outline));
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-radius-circle);
     border-radius: var(--sf-steps-step-radius, var(--sf-radius-circle));
     font-size: var(--sf-step--small-size);
@@ -502,21 +531,13 @@
     -webkit-font-feature-settings: "tnum";
             font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-steps-step-color, var(--sf-on-surface-variant));
   }
   .sf-step.sf-step--stage-default.selected:not(:has(> .sf-icon))::before {
-    border-color: var(--sf-step--progress);
-    background-color: var(--sf-step--progress);
-    color: var(--sf-on-primary);
     outline: var(--sf-step--ring) solid var(--sf-step--progress);
     outline: var(--sf-step--ring) solid var(--sf-steps-current-border-color, var(--sf-step--progress));
     outline-offset: var(--sf-step--ring);
   }
   .sf-step.sf-step--stage-default[aria-current=step]:not(:has(> .sf-icon))::before {
-    border-color: var(--sf-step--progress);
-    background-color: var(--sf-step--progress);
-    color: var(--sf-on-primary);
     outline: var(--sf-step--ring) solid var(--sf-step--progress);
     outline: var(--sf-step--ring) solid var(--sf-steps-current-border-color, var(--sf-step--progress));
     outline-offset: var(--sf-step--ring);
@@ -552,23 +573,16 @@
   /* The label: ahead in the variant ink, current medium, done on-surface,
      error in the error colour. */
   .sf-step.sf-step--stage-default > .sf-step-container {
-    color: var(--sf-on-surface);
     word-wrap: normal;
     word-break: normal;
   }
   .sf-step.sf-step--stage-completed > .sf-step-container {
-    color: var(--sf-on-surface);
     word-wrap: normal;
     word-break: normal;
   }
   .sf-step.sf-step--stage-error > .sf-step-container {
-    color: var(--sf-on-surface);
     word-wrap: normal;
     word-break: normal;
-  }
-  .sf-step.sf-step--stage-default:not(.selected):not([aria-current=step]) > .sf-step-container {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-steps-step-color, var(--sf-on-surface-variant));
   }
   .sf-step.sf-step--stage-default.selected > .sf-step-container {
     font-weight: var(--sf-weight--medium);
@@ -576,91 +590,58 @@
   .sf-step.sf-step--stage-default[aria-current=step] > .sf-step-container {
     font-weight: var(--sf-weight--medium);
   }
-  .sf-step.sf-step--stage-error > .sf-step-container {
-    color: var(--sf-error);
-  }
   .sf-step.sf-step--stage-default.disabled > .sf-step-container {
     --sf-icon--color: var(--sf-on-surface-disabled);
-    color: var(--sf-on-surface-disabled);
   }
   .sf-step.sf-step--stage-default.disabled > .sf-icon {
     --sf-icon--color: var(--sf-on-surface-disabled);
-    color: var(--sf-on-surface-disabled);
   }
   .sf-step.sf-step--stage-default[aria-disabled=true] > .sf-step-container {
     --sf-icon--color: var(--sf-on-surface-disabled);
-    color: var(--sf-on-surface-disabled);
   }
   .sf-step.sf-step--stage-default[aria-disabled=true] > .sf-icon {
     --sf-icon--color: var(--sf-on-surface-disabled);
-    color: var(--sf-on-surface-disabled);
   }
   .sf-step.sf-step--stage-completed.disabled > .sf-step-container {
     --sf-icon--color: var(--sf-on-surface-disabled);
-    color: var(--sf-on-surface-disabled);
   }
   .sf-step.sf-step--stage-completed.disabled > .sf-icon {
     --sf-icon--color: var(--sf-on-surface-disabled);
-    color: var(--sf-on-surface-disabled);
   }
   .sf-step.sf-step--stage-completed[aria-disabled=true] > .sf-step-container {
     --sf-icon--color: var(--sf-on-surface-disabled);
-    color: var(--sf-on-surface-disabled);
   }
   .sf-step.sf-step--stage-completed[aria-disabled=true] > .sf-icon {
     --sf-icon--color: var(--sf-on-surface-disabled);
-    color: var(--sf-on-surface-disabled);
   }
   .sf-step.sf-step--stage-error.disabled > .sf-step-container {
     --sf-icon--color: var(--sf-on-surface-disabled);
-    color: var(--sf-on-surface-disabled);
   }
   .sf-step.sf-step--stage-error.disabled > .sf-icon {
     --sf-icon--color: var(--sf-on-surface-disabled);
-    color: var(--sf-on-surface-disabled);
   }
   .sf-step.sf-step--stage-error[aria-disabled=true] > .sf-step-container {
     --sf-icon--color: var(--sf-on-surface-disabled);
-    color: var(--sf-on-surface-disabled);
   }
   .sf-step.sf-step--stage-error[aria-disabled=true] > .sf-icon {
     --sf-icon--color: var(--sf-on-surface-disabled);
-    color: var(--sf-on-surface-disabled);
   }
   .sf-step.sf-step--stage-default.disabled:not(:has(> .sf-icon))::before {
-    border-color: var(--sf-outline-disabled);
-    background-color: transparent;
-    color: var(--sf-on-surface-disabled);
     outline: 0;
   }
   .sf-step.sf-step--stage-default[aria-disabled=true]:not(:has(> .sf-icon))::before {
-    border-color: var(--sf-outline-disabled);
-    background-color: transparent;
-    color: var(--sf-on-surface-disabled);
     outline: 0;
   }
   .sf-step.sf-step--stage-completed.disabled:not(:has(> .sf-icon))::before {
-    border-color: var(--sf-outline-disabled);
-    background-color: transparent;
-    color: var(--sf-on-surface-disabled);
     outline: 0;
   }
   .sf-step.sf-step--stage-completed[aria-disabled=true]:not(:has(> .sf-icon))::before {
-    border-color: var(--sf-outline-disabled);
-    background-color: transparent;
-    color: var(--sf-on-surface-disabled);
     outline: 0;
   }
   .sf-step.sf-step--stage-error.disabled:not(:has(> .sf-icon))::before {
-    border-color: var(--sf-outline-disabled);
-    background-color: transparent;
-    color: var(--sf-on-surface-disabled);
     outline: 0;
   }
   .sf-step.sf-step--stage-error[aria-disabled=true]:not(:has(> .sf-icon))::before {
-    border-color: var(--sf-outline-disabled);
-    background-color: transparent;
-    color: var(--sf-on-surface-disabled);
     outline: 0;
   }
   /* The «›» between steps becomes the line (C101: no «›»): 1 px outline-variant,
@@ -677,17 +658,147 @@
     margin-right: var(--sf-space-1\/3);
     margin-inline: var(--sf-space-1\/3);
     overflow: hidden;
+  }
+  .sf-steps .sf-step--stage-completed + .sf-steps-separator--directional {
+    --sf-icon--height: calc(var(--sf-px) * 2);
+  }
+  .sf-steps :has(> .sf-step--stage-completed) + .sf-steps-separator--directional {
+    --sf-icon--height: calc(var(--sf-px) * 2);
+  }
+}
+@layer sf.paint {
+  .sf-step.sf-step--stage-default {
+    border: 0;
+    background: none;
+  }
+  .sf-step.sf-step--stage-completed {
+    border: 0;
+    background: none;
+  }
+  .sf-step.sf-step--stage-error {
+    border: 0;
+    background: none;
+  }
+  .sf-step.sf-step--stage-default:not(:has(> .sf-icon))::before {
+    border-color: var(--sf-outline);
+    border-color: var(--sf-steps-step-border-color, var(--sf-outline));
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-steps-step-color, var(--sf-on-surface-variant));
+  }
+  .sf-step.sf-step--stage-completed:not(:has(> .sf-icon))::before {
+    border-color: var(--sf-outline);
+    border-color: var(--sf-steps-step-border-color, var(--sf-outline));
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-steps-step-color, var(--sf-on-surface-variant));
+  }
+  .sf-step.sf-step--stage-error:not(:has(> .sf-icon))::before {
+    border-color: var(--sf-outline);
+    border-color: var(--sf-steps-step-border-color, var(--sf-outline));
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-steps-step-color, var(--sf-on-surface-variant));
+  }
+  .sf-step.sf-step--stage-default.selected:not(:has(> .sf-icon))::before {
+    border-color: var(--sf-step--progress);
+    background-color: var(--sf-step--progress);
+    color: var(--sf-on-primary);
+  }
+  .sf-step.sf-step--stage-default[aria-current=step]:not(:has(> .sf-icon))::before {
+    border-color: var(--sf-step--progress);
+    background-color: var(--sf-step--progress);
+    color: var(--sf-on-primary);
+  }
+  .sf-step.sf-step--stage-default > .sf-step-container {
+    color: var(--sf-on-surface);
+  }
+  .sf-step.sf-step--stage-completed > .sf-step-container {
+    color: var(--sf-on-surface);
+  }
+  .sf-step.sf-step--stage-error > .sf-step-container {
+    color: var(--sf-on-surface);
+  }
+  .sf-step.sf-step--stage-default:not(.selected):not([aria-current=step]) > .sf-step-container {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-steps-step-color, var(--sf-on-surface-variant));
+  }
+  .sf-step.sf-step--stage-error > .sf-step-container {
+    color: var(--sf-error);
+  }
+  .sf-step.sf-step--stage-default.disabled > .sf-step-container {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-default.disabled > .sf-icon {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-default[aria-disabled=true] > .sf-step-container {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-default[aria-disabled=true] > .sf-icon {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-completed.disabled > .sf-step-container {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-completed.disabled > .sf-icon {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-completed[aria-disabled=true] > .sf-step-container {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-completed[aria-disabled=true] > .sf-icon {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-error.disabled > .sf-step-container {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-error.disabled > .sf-icon {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-error[aria-disabled=true] > .sf-step-container {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-error[aria-disabled=true] > .sf-icon {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-default.disabled:not(:has(> .sf-icon))::before {
+    border-color: var(--sf-outline-disabled);
+    background-color: transparent;
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-default[aria-disabled=true]:not(:has(> .sf-icon))::before {
+    border-color: var(--sf-outline-disabled);
+    background-color: transparent;
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-completed.disabled:not(:has(> .sf-icon))::before {
+    border-color: var(--sf-outline-disabled);
+    background-color: transparent;
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-completed[aria-disabled=true]:not(:has(> .sf-icon))::before {
+    border-color: var(--sf-outline-disabled);
+    background-color: transparent;
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-error.disabled:not(:has(> .sf-icon))::before {
+    border-color: var(--sf-outline-disabled);
+    background-color: transparent;
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-step.sf-step--stage-error[aria-disabled=true]:not(:has(> .sf-icon))::before {
+    border-color: var(--sf-outline-disabled);
+    background-color: transparent;
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-steps .sf-steps-separator--directional {
     color: transparent;
     background-color: var(--sf-outline-variant);
     background-color: var(--sf-steps-separator-color, var(--sf-outline-variant));
   }
   .sf-steps .sf-step--stage-completed + .sf-steps-separator--directional {
-    --sf-icon--height: calc(var(--sf-px) * 2);
     background-color: var(--sf-primary);
     background-color: var(--sf-step--progress, var(--sf-primary));
   }
   .sf-steps :has(> .sf-step--stage-completed) + .sf-steps-separator--directional {
-    --sf-icon--height: calc(var(--sf-px) * 2);
     background-color: var(--sf-primary);
     background-color: var(--sf-step--progress, var(--sf-primary));
   }
@@ -814,8 +925,6 @@
     min-inline-size: 0;
     max-width: 100%;
     max-inline-size: 100%;
-    background-color: transparent;
-    background-color: var(--sf-steps--background-color, transparent);
   }
   .sf-steps .sf-steps-container {
     list-style: none;
@@ -903,8 +1012,6 @@
     min-inline-size: var(--sf-space-1);
     height: var(--sf-px);
     block-size: var(--sf-px);
-    background-color: var(--sf-outline-variant);
-    background-color: var(--sf-steps-separator-color, var(--sf-outline-variant));
   }
   .sf-steps[data-sf-measure] .sf-step:not(:last-child)::after {
     content: "";
@@ -913,18 +1020,14 @@
     min-inline-size: var(--sf-space-1);
     height: var(--sf-px);
     block-size: var(--sf-px);
-    background-color: var(--sf-outline-variant);
-    background-color: var(--sf-steps-separator-color, var(--sf-outline-variant));
   }
   .sf-steps.sf-steps--layout-row .sf-step.sf-step--passed:not(:last-child)::after {
     height: calc(var(--sf-px) * 2);
     block-size: calc(var(--sf-px) * 2);
-    background-color: var(--sf-step--progress);
   }
   .sf-steps[data-sf-measure] .sf-step.sf-step--passed:not(:last-child)::after {
     height: calc(var(--sf-px) * 2);
     block-size: calc(var(--sf-px) * 2);
-    background-color: var(--sf-step--progress);
   }
   .sf-steps.sf-steps--layout-row .sf-step-control {
     min-height: var(--sf-ui-1\/2--control-height);
@@ -1032,8 +1135,6 @@
     inset-inline-start: calc((var(--sf-step--marker) - var(--sf-px)) / 2);
     width: var(--sf-px);
     inline-size: var(--sf-px);
-    background-color: var(--sf-outline-variant);
-    background-color: var(--sf-steps-separator-color, var(--sf-outline-variant));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-steps.sf-steps--layout-column:not([data-sf-measure]) .sf-step.sf-step--passed:not(:last-child)::before{
     left: calc((var(--sf-step--marker) - var(--sf-px) * 2) / 2);
@@ -1061,7 +1162,6 @@
     width: calc(var(--sf-px) * 2);
     inline-size: calc(var(--sf-px) * 2);
     inset-inline-start: calc((var(--sf-step--marker) - var(--sf-px) * 2) / 2);
-    background-color: var(--sf-step--progress);
   }
   /* How far a marker reaches on the rail: a number is its box; a dot is the
      dot and its ring. */
@@ -1096,7 +1196,6 @@
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1);
     line-height: var(--sf-text-height-1);
-    color: var(--sf-on-surface);
     word-wrap: normal;
   }
   /* Size 1 is named too (docs batch B, FW-B-8): the template writes
@@ -1110,7 +1209,6 @@
     line-height: var(--sf-text-height-1\/2);
   }
   .sf-steps .sf-steps-count-position {
-    color: var(--sf-on-surface-variant);
     -webkit-font-feature-settings: "tnum";
             font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
@@ -1118,6 +1216,39 @@
   }
   .sf-steps .sf-steps-count-label {
     font-weight: var(--sf-font-weight-medium);
+  }
+}
+@layer sf.paint {
+  .sf-steps {
+    background-color: transparent;
+    background-color: var(--sf-steps--background-color, transparent);
+  }
+  .sf-steps.sf-steps--layout-row .sf-step:not(:last-child)::after {
+    background-color: var(--sf-outline-variant);
+    background-color: var(--sf-steps-separator-color, var(--sf-outline-variant));
+  }
+  .sf-steps[data-sf-measure] .sf-step:not(:last-child)::after {
+    background-color: var(--sf-outline-variant);
+    background-color: var(--sf-steps-separator-color, var(--sf-outline-variant));
+  }
+  .sf-steps.sf-steps--layout-row .sf-step.sf-step--passed:not(:last-child)::after {
+    background-color: var(--sf-step--progress);
+  }
+  .sf-steps[data-sf-measure] .sf-step.sf-step--passed:not(:last-child)::after {
+    background-color: var(--sf-step--progress);
+  }
+  .sf-steps.sf-steps--layout-column:not([data-sf-measure]) .sf-step:not(:last-child)::before {
+    background-color: var(--sf-outline-variant);
+    background-color: var(--sf-steps-separator-color, var(--sf-outline-variant));
+  }
+  .sf-steps.sf-steps--layout-column:not([data-sf-measure]) .sf-step.sf-step--passed:not(:last-child)::before {
+    background-color: var(--sf-step--progress);
+  }
+  .sf-steps .sf-steps-count-line {
+    color: var(--sf-on-surface);
+  }
+  .sf-steps .sf-steps-count-position {
+    color: var(--sf-on-surface-variant);
   }
   .sf-steps .sf-steps-count-label.sf-step--state-error {
     color: var(--sf-error);

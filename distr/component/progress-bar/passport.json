@@ -3,18 +3,21 @@
   "schema_version": 1,
   "id": "component.progress-bar",
   "kind": "component",
-  "version": "1.4.2",
+  "version": "1.5.1",
   "owner": "simai/ui-source",
   "files": [
     "src/component/progress-bar/index.js",
     "src/component/progress-bar/js/_progressbar.js",
     "src/component/progress-bar/js/index.js",
+    "src/component/progress-bar/lang/en.json",
+    "src/component/progress-bar/lang/index.mjs",
+    "src/component/progress-bar/lang/ru.json",
     "src/component/progress-bar/rule.js",
     "src/component/progress-bar/scss/_css__progressbar.scss",
     "src/component/progress-bar/scss/_css__progressbar_custom.scss",
     "src/component/progress-bar/scss/index.scss"
   ],
-  "content_sha256": "971dded24bf9b9ec7e0a0ef4d8a3974bcbea0ee410a4a6b6fcff2ffc7302a5c6",
+  "content_sha256": "e2ee66fd4e4517f232af594ccb3acaf7856972f8f22d53888ae5dde0a703d60f",
   "dependencies": [
     {
       "id": "core.runtime",

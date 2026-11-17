@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   code,
   .sf-doc-code,
@@ -7,7 +7,6 @@
   }
   .sf-doc-lead,
   .t-lead {
-    color: var(--sf-on-surface-variant);
     font-size: var(--sf-text-large--size);
     line-height: var(--sf-text-large--height);
   }
@@ -39,9 +38,9 @@
             margin-block-end: 0;
     padding: var(--sf-space-3);
     word-wrap: anywhere;
-    border: var(--sf-px) solid var(--sf-outline-variant);
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-radius--surface);
-    color: var(--sf-on-surface);
   }
   .sf-doc-source:not(.sf-code-surface):not(.sf-code-surface__scroll) {
     min-width: 0;
@@ -53,15 +52,11 @@
             margin-block-end: var(--sf-text--space-bottom);
     padding: var(--sf-space-1);
     overflow: auto;
-    background-color: var(--sf-surface-container);
-    background-color: var(--sf-highlight-background-color, var(--sf-surface-container));
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
-    border: var(--sf-px) solid var(--sf-outline-variant);
-    border: var(--sf-highlight-border-width, var(--sf-px)) solid var(--sf-highlight-border-color, var(--sf-outline-variant));
+    border-width: var(--sf-px);
+    border-width: var(--sf-highlight-border-width, var(--sf-px));
+    border-style: solid;
     border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-highlight-radius, var(--sf-radius--surface));
-    color: var(--sf-on-surface);
-    color: var(--sf-highlight-color, var(--sf-on-surface));
     -moz-tab-size: 2;
       -o-tab-size: 2;
          tab-size: 2;
@@ -76,28 +71,22 @@
             margin-block-end: var(--sf-text--space-bottom);
     padding: var(--sf-space-1);
     overflow: auto;
-    background-color: var(--sf-surface-container);
-    background-color: var(--sf-highlight-background-color, var(--sf-surface-container));
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
-    border: var(--sf-px) solid var(--sf-outline-variant);
-    border: var(--sf-highlight-border-width, var(--sf-px)) solid var(--sf-highlight-border-color, var(--sf-outline-variant));
+    border-width: var(--sf-px);
+    border-width: var(--sf-highlight-border-width, var(--sf-px));
+    border-style: solid;
     border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-highlight-radius, var(--sf-radius--surface));
-    color: var(--sf-on-surface);
-    color: var(--sf-highlight-color, var(--sf-on-surface));
     -moz-tab-size: 2;
       -o-tab-size: 2;
          tab-size: 2;
   }
   .sf-doc-source:not(.sf-code-surface):not(.sf-code-surface__scroll) code {
-    color: inherit;
     font-family: var(--sf-mono);
     font-family: var(--sf-code-font-family, var(--sf-code--font-family, var(--sf-mono)));
     font-size: var(--sf-text-size-1\/2);
     line-height: var(--sf-text-height-1\/2);
   }
   .source:not(.sf-code-surface):not(.sf-code-surface__scroll) code {
-    color: inherit;
     font-family: var(--sf-mono);
     font-family: var(--sf-code-font-family, var(--sf-code--font-family, var(--sf-mono)));
     font-size: var(--sf-text-size-1\/2);
@@ -856,7 +845,6 @@
   }
   .sf-doc-checkerboard,
   .bg-checkered {
-    background-color: var(--sf-surface-page);
     background-image: conic-gradient(var(--sf-surface-area) 25%, var(--sf-transparent) 0,var(--sf-transparent) 50%, var(--sf-surface-area) 0,var(--sf-surface-area) 75%, var(--sf-transparent) 0);
     background-image: conic-gradient(var(--sf-surface-area) 25%, var(--sf-transparent) 0 50%, var(--sf-surface-area) 0 75%, var(--sf-transparent) 0);
     background-size: var(--sf-space-2) var(--sf-space-2);
@@ -866,6 +854,54 @@
   }
   .hljs-strong {
     font-weight: bold;
+  }
+  @media (forced-colors: active) {
+    .sf-doc-stripes,
+    .bg-stripes,
+    .sf-doc-checkerboard,
+    .bg-checkered {
+      border-width: var(--sf-px);
+      border-style: solid;
+    }
+  }
+}
+@layer sf.paint {
+  .sf-doc-lead,
+  .t-lead {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-doc-example,
+  .example {
+    border-color: var(--sf-outline-variant);
+    color: var(--sf-on-surface);
+  }
+  .sf-doc-source:not(.sf-code-surface):not(.sf-code-surface__scroll) {
+    background-color: var(--sf-surface-container);
+    background-color: var(--sf-highlight-background-color, var(--sf-surface-container));
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-highlight-border-color, var(--sf-outline-variant));
+    color: var(--sf-on-surface);
+    color: var(--sf-highlight-color, var(--sf-on-surface));
+  }
+  .source:not(.sf-code-surface):not(.sf-code-surface__scroll) {
+    background-color: var(--sf-surface-container);
+    background-color: var(--sf-highlight-background-color, var(--sf-surface-container));
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-highlight-border-color, var(--sf-outline-variant));
+    color: var(--sf-on-surface);
+    color: var(--sf-highlight-color, var(--sf-on-surface));
+  }
+  .sf-doc-source:not(.sf-code-surface):not(.sf-code-surface__scroll) code {
+    color: inherit;
+  }
+  .source:not(.sf-code-surface):not(.sf-code-surface__scroll) code {
+    color: inherit;
+  }
+  .sf-doc-checkerboard,
+  .bg-checkered {
+    background-color: var(--sf-surface-page);
   }
   @media (forced-colors: active) {
     .sf-doc-source:not(.sf-code-surface):not(.sf-code-surface__scroll) {
@@ -883,7 +919,7 @@
     .sf-doc-checkerboard,
     .bg-checkered {
       background: Canvas;
-      border: var(--sf-px) solid CanvasText;
+      border-color: CanvasText;
     }
   }
 }

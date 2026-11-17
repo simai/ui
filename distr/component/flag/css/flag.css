@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
 */
@@ -65,6 +65,8 @@
     inline-size: var(--sf-flag--height);
     --sf-flag--radius: var(--sf-flag-radius, var(--sf-radius-circle));
   }
+}
+@layer sf.paint {
   /* While the file is still coming, the box holds its place instead of letting
      the line jump. */
   .sf-flag:not(:has(img, svg)) {

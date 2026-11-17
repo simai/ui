@@ -36,8 +36,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_slider_js_slide_content__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("4130d35a368a");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("a2bebed909d0");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("755770a8ce5c");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("281c6761571f");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("74650ab742c0");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d17c8e1cf358");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _js_viewer_js__WEBPACK_IMPORTED_MODULE_4__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _js_viewer_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -52,16 +51,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-}; // sf-gallery 1.3.0 from its component.json (standard simai.smart-component
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-gallery 1.3.0 from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4, §8), owner decision C150 (2026-11-14): a set of pictures is a
 // grid of picture tiles by default, or the main picture with thumbnails, or
 // masonry (C150 (11): each picture in its own shape, into the shortest
@@ -73,10 +67,7 @@ const ru = {
 
 const GalleryElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
 });
@@ -1100,8 +1091,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("43090d1c8307");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("281c6761571f");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("74650ab742c0");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d17c8e1cf358");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_1__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
@@ -1135,13 +1125,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // global first (memory: bundles each carry their own module copy), so a second
 // copy never draws a second viewer.
 
+ // English built in; Russian and the rest from a language file (C282).
 
 
-
-const WORDS = {
-  en: _lang_en_json__WEBPACK_IMPORTED_MODULE_2__.runtime || {},
-  ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_3__.runtime || {}
-};
 const VIDEO = /\.(?:mp4|m4v|webm|ogv|ogg|mov)(?:[?#]|$)/iu;
 const PDF = /\.pdf(?:[?#]|$)/iu; // A move shorter than this is a press, not a swipe (CSS px).
 
@@ -1156,7 +1142,7 @@ const DOUBLE_TAP_SLOP = 24; // The zoom of a picture already shown at its own pi
 const MIN_ZOOM_STEP = 2;
 
 function word(key, node, vars) {
-  return (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(WORDS, key, node || globalThis.document?.documentElement, {
+  return (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(_lang_index_mjs__WEBPACK_IMPORTED_MODULE_2__["default"], key, node || globalThis.document?.documentElement, {
     component: 'sf-gallery',
     source: 'ru',
     vars
@@ -1840,6 +1826,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "d17c8e1cf358"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("281c6761571f");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "755770a8ce5c"
 (module) {
 
@@ -1850,7 +1858,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-galle
 /***/ "a2bebed909d0"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.gallery","tag":"sf-gallery","version":"1.4.3","kind":"leaf","settings":{"layout":{"type":"enum","values":["grid","thumbnails","masonry"],"default":"grid"},"tile-size":{"type":"enum","values":["s","m","l"],"default":"m"},"ratio":{"type":"enum","values":["1/1","4/3","16/9","auto"],"default":"1/1"},"caption":{"type":"enum","values":["viewer","under"],"default":"viewer"},"selection":{"type":"enum","values":["none","many"],"default":"none"},"heading":{"type":"string","default-from":"runtime.heading"},"inline":{"type":"boolean","default":true},"lightbox":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"modal-id":{"type":"id","default":""},"text":{"type":"string","default":""},"arrows":{"type":"boolean","default":true},"dots":{"type":"boolean","default":true},"thumbs":{"type":"boolean","default":true},"space-between":{"type":"number","default":null},"speed":{"type":"number","default":450},"button-type":{"type":"string","default":"secondary"},"button-size":{"type":"string","default":"1"},"dots-type":{"type":"string","default":"primary-container"},"dots-size":{"type":"string","default":"2"},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"slide-class":{"type":"string","default":""},"inline-class":{"type":"string","default":""},"lightbox-class":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","top","bottom"],"default":"center"},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"boolean","default":false},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"current":{"type":"number","default":1,"integer":true,"min":1},"selected":{"type":"list","default":[],"of":"number"}},"events":{"change":{"carries":{"previous":"number","current":"number","total":"number","from":{"type":"enum","values":["api","inline","lightbox"]}}},"opened":{"carries":{"current":"number","total":"number"}},"closed":{"carries":{"current":"number","total":"number"}},"select":{"carries":{"selected":{"type":"list","of":"number"},"count":"number","total":"number"}}},"actions":{"open":{"with":{"index":{"type":"number","optional":true}}},"close":{},"toggle":{"with":{"index":{"type":"number","optional":true}}},"go-to":{"with":{"index":"number"}},"next":{},"prev":{},"clear-selection":{}},"css-variables":{"--sf-gallery-min-inline-size":{"type":"length","state":"default"},"--sf-gallery-object-fit":{"type":"keyword","state":"default"},"--sf-gallery-media-max-height":{"type":"length","state":"default"},"--sf-gallery-slide-min-height":{"type":"length","state":"default"},"--sf-gallery-caption-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.gallery","tag":"sf-gallery","version":"1.5.2","kind":"leaf","settings":{"layout":{"type":"enum","values":["grid","thumbnails","masonry"],"default":"grid"},"tile-size":{"type":"enum","values":["s","m","l"],"default":"m"},"ratio":{"type":"enum","values":["1/1","4/3","16/9","auto"],"default":"1/1"},"caption":{"type":"enum","values":["viewer","under"],"default":"viewer"},"selection":{"type":"enum","values":["none","many"],"default":"none"},"heading":{"type":"string","default-from":"runtime.heading"},"inline":{"type":"boolean","default":true},"lightbox":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"modal-id":{"type":"id","default":""},"text":{"type":"string","default":""},"arrows":{"type":"boolean","default":true},"dots":{"type":"boolean","default":true},"thumbs":{"type":"boolean","default":true},"space-between":{"type":"number","default":null},"speed":{"type":"number","default":450},"button-type":{"type":"string","default":"secondary"},"button-size":{"type":"string","default":"1"},"dots-type":{"type":"string","default":"primary-container"},"dots-size":{"type":"string","default":"2"},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"slide-class":{"type":"string","default":""},"inline-class":{"type":"string","default":""},"lightbox-class":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","top","bottom"],"default":"center"},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"boolean","default":false},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"current":{"type":"number","default":1,"integer":true,"min":1},"selected":{"type":"list","default":[],"of":"number"}},"events":{"change":{"carries":{"previous":"number","current":"number","total":"number","from":{"type":"enum","values":["api","inline","lightbox"]}}},"opened":{"carries":{"current":"number","total":"number"}},"closed":{"carries":{"current":"number","total":"number"}},"select":{"carries":{"selected":{"type":"list","of":"number"},"count":"number","total":"number"}}},"actions":{"open":{"with":{"index":{"type":"number","optional":true}}},"close":{},"toggle":{"with":{"index":{"type":"number","optional":true}}},"go-to":{"with":{"index":"number"}},"next":{},"prev":{},"clear-selection":{}},"css-variables":{"--sf-gallery-min-inline-size":{"type":"length","state":"default"},"--sf-gallery-object-fit":{"type":"keyword","state":"default"},"--sf-gallery-media-max-height":{"type":"length","state":"default"},"--sf-gallery-slide-min-height":{"type":"length","state":"default"},"--sf-gallery-caption-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
@@ -1858,13 +1866,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.gallery","tag":"sf-galler
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Gallery","runtime":{"heading":"Gallery","open-picture":"Open picture {n} of {total}","open-picture-named":"Open picture {n} of {total}: {alt}","show-picture":"Show picture {n}","show-picture-named":"Show picture {n}: {alt}","pick-picture":"Select picture {n}","pick-picture-named":"Select picture {n}: {alt}","count":"{n} / {total}","selection":"Selection","selected-count":"{count} selected","clear-selection":"Clear selection","viewer-label":"Viewer","viewer-count":"{n} / {total}","viewer-count-words":"{n} of {total}","viewer-zoom-in":"Zoom in","viewer-zoom-out":"Zoom out","viewer-close":"Close","viewer-previous":"Previous picture","viewer-next":"Next picture","viewer-download":"Download {name}","viewer-open-tab":"Open in a new tab","viewer-document":"Document"}}');
-
-/***/ },
-
-/***/ "74650ab742c0"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Галерея","runtime":{"heading":"Галерея","open-picture":"Открыть фото {n} из {total}","open-picture-named":"Открыть фото {n} из {total}: {alt}","show-picture":"Показать фото {n}","show-picture-named":"Показать фото {n}: {alt}","pick-picture":"Выбрать фото {n}","pick-picture-named":"Выбрать фото {n}: {alt}","count":"{n} / {total}","selection":"Выбор","selected-count":"Выбрано {count}","clear-selection":"Снять выбор","viewer-label":"Просмотр","viewer-count":"{n} / {total}","viewer-count-words":"{n} из {total}","viewer-zoom-in":"Увеличить","viewer-zoom-out":"Уменьшить","viewer-close":"Закрыть","viewer-previous":"Предыдущее фото","viewer-next":"Следующее фото","viewer-download":"Скачать {name}","viewer-open-tab":"Открыть в новой вкладке","viewer-document":"Документ"}}');
 
 /***/ }
 

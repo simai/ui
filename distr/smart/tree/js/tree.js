@@ -570,10 +570,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("d9bd94b9a408");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("fb5cbd0ee7de");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d31d60a77b96");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("11ff8dfc051b");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("b7834e0e48fd");
-/* harmony import */ var _tree_item_lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("873f949da61a");
-/* harmony import */ var _tree_item_lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("73a6f336a620");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("9bfaaf7443b9");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -605,24 +602,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
-
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-};
-const itemEn = {
-  runtime: _tree_item_lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
-};
-const itemRu = {
-  runtime: _tree_item_lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
-}; // What a list writes when its rows are dragged: {ids, source}.
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// What a list writes when its rows are dragged: {ids, source}.
 
 const RECORDS_TYPE = 'application/x-sf-records+json'; // Quality profile gate 17 (window_from_entries): a tree that may hold more
 // entries than this draws only those in view.
@@ -699,19 +683,10 @@ function normalizeEntry(item, place) {
 
 const TreeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  // The chevron's names are sf-tree-item's words.
-  lang: {
-    en: { ...en,
-      runtime: { ...itemEn.runtime,
-        ...en.runtime
-      }
-    },
-    ru: { ...ru,
-      runtime: { ...itemRu.runtime,
-        ...ru.runtime
-      }
-    }
-  },
+  // The chevron's names (open-label, close-label) are the tree's own words
+  // too, as sf-tree-item says them: a language file registers words under
+  // one component's name (C282).
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__,
   actions: {
@@ -2133,24 +2108,32 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "9bfaaf7443b9"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("11ff8dfc051b");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "9bbeb11fb966"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"$comment":"The kinds of an entry and the extensions of a name that say them: one map for every SIMAI Framework part that shows a file or a page by its type -- sf-tree\'s rows today; sf-file-upload, sf-file-download and sf-view\'s file cells to follow; Docara\'s static tree, Larena\'s files and ui-mail read the same words (owner decision C102, 2026-11-12; research ui-control control/research/2026-11-12-tree.md section 7 items 2-3). A kind is one of twelve words; its icon is a Material Symbols name of the Framework\'s icon font. An extension is matched on the name\'s last dot, in lower case. A kind without extensions is said by the host (kind) or by the entry\'s place (folder: it has children). Keep the words: they are public (an entry\'s kind).","schema":"simai.framework.file-types","version":1,"kinds":{"folder":{"icon":"folder","open-icon":"folder_open","extensions":[]},"file":{"icon":"draft","extensions":[]},"page":{"icon":"article","extensions":[]},"document":{"icon":"description","extensions":["md","txt","doc","docx","pdf","rtf","odt"]},"image":{"icon":"image","extensions":["png","jpg","jpeg","gif","svg","webp","ico","avif"]},"code":{"icon":"code","extensions":["js","mjs","ts","css","scss","html","php","py","sh","vue"]},"data":{"icon":"data_object","extensions":["json","yml","yaml","xml","toml","lock","ini","env"]},"table":{"icon":"table_chart","extensions":["csv","xls","xlsx","ods"]},"archive":{"icon":"folder_zip","extensions":["zip","tar","gz","rar","7z"]},"video":{"icon":"movie","extensions":["mp4","mov","webm"]},"audio":{"icon":"audio_file","extensions":["mp3","wav","ogg","m4a"]},"link":{"icon":"link","extensions":[]}}}');
-
-/***/ },
-
-/***/ "873f949da61a"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Tree item","runtime":{"open-label":"Open item","close-label":"Close item"}}');
-
-/***/ },
-
-/***/ "73a6f336a620"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Элемент дерева","runtime":{"open-label":"Развернуть","close-label":"Свернуть"}}');
 
 /***/ },
 
@@ -2164,21 +2147,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tree 
 /***/ "fb5cbd0ee7de"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tree","tag":"sf-tree","version":"2.4.0","kind":"leaf","settings":{"selection":{"type":"enum","values":["none","one","many","check"],"default":"none"},"icons":{"type":"enum","values":["all","branches","none"],"default":"all"},"file-types":{"type":"enum","values":["name","none"],"default":"name"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"static":{"type":"boolean","default":false},"reorder":{"type":"boolean","default":false},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":"string","target":"string","rel":"string","kind":{"type":"enum","values":["folder","file","page","document","image","code","data","table","archive","video","audio","link"]},"value":"string","open":"boolean","selected":"boolean","active":"boolean","disabled":"boolean","has-children":"boolean","icon":{"anyOf":[{"type":"icon"},{"type":"boolean"}]},"open-icon":"icon","closed-icon":"icon","chevron-open-icon":"icon","chevron-closed-icon":"icon","open-label":"string","close-label":"string","note":{"type":"string"},"mark":{"type":"boolean"},"more":{"type":"boolean"},"hidden":{"type":"boolean"},"error":{"type":"boolean"},"revision":"string","children":"list"},"entries":{"key":"id","changes":"content"}},"accept-records":{"type":"boolean","default":false},"accept-files":{"type":"boolean","default":false}},"values":{"selected":{"type":"id","default":""},"selected-ids":{"type":"list","default":[],"of":{"id":"id"}}},"events":{"open":{"carries":{"id":"id","value":"string"}},"select":{"carries":{"ids":"list","id":"id","selected":"boolean"}},"toggle":{"carries":{"id":"id","open":"boolean","value":"string"}},"retry":{"carries":{"id":"id","value":"string"}},"move":{"carries":{"ids":"list","parent":{"type":"id","nullable":true},"before":{"type":"id","nullable":true},"source":"string"}},"attach":{"carries":{"files":"list","parent":"id"}},"window":{"carries":{"first":"number","last":"number"}}},"actions":{"expand":{"with":{"id":"id"}},"collapse":{"with":{"id":"id"}},"focus-entry":{"with":{"id":"id"}},"expand-all":{"with":{}},"collapse-all":{"with":{}}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-tree-gap":{"type":"length","state":"default"},"--sf-tree-padding-inline":{"type":"length","state":"default"},"--sf-tree-indent":{"type":"length","state":"default"},"--sf-tree-radius":{"type":"length","state":"default"},"--sf-tree-color":{"type":"color","state":"default"},"--sf-tree-selected-background-color":{"type":"color","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tree","tag":"sf-tree","version":"2.4.1","kind":"leaf","settings":{"selection":{"type":"enum","values":["none","one","many","check"],"default":"none"},"icons":{"type":"enum","values":["all","branches","none"],"default":"all"},"file-types":{"type":"enum","values":["name","none"],"default":"name"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"static":{"type":"boolean","default":false},"reorder":{"type":"boolean","default":false},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":"string","target":"string","rel":"string","kind":{"type":"enum","values":["folder","file","page","document","image","code","data","table","archive","video","audio","link"]},"value":"string","open":"boolean","selected":"boolean","active":"boolean","disabled":"boolean","has-children":"boolean","icon":{"anyOf":[{"type":"icon"},{"type":"boolean"}]},"open-icon":"icon","closed-icon":"icon","chevron-open-icon":"icon","chevron-closed-icon":"icon","open-label":"string","close-label":"string","note":{"type":"string"},"mark":{"type":"boolean"},"more":{"type":"boolean"},"hidden":{"type":"boolean"},"error":{"type":"boolean"},"revision":"string","children":"list"},"entries":{"key":"id","changes":"content"}},"accept-records":{"type":"boolean","default":false},"accept-files":{"type":"boolean","default":false}},"values":{"selected":{"type":"id","default":""},"selected-ids":{"type":"list","default":[],"of":{"id":"id"}}},"events":{"open":{"carries":{"id":"id","value":"string"}},"select":{"carries":{"ids":"list","id":"id","selected":"boolean"}},"toggle":{"carries":{"id":"id","open":"boolean","value":"string"}},"retry":{"carries":{"id":"id","value":"string"}},"move":{"carries":{"ids":"list","parent":{"type":"id","nullable":true},"before":{"type":"id","nullable":true},"source":"string"}},"attach":{"carries":{"files":"list","parent":"id"}},"window":{"carries":{"first":"number","last":"number"}}},"actions":{"expand":{"with":{"id":"id"}},"collapse":{"with":{"id":"id"}},"focus-entry":{"with":{"id":"id"}},"expand-all":{"with":{}},"collapse-all":{"with":{}}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-tree-gap":{"type":"length","state":"default"},"--sf-tree-padding-inline":{"type":"length","state":"default"},"--sf-tree-indent":{"type":"length","state":"default"},"--sf-tree-radius":{"type":"length","state":"default"},"--sf-tree-color":{"type":"color","state":"default"},"--sf-tree-selected-background-color":{"type":"color","state":"selected"}}}');
 
 /***/ },
 
 /***/ "11ff8dfc051b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Tree","runtime":{"loading":"Loading…","load-error":"Could not load","retry":"Retry","hidden":"hidden"}}');
-
-/***/ },
-
-/***/ "b7834e0e48fd"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Дерево","runtime":{"loading":"Загрузка…","load-error":"Не удалось загрузить","retry":"Повторить","hidden":"скрыта"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Tree","runtime":{"loading":"Loading…","load-error":"Could not load","retry":"Retry","hidden":"hidden","open-label":"Open item","close-label":"Close item"}}');
 
 /***/ }
 

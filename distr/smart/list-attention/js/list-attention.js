@@ -418,9 +418,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("64feefebb417");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("a18165be158e");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("565cca359e31");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("3c901318836b");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("9a754872f29c");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("2011d1065c58");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3de597974f9");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("2011d1065c58");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -467,16 +466,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-};
  // The heading's id, one per list on the page (stable across renders).
 
 let sequence = 0;
@@ -680,10 +674,7 @@ function normalizePassed(value) {
 const NARROW_PARTS = ['.sf-list-attention-summary-line', '.sf-list-attention-quiet-title', '.sf-list-attention-quiet-meta', '.sf-list-attention-recheck--narrow'].join(', ');
 const ListAttentionElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__.files,
   source: 'ru'
 });
 
@@ -1451,10 +1442,32 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "d3de597974f9"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3c901318836b");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "565cca359e31"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-attention","tag":"sf-list-attention","version":"1.3.8","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"status":{"type":"string","enum":["error","warning","info","success"]},"title":{"type":"string"},"text":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"},"event":{"type":"string"}}},"object":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"}}},"since":{"type":"string"},"source":{"type":"string"},"affected":{"type":"string"},"help":{"type":"string"},"dismissible":{"type":"boolean"}},"required":["id","status","title"]}},"default":[]},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"frame":{"type":"enum","values":["card","none"],"default":"card"},"triage":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":false},"checked-at":{"type":"string","default":""},"limit":{"type":"number","integer":true,"min":0,"default":5},"more-href":{"type":"string","default":""},"group":{"type":"enum","values":["none","severity"],"default":"none"},"passed":{"type":"list","default":[]},"empty":{"type":"enum","values":["none","line"],"default":"line"},"empty-text":{"type":"string","default-from":"runtime.empty-text"},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{},"events":{"navigate":{"carries":{"id":"string","status":"string","href":"string","part":"string"},"cancelable":true},"apply":{"carries":{"action":"string","scope":"string","ids":"list","id":"string","status":"string"}},"snooze":{"carries":{"id":"string","until":"string"},"cancelable":true},"dismiss":{"carries":{"id":"string"},"cancelable":true},"undo":{"carries":{"id":"string","action":"string"}},"recheck":{"carries":{}},"all":{"carries":{"href":"string"},"cancelable":true}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-status":"string","data-empty":"boolean"},"css-variables":{"--sf-list-attention-background-color":{"type":"color","state":"default"},"--sf-list-attention-divider-color":{"type":"color","state":"default"},"--sf-list-attention-heading-color":{"type":"color","state":"default"},"--sf-list-attention-padding-inline":{"type":"length","state":"default"},"--sf-list-attention-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-attention","tag":"sf-list-attention","version":"1.4.4","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"status":{"type":"string","enum":["error","warning","info","success"]},"title":{"type":"string"},"text":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"},"event":{"type":"string"}}},"object":{"type":"object","properties":{"label":{"type":"string"},"href":{"type":"string"}}},"since":{"type":"string"},"source":{"type":"string"},"affected":{"type":"string"},"help":{"type":"string"},"dismissible":{"type":"boolean"}},"required":["id","status","title"]}},"default":[]},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"frame":{"type":"enum","values":["card","none"],"default":"card"},"triage":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":false},"checked-at":{"type":"string","default":""},"limit":{"type":"number","integer":true,"min":0,"default":5},"more-href":{"type":"string","default":""},"group":{"type":"enum","values":["none","severity"],"default":"none"},"passed":{"type":"list","default":[]},"empty":{"type":"enum","values":["none","line"],"default":"line"},"empty-text":{"type":"string","default-from":"runtime.empty-text"},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{},"events":{"navigate":{"carries":{"id":"string","status":"string","href":"string","part":"string"},"cancelable":true},"apply":{"carries":{"action":"string","scope":"string","ids":"list","id":"string","status":"string"}},"snooze":{"carries":{"id":"string","until":"string"},"cancelable":true},"dismiss":{"carries":{"id":"string"},"cancelable":true},"undo":{"carries":{"id":"string","action":"string"}},"recheck":{"carries":{}},"all":{"carries":{"href":"string"},"cancelable":true}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-status":"string","data-empty":"boolean"},"css-variables":{"--sf-list-attention-background-color":{"type":"color","state":"default"},"--sf-list-attention-divider-color":{"type":"color","state":"default"},"--sf-list-attention-heading-color":{"type":"color","state":"default"},"--sf-list-attention-padding-inline":{"type":"length","state":"default"},"--sf-list-attention-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -1462,13 +1475,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-attention","tag":"sf
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Needs attention","runtime":{"label":"Needs attention","empty-text":"All is well","empty-checked-text":"{text} · checked {when}","status-error":"Error","status-warning":"Warning","status-info":"Info","status-success":"Done","status-passed":"Passed","summary-error":{"one":"{n} error","other":"{n} errors"},"summary-warning":{"one":"{n} warning","other":"{n} warnings"},"summary-info":{"one":"{n} recommendation","other":"{n} recommendations"},"summary-success":{"one":"{n} solved","other":"{n} solved"},"group-error":"Errors","group-warning":"Warnings","group-info":"Recommendations","group-success":"Solved","group-passed":"Passed","affected-text":"affected: {text}","age-now":"just now","age-minutes":"{n} min","age-hours":"{n} h","age-days":{"one":"{n} day","other":"{n} days"},"checked-text":"Checked {when}","checked-now":"just now","checked-minutes":"{n} min ago","checked-time":"at {time}","checked-date":"{date} at {time}","recheck-label":"Check again","more-text":"All problems ({n})","show-all-text":"Show all ({n})","more-label":"More: {title}","snooze-day-text":"Snooze for a day","snooze-week-text":"Snooze for a week","dismiss-text":"Don\'t remind me","help-text":"About this check","snoozed-day-notice":"Snoozed for a day: {title}","snoozed-week-notice":"Snoozed for a week: {title}","dismissed-notice":"We won\'t remind you again: {title}","undo-text":"Undo"},"events":{"navigate":{"label":"Go"},"apply":{"label":"Run"},"snooze":{"label":"Snooze"},"dismiss":{"label":"Don\'t remind"},"undo":{"label":"Undo"},"recheck":{"label":"Check again"},"all":{"label":"All problems"}}}');
-
-/***/ },
-
-/***/ "9a754872f29c"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Требует внимания","runtime":{"label":"Требует внимания","empty-text":"Всё в порядке","empty-checked-text":"{text} · проверено {when}","status-error":"Ошибка","status-warning":"Предупреждение","status-info":"Сведения","status-success":"Готово","status-passed":"Пройдено","summary-error":{"one":"{n} ошибка","few":"{n} ошибки","many":"{n} ошибок","other":"{n} ошибки"},"summary-warning":{"one":"{n} предупреждение","few":"{n} предупреждения","many":"{n} предупреждений","other":"{n} предупреждения"},"summary-info":{"one":"{n} рекомендация","few":"{n} рекомендации","many":"{n} рекомендаций","other":"{n} рекомендации"},"summary-success":{"one":"{n} решена","few":"{n} решены","many":"{n} решено","other":"{n} решено"},"group-error":"Ошибки","group-warning":"Предупреждения","group-info":"Рекомендации","group-success":"Решено","group-passed":"Пройдено","affected-text":"затронуто: {text}","age-now":"только что","age-minutes":"{n} мин","age-hours":"{n} ч","age-days":{"one":"{n} день","few":"{n} дня","many":"{n} дней","other":"{n} дня"},"checked-text":"Проверено {when}","checked-now":"только что","checked-minutes":"{n} мин назад","checked-time":"в {time}","checked-date":"{date} в {time}","recheck-label":"Проверить снова","more-text":"Все проблемы ({n})","show-all-text":"Показать все ({n})","more-label":"Ещё: {title}","snooze-day-text":"Отложить на день","snooze-week-text":"Отложить на неделю","dismiss-text":"Не напоминать","help-text":"Подробнее о проверке","snoozed-day-notice":"Отложено на день: {title}","snoozed-week-notice":"Отложено на неделю: {title}","dismissed-notice":"Больше не напомним: {title}","undo-text":"Вернуть"},"events":{"navigate":{"label":"Перейти"},"apply":{"label":"Выполнить"},"snooze":{"label":"Отложить"},"dismiss":{"label":"Не напоминать"},"undo":{"label":"Вернуть"},"recheck":{"label":"Проверить снова"},"all":{"label":"Все проблемы"}}}');
 
 /***/ }
 

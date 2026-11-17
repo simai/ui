@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
   .bg-fb {
     background-color: #2B74E1;
@@ -80,5 +80,29 @@
   }
   .bg-soundcloud {
     background-color: #FF5500;
+  }
+  .bg-tiktok:not(.focus-visible) {
+    outline: var(--sf-line--border) solid light-dark(transparent, var(--sf-outline-variant));
+    outline-offset: calc(-1 * var(--sf-line--border));
+  }
+  .bg-tiktok:not(:focus-visible) {
+    outline: var(--sf-line--border) solid light-dark(transparent, var(--sf-outline-variant));
+    outline-offset: calc(-1 * var(--sf-line--border));
+  }
+  .bg-qq:not(.focus-visible) {
+    outline: var(--sf-line--border) solid light-dark(transparent, var(--sf-outline-variant));
+    outline-offset: calc(-1 * var(--sf-line--border));
+  }
+  .bg-qq:not(:focus-visible) {
+    outline: var(--sf-line--border) solid light-dark(transparent, var(--sf-outline-variant));
+    outline-offset: calc(-1 * var(--sf-line--border));
+  }
+  .bg-tumblr:not(.focus-visible) {
+    outline: var(--sf-line--border) solid light-dark(transparent, var(--sf-outline-variant));
+    outline-offset: calc(-1 * var(--sf-line--border));
+  }
+  .bg-tumblr:not(:focus-visible) {
+    outline: var(--sf-line--border) solid light-dark(transparent, var(--sf-outline-variant));
+    outline-offset: calc(-1 * var(--sf-line--border));
   }
 }

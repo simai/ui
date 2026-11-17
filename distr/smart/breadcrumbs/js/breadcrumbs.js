@@ -231,8 +231,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_items__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("1f7bf97c23d2");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("22d7cebd40ee");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("73f8db8bd4ae");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("dce1dcba5093");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("78e1ff52ca1a");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3e36df62fe9");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -244,16 +243,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-}; // sf-breadcrumbs from its component.json (standard simai.smart-component 1.3.8
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-breadcrumbs from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §8, §11): its settings are attributes and properties made by
 // core/js/element-manifest.js, its words are lang/<locale>.json (a product adds
 // another language through SF.language.register("sf-breadcrumbs", code,
@@ -262,10 +256,7 @@ const ru = {
 
 const BreadcrumbsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
 });
@@ -1300,6 +1291,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "d3e36df62fe9"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("dce1dcba5093");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "73f8db8bd4ae"
 (module) {
 
@@ -1310,7 +1323,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-bread
 /***/ "22d7cebd40ee"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.breadcrumbs","tag":"sf-breadcrumbs","version":"1.2.7","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"ellipsis":{"type":"boolean","optional":true},"target":{"type":"string","optional":true},"rel":{"type":"string","optional":true},"value":{"type":"string","optional":true},"aria-label":{"type":"string","optional":true},"item-class":{"type":"string","optional":true},"container-class":{"type":"string","optional":true},"hidden-items":{"type":"list","optional":true},"siblings":{"type":"list","optional":true}}},"current":{"type":"enum","values":["last","none"],"default":"last"},"siblings":{"type":"boolean","default":false},"separator-icon":{"type":"icon","default":"chevron_right"},"home-icon":{"type":"icon","default":"home"},"home-label":{"type":"string","default":""},"item-class":{"type":"string","default":""},"link-class":{"type":"string","default":""},"current-class":{"type":"string","default":""},"separator-class":{"type":"string","default":""},"container-class":{"type":"string","default":""},"expand-label":{"type":"string","default-from":"runtime.expand-label"},"expand-on-ellipsis":{"type":"boolean","default":true},"max-items":{"type":"number","integer":true,"min":0,"default":0}},"values":{},"events":{"press":{"carries":{"item":"object","index":"number","items":"list"},"cancelable":true}},"actions":{},"css-variables":{"--sf-breadcrumbs-gap":{"type":"length","state":"default"},"--sf-breadcrumbs-color":{"type":"color","state":"default"},"--sf-breadcrumbs-link-color":{"type":"color","state":"default"},"--sf-breadcrumbs-link-hover-color":{"type":"color","state":"hover"},"--sf-breadcrumbs-current-color":{"type":"color","state":"current"},"--sf-breadcrumbs-separator-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.breadcrumbs","tag":"sf-breadcrumbs","version":"1.2.8","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"ellipsis":{"type":"boolean","optional":true},"target":{"type":"string","optional":true},"rel":{"type":"string","optional":true},"value":{"type":"string","optional":true},"aria-label":{"type":"string","optional":true},"item-class":{"type":"string","optional":true},"container-class":{"type":"string","optional":true},"hidden-items":{"type":"list","optional":true},"siblings":{"type":"list","optional":true}}},"current":{"type":"enum","values":["last","none"],"default":"last"},"siblings":{"type":"boolean","default":false},"separator-icon":{"type":"icon","default":"chevron_right"},"home-icon":{"type":"icon","default":"home"},"home-label":{"type":"string","default":""},"item-class":{"type":"string","default":""},"link-class":{"type":"string","default":""},"current-class":{"type":"string","default":""},"separator-class":{"type":"string","default":""},"container-class":{"type":"string","default":""},"expand-label":{"type":"string","default-from":"runtime.expand-label"},"expand-on-ellipsis":{"type":"boolean","default":true},"max-items":{"type":"number","integer":true,"min":0,"default":0}},"values":{},"events":{"press":{"carries":{"item":"object","index":"number","items":"list"},"cancelable":true}},"actions":{},"css-variables":{"--sf-breadcrumbs-gap":{"type":"length","state":"default"},"--sf-breadcrumbs-color":{"type":"color","state":"default"},"--sf-breadcrumbs-link-color":{"type":"color","state":"default"},"--sf-breadcrumbs-link-hover-color":{"type":"color","state":"hover"},"--sf-breadcrumbs-current-color":{"type":"color","state":"current"},"--sf-breadcrumbs-separator-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
@@ -1318,13 +1331,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.breadcrumbs","tag":"sf-br
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Breadcrumbs","runtime":{"aria-label":"Breadcrumb","expand-label":"Show hidden breadcrumbs","siblings-label":"Sibling sections"}}');
-
-/***/ },
-
-/***/ "78e1ff52ca1a"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Хлебные крошки","runtime":{"aria-label":"Хлебные крошки","expand-label":"Показать скрытые крошки","siblings-label":"Соседние разделы"}}');
 
 /***/ }
 

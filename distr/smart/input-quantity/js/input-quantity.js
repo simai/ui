@@ -1192,11 +1192,6 @@ const INHERITED_TEXT = {
     inherited: 'inherited',
     reset: 'Reset to inherited',
     described: 'Inherited: {value}'
-  },
-  ru: {
-    inherited: 'наследуется',
-    reset: 'Сбросить к наследуемому',
-    described: 'Наследуется: {value}'
   }
 }; // Each control declares the three in its own props -- inherited-value,
 // inherited-text and reset-label -- written out rather than spread from here, so
@@ -1459,11 +1454,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("f604ef1c79fc");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("bd1940663dd9");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("7fb5569a4eda");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("82e515f62ffb");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("83cbe18cd482");
-/* harmony import */ var _value_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("14bfe0f6d8cc");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _value_mjs__WEBPACK_IMPORTED_MODULE_13__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _value_mjs__WEBPACK_IMPORTED_MODULE_13__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("0ae01b62f4a5");
+/* harmony import */ var _value_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("14bfe0f6d8cc");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _value_mjs__WEBPACK_IMPORTED_MODULE_12__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_2__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _value_mjs__WEBPACK_IMPORTED_MODULE_12__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_2__);
@@ -1523,16 +1517,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
-};
  // A held stepper waits, then repeats: long enough that a click is one step,
 // fast enough that a hundred steps take a few seconds.
 
@@ -1561,13 +1550,13 @@ const actions = {
   'step-up'({
     count
   } = {}) {
-    this.setValue((0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.stepFrom)(this.currentValue(), Number(count) || 1, this.stepOptions()));
+    this.setValue((0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.stepFrom)(this.currentValue(), Number(count) || 1, this.stepOptions()));
   },
 
   'step-down'({
     count
   } = {}) {
-    this.setValue((0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.stepFrom)(this.currentValue(), -(Number(count) || 1), this.stepOptions()));
+    this.setValue((0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.stepFrom)(this.currentValue(), -(Number(count) || 1), this.stepOptions()));
   },
 
   // The error message shown in place of the hint, and a custom error the form
@@ -1592,10 +1581,7 @@ const actions = {
 };
 const QuantityElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_6__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default())),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__,
   actions
@@ -1702,30 +1688,30 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
 
 
   get min() {
-    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.readNumber)(this.getAttribute('min'));
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.readNumber)(this.getAttribute('min'));
   }
 
   get max() {
-    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.readNumber)(this.getAttribute('max'));
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.readNumber)(this.getAttribute('max'));
   } // A step is positive; anything else is the default, one.
 
 
   get step() {
-    const step = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.readNumber)(this.getAttribute('step'));
+    const step = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.readNumber)(this.getAttribute('step'));
     return step !== null && step > 0 ? step : 1;
   }
 
   get pageStep() {
-    const page = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.readNumber)(this.getAttribute('page-step'));
+    const page = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.readNumber)(this.getAttribute('page-step'));
     return page !== null && page > 0 ? page : this.step * PAGE_STEPS;
   } // Digits after the decimal mark: the attribute, else what the step implies
   // (0.25 shows two). An integer field has none and refuses a decimal mark.
 
 
   get precision() {
-    const own = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.readNumber)(this.getAttribute('precision'));
+    const own = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.readNumber)(this.getAttribute('precision'));
     if (own !== null && own >= 0) return Math.min(20, Math.floor(own));
-    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.inferPrecision)(this.getAttribute('step') || '1');
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.inferPrecision)(this.getAttribute('step') || '1');
   }
 
   get interactive() {
@@ -1755,8 +1741,8 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
 
 
   readValue(raw) {
-    const number = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.readNumber)(raw);
-    return number === null ? null : (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.roundTo)(number, this.precision);
+    const number = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.readNumber)(raw);
+    return number === null ? null : (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.roundTo)(number, this.precision);
   } // The number the field holds, or null when it is empty.
 
 
@@ -1772,12 +1758,12 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
 
 
   get formValue() {
-    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formValue)(this.value, this.precision);
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.formValue)(this.value, this.precision);
   } // The value as the field writes it: the page's language and digits.
 
 
   get text() {
-    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(this.value, this.numberOptions);
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.formatNumber)(this.value, this.numberOptions);
   } // The look (owner decision C53): steppers on both sides for a quantity, or
   // none for an exact value (a year, a weight, a price), where the keys still
   // step.
@@ -1785,6 +1771,13 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
 
   get steppers() {
     return this.getAttribute('steppers') === 'none' ? 'none' : 'sides';
+  } // The look of the box (owner decision C283): bordered by default, filled on
+  // request -- the class component's sf-quantity--filled, as sf-input's
+  // appearance. Anything else reads as bordered.
+
+
+  get appearance() {
+    return this.getAttribute('appearance') === 'filled' ? 'filled' : 'bordered';
   } // A unit written after the number, inside the box («кг», «%»).
 
 
@@ -1803,13 +1796,13 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
 
 
   get digits() {
-    const own = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.readNumber)(this.getAttribute('digits'));
+    const own = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.readNumber)(this.getAttribute('digits'));
     return own !== null && own >= 1 ? Math.min(20, Math.floor(own)) : null;
   }
 
   get autoDigits() {
     const options = this.numberOptions;
-    const lengths = [this.min, this.max, this.value, (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.readNumber)(this.inheritedValue)].filter(number => typeof number === 'number' && Number.isFinite(number)).map(number => (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(number, options).length);
+    const lengths = [this.min, this.max, this.value, (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.readNumber)(this.inheritedValue)].filter(number => typeof number === 'number' && Number.isFinite(number)).map(number => (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.formatNumber)(number, options).length);
     let digits = Math.max(2, ...lengths);
     if (this.max === null) digits = Math.max(digits, 6);
     return Math.min(20, digits);
@@ -1857,19 +1850,19 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
     if (value === null) return own;
     if (this.min !== null && value < this.min) own.rangeUnderflow = this.sfWord('range-underflow', {
       vars: {
-        min: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(this.min, this.numberOptions)
+        min: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.formatNumber)(this.min, this.numberOptions)
       }
     });
     if (this.max !== null && value > this.max) own.rangeOverflow = this.sfWord('range-overflow', {
       vars: {
-        max: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(this.max, this.numberOptions)
+        max: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.formatNumber)(this.max, this.numberOptions)
       }
     });
     const base = this.min ?? 0;
     const steps = (value - base) / this.step;
     if (Math.abs(steps - Math.round(steps)) > 1e-7) own.stepMismatch = this.sfWord('step-mismatch', {
       vars: {
-        step: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(this.step, this.numberOptions)
+        step: (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.formatNumber)(this.step, this.numberOptions)
       }
     });
     return own;
@@ -1969,9 +1962,9 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
 
   currentValue() {
     if (this._draft !== null) {
-      const typed = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.parseNumber)(this._draft, this.numberOptions);
+      const typed = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.parseNumber)(this._draft, this.numberOptions);
       if (typed === null) return null;
-      if (Number.isFinite(typed)) return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.clamp)((0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.roundTo)(typed, this.precision), this.min, this.max);
+      if (Number.isFinite(typed)) return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.clamp)((0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.roundTo)(typed, this.precision), this.min, this.max);
     }
 
     return this.value;
@@ -2009,7 +2002,7 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
   typedRemove() {
     if (!this.removeModeOn || !this.interactive || this._draft === null) return false;
     if (this.min === null || !(this.min > 0)) return false;
-    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.parseNumber)(this._draft, this.numberOptions) === 0;
+    return (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.parseNumber)(this._draft, this.numberOptions) === 0;
   } // The field never removes itself: it asks, and the page removes the line and
   // offers «Вернуть» (C25). Cancelable; answers whether nobody refused.
 
@@ -2030,8 +2023,8 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
   }
 
   inheritedDisplayValue() {
-    const number = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.readNumber)(this.inheritedValue);
-    return number === null ? this.inheritedValue : (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(number, this.numberOptions);
+    const number = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.readNumber)(this.inheritedValue);
+    return number === null ? this.inheritedValue : (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.formatNumber)(number, this.numberOptions);
   }
 
   inheritedFocusTarget() {
@@ -2111,7 +2104,7 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
     change = true
   } = {}) {
     if (!this.interactive) return false;
-    const next = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.stepFrom)(this.currentValue(), count, this.stepOptions());
+    const next = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.stepFrom)(this.currentValue(), count, this.stepOptions());
 
     if (next === this.value && this._draft === null) {
       if (change) this.commitChange(source);
@@ -2127,8 +2120,8 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
 
   commitDraft(source = 'commit') {
     if (this._draft === null) return false;
-    const typed = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.parseNumber)(this._draft, this.numberOptions);
-    const next = typed === null || !Number.isFinite(typed) ? typed === null ? null : this.value : (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.roundTo)(typed, this.precision);
+    const typed = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.parseNumber)(this._draft, this.numberOptions);
+    const next = typed === null || !Number.isFinite(typed) ? typed === null ? null : this.value : (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.roundTo)(typed, this.precision);
     this.writeValue(next, source);
     this.showRangeError();
     return true;
@@ -2142,8 +2135,8 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
     event.stopPropagation();
     const input = event.target;
     this._draft = input.value;
-    const typed = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.parseNumber)(this._draft, this.numberOptions);
-    const value = typed === null ? null : Number.isFinite(typed) ? (0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.roundTo)(typed, this.precision) : undefined; // Text that is not a number yet («-», «1,») keeps the last value.
+    const typed = (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.parseNumber)(this._draft, this.numberOptions);
+    const value = typed === null ? null : Number.isFinite(typed) ? (0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.roundTo)(typed, this.precision) : undefined; // Text that is not a number yet («-», «1,») keeps the last value.
 
     if (value === undefined) return;
     this._value = value;
@@ -2174,7 +2167,7 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
     const start = input.selectionStart ?? input.value.length;
     const end = input.selectionEnd ?? input.value.length;
     const next = input.value.slice(0, start) + data + input.value.slice(end);
-    if (!(0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.isEditableText)(next, this.numberOptions)) event.preventDefault();
+    if (!(0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.isEditableText)(next, this.numberOptions)) event.preventDefault();
   }
 
   onPaste(event) {
@@ -2184,7 +2177,7 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
     const start = input.selectionStart ?? input.value.length;
     const end = input.selectionEnd ?? input.value.length;
     const next = input.value.slice(0, start) + text + input.value.slice(end);
-    if (!text || !(0,_value_mjs__WEBPACK_IMPORTED_MODULE_13__.isEditableText)(next, this.numberOptions)) event.preventDefault();
+    if (!text || !(0,_value_mjs__WEBPACK_IMPORTED_MODULE_12__.isEditableText)(next, this.numberOptions)) event.preventDefault();
   } // The spinbutton's keys (WAI-ARIA APG): a step, a page, the bounds. Enter
   // commits what is typed; Escape takes the typing back.
 
@@ -2453,6 +2446,7 @@ class SfQuantity extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.Sho
       text: this.text,
       valueText: this.valueText,
       steppers: this.steppers,
+      appearance: this.appearance,
       unit: this.unit,
       digitsStyle: this.digitsStyle,
       formValue: this.formValue,
@@ -2578,7 +2572,8 @@ function renderQuantityTemplate(context) {
   } = context;
   const labelId = `${context.id}--label`;
   const steppers = context.steppers !== 'none';
-  const rootClasses = ['sf-quantity', `sf-quantity--size-${context.size}`, steppers ? '' : 'sf-quantity--steppers-none', field.invalid ? 'error' : '', context.rootClass, LAYOUT.root].filter(Boolean);
+  const rootClasses = ['sf-quantity', `sf-quantity--size-${context.size}`, steppers ? '' : 'sf-quantity--steppers-none', // C283: the filled look is the class component's own modifier.
+  context.appearance === 'filled' ? 'sf-quantity--filled' : '', field.invalid ? 'error' : '', context.rootClass, LAYOUT.root].filter(Boolean);
   const labelContent = component?.hasSlotContent?.('label') ? component.getSlotContent('label') : context.label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-quantity-text" id=${labelId}>${context.label}</span>${field.required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-quantity-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${(0,_helpers_field_help__WEBPACK_IMPORTED_MODULE_1__.renderFieldHelp)({
     help: context.help,
     label: context.label,
@@ -2710,6 +2705,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("smart-base", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("smart-base", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "0ae01b62f4a5"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("82e515f62ffb");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
 
 /***/ },
 
@@ -2887,7 +2904,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "bd1940663dd9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.11.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"steppers":{"type":"enum","values":["sides","none"],"default":"sides"},"unit":{"type":"string","default":""},"digits":{"type":"number","integer":true,"min":1,"max":20,"nullable":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"},"removable":{"type":"boolean","default":false},"remove-label":{"type":"string","default-from":"runtime.remove"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}},"remove":{"carries":{"value":{"type":"number"},"name":"string","source":{"type":"enum","values":["button","typing"]}},"cancelable":true,"own-verb":true}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.12.2","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"steppers":{"type":"enum","values":["sides","none"],"default":"sides"},"unit":{"type":"string","default":""},"digits":{"type":"number","integer":true,"min":1,"max":20,"nullable":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"},"removable":{"type":"boolean","default":false},"remove-label":{"type":"string","default-from":"runtime.remove"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}},"remove":{"carries":{"value":{"type":"number"},"name":"string","source":{"type":"enum","values":["button","typing"]}},"cancelable":true,"own-verb":true}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
@@ -2895,13 +2912,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Quantity","runtime":{"decrement":"Decrease value","increment":"Increase value","range-underflow":"The value must be at least {min}","range-overflow":"The value must be at most {max}","step-mismatch":"The value must be a multiple of {step}","remove":"Remove","value-missing":"Fill in this field","bad-input":"Enter a number","help":"More about: {label}"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}},"events":{"remove":{"label":"Remove"}}}');
-
-/***/ },
-
-/***/ "83cbe18cd482"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Количество","runtime":{"decrement":"Уменьшить значение","increment":"Увеличить значение","range-underflow":"Значение должно быть не меньше {min}","range-overflow":"Значение должно быть не больше {max}","step-mismatch":"Значение должно быть кратно {step}","remove":"Удалить","value-missing":"Заполните поле","bad-input":"Введите число","help":"Подробнее: {label}"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}},"events":{"remove":{"label":"Удалить"}}}');
 
 /***/ }
 

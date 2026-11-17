@@ -2577,7 +2577,7 @@ function renderChoiceButtons(field, value, host) {
                 class="sf-field-choice-buttons"
                 appearance="track"
                 size=${size}
-                root-class=${locked ? 'flex-wrap pointer-event-none' : 'flex-wrap'}
+                root-class=${locked ? 'flex-wrap pointer-events-none' : 'flex-wrap'}
                 name=${fieldName(field)}
                 items=${JSON.stringify(items)}
                 value=${chosen || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -2698,10 +2698,7 @@ function renderChoicesEdit(field, value, host) {
 // keeps exactly what was published.
 
 
-const SET_TEXT = {
-  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__["default"].en,
-  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__["default"].ru
-}; // The host's word wins, as it always did; the set's own fallback now follows
+const SET_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__["default"]; // The host's word wins, as it always did; the set's own fallback now follows
 // the page's language instead of being Russian whatever the page is. `host` is
 // the component that called the set, which is the node the rule reads from.
 // The set is not an element, so it is named here rather than taken from the
@@ -3864,13 +3861,23 @@ __webpack_require__.r(__webpack_exports__);
 // choice's options is the host's to enforce, not a renderer's.
 // The names of the types and variants live in the set's language files
 // (localization study LC-5); `label` keeps its {ru, en} shape for the hosts
-// that read it.
+// that read it. English is built in; the Russian name is read from the words
+// the ru language file registered for sf-field-renderers (owner decision
+// C282), English until it is on the page.
 
 
-const typeLabel = key => ({
-  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].ru[key],
-  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].en[key]
-});
+const registeredName = (code, key) => globalThis.__sfPageLanguage?.registered?.get?.('sf-field-renderers')?.get?.(code)?.[key];
+
+const typeLabel = key => Object.freeze(Object.defineProperties({}, {
+  ru: {
+    enumerable: true,
+    get: () => _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].ru?.[key] ?? registeredName('ru', key) ?? _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].en[key]
+  },
+  en: {
+    enumerable: true,
+    value: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].en[key]
+  }
+}));
 
 const PROPERTY_TYPES = Object.freeze([{
   type: 'string',
@@ -5161,16 +5168,19 @@ function richTextFromPlainText(text, {mode = 'value'} = {}) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
 /* harmony export */ });
 /* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f050502c25f8");
-/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a54dc147fac3");
-// The component's words for the bundle and for Node alike (localization study
-// LC-4/LC-5): the runtime words of its language files, by language.
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
 
 
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
 
 
 /***/ },
@@ -5208,13 +5218,6 @@ __webpack_require__.r(__webpack_exports__);
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":"At most {n} digits after the point","rowCount":{"one":"{n} row","other":"{n} rows"},"type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-meter":"Share of a limit","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)"}}');
-
-/***/ },
-
-/***/ "a54dc147fac3"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Да","no":"Нет","searchInList":"Найти в списке","containsText":"Содержит…","fileKind_image":"Изображения","fileKind_document":"Документы","fileKind_archive":"Архивы","fileKind_other":"Прочие файлы","operator":"Оператор","rangeFrom":"От","rangeTo":"До","loadingOptions":"Загрузка вариантов","optionsError":"Не удалось загрузить варианты","pickRecord":"Выберите запись","pickFromList":"Выберите из списка","searchRecords":"Найти запись","loadingRecords":"Загрузка записей","recordsError":"Не удалось загрузить записи","retry":"Повторить","loadMore":"Загрузить ещё","removeFile":"Убрать","fileRemoved":"Файл убран","undo":"Вернуть","passwordSet":"Задан","passwordUnset":"Не задан","passwordKeep":"Задан; введите новый, чтобы заменить","maskIncomplete":"Заполните поле полностью","notNumber":"Введите число","precisionMax":"Не больше {n} знаков после запятой","rowCount":{"one":"{n} строка","few":"{n} строки","many":"{n} строк","other":"{n} строки"},"type-string":"Строка","variant-string-phone":"Телефон","variant-string-password":"Пароль","type-text":"Текст","type-html":"Форматированный текст","type-integer":"Целое число","variant-integer-stepper":"Кнопками «−» и «+»","type-number":"Число","variant-number-scale":"Шкала 0–100","variant-number-meter":"Доля предела","variant-number-stepper":"Кнопками «−» и «+»","type-date":"Дата","type-datetime":"Дата и время","type-time":"Время","type-boolean":"Да или нет","type-choice":"Одно из списка","variant-choice-buttons":"Кнопками","type-choices":"Несколько из списка","variant-choices-badges":"Значками","variant-choices-checklist":"Флажками","variant-choices-select":"Выпадающим списком","type-user":"Пользователь","type-record":"Запись","type-relation":"Связь","type-lookup":"Из справочника","type-file":"Файл","variant-file-image":"Изображение","variant-file-image-card":"Изображение карточкой","variant-file-image-list":"Изображения списком","type-color":"Цвет","type-include":"Код","type-money":"Деньги","type-percent":"Процент","type-items":"Строки","type-compound":"Составное","type-ru.requisites":"Реквизиты"}}');
 
 /***/ }
 

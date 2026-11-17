@@ -2376,11 +2376,6 @@ const INHERITED_TEXT = {
     inherited: 'inherited',
     reset: 'Reset to inherited',
     described: 'Inherited: {value}'
-  },
-  ru: {
-    inherited: 'наследуется',
-    reset: 'Сбросить к наследуемому',
-    described: 'Наследуется: {value}'
   }
 }; // Each control declares the three in its own props -- inherited-value,
 // inherited-text and reset-label -- written out rather than spread from here, so
@@ -2640,8 +2635,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("64feefebb417");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("fc92d2bbc3ce");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("b0558b1b8eb0");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("e9f1da81a45b");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("d6f37816062a");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("b183c9b75681");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_inputs_js_inputs__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
 ([_component_inputs_js_inputs__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
@@ -2657,16 +2651,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
-}; // sf-input from its component.json (standard simai.smart-component 1.3.8 §3,
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-input from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §17, §20). The settings are made by core/js/element-manifest.js; the
 // legacy names `type` (appearance), `error` (invalid, §17.2), `left-icon`
 // (icon-start) and `right-text` (text-end) are dated aliases (aliases.json),
@@ -2676,10 +2665,7 @@ const ru = {
 
 const InputElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default())),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
 });
@@ -3545,6 +3531,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "b183c9b75681"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e9f1da81a45b");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "d6935866be49"
 (module) {
 
@@ -3562,7 +3570,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "fc92d2bbc3ce"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.14.2","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"appearance":{"type":"enum","values":["bordered","filled","hidden"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url","number"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"counter":{"type":"boolean","default":false},"pattern":{"type":"string","default":""},"min":{"type":"string","default":""},"max":{"type":"string","default":""},"step":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-start":{"type":"string","optional":true},"text-end":{"type":"string","optional":true},"shortcut":{"type":"string","default":""},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.15.2","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"appearance":{"type":"enum","values":["bordered","filled","hidden"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url","number"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"counter":{"type":"boolean","default":false},"pattern":{"type":"string","default":""},"min":{"type":"string","default":""},"max":{"type":"string","default":""},"step":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-start":{"type":"string","optional":true},"text-end":{"type":"string","optional":true},"shortcut":{"type":"string","default":""},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
@@ -3570,13 +3578,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Text fields","runtime":{"value-missing":"Fill in this field","clear":"Clear","reveal":"Show password","type-mismatch":"Check the value","type-mismatch-email":"Enter the whole address, for example ivan@clinic.ru","type-mismatch-url":"Enter the whole address, for example https://clinic.ru","pattern-mismatch":"Check the format","too-short":"At least {min} characters","too-long":"At most {max} characters","range-underflow":"At least {min}","range-overflow":"At most {max}","step-mismatch":"Use steps of {step}","bad-input":"Enter a number","count-text":"{count} / {max}","help":"More about: {label}","caps-lock":"Caps Lock is on","conceal":"Hide password"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
-
-/***/ },
-
-/***/ "d6f37816062a"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Текстовые поля","runtime":{"value-missing":"Заполните поле","clear":"Очистить","reveal":"Показать пароль","type-mismatch":"Проверьте значение","type-mismatch-email":"Введите адрес целиком, например ivan@clinic.ru","type-mismatch-url":"Введите адрес целиком, например https://clinic.ru","pattern-mismatch":"Проверьте формат","too-short":"Не меньше {min} знаков","too-long":"Не больше {max} знаков","range-underflow":"Не меньше {min}","range-overflow":"Не больше {max}","step-mismatch":"Шаг значения — {step}","bad-input":"Введите число","count-text":"{count} / {max}","help":"Подробнее: {label}","caps-lock":"Включён Caps Lock","conceal":"Скрыть пароль"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
 
 /***/ }
 

@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* The inherited-value slot (simai/ui-source#28): the «inherited» marker while
      the field holds nothing of its own, the reset button once it does. Each
@@ -56,7 +56,6 @@
     padding-left: var(--sf-field-inherited-slot--inset, 0px);
   }
   .sf-field-inherited {
-    color: var(--sf-on-surface-variant);
     white-space: nowrap;
     -webkit-padding-end: 0px;
             padding-inline-end: 0px;
@@ -537,122 +536,192 @@
   @media (forced-colors: active) {
     sf-input[data-inherited] .sf-input .sf-input-field input::-webkit-input-placeholder {
       --sf-input-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input[data-inherited] .sf-input .sf-input-field input::-moz-placeholder {
       --sf-input-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input[data-inherited] .sf-input .sf-input-field input:-ms-input-placeholder {
       --sf-input-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input[data-inherited] .sf-input .sf-input-field input::-ms-input-placeholder {
       --sf-input-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input[data-inherited] .sf-input .sf-input-field input::placeholder {
       --sf-input-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-textarea[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-textarea[data-inherited] .sf-textarea textarea::-moz-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-textarea[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-textarea[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-textarea[data-inherited] .sf-textarea textarea::placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-textarea[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-textarea[data-inherited] .sf-textarea textarea::-moz-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-textarea[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-textarea[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-textarea[data-inherited] .sf-textarea textarea::placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-webkit-input-placeholder {
       --sf-dropdown-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-moz-placeholder {
       --sf-dropdown-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input:-ms-input-placeholder {
       --sf-dropdown-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-ms-input-placeholder {
       --sf-dropdown-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::placeholder {
       --sf-dropdown-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
       --sf-quantity-placeholder--color: CanvasText;
+    }
+  }
+}
+/* Paint (C273): the fill, edge and place colour of these parts stand in
+   sf.paint, under the utilities, so bg-*, border-* and color-* on them
+   win; their geometry stays in sf.components, over the utilities. */
+@layer sf.paint {
+  .sf-field-inherited {
+    color: var(--sf-on-surface-variant);
+  }
+  @media (forced-colors: active) {
+    sf-input[data-inherited] .sf-input .sf-input-field input::-webkit-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input[data-inherited] .sf-input .sf-input-field input::-moz-placeholder {
+      color: CanvasText;
+    }
+    sf-input[data-inherited] .sf-input .sf-input-field input:-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input[data-inherited] .sf-input .sf-input-field input::-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input[data-inherited] .sf-input .sf-input-field input::placeholder {
+      color: CanvasText;
+    }
+    sf-input-textarea[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input-textarea[data-inherited] .sf-textarea textarea::-moz-placeholder {
+      color: CanvasText;
+    }
+    sf-input-textarea[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input-textarea[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input-textarea[data-inherited] .sf-textarea textarea::placeholder {
+      color: CanvasText;
+    }
+    sf-textarea[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
+      color: CanvasText;
+    }
+    sf-textarea[data-inherited] .sf-textarea textarea::-moz-placeholder {
+      color: CanvasText;
+    }
+    sf-textarea[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-textarea[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-textarea[data-inherited] .sf-textarea textarea::placeholder {
+      color: CanvasText;
+    }
+    sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-webkit-input-placeholder {
+      color: CanvasText;
+    }
+    sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-moz-placeholder {
+      color: CanvasText;
+    }
+    sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input:-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::placeholder {
+      color: CanvasText;
+    }
+    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
+      color: CanvasText;
+    }
+    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
+      color: CanvasText;
+    }
+    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
+      color: CanvasText;
+    }
+    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
+      color: CanvasText;
+    }
+    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
       color: CanvasText;
     }
   }
@@ -715,9 +784,10 @@
     max-width: 100%;
     max-inline-size: 100%;
   }
-  /* position="end" (sf-checkbox, W4): the box stands at the row's end, so the
-     row is the control and keeps its full width. */
-  .sf-checkable:has(> .sf-checkbox-container + .sf-checkbox-box:last-child) {
+  /* position="end" (sf-checkbox, W4; sf-radio and sf-switch, C251): the box
+     stands at the row's end, so the row is the control and keeps its full
+     width. */
+  .sf-checkable:has(> .sf-checkbox-container + .sf-checkbox-box:last-child, > .sf-radio-button-container + .sf-radio-button-box, > .sf-switch-container-wrap + .sf-switch-toggler) {
     width: auto;
     inline-size: auto;
   }
@@ -734,7 +804,7 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  .sf-checkable-row > .sf-checkable:has(> .sf-checkbox-container + .sf-checkbox-box:last-child) {
+  .sf-checkable-row > .sf-checkable:has(> .sf-checkbox-container + .sf-checkbox-box:last-child, > .sf-radio-button-container + .sf-radio-button-box, > .sf-switch-container-wrap + .sf-switch-toggler) {
     flex: 1 1 auto;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable-help{
@@ -933,9 +1003,10 @@
     -webkit-margin-before: 0;
             margin-block-start: 0;
   }
-  /* position="end" (sf-checkbox): the name, the «?», the free space, then the
-     box at the row's end; the description under the name. */
-  .sf-checkable-row:has(> .sf-checkable--text > .sf-checkbox-container + .sf-checkbox-box:last-child) {
+  /* position="end" (sf-checkbox; sf-radio and sf-switch, C251): the name, the
+     «?», the free space, then the box at the row's end; the description under
+     the name. */
+  .sf-checkable-row:has(> .sf-checkable--text > .sf-checkbox-container + .sf-checkbox-box:last-child, > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box, > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler) {
     grid-template-columns: minmax(0, auto) auto 1fr auto;
     grid-template-areas: "name help . box" "desc desc desc .";
     width: auto;
@@ -966,6 +1037,92 @@
   .sf-checkable-row > .sf-checkable--text > .sf-checkbox-container + .sf-checkbox-box:last-child {
     -webkit-margin-start: var(--sf-checkbox--gap);
             margin-inline-start: var(--sf-checkbox--gap);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-left: var(--sf-radio-button--gap);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-left: var(--sf-radio-button--gap);
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-right: 0;
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-right: 0;
+    }
+  }
+  .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box:where(:dir(ltr)){
+    margin-left: var(--sf-radio-button--gap);
+    margin-right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-right: var(--sf-radio-button--gap);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-right: var(--sf-radio-button--gap);
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-left: 0;
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-left: 0;
+    }
+  }
+  .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box:where(:dir(rtl)){
+    margin-right: var(--sf-radio-button--gap);
+    margin-left: 0;
+  }
+  .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box {
+    margin-inline: var(--sf-radio-button--gap) 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-left: var(--sf-switch--gap);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-left: var(--sf-switch--gap);
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-right: 0;
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-right: 0;
+    }
+  }
+  .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler:where(:dir(ltr)){
+    margin-left: var(--sf-switch--gap);
+    margin-right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-right: var(--sf-switch--gap);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-right: var(--sf-switch--gap);
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-left: 0;
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-left: 0;
+    }
+  }
+  .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler:where(:dir(rtl)){
+    margin-right: var(--sf-switch--gap);
+    margin-left: 0;
+  }
+  .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler {
+    margin-inline: var(--sf-switch--gap) 0;
   }
   /* A wrapped name (dispatcher decision 2026-11-13, a standard ambiguity of
      C59): the «?» follows the name's LAST word, inline at the end of its last

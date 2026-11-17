@@ -61,8 +61,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("af050435d334");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e69facaaef5a");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c94da50349cf");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("4c26ab329d89");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("b2e7f8bf393c");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("23991a9e4b38");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -73,16 +72,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__.runtime
-}; // sf-alert from its component.json (standard simai.smart-component 1.3.8 §3,
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-alert from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §4.8, §8): its settings are attributes and properties made by
 // core/js/element-manifest.js, its words are lang/<locale>.json (a product adds
 // a language through SF.language.register("sf-alert", code, words)), and the
@@ -90,10 +84,7 @@ const ru = {
 
 const AlertElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_5__
 }); // The live region a status speaks through (§4.8, §7.4.1): polite for news,
@@ -444,6 +435,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "23991a9e4b38"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4c26ab329d89");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "c94da50349cf"
 (module) {
 
@@ -454,7 +467,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-alert
 /***/ "e69facaaef5a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert","tag":"sf-alert","version":"1.5.0","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"appearance":{"type":"enum","values":["default","outlined","flat"],"default":"default"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"actions-layout":{"type":"enum","values":["auto","under"],"default":"auto"},"closable":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","api"]}},"cancelable":true}},"actions":{"close":{"emits":"close"}},"css-variables":{"--sf-alert-background-color":{"type":"color","state":"default"},"--sf-alert-border-color":{"type":"color","state":"default"},"--sf-alert-color":{"type":"color","state":"default"},"--sf-alert-border-width":{"type":"length","state":"default"},"--sf-alert-radius":{"type":"length","state":"default"},"--sf-alert-padding-inline":{"type":"length","state":"default"},"--sf-alert-padding-block":{"type":"length","state":"default"},"--sf-alert-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert","tag":"sf-alert","version":"1.5.3","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"appearance":{"type":"enum","values":["default","outlined","flat"],"default":"default"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"actions-layout":{"type":"enum","values":["auto","under"],"default":"auto"},"closable":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","api"]}},"cancelable":true}},"actions":{"close":{"emits":"close"}},"css-variables":{"--sf-alert-background-color":{"type":"color","state":"default"},"--sf-alert-border-color":{"type":"color","state":"default"},"--sf-alert-color":{"type":"color","state":"default"},"--sf-alert-border-width":{"type":"length","state":"default"},"--sf-alert-radius":{"type":"length","state":"default"},"--sf-alert-padding-inline":{"type":"length","state":"default"},"--sf-alert-padding-block":{"type":"length","state":"default"},"--sf-alert-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -462,13 +475,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.alert","tag":"sf-alert","
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Alert","runtime":{"close-label":"Close alert"},"events":{"action":{"label":"Do the alert\'s action"}}}');
-
-/***/ },
-
-/***/ "b2e7f8bf393c"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Уведомление","runtime":{"close-label":"Закрыть сообщение"},"events":{"action":{"label":"Выполнить действие уведомления"}}}');
 
 /***/ }
 

@@ -482,9 +482,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f63c448cb532");
 /* harmony import */ var _js_fold_runs_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("70dca54ae5b2");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("39829f681e1c");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("aa092a01f635");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("fce330adc7bb");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("daf6e145e31a");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("64216a6c6bb3");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("daf6e145e31a");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_relative_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_relative_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -529,16 +528,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
  // The day headings' ids, one set per list on the page (stable across renders).
 
 let sequence = 0;
@@ -674,10 +668,7 @@ function groupByDay(items, {
 }
 const ListTimelineElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
   source: 'ru'
 });
 
@@ -1205,10 +1196,32 @@ function foldRuns(items, {collapse = 5, opened = new Set()} = {}) {
 
 /***/ },
 
+/***/ "64216a6c6bb3"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("aa092a01f635");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "39829f681e1c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-timeline","tag":"sf-list-timeline","version":"1.4.1","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"time":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"},"actor":{"anyOf":[{"type":"string"},{"type":"object","properties":{"name":{"type":"string"},"avatar":{"type":"string"},"hue":{"type":"string"},"system":{"type":"boolean"}},"required":["name"]}]},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"icon":{"type":"string"},"href":{"type":"string"},"kind":{"type":"string","enum":["event","comment","sms"]},"state":{"type":"string","enum":["done","current","upcoming"]},"change":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}},"changes":{"type":"array","items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}}},"slot":{"type":"string"},"items":{"type":"array","items":{"type":"object"}}},"required":["id","title"]}},"default":[]},"label":{"type":"string","default":""},"group":{"type":"enum","values":["day","none"],"default":"day"},"time-format":{"type":"enum","values":["auto","relative","exact"],"default":"auto"},"now":{"type":"string","default":""},"collapse":{"type":"number","integer":true,"min":0,"default":5},"sticky-headings":{"type":"boolean","default":false},"density":{"type":"enum","values":["normal","compact"],"default":"normal"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"load-more":{"carries":{"direction":"string","after":"string"}},"expand":{"carries":{"run":"string","ids":"array","count":"number"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean","data-loading":"boolean"},"css-variables":{"--sf-list-timeline-line-color":{"type":"color","state":"default"},"--sf-list-timeline-marker-color":{"type":"color","state":"default"},"--sf-list-timeline-time-color":{"type":"color","state":"default"},"--sf-list-timeline-day-color":{"type":"color","state":"default"},"--sf-list-timeline-gap":{"type":"length","state":"default"},"--sf-list-timeline-padding-inline":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-timeline","tag":"sf-list-timeline","version":"1.5.3","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"time":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"},"actor":{"anyOf":[{"type":"string"},{"type":"object","properties":{"name":{"type":"string"},"avatar":{"type":"string"},"hue":{"type":"string"},"system":{"type":"boolean"}},"required":["name"]}]},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"icon":{"type":"string"},"href":{"type":"string"},"kind":{"type":"string","enum":["event","comment","sms"]},"state":{"type":"string","enum":["done","current","upcoming"]},"change":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}},"changes":{"type":"array","items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}}},"slot":{"type":"string"},"items":{"type":"array","items":{"type":"object"}}},"required":["id","title"]}},"default":[]},"label":{"type":"string","default":""},"group":{"type":"enum","values":["day","none"],"default":"day"},"time-format":{"type":"enum","values":["auto","relative","exact"],"default":"auto"},"now":{"type":"string","default":""},"collapse":{"type":"number","integer":true,"min":0,"default":5},"sticky-headings":{"type":"boolean","default":false},"density":{"type":"enum","values":["normal","compact"],"default":"normal"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"load-more":{"carries":{"direction":"string","after":"string"}},"expand":{"carries":{"run":"string","ids":"array","count":"number"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean","data-loading":"boolean"},"css-variables":{"--sf-list-timeline-line-color":{"type":"color","state":"default"},"--sf-list-timeline-marker-color":{"type":"color","state":"default"},"--sf-list-timeline-time-color":{"type":"color","state":"default"},"--sf-list-timeline-day-color":{"type":"color","state":"default"},"--sf-list-timeline-gap":{"type":"length","state":"default"},"--sf-list-timeline-padding-inline":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -1216,13 +1229,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-timeline","tag":"sf-
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Timeline","runtime":{"empty-text":"No events yet","more":"Show more","loading":"Loading…","today":"Today","yesterday":"Yesterday","tomorrow":"Tomorrow","status-success":"Done","status-warning":"Warning","status-error":"Error","status-info":"Info","state-done":"Done","state-current":"Now","state-upcoming":"Upcoming","step-status-success":"successful","step-status-warning":"with a warning","step-status-error":"with an error","run-changes":{"one":"{n} more change","other":"{n} more changes"},"run-events":{"one":"{n} more event","other":"{n} more events"}},"events":{"navigate":{"label":"Go"},"load-more":{"label":"Show more"},"expand":{"label":"Show folded"}}}');
-
-/***/ },
-
-/***/ "fce330adc7bb"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Хронология","runtime":{"empty-text":"Событий пока нет","more":"Показать ещё","loading":"Загружаем…","today":"Сегодня","yesterday":"Вчера","tomorrow":"Завтра","status-success":"Готово","status-warning":"Предупреждение","status-error":"Ошибка","status-info":"Сведения","state-done":"Пройдено","state-current":"Сейчас","state-upcoming":"Впереди","step-status-success":"успешно","step-status-warning":"с предупреждением","step-status-error":"с ошибкой","run-changes":{"one":"Ещё {n} изменение","few":"Ещё {n} изменения","many":"Ещё {n} изменений","other":"Ещё {n} изменения"},"run-events":{"one":"Ещё {n} событие","few":"Ещё {n} события","many":"Ещё {n} событий","other":"Ещё {n} события"}},"events":{"navigate":{"label":"Перейти"},"load-more":{"label":"Показать ещё"},"expand":{"label":"Показать свёрнутые"}}}');
 
 /***/ }
 

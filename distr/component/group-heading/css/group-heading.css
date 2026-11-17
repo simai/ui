@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* The group heading of block list (owner decision C40, 2026-11-09; research
      ui-control control/research/2026-11-09-timeline-parts.md §5, prototype
@@ -49,7 +49,6 @@
     box-sizing: border-box;
     margin: var(--sf-space-3) 0 var(--sf-space-1\/2);
     margin: var(--sf-group-heading-margin-block-start, var(--sf-space-3)) 0 var(--sf-group-heading-margin-block-end, var(--sf-space-1\/2));
-    color: var(--sf-on-surface);
     font-size: var(--sf-text-size-1);
     line-height: var(--sf-text-height-1);
     font-weight: var(--sf-weight--medium);
@@ -78,8 +77,6 @@
             margin-block-start: 0;
   }
   .sf-group-heading-date {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-group-heading-date-color, var(--sf-on-surface-variant));
     font-size: var(--sf-text-size-1\/2);
     line-height: var(--sf-text-height-1\/2);
     font-weight: var(--sf-font-weight-regular);
@@ -92,8 +89,6 @@
     padding-top: var(--sf-space-1\/4);
     padding-bottom: var(--sf-space-1\/4);
     padding-block: var(--sf-space-1\/4);
-    background-color: var(--sf-surface-page);
-    background-color: var(--sf-group-heading-background-color, var(--sf-surface-place-solid, var(--sf-surface-page)));
   }
   /* A new day in a conversation (owner decision C167 (2), 2026-11-14; list and
      feed study, prototype list-feed-study.html#q-day, variant A): the words
@@ -107,8 +102,6 @@
     margin-top: var(--sf-space-1\/2);
     margin-bottom: var(--sf-space-1\/4);
     margin-block: var(--sf-space-1\/2) var(--sf-space-1\/4);
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-group-heading-date-color, var(--sf-on-surface-variant));
     font-size: var(--sf-text-size-1\/2);
     line-height: var(--sf-text-height-1\/2);
     font-weight: var(--sf-weight--medium);
@@ -119,6 +112,26 @@
     flex: 1;
     height: var(--sf-px);
     block-size: var(--sf-px);
+  }
+}
+@layer sf.paint {
+  .sf-group-heading {
+    color: var(--sf-on-surface);
+  }
+  .sf-group-heading-date {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-group-heading-date-color, var(--sf-on-surface-variant));
+  }
+  .sf-group-heading--sticky {
+    background-color: var(--sf-surface-page);
+    background-color: var(--sf-group-heading-background-color, var(--sf-surface-place-solid, var(--sf-surface-page)));
+  }
+  .sf-group-heading--divider {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-group-heading-date-color, var(--sf-on-surface-variant));
+  }
+  .sf-group-heading--divider::before,
+  .sf-group-heading--divider::after {
     background-color: var(--sf-outline-variant);
     background-color: var(--sf-group-heading-line-color, var(--sf-outline-variant));
   }

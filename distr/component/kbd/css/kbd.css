@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   :where(button, [role=button], [role=combobox], [role=searchbox]) {
     --sf-kbd--step-size: var(--sf-text-height-1\/2);
@@ -61,11 +61,8 @@
     font-size: var(--sf-text-size-1\/2);
     font-size: var(--sf-kbd-font-size, var(--sf-kbd--step-font-size, var(--sf-text-size-1\/2)));
     font-weight: var(--sf-font-weight-medium);
-    color: var(--sf-on-surface);
-    background: var(--sf-surface-container);
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
-    border: var(--sf-px) solid var(--sf-outline-variant);
-    border: var(--sf-px) solid var(--sf-kbd-border-color, var(--sf-outline-variant));
+    border-width: var(--sf-px);
+    border-style: solid;
     box-shadow: inset 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
     box-shadow: inset 0 calc(-1 * var(--sf-px)) 0 var(--sf-kbd-border-color, var(--sf-outline-variant));
   }
@@ -88,9 +85,8 @@
     block-size: auto;
     margin: var(--sf-0);
     padding: var(--sf-0);
-    color: inherit;
-    background: var(--sf-transparent);
     border: none;
+    border-color: revert-layer;
     border-radius: var(--sf-0);
     box-shadow: none;
     font: inherit;
@@ -124,12 +120,8 @@
     font-size: var(--sf-text-size-1\/2);
     font-size: var(--sf-kbd-font-size, var(--sf-kbd--step-font-size, var(--sf-text-size-1\/2)));
     font-weight: var(--sf-font-weight-medium);
-    color: currentColor;
-    color: var(--sf-kbd-color, currentColor);
-    background: color-mix(in srgb, currentColor 8%, transparent);
-    background: var(--sf-kbd-background-color, var(--sf-kbd-background, color-mix(in srgb, currentColor 8%, transparent)));
-    --sf-on-surface-variant: inherit;
     border: none;
+    border-color: revert-layer;
     box-shadow: none;
   }
   :where(.sf-button-shortcut, .sf-input-shortcut) > :where(kbd:has(> kbd), .sf-kbd--group) {
@@ -146,11 +138,8 @@
     padding-left: var(--sf-0);
     padding-right: var(--sf-0);
     padding-inline: var(--sf-0);
-    --sf-on-surface-variant: inherit;
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-kbd-plain-color, var(--sf-on-surface-variant));
-    background: var(--sf-transparent);
     border: none;
+    border-color: revert-layer;
     border-radius: var(--sf-0);
     box-shadow: none;
     font-family: inherit;
@@ -163,18 +152,12 @@
     vertical-align: baseline;
   }
   :where([role=menu], [role=menubar], [role=listbox], [role=tooltip], .sf-tooltip, .sf-context-menu) :where(kbd:has(> kbd), .sf-kbd--group) {
-    gap: var(--sf-a2);
+    gap: var(--sf-space-1\/4);
     vertical-align: baseline;
   }
   :where([role=menu], [role=menubar], [role=listbox], [role=tooltip], .sf-tooltip, .sf-context-menu) :where(.sf-kbd-join) {
     display: inline;
     line-height: 1;
-  }
-  :where([role=tooltip], .sf-tooltip) :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
-    color: color-mix(in srgb, currentColor 64%, transparent);
-  }
-  :where([role=menu], [role=menubar], [role=listbox], [role=tooltip], .sf-tooltip, .sf-context-menu) :where(:disabled, [aria-disabled=true]) :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
-    color: inherit;
   }
   :where(kbd[appearance=cap]:not(:has(> kbd)), .sf-kbd[appearance=cap], kbd[appearance=cap] kbd) {
     width: auto;
@@ -196,12 +179,8 @@
     font-size: var(--sf-text-size-1\/2);
     font-size: var(--sf-kbd-font-size, var(--sf-kbd--step-font-size, var(--sf-text-size-1\/2)));
     font-weight: var(--sf-font-weight-medium);
-    color: currentColor;
-    color: var(--sf-kbd-color, currentColor);
-    background: color-mix(in srgb, currentColor 8%, transparent);
-    background: var(--sf-kbd-background-color, var(--sf-kbd-background, color-mix(in srgb, currentColor 8%, transparent)));
-    --sf-on-surface-variant: inherit;
     border: none;
+    border-color: revert-layer;
     box-shadow: none;
   }
   :where(kbd[appearance=cap]:has(> kbd), .sf-kbd--group[appearance=cap]) {
@@ -221,11 +200,8 @@
     padding-left: var(--sf-0);
     padding-right: var(--sf-0);
     padding-inline: var(--sf-0);
-    --sf-on-surface-variant: inherit;
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-kbd-plain-color, var(--sf-on-surface-variant));
-    background: var(--sf-transparent);
     border: none;
+    border-color: revert-layer;
     border-radius: var(--sf-0);
     box-shadow: none;
     font-family: inherit;
@@ -238,7 +214,7 @@
     vertical-align: baseline;
   }
   :where(kbd[appearance=plain]:has(> kbd), .sf-kbd--group[appearance=plain]) {
-    gap: var(--sf-a2);
+    gap: var(--sf-space-1\/4);
     vertical-align: baseline;
   }
   :where(kbd[appearance=plain]:has(> kbd), .sf-kbd--group[appearance=plain]) > :where(.sf-kbd-join) {
@@ -265,11 +241,8 @@
     font-size: var(--sf-text-size-1\/2);
     font-size: var(--sf-kbd-font-size, var(--sf-kbd--step-font-size, var(--sf-text-size-1\/2)));
     font-weight: var(--sf-font-weight-medium);
-    color: var(--sf-on-surface);
-    background: var(--sf-surface-container);
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
-    border: var(--sf-px) solid var(--sf-outline-variant);
-    border: var(--sf-px) solid var(--sf-kbd-border-color, var(--sf-outline-variant));
+    border-width: var(--sf-px);
+    border-style: solid;
     box-shadow: inset 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
     box-shadow: inset 0 calc(-1 * var(--sf-px)) 0 var(--sf-kbd-border-color, var(--sf-outline-variant));
   }
@@ -295,13 +268,72 @@
     white-space: nowrap;
   }
   @media (forced-colors: active) {
-    :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
-      border-color: CanvasText;
-    }
     :where(button, [role=button], [role=combobox], [role=searchbox], .sf-button, .sf-input) :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)),
     :where(kbd[appearance=cap]:not(:has(> kbd)), .sf-kbd[appearance=cap], kbd[appearance=cap] kbd) {
       outline: var(--sf-px) solid CanvasText;
       outline-offset: calc(-1 * var(--sf-px));
+    }
+  }
+}
+@layer sf.paint {
+  :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
+    color: var(--sf-on-surface);
+    background: var(--sf-surface-container);
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-kbd-border-color, var(--sf-outline-variant));
+  }
+  :where(kbd:has(> kbd), .sf-kbd--group) {
+    color: inherit;
+    background: var(--sf-transparent);
+    border: none;
+  }
+  :where(button, [role=button], [role=combobox], [role=searchbox], .sf-button, .sf-input) :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
+    color: currentColor;
+    color: var(--sf-kbd-color, currentColor);
+    background: color-mix(in srgb, currentColor 8%, transparent);
+    background: var(--sf-kbd-background-color, var(--sf-kbd-background, color-mix(in srgb, currentColor 8%, transparent)));
+    --sf-on-surface-variant: inherit;
+    border: none;
+  }
+  :where([role=menu], [role=menubar], [role=listbox], [role=tooltip], .sf-tooltip, .sf-context-menu) :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
+    --sf-on-surface-variant: inherit;
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-kbd-plain-color, var(--sf-on-surface-variant));
+    background: var(--sf-transparent);
+    border: none;
+  }
+  :where([role=tooltip], .sf-tooltip) :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
+    color: color-mix(in srgb, currentColor 64%, transparent);
+  }
+  :where([role=menu], [role=menubar], [role=listbox], [role=tooltip], .sf-tooltip, .sf-context-menu) :where(:disabled, [aria-disabled=true]) :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
+    color: inherit;
+  }
+  :where(kbd[appearance=cap]:not(:has(> kbd)), .sf-kbd[appearance=cap], kbd[appearance=cap] kbd) {
+    color: currentColor;
+    color: var(--sf-kbd-color, currentColor);
+    background: color-mix(in srgb, currentColor 8%, transparent);
+    background: var(--sf-kbd-background-color, var(--sf-kbd-background, color-mix(in srgb, currentColor 8%, transparent)));
+    --sf-on-surface-variant: inherit;
+    border: none;
+  }
+  :where(kbd[appearance=plain]:not(:has(> kbd)), .sf-kbd[appearance=plain], kbd[appearance=plain] kbd) {
+    --sf-on-surface-variant: inherit;
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-kbd-plain-color, var(--sf-on-surface-variant));
+    background: var(--sf-transparent);
+    border: none;
+  }
+  :where(kbd[appearance=key]:not(:has(> kbd)), .sf-kbd[appearance=key], kbd[appearance=key] kbd) {
+    color: var(--sf-on-surface);
+    background: var(--sf-surface-container);
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-kbd-border-color, var(--sf-outline-variant));
+  }
+  @media (forced-colors: active) {
+    :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
+      border-color: CanvasText;
     }
   }
 }

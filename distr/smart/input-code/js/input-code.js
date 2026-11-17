@@ -845,10 +845,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e5f10aa473e6");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("a4a487df7872");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("363b524435da");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e01f2016b34a");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("8498c2b6b41c");
-/* harmony import */ var _code_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("fbc54cfd7755");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("ac664264d5c0");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("5038bfe3bc0e");
+/* harmony import */ var _code_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("fbc54cfd7755");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ac664264d5c0");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -892,24 +891,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
 
 
 const CodeInputElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
 });
@@ -971,22 +962,22 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Sh
   }
 
   get length() {
-    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeLength)(this.getAttribute('length'));
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.codeLength)(this.getAttribute('length'));
   }
 
   get mode() {
-    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeMode)(this.getAttribute('mode'));
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.codeMode)(this.getAttribute('mode'));
   } // An own alphabet (C82): only these characters are kept; set, it takes the
   // place of the mode.
 
 
   get charset() {
-    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeCharset)(this.getAttribute('charset'));
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.codeCharset)(this.getAttribute('charset'));
   } // Cells per group, a separator between the groups (C82: 3 + 3, 4 + 4), or 0.
 
 
   get groups() {
-    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeGroups)(this.getAttribute('groups'), this.length);
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.codeGroups)(this.getAttribute('groups'), this.length);
   } // What the code is made of: the mode, the alphabet and whether letters
   // become capitals (C82), as code.mjs reads it.
   // (The setting is copied in by member, not as an object key: the loader
@@ -1000,11 +991,11 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Sh
       charset: this.charset
     };
     settings.uppercase = this.uppercase;
-    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeKind)(settings);
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.codeKind)(settings);
   }
 
   get numeric() {
-    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeInputMode)(this.kind) === 'numeric';
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.codeInputMode)(this.kind) === 'numeric';
   }
 
   get size() {
@@ -1018,14 +1009,14 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Sh
 
   get value() {
     const input = this.getInputElement();
-    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(input ? input.value : this.getAttribute('value') ?? this.defaultValue, this.kind, this.length);
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseCode)(input ? input.value : this.getAttribute('value') ?? this.defaultValue, this.kind, this.length);
   } // Setting the value writes the field and its cells, as the native input's
   // own value does: no input, change or complete event, which are the
   // person's.
 
 
   set value(next) {
-    const value = next === null || next === undefined ? '' : (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(next, this.kind, this.length);
+    const value = next === null || next === undefined ? '' : (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseCode)(next, this.kind, this.length);
     if (next === null || next === undefined) this.removeAttribute('value');else this.setAttribute('value', value);
     const input = this.getInputElement();
     if (input && input.value !== value) input.value = value;
@@ -1062,7 +1053,7 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Sh
 
 
   positionText(cell) {
-    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.positionWords)(this.text(this.numeric ? 'digit' : 'character'), cell, this.length);
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.positionWords)(this.text(this.numeric ? 'digit' : 'character'), cell, this.length);
   }
 
   ownInput(target) {
@@ -1082,7 +1073,7 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Sh
       end: input.selectionEnd ?? 0
     }; // A typed character the mode does not keep is not written at all.
 
-    if (event.inputType === 'insertText' && typeof event.data === 'string' && event.data.length > 0 && (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(event.data, this.kind, this.length) === '') {
+    if (event.inputType === 'insertText' && typeof event.data === 'string' && event.data.length > 0 && (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseCode)(event.data, this.kind, this.length) === '') {
       event.preventDefault();
     }
   }; // Every edit, read after the browser applied it and set right: the value
@@ -1096,7 +1087,7 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Sh
     const {
       value,
       caret
-    } = (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.applyEdit)({
+    } = (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.applyEdit)({
       previous,
       raw: input.value,
       caret: input.selectionStart ?? input.value.length,
@@ -1122,7 +1113,7 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Sh
     if (!this.editable(input)) return;
     const text = event.clipboardData?.getData('text') ?? '';
     event.preventDefault();
-    const next = (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.applyPaste)({
+    const next = (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.applyPaste)({
       previous: input.value,
       text,
       start: input.selectionStart ?? 0,
@@ -1374,7 +1365,7 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Sh
   caretCell(input) {
     const focused = input && input.ownerDocument?.activeElement === input;
     const at = focused ? input.selectionStart ?? input.value.length : input?.value.length ?? 0;
-    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.currentCell)(at, this.length);
+    return (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.currentCell)(at, this.length);
   } // The cells show the code (or a dot for each character when masked), the
   // filled ones `active`, the caret's `current` -- only while the field has
   // the focus: a field at rest marked the next cell and looked focused (K6);
@@ -1397,7 +1388,7 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Sh
     const bare = focused && start === end && !this.readonly;
     this.cells().forEach((cell, index) => {
       const character = value[index] || '';
-      const shown = character && this.mask ? _code_mjs__WEBPACK_IMPORTED_MODULE_10__.MASK_GLYPH : character;
+      const shown = character && this.mask ? _code_mjs__WEBPACK_IMPORTED_MODULE_9__.MASK_GLYPH : character;
       if (cell.textContent !== shown) cell.textContent = shown;
       cell.classList.toggle('active', index < value.length);
       cell.classList.toggle('current', focused && one && index === current);
@@ -1477,8 +1468,8 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Sh
     // native input starts from is that code cleaned to the mode and length,
     // under its own name, so a template never reads a resolved prop changed.
 
-    const defaultCode = (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(this.defaultValue, this.kind, this.length);
-    const value = hasControlledValue ? (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(this.getAttribute('value'), this.kind, this.length) : input ? (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseCode)(input.value, this.kind, this.length) : defaultCode;
+    const defaultCode = (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseCode)(this.defaultValue, this.kind, this.length);
+    const value = hasControlledValue ? (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseCode)(this.getAttribute('value'), this.kind, this.length) : input ? (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseCode)(input.value, this.kind, this.length) : defaultCode;
     return this.createTemplateContext({ ...props,
       component,
       // The field's ids come from its instance path (§7.1.1, #41).
@@ -1501,7 +1492,7 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Sh
       mode: this.mode,
       length: this.length,
       mask: this.mask,
-      inputMode: (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.codeInputMode)(this.kind),
+      inputMode: (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.codeInputMode)(this.kind),
       // Letters become capitals: the keyboard offers them (C82). Not named
       // after the setting: the loader reads template words as utility classes.
       capitals: this.kind.uppercase,
@@ -1509,7 +1500,7 @@ class SfCodeInput extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Sh
       // The cells a group separator follows (C82).
       separators: Array.from({
         length: this.length
-      }, (_, index) => index).filter(index => (0,_code_mjs__WEBPACK_IMPORTED_MODULE_10__.separatorAfter)(index, this.groups, this.length)),
+      }, (_, index) => index).filter(index => (0,_code_mjs__WEBPACK_IMPORTED_MODULE_9__.separatorAfter)(index, this.groups, this.length)),
       ariaLabel: this.ariaLabel,
       groupLabel: this.ariaLabel || this.text('group'),
       messageContent: messageIsError ? errorContent : hint,
@@ -2041,19 +2032,33 @@ const CODE_INPUT_TEXT = {
     'value-missing': 'Enter the code',
     help: 'More about: {label}',
   },
-  ru: {
-    digit: 'цифра {n} из {m}',
-    character: 'символ {n} из {m}',
-    group: 'Код',
-    'too-short': 'Введите код целиком',
-    'value-missing': 'Введите код',
-    help: 'Подробнее: {label}',
-  },
 };
 
 function positionWords(template, cell, length) {
   return String(template).replace('{n}', String(cell + 1)).replace('{m}', String(codeLength(length)));
 }
+
+
+/***/ },
+
+/***/ "5038bfe3bc0e"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e01f2016b34a");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
 
 
 /***/ },
@@ -2068,7 +2073,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "a4a487df7872"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-code","tag":"sf-input-code","version":"1.7.0","kind":"leaf","settings":{"length":{"type":"number","default":6},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"mode":{"type":"enum","values":["numeric","alphanumeric"],"default":"numeric"},"charset":{"type":"string","default":""},"uppercase":{"type":"boolean","default":false},"groups":{"type":"number","default":0},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"},"completed":{"carries":{"value":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","custom-error"]},"css-variables":{"--sf-verification-background-color":{"type":"color","state":"default"},"--sf-verification-border-color":{"type":"color","state":"default"},"--sf-verification-border-width":{"type":"length","state":"default"},"--sf-verification-radius":{"type":"length","state":"default"},"--sf-verification-color":{"type":"color","state":"default"},"--sf-verification-cell-size":{"type":"length","state":"default"},"--sf-verification-gap":{"type":"length","state":"default"},"--sf-verification-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-code","tag":"sf-input-code","version":"1.9.3","kind":"leaf","settings":{"length":{"type":"number","default":6},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"mode":{"type":"enum","values":["numeric","alphanumeric"],"default":"numeric"},"charset":{"type":"string","default":""},"uppercase":{"type":"boolean","default":false},"groups":{"type":"number","default":0},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"},"completed":{"carries":{"value":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","custom-error"]},"css-variables":{"--sf-verification-background-color":{"type":"color","state":"default"},"--sf-verification-border-color":{"type":"color","state":"default"},"--sf-verification-border-width":{"type":"length","state":"default"},"--sf-verification-radius":{"type":"length","state":"default"},"--sf-verification-color":{"type":"color","state":"default"},"--sf-verification-cell-size":{"type":"length","state":"default"},"--sf-verification-gap":{"type":"length","state":"default"},"--sf-verification-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
@@ -2076,13 +2081,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-code","tag":"sf-inp
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Code input","runtime":{"character":"character {n} of {m}","digit":"digit {n} of {m}","group":"Code","too-short":"Enter the whole code","value-missing":"Enter the code","help":"More about: {label}"}}');
-
-/***/ },
-
-/***/ "8498c2b6b41c"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Код подтверждения","runtime":{"character":"символ {n} из {m}","digit":"цифра {n} из {m}","group":"Код","too-short":"Введите код целиком","value-missing":"Введите код","help":"Подробнее: {label}"}}');
 
 /***/ }
 

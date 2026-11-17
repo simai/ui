@@ -591,12 +591,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6b629b4c1b7e");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("34bb89f847b9");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("6faa2d48a2c0");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fca41e9837f0");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("46c0e03c9179");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("8185ae1e4765");
-/* harmony import */ var _core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("269d4777d276");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_composition_sortable_inserter_mjs__WEBPACK_IMPORTED_MODULE_1__, _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_2__, _core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_8__]);
-([_core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_composition_sortable_inserter_mjs__WEBPACK_IMPORTED_MODULE_1__, _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_2__, _core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("68ead05e8488");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("8185ae1e4765");
+/* harmony import */ var _core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("269d4777d276");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_composition_sortable_inserter_mjs__WEBPACK_IMPORTED_MODULE_1__, _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_2__, _core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_7__]);
+([_core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_composition_sortable_inserter_mjs__WEBPACK_IMPORTED_MODULE_1__, _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_2__, _core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // Smart entry for sf-sortable. The loader fetches this bundle only when the
 // page has an <sf-sortable> list, so pages without an editor keep core.js small.
 //
@@ -610,27 +609,19 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__.runtime
-};
 
  // Defined with its insertion point and inserter (inserter-items, opt-in) and
 // the handle's move menu (C171 (1)). They come with this bundle only: the
 // composition overlay carries the drag module too and has no use for them.
 
-(0,_core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__.defineSortable)((0,_core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_8__.moveMenuRegistry)((0,_core_js_composition_sortable_inserter_mjs__WEBPACK_IMPORTED_MODULE_1__.inserterRegistry)()), {
+(0,_core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__.defineSortable)((0,_core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_7__.moveMenuRegistry)((0,_core_js_composition_sortable_inserter_mjs__WEBPACK_IMPORTED_MODULE_1__.inserterRegistry)()), {
   base: (0,_core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_2__.manifestHost)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
-    lang: {
-      en,
-      ru
-    },
+    lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__.files,
     source: 'ru',
     aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
   })
@@ -807,14 +798,6 @@ const SORTABLE_INSERT_EVENT = 'sf-sortable-insert';
 const ITEM = '[data-sf-sortable-item]';
 
 const MESSAGES = {
-  ru: {
-    point: 'Вставить: позиция {index} из {total}',
-    menu: 'Вставить',
-    search: 'Найти',
-    empty: 'Ничего не найдено',
-    inserted: 'Вставлено: {item}, позиция {index} в «{list}».',
-    hint: 'Плюс — вставить после.',
-  },
   en: {
     point: 'Insert: position {index} of {total}',
     menu: 'Insert',
@@ -1362,13 +1345,6 @@ const ITEM = '[data-sf-sortable-item]';
 const HANDLE = '[data-sf-sortable-handle]';
 
 const MESSAGES = {
-  ru: {
-    'move-menu': 'Переместить «{item}»',
-    'move-up': 'Выше',
-    'move-down': 'Ниже',
-    'move-first': 'В начало',
-    'move-last': 'В конец',
-  },
   en: {
     'move-menu': 'Move “{item}”',
     'move-up': 'Up',
@@ -1626,15 +1602,6 @@ const LINE = SORTABLE_DROP_LINE;
 const HALF = SORTABLE_DROP_LINE / 2;
 
 const MESSAGES = {
-  ru: {
-    instructions: 'Пробел или Enter — взять, стрелки — переместить, Пробел или Enter — положить, Escape — отменить.',
-    picked: 'Взято: {item}. Позиция {index} из {total} в «{list}».',
-    moved: 'Позиция {index} из {total} в «{list}».',
-    dropped: 'Положено: {item}, позиция {index} в «{list}».',
-    cancelled: 'Перемещение отменено.',
-    target: 'Цель: {target}.',
-    roledescription: 'перемещаемый',
-  },
   en: {
     instructions: 'Space or Enter to pick up, arrows to move, Space or Enter to drop, Escape to cancel.',
     picked: 'Picked up {item}. Position {index} of {total} in “{list}”.',
@@ -2540,6 +2507,28 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "68ead05e8488"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fca41e9837f0");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "6faa2d48a2c0"
 (module) {
 
@@ -2550,7 +2539,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-sorta
 /***/ "34bb89f847b9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.4.1","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.5.2","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
 
 /***/ },
 
@@ -2558,13 +2547,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sorta
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Drag and drop","runtime":{"cancelled":"Move cancelled.","dropped":"Dropped {item} at position {index} in “{list}”.","empty":"Nothing found","hint":"Plus to insert after.","inserted":"Inserted {item} at position {index} in “{list}”.","instructions":"Space or Enter to pick up, arrows to move, Space or Enter to drop, Escape to cancel.","menu":"Insert","move-down":"Down","move-first":"To the top","move-last":"To the bottom","move-menu":"Move “{item}”","move-up":"Up","moved":"Position {index} of {total} in “{list}”.","picked":"Picked up {item}. Position {index} of {total} in “{list}”.","point":"Insert: position {index} of {total}","roledescription":"draggable","search":"Find","target":"Target: {target}."},"events":{"state":{"label":"Drag step"},"insert":{"label":"Insert"}}}');
-
-/***/ },
-
-/***/ "46c0e03c9179"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Перетаскивание","runtime":{"cancelled":"Перемещение отменено.","dropped":"Положено: {item}, позиция {index} в «{list}».","empty":"Ничего не найдено","hint":"Плюс — вставить после.","inserted":"Вставлено: {item}, позиция {index} в «{list}».","instructions":"Пробел или Enter — взять, стрелки — переместить, Пробел или Enter — положить, Escape — отменить.","menu":"Вставить","move-down":"Ниже","move-first":"В начало","move-last":"В конец","move-menu":"Переместить «{item}»","move-up":"Выше","moved":"Позиция {index} из {total} в «{list}».","picked":"Взято: {item}. Позиция {index} из {total} в «{list}».","point":"Вставить: позиция {index} из {total}","roledescription":"перемещаемый","search":"Найти","target":"Цель: {target}."},"events":{"state":{"label":"Шаг перетаскивания"},"insert":{"label":"Вставить"}}}');
 
 /***/ }
 

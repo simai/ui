@@ -1818,11 +1818,6 @@ const INHERITED_TEXT = {
     inherited: 'inherited',
     reset: 'Reset to inherited',
     described: 'Inherited: {value}'
-  },
-  ru: {
-    inherited: 'наследуется',
-    reset: 'Сбросить к наследуемому',
-    described: 'Наследуется: {value}'
   }
 }; // Each control declares the three in its own props -- inherited-value,
 // inherited-text and reset-label -- written out rather than spread from here, so
@@ -2081,8 +2076,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d1519077b57e");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("a105cae235ec");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("7bae0cbaaf2a");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("88be139816dd");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("4ced3f61aadc");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("2748cb60ae7a");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_textarea_js_textarea__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
 ([_component_textarea_js_textarea__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
@@ -2097,16 +2091,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__.runtime
-}; // sf-input-textarea from its component.json (standard simai.smart-component 1.3.8
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-input-textarea from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §17, §20). The settings are made by core/js/element-manifest.js;
 // `spellcheck` (a property of HTMLElement, §3.1) is spell-check, and `type`
 // (appearance) and `error` (invalid, §17.2) are dated aliases, as is the
@@ -2116,10 +2105,7 @@ const ru = {
 
 const TextareaElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default())),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
 });
@@ -2645,6 +2631,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "2748cb60ae7a"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("88be139816dd");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "9fe5ba254a5b"
 (module) {
 
@@ -2662,7 +2670,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "a105cae235ec"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-textarea","tag":"sf-input-textarea","version":"1.12.3","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled","flush"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"counter":{"type":"boolean","default":false},"spell-check":{"type":"boolean","default":true},"wrap":{"type":"enum","values":["soft","hard"],"default":"soft"},"text":{"type":"enum","values":["plain","code"],"default":"plain"},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":3},"auto-grow":{"type":"boolean","default":true},"min-rows":{"type":"number","default":3},"max-rows":{"type":"number","default":10},"resize":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-textarea-background-color":{"type":"color","state":"default"},"--sf-textarea-border-color":{"type":"color","state":"default"},"--sf-textarea-color":{"type":"color","state":"default"},"--sf-textarea-radius":{"type":"length","state":"default"},"--sf-textarea-padding-inline":{"type":"length","state":"default"},"--sf-textarea-padding-block":{"type":"length","state":"default"},"--sf-textarea-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-textarea","tag":"sf-input-textarea","version":"1.13.2","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled","flush"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"counter":{"type":"boolean","default":false},"spell-check":{"type":"boolean","default":true},"wrap":{"type":"enum","values":["soft","hard"],"default":"soft"},"text":{"type":"enum","values":["plain","code"],"default":"plain"},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":3},"auto-grow":{"type":"boolean","default":true},"min-rows":{"type":"number","default":3},"max-rows":{"type":"number","default":10},"resize":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-textarea-background-color":{"type":"color","state":"default"},"--sf-textarea-border-color":{"type":"color","state":"default"},"--sf-textarea-color":{"type":"color","state":"default"},"--sf-textarea-radius":{"type":"length","state":"default"},"--sf-textarea-padding-inline":{"type":"length","state":"default"},"--sf-textarea-padding-block":{"type":"length","state":"default"},"--sf-textarea-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
@@ -2670,13 +2678,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-textarea","tag":"sf
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Text area","runtime":{"value-missing":"Fill in this field","count-text":"{count} / {max}","too-long":"At most {max} characters","too-short":"At least {min} characters","help":"More about: {label}"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
-
-/***/ },
-
-/***/ "4ced3f61aadc"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Многострочное поле","runtime":{"value-missing":"Заполните поле","count-text":"{count} / {max}","too-long":"Не больше {max} знаков","too-short":"Не меньше {min} знаков","help":"Подробнее: {label}"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
 
 /***/ }
 

@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* An inline-level tag sits in its parent's line by a baseline it takes from
      its first item, the icon. An icon's baseline depends on its state and its
@@ -16,11 +16,12 @@
     margin: 0;
     padding: 0;
     border: 0;
-    background: none;
-    color: inherit;
+    border-color: revert-layer;
     font: inherit;
-    gap: var(--sf-a1);
-    gap: var(--sf-tag--gap, var(--sf-a1));
+    /* The tag's own gap, as the class sheet reads it (0 at every size);
+       the fallback was --sf-a1, a size primitive (C105, C178). */
+    gap: 0;
+    gap: var(--sf-tag--gap, var(--sf-tag-gap, 0));
     cursor: pointer;
     /* The ring is drawn by the box after it (below), so the bare control
        does not draw a second one. Paired with the :focus-visible rule below. */
@@ -228,6 +229,16 @@
       outline: var(--sf-focus--width) solid currentColor;
       outline-offset: var(--sf-focus--inset);
     }
+  }
+}
+/* Paint (C273): the fill, edge and place colour of these parts stand in
+   sf.paint, under the utilities, so bg-*, border-* and color-* on them
+   win; their geometry stays in sf.components, over the utilities. */
+@layer sf.paint {
+  .sf-tag .sf-tag-action {
+    border: 0;
+    background: none;
+    color: inherit;
   }
 }
 @layer sf.states {

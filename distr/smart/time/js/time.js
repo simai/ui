@@ -481,9 +481,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("43090d1c8307");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("33668afeb99d");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("b033fb83f193");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d3960b774f21");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("7c088a35006e");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("a0991f4f93d4");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("fb9cc1c3591e");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("a0991f4f93d4");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_relative_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_relative_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -525,16 +524,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
 
 const FORMATS = ['auto', 'time', 'date', 'datetime', 'relative'];
 const MINUTE = 60000;
@@ -921,10 +915,7 @@ function msUntilWordsChange(said, {
 }
 const TimeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
   source: 'ru'
 });
 
@@ -989,10 +980,7 @@ class SfTime extends TimeElement {
     const registered = globalThis.__sfPageLanguage?.registered?.get?.('sf-time');
 
     for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
-      const own = registered?.get?.(code)?.[key] ?? {
-        ru,
-        en
-      }[code]?.runtime?.[key];
+      const own = registered?.get?.(code)?.[key] ?? _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files[code]?.runtime?.[key];
       if (typeof own === 'string' && own.trim()) return this.sfWord(key);
     }
 
@@ -1187,10 +1175,32 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "fb9cc1c3591e"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3960b774f21");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "b033fb83f193"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.time","tag":"sf-time","version":"1.7.1","kind":"leaf","settings":{"datetime":{"type":"string","default":""},"format":{"type":"enum","values":["auto","time","date","datetime","relative"],"default":"auto"},"now":{"type":"string","default":""},"threshold":{"type":"string","default":"PT1H"},"time-zone":{"type":"string","default":""},"tooltip":{"type":"enum","values":["auto","none"],"default":"auto"}},"values":{},"events":{},"actions":{},"host-states":{"data-empty":"boolean","data-relative":"boolean"},"css-variables":{"--sf-time-color":{"type":"color","state":"default"},"--sf-time-focus-ring-color":{"type":"color","state":"default"},"--sf-time-radius":{"type":"length","state":"default"},"--sf-time-font-variant-numeric":{"type":"keyword","state":"default"},"--sf-time-white-space":{"type":"keyword","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.time","tag":"sf-time","version":"1.8.2","kind":"leaf","settings":{"datetime":{"type":"string","default":""},"format":{"type":"enum","values":["auto","time","date","datetime","relative"],"default":"auto"},"now":{"type":"string","default":""},"threshold":{"type":"string","default":"PT1H"},"time-zone":{"type":"string","default":""},"tooltip":{"type":"enum","values":["auto","none"],"default":"auto"}},"values":{},"events":{},"actions":{},"host-states":{"data-empty":"boolean","data-relative":"boolean"},"css-variables":{"--sf-time-color":{"type":"color","state":"default"},"--sf-time-focus-ring-color":{"type":"color","state":"default"},"--sf-time-radius":{"type":"length","state":"default"},"--sf-time-font-variant-numeric":{"type":"keyword","state":"default"},"--sf-time-white-space":{"type":"keyword","state":"default"}}}');
 
 /***/ },
 
@@ -1198,13 +1208,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.time","tag":"sf-time","ve
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Time","runtime":{"date-at":"{date}, {time}","just-now":"just now","yesterday-at":"{day}, {time}","zone-asia-anadyr":"Anadyr","zone-asia-barnaul":"Barnaul","zone-asia-chita":"Chita","zone-asia-irkutsk":"Irkutsk","zone-asia-kamchatka":"Petropavlovsk-Kamchatsky","zone-asia-khandyga":"Khandyga","zone-asia-krasnoyarsk":"Krasnoyarsk","zone-asia-magadan":"Magadan","zone-asia-novokuznetsk":"Novokuznetsk","zone-asia-novosibirsk":"Novosibirsk","zone-asia-omsk":"Omsk","zone-asia-sakhalin":"Sakhalin","zone-asia-srednekolymsk":"Srednekolymsk","zone-asia-tomsk":"Tomsk","zone-asia-ust-nera":"Ust-Nera","zone-asia-vladivostok":"Vladivostok","zone-asia-yakutsk":"Yakutsk","zone-asia-yekaterinburg":"Yekaterinburg","zone-europe-astrakhan":"Astrakhan","zone-europe-kaliningrad":"Kaliningrad","zone-europe-kirov":"Kirov","zone-europe-moscow":"Moscow","zone-europe-samara":"Samara","zone-europe-saratov":"Saratov","zone-europe-ulyanovsk":"Ulyanovsk","zone-europe-volgograd":"Volgograd"}}');
-
-/***/ },
-
-/***/ "7c088a35006e"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Время","runtime":{"date-at":"{date}, {time}","just-now":"только что","yesterday-at":"{day}, {time}","zone-asia-anadyr":"Анадырь","zone-asia-barnaul":"Барнаул","zone-asia-chita":"Чита","zone-asia-irkutsk":"Иркутск","zone-asia-kamchatka":"Петропавловск-Камчатский","zone-asia-khandyga":"Хандыга","zone-asia-krasnoyarsk":"Красноярск","zone-asia-magadan":"Магадан","zone-asia-novokuznetsk":"Новокузнецк","zone-asia-novosibirsk":"Новосибирск","zone-asia-omsk":"Омск","zone-asia-sakhalin":"Сахалин","zone-asia-srednekolymsk":"Среднеколымск","zone-asia-tomsk":"Томск","zone-asia-ust-nera":"Усть-Нера","zone-asia-vladivostok":"Владивосток","zone-asia-yakutsk":"Якутск","zone-asia-yekaterinburg":"Екатеринбург","zone-europe-astrakhan":"Астрахань","zone-europe-kaliningrad":"Калининград","zone-europe-kirov":"Киров","zone-europe-moscow":"Москва","zone-europe-samara":"Самара","zone-europe-saratov":"Саратов","zone-europe-ulyanovsk":"Ульяновск","zone-europe-volgograd":"Волгоград"}}');
 
 /***/ }
 

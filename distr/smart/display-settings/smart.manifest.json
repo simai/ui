@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.display-settings",
-  "version": "1.0.0",
+  "version": "1.1.3",
   "title": "Display settings",
   "summary": "How a person wants the site shown -- text 100–200 %, a colour scheme, wider spacing, images in colour, grey or hidden with their text, motion stopped, «Обычная версия» -- kept in this browser only and applied by core on every page. Replaces the legacy low-vision version (.sf-special). Promises no conformance.",
   "kind": "smart",
@@ -229,7 +229,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/display-settings/index.js",
-        "sha256": "b8f04f0db8f65d4e42858c9779708447778b4b943316261cbe1b0541a0003e21"
+        "sha256": "1d9707880d75fad2b046eb207fd3c169a1dd16250ffd2c92b40e4169659c2518"
       },
       {
         "path": "src/smart/display-settings/js/templates/default.js",
@@ -237,7 +237,7 @@
       },
       {
         "path": "src/smart/display-settings/scss/_smart__display_settings.scss",
-        "sha256": "5bec3f8cf86532027a6e591add647c72f8b1017c002f51f0bb63c45a368d1893"
+        "sha256": "55ea1f75be40c8203c723155a96466e7e3958af2044b06eef96a537b299c2133"
       },
       {
         "path": "src/smart/display-settings/rule.js",

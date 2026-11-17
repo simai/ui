@@ -14,8 +14,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _shortcut_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("151a293c8c90");
 /* harmony import */ var _spoken_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("a17921630512");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ea38bd73e984");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("03ae6703d3d5");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("da0387538de6");
 // A combination in running text (owner decision C191 (9) and (10),
 // 2026-11-15; ui-control research 2026-11-14-recipe-parts, #q-kb-text and
 // #q-kb-names). An author writes the notation once, as a host's `shortcut`
@@ -42,11 +41,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-const WORDS = {
-  en: _lang_en_json__WEBPACK_IMPORTED_MODULE_2__.runtime,
-  ru: _lang_ru_json__WEBPACK_IMPORTED_MODULE_3__.runtime
-};
 const SELECTOR = 'kbd[data-sf-shortcut]';
 const ATTRIBUTE = 'data-sf-shortcut'; // Read, never seen; inline as well, so the words take no room before the
 // sheet has arrived (the sheet holds the same, .sf-kbd-spoken).
@@ -58,9 +52,9 @@ const UNSEEN = 'position:absolute;inline-size:1px;block-size:1px;overflow:hidden
 
 function say(word, node) {
   const pageText = globalThis.SF?.pageText;
-  if (typeof pageText === 'function') return pageText(WORDS, word, node, 'sf-kbd');
+  if (typeof pageText === 'function') return pageText(_lang_index_mjs__WEBPACK_IMPORTED_MODULE_2__["default"], word, node, 'sf-kbd');
   const lang = String(node?.closest?.('[lang]')?.getAttribute('lang') || 'en').toLowerCase().split('-')[0];
-  return WORDS[lang]?.[word] ?? WORDS.en[word] ?? word;
+  return _lang_index_mjs__WEBPACK_IMPORTED_MODULE_2__["default"][lang]?.[word] ?? _lang_index_mjs__WEBPACK_IMPORTED_MODULE_2__["default"].en[word] ?? word;
 }
 /**
  * Fills one <kbd data-sf-shortcut>: the caps (aria-hidden) and the words a
@@ -594,17 +588,32 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "da0387538de6"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ea38bd73e984");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "ea38bd73e984"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Keyboard key","runtime":{"command":"Command","control":"Control","option":"Option","shift":"Shift","ctrl":"Ctrl","alt":"Alt","win":"Windows","enter":"Enter","escape":"Escape","tab":"Tab","space":"Space","backspace":"Backspace","delete":"Delete","up":"Up Arrow","down":"Down Arrow","left":"Left Arrow","right":"Right Arrow","home":"Home","end":"End","pageup":"Page Up","pagedown":"Page Down","plus":"Plus"}}');
-
-/***/ },
-
-/***/ "03ae6703d3d5"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Клавиша","runtime":{"command":"Command","control":"Control","option":"Option","shift":"Shift","ctrl":"Ctrl","alt":"Alt","win":"Windows","enter":"Ввод","escape":"Escape","tab":"Tab","space":"Пробел","backspace":"Backspace","delete":"Delete","up":"Стрелка вверх","down":"Стрелка вниз","left":"Стрелка влево","right":"Стрелка вправо","home":"Home","end":"End","pageup":"Page Up","pagedown":"Page Down","plus":"Плюс"}}');
 
 /***/ }
 

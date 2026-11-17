@@ -3,7 +3,7 @@
   "schema_version": 1,
   "id": "component.kbd",
   "kind": "component",
-  "version": "1.5.2",
+  "version": "1.7.0",
   "owner": "simai/ui-source",
   "files": [
     "src/component/kbd/docs/docs.md",
@@ -12,13 +12,18 @@
     "src/component/kbd/js/shortcut.js",
     "src/component/kbd/js/spoken.js",
     "src/component/kbd/lang/en.json",
+    "src/component/kbd/lang/index.mjs",
     "src/component/kbd/lang/ru.json",
     "src/component/kbd/rule.js",
     "src/component/kbd/scss/_kbd.scss",
     "src/component/kbd/scss/index.scss"
   ],
-  "content_sha256": "e16d03a0c1e83a3c9265149088177dfca796adc9d42d0e4f780aeb6754961531",
+  "content_sha256": "935a1ae4e93d445bd0ac42521f0b060cf6316245f850ea1e5724a28500920baa",
   "dependencies": [
+    {
+      "id": "core.styles",
+      "range": "^1.15.0"
+    },
     {
       "id": "tokens.border",
       "range": "^1.0.0"

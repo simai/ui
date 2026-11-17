@@ -392,6 +392,15 @@ function bindSliderAccessibility(root, owner = root) {
     if (visibleName && !handle.hasAttribute('aria-label') && !handle.hasAttribute('aria-labelledby')) {
       handle.setAttribute('aria-labelledby', visibleName);
       next['aria-labelledby'] = visibleName;
+    } // The field's help line (data-describedby: its id, as sf-input's hint)
+    // describes a handle nothing else describes.
+
+
+    const description = root.getAttribute('data-describedby');
+
+    if (description && !handle.hasAttribute('aria-describedby')) {
+      handle.setAttribute('aria-describedby', description);
+      next['aria-describedby'] = description;
     }
 
     if (isDisabledRoot(root)) {
@@ -405,7 +414,7 @@ function bindSliderAccessibility(root, owner = root) {
   sync();
   state.observer = new MutationObserver(sync);
   const ownerFilter = owner === root ? [...accessibleAttributes, ...handleLabelAttributes] : [...accessibleAttributes, 'lower-label', 'upper-label'];
-  ownerFilter.push('data-labelledby');
+  ownerFilter.push('data-labelledby', 'data-describedby');
 
   if (owner === root) {
     state.observer.observe(root, {
@@ -419,7 +428,7 @@ function bindSliderAccessibility(root, owner = root) {
     });
     state.observer.observe(root, {
       attributes: true,
-      attributeFilter: [...handleLabelAttributes, 'data-labelledby', 'disabled', 'class']
+      attributeFilter: [...handleLabelAttributes, 'data-labelledby', 'data-describedby', 'disabled', 'class']
     });
   }
 
@@ -1115,6 +1124,75 @@ function createNativeSlider(root, options) {
 
 /***/ },
 
+/***/ "f39dc444b059"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   fieldHelpLabel: () => (/* binding */ fieldHelpLabel),
+/* harmony export */   fieldHelpSize: () => (/* binding */ fieldHelpSize),
+/* harmony export */   renderFieldHelp: () => (/* binding */ renderFieldHelp)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+ // The «?» after a field's label (owner decision C153 (8), C133's look): the
+// `help` setting of every member of the field family draws sf-help-mark after
+// the label text and its required mark. The mark stands a step below the
+// value, as the label does -- 1/3 under the small steps, 1/2 from size 1 up --
+// and each sheet holds it to the label's line, so the label row keeps its
+// height. Its button is named by its subject (the component's word `help`,
+// «Подробнее: {label}»). A press on it opens the explanation and never reaches
+// the label row, whose own press focuses the field.
+
+const HELP_SIZE = Object.freeze({
+  '1/3': '1/3',
+  '1/2': '1/3',
+  1: '1/2',
+  2: '1/2',
+  3: '1/2'
+});
+/** The help mark's step for a field of `size`. */
+
+function fieldHelpSize(size) {
+  return HELP_SIZE[size] || '1/2';
+}
+/** The mark's name: the component's `help` word with the label, or the mark's own default. */
+
+function fieldHelpLabel(component, label) {
+  if (!label || typeof component?.sfWord !== 'function') return '';
+  return component.sfWord('help', {
+    vars: {
+      label
+    }
+  });
+}
+/** sf-help-mark for `help`, or nothing without one. */
+
+function renderFieldHelp({
+  help,
+  label = '',
+  size = '1',
+  className = '',
+  component = null
+} = {}) {
+  if (!help) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-help-mark
+    class=${className || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    size=${fieldHelpSize(size)}
+    text=${help}
+    label=${fieldHelpLabel(component, label) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    @click=${event => event.stopPropagation()}
+  ></sf-help-mark>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "870b5dfddc25"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1147,8 +1225,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e92fd2d1a38c");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("c73b7ddd1da4");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("57a7b9f33b50");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("c64f6025c3f7");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("f6d198d7afd8");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("7ba3bc6a6535");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__, _component_field_size__WEBPACK_IMPORTED_MODULE_6__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _component_range_slider_js_range_slider__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__, _component_field_size__WEBPACK_IMPORTED_MODULE_6__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -1165,16 +1242,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__.runtime
-};
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
 function serializeValue(value) {
   if (Array.isArray(value)) {
@@ -1298,10 +1369,7 @@ function getSliderHandleCount(root) {
 
 const RangeSliderElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_4__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
 }); // The class component's events, copied onto the host under their old method
@@ -1523,6 +1591,14 @@ class SfRangeSlider extends RangeSliderElement {
       nameId: name ? `${(0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__.instancePath)(this, {
         kind: 'sf-range-slider'
       }))}--name` : '',
+      // The help line under the field and the «?» after its label (C153,
+      // field parity with sf-input): the line describes the handles and the
+      // from/to boxes.
+      hint: props.hint || '',
+      help: name ? props.help || '' : '',
+      hintId: props.hint ? `${(0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__.instancePath)(this, {
+        kind: 'sf-range-slider'
+      }))}--hint` : '',
       valueDisplay,
       size: this.size,
       // The class draws a tooltip over each handle; the value as text sits at
@@ -2100,10 +2176,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderRangeSliderTemplate: () => (/* binding */ renderRangeSliderTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
-var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
-lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f39dc444b059");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 function joinClasses(...tokens) {
@@ -2122,13 +2199,25 @@ function renderHead(context) {
   const showName = Boolean(context.name); // With the from/to field the numbers are in the field; the line keeps the name.
 
   const showOutput = context.valueDisplay === 'text' && !context.field;
-  if (!showName && !showOutput) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  if (!showName && !showOutput) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // The «?» after the label (C153 (8), as sf-input's): beside the name, not
+  // in it, so the handles' name (aria-labelledby) stays the label.
+
+  const helpMark = showName ? (0,_helpers_field_help__WEBPACK_IMPORTED_MODULE_1__.renderFieldHelp)({
+    help: context.help,
+    label: context.name,
+    size: context.size,
+    className: 'sf-range-slider-help',
+    component: context.component
+  }) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+
+  const nameLine = name => helpMark === lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? name : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-label">${name}${helpMark}</span>`;
+
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="sf-range-slider-head">
             ${showName // The unit of the from/to field joins the name when the field
   // stands under the track (C202): «Цена, ₽». Hidden in the wide
   // layout, where the field writes it; the handles say it anyway.
-  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-name" id=${context.nameId}>${context.name}${context.field && context.fieldUnit ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-name-unit" aria-hidden="true">, ${context.fieldUnit}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  ? nameLine((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-name" id=${context.nameId}>${context.name}${context.field && context.fieldUnit ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-name-unit" aria-hidden="true">, ${context.fieldUnit}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${showOutput // Each handle reads its own value out (aria-valuetext); this is the sighted copy.
   // A property, not a text part: the host rewrites the text as the
   // handles move, and a text part's markers would go with it, so the
@@ -2185,6 +2274,7 @@ function renderField(context) {
             autocomplete="off"
             spellcheck="false"
             aria-label=${context.fieldLabels[index] || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            aria-describedby=${context.hintId || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ?disabled=${context.disabled}
             ?readonly=${context.readonly}
             @focus=${event => event.target.select?.()}
@@ -2232,6 +2322,7 @@ function renderRangeSliderTemplate(context) {
                         data-lower-label=${valueOrNothing(context.lowerLabel)}
                         data-upper-label=${valueOrNothing(context.upperLabel)}
                         data-labelledby=${context.name ? context.nameId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                        data-describedby=${context.hintId || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                         data-precision=${valueOrNothing(context.precision)}
                         data-grouping=${context.grouping === false ? 'false' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                         data-locale=${valueOrNothing(context.locale)}
@@ -2244,6 +2335,8 @@ function renderRangeSliderTemplate(context) {
               </div>
               ${renderField(context)}
             </div>
+            ${context.hint // The help line under the field (C153, as sf-input's hint).
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-range-slider-hint" id=${context.hintId} data-field-message="hint">${context.hint}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         </div>
     `;
 }
@@ -2294,6 +2387,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "7ba3bc6a6535"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c64f6025c3f7");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "57a7b9f33b50"
 (module) {
 
@@ -2304,21 +2419,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "c73b7ddd1da4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.6.2","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"page-step":{"type":"number","nullable":true},"ticks":{"type":"boolean","default":false},"scale":{"type":"boolean","default":false},"marks":{"type":"string","default":""},"field":{"type":"boolean","default":false},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"string","default":""},"value-display":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true,"default":null},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled"},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.7.2","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"page-step":{"type":"number","nullable":true},"ticks":{"type":"boolean","default":false},"scale":{"type":"boolean","default":false},"marks":{"type":"string","default":""},"field":{"type":"boolean","default":false},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"value-display":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true,"default":null},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled"},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 
 /***/ "c64f6025c3f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Range Slider","runtime":{"from":"from","to":"to","from-label":"{name}, from","to-label":"{name}, to"}}');
-
-/***/ },
-
-/***/ "f6d198d7afd8"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Слайдер диапазона","runtime":{"from":"от","to":"до","from-label":"{name}, от","to-label":"{name}, до"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Range Slider","runtime":{"from":"from","to":"to","from-label":"{name}, from","to-label":"{name}, to","help":"More about: {label}"}}');
 
 /***/ }
 

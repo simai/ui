@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   .sf-figure {
     display: flex;
@@ -14,11 +14,9 @@
     position: relative;
     box-sizing: border-box;
     overflow: hidden;
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
-    background-color: var(--sf-surface-container);
-    background-color: var(--sf-figure-background-color, var(--sf-figure-background, var(--sf-surface-container)));
-    border: var(--sf-0) solid var(--sf-outline-variant);
-    border: var(--sf-figure-border-width, var(--sf-0)) solid var(--sf-figure-border-color, var(--sf-outline-variant));
+    border-width: var(--sf-0);
+    border-width: var(--sf-figure-border-width, var(--sf-0));
+    border-style: solid;
     border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-figure-radius, var(--sf-radius--surface));
   }
@@ -357,8 +355,6 @@
   }
   .sf-figure-caption {
     margin: var(--sf-0);
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-figure-caption-color, var(--sf-on-surface-variant));
     font-size: var(--sf-text-size-1\/2);
     line-height: var(--sf-text-height-1\/2);
     word-wrap: break-word;
@@ -543,7 +539,6 @@
     border-end-start-radius: var(--sf-figure-radius, var(--sf-radius--surface));
     border-end-end-radius: var(--sf-radius--surface);
     border-end-end-radius: var(--sf-figure-radius, var(--sf-radius--surface));
-    color: var(--sf-white);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-figure.sf-figure--caption-plate > .sf-figure-caption {
@@ -610,7 +605,6 @@
     border-end-start-radius: var(--sf-figure-radius, var(--sf-radius--surface));
     border-end-end-radius: var(--sf-radius--surface);
     border-end-end-radius: var(--sf-figure-radius, var(--sf-radius--surface));
-    color: var(--sf-white);
     pointer-events: none;
   }
   .sf-figure.sf-figure--caption-over > .sf-figure-caption a {
@@ -632,9 +626,6 @@
             padding-block-start: var(--sf-figure--ramp);
     background-image: linear-gradient(0deg, var(--sf-black--alfa-64) 0%, var(--sf-black--alfa-64) calc(100% - var(--sf-figure--ramp)), var(--sf-black--alfa-48) calc(100% - var(--sf-figure--ramp) * 0.85), var(--sf-black--alfa-28) calc(100% - var(--sf-figure--ramp) * 0.7), var(--sf-black--alfa-16) calc(100% - var(--sf-figure--ramp) * 0.45), var(--sf-black--alfa-8) calc(100% - var(--sf-figure--ramp) * 0.25), transparent 100%);
     background-image: linear-gradient(0deg in oklab, var(--sf-black--alfa-64) 0%, var(--sf-black--alfa-64) calc(100% - var(--sf-figure--ramp)), var(--sf-black--alfa-48) calc(100% - var(--sf-figure--ramp) * 0.85), var(--sf-black--alfa-28) calc(100% - var(--sf-figure--ramp) * 0.7), var(--sf-black--alfa-16) calc(100% - var(--sf-figure--ramp) * 0.45), var(--sf-black--alfa-8) calc(100% - var(--sf-figure--ramp) * 0.25), transparent 100%);
-  }
-  .sf-figure.sf-figure--caption-plate > .sf-figure-caption {
-    background-color: var(--sf-black--alfa-64);
   }
   :where([data-sf-style=expressive]) {
     --sf-style--expressive: 1;
@@ -757,7 +748,6 @@
     inline-size: 100%;
     margin: var(--sf-0);
     padding: var(--sf-0);
-    color: inherit;
     font: inherit;
     text-align: inherit;
     text-decoration: none;
@@ -773,7 +763,6 @@
     inline-size: 100%;
     margin: var(--sf-0);
     padding: var(--sf-0);
-    color: inherit;
     font: inherit;
     text-align: inherit;
     text-decoration: none;
@@ -892,7 +881,6 @@
     display: flex;
     padding: var(--sf-a2);
     border-radius: var(--sf-radius--ui);
-    background-color: var(--sf-surface-popup);
     box-shadow: var(--sf-shadow-overlay);
     opacity: 0;
     transition: opacity var(--sf-duration-fast) var(--sf-animation);
@@ -987,7 +975,6 @@
   }
   @media (forced-colors: active) {
     .sf-figure-media {
-      border-color: CanvasText;
       background-image: none;
     }
     .sf-figure--tile.sf-figure--selected > .sf-figure-media {
@@ -995,11 +982,51 @@
     }
     .sf-figure.sf-figure--caption-over > .sf-figure-caption {
       background-image: none;
+    }
+    .sf-figure.sf-figure--caption-plate > .sf-figure-caption {
+      background-image: none;
+    }
+  }
+}
+@layer sf.paint {
+  .sf-figure-media {
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+    background-color: var(--sf-surface-container);
+    background-color: var(--sf-figure-background-color, var(--sf-figure-background, var(--sf-surface-container)));
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-figure-border-color, var(--sf-outline-variant));
+  }
+  .sf-figure-caption {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-figure-caption-color, var(--sf-on-surface-variant));
+  }
+  .sf-figure.sf-figure--caption-over > .sf-figure-caption {
+    color: var(--sf-white);
+  }
+  .sf-figure.sf-figure--caption-plate > .sf-figure-caption {
+    color: var(--sf-white);
+  }
+  .sf-figure.sf-figure--caption-plate > .sf-figure-caption {
+    background-color: var(--sf-black--alfa-64);
+  }
+  button.sf-figure-media {
+    color: inherit;
+  }
+  a.sf-figure-media {
+    color: inherit;
+  }
+  .sf-figure-pick {
+    background-color: var(--sf-surface-popup);
+  }
+  @media (forced-colors: active) {
+    .sf-figure-media {
+      border-color: CanvasText;
+    }
+    .sf-figure.sf-figure--caption-over > .sf-figure-caption {
       background-color: Canvas;
       color: CanvasText;
     }
     .sf-figure.sf-figure--caption-plate > .sf-figure-caption {
-      background-image: none;
       background-color: Canvas;
       color: CanvasText;
     }

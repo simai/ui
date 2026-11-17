@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
 *
@@ -35,8 +35,6 @@
     width: 100%;
     inline-size: 100%;
     gap: var(--sf-placeholder--gap);
-    color: var(--sf-placeholder--color);
-    background-color: var(--sf-placeholder--background-color);
     text-align: center;
   }
   .sf-placeholder--column {
@@ -85,8 +83,6 @@
     max-width: 100%;
     max-inline-size: 100%;
     gap: var(--sf-placeholder-content--gap);
-    background-color: var(--sf-transparent);
-    background-color: var(--sf-placeholder-content--background-color, var(--sf-placeholder-right--background-color, var(--sf-transparent)));
   }
   .sf-placeholder > .sf-placeholder-right {
     display: flex;
@@ -98,8 +94,6 @@
     max-width: 100%;
     max-inline-size: 100%;
     gap: var(--sf-placeholder-content--gap);
-    background-color: var(--sf-transparent);
-    background-color: var(--sf-placeholder-content--background-color, var(--sf-placeholder-right--background-color, var(--sf-transparent)));
   }
   /* In a row the content shares the line from a zero basis: with its text's
      width as the basis it wrapped under the visual as soon as the text was
@@ -127,8 +121,6 @@
     max-width: 100%;
     max-inline-size: 100%;
     gap: var(--sf-placeholder-header--gap);
-    background-color: var(--sf-transparent);
-    background-color: var(--sf-placeholder-header--background-color, var(--sf-placeholder-top--background-color, var(--sf-transparent)));
   }
   .sf-placeholder .sf-placeholder-top {
     display: flex;
@@ -139,8 +131,6 @@
     max-width: 100%;
     max-inline-size: 100%;
     gap: var(--sf-placeholder-header--gap);
-    background-color: var(--sf-transparent);
-    background-color: var(--sf-placeholder-header--background-color, var(--sf-placeholder-top--background-color, var(--sf-transparent)));
   }
   /* The title holds the heading ladder (RG-PH-1, owner decisions C21 and
      C44): its level's role, h1 to h6 -- 36 / 32 / 24 / 20 / 16 / 16 on a
@@ -152,8 +142,6 @@
      level rules weigh nothing, so a composition that picks the rung by its
      own size (sf-empty-state) sets it on the title. */
   .sf-placeholder .sf-placeholder__title:not(.does-not-exist) {
-    color: var(--sf-placeholder--color);
-    color: var(--sf-placeholder-title--color, var(--sf-placeholder-top-text--color, var(--sf-placeholder--color)));
     font-family: var(--sf-heading--family);
     font-family: var(--sf-placeholder-title--font-family, var(--sf-placeholder-top-text--font-family, var(--sf-heading--family)));
     font-size: var(--sf-placeholder--title-size);
@@ -166,8 +154,6 @@
     word-wrap: anywhere;
   }
   .sf-placeholder .sf-placeholder-top-text:first-child {
-    color: var(--sf-placeholder--color);
-    color: var(--sf-placeholder-title--color, var(--sf-placeholder-top-text--color, var(--sf-placeholder--color)));
     font-family: var(--sf-heading--family);
     font-family: var(--sf-placeholder-title--font-family, var(--sf-placeholder-top-text--font-family, var(--sf-heading--family)));
     font-size: var(--sf-placeholder--title-size);
@@ -204,8 +190,6 @@
     --sf-placeholder--title-height: var(--sf-heading-6--height);
   }
   .sf-placeholder .sf-placeholder__description:not(.does-not-exist) {
-    color: var(--sf-placeholder--description-color);
-    color: var(--sf-placeholder-description--color, var(--sf-placeholder-top-text--color, var(--sf-placeholder--description-color)));
     font-family: var(--sf-text--family);
     font-family: var(--sf-placeholder-description--font-family, var(--sf-placeholder-top-text--font-family, var(--sf-text--family)));
     font-size: var(--sf-placeholder--description-size);
@@ -218,8 +202,6 @@
     word-wrap: anywhere;
   }
   .sf-placeholder .sf-placeholder-top-text:nth-child(2) {
-    color: var(--sf-placeholder--description-color);
-    color: var(--sf-placeholder-description--color, var(--sf-placeholder-top-text--color, var(--sf-placeholder--description-color)));
     font-family: var(--sf-text--family);
     font-family: var(--sf-placeholder-description--font-family, var(--sf-placeholder-top-text--font-family, var(--sf-text--family)));
     font-size: var(--sf-placeholder--description-size);
@@ -244,5 +226,43 @@
   }
   .sf-placeholder--row .sf-placeholder__actions {
     justify-content: flex-start;
+  }
+}
+@layer sf.paint {
+  .sf-placeholder {
+    color: var(--sf-placeholder--color);
+    background-color: var(--sf-placeholder--background-color);
+  }
+  .sf-placeholder > .sf-placeholder__content {
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-placeholder-content--background-color, var(--sf-placeholder-right--background-color, var(--sf-transparent)));
+  }
+  .sf-placeholder > .sf-placeholder-right {
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-placeholder-content--background-color, var(--sf-placeholder-right--background-color, var(--sf-transparent)));
+  }
+  .sf-placeholder .sf-placeholder__header {
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-placeholder-header--background-color, var(--sf-placeholder-top--background-color, var(--sf-transparent)));
+  }
+  .sf-placeholder .sf-placeholder-top {
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-placeholder-header--background-color, var(--sf-placeholder-top--background-color, var(--sf-transparent)));
+  }
+  .sf-placeholder .sf-placeholder__title:not(.does-not-exist) {
+    color: var(--sf-placeholder--color);
+    color: var(--sf-placeholder-title--color, var(--sf-placeholder-top-text--color, var(--sf-placeholder--color)));
+  }
+  .sf-placeholder .sf-placeholder-top-text:first-child {
+    color: var(--sf-placeholder--color);
+    color: var(--sf-placeholder-title--color, var(--sf-placeholder-top-text--color, var(--sf-placeholder--color)));
+  }
+  .sf-placeholder .sf-placeholder__description:not(.does-not-exist) {
+    color: var(--sf-placeholder--description-color);
+    color: var(--sf-placeholder-description--color, var(--sf-placeholder-top-text--color, var(--sf-placeholder--description-color)));
+  }
+  .sf-placeholder .sf-placeholder-top-text:nth-child(2) {
+    color: var(--sf-placeholder--description-color);
+    color: var(--sf-placeholder-description--color, var(--sf-placeholder-top-text--color, var(--sf-placeholder--description-color)));
   }
 }

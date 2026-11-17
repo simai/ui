@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* The shared row of sf-checkbox, sf-radio and sf-switch (checkable-row.js;
      audit 2026-11-11 W1, W5, W9; owner decisions C59, C63).
@@ -57,9 +57,10 @@
     max-width: 100%;
     max-inline-size: 100%;
   }
-  /* position="end" (sf-checkbox, W4): the box stands at the row's end, so the
-     row is the control and keeps its full width. */
-  .sf-checkable:has(> .sf-checkbox-container + .sf-checkbox-box:last-child) {
+  /* position="end" (sf-checkbox, W4; sf-radio and sf-switch, C251): the box
+     stands at the row's end, so the row is the control and keeps its full
+     width. */
+  .sf-checkable:has(> .sf-checkbox-container + .sf-checkbox-box:last-child, > .sf-radio-button-container + .sf-radio-button-box, > .sf-switch-container-wrap + .sf-switch-toggler) {
     width: auto;
     inline-size: auto;
   }
@@ -76,7 +77,7 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  .sf-checkable-row > .sf-checkable:has(> .sf-checkbox-container + .sf-checkbox-box:last-child) {
+  .sf-checkable-row > .sf-checkable:has(> .sf-checkbox-container + .sf-checkbox-box:last-child, > .sf-radio-button-container + .sf-radio-button-box, > .sf-switch-container-wrap + .sf-switch-toggler) {
     flex: 1 1 auto;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable-help{
@@ -275,9 +276,10 @@
     -webkit-margin-before: 0;
             margin-block-start: 0;
   }
-  /* position="end" (sf-checkbox): the name, the «?», the free space, then the
-     box at the row's end; the description under the name. */
-  .sf-checkable-row:has(> .sf-checkable--text > .sf-checkbox-container + .sf-checkbox-box:last-child) {
+  /* position="end" (sf-checkbox; sf-radio and sf-switch, C251): the name, the
+     «?», the free space, then the box at the row's end; the description under
+     the name. */
+  .sf-checkable-row:has(> .sf-checkable--text > .sf-checkbox-container + .sf-checkbox-box:last-child, > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box, > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler) {
     grid-template-columns: minmax(0, auto) auto 1fr auto;
     grid-template-areas: "name help . box" "desc desc desc .";
     width: auto;
@@ -308,6 +310,92 @@
   .sf-checkable-row > .sf-checkable--text > .sf-checkbox-container + .sf-checkbox-box:last-child {
     -webkit-margin-start: var(--sf-checkbox--gap);
             margin-inline-start: var(--sf-checkbox--gap);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-left: var(--sf-radio-button--gap);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-left: var(--sf-radio-button--gap);
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-right: 0;
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-right: 0;
+    }
+  }
+  .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box:where(:dir(ltr)){
+    margin-left: var(--sf-radio-button--gap);
+    margin-right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-right: var(--sf-radio-button--gap);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-right: var(--sf-radio-button--gap);
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-left: 0;
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box{
+    margin-left: 0;
+    }
+  }
+  .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box:where(:dir(rtl)){
+    margin-right: var(--sf-radio-button--gap);
+    margin-left: 0;
+  }
+  .sf-checkable-row > .sf-checkable--text > .sf-radio-button-container + .sf-radio-button-box {
+    margin-inline: var(--sf-radio-button--gap) 0;
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-left: var(--sf-switch--gap);
+  }
+  @supports not (margin-inline-start: initial){
+  html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-left: var(--sf-switch--gap);
+    }
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-right: 0;
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-right: 0;
+    }
+  }
+  .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler:where(:dir(ltr)){
+    margin-left: var(--sf-switch--gap);
+    margin-right: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-right: var(--sf-switch--gap);
+  }
+  @supports not (margin-inline-start: initial){
+  [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-right: var(--sf-switch--gap);
+    }
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-left: 0;
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler{
+    margin-left: 0;
+    }
+  }
+  .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler:where(:dir(rtl)){
+    margin-right: var(--sf-switch--gap);
+    margin-left: 0;
+  }
+  .sf-checkable-row > .sf-checkable--text > .sf-switch-container-wrap + .sf-switch-toggler {
+    margin-inline: var(--sf-switch--gap) 0;
   }
   /* A wrapped name (dispatcher decision 2026-11-13, a standard ambiguity of
      C59): the «?» follows the name's LAST word, inline at the end of its last

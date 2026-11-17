@@ -219,32 +219,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
 /* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("209b36906371");
 
 
- // The words a slider says about itself (SL-5), for the class block; sf-slider
-// hands its own from lang/ through the root's attributes, which win. A product
-// adds a language with SF.language.register('sf-slider', code, words).
+ // The words a slider says about itself (SL-5), for the class block: lang/,
+// English built in, the other languages from a language file (C282);
+// sf-slider hands its own from its lang/ through the root's attributes, which
+// win. A product adds a language with SF.language.register('sf-slider', code, words).
 
-const SLIDER_TEXT = {
-  en: {
-    label: 'Slides',
-    carousel: 'carousel',
-    slide: 'slide',
-    position: '{n} of {count}',
-    pause: 'Stop slides',
-    play: 'Start slides',
-    thumb: 'Go to slide {n}'
-  },
-  ru: {
-    label: 'Слайды',
-    carousel: 'карусель',
-    slide: 'слайд',
-    position: '{n} из {count}',
-    pause: 'Остановить прокрутку',
-    play: 'Запустить прокрутку',
-    thumb: 'Перейти к слайду {n}'
-  }
-};
+
 const SLIDER_SELECTOR = '.sf-slider'; // Up to seven slides are dots; from eight a counter «2 / 12» stands in their
 // place (C143 (4), as sf-gallery counts pictures, C97).
 
@@ -796,7 +779,7 @@ function createAutoplayGuard(root, slider, rotationButton, words = {}) {
 
 
 function sliderWord(root, key) {
-  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(SLIDER_TEXT, key, root, 'sf-slider');
+  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(_lang_index_mjs__WEBPACK_IMPORTED_MODULE_3__["default"], key, root, 'sf-slider');
 }
 
 function applyRegionSemantics(root) {
@@ -1571,6 +1554,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("feccc97e5d7d");
 // What language a component speaks, and how a product adds one.
 //
 // The Framework speaks English by default and whatever the page says otherwise:
@@ -1605,6 +1589,9 @@ __webpack_require__.r(__webpack_exports__);
 // was published from core's copy, the table read its own, and registering a
 // language changed nothing on screen. Only a browser shows that, and it did
 // (2026-10-11).
+ // The languages built into the bundles (owner decision C282): English; every
+// other language, Russian too, is a language file (core/js/language-packs.js).
+
 
 
 const STORE = (() => {
@@ -1623,9 +1610,10 @@ const STORE = (() => {
 })();
 
 const LISTENERS = STORE.listeners;
-const REGISTERED = STORE.registered; // Language packs (owner decision C177, 2026-11-14): every language but the two
-// built in is one file per language and delivery, fetched only by a page that
-// speaks it. A pack's words go into the same registry as words registered one
+const REGISTERED = STORE.registered; // Language packs (owner decision C177, 2026-11-14; C282, 2026-11-17): every
+// language but English, the one built in, is one file per language and
+// delivery, fetched only by a page that speaks it (or included before core as
+// its script form, core/lang/<code>.js). A pack's words go into the same registry as words registered one
 // by one -- so a bundle built before packs existed reads them too -- a
 // Framework pack's beneath what is there, any other pack's over it: a product
 // overrides a Framework word whichever arrived first. The fetching is core's
@@ -1636,12 +1624,13 @@ const PACKS = STORE.packs ??= {
   loaded: new Map(),
   pending: new Map(),
   request: null
-};
+}; // The languages built into the bundles: English, and in a rollback build Russian
+// too (src/core/lang/built-in.json, C282).
 
-const isBuiltIn = code => code === 'ru' || code === 'en';
+const isBuiltIn = code => code === 'en' || (_lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]?.built_in ?? []).includes(code);
 /**
- * Ask core for the pack of a language this page speaks (nothing for ru and
- * en), and for the part that holds `component`'s words: the Framework's pack
+ * Ask core for the pack of a language this page speaks (nothing for a
+ * built-in language), and for the part that holds `component`'s words: the Framework's pack
  * comes in parts by family (core/js/language-packs.js). A core from before
  * parts takes the language alone.
  */
@@ -2626,6 +2615,61 @@ if (typeof globalThis !== 'undefined') {
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "209b36906371"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("39172fd0fcd2");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "feccc97e5d7d"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _built_in_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6a56aa4367e4");
+// The languages built into the component bundles (owner decision C282),
+// for page-language.js: built-in.json, the build switch
+// scripts/build-language-packs.mjs reads too. A module, as lang/index.mjs, so
+// the bundle and Node read the JSON alike.
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_built_in_json__WEBPACK_IMPORTED_MODULE_0__);
+
+
+/***/ },
+
+/***/ "39172fd0fcd2"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"label":"Slides","carousel":"carousel","slide":"slide","position":"{n} of {count}","pause":"Stop slides","play":"Start slides","thumb":"Go to slide {n}"}}');
+
+/***/ },
+
+/***/ "6a56aa4367e4"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-built-in","schema_version":1,"$comment":"The languages built into the component bundles (owner decision C282, 2026-11-17): English only. Russian and every other language ship as language files (core/lang/<code>.js before core.js, or the parts core/lang/<code>/<family>.json core fetches). complete: the languages that must say every word (scripts/language-coverage.mjs exits 1 on a gap). Rollback: built_in [\\"en\\", \\"ru\\"], then node scripts/build-language-packs.mjs and a rebuild put Russian back into the bundles (the language files still ship, so a page that includes ru.js stays right).","built_in":["en"],"complete":["en","ru"]}');
 
 /***/ }
 

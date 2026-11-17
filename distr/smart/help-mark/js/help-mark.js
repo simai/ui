@@ -15,9 +15,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("eaf281324a90");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("cd1ae22812c1");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("850094d8ffb2");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("c07ccd74494d");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("23401528a3d5");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("48eb1fd0f69f");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("88ff0da5b6ae");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("48eb1fd0f69f");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -45,16 +44,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
 
 
 const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_2___default());
@@ -69,10 +63,7 @@ const PLACEMENTS = {
 let sequence = 0;
 const HelpMarkElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__,
   actions: {
@@ -330,6 +321,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "88ff0da5b6ae"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c07ccd74494d");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "850094d8ffb2"
 (module) {
 
@@ -340,7 +353,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-help-
 /***/ "cd1ae22812c1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.help-mark","tag":"sf-help-mark","version":"1.5.1","kind":"leaf","settings":{"text":{"type":"string","default":""},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/2"},"placement":{"type":"enum","values":["auto","top","bottom","start","end"],"default":"auto"}},"values":{},"events":{"opened":{"carries":{}},"closed":{"carries":{}}},"actions":{"open":{"waits":true},"close":{}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-help-mark-background-color":{"type":"color","state":"open"},"--sf-help-mark-color":{"type":"color","state":"open"},"--sf-help-mark-border-color":{"type":"color","state":"open"},"--sf-help-mark-radius":{"type":"length","state":"default"},"--sf-help-mark-max-width":{"type":"length","state":"default"},"--sf-help-mark-padding-inline":{"type":"length","state":"default"},"--sf-help-mark-padding-block":{"type":"length","state":"default"},"--sf-help-mark-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.help-mark","tag":"sf-help-mark","version":"1.6.3","kind":"leaf","settings":{"text":{"type":"string","default":""},"heading":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/2"},"placement":{"type":"enum","values":["auto","top","bottom","start","end"],"default":"auto"}},"values":{},"events":{"opened":{"carries":{}},"closed":{"carries":{}}},"actions":{"open":{"waits":true},"close":{}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-help-mark-background-color":{"type":"color","state":"open"},"--sf-help-mark-color":{"type":"color","state":"open"},"--sf-help-mark-border-color":{"type":"color","state":"open"},"--sf-help-mark-radius":{"type":"length","state":"default"},"--sf-help-mark-max-width":{"type":"length","state":"default"},"--sf-help-mark-padding-inline":{"type":"length","state":"default"},"--sf-help-mark-padding-block":{"type":"length","state":"default"},"--sf-help-mark-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -348,13 +361,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.help-mark","tag":"sf-help
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Help mark","runtime":{"label":"More information"}}');
-
-/***/ },
-
-/***/ "23401528a3d5"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Подсказка «?»","runtime":{"label":"Подробнее"}}');
 
 /***/ }
 

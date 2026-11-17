@@ -1581,7 +1581,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DURATION: () => (/* binding */ DURATION),
 /* harmony export */   SOURCE_ERRORS: () => (/* binding */ SOURCE_ERRORS),
-/* harmony export */   WORDS: () => (/* binding */ WORDS),
+/* harmony export */   WORDS: () => (/* reexport safe */ _lang_copy_index_mjs__WEBPACK_IMPORTED_MODULE_2__["default"]),
 /* harmony export */   copyFeedback: () => (/* binding */ copyFeedback),
 /* harmony export */   copyKeys: () => (/* binding */ copyKeys),
 /* harmony export */   copyWord: () => (/* binding */ copyWord),
@@ -1592,6 +1592,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e081a020262e");
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _lang_copy_index_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("cc81411c41c7");
 // What a copy says (owner decision C48, 2026-11-11): one feedback for every
 // control that copies -- sf-button-copy, and any <button>, sf-button or
 // sf-button-icon that carries data-sf-copy or data-sf-copy-target (the
@@ -1615,21 +1616,11 @@ __webpack_require__.r(__webpack_exports__);
 // heard here too); tests/inline-code.contract.test.mjs and
 // tests/copy-feedback.contract.test.mjs hold them equal to its language files.
 
+ // core/js/lang/copy: English built in, the other languages from a language
+// file (C282).
 
-const WORDS = {
-  en: {
-    copy: 'Copy',
-    copied: 'Copied',
-    failed: 'Could not copy',
-    selected: 'Selected — press {keys}'
-  },
-  ru: {
-    copy: 'Копировать',
-    copied: 'Скопировано',
-    failed: 'Не удалось скопировать',
-    selected: 'Выделено — нажмите {keys}'
-  }
-};
+
+
 /** How long a result stays, in ms, unless the control says otherwise. */
 
 const DURATION = 2000;
@@ -1700,7 +1691,7 @@ function copyKeys() {
 /** A copy word in the language of `node` (sf-button-copy's words). */
 
 function copyWord(key, node, vars) {
-  return (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(WORDS, key, node, {
+  return (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(_lang_copy_index_mjs__WEBPACK_IMPORTED_MODULE_2__["default"], key, node, {
     component: 'sf-button-copy',
     source: 'ru',
     vars
@@ -2284,7 +2275,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   SCHEMES: () => (/* binding */ SCHEMES),
 /* harmony export */   STORAGE_KEY: () => (/* binding */ STORAGE_KEY),
 /* harmony export */   TEXT_SCALES: () => (/* binding */ TEXT_SCALES),
-/* harmony export */   WORDS: () => (/* binding */ WORDS),
+/* harmony export */   WORDS: () => (/* reexport safe */ _lang_skip_link_index_mjs__WEBPACK_IMPORTED_MODULE_3__["default"]),
 /* harmony export */   applySettings: () => (/* binding */ applySettings),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   forcedColors: () => (/* binding */ forcedColors),
@@ -2301,6 +2292,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
 /* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("2ee7a47e9b10");
+/* harmony import */ var _lang_skip_link_index_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("b8a4348874ab");
 // SF.displaySettings: how a person asked this site to be shown (owner decision
 // C196, 2026-11-15; research ui-control
 // control/research/2026-11-15-accessibility-worldwide.md).
@@ -2345,17 +2337,13 @@ const LEGACY_SCHEMES = Object.freeze({
   green: 'yellow-on-black'
 });
 const LEGACY_SINCE = '2026-11-15';
-const LEGACY_REMOVE_AFTER = '2027-01-01'; // The words core says itself; the same as sf-display-settings' language files
-// (tests/display-settings.contract.test.mjs holds them equal).
+const LEGACY_REMOVE_AFTER = '2027-01-01'; // The words core says itself (core/js/lang/skip-link: English built in, the
+// other languages from a language file, C282); the same as
+// sf-display-settings' language files (tests/display-settings.contract.test.mjs
+// holds them equal).
 
-const WORDS = {
-  en: {
-    'skip-link-text': 'Skip to content'
-  },
-  ru: {
-    'skip-link-text': 'Перейти к содержимому'
-  }
-};
+
+
 const DEFAULTS = Object.freeze({
   scheme: '',
   textScale: 100,
@@ -2652,10 +2640,19 @@ function installSkipLink(doc = globalThis.document) {
   const link = doc.createElement('a');
   link.className = 'sf-skip-link';
   link.href = `#${main.id}`;
-  link.setAttribute('data-sf-skip-link', 'core');
-  link.textContent = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(WORDS, 'skip-link-text', doc.documentElement, {
-    component: 'sf-display-settings',
-    source: 'ru'
+  link.setAttribute('data-sf-skip-link', 'core'); // Its word comes from the page's language part, which may arrive after the
+  // link is drawn (C282): it is written again whenever words arrive.
+
+  const draw = () => {
+    link.textContent = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(_lang_skip_link_index_mjs__WEBPACK_IMPORTED_MODULE_3__["default"], 'skip-link-text', doc.documentElement, {
+      component: 'sf-display-settings',
+      source: 'ru'
+    });
+  };
+
+  draw();
+  _page_language_js__WEBPACK_IMPORTED_MODULE_1__.language.onChange?.(() => {
+    if (link.isConnected) draw();
   });
   doc.body.prepend(link);
   return link;
@@ -2679,11 +2676,14 @@ function start() {
   const ready = () => {
     installSkipLink(doc);
     if (root.getAttribute(ATTRIBUTES.images) === 'hide') followImages(doc, true);
-  };
+  }; // A microtask later when the page is already parsed: core installs its
+  // language-pack fetcher after this module runs, and a word asked before it
+  // has no pack on its way (C282, group build 10).
+
 
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', ready, {
     once: true
-  });else ready(); // Another tab of the site changed the choice.
+  });else if (typeof queueMicrotask === 'function') queueMicrotask(ready);else ready(); // Another tab of the site changed the choice.
 
   globalThis.addEventListener?.('storage', event => {
     if (event.key !== STORAGE_KEY || event.storageArea !== storage()) return;
@@ -5862,9 +5862,10 @@ __webpack_require__.r(__webpack_exports__);
 // effects (format-intl.js). The same functions as core/js/format.js,
 // composition/file-size.mjs and SF.format.fileSize.
  // The four words of a size live in core's language files
-// (core/js/lang/file-size, localization study LC-3): ru and en ship; any
-// other language takes the words a product registers for `sf-file-size`
-// (SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
+// (core/js/lang/file-size, localization study LC-3): English ships in the
+// bundle; Russian and any other language take the words their language file
+// or a product registers for `sf-file-size` (owner decision C282;
+// SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
 // English words with its own digits. A component with words of its own passes
 // them as `units`. The registry is read from the shared global the page
 // language keeps (core/js/page-language.js), so this module still runs
@@ -5877,17 +5878,28 @@ function unitsOf(words) {
   return Object.freeze(UNIT_KEYS.map(key => words[key]));
 }
 
-const FILE_SIZE_UNITS = /* @__PURE__ */Object.freeze({
-  en: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en),
-  ru: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru)
-});
-
 function registeredUnits(code) {
   const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-file-size')?.get?.(code);
   return words && UNIT_KEYS.every(key => typeof words[key] === 'string') ? unitsOf(words) : null;
-}
-/** The unit words for a locale: registered for it, its own, its language's, else English. */
+} // The built-in languages' units (English; owner decision C282), and `ru` as
+// before for a reader of SF.format.FILE_SIZE_UNITS.ru: the units the ru
+// language file registered, null until it is on the page.
 
+
+function unitTable(words) {
+  const table = {};
+
+  for (const [code, own] of Object.entries(words)) table[code] = unitsOf(own);
+
+  if (!table.ru) Object.defineProperty(table, 'ru', {
+    enumerable: true,
+    get: () => registeredUnits('ru')
+  });
+  return Object.freeze(table);
+}
+
+const FILE_SIZE_UNITS = /* @__PURE__ */unitTable(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]);
+/** The unit words for a locale: registered for it, its own, its language's, else English. */
 
 function fileSizeUnits(locale = 'en') {
   const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
@@ -6408,6 +6420,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   iconWords: () => (/* binding */ iconWords)
 /* harmony export */ });
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _lang_icon_search_index_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4bd9c3b168e0");
 // The glyphs a person may mark a part of an interface with -- a section of a
 // record, a row of a menu, a tile of a dashboard. A hundred and twenty names
 // from the Framework's own icon set, the ones products actually reach for,
@@ -6423,492 +6437,40 @@ __webpack_require__.r(__webpack_exports__);
 // (C151 point 8). The choice
 // itself is drawn by sf-dropdown with options of kind icon (layout grid,
 // search), as sf-view-properties and sf-admin-menu do.
-// The words a person searches the choice by (owner decision C151 point 8): a
+
+ // The words a person searches the choice by (owner decision C151 point 8): a
 // Russian and an English word or two for each glyph, the name's own words
 // among the English ones. sf-dropdown matches its icon options against them
 // in either language, so «папка» finds folder and «folder» still does.
-const ICON_CHOICE_WORDS = Object.freeze({
-  folder: {
-    ru: ["папка", "каталог"],
-    en: ["folder", "directory"]
-  },
-  folder_open: {
-    ru: ["открытая", "папка"],
-    en: ["open", "folder"]
-  },
-  topic: {
-    ru: ["тема", "раздел"],
-    en: ["topic", "section"]
-  },
-  home: {
-    ru: ["главная", "дом"],
-    en: ["home", "main"]
-  },
-  dashboard: {
-    ru: ["панель", "сводка"],
-    en: ["dashboard", "overview"]
-  },
-  apartment: {
-    ru: ["здание", "организация"],
-    en: ["building", "organisation"]
-  },
-  store: {
-    ru: ["магазин"],
-    en: ["store", "shop"]
-  },
-  storefront: {
-    ru: ["витрина", "магазин"],
-    en: ["storefront", "shop"]
-  },
-  business_center: {
-    ru: ["портфель", "бизнес"],
-    en: ["business", "briefcase"]
-  },
-  work: {
-    ru: ["работа", "портфель"],
-    en: ["work", "briefcase"]
-  },
-  badge: {
-    ru: ["пропуск", "удостоверение"],
-    en: ["badge", "pass", "id"]
-  },
-  person: {
-    ru: ["человек", "пользователь"],
-    en: ["person", "user"]
-  },
-  group: {
-    ru: ["группа", "люди"],
-    en: ["group", "people"]
-  },
-  groups: {
-    ru: ["группы", "сообщество"],
-    en: ["groups", "community"]
-  },
-  account_circle: {
-    ru: ["профиль", "аккаунт"],
-    en: ["account", "profile"]
-  },
-  manage_accounts: {
-    ru: ["управление", "пользователями"],
-    en: ["manage", "accounts", "users"]
-  },
-  supervisor_account: {
-    ru: ["руководитель", "команда"],
-    en: ["supervisor", "team"]
-  },
-  contacts: {
-    ru: ["контакты"],
-    en: ["contacts"]
-  },
-  school: {
-    ru: ["обучение", "школа"],
-    en: ["school", "learning"]
-  },
-  menu_book: {
-    ru: ["книга", "справочник"],
-    en: ["book", "manual"]
-  },
-  assignment: {
-    ru: ["задание"],
-    en: ["assignment"]
-  },
-  task: {
-    ru: ["задача"],
-    en: ["task"]
-  },
-  description: {
-    ru: ["документ", "описание"],
-    en: ["document", "description"]
-  },
-  article: {
-    ru: ["статья"],
-    en: ["article"]
-  },
-  note_alt: {
-    ru: ["заметка"],
-    en: ["note"]
-  },
-  edit_note: {
-    ru: ["правка", "заметки"],
-    en: ["edit", "note"]
-  },
-  draft: {
-    ru: ["черновик"],
-    en: ["draft"]
-  },
-  receipt: {
-    ru: ["чек", "квитанция"],
-    en: ["receipt"]
-  },
-  receipt_long: {
-    ru: ["счёт", "чек"],
-    en: ["bill", "receipt"]
-  },
-  request_quote: {
-    ru: ["смета", "предложение"],
-    en: ["quote", "estimate"]
-  },
-  inventory_2: {
-    ru: ["архив", "склад"],
-    en: ["archive", "inventory"]
-  },
-  category: {
-    ru: ["категории"],
-    en: ["category"]
-  },
-  label: {
-    ru: ["метка", "ярлык"],
-    en: ["label", "tag"]
-  },
-  sell: {
-    ru: ["цена", "продажа"],
-    en: ["price", "sell"]
-  },
-  local_offer: {
-    ru: ["скидка", "предложение"],
-    en: ["offer", "discount"]
-  },
-  shopping_cart: {
-    ru: ["корзина"],
-    en: ["shopping", "cart"]
-  },
-  shopping_bag: {
-    ru: ["покупки", "сумка"],
-    en: ["shopping", "bag"]
-  },
-  payments: {
-    ru: ["оплата", "деньги"],
-    en: ["payments", "money"]
-  },
-  savings: {
-    ru: ["сбережения", "копилка"],
-    en: ["savings"]
-  },
-  credit_card: {
-    ru: ["карта", "оплата"],
-    en: ["credit", "card"]
-  },
-  account_balance: {
-    ru: ["банк"],
-    en: ["bank", "account"]
-  },
-  calculate: {
-    ru: ["калькулятор", "расчёт"],
-    en: ["calculator"]
-  },
-  percent: {
-    ru: ["процент"],
-    en: ["percent"]
-  },
-  trending_up: {
-    ru: ["рост", "тренд"],
-    en: ["trend", "growth"]
-  },
-  analytics: {
-    ru: ["аналитика"],
-    en: ["analytics"]
-  },
-  insights: {
-    ru: ["выводы", "инсайты"],
-    en: ["insights"]
-  },
-  monitoring: {
-    ru: ["мониторинг"],
-    en: ["monitoring"]
-  },
-  bar_chart: {
-    ru: ["диаграмма", "график"],
-    en: ["bar", "chart"]
-  },
-  pie_chart: {
-    ru: ["круговая", "диаграмма"],
-    en: ["pie", "chart"]
-  },
-  table_chart: {
-    ru: ["таблица"],
-    en: ["table"]
-  },
-  schedule: {
-    ru: ["время", "часы", "расписание"],
-    en: ["time", "clock", "schedule"]
-  },
-  event: {
-    ru: ["событие"],
-    en: ["event"]
-  },
-  today: {
-    ru: ["сегодня"],
-    en: ["today"]
-  },
-  calendar_month: {
-    ru: ["календарь"],
-    en: ["calendar"]
-  },
-  date_range: {
-    ru: ["период", "даты"],
-    en: ["date", "range"]
-  },
-  history: {
-    ru: ["история"],
-    en: ["history"]
-  },
-  alarm: {
-    ru: ["будильник", "напоминание"],
-    en: ["alarm"]
-  },
-  timer: {
-    ru: ["таймер"],
-    en: ["timer"]
-  },
-  update: {
-    ru: ["обновление"],
-    en: ["update"]
-  },
-  hourglass_top: {
-    ru: ["ожидание", "песочные", "часы"],
-    en: ["hourglass", "waiting"]
-  },
-  mail: {
-    ru: ["почта", "письмо"],
-    en: ["mail", "email", "letter"]
-  },
-  outgoing_mail: {
-    ru: ["исходящие", "отправка"],
-    en: ["outgoing", "mail"]
-  },
-  chat: {
-    ru: ["чат", "сообщение"],
-    en: ["chat", "message"]
-  },
-  forum: {
-    ru: ["обсуждение", "форум"],
-    en: ["forum", "discussion"]
-  },
-  sms: {
-    ru: ["смс", "сообщение"],
-    en: ["sms", "text"]
-  },
-  call: {
-    ru: ["звонок", "телефон"],
-    en: ["call", "phone"]
-  },
-  phone_in_talk: {
-    ru: ["разговор"],
-    en: ["phone", "call", "talk"]
-  },
-  contact_support: {
-    ru: ["поддержка"],
-    en: ["support", "help"]
-  },
-  campaign: {
-    ru: ["рассылка", "объявление"],
-    en: ["campaign", "announcement"]
-  },
-  notifications: {
-    ru: ["уведомления"],
-    en: ["notifications"]
-  },
-  language: {
-    ru: ["язык", "мир"],
-    en: ["language", "world"]
-  },
-  public: {
-    ru: ["сайт", "мир", "интернет"],
-    en: ["public", "web", "world"]
-  },
-  place: {
-    ru: ["место"],
-    en: ["place"]
-  },
-  map: {
-    ru: ["карта"],
-    en: ["map"]
-  },
-  location_on: {
-    ru: ["адрес", "место"],
-    en: ["location", "address"]
-  },
-  travel_explore: {
-    ru: ["поиск", "по", "миру"],
-    en: ["travel", "explore"]
-  },
-  flight: {
-    ru: ["перелёт", "самолёт"],
-    en: ["flight", "plane"]
-  },
-  local_shipping: {
-    ru: ["доставка"],
-    en: ["shipping", "delivery"]
-  },
-  route: {
-    ru: ["маршрут"],
-    en: ["route"]
-  },
-  directions: {
-    ru: ["направление"],
-    en: ["directions"]
-  },
-  settings: {
-    ru: ["настройки"],
-    en: ["settings"]
-  },
-  tune: {
-    ru: ["фильтр", "параметры"],
-    en: ["tune", "filter"]
-  },
-  build: {
-    ru: ["инструменты", "сборка"],
-    en: ["build", "tools"]
-  },
-  construction: {
-    ru: ["стройка"],
-    en: ["construction"]
-  },
-  handyman: {
-    ru: ["ремонт", "мастер"],
-    en: ["handyman", "repair"]
-  },
-  code: {
-    ru: ["код"],
-    en: ["code"]
-  },
-  terminal: {
-    ru: ["терминал", "консоль"],
-    en: ["terminal", "console"]
-  },
-  data_object: {
-    ru: ["объект", "данные"],
-    en: ["data", "object"]
-  },
-  api: {
-    ru: ["интерфейс", "api"],
-    en: ["api"]
-  },
-  bug_report: {
-    ru: ["ошибка", "баг"],
-    en: ["bug"]
-  },
-  database: {
-    ru: ["база", "данных"],
-    en: ["database"]
-  },
-  storage: {
-    ru: ["хранилище"],
-    en: ["storage"]
-  },
-  cloud: {
-    ru: ["облако"],
-    en: ["cloud"]
-  },
-  backup: {
-    ru: ["резервная", "копия"],
-    en: ["backup"]
-  },
-  sync: {
-    ru: ["синхронизация"],
-    en: ["sync"]
-  },
-  folder_zip: {
-    ru: ["архив", "zip"],
-    en: ["zip", "archive"]
-  },
-  upload_file: {
-    ru: ["загрузка", "файла"],
-    en: ["upload", "file"]
-  },
-  download: {
-    ru: ["скачать"],
-    en: ["download"]
-  },
-  attach_file: {
-    ru: ["вложение", "скрепка"],
-    en: ["attach", "file"]
-  },
-  link: {
-    ru: ["ссылка"],
-    en: ["link"]
-  },
-  lock: {
-    ru: ["замок", "доступ"],
-    en: ["lock"]
-  },
-  lock_open: {
-    ru: ["открытый", "доступ"],
-    en: ["unlock", "open"]
-  },
-  shield: {
-    ru: ["защита"],
-    en: ["shield", "protection"]
-  },
-  verified_user: {
-    ru: ["проверено", "безопасность"],
-    en: ["verified", "user"]
-  },
-  key: {
-    ru: ["ключ"],
-    en: ["key"]
-  },
-  admin_panel_settings: {
-    ru: ["администрирование"],
-    en: ["admin"]
-  },
-  policy: {
-    ru: ["правила", "политика"],
-    en: ["policy"]
-  },
-  gavel: {
-    ru: ["закон", "право"],
-    en: ["law", "gavel"]
-  },
-  fingerprint: {
-    ru: ["отпечаток"],
-    en: ["fingerprint"]
-  },
-  visibility: {
-    ru: ["видимость", "просмотр"],
-    en: ["visibility", "view"]
-  },
-  palette: {
-    ru: ["палитра", "цвет"],
-    en: ["palette", "colour", "color"]
-  },
-  format_paint: {
-    ru: ["оформление", "кисть"],
-    en: ["format", "paint"]
-  },
-  image: {
-    ru: ["картинка", "изображение"],
-    en: ["image", "picture"]
-  },
-  photo_library: {
-    ru: ["фото", "галерея"],
-    en: ["photos", "gallery"]
-  },
-  collections: {
-    ru: ["коллекции"],
-    en: ["collections"]
-  },
-  movie: {
-    ru: ["видео", "фильм"],
-    en: ["movie", "video"]
-  },
-  play_circle: {
-    ru: ["воспроизведение"],
-    en: ["play"]
-  },
-  mic: {
-    ru: ["микрофон"],
-    en: ["microphone"]
-  },
-  headphones: {
-    ru: ["наушники", "звук"],
-    en: ["headphones", "audio"]
-  },
-  brush: {
-    ru: ["кисть", "рисование"],
-    en: ["brush"]
+// The words live in core's language files (owner decision C282):
+// src/core/js/lang/icon-search/<code>.json, a glyph's words joined by commas.
+// English is built in; Russian (and any other language) is the words its
+// language file registered for sf-icon-search, its icon-search part, fetched
+// the first time a search asks for them. ICON_CHOICE_WORDS keeps its shape,
+// {name: {ru: [...], en: [...]}}: ru reads the registered words when it is read.
+
+const splitWords = text => String(text ?? '').split(',').map(word => word.trim()).filter(Boolean);
+
+function languageWords(code, name) {
+  const own = _lang_icon_search_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"][code]?.[name];
+  if (own !== undefined) return splitWords(own); // localeText asks core for the language's icon-search part when it is not
+  // here yet (and says the English words meanwhile); only a word registered
+  // for the language itself counts.
+
+  (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.localeText)(_lang_icon_search_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"], name, code, 'sf-icon-search');
+  return splitWords(globalThis.__sfPageLanguage?.registered?.get?.('sf-icon-search')?.get?.(code)?.[name]);
+}
+
+const ICON_CHOICE_WORDS = /* @__PURE__ */Object.freeze(Object.fromEntries(Object.keys(_lang_icon_search_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en).map(name => [name, Object.freeze(Object.defineProperties({}, {
+  ru: {
+    enumerable: true,
+    get: () => languageWords('ru', name)
+  },
+  en: {
+    enumerable: true,
+    value: Object.freeze(splitWords(_lang_icon_search_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en[name]))
   }
-}); // The words of any glyph name: the choice's words, or the name read as words
+}))]))); // The words of any glyph name: the choice's words, or the name read as words
 // (folder_open -> folder open) for a glyph outside the choice.
 
 function iconWords(name) {
@@ -8331,11 +7893,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   installLanguagePacks: () => (/* binding */ installLanguagePacks)
 /* harmony export */ });
 /* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e15813114531");
-/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("feccc97e5d7d");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8489d1f5bab4");
 // Fetching language packs (owner decision C177, 2026-11-14; format
 // docs/developer/language-packs.md, schema core/contracts/language-pack.v1.schema.json).
 //
-// ru and en are built into every component. Any other language is one pack
+// English is built into every component (owner decision C282, 2026-11-17:
+// core/lang/built-in.json). Any other language, Russian too, is one pack
 // per language and delivery. The Framework's own is written in parts, one per
 // component family (core/lang/<code>/<family>.json, listed with the
 // components each holds in core/lang/index.json, written by
@@ -8351,10 +7915,17 @@ __webpack_require__.r(__webpack_exports__);
 // SF.language.addPack('de', '/assets/product/lang/de.json') or
 // SF_BOOT_CONFIG.languages = {de: '/assets/product/lang/de.json'}.
 //
+// A page may instead include a pack's script form before core.js
+// (core/lang/<code>.js, C282): its words are in the registry before core runs,
+// it is marked as here whole, and core fetches no Framework part of that
+// language.
+//
 // Only core fetches: every bundle carries page-language.js, which asks through
 // the shared store (globalThis.__sfPageLanguage.packs) and reads the words.
 
- // The family of core's own words (file sizes, relative days): fetched with the
+
+
+const BUILT_IN = new Set(['en', ...(_lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]?.built_in ?? [])]); // The family of core's own words (file sizes, relative days): fetched with the
 // language, as core formats without a component to ask for them.
 
 const CORE_PART = 'core';
@@ -8410,7 +7981,7 @@ function installLanguagePacks({
 
     const run = () => {
       drawing = false;
-      (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.refreshLanguage)();
+      (0,_page_language_js__WEBPACK_IMPORTED_MODULE_2__.refreshLanguage)();
     };
 
     if (typeof globalThis.requestAnimationFrame === 'function') globalThis.requestAnimationFrame(run);else run();
@@ -8444,7 +8015,7 @@ function installLanguagePacks({
         taken = arrived.filter(Boolean).map(({
           pack,
           url
-        }) => _page_language_js__WEBPACK_IMPORTED_MODULE_1__.language.registerPack(pack, url));
+        }) => _page_language_js__WEBPACK_IMPORTED_MODULE_2__.language.registerPack(pack, url));
       } finally {
         PACKS.quiet -= 1;
       }
@@ -8456,12 +8027,18 @@ function installLanguagePacks({
     const all = before ? Promise.all([before, mine]).then(([earlier, now]) => [...earlier, ...now]) : mine;
     PACKS.pending.set(code, all);
     return all;
-  }; // The Framework's parts of a language: {url of a family, family of a component}.
+  }; // A Framework pack of the language already here whole: its script form,
+  // included before core (C282). Its parts are not fetched.
 
 
-  const partUrl = (code, family) => parts.get(code)?.urls.get(family);
+  const whole = code => (PACKS.loaded.get(code) ?? []).some(info => info?.whole && (info.delivery ?? 'framework') === 'framework'); // The Framework's parts of a language: {url of a family, family of a component}.
 
-  const familyOf = (code, component) => parts.get(code)?.families.get(component); // What the page shows now: core's words and the families of the elements
+
+  const partUrl = (code, family) => parts.get(code)?.urls.get(family); // A component's words may ride in two parts (C282: core says a few of a
+  // Smart component's words itself): every one of them.
+
+
+  const familiesOf = (code, component) => [...(parts.get(code)?.families.get(component) ?? [])]; // What the page shows now: core's words and the families of the elements
   // already in the document. While the document is parsed, again once it is.
 
 
@@ -8473,9 +8050,15 @@ function installLanguagePacks({
     const tags = [...known.families.keys()].filter(id => /^[a-z][a-z0-9]*-[a-z0-9-]*$/u.test(id));
 
     try {
-      for (const element of doc?.querySelectorAll?.(tags.join(',')) ?? []) {
-        const family = known.families.get(String(element.localName ?? element.tagName ?? '').toLowerCase());
-        if (family) families.add(family);
+      // A tag, or a class component's class (sf-tabs, sf-slider: C282).
+      const selector = tags.flatMap(id => [id, `.${id}`]).join(',');
+
+      for (const element of selector ? doc?.querySelectorAll?.(selector) ?? [] : []) {
+        const ids = [String(element.localName ?? element.tagName ?? '').toLowerCase(), ...(element.classList ?? [])];
+
+        for (const id of ids) {
+          for (const family of known.families.get(id) ?? []) families.add(family);
+        }
       }
     } catch {// A document that cannot be asked: the parts come with the first words.
     }
@@ -8486,11 +8069,13 @@ function installLanguagePacks({
   const begin = code => {
     if (asked.has(code)) return;
     asked.add(code);
-    fetchSome(code, [...(sources.get(code) ?? []), ...shown(code)]);
+    fetchSome(code, [...(sources.get(code) ?? []), ...(whole(code) ? [] : shown(code))]);
     const doc = globalThis.document;
 
     if (parts.has(code) && doc?.readyState === 'loading' && typeof doc.addEventListener === 'function') {
-      doc.addEventListener('DOMContentLoaded', () => fetchSome(code, shown(code)), {
+      doc.addEventListener('DOMContentLoaded', () => {
+        if (!whole(code)) fetchSome(code, shown(code));
+      }, {
         once: true
       });
     }
@@ -8511,15 +8096,15 @@ function installLanguagePacks({
 
     for (const one of codes) begin(one);
 
-    return Promise.all(codes.map(one => fetchSome(one, [...(sources.get(one) ?? []), ...(parts.get(one)?.urls.values() ?? [])]))).then(lists => lists.flat());
+    return Promise.all(codes.map(one => fetchSome(one, [...(sources.get(one) ?? []), ...(whole(one) ? [] : parts.get(one)?.urls.values() ?? [])]))).then(lists => lists.flat());
   }; // A bundle asks for a language and, from page-language.js of this pair on,
   // names the component that looks up a word: its family's part comes too.
 
 
   PACKS.request = (code, component) => {
     begin(code);
-    const family = component ? familyOf(code, component) : null;
-    if (family) fetchSome(code, [partUrl(code, family)]);
+    const families = component && !whole(code) ? familiesOf(code, component) : [];
+    if (families.length) fetchSome(code, families.map(family => partUrl(code, family)));
   };
 
   for (const code of packs?.languages ?? []) {
@@ -8538,7 +8123,10 @@ function installLanguagePacks({
     for (const [family, components] of Object.entries(byFamily)) {
       known.urls.set(family, resolve(`${root}lang/${code}/${family}.json`));
 
-      for (const component of [].concat(components)) known.families.set(component, family);
+      for (const component of [].concat(components)) {
+        if (!known.families.has(component)) known.families.set(component, new Set());
+        known.families.get(component).add(family);
+      }
     }
 
     parts.set(code, known);
@@ -8551,7 +8139,8 @@ function installLanguagePacks({
       for (const url of [].concat(urls)) PACKS.add(String(code).trim().toLowerCase(), url);
     }
   } // The page's own language, as soon as core runs, so the words are usually
-  // here before the first component draws.
+  // here before the first component draws; the Loader holds the components
+  // while they are on their way (core/js/loader.js languageHold, C282).
 
 
   const lang = globalThis.document?.documentElement?.getAttribute('lang');
@@ -8560,7 +8149,7 @@ function installLanguagePacks({
     const wanted = String(lang).trim().toLowerCase().replace('_', '-');
     const base = wanted.split('-')[0];
 
-    if (base !== 'ru' && base !== 'en') {
+    if (!BUILT_IN.has(base)) {
       PACKS.request(base);
       if (wanted !== base) PACKS.request(wanted);
     }
@@ -10137,13 +9726,14 @@ function watchMotion(listener, win = globalThis) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ATTRIBUTE: () => (/* binding */ ATTRIBUTE),
-/* harmony export */   WORDS: () => (/* binding */ WORDS),
+/* harmony export */   WORDS: () => (/* reexport safe */ _lang_new_tab_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   install: () => (/* binding */ install),
 /* harmony export */   opensNewTab: () => (/* binding */ opensNewTab),
 /* harmony export */   refresh: () => (/* binding */ refresh)
 /* harmony export */ });
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _lang_new_tab_index_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("83aa5d39d7c7");
 // A link that opens a new tab says so (owner decision C186 (3), 2026-11-14;
 // C147 (4) for the reference link, C25 for a file). Every link in text with
 // target="_blank" -- a plain <a>, an <a> with a link-* utility, an sf-link --
@@ -10167,17 +9757,13 @@ __webpack_require__.r(__webpack_exports__);
 // is a link that already shows a new-tab icon. The marks follow the link:
 // a link that stops opening a new tab loses them.
 
-const ATTRIBUTE = 'data-sf-new-tab'; // sf-file-download's words (src/smart/file-download/lang/*.json, new-tab-text);
-// tests/plain-group-3-c186.contract.test.mjs holds them equal.
+const ATTRIBUTE = 'data-sf-new-tab'; // sf-file-download's words (src/smart/file-download/lang/*.json, new-tab-text),
+// core's own language files (core/js/lang/new-tab: English built in, the other
+// languages from a language file, C282); tests/plain-group-3-c186.contract.test.mjs
+// holds them equal.
 
-const WORDS = {
-  en: {
-    'new-tab-text': '(opens in a new tab)'
-  },
-  ru: {
-    'new-tab-text': '(откроется в новой вкладке)'
-  }
-};
+
+
 const GLYPH = 'arrow_outward';
 const NEW_TAB_GLYPHS = new Set(['arrow_outward', 'open_in_new', 'launch', 'north_east']);
 
@@ -10231,7 +9817,7 @@ function lastText(link) {
 
 function mark(link) {
   const doc = link.ownerDocument;
-  const words = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageWord)(WORDS, 'new-tab-text', link, {
+  const words = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageWord)(_lang_new_tab_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"], 'new-tab-text', link, {
     component: 'sf-file-download',
     source: 'ru'
   });
@@ -10346,8 +9932,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   notify: () => (/* binding */ notify)
 /* harmony export */ });
 /* harmony import */ var _page_language__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8489d1f5bab4");
-/* harmony import */ var _layer_stack__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("78628e837a32");
-/* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("2ee7a47e9b10");
+/* harmony import */ var _lang_notify_index_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("61bd475e7388");
+/* harmony import */ var _layer_stack__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("78628e837a32");
+/* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2ee7a47e9b10");
 // One way to tell a person something happened: SF.notify. Every component and
 // every product used to raise its own toast where it stood -- over a card, in a
 // corner of its own, for its own time -- so messages turned up anywhere and
@@ -10370,18 +9957,12 @@ __webpack_require__.r(__webpack_exports__);
 // open; Escape closes the message in focus and moves the focus to the next.
 // The list of earlier pairs, every message whole with a gap, is a setting:
 // SF.notifications.configure({layout: 'list'}).
+ // English built in; the other languages from a language file (C282).
+
 
  // The device's reduced motion or the site's «остановить движение» (C196).
 
 
-const NOTIFY_TEXT = {
-  en: {
-    region: 'Notifications'
-  },
-  ru: {
-    region: 'Уведомления'
-  }
-};
 const STATUSES = new Set(['neutral', 'info', 'success', 'warning', 'error']);
 const ICONS = {
   success: 'check_circle',
@@ -10425,7 +10006,10 @@ const state = {
   // Where the focus came from, to go back to when the last message closes.
   returnFocus: null,
   frame: 0,
-  resize: null
+  resize: null,
+  // The area is being put back on top (LY-13), and the toggle watch is on.
+  raising: false,
+  watchingTopLayer: false
 }; // The messages on view, newest first, without the ones leaving.
 
 function onView() {
@@ -10570,7 +10154,7 @@ function region() {
   const area = document.createElement('section');
   area.className = 'sf-notifications';
   area.dataset.placement = state.placement;
-  area.setAttribute('aria-label', (0,_page_language__WEBPACK_IMPORTED_MODULE_0__.pageText)(NOTIFY_TEXT, 'region', document.documentElement));
+  area.setAttribute('aria-label', (0,_page_language__WEBPACK_IMPORTED_MODULE_0__.pageText)(_lang_notify_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"], 'region', document.documentElement, 'sf-notify'));
   if (typeof area.showPopover === 'function') area.setAttribute('popover', 'manual');
   area.addEventListener('sf-toast-close', event => {
     const entry = state.shown.find(item => item.toast === event.target);
@@ -10682,27 +10266,82 @@ function showRegion() {
     } catch {
       /* not in a document yet */
     }
-  } // A layer of the one document stack (standard 1.3.8 §19.1), the kind that
+  }
+
+  watchTopLayer(); // A layer of the one document stack (standard 1.3.8 §19.1), the kind that
   // takes no keys: Escape and Tab stay with the window under it. Its height
   // counts where the browser has no top layer.
 
-
-  (0,_layer_stack__WEBPACK_IMPORTED_MODULE_1__.openLayer)(area, {
+  (0,_layer_stack__WEBPACK_IMPORTED_MODULE_2__.openLayer)(area, {
     kind: 'toast',
     returnTo: null,
     place: ({
-      zIndex
+      zIndex,
+      index
     }) => {
       area.style.zIndex = String(zIndex);
+      keepAbove(index);
     }
   });
+} // Messages stand over every window (LY-13; the layer roles of C181 (3):
+// window <= message). The area entered the top layer when its first message
+// came, so a window, a drawer or a popover opened after it -- a dialog
+// shown modal, a popover, a layer of the stack -- was drawn over the
+// messages, and a toast raised while a window was open stayed under it.
+// When another layer opens above the area, the area goes back on top: of the
+// stack (its z-index, where the browser has no top layer) and of the
+// browser's top layer, which a popover enters again only by being shown
+// again. Hidden and shown in one task, so no frame is drawn without it; the
+// focus inside it, if any, stays where it was.
+
+
+function keepAbove(index) {
+  if (state.raising || index === (0,_layer_stack__WEBPACK_IMPORTED_MODULE_2__.openLayers)().length - 1) return;
+  state.raising = true;
+  queueMicrotask(() => {
+    state.raising = false;
+    const area = state.region;
+    if (!area?.isConnected || !(0,_layer_stack__WEBPACK_IMPORTED_MODULE_2__.hasLayer)(area)) return;
+    (0,_layer_stack__WEBPACK_IMPORTED_MODULE_2__.raiseLayer)(area);
+    enterTopLayerAgain(area);
+  });
+}
+
+function enterTopLayerAgain(area) {
+  if (typeof area.showPopover !== 'function' || !area.matches(':popover-open')) return;
+  const active = document.activeElement;
+  const inside = Boolean(active && active !== area && area.contains(active));
+
+  try {
+    area.hidePopover();
+    area.showPopover();
+  } catch {
+    /* left the document meanwhile */
+  }
+
+  if (inside && active.isConnected) active.focus({
+    preventScroll: true
+  });
+} // A top-layer element the stack does not know -- a page's own <dialog>
+// shown modal, a popover of its own -- says so with a toggle event, which
+// does not bubble but passes the document on its way down.
+
+
+function watchTopLayer() {
+  if (state.watchingTopLayer) return;
+  state.watchingTopLayer = true;
+  document.addEventListener('toggle', event => {
+    const area = state.region;
+    if (event.newState !== 'open' || !area || event.target === area || area.contains(event.target)) return;
+    enterTopLayerAgain(area);
+  }, true);
 }
 
 function hideRegionWhenEmpty() {
   const area = state.region;
   if (!area || state.shown.length || state.waiting.length) return;
   if (typeof area.hidePopover === 'function' && area.matches(':popover-open')) area.hidePopover();
-  (0,_layer_stack__WEBPACK_IMPORTED_MODULE_1__.closeLayer)(area, {
+  (0,_layer_stack__WEBPACK_IMPORTED_MODULE_2__.closeLayer)(area, {
     restoreFocus: false
   }); // An empty area is no longer under the pointer, in focus or tapped open.
 
@@ -10898,7 +10537,7 @@ async function display(entry) {
   showRegion(); // The newest at the edge the area grows from: nearest the edge it sits on.
 
   const area = region();
-  const stack = state.layout === 'stack' && !(0,_motion_js__WEBPACK_IMPORTED_MODULE_2__.reducedMotion)(); // In a stack the newest comes in from outside the edge and fades in; the
+  const stack = state.layout === 'stack' && !(0,_motion_js__WEBPACK_IMPORTED_MODULE_3__.reducedMotion)(); // In a stack the newest comes in from outside the edge and fades in; the
   // first frame stands it there, the next lets it move (no jump: every move
   // is a transition from where the message stood).
   // layout() reads every height, and that read commits the styles: the
@@ -11502,6 +11141,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("feccc97e5d7d");
 // What language a component speaks, and how a product adds one.
 //
 // The Framework speaks English by default and whatever the page says otherwise:
@@ -11536,6 +11176,9 @@ __webpack_require__.r(__webpack_exports__);
 // was published from core's copy, the table read its own, and registering a
 // language changed nothing on screen. Only a browser shows that, and it did
 // (2026-10-11).
+ // The languages built into the bundles (owner decision C282): English; every
+// other language, Russian too, is a language file (core/js/language-packs.js).
+
 
 
 const STORE = (() => {
@@ -11554,9 +11197,10 @@ const STORE = (() => {
 })();
 
 const LISTENERS = STORE.listeners;
-const REGISTERED = STORE.registered; // Language packs (owner decision C177, 2026-11-14): every language but the two
-// built in is one file per language and delivery, fetched only by a page that
-// speaks it. A pack's words go into the same registry as words registered one
+const REGISTERED = STORE.registered; // Language packs (owner decision C177, 2026-11-14; C282, 2026-11-17): every
+// language but English, the one built in, is one file per language and
+// delivery, fetched only by a page that speaks it (or included before core as
+// its script form, core/lang/<code>.js). A pack's words go into the same registry as words registered one
 // by one -- so a bundle built before packs existed reads them too -- a
 // Framework pack's beneath what is there, any other pack's over it: a product
 // overrides a Framework word whichever arrived first. The fetching is core's
@@ -11567,12 +11211,13 @@ const PACKS = STORE.packs ??= {
   loaded: new Map(),
   pending: new Map(),
   request: null
-};
+}; // The languages built into the bundles: English, and in a rollback build Russian
+// too (src/core/lang/built-in.json, C282).
 
-const isBuiltIn = code => code === 'ru' || code === 'en';
+const isBuiltIn = code => code === 'en' || (_lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]?.built_in ?? []).includes(code);
 /**
- * Ask core for the pack of a language this page speaks (nothing for ru and
- * en), and for the part that holds `component`'s words: the Framework's pack
+ * Ask core for the pack of a language this page speaks (nothing for a
+ * built-in language), and for the part that holds `component`'s words: the Framework's pack
  * comes in parts by family (core/js/language-packs.js). A core from before
  * parts takes the language alone.
  */
@@ -15416,7 +15061,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.59.0';
+const CORE_RUNTIME = '1.60.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -21763,6 +21408,21 @@ const SECTION_DEFAULTS = Object.freeze({ width: 'normal', padding_y: 8 });
 const GRID_DEFAULTS = Object.freeze({ columns: 3, gap: 5 });
 const CONTAINER_DEFAULTS = Object.freeze({ width: 'narrow' });
 const catalogueWord = (type) => `sf.composition.catalogue.type.${type.replace('.', '_').replaceAll('-', '_')}`;
+// The catalogue's search words (owner decision C282): English here; Russian
+// is the words the ru language file registered for sf-composition (its editor
+// part, sf.composition.catalogue.keywords.<type>, the words joined by commas),
+// read when they are asked, so a catalogue built after the file arrived
+// finds «сетка». Empty until then.
+const catalogueKeywords = (type, en) => {
+  const key = `sf.composition.catalogue.keywords.${type.replace('.', '_').replaceAll('-', '_')}`;
+  return Object.freeze(Object.defineProperty({ en: Object.freeze([...en]) }, 'ru', {
+    enumerable: true,
+    get: () => {
+      const word = globalThis.__sfPageLanguage?.registered?.get?.('sf-composition')?.get?.('ru')?.[key];
+      return typeof word === 'string' ? word.split(',').map((one) => one.trim()).filter(Boolean) : [];
+    },
+  }));
+};
 const variantWord = (type, id) => `sf.composition.catalogue.variant.${type.replace('.', '_').replaceAll('-', '_')}.${id.replaceAll('-', '_')}`;
 
 // Text runs, links of text runs, and since content.heading and
@@ -22075,7 +21735,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     // G-39 (1.2.0): the prototype's lead is 19/30 px in the variant ink; the
     // SIMAI Framework's large body text role (20/28 px, 16/24 on the phone) in
     // on-surface-variant. Muted is the variant ink alone.
-    presentation: { views: ['default'], presets: [], modifiers: ['lead', 'muted'], modifier_utilities: { lead: ['text-large', 'color-on-surface-variant'], muted: ['color-on-surface-variant'] } },
+    presentation: { views: ['default'], presets: [], modifiers: ['lead', 'muted'], modifier_utilities: { lead: ['text-2', 'color-on-surface-variant'], muted: ['color-on-surface-variant'] } },
     slots: {},
     renderer: { kind: 'builtin', name: 'content.paragraph' },
     assets: [],
@@ -22206,7 +21866,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     parameter_sets: ['width', 'spacing', 'background', 'visibility'],
     parameter_defaults: CONTAINER_DEFAULTS,
     slots: { default: { min: 0, max: 500, categories: ['layout', 'content', 'smart'] } },
-    catalogue: { group: 'layout', icon: 'width_normal', label_key: catalogueWord('layout.container'), keywords: { en: ['container', 'width', 'wrapper'], ru: ['контейнер', 'ширина', 'обёртка'] }, order: 140 },
+    catalogue: { group: 'layout', icon: 'width_normal', label_key: catalogueWord('layout.container'), keywords: catalogueKeywords('layout.container', ['container', 'width', 'wrapper']), order: 140 },
     variants: [
       { id: 'narrow', label_key: variantWord('layout.container', 'narrow') },
       { id: 'normal', label_key: variantWord('layout.container', 'normal'), props: { width: 'normal' } },
@@ -22220,7 +21880,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     parameter_sets: ['grid', 'visibility'],
     parameter_defaults: GRID_DEFAULTS,
     slots: { default: { min: 0, max: 48, categories: ['layout', 'content', 'smart'] } },
-    catalogue: { group: 'layout', icon: 'grid_on', label_key: catalogueWord('layout.grid'), keywords: { en: ['grid', 'tiles', 'gallery', 'cells'], ru: ['сетка', 'плитка', 'галерея', 'ячейки'] }, order: 150 },
+    catalogue: { group: 'layout', icon: 'grid_on', label_key: catalogueWord('layout.grid'), keywords: catalogueKeywords('layout.grid', ['grid', 'tiles', 'gallery', 'cells']), order: 150 },
     variants: [2, 3, 4].map((count) => ({
       id: `cards-${count}`,
       label_key: variantWord('layout.grid', `cards-${count}`),
@@ -22236,7 +21896,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     parameter_sets: ['visibility'],
     parameter_defaults: { size: 6 },
     slots: {},
-    catalogue: { group: 'layout', icon: 'height', label_key: catalogueWord('layout.spacer'), keywords: { en: ['spacer', 'space', 'gap'], ru: ['пустое место', 'отступ', 'промежуток'] }, order: 160 },
+    catalogue: { group: 'layout', icon: 'height', label_key: catalogueWord('layout.spacer'), keywords: catalogueKeywords('layout.spacer', ['spacer', 'space', 'gap']), order: 160 },
   }),
   // Elements (visual parity, 2026-11-04; G-20): the smart elements a block
   // prints, each a type of its own so an author places it anywhere a block
@@ -22254,7 +21914,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       icon: iconName,
       icon_position: { enum: ['start', 'end'], default: 'start' },
     }),
-    catalogue: { group: 'elements', icon: 'smart_button', label_key: catalogueWord('element.button'), keywords: { en: ['button', 'link', 'call to action', 'cta'], ru: ['кнопка', 'ссылка', 'призыв'] }, order: 100 },
+    catalogue: { group: 'elements', icon: 'smart_button', label_key: catalogueWord('element.button'), keywords: catalogueKeywords('element.button', ['button', 'link', 'call to action', 'cta']), order: 100 },
     variants: [
       { id: 'plain', label_key: variantWord('element.button', 'plain') },
       { id: 'icon', label_key: variantWord('element.button', 'icon'), props: { icon: 'arrow_forward', icon_position: 'end' } },
@@ -22271,7 +21931,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       scheme: { enum: ['primary', 'secondary', 'on-surface', 'on-surface-variant'], default: 'primary' },
       size: { enum: ['1/2', '1', '2'], default: '1' },
     }),
-    catalogue: { group: 'elements', icon: 'add_circle', label_key: catalogueWord('element.button-icon'), keywords: { en: ['icon button', 'icon', 'button'], ru: ['кнопка-значок', 'значок', 'иконка', 'кнопка'] }, order: 110 },
+    catalogue: { group: 'elements', icon: 'add_circle', label_key: catalogueWord('element.button-icon'), keywords: catalogueKeywords('element.button-icon', ['icon button', 'icon', 'button']), order: 110 },
   }),
   elementManifest('element.badge', 'smart/badge', {
     data_schema: closed({ text: plainText(120) }),
@@ -22281,7 +21941,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       size: { enum: ['1/3', '1/2', '1'], default: '1/2' },
       icon: iconName,
     }),
-    catalogue: { group: 'elements', icon: 'label', label_key: catalogueWord('element.badge'), keywords: { en: ['badge', 'tag', 'status', 'label'], ru: ['метка', 'бейдж', 'тег', 'статус'] }, order: 120 },
+    catalogue: { group: 'elements', icon: 'label', label_key: catalogueWord('element.badge'), keywords: catalogueKeywords('element.badge', ['badge', 'tag', 'status', 'label']), order: 120 },
   }),
   elementManifest('element.icon', 'smart/icon', {
     // The label names the icon for a screen reader; without it the icon only decorates.
@@ -22290,7 +21950,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       icon: { ...iconName, default: 'star' },
       size: { enum: ['1', '2', '3', '4', '5'], default: '2' },
     }),
-    catalogue: { group: 'elements', icon: 'star', label_key: catalogueWord('element.icon'), keywords: { en: ['icon', 'symbol', 'pictogram'], ru: ['значок', 'иконка', 'пиктограмма'] }, order: 130 },
+    catalogue: { group: 'elements', icon: 'star', label_key: catalogueWord('element.icon'), keywords: catalogueKeywords('element.icon', ['icon', 'symbol', 'pictogram']), order: 130 },
   }),
   // Forms (2026-11-04; the ui-editor host's G-20): a form and its fields,
   // each field one SIMAI Framework Smart element printed from its inputs
@@ -22315,7 +21975,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
     renderer: { kind: 'builtin', name: 'form.form' },
     assets: [],
     capabilities: ['html'],
-    catalogue: { group: 'forms', icon: 'contact_mail', label_key: catalogueWord('form.form'), keywords: { en: ['form', 'request', 'contact', 'feedback'], ru: ['форма', 'заявка', 'обратная связь', 'контакты'] }, order: 100 },
+    catalogue: { group: 'forms', icon: 'contact_mail', label_key: catalogueWord('form.form'), keywords: catalogueKeywords('form.form', ['form', 'request', 'contact', 'feedback']), order: 100 },
     variants: [
       {
         id: 'request',
@@ -22345,7 +22005,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       required: { type: 'boolean', default: false },
       size: { enum: ['1/2', '1', '2'], default: '1' },
     }),
-    catalogue: { group: 'forms', icon: 'input', label_key: catalogueWord('form.input'), keywords: { en: ['field', 'input', 'text field', 'email', 'phone'], ru: ['поле', 'ввод', 'текстовое поле', 'почта', 'телефон'] }, order: 110 },
+    catalogue: { group: 'forms', icon: 'input', label_key: catalogueWord('form.input'), keywords: catalogueKeywords('form.input', ['field', 'input', 'text field', 'email', 'phone']), order: 110 },
   }),
   elementManifest('form.textarea', 'smart/input-textarea', {
     data_schema: closed({ label: plainText(200), placeholder: plainText(200), hint: plainText(300), name: fieldName }),
@@ -22354,7 +22014,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       required: { type: 'boolean', default: false },
       size: { enum: ['1/2', '1', '2'], default: '1' },
     }),
-    catalogue: { group: 'forms', icon: 'notes', label_key: catalogueWord('form.textarea'), keywords: { en: ['text area', 'message', 'comment', 'multiline'], ru: ['многострочное поле', 'сообщение', 'комментарий'] }, order: 120 },
+    catalogue: { group: 'forms', icon: 'notes', label_key: catalogueWord('form.textarea'), keywords: catalogueKeywords('form.textarea', ['text area', 'message', 'comment', 'multiline']), order: 120 },
   }),
   elementManifest('form.checkbox', 'smart/checkbox', {
     data_schema: closed({ label: plainText(300), hint: plainText(300), name: fieldName }),
@@ -22362,7 +22022,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       checked: { type: 'boolean', default: false },
       size: { enum: ['1/2', '1', '2'], default: '1' },
     }),
-    catalogue: { group: 'forms', icon: 'check_box', label_key: catalogueWord('form.checkbox'), keywords: { en: ['checkbox', 'agree', 'consent', 'tick'], ru: ['флажок', 'галочка', 'согласие'] }, order: 130 },
+    catalogue: { group: 'forms', icon: 'check_box', label_key: catalogueWord('form.checkbox'), keywords: catalogueKeywords('form.checkbox', ['checkbox', 'agree', 'consent', 'tick']), order: 130 },
   }),
   elementManifest('form.switch', 'smart/switch', {
     data_schema: closed({ label: plainText(300), hint: plainText(300), name: fieldName }),
@@ -22370,7 +22030,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       checked: { type: 'boolean', default: false },
       size: { enum: ['1/2', '1', '2'], default: '1' },
     }),
-    catalogue: { group: 'forms', icon: 'toggle_on', label_key: catalogueWord('form.switch'), keywords: { en: ['switch', 'toggle', 'on off'], ru: ['переключатель', 'вкл выкл'] }, order: 140 },
+    catalogue: { group: 'forms', icon: 'toggle_on', label_key: catalogueWord('form.switch'), keywords: catalogueKeywords('form.switch', ['switch', 'toggle', 'on off']), order: 140 },
   }),
   elementManifest('form.select', 'smart/dropdown', {
     // The options are words, one after another, separated by commas: what an
@@ -22380,7 +22040,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       required: { type: 'boolean', default: false },
       size: { enum: ['1/2', '1', '2'], default: '1' },
     }),
-    catalogue: { group: 'forms', icon: 'arrow_drop_down_circle', label_key: catalogueWord('form.select'), keywords: { en: ['select', 'dropdown', 'choice', 'list'], ru: ['список', 'выбор', 'выпадающий список'] }, order: 150 },
+    catalogue: { group: 'forms', icon: 'arrow_drop_down_circle', label_key: catalogueWord('form.select'), keywords: catalogueKeywords('form.select', ['select', 'dropdown', 'choice', 'list']), order: 150 },
   }),
   elementManifest('form.button-submit', 'smart/button', {
     // Unset, it reads «Send» in the Document's language.
@@ -22389,7 +22049,7 @@ const BUILTIN_TYPE_MANIFESTS = Object.freeze([
       appearance: { enum: ['default', 'tonal', 'outline'], default: 'default' },
       size: { enum: ['1/2', '1', '2'], default: '1' },
     }),
-    catalogue: { group: 'forms', icon: 'send', label_key: catalogueWord('form.button-submit'), keywords: { en: ['submit', 'send', 'button'], ru: ['отправить', 'кнопка отправки', 'кнопка'] }, order: 160 },
+    catalogue: { group: 'forms', icon: 'send', label_key: catalogueWord('form.button-submit'), keywords: catalogueKeywords('form.button-submit', ['submit', 'send', 'button']), order: 160 },
   }),
   // The root of a structured-content Document: the page's blocks in order,
   // under the page's title (the accepted content editor prototype writes
@@ -24371,8 +24031,8 @@ __webpack_require__.r(__webpack_exports__);
 
 // The editor words without the words (localization study LC-1, 2026-11-14).
 //
-// The words of the built-in editor manifests (editor-words.mjs, ru + en,
-// 8.7 KB gzip) were part of core.min.js, so every page paid for them though
+// The words of the built-in editor manifests (editor-words.mjs, then ru + en,
+// 8.7 KB gzip; English only since C282, Russian is a language file) were part of core.min.js, so every page paid for them though
 // only a page that draws a parameters form reads them. Core now carries this
 // module only: the keys a field reads, the lookup and a shared slot the words
 // are installed into. The words themselves are a chunk of their own
@@ -24406,12 +24066,13 @@ function editorWordsReady() {
 }
 
 /**
- * Install the words `{en: {...}, ru: {...}}`; the first install wins, and the
- * page's components are told, as for a registered language, so a form drawn
- * before the words arrived draws again.
+ * Install the words `{en: {...}, ...}` (English is built in, owner decision
+ * C282; a bundle built before it brings `ru` too); the first install wins,
+ * and the page's components are told, as for a registered language, so a
+ * form drawn before the words arrived draws again.
  */
 function installEditorWords(words) {
-  if (!STORE.words && words && typeof words.en === 'object' && typeof words.ru === 'object') {
+  if (!STORE.words && words && typeof words.en === 'object') {
     STORE.words = words;
     (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.refreshLanguage)();
   }
@@ -24449,9 +24110,12 @@ function loadEditorWords() {
  * as it was. Empty until the words are on the page; the first read starts
  * loading them, and the page's components are told when they arrive.
  */
+// A language not built in (C282): the words its language file registered for
+// sf-composition.
+const registeredWords = (locale) => globalThis.__sfPageLanguage?.registered?.get?.(EDITOR_WORDS_OWNER)?.get?.(locale) ?? {};
 const readWords = (locale) => {
   if (!STORE.words) loadEditorWords();
-  return editorWords()[locale];
+  return editorWords()[locale] ?? registeredWords(locale);
 };
 const EDITOR_FIELD_WORDS_LIVE = Object.freeze({
   get en() { return readWords('en'); },
@@ -24906,7 +24570,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.badge",
-    "version": "1.6.2"
+    "version": "1.6.3"
   },
   "sf-button": {
     "inputs": {
@@ -25106,7 +24770,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.16.3"
+    "version": "1.16.8"
   },
   "sf-button-icon": {
     "inputs": {
@@ -25286,7 +24950,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.13.3"
+    "version": "1.13.8"
   },
   "sf-checkbox": {
     "inputs": {
@@ -25358,7 +25022,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.checkbox",
-    "version": "1.5.2"
+    "version": "1.5.5"
   },
   "sf-divider": {
     "component": "component.content-divider",
@@ -25399,6 +25063,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "type": "string"
         },
         "help": {
+          "default": "",
+          "type": "string"
+        },
+        "hint": {
           "default": "",
           "type": "string"
         },
@@ -25487,7 +25155,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.18.1"
+    "version": "1.20.3"
   },
   "sf-icon": {
     "inputs": {
@@ -25579,7 +25247,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.4.1"
+    "version": "1.4.2"
   },
   "sf-input": {
     "inputs": {
@@ -25788,7 +25456,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.14.2"
+    "version": "1.15.2"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -25964,7 +25632,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.12.3"
+    "version": "1.13.2"
   },
   "sf-switch": {
     "inputs": {
@@ -25990,6 +25658,14 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "type": "string"
         },
+        "icon": {
+          "default": "",
+          "type": "string"
+        },
+        "icon-on": {
+          "default": "",
+          "type": "string"
+        },
         "inherited-text": {
           "default": "",
           "type": "string"
@@ -26004,6 +25680,14 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         },
         "name": {
           "default": "",
+          "type": "string"
+        },
+        "position": {
+          "default": "start",
+          "enum": [
+            "start",
+            "end"
+          ],
           "type": "string"
         },
         "reset-label": {
@@ -26032,7 +25716,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.switch",
-    "version": "1.7.2"
+    "version": "1.9.3"
   }
 });
 
@@ -26543,8 +26227,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   publishEffects: () => (/* binding */ publishEffects)
 /* harmony export */ });
 /* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6f489cc65b77");
-/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ac24888e7d3e");
-/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("4aea5d6d49c7");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _lang_fragment_index_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("15b764c9972d");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("ac24888e7d3e");
+/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("4aea5d6d49c7");
+
+
+// English built in; the other languages from a language file (C282).
 
 
 
@@ -26575,7 +26264,7 @@ function portProblems(ports, where) {
     const port = ports[name];
     if (!NAME.test(name)) problems.push(`${where}.${name}: name`);
     if (!closed(port, ['value', 'summary'])) { problems.push(`${where}.${name}: undeclared keys`); continue; }
-    if ((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_2__.valueTypeName)(port.value) === null) problems.push(`${where}.${name}: unknown value type ${port.value}`);
+    if ((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_4__.valueTypeName)(port.value) === null) problems.push(`${where}.${name}: unknown value type ${port.value}`);
     if (typeof port.summary !== 'string' || !port.summary.trim() || port.summary.length > 1000) problems.push(`${where}.${name}: summary`);
   }
   return problems;
@@ -26589,7 +26278,7 @@ function checkFragmentDescriptor(descriptor) {
   for (const key of keys) if (!FIELDS.includes(key) && key !== 'schema_version') problems.push(`${key}: undeclared`);
   // Either form of the format name: simai.interface-fragment.v1, or
   // simai.interface-fragment with schema_version 1 (schema-name.mjs).
-  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_1__.isSchema)(descriptor, 'simai.interface-fragment', 1)) problems.push('schema: not simai.interface-fragment, schema_version 1');
+  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_3__.isSchema)(descriptor, 'simai.interface-fragment', 1)) problems.push('schema: not simai.interface-fragment, schema_version 1');
   if (typeof descriptor.id !== 'string' || !ID.test(descriptor.id)) problems.push('id: a dotted identity');
   if (typeof descriptor.element !== 'string' || !ELEMENT.test(descriptor.element)) problems.push('element: a custom element name');
   if (!uniqueList(descriptor.regions, 8, (region) => typeof region === 'string' && NAME.test(region)) || !descriptor.regions.length) problems.push('regions: one to eight region names');
@@ -26624,7 +26313,7 @@ function checkFragmentDescriptor(descriptor) {
 //     ...
 //   </sf-composition-scope>
 const PAGE_EFFECT_TYPES = ['record-changed.v1', 'record-removed.v1', 'collection-changed.v1', 'files-moved.v1', 'counter.v1', 'navigation.v1', 'preference-changed.v1'];
-const effectPort = (type) => (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_2__.valueTypeName)(type);
+const effectPort = (type) => (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_4__.valueTypeName)(type);
 const PAGE_EFFECT_PORTS = PAGE_EFFECT_TYPES.map(effectPort);
 
 function definePageHost(registry = globalThis.customElements) {
@@ -26654,13 +26343,13 @@ function definePageHost(registry = globalThis.customElements) {
       const refused = [];
       for (const effect of Array.isArray(effects) ? effects : []) {
         const type = effect?.type;
-        if (!PAGE_EFFECT_PORTS.includes((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_2__.valueTypeName)(type))) {
+        if (!PAGE_EFFECT_PORTS.includes((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_4__.valueTypeName)(type))) {
           refused.push({type: type ?? null, reason: 'type_not_published'});
           continue;
         }
         let value;
         try {
-          value = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_2__.valueTypeEntry)(type).check(effect.value);
+          value = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_4__.valueTypeEntry)(type).check(effect.value);
         } catch (error) {
           refused.push({type, reason: 'value_invalid', message: String(error?.message ?? error)});
           continue;
@@ -26699,10 +26388,6 @@ function publishEffects(effects, {origin = null} = {}) {
 //   <sf-fragment data-sf-fragment="larena.file-manager" load-timeout="10000">
 //     <sf-file-manager ...></sf-file-manager>
 //   </sf-fragment>
-const FRAGMENT_TEXT = {
-  ru: {heading: 'Не удалось показать этот блок'},
-  en: {heading: 'This block could not be shown'},
-};
 
 function defineFragmentBoundary(registry = globalThis.customElements) {
   if (!registry || typeof globalThis.HTMLElement !== 'function') return null;
@@ -26755,8 +26440,8 @@ function defineFragmentBoundary(registry = globalThis.customElements) {
     }
 
     text(key) {
-      const lang = (this.closest('[lang]')?.getAttribute('lang') || 'en').slice(0, 2);
-      return (FRAGMENT_TEXT[lang] ?? FRAGMENT_TEXT.en)[key];
+      const lang = this.closest('[lang]')?.getAttribute('lang') || 'en';
+      return (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.localeText)(_lang_fragment_index_mjs__WEBPACK_IMPORTED_MODULE_2__["default"], key, lang, 'sf-fragment');
     }
 
     fail(phase, message) {
@@ -27709,127 +27394,131 @@ function richTextFromPlainText(text, {mode = 'value'} = {}) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   BINDING_STATES: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.BINDING_STATES),
-/* harmony export */   BUILTIN_CATALOGUE: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE),
-/* harmony export */   BUILTIN_CATALOGUE_ALSO_IN: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE_ALSO_IN),
-/* harmony export */   BUILTIN_CATALOGUE_ICONS: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE_ICONS),
+/* harmony export */   BINDING_STATES: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_20__.BINDING_STATES),
+/* harmony export */   BUILTIN_CATALOGUE: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.BUILTIN_CATALOGUE),
+/* harmony export */   BUILTIN_CATALOGUE_ALSO_IN: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.BUILTIN_CATALOGUE_ALSO_IN),
+/* harmony export */   BUILTIN_CATALOGUE_ICONS: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.BUILTIN_CATALOGUE_ICONS),
 /* harmony export */   BUILTIN_EDITOR_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS),
-/* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.BUILTIN_FIELD_KINDS),
+/* harmony export */   BUILTIN_FIELD_KINDS: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.BUILTIN_FIELD_KINDS),
 /* harmony export */   BUILTIN_PORT_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS),
 /* harmony export */   BUILTIN_TYPE_MANIFESTS: () => (/* reexport safe */ _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS),
-/* harmony export */   CATALOGUE_GROUPS: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUPS),
-/* harmony export */   CATALOGUE_GROUP_ALIASES: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUP_ALIASES),
-/* harmony export */   CATALOGUE_GROUP_TABLE: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUP_TABLE),
-/* harmony export */   CATALOGUE_TABS: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_TABS),
-/* harmony export */   COMPOSED_EXTENSION: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.COMPOSED_EXTENSION),
+/* harmony export */   CATALOGUE_GROUPS: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.CATALOGUE_GROUPS),
+/* harmony export */   CATALOGUE_GROUP_ALIASES: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.CATALOGUE_GROUP_ALIASES),
+/* harmony export */   CATALOGUE_GROUP_TABLE: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.CATALOGUE_GROUP_TABLE),
+/* harmony export */   CATALOGUE_TABS: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.CATALOGUE_TABS),
+/* harmony export */   COMPOSED_EXTENSION: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_19__.COMPOSED_EXTENSION),
 /* harmony export */   Composition: () => (/* binding */ Composition),
-/* harmony export */   DATA_EXTENSION: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.DATA_EXTENSION),
-/* harmony export */   DATA_SHAPES: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.DATA_SHAPES),
-/* harmony export */   EDITOR_FIELD_WORDS: () => (/* reexport safe */ _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_FIELD_WORDS_LIVE),
-/* harmony export */   EDITOR_WORDS_OWNER: () => (/* reexport safe */ _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_WORDS_OWNER),
-/* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.FRAGMENT_DESCRIPTOR_SCHEMA),
-/* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.INLINE_MARKS),
-/* harmony export */   MODIFIERS_EXTENSION: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.MODIFIERS_EXTENSION),
-/* harmony export */   PARAMETER_SETS: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.PARAMETER_SETS),
-/* harmony export */   PARAMETER_SET_NAMES: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.PARAMETER_SET_NAMES),
-/* harmony export */   PRINTED_ELEMENTS: () => (/* reexport safe */ _elements_mjs__WEBPACK_IMPORTED_MODULE_15__.PRINTED_ELEMENTS),
-/* harmony export */   RUNTIME_OWNER: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.RUNTIME_OWNER),
-/* harmony export */   Recipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.Recipe),
-/* harmony export */   SOURCE_PORT: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.SOURCE_PORT),
-/* harmony export */   UTILITY_BREAKPOINTS: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.UTILITY_BREAKPOINTS),
-/* harmony export */   VALUE_TYPES: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.VALUE_TYPES),
-/* harmony export */   applyFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.applyFieldValue),
-/* harmony export */   bindingSettings: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.bindingSettings),
-/* harmony export */   catalogue: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogue),
-/* harmony export */   catalogueEntry: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogueEntry),
-/* harmony export */   checkFragmentDescriptor: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.checkFragmentDescriptor),
-/* harmony export */   checkModifiers: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.checkModifiers),
-/* harmony export */   checkPortValue: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.checkPortValue),
+/* harmony export */   DATA_EXTENSION: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_20__.DATA_EXTENSION),
+/* harmony export */   DATA_SHAPES: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_20__.DATA_SHAPES),
+/* harmony export */   EDITOR_FIELD_WORDS: () => (/* reexport safe */ _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_3__.EDITOR_FIELD_WORDS_LIVE),
+/* harmony export */   EDITOR_WORDS_OWNER: () => (/* reexport safe */ _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_3__.EDITOR_WORDS_OWNER),
+/* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_14__.FRAGMENT_DESCRIPTOR_SCHEMA),
+/* harmony export */   INLINE_MARKS: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_12__.INLINE_MARKS),
+/* harmony export */   MODIFIERS_EXTENSION: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.MODIFIERS_EXTENSION),
+/* harmony export */   PARAMETER_SETS: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.PARAMETER_SETS),
+/* harmony export */   PARAMETER_SET_NAMES: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.PARAMETER_SET_NAMES),
+/* harmony export */   PRINTED_ELEMENTS: () => (/* reexport safe */ _elements_mjs__WEBPACK_IMPORTED_MODULE_17__.PRINTED_ELEMENTS),
+/* harmony export */   RUNTIME_OWNER: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_20__.RUNTIME_OWNER),
+/* harmony export */   Recipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_10__.Recipe),
+/* harmony export */   SOURCE_PORT: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_20__.SOURCE_PORT),
+/* harmony export */   UTILITY_BREAKPOINTS: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.UTILITY_BREAKPOINTS),
+/* harmony export */   VALUE_TYPES: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_13__.VALUE_TYPES),
+/* harmony export */   applyFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.applyFieldValue),
+/* harmony export */   bindingSettings: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_20__.bindingSettings),
+/* harmony export */   catalogue: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.catalogue),
+/* harmony export */   catalogueEntry: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.catalogueEntry),
+/* harmony export */   checkFragmentDescriptor: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_14__.checkFragmentDescriptor),
+/* harmony export */   checkModifiers: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.checkModifiers),
+/* harmony export */   checkPortValue: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_13__.checkPortValue),
 /* harmony export */   checkPrintedElements: () => (/* binding */ checkPrintedElements),
 /* harmony export */   checkSourceAnswer: () => (/* binding */ checkSourceAnswer),
 /* harmony export */   composedEditorFields: () => (/* binding */ composedEditorFields),
-/* harmony export */   composedInstance: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedInstance),
-/* harmony export */   composedPart: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedPart),
-/* harmony export */   composedTextPaths: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedTextPaths),
+/* harmony export */   composedInstance: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_19__.composedInstance),
+/* harmony export */   composedPart: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_19__.composedPart),
+/* harmony export */   composedTextPaths: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_19__.composedTextPaths),
 /* harmony export */   compositionTypeFromSmartManifest: () => (/* binding */ compositionTypeFromSmartManifest),
-/* harmony export */   createPortRegistry: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.createPortRegistry),
+/* harmony export */   createPortRegistry: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_13__.createPortRegistry),
 /* harmony export */   createRegistry: () => (/* binding */ createRegistry),
-/* harmony export */   createShapeRegistry: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.createShapeRegistry),
+/* harmony export */   createShapeRegistry: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_20__.createShapeRegistry),
 /* harmony export */   createSourcePort: () => (/* binding */ createSourcePort),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   defineComposedType: () => (/* binding */ defineComposedType),
-/* harmony export */   defineCompositionScope: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.defineCompositionScope),
-/* harmony export */   defineFragmentBoundary: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.defineFragmentBoundary),
-/* harmony export */   definePageHost: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.definePageHost),
-/* harmony export */   demoData: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_18__.demoData),
-/* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_9__.describeRegions),
-/* harmony export */   editorFieldMessages: () => (/* reexport safe */ _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.editorFieldMessages),
-/* harmony export */   effectiveProps: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.effectiveProps),
-/* harmony export */   elementInputs: () => (/* reexport safe */ _elements_mjs__WEBPACK_IMPORTED_MODULE_15__.elementInputs),
-/* harmony export */   entryGroups: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.entryGroups),
-/* harmony export */   expandComposed: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.expandComposed),
-/* harmony export */   expandParameterSets: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets),
+/* harmony export */   defineCompositionScope: () => (/* reexport safe */ _routing_mjs__WEBPACK_IMPORTED_MODULE_13__.defineCompositionScope),
+/* harmony export */   defineFragmentBoundary: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_14__.defineFragmentBoundary),
+/* harmony export */   definePageHost: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_14__.definePageHost),
+/* harmony export */   demoData: () => (/* reexport safe */ _data_mjs__WEBPACK_IMPORTED_MODULE_20__.demoData),
+/* harmony export */   describeRegions: () => (/* reexport safe */ _regions_mjs__WEBPACK_IMPORTED_MODULE_11__.describeRegions),
+/* harmony export */   editorFieldMessages: () => (/* reexport safe */ _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_3__.editorFieldMessages),
+/* harmony export */   effectiveProps: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.effectiveProps),
+/* harmony export */   elementInputs: () => (/* reexport safe */ _elements_mjs__WEBPACK_IMPORTED_MODULE_17__.elementInputs),
+/* harmony export */   entryGroups: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.entryGroups),
+/* harmony export */   expandComposed: () => (/* reexport safe */ _composed_mjs__WEBPACK_IMPORTED_MODULE_19__.expandComposed),
+/* harmony export */   expandParameterSets: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.expandParameterSets),
 /* harmony export */   extendRegistry: () => (/* binding */ extendRegistry),
-/* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.inlineText),
-/* harmony export */   instantiateVariant: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.instantiateVariant),
-/* harmony export */   loadEditorWords: () => (/* reexport safe */ _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.loadEditorWords),
-/* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.marksIn),
+/* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_12__.inlineText),
+/* harmony export */   instantiateVariant: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.instantiateVariant),
+/* harmony export */   loadEditorWords: () => (/* reexport safe */ _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_3__.loadEditorWords),
+/* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_12__.marksIn),
 /* harmony export */   normalize: () => (/* binding */ normalize),
-/* harmony export */   normalizeInline: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.normalizeInline),
-/* harmony export */   ownModifiers: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.ownModifiers),
-/* harmony export */   parameterSetFields: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.parameterSetFields),
-/* harmony export */   parameterSetParts: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.parameterSetParts),
-/* harmony export */   parseFieldSubmission: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.parseFieldSubmission),
-/* harmony export */   parseRecipeJson: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.parseRecipeJson),
+/* harmony export */   normalizeInline: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_12__.normalizeInline),
+/* harmony export */   ownModifiers: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.ownModifiers),
+/* harmony export */   parameterSetFields: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.parameterSetFields),
+/* harmony export */   parameterSetParts: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.parameterSetParts),
+/* harmony export */   parseFieldSubmission: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.parseFieldSubmission),
+/* harmony export */   parseRecipeJson: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_10__.parseRecipeJson),
 /* harmony export */   printElement: () => (/* binding */ printElement),
-/* harmony export */   projectDocumentEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.projectDocumentEditorFields),
-/* harmony export */   projectEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.projectEditorFields),
-/* harmony export */   publishEffects: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.publishEffects),
-/* harmony export */   recipeDigest: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.recipeDigest),
-/* harmony export */   recipeNodeId: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.recipeNodeId),
+/* harmony export */   projectDocumentEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_8__.projectDocumentEditorFields),
+/* harmony export */   projectEditorFields: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_8__.projectEditorFields),
+/* harmony export */   publishEffects: () => (/* reexport safe */ _fragments_mjs__WEBPACK_IMPORTED_MODULE_14__.publishEffects),
+/* harmony export */   recipeDigest: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_10__.recipeDigest),
+/* harmony export */   recipeNodeId: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_10__.recipeNodeId),
 /* harmony export */   render: () => (/* binding */ render),
-/* harmony export */   renderFieldFallback: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.renderFieldFallback),
-/* harmony export */   replaceRange: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.replaceRange),
-/* harmony export */   resolveFieldKind: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveFieldKind),
-/* harmony export */   resolveRecipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.resolveRecipe),
-/* harmony export */   setLink: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.setLink),
-/* harmony export */   slotAccepts: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.slotAccepts),
-/* harmony export */   slotPlaces: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.slotPlaces),
-/* harmony export */   stableStringify: () => (/* reexport safe */ _canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify),
+/* harmony export */   renderFieldFallback: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.renderFieldFallback),
+/* harmony export */   replaceRange: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_12__.replaceRange),
+/* harmony export */   resolveFieldKind: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.resolveFieldKind),
+/* harmony export */   resolveRecipe: () => (/* reexport safe */ _recipe_mjs__WEBPACK_IMPORTED_MODULE_10__.resolveRecipe),
+/* harmony export */   setLink: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_12__.setLink),
+/* harmony export */   slotAccepts: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.slotAccepts),
+/* harmony export */   slotPlaces: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.slotPlaces),
+/* harmony export */   stableStringify: () => (/* reexport safe */ _canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.stableStringify),
 /* harmony export */   startInlineEdit: () => (/* binding */ startInlineEdit),
-/* harmony export */   toggleMark: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.toggleMark),
+/* harmony export */   toggleMark: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_12__.toggleMark),
 /* harmony export */   upgradeComposed: () => (/* binding */ upgradeComposed),
-/* harmony export */   utilityClassSpace: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityClassSpace),
-/* harmony export */   utilityClasses: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityClasses),
-/* harmony export */   utilityPartClasses: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityPartClasses),
+/* harmony export */   utilityClassSpace: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.utilityClassSpace),
+/* harmony export */   utilityClasses: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.utilityClasses),
+/* harmony export */   utilityPartClasses: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.utilityPartClasses),
 /* harmony export */   validate: () => (/* binding */ validate),
-/* harmony export */   validateEditorManifest: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.validateEditorManifest),
-/* harmony export */   validateFieldKinds: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.validateFieldKinds),
-/* harmony export */   validateFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.validateFieldValue),
-/* harmony export */   validateParameterSets: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.validateParameterSets),
+/* harmony export */   validateEditorManifest: () => (/* reexport safe */ _editor_mjs__WEBPACK_IMPORTED_MODULE_8__.validateEditorManifest),
+/* harmony export */   validateFieldKinds: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.validateFieldKinds),
+/* harmony export */   validateFieldValue: () => (/* reexport safe */ _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.validateFieldValue),
+/* harmony export */   validateParameterSets: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.validateParameterSets),
 /* harmony export */   validateTypeManifest: () => (/* binding */ validateTypeManifest),
-/* harmony export */   valuesByBreakpoint: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.valuesByBreakpoint),
-/* harmony export */   withParameterSetFields: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.withParameterSetFields)
+/* harmony export */   valuesByBreakpoint: () => (/* reexport safe */ _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.valuesByBreakpoint),
+/* harmony export */   withParameterSetFields: () => (/* reexport safe */ _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.withParameterSetFields)
 /* harmony export */ });
 /* harmony import */ var _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("08e5033c490a");
-/* harmony import */ var _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("bd04957f6bb9");
-/* harmony import */ var _html_subset_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e19611ff78cb");
-/* harmony import */ var _file_size_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("fb0bdf7719f0");
-/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("6f489cc65b77");
-/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("ac24888e7d3e");
-/* harmony import */ var _editor_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3765e2c966fd");
-/* harmony import */ var _fields_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4e6fc63bed81");
-/* harmony import */ var _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("6770fb69bd04");
-/* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("68efac8c1b57");
-/* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("e66d878fb4f8");
-/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("4aea5d6d49c7");
-/* harmony import */ var _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("c2e3ed8498dc");
-/* harmony import */ var _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("b88de35f4919");
-/* harmony import */ var _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("76235de72516");
-/* harmony import */ var _elements_mjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("3ad83f3699c7");
-/* harmony import */ var _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("18b9c76994c9");
-/* harmony import */ var _composed_mjs__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("e2cb52b018e5");
-/* harmony import */ var _data_mjs__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("c6b53a101be9");
+/* harmony import */ var _lang_composition_index_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f7e83b012604");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("bd04957f6bb9");
+/* harmony import */ var _html_subset_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e19611ff78cb");
+/* harmony import */ var _file_size_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fb0bdf7719f0");
+/* harmony import */ var _canonical_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("6f489cc65b77");
+/* harmony import */ var _schema_name_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ac24888e7d3e");
+/* harmony import */ var _editor_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("3765e2c966fd");
+/* harmony import */ var _fields_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("4e6fc63bed81");
+/* harmony import */ var _recipe_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("6770fb69bd04");
+/* harmony import */ var _regions_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("68efac8c1b57");
+/* harmony import */ var _inline_model_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("e66d878fb4f8");
+/* harmony import */ var _routing_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("4aea5d6d49c7");
+/* harmony import */ var _fragments_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("c2e3ed8498dc");
+/* harmony import */ var _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("b88de35f4919");
+/* harmony import */ var _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("76235de72516");
+/* harmony import */ var _elements_mjs__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("3ad83f3699c7");
+/* harmony import */ var _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("18b9c76994c9");
+/* harmony import */ var _composed_mjs__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("e2cb52b018e5");
+/* harmony import */ var _data_mjs__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("c6b53a101be9");
+
+
 
 // The editor words are not part of core (localization study LC-1): the
 // runtime reads the installed words, SF.Composition.loadEditorWords() fetches
@@ -27894,7 +27583,7 @@ async function sha256(value) {
 }
 
 function pushUnknownFields(value, allowed, path, diagnostics) {
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(value)) return;
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(value)) return;
   for (const key of Object.keys(value)) {
     if (!allowed.has(key)) diagnostics.push(diagnostic('unknown_field', `${path}.${key}`, `Unknown field ${key}`));
   }
@@ -27905,7 +27594,7 @@ function scanForbiddenKeys(value, path, diagnostics) {
     value.forEach((entry, index) => scanForbiddenKeys(entry, `${path}[${index}]`, diagnostics));
     return;
   }
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(value)) return;
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(value)) return;
   for (const [key, entry] of Object.entries(value)) {
     const normalized = key.toLowerCase().replaceAll('-', '');
     if (FORBIDDEN_KEYS.has(normalized)) {
@@ -27916,7 +27605,7 @@ function scanForbiddenKeys(value, path, diagnostics) {
 }
 
 function validateExtensions(value, path, diagnostics, supported = new Set()) {
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(value)) {
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(value)) {
     diagnostics.push(diagnostic('extensions_invalid', path, 'Extensions must be an object'));
     return;
   }
@@ -27924,7 +27613,7 @@ function validateExtensions(value, path, diagnostics, supported = new Set()) {
     if (!/^[a-z][a-z0-9.-]*:[a-z][a-z0-9._-]*$/u.test(key)) {
       diagnostics.push(diagnostic('extension_name_invalid', `${path}.${key}`, 'Extension keys must be namespaced'));
     }
-    if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(value[key]) && value[key].required === true && !supported.has(key)) {
+    if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(value[key]) && value[key].required === true && !supported.has(key)) {
       diagnostics.push(diagnostic('extension_required_unknown', `${path}.${key}`, `Required extension ${key} is not supported`));
     }
   }
@@ -27952,7 +27641,7 @@ function validateJsonSchema(value, schema, path, diagnostics) {
   const types = Array.isArray(schema.type) ? schema.type : [schema.type];
   if (schema.type) {
     const actual = value === null ? 'null' : Array.isArray(value) ? 'array' : Number.isInteger(value) ? 'integer' : typeof value === 'number' ? 'number' : typeof value;
-    if (!types.includes(actual) && !(actual === 'integer' && types.includes('number')) && !(actual === 'object' && !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(value))) {
+    if (!types.includes(actual) && !(actual === 'integer' && types.includes('number')) && !(actual === 'object' && !(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(value))) {
       diagnostics.push(diagnostic('schema_type', path, `Expected ${types.join(' or ')}`));
       return;
     }
@@ -27969,10 +27658,10 @@ function validateJsonSchema(value, schema, path, diagnostics) {
   if (Array.isArray(value)) {
     if (schema.minItems !== undefined && value.length < schema.minItems) diagnostics.push(diagnostic('schema_min_items', path, 'Array has too few items'));
     if (schema.maxItems !== undefined && value.length > schema.maxItems) diagnostics.push(diagnostic('schema_max_items', path, 'Array has too many items'));
-    if (schema.uniqueItems && new Set(value.map(_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)).size !== value.length) diagnostics.push(diagnostic('schema_unique_items', path, 'Array items must be unique'));
+    if (schema.uniqueItems && new Set(value.map(_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.stableStringify)).size !== value.length) diagnostics.push(diagnostic('schema_unique_items', path, 'Array items must be unique'));
     if (schema.items) value.forEach((entry, index) => validateJsonSchema(entry, schema.items, `${path}[${index}]`, diagnostics));
   }
-  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(value)) {
+  if ((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(value)) {
     for (const key of schema.required || []) {
       if (!(key in value)) diagnostics.push(diagnostic('schema_required', `${path}.${key}`, `Required field ${key} is missing`));
     }
@@ -28035,7 +27724,7 @@ function validateInlineContent(value, path, diagnostics) {
 // Every inline content of a node, with its path: the link rule applies to all
 // of them, wherever a type keeps text.
 function inlineFields(node, path) {
-  const data = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node.data) ? node.data : {};
+  const data = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(node.data) ? node.data : {};
   const at = (key) => (Array.isArray(data[key]) ? [[data[key], `${path}.data.${key}`]] : []);
   switch (node.type) {
     case 'content.heading':
@@ -28066,7 +27755,7 @@ function inlineFields(node, path) {
 function validateContentRules(root, diagnostics, { hostSources = false } = {}) {
   let outlets = 0;
   const visit = (node, path, parentType) => {
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node)) return;
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(node)) return;
     for (const [content, contentPath] of inlineFields(node, path)) validateInlineContent(content, contentPath, diagnostics);
     // With a host source resolver the stored name is the host's (media:<id>),
     // and the address it resolves to is checked where it is drawn.
@@ -28091,7 +27780,7 @@ function validateContentRules(root, diagnostics, { hostSources = false } = {}) {
       outlets += 1;
       if (outlets > 1) diagnostics.push(diagnostic('outlet_duplicate', path, 'A layout holds the page content in one place'));
     }
-    for (const [slotName, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node.slots) ? node.slots : {})) {
+    for (const [slotName, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(node.slots) ? node.slots : {})) {
       if (Array.isArray(children)) children.forEach((child, index) => visit(child, `${path}.slots.${slotName}[${index}]`, node.type));
     }
   };
@@ -28102,9 +27791,9 @@ let defaultPorts = null;
 
 function normalizePorts(ports) {
   if (ports?.elements instanceof Map) return ports;
-  if (Array.isArray(ports)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.createPortRegistry)(ports);
-  if (ports && Array.isArray(ports.manifests)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.createPortRegistry)(ports.manifests, { bindings: ports.bindings });
-  defaultPorts = defaultPorts || (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.createPortRegistry)(_builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS);
+  if (Array.isArray(ports)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_13__.createPortRegistry)(ports);
+  if (ports && Array.isArray(ports.manifests)) return (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_13__.createPortRegistry)(ports.manifests, { bindings: ports.bindings });
+  defaultPorts = defaultPorts || (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_13__.createPortRegistry)(_builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS);
   return defaultPorts;
 }
 
@@ -28117,10 +27806,10 @@ function createRegistry(manifests = _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.B
   const types = new Map();
   for (const manifest of manifests) {
     // Either form of the format name (schema-name.mjs).
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) throw new TypeError('composition_manifest_invalid');
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_7__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) throw new TypeError('composition_manifest_invalid');
     if (types.has(manifest.type)) throw new TypeError(`composition_manifest_duplicate:${manifest.type}`);
     // A type's parameter sets join its props (parameter-sets.mjs).
-    types.set(manifest.type, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.canonical)((0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets)(manifest)));
+    types.set(manifest.type, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.canonical)((0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.expandParameterSets)(manifest)));
   }
   return { types, renderers: new Map(Object.entries(renderers)) };
 }
@@ -28162,7 +27851,7 @@ function compositionTypeFromSmartManifest(manifest) {
     }
     : undefined;
   return {
-    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__.schemaFields)('simai.composition.type-manifest', 1),
+    ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_7__.schemaFields)('simai.composition.type-manifest', 1),
     type: declaration.type,
     version: manifest.version,
     category: 'smart',
@@ -28209,7 +27898,7 @@ function validate(document, registry = undefined, options = {}) {
   const notices = [];
   const resolvedRegistry = normalizeRegistry(registry);
   const limits = { ...DEFAULT_LIMITS, ...(options.limits || {}) };
-  const supportedExtensions = new Set([_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.ENDPOINT_EXTENSION, ...(options.supportedExtensions || [])]);
+  const supportedExtensions = new Set([_routing_mjs__WEBPACK_IMPORTED_MODULE_13__.ENDPOINT_EXTENSION, ...(options.supportedExtensions || [])]);
   let serialized;
   try {
     serialized = JSON.stringify(document);
@@ -28217,9 +27906,9 @@ function validate(document, registry = undefined, options = {}) {
     return { valid: false, diagnostics: [diagnostic('document_not_json', '$', 'Document must be JSON serializable')] };
   }
   if (new globalThis.TextEncoder().encode(serialized).byteLength > limits.maxDocumentBytes) diagnostics.push(diagnostic('document_too_large', '$', 'Document exceeds the byte limit'));
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(document)) return { valid: false, diagnostics: [diagnostic('document_invalid', '$', 'Document must be an object')] };
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(document)) return { valid: false, diagnostics: [diagnostic('document_invalid', '$', 'Document must be an object')] };
   pushUnknownFields(document, DOCUMENT_FIELDS, '$', diagnostics);
-  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__.isSchema)(document, 'simai.composition.document', 1)) diagnostics.push(diagnostic('schema_unknown', '$.schema', `Expected ${DOCUMENT_SCHEMA}, or simai.composition.document with schema_version 1`));
+  if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_7__.isSchema)(document, 'simai.composition.document', 1)) diagnostics.push(diagnostic('schema_unknown', '$.schema', `Expected ${DOCUMENT_SCHEMA}, or simai.composition.document with schema_version 1`));
   if (typeof document.id !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,119}$/u.test(document.id)) diagnostics.push(diagnostic('document_id_invalid', '$.id', 'Document id is invalid'));
   const knownProfile = PROFILES.has(document.profile);
   if (!knownProfile) diagnostics.push(diagnostic('profile_unknown', '$.profile', 'Profile is not supported'));
@@ -28233,7 +27922,7 @@ function validate(document, registry = undefined, options = {}) {
     nodeCount += 1;
     if (nodeCount > limits.maxNodes) return;
     if (depth > limits.maxDepth) diagnostics.push(diagnostic('depth_limit', path, 'Composition is too deeply nested'));
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node)) {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(node)) {
       diagnostics.push(diagnostic('node_invalid', path, 'Node must be an object'));
       return;
     }
@@ -28258,27 +27947,27 @@ function validate(document, registry = undefined, options = {}) {
     validateJsonSchema(node.data || {}, manifest.data_schema, `${path}.data`, diagnostics);
     // A layout parameter may hold a value per breakpoint (utilities.mjs): each
     // value is checked on its own, the rest of the props as before.
-    const responsive = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.checkResponsiveProps)(node.props || {}, manifest.props_schema, `${path}.props`, validateJsonSchema);
+    const responsive = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.checkResponsiveProps)(node.props || {}, manifest.props_schema, `${path}.props`, validateJsonSchema);
     diagnostics.push(...responsive.diagnostics);
     validateJsonSchema(responsive.props, responsive.schema || manifest.props_schema, `${path}.props`, diagnostics);
     // A block's own modifiers never refuse a Document: a class no utility rule
     // knows is left out of the HTML and reported.
-    notices.push(...(0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.modifierNotices)(node, { rules: options.utilityRules }).notices);
-    if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.isComposed)(manifest)) {
-      const instance = (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.validateComposedInstance)(node, manifest, resolvedRegistry, path, checkInline);
+    notices.push(...(0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.modifierNotices)(node, { rules: options.utilityRules }).notices);
+    if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_19__.isComposed)(manifest)) {
+      const instance = (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_19__.validateComposedInstance)(node, manifest, resolvedRegistry, path, checkInline);
       diagnostics.push(...instance.diagnostics);
       notices.push(...instance.notices);
       const depth = (options.composedDepth || 0) + 1;
-      if (depth > _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.MAX_COMPOSED_DEPTH) diagnostics.push(diagnostic('composed_depth_limit', path, 'Site blocks are nested too deeply'));
+      if (depth > _composed_mjs__WEBPACK_IMPORTED_MODULE_19__.MAX_COMPOSED_DEPTH) diagnostics.push(diagnostic('composed_depth_limit', path, 'Site blocks are nested too deeply'));
       else {
-        const expanded = validate({ ...document, root: (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.expandComposed)(node, manifest) }, resolvedRegistry, { ...options, composedDepth: depth });
+        const expanded = validate({ ...document, root: (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_19__.expandComposed)(node, manifest) }, resolvedRegistry, { ...options, composedDepth: depth });
         // The Document's own profile diagnostic is already reported once.
         diagnostics.push(...expanded.diagnostics.filter(({ code }) => code !== 'profile_unknown').map((entry) => ({ ...entry, path: `${path}.composed${entry.path.replace(/^\$\.root/u, '').replace(/^\$/u, '')}` })));
         notices.push(...(expanded.notices || []));
       }
     }
     if (node.presentation !== undefined) {
-      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node.presentation)) diagnostics.push(diagnostic('presentation_invalid', `${path}.presentation`, 'Presentation must be an object'));
+      if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(node.presentation)) diagnostics.push(diagnostic('presentation_invalid', `${path}.presentation`, 'Presentation must be an object'));
       else {
         pushUnknownFields(node.presentation, PRESENTATION_FIELDS, `${path}.presentation`, diagnostics);
         const contract = manifest.presentation || {};
@@ -28295,7 +27984,7 @@ function validate(document, registry = undefined, options = {}) {
       if (!Array.isArray(node.bindings)) diagnostics.push(diagnostic('bindings_invalid', `${path}.bindings`, 'Bindings must be an array'));
       else node.bindings.forEach((binding, index) => {
         const bindingPath = `${path}.bindings[${index}]`;
-        if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(binding)) diagnostics.push(diagnostic('binding_invalid', bindingPath, 'Binding must be an object'));
+        if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(binding)) diagnostics.push(diagnostic('binding_invalid', bindingPath, 'Binding must be an object'));
         else {
           pushUnknownFields(binding, BINDING_FIELDS, bindingPath, diagnostics);
           for (const key of ['owner', 'ref', 'target']) if (typeof binding[key] !== 'string' || !binding[key]) diagnostics.push(diagnostic('binding_field_invalid', `${bindingPath}.${key}`, `${key} is required`));
@@ -28304,7 +27993,7 @@ function validate(document, registry = undefined, options = {}) {
       });
     }
     const slots = node.slots || {};
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(slots)) {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(slots)) {
       diagnostics.push(diagnostic('slots_invalid', `${path}.slots`, 'Slots must be an object'));
       return;
     }
@@ -28324,7 +28013,7 @@ function validate(document, registry = undefined, options = {}) {
         const childManifest = resolvedRegistry.types.get(child?.type);
         if (childManifest && slot.types && !slot.types.includes(child.type)) diagnostics.push(diagnostic('slot_child_type_forbidden', `${path}.slots.${slotName}[${index}]`, `${child.type} is not allowed in this slot`));
         if (childManifest && slot.categories && !slot.categories.includes(childManifest.category)) diagnostics.push(diagnostic('slot_child_category_forbidden', `${path}.slots.${slotName}[${index}]`, `${childManifest.category} is not allowed in this slot`));
-        if (childManifest && slot.groups && !(0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.entryGroups)((0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogueEntry)(childManifest)).some((group) => slot.groups.map(_catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogueGroup).includes(group))) diagnostics.push(diagnostic('slot_child_group_forbidden', `${path}.slots.${slotName}[${index}]`, `${child.type} is not in a group this place accepts (${slot.groups.join(', ')})`));
+        if (childManifest && slot.groups && !(0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.entryGroups)((0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.catalogueEntry)(childManifest)).some((group) => slot.groups.map(_catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.catalogueGroup).includes(group))) diagnostics.push(diagnostic('slot_child_group_forbidden', `${path}.slots.${slotName}[${index}]`, `${child.type} is not in a group this place accepts (${slot.groups.join(', ')})`));
         visit(child, `${path}.slots.${slotName}[${index}]`, depth + 1);
       });
     }
@@ -28335,31 +28024,31 @@ function validate(document, registry = undefined, options = {}) {
   visit(document.root, '$.root', 1);
   if (nodeCount > limits.maxNodes) diagnostics.push(diagnostic('node_limit', '$.root', 'Composition has too many nodes'));
   else {
-    (0,_regions_mjs__WEBPACK_IMPORTED_MODULE_9__.validateRegionRules)(document.root, resolvedRegistry, diagnostics);
+    (0,_regions_mjs__WEBPACK_IMPORTED_MODULE_11__.validateRegionRules)(document.root, resolvedRegistry, diagnostics);
     validateContentRules(document.root, diagnostics, { hostSources: typeof options.resolveSource === 'function' });
-    (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.resolveRoutes)(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
-    (0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.validateDataRules)(document.root, resolvedRegistry, options.shapes, diagnostics);
+    (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_13__.resolveRoutes)(document.root, resolvedRegistry, normalizePorts(options.ports), diagnostics);
+    (0,_data_mjs__WEBPACK_IMPORTED_MODULE_20__.validateDataRules)(document.root, resolvedRegistry, options.shapes, diagnostics);
   }
   return { valid: diagnostics.length === 0, diagnostics, ...(notices.length ? { notices } : {}) };
 }
 
 function collectDependencies(node, manifest, output) {
   for (const asset of manifest.assets || []) output.assets.add(asset);
-  for (const binding of node.bindings || []) output.bindings.set(`${binding.owner}:${binding.ref}:${binding.target}:${binding.revision || ''}`, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.canonical)(binding));
+  for (const binding of node.bindings || []) output.bindings.set(`${binding.owner}:${binding.ref}:${binding.target}:${binding.revision || ''}`, (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.canonical)(binding));
 }
 
 async function normalize(document, registry = undefined, options = {}) {
   const resolvedRegistry = normalizeRegistry(registry);
   const result = validate(document, resolvedRegistry, options);
   if (!result.valid) return { document: null, digest: null, dependencies: { assets: [], bindings: [] }, diagnostics: result.diagnostics };
-  const normalized = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.canonical)(JSON.parse(JSON.stringify(document)));
+  const normalized = (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.canonical)(JSON.parse(JSON.stringify(document)));
   const dependencies = { assets: new Set(), bindings: new Map() };
   const visit = (node, depth = 0) => {
     const manifest = resolvedRegistry.types.get(node.type);
     if (!manifest) return;
     collectDependencies(node, manifest, dependencies);
     // A site block needs what the blocks of its tree need.
-    if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.isComposed)(manifest) && depth < _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.MAX_COMPOSED_DEPTH) visit((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.expandComposed)(node, manifest), depth + 1);
+    if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_19__.isComposed)(manifest) && depth < _composed_mjs__WEBPACK_IMPORTED_MODULE_19__.MAX_COMPOSED_DEPTH) visit((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_19__.expandComposed)(node, manifest), depth + 1);
     Object.values(node.slots || {}).flat().forEach((child) => visit(child, depth));
   };
   visit(normalized.root);
@@ -28367,10 +28056,10 @@ async function normalize(document, registry = undefined, options = {}) {
   return {
     ...(notices.length ? { notices } : {}),
     document: normalized,
-    digest: await sha256((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)(normalized)),
+    digest: await sha256((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.stableStringify)(normalized)),
     dependencies: {
       assets: [...dependencies.assets].sort(),
-      bindings: [...dependencies.bindings.values()].sort((left, right) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)(left).localeCompare((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)(right))),
+      bindings: [...dependencies.bindings.values()].sort((left, right) => (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.stableStringify)(left).localeCompare((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.stableStringify)(right))),
     },
     diagnostics: [],
   };
@@ -28382,13 +28071,13 @@ async function normalize(document, registry = undefined, options = {}) {
 async function settleForeignHashes(root) {
   const notices = [];
   const visit = async (node, path) => {
-    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node)) return;
-    if (node.type === 'content.foreign' && (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node.data) && typeof node.data.raw === 'string') {
+    if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(node)) return;
+    if (node.type === 'content.foreign' && (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(node.data) && typeof node.data.raw === 'string') {
       const hash = `sha256:${await sha256(node.data.raw)}`;
       if (node.data.hash === undefined) node.data.hash = hash;
       else if (node.data.hash !== hash) notices.push(diagnostic('foreign_hash_mismatch', `${path}.data.hash`, 'The hash does not match raw; the block is kept and not drawn', { id: node.id }));
     }
-    for (const [name, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(node.slots) ? node.slots : {})) {
+    for (const [name, children] of Object.entries((0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(node.slots) ? node.slots : {})) {
       if (Array.isArray(children)) for (const [index, child] of children.entries()) await visit(child, `${path}.slots.${name}[${index}]`);
     }
   };
@@ -28427,7 +28116,7 @@ function renderInline(content) {
     if (inline.type !== 'text') {
       // An atom draws its own element, its props escaped as text; anything
       // else (validation refuses it) draws nothing rather than "undefined".
-      const view = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.inlineComponentView)(inline);
+      const view = (0,_inline_model_mjs__WEBPACK_IMPORTED_MODULE_12__.inlineComponentView)(inline);
       if (!view) return '';
       const attributes = view.attributes.map(([name, value]) => (value === '' ? ` ${name}` : ` ${name}="${escapeHtml(value)}"`)).join('');
       return `<${view.tag}${attributes}>${escapeHtml(view.text)}</${view.tag}>`;
@@ -28474,11 +28163,11 @@ function renderCardHeader(node) {
 
 function renderFile(node, locale) {
   const { href, label, mime, size } = node.data;
-  const name = label || (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_3__.fileNameFromAddress)(href) || href;
+  const name = label || (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__.fileNameFromAddress)(href) || href;
   const type = mime ? ` type="${escapeHtml(mime)}"` : '';
-  const sizeText = Number.isInteger(size) ? (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_3__.formatFileSize)(size, (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_3__.fileSizeUnits)(locale), locale) : '';
+  const sizeText = Number.isInteger(size) ? (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__.formatFileSize)(size, (0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__.fileSizeUnits)(locale), locale) : '';
   const sizePart = sizeText ? `<span class="sf-download-file__size sf-download-file-file-size">${escapeHtml(sizeText)}</span>` : '';
-  return `<a class="sf-download-file" href="${escapeHtml(href)}" download${type}${id(node)}><span class="sf-download-file__body sf-download-file-wrap"><span class="sf-download-file__main sf-download-file-container"><i class="sf-download-file__icon sf-icon" aria-hidden="true">${(0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_3__.fileIcon)(mime)}</i><span class="sf-download-file__name sf-download-file-file-name">${escapeHtml(name)}</span></span>${sizePart}</span></a>`;
+  return `<a class="sf-download-file" href="${escapeHtml(href)}" download${type}${id(node)}><span class="sf-download-file__body sf-download-file-wrap"><span class="sf-download-file__main sf-download-file-container"><i class="sf-download-file__icon sf-icon" aria-hidden="true">${(0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__.fileIcon)(mime)}</i><span class="sf-download-file__name sf-download-file-file-name">${escapeHtml(name)}</span></span>${sizePart}</span></a>`;
 }
 
 function renderTable(node) {
@@ -28541,10 +28230,9 @@ function renderMedia(node, slots) {
 
 // The words an element prints until the author writes its own, in the
 // Document's language (English when there is none for it).
-const ELEMENT_PLACEHOLDERS = Object.freeze({
-  en: { button: 'Button', badge: 'Badge', send: 'Send', field: 'Field', option: 'Option', name: 'Name', phone: 'Phone', email: 'Email', message: 'Message' },
-  ru: { button: 'Кнопка', badge: 'Метка', send: 'Отправить', field: 'Поле', option: 'Вариант', name: 'Имя', phone: 'Телефон', email: 'Почта', message: 'Сообщение' },
-});
+// core/js/lang/composition: English built in, the other languages from a
+// language file, registered for sf-composition (C282).
+const ELEMENT_PLACEHOLDERS = _lang_composition_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"];
 // The fields whose name has a word of its own when they have no label (forms, 2026-11-04).
 const NAMED_FIELDS = new Set(['name', 'phone', 'email', 'message']);
 const fieldLabel = (node, locale) => node.data?.label || placeholder(locale, NAMED_FIELDS.has(node.data?.name) ? node.data.name : 'field');
@@ -28552,7 +28240,7 @@ const fieldLabel = (node, locale) => node.data?.label || placeholder(locale, NAM
 const fieldBlock = (node, html) => (html ? `<div${id(node)}>${html}</div>` : '');
 // The options of a select: the words an author wrote, separated by commas.
 const optionList = (text) => [...new Set(String(text ?? '').split(',').map((word) => word.trim()).filter(Boolean))];
-const placeholder = (locale, key) => (ELEMENT_PLACEHOLDERS[String(locale || 'en').toLowerCase().split('-')[0]] || ELEMENT_PLACEHOLDERS.en)[key];
+const placeholder = (locale, key) => (0,_page_language_js__WEBPACK_IMPORTED_MODULE_2__.localeText)(ELEMENT_PLACEHOLDERS, key, String(locale || 'en'), 'sf-composition');
 const defined = (inputs) => Object.fromEntries(Object.entries(inputs).filter(([, value]) => value !== undefined && value !== ''));
 // An element stands in a block of its own: the editor selects and the
 // utilities reach the block (sf-button's host is display: contents), the
@@ -28589,7 +28277,7 @@ const BUILTIN_RENDERERS = {
     // parts its parameter sets place classes on. 1.2.0: its width defaults to
     // the page container (parameter_defaults), so a section draws them unless
     // the Document sets its width full and gives no columns.
-    const props = (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.effectiveProps)(node, manifest);
+    const props = (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.effectiveProps)(node, manifest);
     const framed = (props.width !== undefined && props.width !== 'full') || ['columns', 'gap'].some((key) => props[key] !== undefined);
     const inner = framed ? `<div data-sf-composition-part="frame"><div${rhythm(props)} data-sf-composition-part="content">${slots.default || ''}</div></div>` : (slots.default || '');
     return `<section data-sf-composition-id="${escapeHtml(node.id)}">${inner}</section>`;
@@ -28609,17 +28297,17 @@ const BUILTIN_RENDERERS = {
     const props = node.props;
     // Embedded, the main region is a plain element too: the host's page holds the one main.
     const embeddedMain = props.landmark === 'main' && renderEmbedded(context?.options);
-    const element = embeddedMain ? 'div' : _regions_mjs__WEBPACK_IMPORTED_MODULE_9__.REGION_ELEMENTS[props.landmark];
+    const element = embeddedMain ? 'div' : _regions_mjs__WEBPACK_IMPORTED_MODULE_11__.REGION_ELEMENTS[props.landmark];
     const landmark = embeddedMain ? ' data-sf-composition-landmark="main"' : '';
     const sticky = props.sticky === true ? ' data-sf-region-sticky=""' : '';
     const label = props.label !== undefined ? ` aria-label="${escapeHtml(props.label)}"` : '';
     return `<${element} class="sf-composition-region" data-sf-composition-id="${escapeHtml(node.id)}" data-sf-region="${escapeHtml(props.name)}" data-sf-region-placement="${escapeHtml(props.placement ?? 'block')}"${landmark}${sticky}${label}>${slots.default || ''}</${element}>`;
   },
-  'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.routesAttribute)(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
+  'layout.scope': ({ node, slots, routes }) => `<sf-composition-scope data-sf-composition-id="${escapeHtml(node.id)}" data-sf-routes="${escapeHtml((0,_routing_mjs__WEBPACK_IMPORTED_MODULE_13__.routesAttribute)(routes || []))}">${slots.default || ''}</sf-composition-scope>`,
   'layout.area': ({ node, slots }) => `<div data-sf-composition-area=""${id(node)}>${slots.default || ''}</div>`,
   // The layout and element types of the one block editor (2026-11-04): the
   // block's own element, its parts, and SIMAI Framework utilities only.
-  'layout.container': ({ node, slots, manifest }) => `<div${id(node)}><div data-sf-composition-part="frame"><div${rhythm((0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.effectiveProps)(node, manifest))} data-sf-composition-part="content">${slots.default || ''}</div></div></div>`,
+  'layout.container': ({ node, slots, manifest }) => `<div${id(node)}><div data-sf-composition-part="frame"><div${rhythm((0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.effectiveProps)(node, manifest))} data-sf-composition-part="content">${slots.default || ''}</div></div></div>`,
   'layout.grid': ({ node, slots }) => `<div${id(node)}><div class="grid" data-sf-composition-part="content">${(slots.defaultList || []).map((child) => `<div class="min-w-0">${child}</div>`).join('')}</div></div>`,
   'layout.spacer': ({ node }) => `<div aria-hidden="true"${id(node)}></div>`,
   'element.button': ({ node, elements, locale }) => {
@@ -28779,7 +28467,7 @@ const BUILTIN_RENDERERS = {
   'content.file': ({ node, locale }) => renderFile(node, locale),
   // Cleaned at render by the html@1 subset's one rule: no script, no style, no
   // attribute but a safe href survives.
-  'content.html': ({ node }) => `<div${id(node)}>${(0,_html_subset_mjs__WEBPACK_IMPORTED_MODULE_2__.sanitizeRichText)(node.data.markup)}</div>`,
+  'content.html': ({ node }) => `<div${id(node)}>${(0,_html_subset_mjs__WEBPACK_IMPORTED_MODULE_4__.sanitizeRichText)(node.data.markup)}</div>`,
   'content.outlet': ({ node, outlet }) => `<div data-sf-outlet=""${id(node)}>${outlet || ''}</div>`,
   // Nothing on a public page; an editor (unknown: 'placeholder') draws the
   // inert placeholder.
@@ -28806,9 +28494,9 @@ async function render(document, context = {}) {
   diagnostics.push(...(normalized.notices || []).filter(({ code }) => code === 'foreign_hash_mismatch').map(({ id: _id, ...entry }) => entry));
   const notices = [...(normalized.notices || [])].filter((entry) => !entry.code.startsWith('modifier') && entry.code !== 'foreign_hash_mismatch');
   const hydration = [];
-  const routes = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.resolveRoutes)(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
+  const routes = (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_13__.resolveRoutes)(normalized.document.root, registry, normalizePorts(context.options?.ports), []);
   // The data of the blocks that declare it, resolved before drawing (data.mjs).
-  const data = await (0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.resolveData)(normalized.document.root, registry, context, validateJsonSchema);
+  const data = await (0,_data_mjs__WEBPACK_IMPORTED_MODULE_20__.resolveData)(normalized.document.root, registry, context, validateJsonSchema);
   diagnostics.push(...data.diagnostics);
   // The page's content for a layout's content.outlet: a structured-content
   // Document, rendered with the same registry; its assets and diagnostics
@@ -28852,16 +28540,16 @@ async function render(document, context = {}) {
     if (node.type === 'content.foreign' && context.options?.unknown !== 'placeholder') notices.push(diagnostic('preserved_not_shown', `node:${node.id}`, `A preserved ${node.data.source} block is kept in the Document and not drawn on the page`, { source: node.data.source }));
     // A site block draws its type's current tree with the instance's values
     // and texts (composed.mjs); the instance stays one node of the Document.
-    if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.isComposed)(manifest)) {
-      if (depth >= _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.MAX_COMPOSED_DEPTH) return '';
-      const expanded = (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.expandComposed)(node, manifest);
-      const inner = await (0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.resolveData)(expanded, registry, context, validateJsonSchema);
+    if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_19__.isComposed)(manifest)) {
+      if (depth >= _composed_mjs__WEBPACK_IMPORTED_MODULE_19__.MAX_COMPOSED_DEPTH) return '';
+      const expanded = (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_19__.expandComposed)(node, manifest);
+      const inner = await (0,_data_mjs__WEBPACK_IMPORTED_MODULE_20__.resolveData)(expanded, registry, context, validateJsonSchema);
       for (const [id, entry] of inner.byNode) data.byNode.set(id, entry);
       data.links.push(...inner.links);
       diagnostics.push(...inner.diagnostics);
       return renderNode(expanded, depth + 1, inside);
     }
-    const byPart = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityPartClasses)(node, manifest);
+    const byPart = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.utilityPartClasses)(node, manifest);
     const ownFrame = (byPart.frame || []).includes('container');
     const outer = inside && !(byPart[''] || []).includes('container-breakout');
     if (outer && ownFrame) byPart.frame.push('container-flush');
@@ -28874,7 +28562,7 @@ async function render(document, context = {}) {
     }
     const resolvedBindings = {};
     let bindingStates;
-    if ((0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.takesData)(manifest)) {
+    if ((0,_data_mjs__WEBPACK_IMPORTED_MODULE_20__.takesData)(manifest)) {
       const entry = data.byNode.get(node.id) || { values: {}, states: {} };
       Object.assign(resolvedBindings, entry.values);
       bindingStates = entry.states;
@@ -28885,7 +28573,7 @@ async function render(document, context = {}) {
     }
     // Layout parameters and the block's own modifiers become SIMAI Framework
     // utilities on the block's element (utilities.mjs).
-    const own = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.modifierNotices)(node, { rules: context.options?.utilityRules });
+    const own = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.modifierNotices)(node, { rules: context.options?.utilityRules });
     notices.push(...own.notices);
     const utilities = [...new Set([...(byPart[''] || []), ...modifierUtilities(node, manifest), ...own.kept])];
     let renderer = registry.renderers.get(manifest.renderer.name) || BUILTIN_RENDERERS[manifest.renderer.name];
@@ -28905,19 +28593,19 @@ async function render(document, context = {}) {
     // The smart elements a block may print, held to their manifests (elements.mjs).
     const elements = {
       print: (name, inputs) => {
-        const printed = (0,_elements_mjs__WEBPACK_IMPORTED_MODULE_15__.printElement)(name, inputs, validateJsonSchema, `node:${node.id}`);
+        const printed = (0,_elements_mjs__WEBPACK_IMPORTED_MODULE_17__.printElement)(name, inputs, validateJsonSchema, `node:${node.id}`);
         diagnostics.push(...printed.diagnostics);
         return printed.html;
       },
     };
-    const html = await renderer({ node, slots, context, elements, resolvedBindings, ...(bindingStates ? { bindingStates } : {}), utilities, manifest, routes: routes.get(node.id), endpoint: (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.endpointName)(node), outlet: node.type === 'content.outlet' ? outlet : undefined, locale: normalized.document.locale ?? 'en' });
-    let drawn = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.withClasses)(html, node.id, utilities);
+    const html = await renderer({ node, slots, context, elements, resolvedBindings, ...(bindingStates ? { bindingStates } : {}), utilities, manifest, routes: routes.get(node.id), endpoint: (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_13__.endpointName)(node), outlet: node.type === 'content.outlet' ? outlet : undefined, locale: normalized.document.locale ?? 'en' });
+    let drawn = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.withClasses)(html, node.id, utilities);
     // A parameter that reaches an inner element (a set's part): the renderer
     // marks it data-sf-composition-part; classes for a part it did not draw
     // are reported, never placed elsewhere.
     for (const [part, classes] of Object.entries(byPart)) {
       if (part === '' || !classes.length) continue;
-      const placed = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.withPartClasses)(drawn, node.id, part, classes);
+      const placed = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.withPartClasses)(drawn, node.id, part, classes);
       if (placed.found) drawn = placed.html;
       else notices.push(diagnostic('utility_part_missing', `node:${node.id}`, `${node.type} draws no ${part} part; ${classes.join(' ')} is left out`, { part }));
     }
@@ -28940,8 +28628,8 @@ async function render(document, context = {}) {
 
 const fits = (value, schema) => {
   const problems = [];
-  const responsive = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.isResponsive)(schema) && (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.isBreakpointValue)(value);
-  if (responsive) for (const entry of Object.values(value)) validateJsonSchema(entry, (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.valueSchema)(schema), '$', problems);
+  const responsive = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.isResponsive)(schema) && (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.isBreakpointValue)(value);
+  if (responsive) for (const entry of Object.values(value)) validateJsonSchema(entry, (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.valueSchema)(schema), '$', problems);
   else validateJsonSchema(value, schema, '$', problems);
   return problems.length === 0;
 };
@@ -28954,28 +28642,28 @@ const fits = (value, schema) => {
  */
 function validateTypeManifest(manifest, registry = undefined, options = {}) {
   const diagnostics = [];
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) return { valid: false, diagnostics: [diagnostic('composition_manifest_invalid', '$', 'A type manifest is simai.composition.type-manifest with schema_version 1')] };
-  diagnostics.push(...(0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.validateCatalogueFields)(manifest));
-  diagnostics.push(...(0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.validateParameterSets)(manifest));
-  diagnostics.push(...(0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.validateParameterDefaults)(manifest, fits));
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(manifest) || !(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_7__.isSchema)(manifest, 'simai.composition.type-manifest', 1)) return { valid: false, diagnostics: [diagnostic('composition_manifest_invalid', '$', 'A type manifest is simai.composition.type-manifest with schema_version 1')] };
+  diagnostics.push(...(0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.validateCatalogueFields)(manifest));
+  diagnostics.push(...(0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.validateParameterSets)(manifest));
+  diagnostics.push(...(0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.validateParameterDefaults)(manifest, fits));
   diagnostics.push(...validateModifierUtilities(manifest));
-  diagnostics.push(...(0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.validateUtilityDeclarations)((0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets)(manifest)));
-  diagnostics.push(...(0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.validateDataDeclarations)(manifest, options.shapes));
+  diagnostics.push(...(0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.validateUtilityDeclarations)((0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.expandParameterSets)(manifest)));
+  diagnostics.push(...(0,_data_mjs__WEBPACK_IMPORTED_MODULE_20__.validateDataDeclarations)(manifest, options.shapes));
   let resolved = normalizeRegistry(registry);
   if (resolved.types.get(manifest.type) !== manifest) {
     const others = [...resolved.types.values()].filter((entry) => entry.type !== manifest.type);
-    resolved = { types: new Map([...others, (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets)(manifest)].map((entry) => [entry.type, entry])), renderers: resolved.renderers };
+    resolved = { types: new Map([...others, (0,_parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.expandParameterSets)(manifest)].map((entry) => [entry.type, entry])), renderers: resolved.renderers };
   }
-  if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.isComposed)(manifest)) {
-    const again = (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.defineComposedType)({ ...manifest, root: manifest.composed.root }, resolved, (document, current) => validate(document, current, options));
+  if ((0,_composed_mjs__WEBPACK_IMPORTED_MODULE_19__.isComposed)(manifest)) {
+    const again = (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_19__.defineComposedType)({ ...manifest, root: manifest.composed.root }, resolved, (document, current) => validate(document, current, options));
     diagnostics.push(...again.diagnostics.map((entry) => ({ ...entry, path: entry.path.startsWith('$.root') ? `$.composed${entry.path.slice(1)}` : entry.path })));
-    if (again.manifest && (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)(again.manifest.props_schema) !== (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify)(manifest.props_schema)) diagnostics.push(diagnostic('composed_schema_drift', '$.props_schema', 'The exposed parameters do not match the tree: make the manifest with defineComposedType'));
+    if (again.manifest && (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.stableStringify)(again.manifest.props_schema) !== (0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.stableStringify)(manifest.props_schema)) diagnostics.push(diagnostic('composed_schema_drift', '$.props_schema', 'The exposed parameters do not match the tree: make the manifest with defineComposedType'));
     if (manifest.renderer?.kind !== 'builtin' || manifest.renderer?.name !== 'composed') diagnostics.push(diagnostic('composed_renderer_invalid', '$.renderer', 'A site block is drawn by the builtin renderer composed'));
   } else if (manifest.exposed !== undefined) diagnostics.push(diagnostic('composed_exposed_without_tree', '$.exposed', 'Only a site block (composed) exposes parameters'));
   if (Array.isArray(manifest.variants) && !diagnostics.some((entry) => entry.code.startsWith('variant'))) {
     for (const variant of manifest.variants) {
-      const node = (0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.instantiateVariant)(manifest, variant.id, { id: `variant-${variant.id}` });
-      const checked = validate({ ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_5__.schemaFields)('simai.composition.document', 1), id: 'variant-probe', profile: manifest.profiles[0], root: node }, resolved, options);
+      const node = (0,_catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.instantiateVariant)(manifest, variant.id, { id: `variant-${variant.id}` });
+      const checked = validate({ ...(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_7__.schemaFields)('simai.composition.document', 1), id: 'variant-probe', profile: manifest.profiles[0], root: node }, resolved, options);
       diagnostics.push(...checked.diagnostics.map((entry) => ({ ...entry, path: `$.variants.${variant.id}${entry.path.replace(/^\$\.root/u, '')}` })));
     }
   }
@@ -28988,13 +28676,13 @@ function validateTypeManifest(manifest, registry = undefined, options = {}) {
 const MODIFIER_CLASS = /^[a-z0-9][a-z0-9:/_.-]{0,99}$/u;
 function modifierUtilities(node, manifest) {
   const table = manifest?.presentation?.modifier_utilities;
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(table) || !Array.isArray(node?.presentation?.modifiers)) return [];
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(table) || !Array.isArray(node?.presentation?.modifiers)) return [];
   return node.presentation.modifiers.flatMap((modifier) => (Array.isArray(table[modifier]) ? table[modifier] : []));
 }
 function validateModifierUtilities(manifest) {
   const table = manifest?.presentation?.modifier_utilities;
   if (table === undefined) return [];
-  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.isPlainObject)(table)) return [diagnostic('modifier_utilities_invalid', '$.presentation.modifier_utilities', 'Modifier utilities are an object of class lists')];
+  if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(table)) return [diagnostic('modifier_utilities_invalid', '$.presentation.modifier_utilities', 'Modifier utilities are an object of class lists')];
   const declared = manifest.presentation.modifiers || [];
   const diagnostics = [];
   for (const [modifier, classes] of Object.entries(table)) {
@@ -29006,7 +28694,7 @@ function validateModifierUtilities(manifest) {
 
 /** A site block's type manifest from what the block builder saved (composed.mjs). */
 function defineComposedType(definition, registry = undefined, options = {}) {
-  return (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.defineComposedType)(definition, normalizeRegistry(registry), (document, current) => validate(document, current, options));
+  return (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_19__.defineComposedType)(definition, normalizeRegistry(registry), (document, current) => validate(document, current, options));
 }
 
 /**
@@ -29018,31 +28706,31 @@ function defineComposedType(definition, registry = undefined, options = {}) {
 function composedEditorFields(manifest, instance = undefined, options = {}) {
   const registry = normalizeRegistry(options.registry);
   const editors = [..._builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS, ...(options.editorManifests || [])];
-  const made = (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedEditorManifest)(manifest, registry, editors);
+  const made = (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_19__.composedEditorManifest)(manifest, registry, editors);
   if (!made.manifest) return { valid: false, manifest: null, origins: {}, fields: [], diagnostics: made.diagnostics };
-  const projected = (0,_editor_mjs__WEBPACK_IMPORTED_MODULE_6__.projectEditorFields)(made.manifest, manifest, instance || { id: '', type: manifest.type }, options);
+  const projected = (0,_editor_mjs__WEBPACK_IMPORTED_MODULE_8__.projectEditorFields)(made.manifest, manifest, instance || { id: '', type: manifest.type }, options);
   const diagnostics = [...made.diagnostics, ...projected.diagnostics];
   return { valid: diagnostics.length === 0, manifest: made.manifest, origins: made.origins, fields: projected.fields, diagnostics };
 }
 
 /** Every instance of a site block moved to its type's current version; what the new version no longer has is reported. */
 function upgradeComposed(document, registry = undefined) {
-  return (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_17__.upgradeComposed)(document, normalizeRegistry(registry), fits);
+  return (0,_composed_mjs__WEBPACK_IMPORTED_MODULE_19__.upgradeComposed)(document, normalizeRegistry(registry), fits);
 }
 
 /** The markup of a smart element a block prints, from its manifest inputs: {html, diagnostics} (elements.mjs). */
 function printElement(name, inputs = {}) {
-  return (0,_elements_mjs__WEBPACK_IMPORTED_MODULE_15__.printElement)(name, inputs, validateJsonSchema);
+  return (0,_elements_mjs__WEBPACK_IMPORTED_MODULE_17__.printElement)(name, inputs, validateJsonSchema);
 }
 
 /** The problems of the smart elements in HTML a renderer wrote: attributes their manifests do not take (elements.mjs). */
 function checkPrintedElements(html) {
-  return (0,_elements_mjs__WEBPACK_IMPORTED_MODULE_15__.checkPrintedElements)(html, validateJsonSchema);
+  return (0,_elements_mjs__WEBPACK_IMPORTED_MODULE_17__.checkPrintedElements)(html, validateJsonSchema);
 }
 
 /** The problems of a host's answer to one source-port request. */
 function checkSourceAnswer(request, answer, options = {}) {
-  return (0,_data_mjs__WEBPACK_IMPORTED_MODULE_18__.checkSourceAnswer)(request, answer, { ...options, check: validateJsonSchema });
+  return (0,_data_mjs__WEBPACK_IMPORTED_MODULE_20__.checkSourceAnswer)(request, answer, { ...options, check: validateJsonSchema });
 }
 
 /**
@@ -29072,98 +28760,98 @@ function createSourcePort(host, options = {}) {
 
 const Composition = Object.freeze({
   BUILTIN_EDITOR_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_EDITOR_MANIFESTS,
-  BUILTIN_FIELD_KINDS: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.BUILTIN_FIELD_KINDS,
+  BUILTIN_FIELD_KINDS: _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.BUILTIN_FIELD_KINDS,
   BUILTIN_PORT_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_PORT_MANIFESTS,
-  EDITOR_FIELD_WORDS: _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_FIELD_WORDS_LIVE,
-  EDITOR_WORDS_OWNER: _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.EDITOR_WORDS_OWNER,
-  Recipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.Recipe,
-  applyFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.applyFieldValue,
-  editorFieldMessages: _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.editorFieldMessages,
-  loadEditorWords: _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_1__.loadEditorWords,
-  parseFieldSubmission: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.parseFieldSubmission,
-  renderFieldFallback: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.renderFieldFallback,
-  resolveFieldKind: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.resolveFieldKind,
-  validateFieldKinds: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.validateFieldKinds,
-  validateFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_7__.validateFieldValue,
-  VALUE_TYPES: _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.VALUE_TYPES,
-  checkPortValue: _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.checkPortValue,
-  checkFragmentDescriptor: _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.checkFragmentDescriptor,
-  FRAGMENT_DESCRIPTOR_SCHEMA: _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.FRAGMENT_DESCRIPTOR_SCHEMA,
-  publishEffects: _fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.publishEffects,
-  createPortRegistry: _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.createPortRegistry,
-  defineCompositionScope: _routing_mjs__WEBPACK_IMPORTED_MODULE_11__.defineCompositionScope,
+  EDITOR_FIELD_WORDS: _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_3__.EDITOR_FIELD_WORDS_LIVE,
+  EDITOR_WORDS_OWNER: _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_3__.EDITOR_WORDS_OWNER,
+  Recipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_10__.Recipe,
+  applyFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.applyFieldValue,
+  editorFieldMessages: _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_3__.editorFieldMessages,
+  loadEditorWords: _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_3__.loadEditorWords,
+  parseFieldSubmission: _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.parseFieldSubmission,
+  renderFieldFallback: _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.renderFieldFallback,
+  resolveFieldKind: _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.resolveFieldKind,
+  validateFieldKinds: _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.validateFieldKinds,
+  validateFieldValue: _fields_mjs__WEBPACK_IMPORTED_MODULE_9__.validateFieldValue,
+  VALUE_TYPES: _routing_mjs__WEBPACK_IMPORTED_MODULE_13__.VALUE_TYPES,
+  checkPortValue: _routing_mjs__WEBPACK_IMPORTED_MODULE_13__.checkPortValue,
+  checkFragmentDescriptor: _fragments_mjs__WEBPACK_IMPORTED_MODULE_14__.checkFragmentDescriptor,
+  FRAGMENT_DESCRIPTOR_SCHEMA: _fragments_mjs__WEBPACK_IMPORTED_MODULE_14__.FRAGMENT_DESCRIPTOR_SCHEMA,
+  publishEffects: _fragments_mjs__WEBPACK_IMPORTED_MODULE_14__.publishEffects,
+  createPortRegistry: _routing_mjs__WEBPACK_IMPORTED_MODULE_13__.createPortRegistry,
+  defineCompositionScope: _routing_mjs__WEBPACK_IMPORTED_MODULE_13__.defineCompositionScope,
   startInlineEdit,
-  normalizeInline: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.normalizeInline,
-  inlineText: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_10__.inlineText,
+  normalizeInline: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_12__.normalizeInline,
+  inlineText: _inline_model_mjs__WEBPACK_IMPORTED_MODULE_12__.inlineText,
   BUILTIN_TYPE_MANIFESTS: _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.BUILTIN_TYPE_MANIFESTS,
   createRegistry,
   extendRegistry,
   compositionTypeFromSmartManifest,
-  describeRegions: _regions_mjs__WEBPACK_IMPORTED_MODULE_9__.describeRegions,
+  describeRegions: _regions_mjs__WEBPACK_IMPORTED_MODULE_11__.describeRegions,
   normalize,
-  projectDocumentEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.projectDocumentEditorFields,
-  projectEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.projectEditorFields,
+  projectDocumentEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_8__.projectDocumentEditorFields,
+  projectEditorFields: _editor_mjs__WEBPACK_IMPORTED_MODULE_8__.projectEditorFields,
   render,
-  resolveRecipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.resolveRecipe,
-  parseRecipeJson: _recipe_mjs__WEBPACK_IMPORTED_MODULE_8__.parseRecipeJson,
-  stableStringify: _canonical_mjs__WEBPACK_IMPORTED_MODULE_4__.stableStringify,
+  resolveRecipe: _recipe_mjs__WEBPACK_IMPORTED_MODULE_10__.resolveRecipe,
+  parseRecipeJson: _recipe_mjs__WEBPACK_IMPORTED_MODULE_10__.parseRecipeJson,
+  stableStringify: _canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.stableStringify,
   validate,
-  validateEditorManifest: _editor_mjs__WEBPACK_IMPORTED_MODULE_6__.validateEditorManifest,
+  validateEditorManifest: _editor_mjs__WEBPACK_IMPORTED_MODULE_8__.validateEditorManifest,
   // One block editor (2026-11-03): catalogue, layout utilities, own
   // modifiers, site blocks, named places and data.
-  BINDING_STATES: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.BINDING_STATES,
-  BUILTIN_CATALOGUE: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE,
-  BUILTIN_CATALOGUE_ALSO_IN: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE_ALSO_IN,
-  BUILTIN_CATALOGUE_ICONS: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.BUILTIN_CATALOGUE_ICONS,
-  CATALOGUE_GROUPS: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUPS,
-  CATALOGUE_GROUP_ALIASES: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUP_ALIASES,
-  CATALOGUE_GROUP_TABLE: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_GROUP_TABLE,
-  CATALOGUE_TABS: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.CATALOGUE_TABS,
-  DATA_SHAPES: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.DATA_SHAPES,
-  SOURCE_PORT: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.SOURCE_PORT,
-  UTILITY_BREAKPOINTS: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.UTILITY_BREAKPOINTS,
-  bindingSettings: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.bindingSettings,
-  catalogue: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogue,
-  catalogueEntry: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.catalogueEntry,
-  entryGroups: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.entryGroups,
-  checkModifiers: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.checkModifiers,
+  BINDING_STATES: _data_mjs__WEBPACK_IMPORTED_MODULE_20__.BINDING_STATES,
+  BUILTIN_CATALOGUE: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.BUILTIN_CATALOGUE,
+  BUILTIN_CATALOGUE_ALSO_IN: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.BUILTIN_CATALOGUE_ALSO_IN,
+  BUILTIN_CATALOGUE_ICONS: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.BUILTIN_CATALOGUE_ICONS,
+  CATALOGUE_GROUPS: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.CATALOGUE_GROUPS,
+  CATALOGUE_GROUP_ALIASES: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.CATALOGUE_GROUP_ALIASES,
+  CATALOGUE_GROUP_TABLE: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.CATALOGUE_GROUP_TABLE,
+  CATALOGUE_TABS: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.CATALOGUE_TABS,
+  DATA_SHAPES: _data_mjs__WEBPACK_IMPORTED_MODULE_20__.DATA_SHAPES,
+  SOURCE_PORT: _data_mjs__WEBPACK_IMPORTED_MODULE_20__.SOURCE_PORT,
+  UTILITY_BREAKPOINTS: _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.UTILITY_BREAKPOINTS,
+  bindingSettings: _data_mjs__WEBPACK_IMPORTED_MODULE_20__.bindingSettings,
+  catalogue: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.catalogue,
+  catalogueEntry: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.catalogueEntry,
+  entryGroups: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.entryGroups,
+  checkModifiers: _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.checkModifiers,
   checkSourceAnswer,
   composedEditorFields,
-  composedInstance: _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedInstance,
-  composedPart: _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedPart,
-  composedTextPaths: _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.composedTextPaths,
-  createShapeRegistry: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.createShapeRegistry,
+  composedInstance: _composed_mjs__WEBPACK_IMPORTED_MODULE_19__.composedInstance,
+  composedPart: _composed_mjs__WEBPACK_IMPORTED_MODULE_19__.composedPart,
+  composedTextPaths: _composed_mjs__WEBPACK_IMPORTED_MODULE_19__.composedTextPaths,
+  createShapeRegistry: _data_mjs__WEBPACK_IMPORTED_MODULE_20__.createShapeRegistry,
   createSourcePort,
   defineComposedType,
-  demoData: _data_mjs__WEBPACK_IMPORTED_MODULE_18__.demoData,
-  PARAMETER_SETS: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.PARAMETER_SETS,
-  PRINTED_ELEMENTS: _elements_mjs__WEBPACK_IMPORTED_MODULE_15__.PRINTED_ELEMENTS,
+  demoData: _data_mjs__WEBPACK_IMPORTED_MODULE_20__.demoData,
+  PARAMETER_SETS: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.PARAMETER_SETS,
+  PRINTED_ELEMENTS: _elements_mjs__WEBPACK_IMPORTED_MODULE_17__.PRINTED_ELEMENTS,
   checkPrintedElements,
-  elementInputs: _elements_mjs__WEBPACK_IMPORTED_MODULE_15__.elementInputs,
-  effectiveProps: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.effectiveProps,
-  expandParameterSets: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.expandParameterSets,
-  parameterSetFields: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.parameterSetFields,
+  elementInputs: _elements_mjs__WEBPACK_IMPORTED_MODULE_17__.elementInputs,
+  effectiveProps: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.effectiveProps,
+  expandParameterSets: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.expandParameterSets,
+  parameterSetFields: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.parameterSetFields,
   printElement,
-  withParameterSetFields: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_16__.withParameterSetFields,
-  expandComposed: _composed_mjs__WEBPACK_IMPORTED_MODULE_17__.expandComposed,
-  instantiateVariant: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.instantiateVariant,
-  ownModifiers: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.ownModifiers,
-  slotAccepts: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.slotAccepts,
-  slotPlaces: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_14__.slotPlaces,
+  withParameterSetFields: _parameter_sets_mjs__WEBPACK_IMPORTED_MODULE_18__.withParameterSetFields,
+  expandComposed: _composed_mjs__WEBPACK_IMPORTED_MODULE_19__.expandComposed,
+  instantiateVariant: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.instantiateVariant,
+  ownModifiers: _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.ownModifiers,
+  slotAccepts: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.slotAccepts,
+  slotPlaces: _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.slotPlaces,
   upgradeComposed,
-  utilityClasses: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityClasses,
-  utilityClassSpace: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityClassSpace,
-  utilityPartClasses: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.utilityPartClasses,
+  utilityClasses: _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.utilityClasses,
+  utilityClassSpace: _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.utilityClassSpace,
+  utilityPartClasses: _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.utilityPartClasses,
   validateTypeManifest,
-  valuesByBreakpoint: _utilities_mjs__WEBPACK_IMPORTED_MODULE_13__.valuesByBreakpoint,
+  valuesByBreakpoint: _utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.valuesByBreakpoint,
 });
 
 if (typeof globalThis !== 'undefined') {
   globalThis.SF = globalThis.SF || {};
   globalThis.SF.Composition = Composition;
-  (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_11__.defineCompositionScope)();
-  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.definePageHost)();
-  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_12__.defineFragmentBoundary)();
+  (0,_routing_mjs__WEBPACK_IMPORTED_MODULE_13__.defineCompositionScope)();
+  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_14__.definePageHost)();
+  (0,_fragments_mjs__WEBPACK_IMPORTED_MODULE_14__.defineFragmentBoundary)();
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Composition);
@@ -31868,7 +31556,191 @@ function withClasses(html, id, classes) {
 
 /***/ },
 
+/***/ "f7e83b012604"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("df4271a1745f");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "cc81411c41c7"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("62f586305461");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "4294700087dc"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3694b5e2bf39");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "15b764c9972d"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ea84b0a22415");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "4bd9c3b168e0"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4bc232cd5c70");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "83aa5d39d7c7"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("16d20aee4c19");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "61bd475e7388"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("0899224095a6");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "b8a4348874ab"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f9d8a56b347c");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "feccc97e5d7d"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -31876,14 +31748,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3694b5e2bf39");
-/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("220979cc98c6");
-// The unit words of a file size (localization study LC-3), for the bundle and
-// for Node alike: the runtime words of the language files, by language.
+/* harmony import */ var _built_in_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6a56aa4367e4");
+// The languages built into the component bundles (owner decision C282),
+// for page-language.js: built-in.json, the build switch
+// scripts/build-language-packs.mjs reads too. A module, as lang/index.mjs, so
+// the bundle and Node read the JSON alike.
 
 
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_built_in_json__WEBPACK_IMPORTED_MODULE_0__);
 
 
 /***/ },
@@ -31907,6 +31779,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "df4271a1745f"
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"button":"Button","badge":"Badge","send":"Send","field":"Field","option":"Option","name":"Name","phone":"Phone","email":"Email","message":"Message"}}');
+
+/***/ },
+
+/***/ "62f586305461"
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"copy":"Copy","copied":"Copied","failed":"Could not copy","selected":"Selected — press {keys}"}}');
+
+/***/ },
+
 /***/ "3694b5e2bf39"
 (module) {
 
@@ -31915,11 +31803,51 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"B","kb":"KB","mb":"MB
 
 /***/ },
 
-/***/ "220979cc98c6"
+/***/ "ea84b0a22415"
 (module) {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"Б","kb":"КБ","mb":"МБ","gb":"ГБ"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"heading":"This block could not be shown"}}');
+
+/***/ },
+
+/***/ "4bc232cd5c70"
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"folder":"folder, directory","folder_open":"open, folder","topic":"topic, section","home":"home, main","dashboard":"dashboard, overview","apartment":"building, organisation","store":"store, shop","storefront":"storefront, shop","business_center":"business, briefcase","work":"work, briefcase","badge":"badge, pass, id","person":"person, user","group":"group, people","groups":"groups, community","account_circle":"account, profile","manage_accounts":"manage, accounts, users","supervisor_account":"supervisor, team","contacts":"contacts","school":"school, learning","menu_book":"book, manual","assignment":"assignment","task":"task","description":"document, description","article":"article","note_alt":"note","edit_note":"edit, note","draft":"draft","receipt":"receipt","receipt_long":"bill, receipt","request_quote":"quote, estimate","inventory_2":"archive, inventory","category":"category","label":"label, tag","sell":"price, sell","local_offer":"offer, discount","shopping_cart":"shopping, cart","shopping_bag":"shopping, bag","payments":"payments, money","savings":"savings","credit_card":"credit, card","account_balance":"bank, account","calculate":"calculator","percent":"percent","trending_up":"trend, growth","analytics":"analytics","insights":"insights","monitoring":"monitoring","bar_chart":"bar, chart","pie_chart":"pie, chart","table_chart":"table","schedule":"time, clock, schedule","event":"event","today":"today","calendar_month":"calendar","date_range":"date, range","history":"history","alarm":"alarm","timer":"timer","update":"update","hourglass_top":"hourglass, waiting","mail":"mail, email, letter","outgoing_mail":"outgoing, mail","chat":"chat, message","forum":"forum, discussion","sms":"sms, text","call":"call, phone","phone_in_talk":"phone, call, talk","contact_support":"support, help","campaign":"campaign, announcement","notifications":"notifications","language":"language, world","public":"public, web, world","place":"place","map":"map","location_on":"location, address","travel_explore":"travel, explore","flight":"flight, plane","local_shipping":"shipping, delivery","route":"route","directions":"directions","settings":"settings","tune":"tune, filter","build":"build, tools","construction":"construction","handyman":"handyman, repair","code":"code","terminal":"terminal, console","data_object":"data, object","api":"api","bug_report":"bug","database":"database","storage":"storage","cloud":"cloud","backup":"backup","sync":"sync","folder_zip":"zip, archive","upload_file":"upload, file","download":"download","attach_file":"attach, file","link":"link","lock":"lock","lock_open":"unlock, open","shield":"shield, protection","verified_user":"verified, user","key":"key","admin_panel_settings":"admin","policy":"policy","gavel":"law, gavel","fingerprint":"fingerprint","visibility":"visibility, view","palette":"palette, colour, color","format_paint":"format, paint","image":"image, picture","photo_library":"photos, gallery","collections":"collections","movie":"movie, video","play_circle":"play","mic":"microphone","headphones":"headphones, audio","brush":"brush"}}');
+
+/***/ },
+
+/***/ "16d20aee4c19"
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"new-tab-text":"(opens in a new tab)"}}');
+
+/***/ },
+
+/***/ "0899224095a6"
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"region":"Notifications"}}');
+
+/***/ },
+
+/***/ "f9d8a56b347c"
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"skip-link-text":"Skip to content"}}');
+
+/***/ },
+
+/***/ "6a56aa4367e4"
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-built-in","schema_version":1,"$comment":"The languages built into the component bundles (owner decision C282, 2026-11-17): English only. Russian and every other language ship as language files (core/lang/<code>.js before core.js, or the parts core/lang/<code>/<family>.json core fetches). complete: the languages that must say every word (scripts/language-coverage.mjs exits 1 on a gap). Rollback: built_in [\\"en\\", \\"ru\\"], then node scripts/build-language-packs.mjs and a rebuild put Russian back into the bundles (the language files still ship, so a page that includes ru.js stays right).","built_in":["en"],"complete":["en","ru"]}');
 
 /***/ },
 
@@ -31927,7 +31855,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"Б","kb":"КБ","mb":
 (module) {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-pack-index","schema_version":1,"delivery":"framework","languages":[],"parts":{},"coverage":{}}');
+module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-pack-index","schema_version":1,"delivery":"framework","languages":["ru"],"parts":{"ru":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]}},"coverage":{"ru":{"words":2043,"translated":2043,"share":100}}}');
 
 /***/ }
 

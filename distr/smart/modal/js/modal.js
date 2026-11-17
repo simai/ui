@@ -933,21 +933,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_modal_js_motion__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("201fd0b17b8b");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("afc57055d2cc");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("85cdf307b188");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("66be591d2d06");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("be0bc1a67e65");
-/* harmony import */ var _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("93025a68d8ab");
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("18003344cff0");
-/* harmony import */ var _core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("42f1649d1a1b");
-/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("1373e294ec38");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("95d01a7df79b");
+/* harmony import */ var _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("93025a68d8ab");
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("18003344cff0");
+/* harmony import */ var _core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("42f1649d1a1b");
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("1373e294ec38");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__);
 
 
 
@@ -960,16 +959,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__.runtime
-}; // A box that holds its own overlays (sf-modal, sf-drawer); the drawer's own
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// A box that holds its own overlays (sf-modal, sf-drawer); the drawer's own
 // name came first and is read until the change journal retires it.
 
 const OVERLAY_CONTAINER = "[data-sf-overlay-container], [data-sf-drawer-container]"; // Below the Framework's sm breakpoint (32rem) a question window is a bottom
@@ -1006,10 +1000,7 @@ const EDGE_POSITIONS_UNTIL = "2027-01-01";
 
 const ModalElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__.files,
   source: "ru",
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__
 }); // The public variables the manifest declares; a window drawn at the end of the
@@ -1091,17 +1082,17 @@ class SfModal extends ModalElement {
   static defaultTrueAttributes = new Set(["overlay", "show-close", "show-footer", "close-on-esc", "close-on-overlay", "preserve-scroll-gap", "preload", "dismissible"]);
 
   static getTopModal() {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.getTopModalLayer)();
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.getTopModalLayer)();
   } // Whether this modal is the top layer of the document: a drawer or a list
   // opened from it stands above it and takes the keys while it does.
 
 
   static isTopModal(modal) {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.isTopModalLayer)(modal);
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.isTopModalLayer)(modal);
   }
 
   static getStackIndex(modal) {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.getModalLayerIndex)(modal);
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.getModalLayerIndex)(modal);
   }
 
   static addToStack(modal) {
@@ -1115,7 +1106,7 @@ class SfModal extends ModalElement {
     // and the document scroll lock.
 
     if (!modal.hiddenState) {
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.addModalLayer)(modal);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.addModalLayer)(modal);
     }
   }
 
@@ -1126,7 +1117,7 @@ class SfModal extends ModalElement {
 
     SfModal.stack = SfModal.stack.filter(item => item !== modal);
     SfModal.openCount = SfModal.stack.length;
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.removeModalLayer)(modal);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.removeModalLayer)(modal);
   }
 
   static bringToFront(modal) {
@@ -1136,11 +1127,11 @@ class SfModal extends ModalElement {
 
     SfModal.stack = SfModal.stack.filter(item => item !== modal);
     SfModal.stack.push(modal);
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.raiseModalLayer)(modal);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.raiseModalLayer)(modal);
   }
 
   static updateStackStyles() {
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.updateModalLayers)();
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.updateModalLayers)();
   } // The manifest's settings, and the base's own template name.
 
 
@@ -1206,7 +1197,7 @@ class SfModal extends ModalElement {
 
 
   watchPhone() {
-    const query = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_17__.breakpointMedia)("sm", {
+    const query = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_16__.breakpointMedia)("sm", {
       below: true
     });
     if (!query || this._phoneQuery) return;
@@ -1537,7 +1528,7 @@ class SfModal extends ModalElement {
       return "";
     }
 
-    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__.layerZIndexAt)(this._stackIndex);
+    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__.layerZIndexAt)(this._stackIndex);
   }
 
   get remoteContent() {
@@ -1819,7 +1810,7 @@ class SfModal extends ModalElement {
     // block's retuned roles and its parts' public variables reach the window
     // and its content, but none of the window's own --sf-modal-* names.
 
-    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__.carryLayerOrigin)(this._portalRoot, this, {
+    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__.carryLayerOrigin)(this._portalRoot, this, {
       variables: MODAL_VARIABLES,
       area: true,
       except: ["--sf-modal-"]
@@ -2124,7 +2115,7 @@ class SfModal extends ModalElement {
 
     if (!wasClosing) {
       this._lastActive = document.activeElement;
-      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.captureModalFocusAncestors)(this._lastActive);
+      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.captureModalFocusAncestors)(this._lastActive);
     }
 
     if (wasClosing) {
@@ -2347,9 +2338,9 @@ class SfModal extends ModalElement {
 
     if (this.hiddenState) {
       const wasTop = SfModal.isTopModal(this);
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.removeModalLayer)(this);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.removeModalLayer)(this);
       this.applyStackPosition();
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
 
       if (root) {
         root.inert = true;
@@ -2361,7 +2352,7 @@ class SfModal extends ModalElement {
         root.setAttribute("aria-hidden", "false");
       }
 
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.addModalLayer)(this);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.addModalLayer)(this);
       SfModal.bringToFront(this);
       requestAnimationFrame(() => this.focusFirst());
     }
@@ -2400,7 +2391,7 @@ class SfModal extends ModalElement {
     }
 
     if (this.display !== "inline") {
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
     }
 
     this._edited = false;
@@ -2484,7 +2475,7 @@ class SfModal extends ModalElement {
       // page's own markup has no opener.
       const active = document.activeElement;
       this._lastActive = active instanceof HTMLElement && active !== document.body && active !== document.documentElement && !this.contains(active) && !this._root()?.contains(active) ? active : null;
-      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.captureModalFocusAncestors)(this._lastActive);
+      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.captureModalFocusAncestors)(this._lastActive);
       this._isOpen = true;
       this._modalState = "open";
 
@@ -2499,14 +2490,14 @@ class SfModal extends ModalElement {
     this.applyStackPosition();
     if (this.display !== "inline") this.watchBodyEdges(); // Projection can replace the panel while an existing layer remains open.
 
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.updateModalLayers)(); // A closed window's content starts after the page's first paint, unseen:
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.updateModalLayers)(); // A closed window's content starts after the page's first paint, unseen:
     // the Loader leaves it until the window opens (its root is inert), and a
     // page that waited for a tag in it before opening the window waited for
     // ever (layer-stack.js startClosedLayerContent).
 
     if (this.display !== "inline" && !this.openState && !this._closedContentStarted) {
       this._closedContentStarted = true;
-      (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__.startClosedLayerContent)(() => this._root());
+      (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__.startClosedLayerContent)(() => this._root());
     }
 
     if (this.autoload && !this.openState && !this._hasAutoloaded) {
@@ -2560,9 +2551,9 @@ class SfModal extends ModalElement {
 
     const surface = root?.querySelector("[data-sf-modal-surface]");
     const panel = root?.querySelector("[data-sf-modal-panel]");
-    if (!surface || !panel || !surface.contains(event.target) || (0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_16__.startsOnControl)(event.target)) return;
-    if (!(0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_16__.inHandleRow)(event, surface)) return;
-    (0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_16__.trackSwipe)(event, {
+    if (!surface || !panel || !surface.contains(event.target) || (0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_15__.startsOnControl)(event.target)) return;
+    if (!(0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_15__.inHandleRow)(event, surface)) return;
+    (0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_15__.trackSwipe)(event, {
       surface: panel,
       direction: "down",
       variable: "--sf-sheet--drag",
@@ -2886,7 +2877,7 @@ class SfModal extends ModalElement {
     if (this.display !== "inline") this.returnSlotNodes();
     this._releaseClosingContent?.();
     this._releaseClosingContent = null;
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_14__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
   }
 
   clearPortal() {
@@ -3024,7 +3015,7 @@ class SfModal extends ModalElement {
 
 
   static lockPage(preserveScrollGap = true) {
-    if (!SfModal.lockState) SfModal.lockState = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_15__.lockPageScroll)({
+    if (!SfModal.lockState) SfModal.lockState = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__.lockPageScroll)({
       preserveScrollGap
     });
   }
@@ -3252,6 +3243,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "95d01a7df79b"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("66be591d2d06");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "85cdf307b188"
 (module) {
 
@@ -3262,7 +3275,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-modal
 /***/ "afc57055d2cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.10.1","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"initial-focus":{"type":"enum","values":["auto","safe","first","panel"],"default":"auto"},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"size":{"type":"enum","values":["form","question","wide","full","auto"],"default":"form","x-scale":"width"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"},"--sf-modal-question-width":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.10.6","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"initial-focus":{"type":"enum","values":["auto","safe","first","panel"],"default":"auto"},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"size":{"type":"enum","values":["form","question","wide","full","auto"],"default":"form","x-scale":"width"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"},"--sf-modal-question-width":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -3270,13 +3283,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Modal","runtime":{"close":"Close","discard":"Don\'t save","discard-heading":"Close without saving?","frame-failed":"Failed to load iframe content","keep-editing":"Keep editing","load-failed":"Failed to load content","loading":"Loading…","minimize":"Minimize","title":"Dialog"},"events":{"content-upload":{"label":"Load content"},"content-uploaded":{"label":"Content loaded"}}}');
-
-/***/ },
-
-/***/ "be0bc1a67e65"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Модальное окно","runtime":{"close":"Закрыть","discard":"Не сохранять","discard-heading":"Закрыть без сохранения?","frame-failed":"Не удалось загрузить встроенную страницу","keep-editing":"Продолжить правку","load-failed":"Не удалось загрузить содержимое","loading":"Загрузка…","minimize":"Свернуть","title":"Окно"},"events":{"content-upload":{"label":"Загрузить содержимое"},"content-uploaded":{"label":"Содержимое загружено"}}}');
 
 /***/ }
 

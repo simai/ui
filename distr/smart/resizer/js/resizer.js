@@ -282,9 +282,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("51250bf01ab0");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("bed569d628ec");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("20dea37abe64");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4012ebee0398");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d865d3c42424");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d4f7aa048f0e");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("f3c30de36007");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d4f7aa048f0e");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_aliases_js__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_aliases_js__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__);
@@ -307,16 +306,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-};
  // The words are lang/<locale>.json, read through the shared reader, so
 // SF.language.use() chooses the language and SF.language.register('sf-resizer',
 // ...) adds one the Framework has never heard of (ui-mail feedback
@@ -354,10 +348,7 @@ class ResizerHost extends HTMLElement {
 
 const ResizerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: ResizerHost,
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
 }); // A CSS length (tokens included) in pixels, read in the target's context.
@@ -428,6 +419,14 @@ const valueWords = dictionary => (share, folded, handle) => (0,_core_js_page_lan
   component: 'sf-resizer',
   source: 'ru',
   count: share
+}); // The words of an edge without an upper limit, whose value is its width in
+// pixels: «244 px», or folded.
+
+
+const widthWords = dictionary => (width, folded, handle) => (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageWord)(dictionary, folded ? 'folded' : 'width', handle, {
+  component: 'sf-resizer',
+  source: 'ru',
+  count: width
 }); // The panel the handle folds is said folded by data-folded (the name the
 // study's prototype gives it); the «Показать» button that brings it back
 // stands on its edge (data-sf-resizer-unfold), and below the layout's split
@@ -574,7 +573,8 @@ class SfResizer extends ResizerElement {
 
     this._detach = (0,_engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer)(this, {
       session: () => this.disabled || this._narrow ? null : this.session(),
-      text: valueWords(ResizerElement.sfWords)
+      text: valueWords(ResizerElement.sfWords),
+      widthText: widthWords(ResizerElement.sfWords)
     });
     globalThis.addEventListener('resize', this._onWindowResize);
     document.addEventListener?.('scroll', this._onScroll, {
@@ -1153,7 +1153,7 @@ class SfResizer extends ResizerElement {
       limits: () => this.limits(),
       measure: () => width,
       folded: () => this.folded()
-    }, width, valueWords(ResizerElement.sfWords));
+    }, width, valueWords(ResizerElement.sfWords), widthWords(ResizerElement.sfWords));
   }
 
 }
@@ -1164,6 +1164,7 @@ globalThis.SF = globalThis.SF || {}; // attach: the same gesture on any handle -
 
 const attach = (root, options = {}) => (0,_engine_mjs__WEBPACK_IMPORTED_MODULE_0__.attachResizer)(root, {
   text: valueWords(ResizerElement.sfWords),
+  widthText: widthWords(ResizerElement.sfWords),
   ...options
 });
 
@@ -1248,6 +1249,11 @@ __webpack_require__.r(__webpack_exports__);
 //   } -- or null, when this handle does not resize now.
 //   options.text(share, folded, handle): the words of the value
 //                     (aria-valuetext), «27 %»; without it, none.
+//   options.widthText(width, folded, handle): the words of an edge without
+//                     an upper limit (max not finite), whose value is its
+//                     width in pixels, «244 px»; without it, none. text is
+//                     never asked for such an edge: its share would be a
+//                     width, said as a percentage.
 //
 // Edges another component draws (options.handles) leave Enter and Escape to
 // it: a table's column edge goes back to its header on either (C158 (5)).
@@ -1263,12 +1269,30 @@ function share(session, width) {
   return Math.round(Math.min(100, Math.max(0, ((width - min) / (max - min)) * 100)));
 }
 
-function setValue(handle, session, width = session.measure(), text = null) {
+// An edge without an upper limit (max Infinity, or not a number: a column
+// with no maxWidth) has no way from min to max: its share was always 0
+// (ui-view, 2026-11-17). Its value is then the width in pixels from min, and
+// aria-valuemax is left out, as WAI-ARIA allows when the maximum is unknown;
+// its words are widthText's («244 px»), never the share's «%».
+function setValue(handle, session, width = session.measure(), text = null, widthText = null) {
+  const {min, max} = session.limits();
+  const folded = Boolean(session.folded?.());
+  if (!Number.isFinite(max)) {
+    const floor = Number.isFinite(min) ? Math.max(0, Math.round(min)) : 0;
+    const now = folded ? 0 : Math.max(floor, Math.round(Number(width) || 0));
+    handle.setAttribute('aria-valuemin', String(folded ? 0 : floor));
+    handle.removeAttribute('aria-valuemax');
+    handle.setAttribute('aria-valuenow', String(now));
+    const words = widthText?.(now, folded, handle);
+    if (words) handle.setAttribute('aria-valuetext', words);
+    else handle.removeAttribute('aria-valuetext');
+    return;
+  }
   const now = share(session, width);
   handle.setAttribute('aria-valuemin', '0');
   handle.setAttribute('aria-valuemax', '100');
   handle.setAttribute('aria-valuenow', String(now));
-  const words = text?.(now, Boolean(session.folded?.()), handle);
+  const words = text?.(now, folded, handle);
   if (words) handle.setAttribute('aria-valuetext', words);
   else handle.removeAttribute('aria-valuetext');
 }
@@ -1283,7 +1307,8 @@ function attachResizer(root, options = {}) {
   const owns = (handle) => handle && (handle === root || root.contains(handle));
   const sessionOf = (handle) => (owns(handle) ? options.session?.(handle) ?? null : null);
   const text = options.text ?? null;
-  const say = (handle, session, width) => setValue(handle, session, width, text);
+  const widthText = options.widthText ?? null;
+  const say = (handle, session, width) => setValue(handle, session, width, text, widthText);
   let drag = null;
 
   const finish = (commit) => {
@@ -1391,7 +1416,9 @@ function attachResizer(root, options = {}) {
     else if (event.key === 'PageUp') next = now + step * 4;
     else if (event.key === 'PageDown') next = now - step * 4;
     else if (event.key === 'Home') next = min;
-    else if (event.key === 'End') next = max;
+    // End on an edge without an upper limit has nowhere to go: it would
+    // write an infinite width. It is left to the page.
+    else if (event.key === 'End') next = Number.isFinite(max) ? max : null;
     if (next === null) return;
     event.preventDefault();
     event.stopPropagation();
@@ -1442,6 +1469,28 @@ function attachResizer(root, options = {}) {
 
 /***/ },
 
+/***/ "f3c30de36007"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4012ebee0398");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "20dea37abe64"
 (module) {
 
@@ -1452,21 +1501,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-resiz
 /***/ "bed569d628ec"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.resizer","tag":"sf-resizer","version":"1.3.4","kind":"leaf","settings":{"min":{"type":"string","default":"12rem"},"max":{"type":"string","default":"40rem"},"property":{"type":"string","default":""},"target":{"type":"string","default":""},"edge":{"type":"enum","values":["inline-end","inline-start"],"default":"inline-end"},"step":{"type":"number","default":16,"min":1},"storage-key":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"disabled":{"type":"boolean","default":false},"collapsible":{"type":"boolean","default":false},"value":{"type":"number","nullable":true,"default":null}},"values":{},"events":{"resize":{"carries":{"width":"number","phase":{"type":"enum","values":["move","end","reset"]}},"own-verb":true}},"actions":{},"css-variables":{"--sf-resizer-hit-size":{"type":"length","state":"default"},"--sf-resizer-line-width":{"type":"length","state":"default"},"--sf-resizer-line-color":{"type":"color","state":"default"},"--sf-resizer-hover-line-color":{"type":"color","state":"hover"},"--sf-resizer-z-index":{"type":"integer","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.resizer","tag":"sf-resizer","version":"1.5.0","kind":"leaf","settings":{"min":{"type":"string","default":"12rem"},"max":{"type":"string","default":"40rem"},"property":{"type":"string","default":""},"target":{"type":"string","default":""},"edge":{"type":"enum","values":["inline-end","inline-start"],"default":"inline-end"},"step":{"type":"number","default":16,"min":1},"storage-key":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"disabled":{"type":"boolean","default":false},"collapsible":{"type":"boolean","default":false},"value":{"type":"number","nullable":true,"default":null}},"values":{},"events":{"resize":{"carries":{"width":"number","phase":{"type":"enum","values":["move","end","reset"]}},"own-verb":true}},"actions":{},"css-variables":{"--sf-resizer-hit-size":{"type":"length","state":"default"},"--sf-resizer-line-width":{"type":"length","state":"default"},"--sf-resizer-line-color":{"type":"color","state":"default"},"--sf-resizer-hover-line-color":{"type":"color","state":"hover"},"--sf-resizer-z-index":{"type":"integer","state":"default"}}}');
 
 /***/ },
 
 /***/ "4012ebee0398"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Resizer","runtime":{"hint":"Drag, or use the arrow keys; a double click restores the width.","label":"Resize","value":"{n}%","folded":"Collapsed","show":"Show"},"events":{"resize":{"label":"Change the width"}}}');
-
-/***/ },
-
-/***/ "d865d3c42424"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Изменение ширины","runtime":{"hint":"Тяните или нажимайте стрелки; двойной щелчок возвращает ширину.","label":"Изменить ширину","value":"{n} %","folded":"Свёрнуто","show":"Показать"},"events":{"resize":{"label":"Изменить ширину"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Resizer","runtime":{"hint":"Drag, or use the arrow keys; a double click restores the width.","label":"Resize","value":"{n}%","width":"{n} px","folded":"Collapsed","show":"Show"},"events":{"resize":{"label":"Change the width"}}}');
 
 /***/ }
 

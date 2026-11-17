@@ -54,10 +54,7 @@ _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_depende
 // {count, dot}); a count written as «a|b|c» (an author's label, a product's
 // word from before) still reads in the order of the categories.
 
-const ANCHORED_BADGE_TEXT = {
-  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en,
-  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru
-};
+const ANCHORED_BADGE_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"];
 const ANCHORED_BADGE_COMPONENT = 'sf-badge';
 const DEFAULT_BADGE_CAP = 99;
 const CATEGORIES = ['zero', 'one', 'two', 'few', 'many', 'other'];
@@ -235,8 +232,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("7a5bfad2e591");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6cbc1a3bd7e5");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("920b6920c2b6");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d709c9845088");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3824886fec29");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("9d93f45ce9cf");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -246,16 +242,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__.runtime
-}; // No sheet import: the rule has no css, so a sheet in this bundle never
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// No sheet import: the rule has no css, so a sheet in this bundle never
 // reached a page; the avatars class sheet comes by the rule's relation
 // (audit 2026-11-11, dead Smart sheets).
 // sf-avatar-group from its component.json (standard simai.smart-component 1.3.8 §3,
@@ -267,10 +258,7 @@ const ru = {
 
 const AvatarsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
 }); // The tooltips' ids, one per element on the page (stable across renders).
@@ -1262,6 +1250,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getInitials: () => (/* binding */ getInitials),
 /* harmony export */   normalizeInitialsWords: () => (/* binding */ normalizeInitialsWords)
 /* harmony export */ });
+// c282-allow-start: input parsing (initials read from Russian names, C152)
 const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]); // Words a name carries that are not the person's or the organisation's own
 // (owner decision C152 (3), 2026-11-14): legal forms (ООО «Ромашка» → Р),
 // titles (Dr. John Smith → JS) and name particles (Мария фон Штейн → МШ) are
@@ -1271,7 +1260,8 @@ const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "д
 const INITIALS_SERVICE_WORDS = new Set([// legal forms
 "ооо", "оао", "зао", "пао", "ао", "нао", "ип", "нко", "ано", "гуп", "муп", "фгуп", "гбу", "мбу", "чоп", "llc", "inc", "ltd", "gmbh", "ag", "corp", "co", "llp", "plc", "lp", "bv", "oy", "ab", "srl", "sarl", // titles
 "dr", "prof", "mr", "mrs", "ms", "mx", "miss", "sir", "jr", "sr", "phd", "д-р", "проф", "акад", "г-н", "г-жа", "доц", // particles
-"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]);
+"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]); // c282-allow-end
+
 function normalizeInitialsWords(value = "") {
   return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
 } // The first character a reader sees: a whole grapheme, so a letter written
@@ -1394,16 +1384,41 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
 /* harmony export */ });
 /* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7f9642eacf1b");
-/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8714e4691010");
-// The component's words for the bundle and for Node alike (localization study
-// LC-4/LC-5): the runtime words of its language files, by language.
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
 
 
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "9d93f45ce9cf"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d709c9845088");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
 
 
 /***/ },
@@ -1500,13 +1515,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} un
 
 /***/ },
 
-/***/ "8714e4691010"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"count":{"one":"{count} непрочитанное","few":"{count} непрочитанных","many":"{count} непрочитанных","other":"{count} непрочитанного"},"dot":"есть новое"}}');
-
-/***/ },
-
 /***/ "920b6920c2b6"
 (module) {
 
@@ -1517,7 +1525,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-avata
 /***/ "6cbc1a3bd7e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar-group","tag":"sf-avatar-group","version":"1.5.1","kind":"leaf","settings":{"fields":{"type":"string","default":""},"property":{"type":"string","default":""},"image-url":{"type":"string","default":""},"avatar-url":{"type":"string","default":""},"avatar-size":{"type":"string","default":""},"check":{"type":"boolean","default":false},"name":{"type":"string","default":""},"source":{"type":"string","default":""},"label-text":{"type":"string","default":""},"label-second-text":{"type":"string","default":""},"avatars":{"type":"list","of":{"image-url":"string","text":"string","name":"string","status":"string","hue":"string"},"default":[]},"avatars-more":{"type":"string","default":""},"round-size":{"type":"string","default":""},"label-size":{"type":"string","default":""},"profile-size":{"type":"string","default":""}},"values":{"active":{"type":"boolean","default":false}},"events":{},"actions":{},"presentation":{"skeleton":{"late":["avatars"]}},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar-group","tag":"sf-avatar-group","version":"1.5.2","kind":"leaf","settings":{"fields":{"type":"string","default":""},"property":{"type":"string","default":""},"image-url":{"type":"string","default":""},"avatar-url":{"type":"string","default":""},"avatar-size":{"type":"string","default":""},"check":{"type":"boolean","default":false},"name":{"type":"string","default":""},"source":{"type":"string","default":""},"label-text":{"type":"string","default":""},"label-second-text":{"type":"string","default":""},"avatars":{"type":"list","of":{"image-url":"string","text":"string","name":"string","status":"string","hue":"string"},"default":[]},"avatars-more":{"type":"string","default":""},"round-size":{"type":"string","default":""},"label-size":{"type":"string","default":""},"profile-size":{"type":"string","default":""}},"values":{"active":{"type":"boolean","default":false}},"events":{},"actions":{},"presentation":{"skeleton":{"late":["avatars"]}},"css-variables":{"--sf-avatar-background-color":{"type":"color","state":"default"},"--sf-avatar-color":{"type":"color","state":"default"},"--sf-avatar-border-color":{"type":"color","state":"default"},"--sf-avatar-border-width":{"type":"length","state":"default"},"--sf-avatar-radius":{"type":"length","state":"default"},"--sf-avatar-offline-background-color":{"type":"color","state":"default"},"--sf-avatar-offline-overlay":{"type":"image","state":"default"}}}');
 
 /***/ },
 
@@ -1525,13 +1533,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.avatar-group","tag":"sf-a
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Avatars","runtime":{"group-label":"Members: {n}","more-label":{"one":"{n} more member","other":"{n} more members"}}}');
-
-/***/ },
-
-/***/ "3824886fec29"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Аватары","runtime":{"group-label":"Участники: {n}","more-label":{"one":"Ещё {n} участник","few":"Ещё {n} участника","many":"Ещё {n} участников","other":"Ещё {n} участника"}}}');
 
 /***/ }
 

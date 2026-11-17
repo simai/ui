@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
 *
@@ -117,8 +117,6 @@
      from core's badge table (owner decision C132): 8 on 1/4 and 1/3, 12 on
      1/2 and 1, 16 on 2 and 3. It was a text size: 14 and 20 on a desktop. */
   .sf-avatar-badge {
-    background-color: transparent;
-    background-color: var(--sf-avatar-badge--background-color, transparent);
     width: var(--sf-avatar-badge--width);
     height: var(--sf-avatar-badge--width);
   }
@@ -148,6 +146,12 @@
     --sf-avatar-badge--width: var(--sf-micro--badge-1\/2);
   }
 }
+@layer sf.paint {
+  .sf-avatar-badge {
+    background-color: transparent;
+    background-color: var(--sf-avatar-badge--background-color, transparent);
+  }
+}
 @layer sf.components {
   /* utility-hint: display/block */
   .sf-online-indicator {
@@ -155,8 +159,6 @@
     border-radius: var(--sf-radius-circle);
     width: var(--sf-online-indicator--width);
     height: var(--sf-online-indicator--height);
-    background-color: transparent;
-    background-color: var(--sf-surface-place-ground, transparent);
     background-image: linear-gradient(var(--sf-online-indicator--background-color) 0, var(--sf-online-indicator--background-color) 0);
     background-image: linear-gradient(var(--sf-online-indicator--background-color) 0 0);
     box-shadow: 0 0 0 var(--sf-online-indicator--ring-width) transparent, 0 0 0 var(--sf-online-indicator--ring-width) transparent;
@@ -224,7 +226,23 @@
       outline: var(--sf-online-indicator--ring-width) solid Canvas;
     }
     .sf-online-indicator--away {
-      border: var(--sf-online-indicator--ring-width) solid CanvasText;
+      border-width: var(--sf-online-indicator--ring-width);
+      border-style: solid;
+    }
+    .sf-online-indicator:has(> .sf-dot) {
+      border: 0;
+      border-color: revert-layer;
+    }
+  }
+}
+@layer sf.paint {
+  .sf-online-indicator {
+    background-color: transparent;
+    background-color: var(--sf-surface-place-ground, transparent);
+  }
+  @media (forced-colors: active) {
+    .sf-online-indicator--away {
+      border-color: CanvasText;
     }
     .sf-online-indicator:has(> .sf-dot) {
       border: 0;
@@ -263,7 +281,6 @@
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   .sf-avatar-card .sf-avatar-card-content {
-    color: var(--sf-on-surface);
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1);
     font-weight: var(--sf-font-weight-medium);
@@ -271,8 +288,6 @@
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-avatar-card-row--gap, var(--sf-space-1\/4)) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-avatar-card .sf-avatar-card-row {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-avatar-card-row--color, var(--sf-on-surface-variant));
     font-family: var(--sf-text--family);
     font-family: var(--sf-avatar-card-row--font-family, var(--sf-text--family));
     font-size: var(--sf-text-size-1);
@@ -293,8 +308,6 @@
     width: var(--sf-icon--width, var(--sf-text-height-1));
   }
   .sf-avatar-card .sf-avatar-card-title {
-    color: var(--sf-on-surface);
-    color: var(--sf-avatar-card-title--color, var(--sf-on-surface));
     font-family: var(--sf-text--family);
     font-family: var(--sf-avatar-card-title--font-family, var(--sf-text--family));
     font-size: var(--sf-text-size-1);
@@ -315,6 +328,36 @@
   .sf-avatar-card .sf-avatar-card-placeholder {
     container-type: inline-size;
     overflow: hidden;
+  }
+  .sf-avatar-card .sf-avatar-card-initials {
+    font-family: var(--sf-text--family);
+    font-size: 36cqi;
+    font-weight: var(--sf-font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  /* The icon sheet sizes .sf-icon outside the layers, so the glyph takes its
+     size through the icon's own size variables (the author's
+     --sf-icon-glyph-size still wins). */
+  .sf-avatar-card .sf-avatar-card-placeholder .sf-icon {
+    --sf-icon--font-size: 45cqi;
+    --sf-icon--height: 45cqi;
+    --sf-icon--width: 45cqi;
+  }
+}
+@layer sf.paint {
+  .sf-avatar-card .sf-avatar-card-content {
+    color: var(--sf-on-surface);
+  }
+  .sf-avatar-card .sf-avatar-card-row {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-avatar-card-row--color, var(--sf-on-surface-variant));
+  }
+  .sf-avatar-card .sf-avatar-card-title {
+    color: var(--sf-on-surface);
+    color: var(--sf-avatar-card-title--color, var(--sf-on-surface));
+  }
+  .sf-avatar-card .sf-avatar-card-placeholder {
     background-color: var(--sf-surface-container);
     /* The container text role, as on the round placeholder (C124 "the round
        placeholder's colours"): dimmed text inside reads the container ink. */
@@ -397,20 +440,7 @@
     background-color: var(--sf-hue-container);
     color: var(--sf-on-hue-container);
   }
-  .sf-avatar-card .sf-avatar-card-initials {
-    font-family: var(--sf-text--family);
-    font-size: 36cqi;
-    font-weight: var(--sf-font-weight-medium);
-    line-height: 1;
-    white-space: nowrap;
-  }
-  /* The icon sheet sizes .sf-icon outside the layers, so the glyph takes its
-     size through the icon's own size variables (the author's
-     --sf-icon-glyph-size still wins). */
   .sf-avatar-card .sf-avatar-card-placeholder .sf-icon {
-    --sf-icon--font-size: 45cqi;
-    --sf-icon--height: 45cqi;
-    --sf-icon--width: 45cqi;
     color: inherit;
   }
 }
@@ -601,8 +631,6 @@
     border-start-end-radius: var(--sf-avatar--border-top-right-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
     border-start-start-radius: var(--sf-radius-circle);
     border-start-start-radius: var(--sf-avatar--border-top-left-radius, var(--sf-avatar-radius, var(--sf-radius-circle)));
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-avatar--color, var(--sf-avatar-color, var(--sf-on-surface-variant)));
     font-family: var(--sf-text--family);
     font-family: var(--sf-avatar--font-family, var(--sf-text--family));
     /* Initials in the medium weight (owner decision C152 (3), 2026-11-14;
@@ -612,12 +640,9 @@
     font-weight: var(--sf-avatar--font-weight, var(--sf-weight--medium));
     width: var(--sf-avatar--width);
     height: var(--sf-avatar--height);
-    background-color: var(--sf-avatar--background-color);
     font-size: var(--sf-avatar--font-size);
     line-height: var(--sf-avatar--line-height);
     white-space: nowrap;
-    border-color: transparent;
-    border-color: var(--sf-avatar--border-color, var(--sf-avatar-border-color, transparent));
     border-width: 0;
     border-width: var(--sf-avatar--border-width, 0);
     border-top-width: 0;
@@ -741,8 +766,7 @@
   .sf-avatar .sf-avatar-badge {
     border: 0 solid;
     border: var(--sf-avatar-badge--border, 0 solid);
-    border-color: transparent;
-    border-color: var(--sf-avatar-badge--border-color, transparent);
+    border-color: revert-layer;
     border-end-end-radius: var(--sf-avatar-badge--border-end-end-radius);
     border-end-start-radius: var(--sf-avatar-badge--border-end-start-radius);
     border-start-end-radius: var(--sf-avatar-badge--border-start-end-radius);
@@ -872,7 +896,6 @@
   }
   .sf-avatar--placeholder, .sf-avatar--text {
     --sf-avatar--background-color: var(--sf-avatar-background-color, var(--sf-surface-container));
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
   }
   /* The hue of initials (owner decision C17, 2026-11-08): sf-hue-<name> gives
      the element a hue's role set (core/scss/_sf_css__hue.scss), and the
@@ -1240,6 +1263,24 @@
     vertical-align: middle;
   }
 }
+@layer sf.paint {
+  .sf-avatar {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-avatar--color, var(--sf-avatar-color, var(--sf-on-surface-variant)));
+    background-color: var(--sf-avatar--background-color);
+    border-color: transparent;
+    border-color: var(--sf-avatar--border-color, var(--sf-avatar-border-color, transparent));
+  }
+  .sf-avatar .sf-avatar-badge {
+    border: 0 solid;
+    border: var(--sf-avatar-badge--border, 0 solid);
+    border-color: transparent;
+    border-color: var(--sf-avatar-badge--border-color, transparent);
+  }
+  .sf-avatar--placeholder, .sf-avatar--text {
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+  }
+}
 @layer sf.states {
   button.sf-avatar:not(:disabled):not(.disabled):hover .sf-online-indicator.sf-online-indicator--online {
     --sf-online-indicator--background-color: var(--sf-success);
@@ -1331,8 +1372,6 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
   .sf-avatar-label-group {
-    background-color: transparent;
-    background-color: var(--sf-avatar-label-group--background-color, transparent);
     gap: var(--sf-avatar-label-group--gap);
     /* The group may be narrower than its text, so the no-wrap lines can end
        in an ellipsis (docs precheck smart content AV-01): as a grid or flex
@@ -1345,8 +1384,6 @@
   }
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   .sf-avatar-label-group .sf-avatar-label-group-container {
-    background-color: transparent;
-    background-color: var(--sf-avatar-label-group-container--background-color, transparent);
     min-width: 0;
     min-inline-size: 0;
     /* The name and the role wrap inside the group (owner decision C152 (7):
@@ -1358,8 +1395,6 @@
     word-wrap: break-word;
   }
   .sf-avatar-label-group .sf-avatar-label-group-title {
-    color: var(--sf-on-surface);
-    color: var(--sf-avatar-label-group-title--color, var(--sf-on-surface));
     font-family: var(--sf-text--family);
     font-family: var(--sf-avatar-label-group-title--font-family, var(--sf-text--family));
     font-size: var(--sf-avatar-label-group-title--font-size);
@@ -1368,8 +1403,6 @@
     line-height: var(--sf-avatar-label-group-title--line-height);
   }
   .sf-avatar-label-group .sf-avatar-label-group-text {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-avatar-label-group-text--color, var(--sf-on-surface-variant));
     font-family: var(--sf-text--family);
     font-family: var(--sf-avatar-label-group-text--font-family, var(--sf-text--family));
     font-size: var(--sf-avatar-label-group-text--font-size);
@@ -1433,6 +1466,24 @@
   .sf-avatar-label-group--size-1\/3,
   .sf-avatar-label-group--size-1\/4 {
     --sf-avatar-label-group--gap: var(--sf-space-1\/4);
+  }
+}
+@layer sf.paint {
+  .sf-avatar-label-group {
+    background-color: transparent;
+    background-color: var(--sf-avatar-label-group--background-color, transparent);
+  }
+  .sf-avatar-label-group .sf-avatar-label-group-container {
+    background-color: transparent;
+    background-color: var(--sf-avatar-label-group-container--background-color, transparent);
+  }
+  .sf-avatar-label-group .sf-avatar-label-group-title {
+    color: var(--sf-on-surface);
+    color: var(--sf-avatar-label-group-title--color, var(--sf-on-surface));
+  }
+  .sf-avatar-label-group .sf-avatar-label-group-text {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-avatar-label-group-text--color, var(--sf-on-surface-variant));
   }
 }
 @layer sf.components {
@@ -1544,10 +1595,7 @@
   .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(.focus-visible):not([focus-within]):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
     border: var(--sf-px) solid;
     border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
-    /* The cut-out between overlapping avatars is the place they stand on
-       (C16): white in both themes drew a white ring on a dark page. */
-    border-color: transparent;
-    border-color: var(--sf-surface-place, transparent);
+    border-color: revert-layer;
     border-style: solid;
     border-width: var(--sf-px);
     border-width: var(--sf-avatar-group--ring, var(--sf-px));
@@ -1556,11 +1604,7 @@
     border: var(--sf-px) solid;
     border: var(--sf-px) solid;
     border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
-    /* The cut-out between overlapping avatars is the place they stand on
-       (C16): white in both themes drew a white ring on a dark page. */
-    border-color: transparent;
-    border-color: transparent;
-    border-color: var(--sf-surface-place, transparent);
+    border-color: revert-layer;
     border-style: solid;
     border-width: var(--sf-px);
     border-width: var(--sf-px);
@@ -1569,10 +1613,7 @@
   .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(.focus-visible):not(:focus-within):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
     border: var(--sf-px) solid;
     border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
-    /* The cut-out between overlapping avatars is the place they stand on
-       (C16): white in both themes drew a white ring on a dark page. */
-    border-color: transparent;
-    border-color: var(--sf-surface-place, transparent);
+    border-color: revert-layer;
     border-style: solid;
     border-width: var(--sf-px);
     border-width: var(--sf-avatar-group--ring, var(--sf-px));
@@ -1580,10 +1621,7 @@
   .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(.focus-visible):not([focus-within]):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
     border: var(--sf-px) solid;
     border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
-    /* The cut-out between overlapping avatars is the place they stand on
-       (C16): white in both themes drew a white ring on a dark page. */
-    border-color: transparent;
-    border-color: var(--sf-surface-place, transparent);
+    border-color: revert-layer;
     border-style: solid;
     border-width: var(--sf-px);
     border-width: var(--sf-avatar-group--ring, var(--sf-px));
@@ -1592,11 +1630,7 @@
     border: var(--sf-px) solid;
     border: var(--sf-px) solid;
     border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
-    /* The cut-out between overlapping avatars is the place they stand on
-       (C16): white in both themes drew a white ring on a dark page. */
-    border-color: transparent;
-    border-color: transparent;
-    border-color: var(--sf-surface-place, transparent);
+    border-color: revert-layer;
     border-style: solid;
     border-width: var(--sf-px);
     border-width: var(--sf-px);
@@ -1605,10 +1639,7 @@
   .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(:focus-visible):not([focus-within]):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
     border: var(--sf-px) solid;
     border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
-    /* The cut-out between overlapping avatars is the place they stand on
-       (C16): white in both themes drew a white ring on a dark page. */
-    border-color: transparent;
-    border-color: var(--sf-surface-place, transparent);
+    border-color: revert-layer;
     border-style: solid;
     border-width: var(--sf-px);
     border-width: var(--sf-avatar-group--ring, var(--sf-px));
@@ -1617,11 +1648,7 @@
     border: var(--sf-px) solid;
     border: var(--sf-px) solid;
     border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
-    /* The cut-out between overlapping avatars is the place they stand on
-       (C16): white in both themes drew a white ring on a dark page. */
-    border-color: transparent;
-    border-color: transparent;
-    border-color: var(--sf-surface-place, transparent);
+    border-color: revert-layer;
     border-style: solid;
     border-width: var(--sf-px);
     border-width: var(--sf-px);
@@ -1632,12 +1659,7 @@
     border: var(--sf-px) solid;
     border: var(--sf-px) solid;
     border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
-    /* The cut-out between overlapping avatars is the place they stand on
-       (C16): white in both themes drew a white ring on a dark page. */
-    border-color: transparent;
-    border-color: transparent;
-    border-color: transparent;
-    border-color: var(--sf-surface-place, transparent);
+    border-color: revert-layer;
     border-style: solid;
     border-width: var(--sf-px);
     border-width: var(--sf-px);
@@ -1648,11 +1670,7 @@
     border: var(--sf-px) solid;
     border: var(--sf-px) solid;
     border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
-    /* The cut-out between overlapping avatars is the place they stand on
-       (C16): white in both themes drew a white ring on a dark page. */
-    border-color: transparent;
-    border-color: transparent;
-    border-color: var(--sf-surface-place, transparent);
+    border-color: revert-layer;
     border-style: solid;
     border-width: var(--sf-px);
     border-width: var(--sf-px);
@@ -1662,11 +1680,7 @@
     border: var(--sf-px) solid;
     border: var(--sf-px) solid;
     border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
-    /* The cut-out between overlapping avatars is the place they stand on
-       (C16): white in both themes drew a white ring on a dark page. */
-    border-color: transparent;
-    border-color: transparent;
-    border-color: var(--sf-surface-place, transparent);
+    border-color: revert-layer;
     border-style: solid;
     border-width: var(--sf-px);
     border-width: var(--sf-px);
@@ -1677,12 +1691,7 @@
     border: var(--sf-px) solid;
     border: var(--sf-px) solid;
     border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
-    /* The cut-out between overlapping avatars is the place they stand on
-       (C16): white in both themes drew a white ring on a dark page. */
-    border-color: transparent;
-    border-color: transparent;
-    border-color: transparent;
-    border-color: var(--sf-surface-place, transparent);
+    border-color: revert-layer;
     border-style: solid;
     border-width: var(--sf-px);
     border-width: var(--sf-px);
@@ -1693,11 +1702,7 @@
     border: var(--sf-px) solid;
     border: var(--sf-px) solid;
     border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
-    /* The cut-out between overlapping avatars is the place they stand on
-       (C16): white in both themes drew a white ring on a dark page. */
-    border-color: transparent;
-    border-color: transparent;
-    border-color: var(--sf-surface-place, transparent);
+    border-color: revert-layer;
     border-style: solid;
     border-width: var(--sf-px);
     border-width: var(--sf-px);
@@ -1706,10 +1711,7 @@
   .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(:focus-visible):not(:focus-within):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
     border: var(--sf-px) solid;
     border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
-    /* The cut-out between overlapping avatars is the place they stand on
-       (C16): white in both themes drew a white ring on a dark page. */
-    border-color: transparent;
-    border-color: var(--sf-surface-place, transparent);
+    border-color: revert-layer;
     border-style: solid;
     border-width: var(--sf-px);
     border-width: var(--sf-avatar-group--ring, var(--sf-px));
@@ -1879,5 +1881,131 @@
     min-width: 0;
     min-inline-size: 0;
     word-wrap: anywhere;
+  }
+}
+@layer sf.paint {
+  .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(.focus-visible):not([focus-within]):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
+    border: var(--sf-px) solid;
+    border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
+    /* The cut-out between overlapping avatars is the place they stand on
+       (C16): white in both themes drew a white ring on a dark page. */
+    border-color: transparent;
+    border-color: var(--sf-surface-place, transparent);
+  }
+  .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(.focus-visible):not([focus-within]):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
+    border: var(--sf-px) solid;
+    border: var(--sf-px) solid;
+    border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
+    /* The cut-out between overlapping avatars is the place they stand on
+       (C16): white in both themes drew a white ring on a dark page. */
+    border-color: transparent;
+    border-color: transparent;
+    border-color: var(--sf-surface-place, transparent);
+  }
+  .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(.focus-visible):not(:focus-within):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
+    border: var(--sf-px) solid;
+    border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
+    /* The cut-out between overlapping avatars is the place they stand on
+       (C16): white in both themes drew a white ring on a dark page. */
+    border-color: transparent;
+    border-color: var(--sf-surface-place, transparent);
+  }
+  .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(.focus-visible):not([focus-within]):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
+    border: var(--sf-px) solid;
+    border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
+    /* The cut-out between overlapping avatars is the place they stand on
+       (C16): white in both themes drew a white ring on a dark page. */
+    border-color: transparent;
+    border-color: var(--sf-surface-place, transparent);
+  }
+  .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(.focus-visible):not([focus-within]):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
+    border: var(--sf-px) solid;
+    border: var(--sf-px) solid;
+    border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
+    /* The cut-out between overlapping avatars is the place they stand on
+       (C16): white in both themes drew a white ring on a dark page. */
+    border-color: transparent;
+    border-color: transparent;
+    border-color: var(--sf-surface-place, transparent);
+  }
+  .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(:focus-visible):not([focus-within]):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
+    border: var(--sf-px) solid;
+    border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
+    /* The cut-out between overlapping avatars is the place they stand on
+       (C16): white in both themes drew a white ring on a dark page. */
+    border-color: transparent;
+    border-color: var(--sf-surface-place, transparent);
+  }
+  .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(.focus-visible):not([focus-within]):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
+    border: var(--sf-px) solid;
+    border: var(--sf-px) solid;
+    border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
+    /* The cut-out between overlapping avatars is the place they stand on
+       (C16): white in both themes drew a white ring on a dark page. */
+    border-color: transparent;
+    border-color: transparent;
+    border-color: var(--sf-surface-place, transparent);
+  }
+  .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(.focus-visible):not([focus-within]):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
+    border: var(--sf-px) solid;
+    border: var(--sf-px) solid;
+    border: var(--sf-px) solid;
+    border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
+    /* The cut-out between overlapping avatars is the place they stand on
+       (C16): white in both themes drew a white ring on a dark page. */
+    border-color: transparent;
+    border-color: transparent;
+    border-color: transparent;
+    border-color: var(--sf-surface-place, transparent);
+  }
+  .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(.focus-visible):not(:focus-within):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
+    border: var(--sf-px) solid;
+    border: var(--sf-px) solid;
+    border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
+    /* The cut-out between overlapping avatars is the place they stand on
+       (C16): white in both themes drew a white ring on a dark page. */
+    border-color: transparent;
+    border-color: transparent;
+    border-color: var(--sf-surface-place, transparent);
+  }
+  .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(.focus-visible):not([focus-within]):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
+    border: var(--sf-px) solid;
+    border: var(--sf-px) solid;
+    border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
+    /* The cut-out between overlapping avatars is the place they stand on
+       (C16): white in both themes drew a white ring on a dark page. */
+    border-color: transparent;
+    border-color: transparent;
+    border-color: var(--sf-surface-place, transparent);
+  }
+  .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(.focus-visible):not([focus-within]):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
+    border: var(--sf-px) solid;
+    border: var(--sf-px) solid;
+    border: var(--sf-px) solid;
+    border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
+    /* The cut-out between overlapping avatars is the place they stand on
+       (C16): white in both themes drew a white ring on a dark page. */
+    border-color: transparent;
+    border-color: transparent;
+    border-color: transparent;
+    border-color: var(--sf-surface-place, transparent);
+  }
+  .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(:focus-visible):not([focus-within]):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
+    border: var(--sf-px) solid;
+    border: var(--sf-px) solid;
+    border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
+    /* The cut-out between overlapping avatars is the place they stand on
+       (C16): white in both themes drew a white ring on a dark page. */
+    border-color: transparent;
+    border-color: transparent;
+    border-color: var(--sf-surface-place, transparent);
+  }
+  .sf-avatar-group .sf-avatar:not(:hover):not(:active):not(:focus):not(:focus-visible):not(:focus-within):not(:disabled):not(:visited):not(:checked):not(:indeterminate) {
+    border: var(--sf-px) solid;
+    border: var(--sf-avatar-group--ring, var(--sf-px)) solid;
+    /* The cut-out between overlapping avatars is the place they stand on
+       (C16): white in both themes drew a white ring on a dark page. */
+    border-color: transparent;
+    border-color: var(--sf-surface-place, transparent);
   }
 }

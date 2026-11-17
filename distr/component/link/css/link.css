@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* A link is a run of the text it stands in (RG-NV 5, 6): it takes the
      text's size, line, family and weight (C103: one line, one step; a link
@@ -17,8 +17,6 @@
     --sf-link--gap: var(--sf-gap--icon-inline, var(--sf-space-1\/4));
     --sf-link--text-decoration: underline;
     display: inline;
-    color: var(--sf-link--color);
-    background-color: var(--sf-link--background-color);
     font: inherit;
     -webkit-text-decoration-line: var(--sf-link--text-decoration);
             text-decoration-line: var(--sf-link--text-decoration);
@@ -66,7 +64,6 @@
   .sf-link :where(.sf-link__content, .sf-link-content) {
     min-width: var(--sf-0);
     min-inline-size: var(--sf-0);
-    color: inherit;
     font: inherit;
     word-wrap: anywhere;
     text-decoration: inherit;
@@ -139,6 +136,17 @@
     block-size: var(--sf-link-icon--size);
     width: var(--sf-link-icon--size);
     inline-size: var(--sf-link-icon--size);
+  }
+}
+@layer sf.paint {
+  .sf-link {
+    color: var(--sf-link--color);
+    background-color: var(--sf-link--background-color);
+  }
+  .sf-link :where(.sf-link__content, .sf-link-content) {
+    color: inherit;
+  }
+  .sf-link :where(.sf-link__icon, .sf-link-icon) {
     color: currentColor;
   }
 }

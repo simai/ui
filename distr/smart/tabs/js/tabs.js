@@ -1297,8 +1297,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("795a53b0bbe9");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("84d032c55810");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("51b106697124");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("33cd7c3c3aca");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("90473944857f");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("c74d9c9cd2e0");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
@@ -1319,16 +1318,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_13__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__.runtime
-}; // sf-tabs from its component.json (standard simai.smart-component 1.3.8 §3,
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-tabs from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §7.2.1, §7.2.3, §8, §11): the settings are attributes and properties
 // made by core/js/element-manifest.js, the words are lang/<locale>.json, the
 // actions answer outcomes, and the old event name sf-tab-change is a dated
@@ -1336,10 +1330,7 @@ const ru = {
 
 const TabsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_12__,
   // setData(data, reason) and setPanels(panels, reason) take their fields in
@@ -3350,7 +3341,7 @@ function renderIconLink(item, context) {
       data-sf-tab-index=${String(item.index)}
       data-tab-label=${item.label}
       data-tooltip=${item.hint ? hintId(item, context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-    ><sf-icon root-class="pointer-event-none" icon=${item.iconStart || item.icon || item.iconEnd || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ><sf-icon root-class="pointer-events-none" icon=${item.iconStart || item.icon || item.iconEnd || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       weight="400" aria-hidden="true"></sf-icon></a>`;
 } // A tab is marked data-sf-tab-index only (R193 DP-11): the unprefixed
 // data-tab, its former name, was written for one minor (1.2.x) and is not
@@ -3562,6 +3553,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "c74d9c9cd2e0"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("33cd7c3c3aca");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "51b106697124"
 (module) {
 
@@ -3572,7 +3585,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs 
 /***/ "84d032c55810"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.4.0","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.4.3","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -3580,13 +3593,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","ve
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Tabs","events":{"settings-change":{"label":"Tabs arranged"},"settings-reset":{"label":"Tabs reset"}},"runtime":{"customize":"Customize tabs","errors":{"one":"{n} error","other":"{n} errors"},"more":"More","moved":"Moved","pinned":"Always shown","reset":"Reset","tab":"Tab {n}","visible":"Shown"}}');
-
-/***/ },
-
-/***/ "90473944857f"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Вкладки","events":{"settings-change":{"label":"Вкладки настроены"},"settings-reset":{"label":"Вкладки сброшены"}},"runtime":{"customize":"Настроить вкладки","errors":{"one":"{n} ошибка","few":"{n} ошибки","many":"{n} ошибок","other":"{n} ошибки"},"more":"Ещё","moved":"Перемещено","pinned":"Всегда на месте","reset":"Сбросить","tab":"Вкладка {n}","visible":"Показывать"}}');
 
 /***/ }
 

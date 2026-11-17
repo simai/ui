@@ -597,9 +597,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("7fc7df212ec0");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("96b1e08482fd");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("b8705148b32a");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e4e3e149eb84");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("0c19f0f04de2");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("6c4095b537c9");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d1d35d196e05");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("6c4095b537c9");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
@@ -633,23 +632,15 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
 
 const PageHeaderElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
 }); // The header's slots. A child naming one of them is the page's content for it.
@@ -1290,6 +1281,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "d1d35d196e05"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e4e3e149eb84");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "b8705148b32a"
 (module) {
 
@@ -1300,7 +1313,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-heade
 /***/ "96b1e08482fd"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-page","tag":"sf-header-page","version":"1.8.3","kind":"leaf","settings":{"heading":{"type":"string","default":""},"count":{"type":"string","default":""},"level":{"type":"enum","values":["site","install"],"default":"site"},"expressive":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["more","wrap"],"default":"more"},"sticky":{"type":"boolean","default":false},"star":{"type":"boolean","optional":true}},"values":{},"events":{"toggle":{"carries":{"on":"boolean"},"cancelable":true}},"actions":{},"host-states":{"data-scrolled":"boolean"},"css-variables":{"--sf-page-header-gap":{"type":"length","state":"default"},"--sf-page-header-line-gap":{"type":"length","state":"default"},"--sf-page-header-actions-gap":{"type":"length","state":"default"},"--sf-page-header-heading-color":{"type":"color","state":"default"},"--sf-page-header-star-color":{"type":"color","state":"on"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-page","tag":"sf-header-page","version":"1.9.3","kind":"leaf","settings":{"heading":{"type":"string","default":""},"count":{"type":"string","default":""},"level":{"type":"enum","values":["site","install"],"default":"site"},"expressive":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["more","wrap"],"default":"more"},"sticky":{"type":"boolean","default":false},"star":{"type":"boolean","optional":true}},"values":{},"events":{"toggle":{"carries":{"on":"boolean"},"cancelable":true}},"actions":{},"host-states":{"data-scrolled":"boolean"},"css-variables":{"--sf-page-header-gap":{"type":"length","state":"default"},"--sf-page-header-line-gap":{"type":"length","state":"default"},"--sf-page-header-actions-gap":{"type":"length","state":"default"},"--sf-page-header-heading-color":{"type":"color","state":"default"},"--sf-page-header-star-color":{"type":"color","state":"on"}}}');
 
 /***/ },
 
@@ -1308,13 +1321,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-page","tag":"sf-he
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Page header","runtime":{"all-sites":"for all sites","more":"More","star":"Add to favourites","unstar":"Remove from favourites"}}');
-
-/***/ },
-
-/***/ "0c19f0f04de2"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Шапка страницы","runtime":{"all-sites":"для всех сайтов","more":"Ещё","star":"В избранное","unstar":"Убрать из избранного"}}');
 
 /***/ }
 

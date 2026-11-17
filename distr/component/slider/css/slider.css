@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
 *
@@ -249,7 +249,6 @@
     border-start-end-radius: var(--sf-slider-dots--border-start-end-radius);
     border-end-start-radius: var(--sf-slider-dots--border-end-start-radius);
     border-end-end-radius: var(--sf-slider-dots--border-end-end-radius);
-    background-color: var(--sf-slider-dots--background-color);
     box-shadow: var(--sf-slider-dots--box-shadow);
     -webkit-backdrop-filter: var(--sf-slider-dots--backdrop-filter);
             backdrop-filter: var(--sf-slider-dots--backdrop-filter);
@@ -353,10 +352,9 @@
     --sf-slider-dots-dot--border-end-start-radius: var(--sf-radius-circle);
     --sf-slider-dots-dot--border-start-end-radius: var(--sf-radius-circle);
     --sf-slider-dots-dot--border-start-start-radius: var(--sf-radius-circle);
-    background-color: var(--sf-slider-dots-dot--background-color);
-    color: var(--sf-slider-dots-dot--color);
-    border: var(--sf-px) solid currentColor;
-    border: var(--sf-slider-dots-dot--stroke-width, var(--sf-px)) solid currentColor;
+    border-width: var(--sf-px);
+    border-width: var(--sf-slider-dots-dot--stroke-width, var(--sf-px));
+    border-style: solid;
     outline: none;
     border-end-end-radius: var(--sf-slider-dots-dot--border-end-end-radius);
     border-end-start-radius: var(--sf-slider-dots-dot--border-end-start-radius);
@@ -385,8 +383,6 @@
   }
   .sf-slider-dots .sf-slider-dots-dot.active {
     --sf-slider-dots-dot--background-color: var(--sf-slider-dots-dot--active-color, var(--sf-slider-dots-dot--color));
-    color: var(--sf-slider-dots-dot--color);
-    color: var(--sf-slider-dots-dot--active-color, var(--sf-slider-dots-dot--color));
     width: var(--sf-slider-dots-dot--active-width);
   }
   .sf-slider-dots .sf-slider-dots-dot.focus-visible {
@@ -404,13 +400,6 @@
   @media (forced-colors: active) {
     .sf-slider-dots .sf-slider-dots-dot {
       forced-color-adjust: none;
-      color: ButtonText;
-      border-color: ButtonText;
-      background-color: ButtonFace;
-    }
-    .sf-slider-dots .sf-slider-dots-dot.active {
-      border-color: Highlight;
-      background-color: Highlight;
     }
     .sf-slider-dots .sf-slider-dots-dot.focus-visible {
       outline-color: Highlight;
@@ -583,6 +572,31 @@
             padding-inline-end: 0;
   }
 }
+@layer sf.paint {
+  .sf-slider-dots {
+    background-color: var(--sf-slider-dots--background-color);
+  }
+  .sf-slider-dots .sf-slider-dots-dot {
+    background-color: var(--sf-slider-dots-dot--background-color);
+    color: var(--sf-slider-dots-dot--color);
+    border-color: currentColor;
+  }
+  .sf-slider-dots .sf-slider-dots-dot.active {
+    color: var(--sf-slider-dots-dot--color);
+    color: var(--sf-slider-dots-dot--active-color, var(--sf-slider-dots-dot--color));
+  }
+  @media (forced-colors: active) {
+    .sf-slider-dots .sf-slider-dots-dot {
+      color: ButtonText;
+      border-color: ButtonText;
+      background-color: ButtonFace;
+    }
+    .sf-slider-dots .sf-slider-dots-dot.active {
+      border-color: Highlight;
+      background-color: Highlight;
+    }
+  }
+}
 /*
 * Main SCSS file for including styles for component.
 *
@@ -602,8 +616,6 @@
     display: inline-flex;
     align-items: center;
     gap: var(--sf-space-1\/3);
-    background-color: transparent;
-    background-color: var(--sf-slider-arrows--background-color, transparent);
     box-shadow: var(--sf-slider-arrows--box-shadow);
     -webkit-backdrop-filter: var(--sf-slider-arrows--backdrop-filter);
             backdrop-filter: var(--sf-slider-arrows--backdrop-filter);
@@ -727,7 +739,6 @@
     --sf-icon-button--border-end-start-radius: var(--sf-radius-rounded);
     --sf-icon-button--border-start-end-radius: var(--sf-radius-rounded);
     --sf-icon-button--border-start-start-radius: var(--sf-radius-rounded);
-    background-color: var(--sf-icon-button--background-color);
     border-end-end-radius: var(--sf-icon-button--border-end-end-radius);
     border-end-start-radius: var(--sf-icon-button--border-end-start-radius);
     border-start-end-radius: var(--sf-icon-button--border-start-end-radius);
@@ -749,6 +760,16 @@
     /* The raised place (C20). It read --sf-blur-medium, a length (4px), which
        is no shadow: the declaration was dropped and the arrows had none. */
     --sf-slider-arrows--box-shadow: var(--sf-shadow-raised);
+  }
+}
+@layer sf.paint {
+  .sf-slider-arrows {
+    background-color: transparent;
+    background-color: var(--sf-slider-arrows--background-color, transparent);
+  }
+  .sf-slider-arrows .sf-icon-button,
+  .sf-slider-rotation-place .sf-icon-button {
+    background-color: var(--sf-icon-button--background-color);
   }
 }
 /* The light circle of --light (FW-B-3, docs batch B 2026-11-15). The circle
@@ -864,6 +885,14 @@
     display: block;
     min-height: var(--sf-f2);
     min-height: var(--sf-slider-slide--min-height, var(--sf-f2));
+  }
+  /* A slider with a ratio is as high as its ratio makes it: the slide fills the
+     frame and has no floor of its own. The 192 floor (--sf-f2) stood under the
+     frame on a narrow screen -- 16/9 at 390 is a 280 x 158 window, 21/9 about
+     120 high -- and the window cut the slide's bottom, its number and its
+     caption on the scrim with it (34 px at 16/9, about 72 at 21/9). */
+  .sf-slider:not(.sf-slider--content):not([data-ratio=auto])[data-ratio] > .sf-slider-main.swiper .sf-slider-slide {
+    min-height: 0;
   }
   .sf-slider .sf-slider-slide img {
     width: 100%;
@@ -1156,7 +1185,6 @@
      they change. */
   .sf-slider-dots.sf-slider-dots--count {
     align-items: center;
-    color: var(--sf-slider-dots-dot--color);
     font-size: var(--sf-text-size-1\/2);
     -webkit-font-feature-settings: "tnum";
             font-feature-settings: "tnum";
@@ -1172,9 +1200,6 @@
     padding-right: var(--sf-space-1\/2);
     padding-inline: var(--sf-space-1\/2);
     white-space: pre;
-  }
-  .sf-slider-dots.sf-slider-dots--plate.sf-slider-dots--count {
-    color: var(--sf-on-surface);
   }
   .sf-slider-dots.sf-slider-dots--bare.sf-slider-dots--count {
     padding-left: 0;
@@ -1228,6 +1253,14 @@
     bottom: calc(var(--sf-space-1) + var(--sf-d2));
     bottom: calc(var(--sf-slider-gap, var(--sf-slider--gap, var(--sf-space-1))) + var(--sf-slider-thumbnail--block-size, var(--sf-slider-thumbnail-size, var(--sf-d2))));
     inset-block-end: calc(var(--sf-slider-gap, var(--sf-slider--gap, var(--sf-space-1))) + var(--sf-slider-thumbnail--block-size, var(--sf-slider-thumbnail-size, var(--sf-d2))));
+  }
+}
+@layer sf.paint {
+  .sf-slider-dots.sf-slider-dots--count {
+    color: var(--sf-slider-dots-dot--color);
+  }
+  .sf-slider-dots.sf-slider-dots--plate.sf-slider-dots--count {
+    color: var(--sf-on-surface);
   }
 }
 @layer sf.states {

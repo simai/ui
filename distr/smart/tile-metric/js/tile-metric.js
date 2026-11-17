@@ -242,9 +242,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c9ce0852ac73");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("8433b29b08eb");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("1d705aa58430");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("5875d0203387");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("f46b2c1764b8");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("6778b5230e7b");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("156278cb72e1");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("6778b5230e7b");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -271,16 +270,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__.runtime
-};
  // The label's id, one per tile on the page (the same on every render, so a
 // first-paint snapshot is stable).
 
@@ -365,10 +359,7 @@ function changeOf({
 }
 const TileMetricElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__.files,
   source: 'ru'
 });
 
@@ -717,10 +708,32 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "156278cb72e1"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5875d0203387");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "1d705aa58430"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tile-metric","tag":"sf-tile-metric","version":"1.5.2","kind":"leaf","settings":{"label":{"type":"string","default":""},"value":{"type":"number","optional":true},"value-text":{"type":"string","default":""},"format":{"type":"string","default":"number"},"unit":{"type":"string","default":""},"previous":{"type":"number","optional":true},"delta":{"type":"number","optional":true},"delta-format":{"type":"enum","values":["percent","absolute","both"],"default":"percent"},"period-text":{"type":"string","default":""},"better":{"type":"enum","values":["up","down","none"],"default":"up"},"max":{"type":"number","optional":true},"limit-text":{"type":"string","default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"status":{"type":"enum","values":["neutral","success","warning","error","info"],"default":"neutral"},"hint":{"type":"string","default":""},"href":{"type":"string","default":""},"openable":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{},"events":{"open":{"carries":{"id":"string"}}},"actions":{},"host-states":{"data-status":"string","data-loading":"boolean"},"css-variables":{"--sf-tile-metric-background-color":{"type":"color","state":"default"},"--sf-tile-metric-border-color":{"type":"color","state":"default"},"--sf-tile-metric-radius":{"type":"length","state":"default"},"--sf-tile-metric-padding":{"type":"length","state":"default"},"--sf-tile-metric-value-color":{"type":"color","state":"default"},"--sf-tile-metric-hover-background-color":{"type":"color","state":"hover"},"--sf-tile-metric-min-width":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tile-metric","tag":"sf-tile-metric","version":"1.6.3","kind":"leaf","settings":{"label":{"type":"string","default":""},"value":{"type":"number","optional":true},"value-text":{"type":"string","default":""},"format":{"type":"string","default":"number"},"unit":{"type":"string","default":""},"previous":{"type":"number","optional":true},"delta":{"type":"number","optional":true},"delta-format":{"type":"enum","values":["percent","absolute","both"],"default":"percent"},"period-text":{"type":"string","default":""},"better":{"type":"enum","values":["up","down","none"],"default":"up"},"max":{"type":"number","optional":true},"limit-text":{"type":"string","default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"status":{"type":"enum","values":["neutral","success","warning","error","info"],"default":"neutral"},"hint":{"type":"string","default":""},"href":{"type":"string","default":""},"openable":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"}},"values":{},"events":{"open":{"carries":{"id":"string"}}},"actions":{},"host-states":{"data-status":"string","data-loading":"boolean"},"css-variables":{"--sf-tile-metric-background-color":{"type":"color","state":"default"},"--sf-tile-metric-border-color":{"type":"color","state":"default"},"--sf-tile-metric-radius":{"type":"length","state":"default"},"--sf-tile-metric-padding":{"type":"length","state":"default"},"--sf-tile-metric-value-color":{"type":"color","state":"default"},"--sf-tile-metric-hover-background-color":{"type":"color","state":"hover"},"--sf-tile-metric-min-width":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -728,13 +741,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tile-metric","tag":"sf-ti
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Metric tile","runtime":{"untitled":"Metric","no-value":"—","loading":"Loading","limit":"{value} of {max}","limit-name":"{label}: used","change-up":"up","change-down":"down","change-flat":"no change","status-success":"OK","status-info":"Info","status-warning":"Warning","status-error":"Error"},"events":{"open":{"label":"Open"}}}');
-
-/***/ },
-
-/***/ "f46b2c1764b8"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Плитка показателя","runtime":{"untitled":"Показатель","no-value":"—","loading":"Загрузка","limit":"{value} из {max}","limit-name":"{label}: заполнено","change-up":"рост","change-down":"снижение","change-flat":"без изменений","status-success":"В порядке","status-info":"Сведения","status-warning":"Внимание","status-error":"Ошибка"},"events":{"open":{"label":"Открыть"}}}');
 
 /***/ }
 

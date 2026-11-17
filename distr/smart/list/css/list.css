@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* sf-list. The host is display: contents; .sf-list__frame is what the page
      places, on the Framework's plain list surface (.sf-list: its fill, edge,
@@ -31,7 +31,6 @@
     flex-direction: column;
     min-width: 0;
     min-inline-size: 0;
-    color: var(--sf-on-surface);
     font-family: var(--sf-text--family);
   }
   /* 1.5.1: what the narrow rule watches for the frame's width (index.js
@@ -182,20 +181,12 @@
      and the title's line. An unread row's time takes the main ink, as its
      title is semibold; a disabled row's stays the disabled ink. */
   .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta > .sf-list__time {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
     font-size: var(--sf-list-item-supporting--font-size);
     line-height: var(--sf-list-item-supporting--line-height);
     -webkit-font-feature-settings: "tnum";
             font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
-  }
-  .sf-list-item.disabled:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta > .sf-list__time {
-    color: var(--sf-on-surface-disabled);
-  }
-  .sf-list__row--unread > sf-list-item > .sf-list-item:not(.disabled) > .sf-list-item-wrap > .sf-list__meta > .sf-list__time {
-    color: var(--sf-on-surface);
   }
   /* A two-line row's meta is sf-list-item's end column (owner decision C148
      (2)): the badge and the count on the caption's line, under the title's
@@ -465,8 +456,6 @@
     padding-left: var(--sf-list--text-inset);
     padding-right: var(--sf-list--text-inset);
     padding-inline: var(--sf-list--text-inset);
-    color: var(--sf-on-surface);
-    color: var(--sf-list-heading-color, var(--sf-on-surface));
   }
   .sf-list__group + .sf-list__group {
     margin-top: calc(var(--sf-space-3) - var(--sf-list--group-gap));
@@ -496,15 +485,7 @@
     flex: 1;
     min-width: 0;
     min-inline-size: 0;
-    background-color: transparent;
     --sf-list-item--border-bottom-width: 0;
-  }
-  /* A translucent fill: a tonal badge on the open row keeps its own tone
-     (C43; core mix sf-place-fill, written out because this sheet is not Sass). */
-  .sf-list__row--current {
-    background-color: var(--sf-list--current);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-list--current);
   }
   /* An unread row (owner decision C167 (3), 2026-11-14): a row with a count
      -- the item's count is its unread (count-label «3 непрочитанных») -- has
@@ -563,11 +544,9 @@
     padding-left: var(--sf-list--text-inset);
     padding-right: var(--sf-list--text-inset);
     padding-inline: var(--sf-list--text-inset);
-    border: var(--sf-px) solid var(--sf-outline);
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-list--row-radius);
-    /* A bordered field: no plate of its own (C16). */
-    background: var(--sf-transparent);
-    color: inherit;
     font: inherit;
     font-size: var(--sf-list--font-size);
     line-height: var(--sf-list--line-height);
@@ -669,7 +648,6 @@
      sheet's .sf-avatar paints its own plate in sf.components, so the place
      says the skeleton fill again here, above it. */
   .sf-list__lead-skeleton.sf-first-paint-fill {
-    background-color: var(--sf-skeleton-base);
     -webkit-animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
             animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
   }
@@ -680,6 +658,47 @@
     height: var(--sf-list--lead-line);
     block-size: var(--sf-list--lead-line);
     border-radius: var(--sf-radius--ui);
+  }
+}
+/* Paint (C273): the fill, edge and place colour of these parts stand in
+   sf.paint, under the utilities, so bg-*, border-* and color-* on them
+   win; their geometry stays in sf.components, over the utilities. */
+@layer sf.paint {
+  .sf-list__frame {
+    color: var(--sf-on-surface);
+  }
+  .sf-list-item:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta > .sf-list__time {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
+  }
+  .sf-list-item.disabled:not(.sf-list-item--two-line) > .sf-list-item-wrap > .sf-list__meta > .sf-list__time {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-list__row--unread > sf-list-item > .sf-list-item:not(.disabled) > .sf-list-item-wrap > .sf-list__meta > .sf-list__time {
+    color: var(--sf-on-surface);
+  }
+  .sf-list__group > .sf-list__heading {
+    color: var(--sf-on-surface);
+    color: var(--sf-list-heading-color, var(--sf-on-surface));
+  }
+  .sf-list__row > sf-list-item > .sf-list-item {
+    background-color: transparent;
+  }
+  /* A translucent fill: a tonal badge on the open row keeps its own tone
+     (C43; core mix sf-place-fill, written out because this sheet is not Sass). */
+  .sf-list__row--current {
+    background-color: var(--sf-list--current);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-list--current);
+  }
+  .sf-list__rename {
+    border-color: var(--sf-outline);
+    /* A bordered field: no plate of its own (C16). */
+    background: var(--sf-transparent);
+    color: inherit;
+  }
+  .sf-list__lead-skeleton.sf-first-paint-fill {
+    background-color: var(--sf-skeleton-base);
   }
 }
 /* Under a finger (1.2.0) every row, the rename field, the loading rows and

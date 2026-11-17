@@ -20,9 +20,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("32f2d60c5165");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("ad38f797cd15");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("b99c8b8e2c4b");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2484a115f83a");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("1c518e38db07");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("8c4b184ec5f7");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("1c518e38db07");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -49,16 +48,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__.runtime
-};
  // A value longer than this (in graphemes, roughly characters) is not put in a sentence.
 
 const LONG = 80; // The reveal's ids, one per element on the page (stable across renders).
@@ -98,10 +92,7 @@ function isLong(text) {
 }
 const ChangeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__.files,
   source: 'ru'
 });
 
@@ -375,10 +366,32 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "8c4b184ec5f7"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("b99c8b8e2c4b");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "ad38f797cd15"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.change","tag":"sf-change","version":"1.1.1","kind":"leaf","settings":{"before":{"type":"string","default":""},"after":{"type":"string","default":""},"label":{"type":"string","default":""},"show-label":{"type":"boolean","default":false},"changes":{"type":"list","schema":{"items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":"string"},"after":{"type":"string"}},"required":["label"]}},"default":[]},"layout":{"type":"enum","values":["inline","list"],"default":"inline"},"reveal":{"type":"enum","values":["auto","none"],"default":"auto"}},"values":{},"events":{},"actions":{},"presentation":{"skeleton":{"late":["changes"]}},"host-states":{"data-empty":"boolean","data-block":"boolean","data-revealed":"boolean"},"css-variables":{"--sf-change-before-color":{"type":"color","state":"default"},"--sf-change-after-color":{"type":"color","state":"default"},"--sf-change-after-weight":{"type":"keyword","state":"default"},"--sf-change-arrow-color":{"type":"color","state":"default"},"--sf-change-label-color":{"type":"color","state":"default"},"--sf-change-column-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.change","tag":"sf-change","version":"1.2.3","kind":"leaf","settings":{"before":{"type":"string","default":"","attribute-only":true},"after":{"type":"string","default":"","attribute-only":true},"label":{"type":"string","default":""},"show-label":{"type":"boolean","default":false},"changes":{"type":"list","schema":{"items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":"string"},"after":{"type":"string"}},"required":["label"]}},"default":[]},"layout":{"type":"enum","values":["inline","list"],"default":"inline"},"reveal":{"type":"enum","values":["auto","none"],"default":"auto"}},"values":{},"events":{},"actions":{},"presentation":{"skeleton":{"late":["changes"]}},"host-states":{"data-empty":"boolean","data-block":"boolean","data-revealed":"boolean"},"css-variables":{"--sf-change-before-color":{"type":"color","state":"default"},"--sf-change-after-color":{"type":"color","state":"default"},"--sf-change-after-weight":{"type":"keyword","state":"default"},"--sf-change-arrow-color":{"type":"color","state":"default"},"--sf-change-label-color":{"type":"color","state":"default"},"--sf-change-column-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -386,13 +399,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.change","tag":"sf-change"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Change","runtime":{"empty-text":"empty","change-text":"was {before}, now {after}","label-separator":":","show-text":"Show changes","hide-text":"Hide changes","before-text":"Before","after-text":"After"}}');
-
-/***/ },
-
-/***/ "2484a115f83a"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Изменение","runtime":{"empty-text":"пусто","change-text":"было {before}, стало {after}","label-separator":":","show-text":"Показать изменения","hide-text":"Скрыть изменения","before-text":"Было","after-text":"Стало"}}');
 
 /***/ }
 

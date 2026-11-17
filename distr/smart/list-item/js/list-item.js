@@ -326,6 +326,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getInitials: () => (/* binding */ getInitials),
 /* harmony export */   normalizeInitialsWords: () => (/* binding */ normalizeInitialsWords)
 /* harmony export */ });
+// c282-allow-start: input parsing (initials read from Russian names, C152)
 const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]); // Words a name carries that are not the person's or the organisation's own
 // (owner decision C152 (3), 2026-11-14): legal forms (ООО «Ромашка» → Р),
 // titles (Dr. John Smith → JS) and name particles (Мария фон Штейн → МШ) are
@@ -335,7 +336,8 @@ const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "д
 const INITIALS_SERVICE_WORDS = new Set([// legal forms
 "ооо", "оао", "зао", "пао", "ао", "нао", "ип", "нко", "ано", "гуп", "муп", "фгуп", "гбу", "мбу", "чоп", "llc", "inc", "ltd", "gmbh", "ag", "corp", "co", "llp", "plc", "lp", "bv", "oy", "ab", "srl", "sarl", // titles
 "dr", "prof", "mr", "mrs", "ms", "mx", "miss", "sir", "jr", "sr", "phd", "д-р", "проф", "акад", "г-н", "г-жа", "доц", // particles
-"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]);
+"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]); // c282-allow-end
+
 function normalizeInitialsWords(value = "") {
   return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
 } // The first character a reader sees: a whole grapheme, so a letter written
@@ -430,8 +432,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_long_press__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("50e7fd61ac57");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f4c129a27dd4");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("06e7f30e3c4d");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("f073ddf72256");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ef521380d975");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("56d4b82fb2ff");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -450,16 +451,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-}; // A row a person reaches by keyboard (interactive, or an item of an sf-sortable
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// A row a person reaches by keyboard (interactive, or an item of an sf-sortable
 // list) is one stop of its list: the list is a single Tab stop and the arrows,
 // Home and End move between its rows (simai/ui-source#29, ui-mail P-14: twenty
 // blocks were forty Tab stops). The list is the nearest sf-sortable, listbox,
@@ -571,10 +567,7 @@ function normalizeSizeGroup(value) {
 
 const ListItemElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__
 });
@@ -1410,6 +1403,28 @@ function resolveAvatarTone(setting, name) {
 
 /***/ },
 
+/***/ "56d4b82fb2ff"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f073ddf72256");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "06e7f30e3c4d"
 (module) {
 
@@ -1420,7 +1435,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-list-
 /***/ "f4c129a27dd4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-item","tag":"sf-list-item","version":"1.6.1","kind":"leaf","settings":{"value":{"type":"string","default":""},"kind":{"type":"enum","values":["text","icon","checkbox","avatar","color"],"default":"text"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"text":{"type":"string","default":""},"icon":{"type":"icon","default":"person"},"disabled":{"type":"boolean","default":false},"color-class":{"type":"string","default":"bg-tertiary"},"avatar-image-url":{"type":"string","default":""},"avatar-title":{"type":"string","default":""},"supporting":{"type":"string","default":""},"interactive":{"type":"boolean","default":false},"sortable-item":{"type":"string","default":""},"pinned":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"lines":{"type":"enum","values":["1","2"],"default":"1"}},"values":{"checked":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","trigger":{"type":"enum","values":["pointer","keyboard"]}}}},"actions":{},"css-variables":{"--sf-list-item-background-color":{"type":"color","state":"default"},"--sf-list-item-border-color":{"type":"color","state":"default"},"--sf-list-item-color":{"type":"color","state":"default"},"--sf-list-item-supporting-color":{"type":"color","state":"default"},"--sf-list-item-handle-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-item","tag":"sf-list-item","version":"1.6.2","kind":"leaf","settings":{"value":{"type":"string","default":""},"kind":{"type":"enum","values":["text","icon","checkbox","avatar","color"],"default":"text"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"text":{"type":"string","default":""},"icon":{"type":"icon","default":"person"},"disabled":{"type":"boolean","default":false},"color-class":{"type":"string","default":"bg-tertiary"},"avatar-image-url":{"type":"string","default":""},"avatar-title":{"type":"string","default":""},"supporting":{"type":"string","default":""},"interactive":{"type":"boolean","default":false},"sortable-item":{"type":"string","default":""},"pinned":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"lines":{"type":"enum","values":["1","2"],"default":"1"}},"values":{"checked":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","trigger":{"type":"enum","values":["pointer","keyboard"]}}}},"actions":{},"css-variables":{"--sf-list-item-background-color":{"type":"color","state":"default"},"--sf-list-item-border-color":{"type":"color","state":"default"},"--sf-list-item-color":{"type":"color","state":"default"},"--sf-list-item-supporting-color":{"type":"color","state":"default"},"--sf-list-item-handle-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
@@ -1428,13 +1443,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-item","tag":"sf-list
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"List item","runtime":{}}');
-
-/***/ },
-
-/***/ "ef521380d975"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Пункт списка","runtime":{}}');
 
 /***/ }
 

@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 /* sf-focus-ring: editor — the editing canvas marks what is being edited in its
    own colour, which is part of the editor's language rather than the product's
    focus colour. Width and style stay the system's. */
@@ -67,8 +67,6 @@
     pointer-events: none;
     opacity: 1;
     opacity: var(--sf-sortable-ghost-opacity, 1);
-    background-color: Canvas;
-    background-color: var(--sf-surface-popup, Canvas);
     box-shadow: var(--sf-shadow-overlay);
   }
   .sf-sortable-ghost > .sf-sortable-ghost-item {
@@ -84,8 +82,6 @@
     z-index: 90;
     z-index: var(--sf-sortable-ghost-z-index, var(--sf-layer--popover, 90));
     border-radius: var(--sf-radius-1\/3);
-    background: Highlight;
-    background: var(--sf-sortable-indicator-color, var(--sf-primary, Highlight));
     pointer-events: none;
   }
   .sf-sortable-indicator[hidden] {
@@ -104,11 +100,9 @@
     z-index: 90;
     z-index: var(--sf-sortable-ghost-z-index, var(--sf-layer--popover, 90));
     box-sizing: border-box;
-    border: var(--sf-px) dashed Highlight;
-    border: var(--sf-px) dashed var(--sf-primary-outline, var(--sf-primary, Highlight));
+    border-width: var(--sf-px);
+    border-style: dashed;
     border-radius: var(--sf-radius--ui);
-    background-color: transparent;
-    background-color: var(--sf-primary-state-select, transparent);
     pointer-events: none;
   }
   [data-sf-sortable-column-source] {
@@ -117,11 +111,9 @@
   .sf-sortable-placeholder {
     box-sizing: border-box;
     flex: none;
-    border: var(--sf-px) dashed Highlight;
-    border: var(--sf-px) dashed var(--sf-sortable-placeholder-border-color, var(--sf-primary-outline, var(--sf-primary, Highlight)));
+    border-width: var(--sf-px);
+    border-style: dashed;
     border-radius: var(--sf-radius--ui);
-    background-color: transparent;
-    background-color: var(--sf-primary-state-select, transparent);
     pointer-events: none;
   }
   .sf-sortable-live {
@@ -166,8 +158,6 @@
     content: "";
     position: absolute;
     border-radius: var(--sf-px);
-    background: Highlight;
-    background: var(--sf-primary, Highlight);
     pointer-events: none;
   }
   .sf-sortable-insert[data-axis=y]::before {
@@ -221,9 +211,6 @@
     align-items: center;
     justify-content: center;
     margin: 0;
-    background-color: Canvas;
-    background-color: var(--sf-surface-raised, Canvas);
-    --sf-on-surface-variant: var(--sf-on-surface-raised-variant);
     background-image: linear-gradient(transparent, transparent);
     background-image: linear-gradient(var(--sf-icon-button--background-color, transparent), var(--sf-icon-button--background-color, transparent));
     --sf-icon-button--box-shadow: var(--sf-shadow-raised);
@@ -252,5 +239,36 @@
        -moz-user-select: none;
         -ms-user-select: none;
             user-select: none;
+  }
+}
+@layer sf.paint {
+  .sf-sortable-ghost {
+    background-color: Canvas;
+    background-color: var(--sf-surface-popup, Canvas);
+  }
+  .sf-sortable-indicator {
+    background: Highlight;
+    background: var(--sf-sortable-indicator-color, var(--sf-primary, Highlight));
+  }
+  .sf-sortable-column-outline {
+    border-color: Highlight;
+    border-color: var(--sf-primary-outline, var(--sf-primary, Highlight));
+    background-color: transparent;
+    background-color: var(--sf-primary-state-select, transparent);
+  }
+  .sf-sortable-placeholder {
+    border-color: Highlight;
+    border-color: var(--sf-sortable-placeholder-border-color, var(--sf-primary-outline, var(--sf-primary, Highlight)));
+    background-color: transparent;
+    background-color: var(--sf-primary-state-select, transparent);
+  }
+  .sf-sortable-insert::before {
+    background: Highlight;
+    background: var(--sf-primary, Highlight);
+  }
+  .sf-sortable-insert .sf-sortable-insert-button.sf-icon-button {
+    background-color: Canvas;
+    background-color: var(--sf-surface-raised, Canvas);
+    --sf-on-surface-variant: var(--sf-on-surface-raised-variant);
   }
 }

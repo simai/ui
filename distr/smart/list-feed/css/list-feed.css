@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* sf-list-feed. The host is display: contents (the Smart base sets it), so
      .sf-list-feed is what the page's layout places: give its container a
@@ -160,22 +160,38 @@
     gap: var(--sf-space-1\/4);
     max-width: 100%;
     max-inline-size: 100%;
-    color: var(--sf-on-surface);
     font-family: var(--sf-text--family);
     font-size: var(--sf-text--size);
     line-height: var(--sf-text--height);
   }
   .sf-list-feed__author {
     margin: 0;
-    color: var(--sf-on-surface);
     font-size: var(--sf-text-size-1\/2);
     line-height: var(--sf-text-height-1\/2);
     font-weight: var(--sf-font-weight-medium);
   }
   /* «Автор · время» (C167 (4)): the time quiet and regular after the name. */
   .sf-list-feed__time {
-    color: var(--sf-on-surface-variant);
     font-weight: var(--sf-weight--regular);
+  }
+  .sf-list-feed__text {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: anywhere;
+  }
+}
+/* Paint (C273): the fill, edge and place colour of these parts stand in
+   sf.paint, under the utilities, so bg-*, border-* and color-* on them
+   win; their geometry stays in sf.components, over the utilities. */
+@layer sf.paint {
+  .sf-list-feed__entry {
+    color: var(--sf-on-surface);
+  }
+  .sf-list-feed__author {
+    color: var(--sf-on-surface);
+  }
+  .sf-list-feed__time {
+    color: var(--sf-on-surface-variant);
   }
   /* The «Новые» line over the first unread entry (C167 (3)): block list's
      divider, its words and hairlines in primary. Written on the line itself:
@@ -186,10 +202,5 @@
   .sf-list-feed__unread > .sf-list-feed__new::before,
   .sf-list-feed__unread > .sf-list-feed__new::after {
     background-color: var(--sf-primary);
-  }
-  .sf-list-feed__text {
-    margin: 0;
-    white-space: pre-wrap;
-    word-wrap: anywhere;
   }
 }

@@ -85,7 +85,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DURATION: () => (/* binding */ DURATION),
 /* harmony export */   SOURCE_ERRORS: () => (/* binding */ SOURCE_ERRORS),
-/* harmony export */   WORDS: () => (/* binding */ WORDS),
+/* harmony export */   WORDS: () => (/* reexport safe */ _lang_copy_index_mjs__WEBPACK_IMPORTED_MODULE_2__["default"]),
 /* harmony export */   copyFeedback: () => (/* binding */ copyFeedback),
 /* harmony export */   copyKeys: () => (/* binding */ copyKeys),
 /* harmony export */   copyWord: () => (/* binding */ copyWord),
@@ -96,6 +96,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e081a020262e");
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _lang_copy_index_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("cc81411c41c7");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_1__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_async_dependencies_result__[0];
@@ -123,21 +124,11 @@ _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_async_dependencies_re
 // heard here too); tests/inline-code.contract.test.mjs and
 // tests/copy-feedback.contract.test.mjs hold them equal to its language files.
 
+ // core/js/lang/copy: English built in, the other languages from a language
+// file (C282).
 
-const WORDS = {
-  en: {
-    copy: 'Copy',
-    copied: 'Copied',
-    failed: 'Could not copy',
-    selected: 'Selected — press {keys}'
-  },
-  ru: {
-    copy: 'Копировать',
-    copied: 'Скопировано',
-    failed: 'Не удалось скопировать',
-    selected: 'Выделено — нажмите {keys}'
-  }
-};
+
+
 /** How long a result stays, in ms, unless the control says otherwise. */
 
 const DURATION = 2000;
@@ -208,7 +199,7 @@ function copyKeys() {
 /** A copy word in the language of `node` (sf-button-copy's words). */
 
 function copyWord(key, node, vars) {
-  return (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(WORDS, key, node, {
+  return (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(_lang_copy_index_mjs__WEBPACK_IMPORTED_MODULE_2__["default"], key, node, {
     component: 'sf-button-copy',
     source: 'ru',
     vars
@@ -850,9 +841,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4a6d31f10418");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("7eee0ce1da86");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("95fd5a964f9f");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("6cfb20b5910e");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("f4e4ea0915ae");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("0276298b5863");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("87196947f511");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("0276298b5863");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_copy_feedback_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_copy_feedback_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -883,16 +873,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__.runtime
-};
  // The fields whose actions are glyphs (C123): sf-input's field and the class
 // markup of the inputs component.
 
@@ -902,10 +887,7 @@ const positioning = () => globalThis.SF?.Position || (_core_js_position_js__WEBP
 
 const CopyButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__,
   actions: {
@@ -1645,6 +1627,57 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "cc81411c41c7"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("62f586305461");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "87196947f511"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6cfb20b5910e");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "62f586305461"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"copy":"Copy","copied":"Copied","failed":"Could not copy","selected":"Selected — press {keys}"}}');
+
+/***/ },
+
 /***/ "95fd5a964f9f"
 (module) {
 
@@ -1655,7 +1688,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "7eee0ce1da86"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-copy","tag":"sf-button-copy","version":"1.6.0","kind":"leaf","settings":{"value":{"type":"string","default":""},"target":{"type":"string","default":""},"text":{"type":"string","default":""},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"appearance":{"type":"enum","values":["ghost","outline","tonal","plain"],"default":"ghost"},"icon":{"type":"icon","default":"content_copy"},"success-icon":{"type":"icon","default":"check"},"success-text":{"type":"string","default":""},"error-text":{"type":"string","default":""},"duration":{"type":"number","integer":true,"min":0,"default":2000}},"values":{},"events":{"copied":{"carries":{"text":"string","method":{"type":"enum","values":["native","legacy"]}},"own-verb":true},"copy-failed":{"carries":{"code":{"type":"enum","values":["empty_source","missing_target","ambiguous_source","denied"]}},"own-verb":true}},"actions":{"copy":{"waits":true}},"css-variables":{"--sf-copy-button-display":{"type":"keyword","state":"default"},"--sf-copy-button-vertical-align":{"type":"keyword","state":"default"},"--sf-copy-button-pending-opacity":{"type":"number","state":"pending"},"--sf-copy-button-success-color":{"type":"color","state":"success"},"--sf-copy-button-error-color":{"type":"color","state":"error"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-copy","tag":"sf-button-copy","version":"1.7.4","kind":"leaf","settings":{"value":{"type":"string","default":""},"target":{"type":"string","default":""},"text":{"type":"string","default":""},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"appearance":{"type":"enum","values":["ghost","outline","tonal","plain"],"default":"ghost"},"icon":{"type":"icon","default":"content_copy"},"success-icon":{"type":"icon","default":"check"},"success-text":{"type":"string","default":""},"error-text":{"type":"string","default":""},"duration":{"type":"number","integer":true,"min":0,"default":2000}},"values":{},"events":{"copied":{"carries":{"text":"string","method":{"type":"enum","values":["native","legacy"]}},"own-verb":true},"copy-failed":{"carries":{"code":{"type":"enum","values":["empty_source","missing_target","ambiguous_source","denied"]}},"own-verb":true}},"actions":{"copy":{"waits":true}},"css-variables":{"--sf-copy-button-display":{"type":"keyword","state":"default"},"--sf-copy-button-vertical-align":{"type":"keyword","state":"default"},"--sf-copy-button-pending-opacity":{"type":"number","state":"pending"},"--sf-copy-button-success-color":{"type":"color","state":"success"},"--sf-copy-button-error-color":{"type":"color","state":"error"}}}');
 
 /***/ },
 
@@ -1663,13 +1696,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-copy","tag":"sf-bu
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Copy button","runtime":{"copied":"Copied","copy":"Copy","failed":"Could not copy","selected":"Selected — press {keys}"},"events":{"copied":{"label":"Copied"},"copy-failed":{"label":"Could not copy"}}}');
-
-/***/ },
-
-/***/ "f4e4ea0915ae"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Кнопка копирования","runtime":{"copied":"Скопировано","copy":"Копировать","failed":"Не удалось скопировать","selected":"Выделено — нажмите {keys}"},"events":{"copied":{"label":"Скопировано"},"copy-failed":{"label":"Не удалось скопировать"}}}');
 
 /***/ }
 

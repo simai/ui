@@ -237,8 +237,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("bba1a166d803");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("084d7e69277d");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4c5d825d13eb");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("504c972b8143");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("15b6f80ad2ae");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -249,16 +248,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__.runtime
-}; // sf-progress-ring from its component.json (standard simai.smart-component
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-progress-ring from its component.json (standard simai.smart-component
 // 1.3.11 §3, §4; the 1.4 folder of five authored files): its settings are
 // attributes and properties made by core/js/element-manifest.js, and a job's
 // part arrives as the stream fact chunk {done, total} (vocabulary 1.1.5 §5.2),
@@ -268,10 +262,7 @@ const ru = {
 
 const ProgressRingElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__.files,
   source: 'ru',
   actions: {
     chunk({
@@ -545,10 +536,32 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "15b6f80ad2ae"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4c5d825d13eb");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "084d7e69277d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-ring","tag":"sf-progress-ring","version":"1.6.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"show-text":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-ring-size":{"type":"length","state":"default"},"--sf-progress-ring-line-width":{"type":"length","state":"default"},"--sf-progress-ring-gap":{"type":"length","state":"default"},"--sf-progress-ring-fill-color":{"type":"color","state":"default"},"--sf-progress-ring-track-color":{"type":"color","state":"default"},"--sf-progress-ring-color":{"type":"color","state":"default"}},"host-states":{"data-status":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-ring","tag":"sf-progress-ring","version":"1.6.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"show-text":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-ring-size":{"type":"length","state":"default"},"--sf-progress-ring-line-width":{"type":"length","state":"default"},"--sf-progress-ring-gap":{"type":"length","state":"default"},"--sf-progress-ring-fill-color":{"type":"color","state":"default"},"--sf-progress-ring-track-color":{"type":"color","state":"default"},"--sf-progress-ring-color":{"type":"color","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 
@@ -556,13 +569,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-ring","tag":"sf-
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Progress Ring"}');
-
-/***/ },
-
-/***/ "504c972b8143"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Кольцо прогресса"}');
 
 /***/ }
 

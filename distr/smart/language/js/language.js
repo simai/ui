@@ -1227,10 +1227,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_languages__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("464bf30e7c23");
 /* harmony import */ var _data_names_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("9937e6b314d1");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("11b7e7a66992");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("1fc6cbb91573");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("8773c52f3b37");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("0161a89699b6");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _js_languages__WEBPACK_IMPORTED_MODULE_9__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _js_languages__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__);
@@ -1273,16 +1272,12 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_12__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_13__.runtime
-};
+const en = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__.files.en;
 (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.useNames)(_data_names_json__WEBPACK_IMPORTED_MODULE_10__); // The parts it draws, found under their current names and their former ones.
 
 const MENU = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-menu-context')}`;
@@ -1327,10 +1322,7 @@ const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js_
 const rememberKey = name => text(name) ? `sf-language/${text(name)}` : '';
 const LanguageElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__.files,
   source: 'ru',
   actions: {
     select(args = {}) {
@@ -1843,8 +1835,15 @@ SfLanguage.menuEntry = function menuEntry({
     home
   });
   const doc = globalThis.document?.documentElement;
-  const pageCode = page || doc?.getAttribute('lang') || 'en';
-  const words = (String(pageCode).toLowerCase().startsWith('ru') ? ru : en).runtime;
+  const pageCode = page || doc?.getAttribute('lang') || 'en'; // The page language's words: English built in, any other the words its
+  // language file registered for sf-language (C282).
+
+  const code = String(pageCode).toLowerCase().replace('_', '-');
+  const registered = globalThis.__sfPageLanguage?.registered?.get?.('sf-language');
+  const words = { ...en.runtime,
+    ...(registered?.get?.(code.split('-')[0]) ?? {}),
+    ...(registered?.get?.(code) ?? {})
+  };
   const current = (value && (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, value)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, pageCode) ?? list[0] ?? null;
   const entry = {
     id: 'language',
@@ -1878,8 +1877,9 @@ __webpack_async_result__();
 /***/ },
 
 /***/ "464bf30e7c23"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+(module, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MODES: () => (/* binding */ MODES),
@@ -1901,14 +1901,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   shortLabelIn: () => (/* binding */ shortLabelIn),
 /* harmony export */   useNames: () => (/* binding */ useNames)
 /* harmony export */ });
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__);
 // The languages of sf-language, without the element: codes made canonical,
 // named in themselves and in English, the direction each is written in, the
 // look a count of them takes, and what a search finds. The names of the
 // languages the component supports ship with it (data/names.json, from CLDR:
 // the browser's Intl.DisplayNames names fewer -- research LG-7); the browser
 // names the rest, and what neither can name is shown as its code. The
-// element gives this module the shipped names (useNames), so the module
-// itself has no import a plain Node.js test cannot take.
+// element gives this module the shipped names (useNames). Their names in
+// Russian and any other language are words of sf-language, name-<code>, a
+// language file's (owner decision C282), read through the page's language
+// registry.
+
 const MODES = ['auto', 'inline', 'menu', 'search', 'field'];
 const SIZES = ['1/3', '1/2', '1', '2', '3']; // The languages written right to left, by their primary subtag, where the
 // browser cannot say it itself (Intl.Locale textInfo); and the scripts that
@@ -1950,24 +1958,46 @@ function dirOf(code) {
   return RTL_LANGUAGES.has(primary) ? 'rtl' : 'ltr';
 } // The shipped names, by canonical code in lower case.
 
-const SHIPPED = new Map();
-/** Takes the shipped names (data/names.json): {names: {<code>: {native, en, ru}}}. */
+const SHIPPED = new Map(); // The code as the data writes it (zh-Hans), by its lower case: the key of its
+// name words (name-zh-Hans).
+
+const DATA_CODES = new Map();
+
+const canonicalWordCode = code => DATA_CODES.get(String(code).toLowerCase()) ?? String(code);
+/** Takes the shipped names (data/names.json): {names: {<code>: {native, en}}}. */
+
 
 function useNames(data) {
   SHIPPED.clear();
+  DATA_CODES.clear();
 
   for (const [code, names] of Object.entries(data?.names ?? {})) {
-    if (names && typeof names === 'object') SHIPPED.set(code.toLowerCase(), names);
+    if (!names || typeof names !== 'object') continue;
+    SHIPPED.set(code.toLowerCase(), names);
+    DATA_CODES.set(code.toLowerCase(), code);
   }
-} // A shipped name of a language in a language: native (in itself), en or ru;
-// '' when none ships.
+} // The name of a language in a language the data does not name it in (owner
+// decision C282: the data names each in itself and in English; Russian and
+// any other language's names are words of sf-language, name-<code>, its
+// language file's). undefined when that language has none.
+
+function nameWord(code, inLanguage) {
+  const key = `name-${code}`;
+  const word = (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__.localeText)(null, key, inLanguage, 'sf-language');
+  return word === key ? undefined : word;
+} // A shipped name of a language in a language: native (in itself), en, or the
+// words of the language it is named in; '' when none.
+
 
 function shippedName(code, inLanguage) {
   const names = SHIPPED.get(String(code).toLowerCase());
   if (!names) return '';
   const want = String(inLanguage).toLowerCase();
   if (want === String(code).toLowerCase()) return names.native || '';
-  return names[want] || names[want.split('-')[0]] || '';
+  const own = names[want] || names[want.split('-')[0]];
+  if (own) return own;
+  const word = nameWord(canonicalWordCode(code), want);
+  return typeof word === 'string' ? word : '';
 } // A language's name in a language: the shipped one first, else the
 // browser's; '' when neither has one.
 
@@ -2311,6 +2341,8 @@ function languageRows(list, current, {
     };
   });
 }
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -2527,17 +2559,39 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "0161a89699b6"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1fc6cbb91573");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "11b7e7a66992"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.5.0","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.5.3","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
 
 /***/ },
 
 /***/ "9937e6b314d1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Names of the languages sf-language supports, from CLDR 48 (ICU 78 as Node.js ships it): each language in itself (native), in English (en) and in Russian (ru), the component\'s two languages. The browser\'s Intl.DisplayNames carries fewer languages (headless Chromium names be, hy, ka, tt, ky and tg only in English and ba, sah not at all; research 2026-11-14-language LG-7), so these names come first and Intl names every other language and page language. Spelled as CLDR writes them; the element gives a name its capital in a list. Data, not code: add a language here with all three names.","names":{"ru":{"native":"русский","en":"Russian","ru":"русский"},"en":{"native":"English","en":"English","ru":"английский"},"de":{"native":"Deutsch","en":"German","ru":"немецкий"},"fr":{"native":"français","en":"French","ru":"французский"},"es":{"native":"español","en":"Spanish","ru":"испанский"},"it":{"native":"italiano","en":"Italian","ru":"итальянский"},"pt":{"native":"português","en":"Portuguese","ru":"португальский"},"pt-BR":{"native":"português (Brasil)","en":"Brazilian Portuguese","ru":"бразильский португальский"},"pt-PT":{"native":"português europeu","en":"European Portuguese","ru":"европейский португальский"},"tr":{"native":"Türkçe","en":"Turkish","ru":"турецкий"},"pl":{"native":"polski","en":"Polish","ru":"польский"},"uk":{"native":"українська","en":"Ukrainian","ru":"украинский"},"be":{"native":"беларуская","en":"Belarusian","ru":"белорусский"},"uz":{"native":"o‘zbek","en":"Uzbek","ru":"узбекский"},"az":{"native":"azərbaycan","en":"Azerbaijani","ru":"азербайджанский"},"hy":{"native":"հայերեն","en":"Armenian","ru":"армянский"},"ka":{"native":"ქართული","en":"Georgian","ru":"грузинский"},"he":{"native":"עברית","en":"Hebrew","ru":"иврит"},"ar":{"native":"العربية","en":"Arabic","ru":"арабский"},"fa":{"native":"فارسی","en":"Persian","ru":"персидский"},"hi":{"native":"हिन्दी","en":"Hindi","ru":"хинди"},"bn":{"native":"বাংলা","en":"Bangla","ru":"бенгальский"},"ja":{"native":"日本語","en":"Japanese","ru":"японский"},"ko":{"native":"한국어","en":"Korean","ru":"корейский"},"zh":{"native":"中文","en":"Chinese","ru":"китайский"},"zh-Hans":{"native":"简体中文","en":"Simplified Chinese","ru":"китайский, упрощенное письмо"},"zh-Hant":{"native":"繁體中文","en":"Traditional Chinese","ru":"китайский, традиционное письмо"},"zh-TW":{"native":"中文（台灣）","en":"Chinese (Taiwan)","ru":"китайский (Тайвань)"},"vi":{"native":"Tiếng Việt","en":"Vietnamese","ru":"вьетнамский"},"th":{"native":"ไทย","en":"Thai","ru":"тайский"},"id":{"native":"Indonesia","en":"Indonesian","ru":"индонезийский"},"ms":{"native":"Melayu","en":"Malay","ru":"малайский"},"nl":{"native":"Nederlands","en":"Dutch","ru":"нидерландский"},"sv":{"native":"svenska","en":"Swedish","ru":"шведский"},"no":{"native":"norsk","en":"Norwegian","ru":"норвежский"},"nb":{"native":"norsk bokmål","en":"Norwegian Bokmål","ru":"норвежский букмол"},"da":{"native":"dansk","en":"Danish","ru":"датский"},"fi":{"native":"suomi","en":"Finnish","ru":"финский"},"cs":{"native":"čeština","en":"Czech","ru":"чешский"},"sk":{"native":"slovenčina","en":"Slovak","ru":"словацкий"},"hu":{"native":"magyar","en":"Hungarian","ru":"венгерский"},"ro":{"native":"română","en":"Romanian","ru":"румынский"},"bg":{"native":"български","en":"Bulgarian","ru":"болгарский"},"el":{"native":"Ελληνικά","en":"Greek","ru":"греческий"},"tt":{"native":"татар","en":"Tatar","ru":"татарский"},"ky":{"native":"кыргызча","en":"Kyrgyz","ru":"киргизский"},"tg":{"native":"тоҷикӣ","en":"Tajik","ru":"таджикский"},"ba":{"native":"башҡорт","en":"Bashkir","ru":"башкирский"},"sah":{"native":"саха тыла","en":"Yakut","ru":"саха"},"tk":{"native":"türkmen dili","en":"Turkmen","ru":"туркменский"},"mn":{"native":"монгол","en":"Mongolian","ru":"монгольский"},"cv":{"native":"чӑваш чӗлхи","en":"Chuvash","ru":"чувашский"},"ce":{"native":"нохчийн","en":"Chechen","ru":"чеченский"},"os":{"native":"ирон","en":"Ossetic","ru":"осетинский"},"lv":{"native":"latviešu","en":"Latvian","ru":"латышский"},"lt":{"native":"lietuvių","en":"Lithuanian","ru":"литовский"},"et":{"native":"eesti","en":"Estonian","ru":"эстонский"},"sr":{"native":"српски","en":"Serbian","ru":"сербский"},"hr":{"native":"hrvatski","en":"Croatian","ru":"хорватский"},"sl":{"native":"slovenščina","en":"Slovenian","ru":"словенский"},"mk":{"native":"македонски","en":"Macedonian","ru":"македонский"},"sq":{"native":"shqip","en":"Albanian","ru":"албанский"},"bs":{"native":"bosanski","en":"Bosnian","ru":"боснийский"},"ug":{"native":"ئۇيغۇرچە","en":"Uyghur","ru":"уйгурский"},"ur":{"native":"اردو","en":"Urdu","ru":"урду"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Names of the languages sf-language supports, from CLDR 48 (ICU 78 as Node.js ships it): each language in itself (native) and in English (en). Since owner decision C282 their names in Russian are the ru language file\'s words (src/core/js/lang/language-names, name-<code>, registered for sf-language), as any other language\'s names may be. The browser\'s Intl.DisplayNames carries fewer languages (headless Chromium names be, hy, ka, tt, ky and tg only in English and ba, sah not at all; research 2026-11-14-language LG-7), so these names come first and Intl names every other language and page language. Spelled as CLDR writes them; the element gives a name its capital in a list. Data, not code: add a language here with both names, and its Russian name to the language file.","names":{"ru":{"native":"русский","en":"Russian"},"en":{"native":"English","en":"English"},"de":{"native":"Deutsch","en":"German"},"fr":{"native":"français","en":"French"},"es":{"native":"español","en":"Spanish"},"it":{"native":"italiano","en":"Italian"},"pt":{"native":"português","en":"Portuguese"},"pt-BR":{"native":"português (Brasil)","en":"Brazilian Portuguese"},"pt-PT":{"native":"português europeu","en":"European Portuguese"},"tr":{"native":"Türkçe","en":"Turkish"},"pl":{"native":"polski","en":"Polish"},"uk":{"native":"українська","en":"Ukrainian"},"be":{"native":"беларуская","en":"Belarusian"},"uz":{"native":"o‘zbek","en":"Uzbek"},"az":{"native":"azərbaycan","en":"Azerbaijani"},"hy":{"native":"հայերեն","en":"Armenian"},"ka":{"native":"ქართული","en":"Georgian"},"he":{"native":"עברית","en":"Hebrew"},"ar":{"native":"العربية","en":"Arabic"},"fa":{"native":"فارسی","en":"Persian"},"hi":{"native":"हिन्दी","en":"Hindi"},"bn":{"native":"বাংলা","en":"Bangla"},"ja":{"native":"日本語","en":"Japanese"},"ko":{"native":"한국어","en":"Korean"},"zh":{"native":"中文","en":"Chinese"},"zh-Hans":{"native":"简体中文","en":"Simplified Chinese"},"zh-Hant":{"native":"繁體中文","en":"Traditional Chinese"},"zh-TW":{"native":"中文（台灣）","en":"Chinese (Taiwan)"},"vi":{"native":"Tiếng Việt","en":"Vietnamese"},"th":{"native":"ไทย","en":"Thai"},"id":{"native":"Indonesia","en":"Indonesian"},"ms":{"native":"Melayu","en":"Malay"},"nl":{"native":"Nederlands","en":"Dutch"},"sv":{"native":"svenska","en":"Swedish"},"no":{"native":"norsk","en":"Norwegian"},"nb":{"native":"norsk bokmål","en":"Norwegian Bokmål"},"da":{"native":"dansk","en":"Danish"},"fi":{"native":"suomi","en":"Finnish"},"cs":{"native":"čeština","en":"Czech"},"sk":{"native":"slovenčina","en":"Slovak"},"hu":{"native":"magyar","en":"Hungarian"},"ro":{"native":"română","en":"Romanian"},"bg":{"native":"български","en":"Bulgarian"},"el":{"native":"Ελληνικά","en":"Greek"},"tt":{"native":"татар","en":"Tatar"},"ky":{"native":"кыргызча","en":"Kyrgyz"},"tg":{"native":"тоҷикӣ","en":"Tajik"},"ba":{"native":"башҡорт","en":"Bashkir"},"sah":{"native":"саха тыла","en":"Yakut"},"tk":{"native":"türkmen dili","en":"Turkmen"},"mn":{"native":"монгол","en":"Mongolian"},"cv":{"native":"чӑваш чӗлхи","en":"Chuvash"},"ce":{"native":"нохчийн","en":"Chechen"},"os":{"native":"ирон","en":"Ossetic"},"lv":{"native":"latviešu","en":"Latvian"},"lt":{"native":"lietuvių","en":"Lithuanian"},"et":{"native":"eesti","en":"Estonian"},"sr":{"native":"српски","en":"Serbian"},"hr":{"native":"hrvatski","en":"Croatian"},"sl":{"native":"slovenščina","en":"Slovenian"},"mk":{"native":"македонски","en":"Macedonian"},"sq":{"native":"shqip","en":"Albanian"},"bs":{"native":"bosanski","en":"Bosnian"},"ug":{"native":"ئۇيغۇرچە","en":"Uyghur"},"ur":{"native":"اردو","en":"Urdu"}}}');
 
 /***/ },
 
@@ -2545,13 +2599,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Names of the languages sf
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Language","runtime":{"label":"Language","trigger":"{label}: {name}","search":"Find a language","empty":"No language found","missing":"no translation — the home page opens"}}');
-
-/***/ },
-
-/***/ "8773c52f3b37"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Язык","runtime":{"label":"Язык","trigger":"{label}: {name}","search":"Найти язык","empty":"Язык не найден","missing":"нет перевода — откроется главная"}}');
 
 /***/ }
 

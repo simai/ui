@@ -1,2 +1,2 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities{.small-caps{-webkit-font-feature-settings:"smcp";font-feature-settings:"smcp";font-variant-caps:small-caps}.small-caps-none{-webkit-font-feature-settings:normal;font-feature-settings:normal;font-variant-caps:normal}}

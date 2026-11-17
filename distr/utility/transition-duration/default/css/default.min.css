@@ -1,2 +1,2 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities{.duration-fast{transition-duration:var(--sf-duration-fast)}@media(prefers-reduced-motion: reduce){.duration-fast{transition-duration:.01ms}}.duration-normal{transition-duration:var(--sf-duration-normal)}@media(prefers-reduced-motion: reduce){.duration-normal{transition-duration:.01ms}}.duration-slow{transition-duration:var(--sf-duration-slow)}@media(prefers-reduced-motion: reduce){.duration-slow{transition-duration:.01ms}}}

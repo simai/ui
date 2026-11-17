@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.menu-context",
-  "version": "1.25.5",
+  "version": "1.27.0",
   "title": "Context Menu",
   "summary": "The Framework's action menu and its settings panel: data entries with icon, caption, value, shortcut, check, submenu, separator and heading, and the value rows a setting needs (switch, range, choice, a group of rows or tiles) with one change event and the set-value, set-all, reset and show actions, opened by openFor() into the top layer, anchored, with keyboard, typeahead and focus return. A host may still render its own items and own the lifecycle.",
   "kind": "smart",
@@ -160,9 +160,12 @@
         "description": "A close button at the end of the panel's head."
       },
       "for": {
-        "type": "string",
+        "type": [
+          "string",
+          "array"
+        ],
         "default": "",
-        "description": "The id of a page area -- a list, a table, a tree -- or several separated by spaces, whose objects open this menu by the right button, the menu key (Shift+F10) and a long press on a touch screen (owner decision C164 (1)). The object is the row the event came from (a table body's row, an element with a row, option, treeitem or listitem role, a list item), or the area itself; its «⋯» opened with openFor() names the same object, so one open listener gives one list for every way in (C164 (2)). On a selected row (aria-selected=\"true\") the menu acts on every selected row of the area and says «Выбрано N»; a row that can be selected and is not is selected alone first (C164 (3)). A link, a field, selected text and the right button with Shift keep the browser's own menu. On a phone the menu of an object is the sheet at the bottom (C164 (6))."
+        "description": "The id of a page area -- a list, a table, a tree -- or several separated by spaces, whose objects open this menu by the right button, the menu key (Shift+F10) and a long press on a touch screen (owner decision C164 (1)). The object is the row the event came from (a table body's row, an element with a row, option, treeitem or listitem role, a list item), or the area itself; its «⋯» opened with openFor() names the same object, so one open listener gives one list for every way in (C164 (2)). On a selected row (aria-selected=\"true\") the menu acts on every selected row of the area and says «Выбрано N»; a row that can be selected and is not is selected alone first (C164 (3)). A link, a field, selected text and the right button with Shift keep the browser's own menu. On a phone the menu of an object is the sheet at the bottom (C164 (6)). An area may stand in a shadow root -- a view's own table: an id is found in the menu's own root and in the root of the control it is open for, then in the document; an area no id reaches is given as the property, a list of the areas themselves (menu.for = [table, ...]; ids may stand in the list too), kept until a string is set. The events of an area in a shadow root are read at the element they came from (the first of the composed path), not at the host the document sees (since 1.27.0)."
       },
       "aria-label": {
         "type": "string",
@@ -189,7 +192,7 @@
       },
       "search": {
         "type": "object",
-        "description": "{placeholder, empty, remote}: a search field above the rows (set as a property). Local by default; with remote: true the menu raises sf-context-menu-search {query} and shows the entries the host sets. A submenu entry passes it with `search`."
+        "description": "{placeholder, empty, remote}: a search field above the rows (set as a property). Local by default; with remote: true the menu raises sf-menu-context-search {query} and shows the entries the host sets. A submenu entry passes it with `search`."
       }
     },
     "additionalProperties": false
@@ -199,7 +202,7 @@
     "kinds": {
       "item": {
         "fields": {
-          "id": "string, returned in sf-context-menu-select",
+          "id": "string, returned in sf-menu-context-select",
           "text": "string, the label",
           "icon": "string, a Material Symbols name",
           "caption": "string, a second line under the label",
@@ -467,7 +470,7 @@
       }
     },
     "chooseTab": {
-      "summary": "Choose a tab by index and emit sf-context-menu-tab.",
+      "summary": "Choose a tab by index and emit sf-menu-context-tab.",
       "arguments": [
         {
           "name": "args",
@@ -491,7 +494,7 @@
       }
     },
     "requestClose": {
-      "summary": "Close an owned menu; for a menu its host placed, emit sf-context-menu-close for the host to close it.",
+      "summary": "Close an owned menu; for a menu its host placed, emit sf-menu-context-close for the host to close it.",
       "arguments": [],
       "returns": {
         "type": "boolean"
@@ -1031,7 +1034,7 @@
     "source_artifacts": [
       {
         "path": "src/smart/menu-context/index.js",
-        "sha256": "60d2362f6221ca7f98dd3b058013efd466b9269be4fa90e27f9c4778170166ac"
+        "sha256": "72393daf31820bb6bc2ebd2acf046c9c60da2ac16f29fd1e9622c0b9abfc072e"
       },
       {
         "path": "src/smart/menu-context/js/templates/default.js",
@@ -1039,7 +1042,7 @@
       },
       {
         "path": "src/component/context-menu/scss/_css__context_menu.scss",
-        "sha256": "b6294e567b3b658b2e1af297999e6bf44fcb6468e410938717ac841b9a0825b9"
+        "sha256": "1c465786268718277189cbf87510140f713bf56a8f34b4b59dbe79e8dd95ea1f"
       },
       {
         "path": "src/component/context-menu/scss/_css__context_menu_custom.scss",
@@ -1056,7 +1059,7 @@
     ]
   },
   "ai_guidance": {
-    "use_when": "Use sf-context-menu for every action menu: give it entries and open it with openFor(anchor). It opens below and start-aligned by default, with no tail, in the top layer, on the profile menu's surface. A profile menu is one: a header for the person, a choice row for the theme, a submenu with search for the language. A settings panel is one too, and is this component rather than a tag of its own: submenu=\"drill\" with value rows (switch, range, choice, a group of tiles), listening to sf-context-menu-change alone.",
+    "use_when": "Use sf-menu-context for every action menu: give it entries and open it with openFor(anchor). It opens below and start-aligned by default, with no tail, in the top layer, on the profile menu's surface. A profile menu is one: a header for the person, a choice row for the theme, a submenu with search for the language. A settings panel is one too, and is this component rather than a tag of its own: submenu=\"drill\" with value rows (switch, range, choice, a group of tiles), listening to sf-menu-context-change alone.",
     "do_not": [
       "Do not copy generated ui-smart code",
       "Do not move host data or access decisions into the component",

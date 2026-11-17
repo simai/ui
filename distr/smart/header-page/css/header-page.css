@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* The head of an admin page. The public variables (standard 1.3.8 §6): the gap
      between the path and the line, the line's gap, the actions' gap, the
@@ -50,8 +50,6 @@
   }
   .sf-page-header-heading {
     flex: 0 1 auto;
-    color: inherit;
-    color: var(--sf-page-header-heading-color, inherit);
   }
   /* The actions are buttons of one group: 8 apart (C105 H5, --sf-space-1/3);
      the line keeps 16 between the heading and the actions (H6, the line's gap).
@@ -211,7 +209,6 @@
     padding-top: var(--sf-space-1\/2);
     padding-bottom: var(--sf-space-1\/2);
     padding-block: var(--sf-space-1\/2);
-    background-color: var(--sf-surface-page);
     box-shadow: var(--sf-shadow-flat);
     transition: box-shadow var(--sf-duration-fast) var(--sf-animation), background-color var(--sf-duration-fast) var(--sf-animation);
   }
@@ -226,11 +223,9 @@
     }
   }
   sf-header-page[data-scrolled=true] > .sf-page-header--sticky {
-    background-color: var(--sf-surface-raised);
     box-shadow: var(--sf-shadow-raised);
   }
   sf-page-header[data-scrolled=true] > .sf-page-header--sticky {
-    background-color: var(--sf-surface-raised);
     box-shadow: var(--sf-shadow-raised);
   }
   sf-header-page[data-scrolled=true] > .sf-page-header--sticky > .sf-page-header-path {
@@ -286,5 +281,20 @@
      favourite's colour is given to the glyph itself. */
   .sf-page-header-star--on .sf-icon {
     --sf-icon--color: var(--sf-page-header-star-color, var(--sf-warning));
+  }
+}
+@layer sf.paint {
+  .sf-page-header-heading {
+    color: inherit;
+    color: var(--sf-page-header-heading-color, inherit);
+  }
+  .sf-page-header--sticky {
+    background-color: var(--sf-surface-page);
+  }
+  sf-header-page[data-scrolled=true] > .sf-page-header--sticky {
+    background-color: var(--sf-surface-raised);
+  }
+  sf-page-header[data-scrolled=true] > .sf-page-header--sticky {
+    background-color: var(--sf-surface-raised);
   }
 }

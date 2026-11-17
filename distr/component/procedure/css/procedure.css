@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   .sf-procedure {
     --sf-procedure--marker-size: var(--sf-text-height-1);
@@ -50,11 +50,8 @@
     inline-size: var(--sf-procedure--marker-size);
     height: var(--sf-procedure--marker-size);
     block-size: var(--sf-procedure--marker-size);
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-procedure-marker-color, var(--sf-on-surface-variant));
-    background-color: transparent;
-    background-color: var(--sf-procedure-marker-background-color, var(--sf-procedure-marker-background, transparent));
-    border: var(--sf-px) solid var(--sf-outline);
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-radius-circle);
     font-size: var(--sf-text-size-1\/2);
     font-weight: var(--sf-font-weight-medium);
@@ -95,8 +92,6 @@
     inset-inline-start: calc((var(--sf-procedure--marker-size) - var(--sf-procedure--line-width)) / 2);
     width: var(--sf-procedure--line-width);
     inline-size: var(--sf-procedure--line-width);
-    background-color: var(--sf-outline-variant);
-    background-color: var(--sf-procedure-line-color, var(--sf-outline-variant));
   }
   .sf-procedure-title,
   .sf-procedure-content {
@@ -131,9 +126,6 @@
   }
   .sf-procedure-step--complete::before {
     content: "";
-    color: var(--sf-on-primary);
-    background-color: var(--sf-primary);
-    border-color: var(--sf-primary);
     background-image: linear-gradient(to top right, var(--sf-transparent) calc(50% - var(--sf-procedure--check)), var(--sf-on-primary) calc(50% - var(--sf-procedure--check)) calc(50% + var(--sf-procedure--check)), var(--sf-transparent) calc(50% + var(--sf-procedure--check))), linear-gradient(to bottom right, var(--sf-transparent) calc(50% - var(--sf-procedure--check)), var(--sf-on-primary) calc(50% - var(--sf-procedure--check)) calc(50% + var(--sf-procedure--check)), var(--sf-transparent) calc(50% + var(--sf-procedure--check)));
     background-origin: border-box;
     background-repeat: no-repeat;
@@ -141,9 +133,6 @@
     background-position: 27.2% 63.1%, 65.1% 49.7%;
   }
   .sf-procedure-step--current::before {
-    color: var(--sf-on-primary);
-    background-color: var(--sf-primary);
-    border-color: var(--sf-primary);
     outline: var(--sf-procedure--ring) solid var(--sf-primary);
     outline-offset: var(--sf-procedure--ring);
   }
@@ -159,17 +148,42 @@
     content: none;
   }
   @media (forced-colors: active) {
-    .sf-procedure-step::before {
-      border-color: CanvasText;
-    }
-    .sf-procedure-step:not(:last-child)::after {
-      background-color: CanvasText;
-    }
     .sf-procedure-step--complete::before {
       content: counter(sf-procedure);
     }
     .sf-procedure-step--current::before {
       outline-color: CanvasText;
+    }
+  }
+}
+@layer sf.paint {
+  .sf-procedure-step::before {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-procedure-marker-color, var(--sf-on-surface-variant));
+    background-color: transparent;
+    background-color: var(--sf-procedure-marker-background-color, var(--sf-procedure-marker-background, transparent));
+    border-color: var(--sf-outline);
+  }
+  .sf-procedure-step:not(:last-child)::after {
+    background-color: var(--sf-outline-variant);
+    background-color: var(--sf-procedure-line-color, var(--sf-outline-variant));
+  }
+  .sf-procedure-step--complete::before {
+    color: var(--sf-on-primary);
+    background-color: var(--sf-primary);
+    border-color: var(--sf-primary);
+  }
+  .sf-procedure-step--current::before {
+    color: var(--sf-on-primary);
+    background-color: var(--sf-primary);
+    border-color: var(--sf-primary);
+  }
+  @media (forced-colors: active) {
+    .sf-procedure-step::before {
+      border-color: CanvasText;
+    }
+    .sf-procedure-step:not(:last-child)::after {
+      background-color: CanvasText;
     }
   }
 }

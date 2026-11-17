@@ -782,9 +782,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3bb2b1c9d41d");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d092c5059e25");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("5ffd5a820c01");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("bb540c15b990");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("7e1b23a85a40");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("533b90592c77");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("a099398f5172");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("533b90592c77");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -830,16 +829,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-};
  // The ids of a run's parts, one set per run on the page (the same on every
 // render, so a first-paint snapshot is stable).
 
@@ -1137,10 +1131,7 @@ function normalizeErrors(value, limit = ERRORS_SHOWN) {
 }
 const ProgressRunElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__,
   actions: {
@@ -2303,6 +2294,28 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "a099398f5172"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("bb540c15b990");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "5ffd5a820c01"
 (module) {
 
@@ -2313,7 +2326,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "d092c5059e25"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-run","tag":"sf-progress-run","version":"1.4.6","kind":"leaf","settings":{"look":{"type":"enum","values":["full","row","notice"],"default":"full"},"label":{"type":"string","default":""},"heading-level":{"type":"enum","values":["1","2","3","4","5","6"],"default":"3"},"caption":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0},"total":{"type":"number","optional":true,"min":0},"unit":{"type":"string","default":""},"remaining":{"type":"number","optional":true,"min":0},"started-at":{"type":"string","default":""},"finished-at":{"type":"string","default":""},"steps":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"state":{"type":"string","enum":["waiting","running","done","failed","skipped"]},"text":{"type":"string"},"started":{"type":"string"},"finished":{"type":"string"},"duration":{"type":"number"},"value":{"type":"number"},"total":{"type":"number"},"unit":{"type":"string"},"log":{"type":"string"}},"required":["id","title"]}},"default":[]},"run-state":{"type":"enum","values":["auto","running","paused","done","partial","failed","cancelled"],"default":"auto"},"result-text":{"type":"string","default":""},"counters":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"number"},"status":{"type":"string","enum":["","error"]},"zero":{"type":"string"}},"required":["id","label"]}},"default":[]},"errors":{"type":"list","schema":{"items":{"type":"object","properties":{"where":{"type":"string"},"key":{"type":"string"},"text":{"type":"string"}},"required":["text"]}},"default":[]},"errors-total":{"type":"number","optional":true,"min":0},"output":{"type":"string","default":""},"output-label":{"type":"string","default-from":"runtime.output-label"},"file-name":{"type":"string","default":"output.txt"},"cancelable":{"type":"boolean","default":false},"pausable":{"type":"boolean","default":false},"retryable":{"type":"boolean","default":false},"hideable":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{"output-open":{"type":"boolean","default":false}},"events":{"cancel":{"carries":{},"cancelable":true},"retry":{"carries":{"scope":{"type":"enum","values":["all","failed"]},"from":{"type":"string","optional":true}}},"close":{"carries":{"reason":{"type":"enum","values":["close"]}},"cancelable":true},"download":{"carries":{"file-name":"string"},"cancelable":true},"toggle":{"carries":{"open":"boolean"}},"pause":{"carries":{}},"resume":{"carries":{}},"minimize":{"carries":{}},"expand":{"carries":{}},"report":{"carries":{},"cancelable":true}},"actions":{"chunk":{"with":{"text":"string","step":{"type":"string","optional":true}}},"clear":{"with":{}},"step":{"with":{"id":"string","state":"string","text":"string","value":"number","total":"number","started":"string","finished":"string","duration":"number"}}},"presentation":{"skeleton":{"late":["steps","counters"]}},"host-states":{"data-state":"string"},"css-variables":{"--sf-progress-run-background-color":{"type":"color","state":"default"},"--sf-progress-run-divider-color":{"type":"color","state":"default"},"--sf-progress-run-output-background-color":{"type":"color","state":"default"},"--sf-progress-run-output-color":{"type":"color","state":"default"},"--sf-progress-run-output-max-height":{"type":"length","state":"default"},"--sf-progress-run-padding-inline":{"type":"length","state":"default"},"--sf-progress-run-gap":{"type":"length","state":"default"},"--sf-progress-run-gap-tight":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-run","tag":"sf-progress-run","version":"1.5.4","kind":"leaf","settings":{"look":{"type":"enum","values":["full","row","notice"],"default":"full"},"label":{"type":"string","default":""},"heading-level":{"type":"enum","values":["1","2","3","4","5","6"],"default":"3"},"caption":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0},"total":{"type":"number","optional":true,"min":0},"unit":{"type":"string","default":""},"remaining":{"type":"number","optional":true,"min":0},"started-at":{"type":"string","default":""},"finished-at":{"type":"string","default":""},"steps":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"state":{"type":"string","enum":["waiting","running","done","failed","skipped"]},"text":{"type":"string"},"started":{"type":"string"},"finished":{"type":"string"},"duration":{"type":"number"},"value":{"type":"number"},"total":{"type":"number"},"unit":{"type":"string"},"log":{"type":"string"}},"required":["id","title"]}},"default":[]},"run-state":{"type":"enum","values":["auto","running","paused","done","partial","failed","cancelled"],"default":"auto"},"result-text":{"type":"string","default":""},"counters":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"number"},"status":{"type":"string","enum":["","error"]},"zero":{"type":"string"}},"required":["id","label"]}},"default":[]},"errors":{"type":"list","schema":{"items":{"type":"object","properties":{"where":{"type":"string"},"key":{"type":"string"},"text":{"type":"string"}},"required":["text"]}},"default":[]},"errors-total":{"type":"number","optional":true,"min":0},"output":{"type":"string","default":""},"output-label":{"type":"string","default-from":"runtime.output-label"},"file-name":{"type":"string","default":"output.txt"},"cancelable":{"type":"boolean","default":false},"pausable":{"type":"boolean","default":false},"retryable":{"type":"boolean","default":false},"hideable":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{"output-open":{"type":"boolean","default":false}},"events":{"cancel":{"carries":{},"cancelable":true},"retry":{"carries":{"scope":{"type":"enum","values":["all","failed"]},"from":{"type":"string","optional":true}}},"close":{"carries":{"reason":{"type":"enum","values":["close"]}},"cancelable":true},"download":{"carries":{"file-name":"string"},"cancelable":true},"toggle":{"carries":{"open":"boolean"}},"pause":{"carries":{}},"resume":{"carries":{}},"minimize":{"carries":{}},"expand":{"carries":{}},"report":{"carries":{},"cancelable":true}},"actions":{"chunk":{"with":{"text":"string","step":{"type":"string","optional":true}}},"clear":{"with":{}},"step":{"with":{"id":"string","state":"string","text":"string","value":"number","total":"number","started":"string","finished":"string","duration":"number"}}},"presentation":{"skeleton":{"late":["steps","counters"]}},"host-states":{"data-state":"string"},"css-variables":{"--sf-progress-run-background-color":{"type":"color","state":"default"},"--sf-progress-run-divider-color":{"type":"color","state":"default"},"--sf-progress-run-output-background-color":{"type":"color","state":"default"},"--sf-progress-run-output-color":{"type":"color","state":"default"},"--sf-progress-run-output-max-height":{"type":"length","state":"default"},"--sf-progress-run-padding-inline":{"type":"length","state":"default"},"--sf-progress-run-gap":{"type":"length","state":"default"},"--sf-progress-run-gap-tight":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -2321,13 +2334,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-run","tag":"sf-p
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Progress","runtime":{"label":"Progress","output-label":"Output","steps":"Steps","state-waiting":"waiting","state-running":"running","state-done":"done","state-failed":"failed","state-skipped":"skipped","result-done":"Done","result-failed":"Failed","result-cancelled":"Cancelled","cancel":"Cancel","retry":"Retry","hide":"Hide","copy":"Copy the output","download":"Download the output","result-partial":"Done with errors","state-word-running":"Running","state-word-paused":"Paused","state-word-partial":"With errors","state-word-cancelled":"Cancelled","state-word-waiting":"Queued","announce-paused":"Paused","announce-resumed":"Going on","announce-progress":"{value} of {total}{unit}, {percent} %","announce-count":"{value}{unit}","figures":"{value} of {total}{unit} · {percent} %","figures-count":"{value}{unit}","percent":"{percent} %","estimating":"estimating time…","remaining":"about {time} left","remaining-short":"{time}","remaining-less":"less than a minute left","remaining-less-short":"< 1 min","minutes":"{n} min","hours":"{h} h {m} min","took":"took {time}","errors-shown":{"one":"Errors: the first {n} of {total}","other":"Errors: the first {n} of {total}"},"more-errors":{"one":"{n} more error","other":"{n} more errors"},"errors-count":{"one":"{n} error","other":"{n} errors"},"no-errors":"no errors","retry-failed":"Retry failed","pause":"Pause","resume":"Continue","minimize":"Minimize","expand":"Expand","step-log":"Step log","counts":"Result","figures-plain":"{value} of {total}"},"events":{"cancel":{"label":"Cancel"},"retry":{"label":"Retry"},"close":{"label":"Hide"},"download":{"label":"Download the output"},"pause":{"label":"Pause"},"resume":{"label":"Continue"},"minimize":{"label":"Minimize"},"expand":{"label":"Expand"},"report":{"label":"Errors"}}}');
-
-/***/ },
-
-/***/ "7e1b23a85a40"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Ход выполнения","runtime":{"label":"Ход выполнения","output-label":"Вывод","steps":"Шаги","state-waiting":"ожидает","state-running":"выполняется","state-done":"готово","state-failed":"не удалось","state-skipped":"пропущен","result-done":"Готово","result-failed":"Не удалось","result-cancelled":"Отменено","cancel":"Отменить","retry":"Повторить","hide":"Скрыть","copy":"Скопировать вывод","download":"Скачать вывод","result-partial":"Готово с ошибками","state-word-running":"Идёт","state-word-paused":"Пауза","state-word-partial":"С ошибками","state-word-cancelled":"Отменено","state-word-waiting":"В очереди","announce-paused":"Пауза","announce-resumed":"Продолжается","announce-progress":"{value} из {total}{unit}, {percent} %","announce-count":"{value}{unit}","figures":"{value} из {total}{unit} · {percent} %","figures-count":"{value}{unit}","percent":"{percent} %","estimating":"оцениваем время…","remaining":"осталось ≈ {time}","remaining-short":"{time}","remaining-less":"осталось меньше минуты","remaining-less-short":"< 1 мин","minutes":"{n} мин","hours":"{h} ч {m} мин","took":"заняло {time}","errors-shown":{"one":"Ошибки: первая {n} из {total}","few":"Ошибки: первые {n} из {total}","many":"Ошибки: первые {n} из {total}","other":"Ошибки: первые {n} из {total}"},"more-errors":{"one":"Ещё {n} ошибка","few":"Ещё {n} ошибки","many":"Ещё {n} ошибок","other":"Ещё {n} ошибки"},"errors-count":{"one":"{n} ошибка","few":"{n} ошибки","many":"{n} ошибок","other":"{n} ошибки"},"no-errors":"ошибок нет","retry-failed":"Повторить неудачные","pause":"Пауза","resume":"Продолжить","minimize":"Свернуть","expand":"Развернуть","step-log":"Журнал шага","counts":"Итог","figures-plain":"{value} из {total}"},"events":{"cancel":{"label":"Отменить"},"retry":{"label":"Повторить"},"close":{"label":"Скрыть"},"download":{"label":"Скачать вывод"},"pause":{"label":"Пауза"},"resume":{"label":"Продолжить"},"minimize":{"label":"Свернуть"},"expand":{"label":"Развернуть"},"report":{"label":"Ошибки"}}}');
 
 /***/ }
 

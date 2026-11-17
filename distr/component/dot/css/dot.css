@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* One dot for every status mark (owner decision C185 (7), (8)): the
      coloured disc is the step (C132) with nothing around it, so the box is
@@ -14,8 +14,6 @@
     align-items: center;
     justify-content: center;
     vertical-align: middle;
-    background-color: var(--sf-transparent);
-    background-color: var(--sf-dot--background-color, var(--sf-transparent));
     gap: var(--sf-space-1\/2);
     gap: var(--sf-dot--gap, var(--sf-space-1\/2));
     padding: 0;
@@ -25,7 +23,6 @@
     display: block;
     flex: 0 0 auto;
     box-sizing: border-box;
-    background-color: var(--sf-dot-item--background-color);
     border-radius: var(--sf-dot-item--border-radius);
     height: var(--sf-dot-item--size);
     block-size: var(--sf-dot-item--size);
@@ -100,7 +97,6 @@
     box-shadow: 0 0 0 var(--sf-dot-item--ring) var(--sf-surface-place, var(--sf-surface-page)), 0 0 0 calc(2 * var(--sf-dot-item--ring)) var(--sf-dot-item--background-color);
   }
   .sf-dot.sf-dot--hollow .sf-dot-item {
-    background-color: transparent;
     box-shadow: inset 0 0 0 var(--sf-dot-item--ring) var(--sf-dot-item--background-color);
   }
   /* The ring stands outside the disc, so the box keeps the disc's size; a
@@ -113,7 +109,6 @@
     .sf-dot .sf-dot-item {
       forced-color-adjust: none;
       --sf-dot-item--background-color: CanvasText;
-      background-color: CanvasText;
       box-shadow: none;
     }
     .sf-dot.sf-dot--ring .sf-dot-item {
@@ -122,10 +117,29 @@
       outline-offset: var(--sf-dot-item--ring);
     }
     .sf-dot.sf-dot--hollow .sf-dot-item {
-      background-color: Canvas;
       box-shadow: none;
       outline: var(--sf-dot-item--ring) solid CanvasText;
       outline-offset: calc(-1 * var(--sf-dot-item--ring));
+    }
+  }
+}
+@layer sf.paint {
+  .sf-dot {
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-dot--background-color, var(--sf-transparent));
+  }
+  .sf-dot .sf-dot-item {
+    background-color: var(--sf-dot-item--background-color);
+  }
+  .sf-dot.sf-dot--hollow .sf-dot-item {
+    background-color: transparent;
+  }
+  @media (forced-colors: active) {
+    .sf-dot .sf-dot-item {
+      background-color: CanvasText;
+    }
+    .sf-dot.sf-dot--hollow .sf-dot-item {
+      background-color: Canvas;
     }
   }
 }

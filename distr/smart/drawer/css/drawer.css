@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @property --sf-drawer-stack-offset {
   syntax: "<length>";
   inherits: true;
@@ -35,10 +35,6 @@
     left: 0;
     inset: 0;
     pointer-events: none;
-    /* The shared scrim (core --sf-scrim-*, black at 64: C16, C20), the
-       drawer's own variables first. */
-    background: var(--sf-black--alfa-64);
-    background: var(--sf-drawer-overlay-background, var(--sf-scrim-color, var(--sf-black--alfa-64)));
     opacity: 1;
     opacity: var(--sf-drawer-overlay-opacity, var(--sf-scrim-opacity, 1));
     transition: opacity var(--sf-duration-normal) var(--sf-ease-exit);
@@ -121,8 +117,6 @@
     pointer-events: auto;
     border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-drawer-radius, var(--sf-radius--surface));
-    color: var(--sf-on-surface);
-    color: var(--sf-drawer-color, var(--sf-on-surface));
     box-shadow: var(--sf-shadow-modal);
     box-shadow: var(--sf-drawer-shadow, var(--sf-shadow-modal));
     /* sf-focus-ring: none — the panel takes focus programmatically when it
@@ -154,131 +148,6 @@
   }
   /* A floating panel is the modal place (C20): the popup surface, the modal
      shadow, the scrim; a column of the page takes the page's (below). */
-  .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel {
-    background: var(--sf-surface-popup);
-    background: var(--sf-drawer-background, var(--sf-surface-popup));
-    --sf-surface-place: var(--sf-drawer-background, var(--sf-surface-popup));
-    --sf-surface-place-solid: var(--sf-drawer-background, var(--sf-surface-popup));
-    --sf-surface-place-ground: var(--sf-drawer-background, var(--sf-surface-popup));
-    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
-    --sf-place--ink: initial;
-    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
-    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
-    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
-    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
-    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
-    --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
-    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
-    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
-    --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-on-surface-muted: var(--sf-on-surface-disabled);
-    --sf-surface-underlay: initial;
-    --sf-surface-place-fill: initial;
-    --sf-disable: var(--sf-surface-disabled);
-    --sf-on-disable: var(--sf-on-surface-disabled);
-    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
-    --sf-surface-transparent-active: var(--sf-surface-state-active);
-    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
-    --sf-surface-transparent-select: var(--sf-surface-state-select);
-    --sf-code--color: var(--sf-on-surface);
-    --sf-code--background: var(--sf-surface-container);
-    --sf-place--container-outline: initial;
-  }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel {
-    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
-    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
-  }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel {
-    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
-    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
-    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
-    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
-    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
-    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
-    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
-    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
-    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
-    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
-    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
-    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
-    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
-    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
-    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
-    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
-    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
-    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
-    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
-    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
-    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
-    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
-    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
-    --sf-place--plate: initial;
-    --sf-place--on-plate: initial;
-    --sf-place--fill-placeholder: initial;
-    --sf-place--control-hover: initial;
-    --sf-place--control-active: initial;
-  }
-  :where(.sf-surface-media) .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel {
-    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
-    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
-    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
-    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
-    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
-    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
-    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
-    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
-    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
-    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
-    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
-    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
-    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
-    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
-    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
-    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
-    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
-    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
-    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
-    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
-    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
-    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
-    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
-  }
-  :where(.bg-surface-4) .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel {
-    --sf-primary: var(--sf-place--found-primary);
-    --sf-primary-hover: var(--sf-place--found-primary-hover);
-    --sf-primary-active: var(--sf-place--found-primary-active);
-    --sf-link: var(--sf-place--found-link);
-    --sf-link-hover: var(--sf-place--found-link-hover);
-    --sf-link-active: var(--sf-place--found-link-active);
-  }
-  .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel > * {
-    --sf-surface-popup: var(--sf-surface-popup-nested);
-    --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
-    --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
-    --sf-place--popup-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-70));
-    --sf-elevation-3--surface: var(--sf-surface-popup);
-    --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
-  }
   /* The drawer is on the shared size ladder. The words small, large and medium
      are legacy values the component still accepts; it renders the step. */
   .sf-drawer[data-sf-drawer-size="1/2"] {
@@ -295,7 +164,8 @@
   .sf-drawer[data-sf-drawer-placement=left] .sf-drawer-panel {
     --sf-drawer--edge-end: var(--sf-px);
     left: var(--sf-drawer-stack-inset);
-    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    border-right-width: var(--sf-px);
+    border-right-style: solid;
     border-top-left-radius: var(--sf-0);
     border-bottom-left-radius: var(--sf-0);
     -webkit-transform: translateX(-100%);
@@ -304,7 +174,8 @@
   .sf-drawer[data-sf-drawer-placement=right] .sf-drawer-panel {
     --sf-drawer--edge-start: var(--sf-px);
     right: var(--sf-drawer-stack-inset);
-    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    border-left-width: var(--sf-px);
+    border-left-style: solid;
     border-top-right-radius: var(--sf-0);
     border-bottom-right-radius: var(--sf-0);
     -webkit-transform: translateX(100%);
@@ -343,26 +214,48 @@
     right: var(--sf-drawer-stack-inset);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    border-right-width: var(--sf-px);
   }
-  @supports not (border-inline-end: initial){
+  @supports not (border-inline-end-width: initial){
   html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    border-right-width: var(--sf-px);
     }
   }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(ltr)){
-    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    border-right-width: var(--sf-px);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    border-left-width: var(--sf-px);
   }
-  @supports not (border-inline-end: initial){
+  @supports not (border-inline-end-width: initial){
   [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    border-left-width: var(--sf-px);
     }
   }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(rtl)){
-    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    border-left-width: var(--sf-px);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
+    border-right-style: solid;
+  }
+  @supports not (border-inline-end-style: initial){
+  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
+    border-right-style: solid;
+    }
+  }
+  .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(ltr)){
+    border-right-style: solid;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
+    border-left-style: solid;
+  }
+  @supports not (border-inline-end-style: initial){
+  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
+    border-left-style: solid;
+    }
+  }
+  .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(rtl)){
+    border-left-style: solid;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
     border-top-left-radius: var(--sf-0);
@@ -411,8 +304,8 @@
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel {
     --sf-drawer--edge-end: var(--sf-px);
     inset-inline-start: var(--sf-drawer-stack-inset);
-    -webkit-border-end: var(--sf-px) solid var(--sf-outline-variant);
-            border-inline-end: var(--sf-px) solid var(--sf-outline-variant);
+    border-inline-end-width: var(--sf-px);
+    border-inline-end-style: solid;
     border-start-start-radius: var(--sf-0);
     border-end-start-radius: var(--sf-0);
     -webkit-transform: translateX(-100%);
@@ -447,26 +340,48 @@
     left: var(--sf-drawer-stack-inset);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    border-left-width: var(--sf-px);
   }
-  @supports not (border-inline-start: initial){
+  @supports not (border-inline-start-width: initial){
   html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    border-left-width: var(--sf-px);
     }
   }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(ltr)){
-    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    border-left-width: var(--sf-px);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    border-right-width: var(--sf-px);
   }
-  @supports not (border-inline-start: initial){
+  @supports not (border-inline-start-width: initial){
   [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    border-right-width: var(--sf-px);
     }
   }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(rtl)){
-    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    border-right-width: var(--sf-px);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
+    border-left-style: solid;
+  }
+  @supports not (border-inline-start-style: initial){
+  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
+    border-left-style: solid;
+    }
+  }
+  .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(ltr)){
+    border-left-style: solid;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
+    border-right-style: solid;
+  }
+  @supports not (border-inline-start-style: initial){
+  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
+    border-right-style: solid;
+    }
+  }
+  .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(rtl)){
+    border-right-style: solid;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
     border-top-right-radius: var(--sf-0);
@@ -515,8 +430,8 @@
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel {
     --sf-drawer--edge-start: var(--sf-px);
     inset-inline-end: var(--sf-drawer-stack-inset);
-    -webkit-border-start: var(--sf-px) solid var(--sf-outline-variant);
-            border-inline-start: var(--sf-px) solid var(--sf-outline-variant);
+    border-inline-start-width: var(--sf-px);
+    border-inline-start-style: solid;
     border-start-end-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
     -webkit-transform: translateX(100%);
@@ -605,7 +520,6 @@
     top: 0;
     inset-block-start: 0;
     z-index: 1;
-    background: inherit;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -746,7 +660,6 @@
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
-    color: var(--sf-on-surface);
     font-size: var(--sf-heading-4--size);
     font-size: var(--sf-drawer--title-size, var(--sf-heading-4--size));
     line-height: var(--sf-heading-4--height);
@@ -908,7 +821,6 @@
     display: flex;
     flex: none;
     flex-wrap: wrap;
-    background: inherit;
     padding-top: var(--sf-space-1);
     padding-bottom: var(--sf-drawer--inset);
     padding-block: var(--sf-space-1) var(--sf-drawer--inset);
@@ -1569,42 +1481,6 @@
      grey the close stood on the scrim at about 1:1. A column of the page has
      no scrim: its edge keeps the page's look; nor has a panel whose edge
      stands in its head (data-sf-drawer-edge-in-head). */
-  .sf-drawer:not([data-sf-drawer-column=true]):not([data-sf-drawer-edge-in-head]) .sf-drawer-edge {
-    --sf-primary: var(--sf-white);
-    --sf-primary-hover: var(--sf-neutral-95);
-    --sf-primary-active: var(--sf-neutral-90);
-    --sf-on-primary: var(--sf-black);
-    --sf-primary-container: var(--sf-white--alfa-12);
-    --sf-primary-container-hover: var(--sf-white--alfa-16);
-    --sf-primary-container-active: var(--sf-white--alfa-20);
-    --sf-on-primary-container: var(--sf-white);
-    --sf-link: var(--sf-white);
-    --sf-link-hover: var(--sf-neutral-95);
-    --sf-link-active: var(--sf-neutral-90);
-    --sf-link-visited: var(--sf-white--alfa-80);
-    --sf-focus: var(--sf-white);
-    --sf-focus--color: var(--sf-focus);
-    --sf-on-primary-container-graphic: var(--sf-white);
-    --sf-on-secondary-container: var(--sf-white);
-    --sf-on-secondary-container-graphic: var(--sf-white);
-    --sf-on-tertiary-container: var(--sf-white);
-    --sf-on-tertiary-container-graphic: var(--sf-white);
-    --sf-on-info-container: var(--sf-white);
-    --sf-on-info-container-graphic: var(--sf-white);
-    --sf-on-success-container: var(--sf-white);
-    --sf-on-success-container-graphic: var(--sf-white);
-    --sf-on-warning-container: var(--sf-white);
-    --sf-on-warning-container-graphic: var(--sf-white);
-    --sf-on-error-container: var(--sf-white);
-    --sf-on-error-container-graphic: var(--sf-white);
-    --sf-on-neutral-container: var(--sf-white);
-    --sf-on-neutral-container-graphic: var(--sf-white);
-    --sf-on-surface: var(--sf-on-scrim-control);
-    --sf-on-surface-icon: var(--sf-on-scrim-control);
-    --sf-on-surface-hover: var(--sf-on-scrim-control);
-    --sf-on-surface-active: var(--sf-on-scrim-control);
-    --sf-on-surface-variant: var(--sf-on-scrim-control);
-  }
   /* A phone (below md, where the forms in popups are sheets, C32): a side
      panel is the whole screen, without a radius and without a border
      (owner decision C56, as sf-modal's side panel; study DR-5). Every step
@@ -1939,122 +1815,7 @@
      the page. Without the room (a narrow host) it floats over the page and
      keeps the popup place and its shadow. */
   .sf-drawer[data-sf-drawer-column=true] .sf-drawer-panel {
-    background: var(--sf-surface-area);
-    background: var(--sf-drawer-background, var(--sf-surface-area));
-    --sf-surface-place: var(--sf-drawer-background, var(--sf-surface-area));
-    --sf-surface-place-solid: var(--sf-drawer-background, var(--sf-surface-area));
-    --sf-surface-place-ground: var(--sf-drawer-background, var(--sf-surface-area));
-    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
-    --sf-place--ink: initial;
-    --sf-place--fill-surface: initial;
-    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
-    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
-    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
-    --sf-on-surface-variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
-    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
-    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
-    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
-    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-on-surface-muted: var(--sf-on-surface-disabled);
-    --sf-surface-underlay: initial;
-    --sf-surface-place-fill: initial;
-    --sf-disable: var(--sf-surface-disabled);
-    --sf-on-disable: var(--sf-on-surface-disabled);
-    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
-    --sf-surface-transparent-active: var(--sf-surface-state-active);
-    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
-    --sf-surface-transparent-select: var(--sf-surface-state-select);
-    --sf-code--color: var(--sf-on-surface);
-    --sf-code--background: var(--sf-surface-container);
-    --sf-place--container-outline: initial;
     box-shadow: var(--sf-shadow-flat);
-  }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-drawer[data-sf-drawer-column=true] .sf-drawer-panel {
-    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
-    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
-  }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-drawer[data-sf-drawer-column=true] .sf-drawer-panel {
-    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
-    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
-    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
-    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
-    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
-    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
-    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
-    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
-    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
-    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
-    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
-    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
-    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
-    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
-    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
-    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
-    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
-    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
-    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
-    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
-    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
-    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
-    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
-    --sf-place--plate: initial;
-    --sf-place--on-plate: initial;
-    --sf-place--fill-placeholder: initial;
-    --sf-place--control-hover: initial;
-    --sf-place--control-active: initial;
-  }
-  :where(.sf-surface-media) .sf-drawer[data-sf-drawer-column=true] .sf-drawer-panel {
-    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
-    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
-    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
-    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
-    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
-    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
-    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
-    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
-    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
-    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
-    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
-    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
-    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
-    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
-    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
-    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
-    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
-    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
-    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
-    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
-    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
-    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
-    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
-  }
-  :where(.bg-surface-4) .sf-drawer[data-sf-drawer-column=true] .sf-drawer-panel {
-    --sf-primary: var(--sf-place--found-primary);
-    --sf-primary-hover: var(--sf-place--found-primary-hover);
-    --sf-primary-active: var(--sf-place--found-primary-active);
-    --sf-link: var(--sf-place--found-link);
-    --sf-link-hover: var(--sf-place--found-link-hover);
-    --sf-link-active: var(--sf-place--found-link-active);
   }
   /* The bottom sheet (placement="bottom", simai/ui-source#20): the whole
      width, from the bottom edge, rounded at the top, with a grab handle. It
@@ -2124,9 +1885,10 @@
     margin-inline: auto;
     max-height: calc(var(--sf-drawer-sheet-room) - var(--sf-space-3));
     max-block-size: calc(var(--sf-drawer-sheet-room) - var(--sf-space-3));
-    border-top: var(--sf-px) solid var(--sf-outline-variant);
-    -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
-            border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    border-top-width: var(--sf-px);
+    border-block-start-width: var(--sf-px);
+    border-top-style: solid;
+    border-block-start-style: solid;
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
     padding-bottom: env(safe-area-inset-bottom, 0);
@@ -2221,7 +1983,7 @@
     margin: 0;
     padding: 0;
     border: 0;
-    background: inherit;
+    border-color: revert-layer;
     cursor: -webkit-grab;
     cursor: grab;
     touch-action: none;
@@ -2236,7 +1998,6 @@
     height: var(--sf-a4);
     block-size: var(--sf-a4);
     border-radius: var(--sf-radius-rounded);
-    background-color: var(--sf-on-surface-variant);
   }
   .sf-drawer-handle.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
@@ -2339,6 +2100,372 @@
     .sf-drawer:not(.is-open) .sf-drawer-panel {
       transition: none;
     }
+  }
+}
+@layer sf.paint {
+  .sf-drawer-overlay {
+    /* The shared scrim (core --sf-scrim-*, black at 64: C16, C20), the
+       drawer's own variables first. */
+    background: var(--sf-black--alfa-64);
+    background: var(--sf-drawer-overlay-background, var(--sf-scrim-color, var(--sf-black--alfa-64)));
+  }
+  .sf-drawer-panel {
+    color: var(--sf-on-surface);
+    color: var(--sf-drawer-color, var(--sf-on-surface));
+  }
+  .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel {
+    background: var(--sf-surface-popup);
+    background: var(--sf-drawer-background, var(--sf-surface-popup));
+    --sf-surface-place: var(--sf-drawer-background, var(--sf-surface-popup));
+    --sf-surface-place-solid: var(--sf-drawer-background, var(--sf-surface-popup));
+    --sf-surface-place-ground: var(--sf-drawer-background, var(--sf-surface-popup));
+    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+    --sf-place--ink: initial;
+    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
+    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
+    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
+    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-on-surface-muted: var(--sf-on-surface-disabled);
+    --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-disable: var(--sf-surface-disabled);
+    --sf-on-disable: var(--sf-on-surface-disabled);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
+    --sf-place--container-outline: initial;
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel {
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
+    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
+    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
+    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
+    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
+    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
+    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
+    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
+    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
+    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
+    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
+    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
+    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
+    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
+    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
+    --sf-place--plate: initial;
+    --sf-place--on-plate: initial;
+    --sf-place--fill-placeholder: initial;
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
+  }
+  :where(.sf-surface-media) .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
+    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
+    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
+    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
+    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
+    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
+    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
+    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
+    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
+    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
+    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
+    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
+    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
+    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
+    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
+  }
+  :where(.bg-surface-4) .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
+  }
+  .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel > * {
+    --sf-surface-popup: var(--sf-surface-popup-nested);
+    --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
+    --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
+    --sf-place--popup-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-70));
+    --sf-elevation-3--surface: var(--sf-surface-popup);
+    --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
+  }
+  .sf-drawer[data-sf-drawer-placement=left] .sf-drawer-panel {
+    border-right-color: var(--sf-outline-variant);
+  }
+  .sf-drawer[data-sf-drawer-placement=right] .sf-drawer-panel {
+    border-left-color: var(--sf-outline-variant);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
+    border-right-color: var(--sf-outline-variant);
+  }
+  @supports not (border-inline-end-color: initial){
+  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
+    border-right-color: var(--sf-outline-variant);
+    }
+  }
+  .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(ltr)){
+    border-right-color: var(--sf-outline-variant);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
+    border-left-color: var(--sf-outline-variant);
+  }
+  @supports not (border-inline-end-color: initial){
+  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
+    border-left-color: var(--sf-outline-variant);
+    }
+  }
+  .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(rtl)){
+    border-left-color: var(--sf-outline-variant);
+  }
+  .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel {
+    border-inline-end-color: var(--sf-outline-variant);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
+    border-left-color: var(--sf-outline-variant);
+  }
+  @supports not (border-inline-start-color: initial){
+  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
+    border-left-color: var(--sf-outline-variant);
+    }
+  }
+  .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(ltr)){
+    border-left-color: var(--sf-outline-variant);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
+    border-right-color: var(--sf-outline-variant);
+  }
+  @supports not (border-inline-start-color: initial){
+  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
+    border-right-color: var(--sf-outline-variant);
+    }
+  }
+  .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(rtl)){
+    border-right-color: var(--sf-outline-variant);
+  }
+  .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel {
+    border-inline-start-color: var(--sf-outline-variant);
+  }
+  .sf-drawer-head {
+    background: inherit;
+  }
+  .sf-drawer-title {
+    color: var(--sf-on-surface);
+  }
+  .sf-drawer-foot {
+    background: inherit;
+  }
+  .sf-drawer:not([data-sf-drawer-column=true]):not([data-sf-drawer-edge-in-head]) .sf-drawer-edge {
+    --sf-primary: var(--sf-white);
+    --sf-primary-hover: var(--sf-neutral-95);
+    --sf-primary-active: var(--sf-neutral-90);
+    --sf-on-primary: var(--sf-black);
+    --sf-primary-container: var(--sf-white--alfa-12);
+    --sf-primary-container-hover: var(--sf-white--alfa-16);
+    --sf-primary-container-active: var(--sf-white--alfa-20);
+    --sf-on-primary-container: var(--sf-white);
+    --sf-link: var(--sf-white);
+    --sf-link-hover: var(--sf-neutral-95);
+    --sf-link-active: var(--sf-neutral-90);
+    --sf-link-visited: var(--sf-white--alfa-80);
+    --sf-focus: var(--sf-white);
+    --sf-focus--color: var(--sf-focus);
+    --sf-on-primary-container-graphic: var(--sf-white);
+    --sf-on-secondary-container: var(--sf-white);
+    --sf-on-secondary-container-graphic: var(--sf-white);
+    --sf-on-tertiary-container: var(--sf-white);
+    --sf-on-tertiary-container-graphic: var(--sf-white);
+    --sf-on-info-container: var(--sf-white);
+    --sf-on-info-container-graphic: var(--sf-white);
+    --sf-on-success-container: var(--sf-white);
+    --sf-on-success-container-graphic: var(--sf-white);
+    --sf-on-warning-container: var(--sf-white);
+    --sf-on-warning-container-graphic: var(--sf-white);
+    --sf-on-error-container: var(--sf-white);
+    --sf-on-error-container-graphic: var(--sf-white);
+    --sf-on-neutral-container: var(--sf-white);
+    --sf-on-neutral-container-graphic: var(--sf-white);
+    --sf-on-surface: var(--sf-on-scrim-control);
+    --sf-on-surface-icon: var(--sf-on-scrim-control);
+    --sf-on-surface-hover: var(--sf-on-scrim-control);
+    --sf-on-surface-active: var(--sf-on-scrim-control);
+    --sf-on-surface-variant: var(--sf-on-scrim-control);
+  }
+  .sf-drawer[data-sf-drawer-column=true] .sf-drawer-panel {
+    background: var(--sf-surface-area);
+    background: var(--sf-drawer-background, var(--sf-surface-area));
+    --sf-surface-place: var(--sf-drawer-background, var(--sf-surface-area));
+    --sf-surface-place-solid: var(--sf-drawer-background, var(--sf-surface-area));
+    --sf-surface-place-ground: var(--sf-drawer-background, var(--sf-surface-area));
+    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+    --sf-place--ink: initial;
+    --sf-place--fill-surface: initial;
+    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
+    --sf-on-surface-variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
+    --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
+    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-on-surface-muted: var(--sf-on-surface-disabled);
+    --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-disable: var(--sf-surface-disabled);
+    --sf-on-disable: var(--sf-on-surface-disabled);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
+    --sf-place--container-outline: initial;
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-drawer[data-sf-drawer-column=true] .sf-drawer-panel {
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-drawer[data-sf-drawer-column=true] .sf-drawer-panel {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
+    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
+    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
+    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
+    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
+    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
+    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
+    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
+    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
+    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
+    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
+    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
+    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
+    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
+    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
+    --sf-place--plate: initial;
+    --sf-place--on-plate: initial;
+    --sf-place--fill-placeholder: initial;
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
+  }
+  :where(.sf-surface-media) .sf-drawer[data-sf-drawer-column=true] .sf-drawer-panel {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
+    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
+    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
+    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
+    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
+    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
+    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
+    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
+    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
+    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
+    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
+    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
+    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
+    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
+    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
+  }
+  :where(.bg-surface-4) .sf-drawer[data-sf-drawer-column=true] .sf-drawer-panel {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
+  }
+  .sf-drawer[data-sf-drawer-placement=bottom] .sf-drawer-panel {
+    border-top-color: var(--sf-outline-variant);
+    border-block-start-color: var(--sf-outline-variant);
+  }
+  .sf-drawer-handle {
+    border: 0;
+    background: inherit;
+  }
+  .sf-drawer-handle-bar {
+    background-color: var(--sf-on-surface-variant);
   }
 }
 /* A control on the scrim (study VP-16, C14 (3)): the round plate of the core

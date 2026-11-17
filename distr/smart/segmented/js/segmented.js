@@ -1253,8 +1253,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("64feefebb417");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("9e8a0d4d39c8");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("58fa7b09c477");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("dd70e430dd3b");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("6103742da696");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("dc257f02dfa6");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -1271,16 +1270,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__.runtime
-}; // The theme switch's own words -- the three Loader preferences, and the
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// The theme switch's own words -- the three Loader preferences, and the
 // group's name when the page gives none -- are lang/<locale>.json runtime.
 
 const THEME_PREFERENCES = ['system', 'light', 'dark']; // The system item is a monitor, desktop_windows (owner decision D11c, docs
@@ -1424,10 +1418,7 @@ function normalizeItems(items = []) {
 
 const ButtonGroupElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__,
   actions: {
@@ -2027,7 +2018,7 @@ function renderSegment(item, context) {
     className: 'sf-button-spinner',
     overlay: !item.icon
   }) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const icon = item.loading && item.icon ? spinner : item.icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${item.icon} root-class="pointer-event-none" weight="400" aria-hidden="true"></sf-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const icon = item.loading && item.icon ? spinner : item.icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${item.icon} root-class="pointer-events-none" weight="400" aria-hidden="true"></sf-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const count = item.count !== '' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-group-count">${item.count}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <button
@@ -2041,7 +2032,7 @@ function renderSegment(item, context) {
     >
       ${item.loading && !item.icon ? spinner : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${icon}
-      ${item.iconOnly ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-group-label--hidden">${item.label}</span>${count}` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-text-container text-center pointer-event-none">${item.label}${count}</span>`}
+      ${item.iconOnly ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-group-label--hidden">${item.label}</span>${count}` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-text-container text-center pointer-events-none">${item.label}${count}</span>`}
     </button>
   `;
 } // The labels do not fit on one line (owner decision C47 C): the same choice as
@@ -2139,6 +2130,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "dc257f02dfa6"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("dd70e430dd3b");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "58fa7b09c477"
 (module) {
 
@@ -2149,7 +2162,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "9e8a0d4d39c8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.segmented","tag":"sf-segmented","version":"1.6.4","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","lang":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}}},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["track","buttons"],"default":"track"},"plate":{"type":"enum","values":["raised","scheme"],"default":"raised"},"backdrop":{"type":"enum","values":["surface","color","media"],"default":"surface"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":{"type":"string"},"item":{"type":"object","nullable":true}}}},"actions":{"select":{"with":{"value":"string"}},"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.segmented","tag":"sf-segmented","version":"1.6.7","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","lang":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}}},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["track","buttons"],"default":"track"},"plate":{"type":"enum","values":["raised","scheme"],"default":"raised"},"backdrop":{"type":"enum","values":["surface","color","media"],"default":"surface"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":{"type":"string"},"item":{"type":"object","nullable":true}}}},"actions":{"select":{"with":{"value":"string"}},"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 
@@ -2157,13 +2170,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.segmented","tag":"sf-segm
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Segmented control","runtime":{"dark":"Dark","group":"Theme","light":"Light","system":"System","value-missing":"Choose an option."}}');
-
-/***/ },
-
-/***/ "6103742da696"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Сегментный переключатель","runtime":{"dark":"Тёмная","group":"Тема","light":"Светлая","system":"Как в системе","value-missing":"Выберите вариант."}}');
 
 /***/ }
 

@@ -1273,9 +1273,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6b629b4c1b7e");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("7e115d411c69");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("8e25252ed5d8");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("5842a411d855");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("9e4c4cb2370f");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2fd7a4d3f4d6");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("80fa922ae034");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("2fd7a4d3f4d6");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_1__]);
 ([_core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // Smart entry for sf-editor-overlay, the editor canvas overlay. Library
@@ -1290,16 +1289,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__.runtime
-};
 
 globalThis.SF = globalThis.SF || {};
 globalThis.SF.CompositionOverlay = Object.freeze({
@@ -1320,10 +1314,7 @@ const positional = ['attach', 'attach-frame', 'set-document', 'set-nodes', 'set-
 globalThis.SF.Composition?.loadEditorWords?.();
 (0,_core_js_composition_overlay_mjs__WEBPACK_IMPORTED_MODULE_0__.defineCompositionOverlay)(globalThis.customElements, {
   base: (0,_core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_1__.manifestHost)(_component_json__WEBPACK_IMPORTED_MODULE_2__, {
-    lang: {
-      en,
-      ru
-    },
+    lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__.files,
     source: 'ru',
     aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_3__,
     positional
@@ -1591,9 +1582,11 @@ const LEGACY_DETAIL = {
 };
 
 const MESSAGES = {
-  ru: { picked: 'Перемещение: {label}. Стрелки выбирают место, Enter — положить, Escape — отменить.', cancelled: 'Перемещение отменено.', tree: 'Структура страницы', toolbar: 'Действия', insert: 'Вставить', insertAt: 'Вставить в «{slot}», позиция {index}', position: '{index} из {total}', selected: 'Выбрано: {label}', editing: 'Редактирование: {label}. Enter — сохранить, Escape — отменить.', more: 'Ещё', insertAfter: 'Вставить после «{label}»', dropped: 'Перемещено: {label}. {place}.' },
   en: { picked: 'Moving {label}. Arrows choose a place, Enter drops, Escape cancels.', cancelled: 'Move cancelled.', tree: 'Page structure', toolbar: 'Actions', insert: 'Insert', insertAt: 'Insert into “{slot}”, position {index}', position: '{index} of {total}', selected: 'Selected: {label}', editing: 'Editing {label}. Enter saves, Escape cancels.', more: 'More', insertAfter: 'Insert after “{label}”', dropped: 'Moved {label}. {place}.' },
 };
+
+const dashed = (key) => key.replace(/[A-Z]/gu, (letter) => `-${letter.toLowerCase()}`);
+const DASHED_MESSAGES = { en: Object.fromEntries(Object.entries(MESSAGES.en).map(([key, word]) => [dashed(key), word])) };
 
 const ACTION_ID = /^[a-z][a-z0-9-]{0,63}$/u;
 const ACTION_KEYS = new Set(['id', 'label', 'icon', 'shortcut', 'disabled', 'tone', 'priority']);
@@ -1913,8 +1906,11 @@ function defineCompositionOverlay(registry = globalThis.customElements, { base =
     }
 
     get messages() {
-      // In the page's language through pageText, as every component's words are.
-      const words = Object.fromEntries(Object.keys(MESSAGES.en).map((key) => [key, (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageText)(MESSAGES, key, this, 'sf-editor-overlay')]));
+      // In the page's language through pageText, as every component's words
+      // are: English here, any other language the words its language file
+      // registered for sf-editor-overlay (C282), whose keys are dashed
+      // (insert-at for insertAt).
+      const words = Object.fromEntries(Object.keys(MESSAGES.en).map((key) => [key, (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageText)(DASHED_MESSAGES, dashed(key), this, 'sf-editor-overlay')]));
       return { ...words, ...(this.customMessages || {}) };
     }
 
@@ -3885,15 +3881,6 @@ const LINE = SORTABLE_DROP_LINE;
 const HALF = SORTABLE_DROP_LINE / 2;
 
 const MESSAGES = {
-  ru: {
-    instructions: 'Пробел или Enter — взять, стрелки — переместить, Пробел или Enter — положить, Escape — отменить.',
-    picked: 'Взято: {item}. Позиция {index} из {total} в «{list}».',
-    moved: 'Позиция {index} из {total} в «{list}».',
-    dropped: 'Положено: {item}, позиция {index} в «{list}».',
-    cancelled: 'Перемещение отменено.',
-    target: 'Цель: {target}.',
-    roledescription: 'перемещаемый',
-  },
   en: {
     instructions: 'Space or Enter to pick up, arrows to move, Space or Enter to drop, Escape to cancel.',
     picked: 'Picked up {item}. Position {index} of {total} in “{list}”.',
@@ -4799,6 +4786,28 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "80fa922ae034"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5842a411d855");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "8e25252ed5d8"
 (module) {
 
@@ -4809,7 +4818,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-edito
 /***/ "7e115d411c69"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-overlay","tag":"sf-editor-overlay","version":"1.11.2","kind":"leaf","settings":{"for":{"type":"string","default":""},"frame":{"type":"string","default":""},"accepts":{"type":"string","default":""},"label":{"type":"string","default":""},"placement":{"type":"enum","values":["top","side"],"default":"top"},"passive":{"type":"boolean","default":false},"actions":{"type":"list","default":[],"of":{"id":"string","label":"string","icon":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"tone":{"type":"enum","values":["danger"],"optional":true},"priority":{"type":"number|string","optional":true}}},"messages":{"type":"object","default":{}},"insertion-target":{"type":"object","default":{}}},"values":{},"events":{"select":{"carries":{"ids":"list","id":{"type":"id","nullable":true},"node_id":{"type":"id","nullable":true}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"insert":{"carries":{"parent":"id","slot":"string","index":{"type":"number","integer":true},"item":{"type":"string","optional":true},"from":{"type":"string","optional":true},"mode":{"type":"enum","values":["move","copy"],"optional":true},"parent_id":{"type":"id"}},"own-verb":true},"move":{"carries":{"ids":"list","id":"id","parent":"id","position":"number","slot":"string","node_id":{"type":"id"},"parent_id":{"type":"id"},"index":{"type":"number","integer":true}}},"change":{"carries":{"id":"id","value":"string","previous":"string"},"cancelable":true,"x-native":false},"open":{"carries":{"ids":"list","id":"id","node":{"type":"id"},"point":{"type":"object","nullable":true},"trigger":{"type":"enum","values":["click","dblclick","enter"]}}}},"actions":{"attach":{"with":{"canvas":"object"}},"attach-frame":{"with":{"iframe":"object"}},"set-document":{"with":{"document":"object","options":"object"}},"set-nodes":{"with":{"nodes":{"type":"list","of":{"id":"id","kind":"string","label":"string","parent":"id","editable":"boolean","rect":"object","element":"object"}},"options":"object"}},"set-drop-filter":{"with":{"filter":{"type":"object"}}},"set-actions":{"with":{"actions":"list"}},"set-messages":{"with":{"messages":"object"}},"set-insertion-target":{"with":{"target":{"type":"object","nullable":true}}},"select":{"with":{"id":{"type":"id","nullable":true},"options":"object"}},"edit":{"with":{"id":"string"}},"refresh":{}},"css-variables":{"--sf-composition-overlay-frame-color":{"type":"color","state":"default"},"--sf-composition-overlay-z-index":{"type":"number","state":"default"},"--sf-composition-overlay-toolbar-background-color":{"type":"color","state":"selected"},"--sf-composition-overlay-toolbar-radius":{"type":"length","state":"selected"},"--sf-composition-overlay-toolbar-gap":{"type":"length","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-overlay","tag":"sf-editor-overlay","version":"1.12.2","kind":"leaf","settings":{"for":{"type":"string","default":""},"frame":{"type":"string","default":""},"accepts":{"type":"string","default":""},"label":{"type":"string","default":""},"placement":{"type":"enum","values":["top","side"],"default":"top"},"passive":{"type":"boolean","default":false},"actions":{"type":"list","default":[],"of":{"id":"string","label":"string","icon":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"tone":{"type":"enum","values":["danger"],"optional":true},"priority":{"type":"number|string","optional":true}}},"messages":{"type":"object","default":{}},"insertion-target":{"type":"object","default":{}}},"values":{},"events":{"select":{"carries":{"ids":"list","id":{"type":"id","nullable":true},"node_id":{"type":"id","nullable":true}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"insert":{"carries":{"parent":"id","slot":"string","index":{"type":"number","integer":true},"item":{"type":"string","optional":true},"from":{"type":"string","optional":true},"mode":{"type":"enum","values":["move","copy"],"optional":true},"parent_id":{"type":"id"}},"own-verb":true},"move":{"carries":{"ids":"list","id":"id","parent":"id","position":"number","slot":"string","node_id":{"type":"id"},"parent_id":{"type":"id"},"index":{"type":"number","integer":true}}},"change":{"carries":{"id":"id","value":"string","previous":"string"},"cancelable":true,"x-native":false},"open":{"carries":{"ids":"list","id":"id","node":{"type":"id"},"point":{"type":"object","nullable":true},"trigger":{"type":"enum","values":["click","dblclick","enter"]}}}},"actions":{"attach":{"with":{"canvas":"object"}},"attach-frame":{"with":{"iframe":"object"}},"set-document":{"with":{"document":"object","options":"object"}},"set-nodes":{"with":{"nodes":{"type":"list","of":{"id":"id","kind":"string","label":"string","parent":"id","editable":"boolean","rect":"object","element":"object"}},"options":"object"}},"set-drop-filter":{"with":{"filter":{"type":"object"}}},"set-actions":{"with":{"actions":"list"}},"set-messages":{"with":{"messages":"object"}},"set-insertion-target":{"with":{"target":{"type":"object","nullable":true}}},"select":{"with":{"id":{"type":"id","nullable":true},"options":"object"}},"edit":{"with":{"id":"string"}},"refresh":{}},"css-variables":{"--sf-composition-overlay-frame-color":{"type":"color","state":"default"},"--sf-composition-overlay-z-index":{"type":"number","state":"default"},"--sf-composition-overlay-toolbar-background-color":{"type":"color","state":"selected"},"--sf-composition-overlay-toolbar-radius":{"type":"length","state":"selected"},"--sf-composition-overlay-toolbar-gap":{"type":"length","state":"selected"}}}');
 
 /***/ },
 
@@ -4817,13 +4826,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-overlay","tag":"sf
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Composition overlay","runtime":{"cancelled":"Move cancelled.","dropped":"Moved {label}. {place}.","editing":"Editing {label}. Enter saves, Escape cancels.","insert":"Insert","insert-after":"Insert after “{label}”","insert-at":"Insert into “{slot}”, position {index}","more":"More","picked":"Moving {label}. Arrows choose a place, Enter drops, Escape cancels.","position":"{index} of {total}","selected":"Selected: {label}","toolbar":"Actions","tree":"Page structure"},"events":{"insert":{"label":"Insert"}}}');
-
-/***/ },
-
-/***/ "9e4c4cb2370f"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Слой редактора","runtime":{"cancelled":"Перемещение отменено.","dropped":"Перемещено: {label}. {place}.","editing":"Редактирование: {label}. Enter — сохранить, Escape — отменить.","insert":"Вставить","insert-after":"Вставить после «{label}»","insert-at":"Вставить в «{slot}», позиция {index}","more":"Ещё","picked":"Перемещение: {label}. Стрелки выбирают место, Enter — положить, Escape — отменить.","position":"{index} из {total}","selected":"Выбрано: {label}","toolbar":"Действия","tree":"Структура страницы"},"events":{"insert":{"label":"Вставить"}}}');
 
 /***/ }
 

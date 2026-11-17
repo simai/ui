@@ -239,9 +239,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("42f1649d1a1b");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("0dc7c163a2e8");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d6e446f3d408");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("a3b41385ab12");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ce0ca620b623");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("fefa0c5c3ed9");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d0eb591c1610");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("fefa0c5c3ed9");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
@@ -259,16 +258,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-}; // sf-drawer from its component.json (standard simai.smart-component 1.3.8 §3,
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-drawer from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §8, §19): its settings are attributes and properties made by
 // core/js/element-manifest.js, its words are lang/<locale>.json (a product
 // adds a language through SF.language.register("sf-drawer", code, words)),
@@ -276,10 +270,7 @@ const ru = {
 
 const DrawerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
 }); // The public variables the manifest declares; the panel drawn at the end of the
@@ -1704,13 +1695,16 @@ class SfDrawer extends DrawerElement {
   } // The first focus of a modal panel (study DR-12, dispatcher 2026-11-14, as
   // sf-modal's initial focus does it for a window): the element the page
   // marked with `autofocus`, else the first field of the content (a text
-  // field, a list, a text area), else its first control, else the panel. The
-  // head's close and the edge do not count: they are the panel's, not the
-  // content's. The panel itself took the focus before, so a filter panel
-  // opened with its search field one Tab away. A field drawn after the panel
-  // opened (an sf-input still loading) is waited for, frame by frame for up
-  // to two seconds, while the focus is still on the panel; anything the
-  // person does in between wins.
+  // field, a list, a text area), else the panel. The head's close and the
+  // edge do not count: they are the panel's, not the content's. A form opens
+  // with its field (C159 (9)), so a filter panel opened with its search field
+  // one Tab away no longer. Content with nothing to fill in -- a record to
+  // read, values with copy buttons -- keeps the focus on the panel, which is
+  // named by its title and draws no ring: the first control took it before,
+  // and its ring and tooltip covered the value beside it (dispatcher
+  // 2026-11-16). A field drawn after the panel opened (an sf-input still
+  // loading) is waited for, frame by frame for up to two seconds, while the
+  // focus is still on the panel; anything the person does in between wins.
 
 
   focusFirst() {
@@ -1744,7 +1738,7 @@ class SfDrawer extends DrawerElement {
 
     const body = panel.querySelector('[data-sf-drawer-body]');
     const stops = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.focusablesIn)(body).filter(node => node.tabIndex >= 0);
-    return stops.find(node => node.matches(FIELD)) || stops[0] || null;
+    return stops.find(node => node.matches(FIELD)) || null;
   }
 
   restoreFocus() {
@@ -2223,6 +2217,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "d0eb591c1610"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a3b41385ab12");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "d6e446f3d408"
 (module) {
 
@@ -2233,7 +2249,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-drawe
 /***/ "0dc7c163a2e8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.drawer","tag":"sf-drawer","version":"1.16.4","kind":"leaf","settings":{"placement":{"type":"enum","values":["left","right","inline-start","inline-end","bottom"],"default":"right"},"snap":{"type":"enum","values":["auto","half","full"],"default":"auto"},"overlay":{"type":"boolean","default":true},"modal":{"type":"boolean","default":true},"docked":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2","full"],"default":"1","x-scale":"width"},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"controlled":{"type":"boolean","default":false},"close-placement":{"type":"enum","values":["inside","outside"],"default":"inside"},"heading":{"type":"string","default":""},"label":{"type":"string","default":""},"close-label":{"type":"string","default-from":"runtime.close-label"},"width":{"type":"string","default":""},"stack-offset":{"type":"string","default":""},"dock-breakpoint":{"type":"string","default":""},"block-start":{"type":"string","default":""},"gutter":{"type":"string","default":""},"z-index":{"type":"string","default":""},"overlay-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"panel-style":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false}},"events":{"open":{"carries":{"drawer-id":"string"},"cancelable":true},"opened":{"carries":{"drawer-id":"string"}},"close":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"snapped":{"carries":{"drawer-id":"string","snap":{"type":"enum","values":["auto","half","full"]}}}},"actions":{"open":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"css-variables":{"--sf-drawer-background":{"type":"color","state":"default"},"--sf-drawer-color":{"type":"color","state":"default"},"--sf-drawer-overlay-background":{"type":"color","state":"overlay"},"--sf-drawer-gutter":{"type":"length","state":"default"},"--sf-drawer-block-start":{"type":"length","state":"default"},"--sf-drawer-dock-breakpoint":{"type":"length","state":"docked"},"--sf-drawer-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.drawer","tag":"sf-drawer","version":"1.17.3","kind":"leaf","settings":{"placement":{"type":"enum","values":["left","right","inline-start","inline-end","bottom"],"default":"right"},"snap":{"type":"enum","values":["auto","half","full"],"default":"auto"},"overlay":{"type":"boolean","default":true},"modal":{"type":"boolean","default":true},"docked":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2","full"],"default":"1","x-scale":"width"},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"controlled":{"type":"boolean","default":false},"close-placement":{"type":"enum","values":["inside","outside"],"default":"inside"},"heading":{"type":"string","default":""},"label":{"type":"string","default":""},"close-label":{"type":"string","default-from":"runtime.close-label"},"width":{"type":"string","default":""},"stack-offset":{"type":"string","default":""},"dock-breakpoint":{"type":"string","default":""},"block-start":{"type":"string","default":""},"gutter":{"type":"string","default":""},"z-index":{"type":"string","default":""},"overlay-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"panel-style":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false}},"events":{"open":{"carries":{"drawer-id":"string"},"cancelable":true},"opened":{"carries":{"drawer-id":"string"}},"close":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"snapped":{"carries":{"drawer-id":"string","snap":{"type":"enum","values":["auto","half","full"]}}}},"actions":{"open":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"css-variables":{"--sf-drawer-background":{"type":"color","state":"default"},"--sf-drawer-color":{"type":"color","state":"default"},"--sf-drawer-overlay-background":{"type":"color","state":"overlay"},"--sf-drawer-gutter":{"type":"length","state":"default"},"--sf-drawer-block-start":{"type":"length","state":"default"},"--sf-drawer-dock-breakpoint":{"type":"length","state":"docked"},"--sf-drawer-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 
@@ -2241,13 +2257,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.drawer","tag":"sf-drawer"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Drawer","runtime":{"close-label":"Close drawer","handle-label":"Resize the panel","back-label":"Back"}}');
-
-/***/ },
-
-/***/ "ce0ca620b623"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Панель","runtime":{"close-label":"Закрыть панель","handle-label":"Изменить высоту панели","back-label":"Назад"}}');
 
 /***/ }
 

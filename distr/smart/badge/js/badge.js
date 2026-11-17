@@ -434,8 +434,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("ead34405591f");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("55155acfa4cc");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2643258a0104");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("f6a7c3a64b57");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("94f01354b3f6");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("483ea2c68d6b");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -449,16 +448,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
 const BADGE_COLOUR_ROLES = ['neutral', 'primary', 'secondary', 'tertiary', 'on-surface'];
 const BADGE_STATUSES = ['', 'info', 'success', 'warning', 'error'];
 const BADGE_STATUS_LEGACY = {
@@ -541,10 +535,7 @@ function resolveBadgeStatus(element, raw, fallback) {
 
 const BadgeElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
 });
@@ -839,6 +830,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "483ea2c68d6b"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f6a7c3a64b57");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "2643258a0104"
 (module) {
 
@@ -849,7 +862,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-badge
 /***/ "55155acfa4cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.6.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2","text"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"tonal"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed","paused","queued"],"default":""},"icon-only":{"type":"boolean","default":false},"tight":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.6.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2","text"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"tonal"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed","paused","queued"],"default":""},"icon-only":{"type":"boolean","default":false},"tight":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
@@ -857,13 +870,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Badges","runtime":{"activity-running":"Running","activity-waiting":"Needs your input","activity-done":"Ready","activity-stopped":"Stopped","activity-failed":"Failed","activity-paused":"Paused","activity-queued":"Queued"}}');
-
-/***/ },
-
-/***/ "94f01354b3f6"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Бейджи","runtime":{"activity-running":"Выполняется","activity-waiting":"Нужен ваш ответ","activity-done":"Готово","activity-stopped":"Остановлено","activity-failed":"Не удалось","activity-paused":"Пауза","activity-queued":"В очереди"}}');
 
 /***/ }
 

@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
 *
@@ -11,16 +11,12 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   .sf-switch {
-    background-color: transparent;
-    background-color: var(--sf-switch--background-color, transparent);
     gap: var(--sf-switch--gap);
   }
   /* The icons of the control and of its class markup; the help mark's «?» is
      its own button's glyph, sized and coloured by sf-help-mark (it took the
      size-2 line, 28 in a 32 button). :where keeps the weight of the rules. */
   .sf-switch .sf-icon:where(:not(sf-help-mark *)) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-icon--color, var(--sf-on-surface-variant));
     font-size: var(--sf-text-size-3);
     font-size: var(--sf-icon--font-size, var(--sf-text-size-3));
     height: var(--sf-text-size-3);
@@ -32,14 +28,12 @@
   .sf-switch .sf-switch-container-wrap {
     --sf-switch-container-wrap--background-color: transparent;
     --sf-switch-container-wrap--gap: var(--sf-space-0);
-    background-color: var(--sf-switch-container-wrap--background-color);
     gap: var(--sf-switch-container-wrap--gap);
   }
   .sf-switch .sf-switch-description {
     --sf-switch-description--color: var(--sf-on-surface-variant);
     --sf-switch-description--font-family: var(--sf-text--family);
     --sf-switch-description--font-weight: var(--sf-font-weight-regular);
-    color: var(--sf-switch-description--color);
     font-family: var(--sf-switch-description--font-family);
     font-size: var(--sf-switch-description--font-size);
     font-weight: var(--sf-switch-description--font-weight);
@@ -48,7 +42,6 @@
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) gap/var(--sf-switch-top--gap) */
   .sf-switch .sf-switch-top {
     --sf-switch-top--background-color: transparent;
-    background-color: var(--sf-switch-top--background-color);
     gap: var(--sf-switch-top--gap);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-switch-container--gap) justify-content/center (.justify-center) align-items/center (.items-center) */
@@ -56,8 +49,6 @@
     --sf-switch-container--background-color: transparent;
     --sf-switch-container--gap: var(--sf-a0);
     --sf-switch-container--font-weight: var(--sf-font-weight-regular); /* C63 W6: one label weight, named */
-    background-color: var(--sf-switch-container--background-color);
-    color: var(--sf-switch-container--color);
     font-family: var(--sf-switch-container--font-family);
     font-size: var(--sf-switch-container--font-size);
     font-weight: var(--sf-switch-container--font-weight);
@@ -208,10 +199,8 @@
     --sf-switch-toggler--border-start-start-radius: var(--sf-switch-radius, var(--sf-radius-circle));
     --sf-switch-toggler--border-style: solid;
     --sf-switch-toggler--border-width: var(--sf-switch-border-width, var(--sf-px));
-    background-color: var(--sf-switch-toggler--background-color);
     border: var(--sf-switch-toggler--border);
-    border-color: transparent;
-    border-color: var(--sf-switch-toggler--border-color, transparent);
+    border-color: revert-layer;
     border-end-end-radius: var(--sf-switch-toggler--border-end-end-radius);
     border-end-start-radius: var(--sf-switch-toggler--border-end-start-radius);
     border-start-end-radius: var(--sf-switch-toggler--border-start-end-radius);
@@ -232,7 +221,6 @@
   .sf-switch .sf-switch-inner {
     --sf-switch-inner--background-color: var(--sf-on-surface-variant);
     --sf-switch-inner--border-radius: var(--sf-radius-circle);
-    background-color: var(--sf-switch-inner--background-color);
     border-radius: var(--sf-switch-inner--border-radius);
     height: var(--sf-switch-inner--height);
     width: var(--sf-switch-inner--width);
@@ -472,6 +460,38 @@
      put, so the fill ran ahead of the travel by the length of the press. The
      colours and the travel now start together on release, on one clock. */
 }
+@layer sf.paint {
+  .sf-switch {
+    background-color: transparent;
+    background-color: var(--sf-switch--background-color, transparent);
+  }
+  .sf-switch .sf-icon:where(:not(sf-help-mark *)) {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-icon--color, var(--sf-on-surface-variant));
+  }
+  .sf-switch .sf-switch-container-wrap {
+    background-color: var(--sf-switch-container-wrap--background-color);
+  }
+  .sf-switch .sf-switch-description {
+    color: var(--sf-switch-description--color);
+  }
+  .sf-switch .sf-switch-top {
+    background-color: var(--sf-switch-top--background-color);
+  }
+  .sf-switch .sf-switch-container {
+    background-color: var(--sf-switch-container--background-color);
+    color: var(--sf-switch-container--color);
+  }
+  .sf-switch .sf-switch-toggler {
+    background-color: var(--sf-switch-toggler--background-color);
+    border: var(--sf-switch-toggler--border);
+    border-color: transparent;
+    border-color: var(--sf-switch-toggler--border-color, transparent);
+  }
+  .sf-switch .sf-switch-inner {
+    background-color: var(--sf-switch-inner--background-color);
+  }
+}
 @layer sf.states {
   @media (forced-colors: active) {
     .sf-switch .sf-switch-toggler {
@@ -553,6 +573,14 @@
   }
   .sf-switch .sf-switch-container-wrap {
     min-width: 0;
+  }
+  /* With the track at the end (the track after the text column: the class
+     markup, and sf-switch position="end", C251 SM-SW-1) the text column takes
+     the rest of the row, so the track stands at the end of the row, as
+     sf-checkbox's box. The track is twice its height, wider than the 24 hit
+     area, so its hit area never stands past the row. */
+  .sf-switch:has(> .sf-switch-container-wrap + .sf-switch-toggler) > .sf-switch-container-wrap {
+    flex: 1 1 auto;
   }
   .sf-switch .sf-switch-text {
     white-space: normal;

@@ -299,8 +299,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("404cdb27f6dc");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("df2ec153edc1");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("ded7e3ee1d62");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("6361d98e96ea");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("900783d4385c");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_5__, lit__WEBPACK_IMPORTED_MODULE_6__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_5__, lit__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -354,22 +353,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-};
 const ChangeConfirmElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
   source: "ru",
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
 });
@@ -1081,10 +1072,13 @@ function renderConfirmFooter(context, block, {
   // that appears together with its words is not heard. With statusLast it
   // follows the answers in the markup too (sf-confirm-change 1.9.0: the
   // deadline under the answers, an sf-time that may take a Tab after them).
+  // The status sign is 16, the ladder's 1/3 (C151 (1)): size="1" was the old
+  // icon scale's name for it, noted in SF.deprecations on every state
+  // (Smart joint pass SM-CNF-1, SM-CCH-1).
 
   const status = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                 <p class=${part("status")} role="status" tabindex="-1">
-                    ${context.statusText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.statusIcon} size="1" aria-hidden="true"></sf-icon>
+                    ${context.statusText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.statusIcon} data-sf-icon-scale="ladder" size="1/3" aria-hidden="true"></sf-icon>
                             <span>${context.statusText}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 </p>`; // While the answer is applied (pending) the answers stay where they were:
   // the pressed one busy, with the button's own spinner and aria-busy, the
@@ -1175,6 +1169,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "900783d4385c"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ded7e3ee1d62");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "df2ec153edc1"
 (module) {
 
@@ -1185,7 +1201,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-confi
 /***/ "404cdb27f6dc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm-change","tag":"sf-confirm-change","version":"1.9.2","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"enum","values":["2","3","4","5","6"],"default":"3"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"change-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"},"changes":{"type":"list","default":[],"of":{"label":"string","before":{"type":"string","nullable":true,"optional":true},"after":{"type":"string","nullable":true,"optional":true}}}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{"x-answer":"puts the question again (state open); asked by an assembly (ask, §19.4) it answers when the person answers or the time runs out, with value {accepted, reason, value}"},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"presentation":{"skeleton":{"late":["changes"]}},"host-states":{},"css-variables":{"--sf-confirm-change-radius":{"type":"length","state":"default"},"--sf-confirm-change-inset":{"type":"length","state":"default"},"--sf-confirm-change-gap":{"type":"length","state":"default"},"--sf-confirm-change-before-background-color":{"type":"color","state":"default"},"--sf-confirm-change-after-background-color":{"type":"color","state":"default"},"--sf-confirm-change-after-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm-change","tag":"sf-confirm-change","version":"1.10.4","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"enum","values":["2","3","4","5","6"],"default":"3"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"change-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"},"changes":{"type":"list","default":[],"of":{"label":"string","before":{"type":"string","nullable":true,"optional":true},"after":{"type":"string","nullable":true,"optional":true}}}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{"x-answer":"puts the question again (state open); asked by an assembly (ask, §19.4) it answers when the person answers or the time runs out, with value {accepted, reason, value}"},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"presentation":{"skeleton":{"late":["changes"]}},"host-states":{},"css-variables":{"--sf-confirm-change-radius":{"type":"length","state":"default"},"--sf-confirm-change-inset":{"type":"length","state":"default"},"--sf-confirm-change-gap":{"type":"length","state":"default"},"--sf-confirm-change-before-background-color":{"type":"color","state":"default"},"--sf-confirm-change-after-background-color":{"type":"color","state":"default"},"--sf-confirm-change-after-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
@@ -1193,13 +1209,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm-change","tag":"sf
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Change confirmation","runtime":{"accept-text":"Confirm","accepted-text":"Applied","accepting-text":"Applying…","after-text":"Will be","before-text":"Was","changes-label":"What will change","decline-text":"Decline","declining-text":"Declining…","empty-value-text":"empty","expired-text":"The time to confirm has passed","until-text":"Confirm by {time}"},"events":{"expired":{"label":"Expired"}}}');
-
-/***/ },
-
-/***/ "6361d98e96ea"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Подтверждение изменения","runtime":{"accept-text":"Подтвердить","accepted-text":"Применено","accepting-text":"Применяется…","after-text":"Станет","before-text":"Было","changes-label":"Что изменится","decline-text":"Отклонить","declining-text":"Отклоняется…","empty-value-text":"пусто","expired-text":"Время подтверждения истекло","until-text":"Подтвердить можно до {time}"},"events":{"expired":{"label":"Время истекло"}}}');
 
 /***/ }
 

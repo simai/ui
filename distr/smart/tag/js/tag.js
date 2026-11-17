@@ -1339,6 +1339,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getInitials: () => (/* binding */ getInitials),
 /* harmony export */   normalizeInitialsWords: () => (/* binding */ normalizeInitialsWords)
 /* harmony export */ });
+// c282-allow-start: input parsing (initials read from Russian names, C152)
 const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]); // Words a name carries that are not the person's or the organisation's own
 // (owner decision C152 (3), 2026-11-14): legal forms (ООО «Ромашка» → Р),
 // titles (Dr. John Smith → JS) and name particles (Мария фон Штейн → МШ) are
@@ -1348,7 +1349,8 @@ const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "д
 const INITIALS_SERVICE_WORDS = new Set([// legal forms
 "ооо", "оао", "зао", "пао", "ао", "нао", "ип", "нко", "ано", "гуп", "муп", "фгуп", "гбу", "мбу", "чоп", "llc", "inc", "ltd", "gmbh", "ag", "corp", "co", "llp", "plc", "lp", "bv", "oy", "ab", "srl", "sarl", // titles
 "dr", "prof", "mr", "mrs", "ms", "mx", "miss", "sir", "jr", "sr", "phd", "д-р", "проф", "акад", "г-н", "г-жа", "доц", // particles
-"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]);
+"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]); // c282-allow-end
+
 function normalizeInitialsWords(value = "") {
   return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
 } // The first character a reader sees: a whole grapheme, so a letter written
@@ -1451,8 +1453,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("b30ec5bc0edb");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("7eee137ec5ff");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("e01b02206b25");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("d65b1989605d");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("277f66a1ef9b");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("109c3b010316");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_tag_row_js__WEBPACK_IMPORTED_MODULE_7__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_tag_row_js__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -1470,16 +1471,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
-};
 const TAG_KINDS = ['checkbox', 'icon', 'default', 'color', 'avatar']; // The glyphs the template draws in sf-icon: an icon tag's icon (sell when
 // none is named) and an avatar tag's placeholder; a slot drawn instead asks
 // for nothing. Read from the element, so it can be asked before it draws.
@@ -1631,6 +1627,42 @@ function tagAppearance(element) {
   }
 
   return 'outline';
+} // A bare tag is a plain tag (owner decision C280, 2026-11-17; Smart joint
+// pass SM-TG-1, prototypes/smart-tags-study.html#q-tag-default): kind default,
+// as the class twin starts, and a filter toggle only with kind="checkbox".
+// Until 2027-01-01 (journal value-tag-default-kind-plain) a bare tag a page
+// still uses as a toggle keeps toggling and is noted in SF.deprecations: one
+// whose change the page listens to, one in an sf-tag-group that selects
+// (selection one or many, the group's filters), and the copy of either in a
+// group's «+N» panel.
+
+
+const BARE_TOGGLE = {
+  since: '2026-11-17',
+  remove_after: '2027-01-01'
+};
+
+function bareToggle(element) {
+  const original = element?._sfOriginal;
+  if (original && original !== element) return original.kind === 'checkbox';
+  const group = element?.parentElement;
+  const selecting = group?.localName === 'sf-tag-group' && normalize(group.getAttribute('selection') || 'many') !== 'none';
+  if (!element?._sfChangeHeard && !selecting) return false;
+
+  if (!element._sfBareToggleNoted) {
+    element._sfBareToggleNoted = true;
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__.noteDeprecated)({
+      component: 'sf-tag',
+      tag: 'sf-tag',
+      kind: 'value',
+      attribute: 'kind',
+      from: '(none) as a toggle',
+      to: 'checkbox',
+      ...BARE_TOGGLE
+    });
+  }
+
+  return true;
 }
 
 function resolveTagKind(element, raw, fallback) {
@@ -1640,7 +1672,7 @@ function resolveTagKind(element, raw, fallback) {
     return requested === 'quantity' ? 'default' : TAG_KINDS.includes(requested) ? requested : fallback;
   }
 
-  return legacyType(element, 'kind') || fallback;
+  return legacyType(element, 'kind') || (bareToggle(element) ? 'checkbox' : fallback);
 }
 
 function resolveTagStatus(element, raw, fallback) {
@@ -1660,10 +1692,7 @@ function resolveTagStatus(element, raw, fallback) {
 
 const TagElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
 });
@@ -1680,7 +1709,7 @@ class SfTag extends TagElement {
       // both — see contracts/public-api-axes.json. The routing lives in the prop
       // rather than in a getter, because the template reads the props context.
       kind: {
-        default: 'checkbox',
+        default: 'default',
         values: TAG_KINDS,
         parser: (raw, fallback, element) => resolveTagKind(element, raw, fallback)
       },
@@ -1702,6 +1731,17 @@ class SfTag extends TagElement {
 
   get kind() {
     return this.getProp('kind');
+  } // A page that listens to a bare tag's change uses it as a toggle (C280): it
+  // keeps toggling until 2027-01-01, noted (bareToggle).
+
+
+  addEventListener(type, listener, options) {
+    if (type === 'change' && !this._sfChangeHeard) {
+      this._sfChangeHeard = true;
+      if (!this.hasAttribute('kind') && !this.hasAttribute('type')) this.requestComponentUpdate?.('kind');
+    }
+
+    return super.addEventListener(type, listener, options);
   }
 
   set kind(value) {
@@ -2822,6 +2862,28 @@ function resolveAvatarTone(setting, name) {
 
 /***/ },
 
+/***/ "109c3b010316"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d65b1989605d");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "e01b02206b25"
 (module) {
 
@@ -2832,7 +2894,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tag f
 /***/ "7eee137ec5ff"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.11.2","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"checkbox"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","outline","ghost","surface"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"href":{"type":"string","default":""},"key":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"color":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.12.5","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"default"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","outline","ghost","surface"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"href":{"type":"string","default":""},"key":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"color":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -2840,13 +2902,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","vers
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Tags","runtime":{"remove":"Remove","more":{"one":"{n} more: {names}","other":"{n} more: {names}"},"position":"{label}, {position} of {total}, Delete to remove"}}');
-
-/***/ },
-
-/***/ "277f66a1ef9b"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Теги","runtime":{"remove":"Удалить","more":{"one":"Ещё {n}: {names}","few":"Ещё {n}: {names}","many":"Ещё {n}: {names}","other":"Ещё {n}: {names}"},"position":"{label}, {position} из {total}, Delete — убрать"}}');
 
 /***/ }
 

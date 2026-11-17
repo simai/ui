@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
 *
@@ -43,8 +43,9 @@
      width (C59: windows have a shadow, no frame; the light look lost its
      hairline). The forced-colours border below comes later and wins. */
   .sf-tooltip .sf-tooltip-content {
-    border: 0 solid var(--sf-outline-variant);
-    border: var(--sf-tooltip-border-width, 0) solid var(--sf-tooltip-border-color, var(--sf-outline-variant));
+    border-width: 0;
+    border-width: var(--sf-tooltip-border-width, 0);
+    border-style: solid;
   }
   .sf-tooltip .sf-tooltip-text,
   .sf-tooltip .sf-tooltip-supporting-text {
@@ -880,15 +881,23 @@
   }
   @media (forced-colors: active) {
     .sf-tooltip .sf-tooltip-content {
-      border: var(--sf-px) solid CanvasText;
+      border-width: var(--sf-px);
+      border-style: solid;
+    }
+  }
+}
+@layer sf.paint {
+  .sf-tooltip .sf-tooltip-content {
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-tooltip-border-color, var(--sf-outline-variant));
+  }
+  @media (forced-colors: active) {
+    .sf-tooltip .sf-tooltip-content {
+      border-color: CanvasText;
     }
   }
 }
 @layer sf.components {
-  .sf-tooltip {
-    background-color: transparent;
-    background-color: var(--sf-tooltip--background-color, transparent);
-  }
   /* One size for every tooltip (owner decision C160 (3)): the text 12/16
      (--sf-text-size-1/3, --sf-text-height-1/3), regular, padding 4 x 8
      (--sf-a4 by --sf-a8: the base steps, which density does not restate, so a
@@ -1045,8 +1054,6 @@
     --sf-tooltip-content--border-end-start-radius: var(--sf-tooltip-radius, var(--sf-radius--ui));
     --sf-tooltip-content--border-start-end-radius: var(--sf-tooltip-radius, var(--sf-radius--ui));
     --sf-tooltip-content--border-start-start-radius: var(--sf-tooltip-radius, var(--sf-radius--ui));
-    background-color: var(--sf-surface-inverse);
-    background-color: var(--sf-tooltip-content--background-color, var(--sf-tooltip-background-color, var(--sf-surface-inverse)));
     border-end-end-radius: var(--sf-tooltip-content--border-end-end-radius);
     border-end-start-radius: var(--sf-tooltip-content--border-end-start-radius);
     border-start-end-radius: var(--sf-tooltip-content--border-start-end-radius);
@@ -1068,14 +1075,11 @@
   .sf-tooltip .sf-tooltip-wrap {
     --sf-tooltip-wrap--background-color: transparent;
     --sf-tooltip-wrap--gap: var(--sf-tooltip-gap, var(--sf-space-1\/4));
-    background-color: var(--sf-tooltip-wrap--background-color);
     gap: var(--sf-tooltip-wrap--gap);
   }
   .sf-tooltip .sf-tooltip-text {
     --sf-tooltip-text--font-family: var(--sf-text--family);
     --sf-tooltip-text--font-weight: var(--sf-font-weight-regular);
-    color: var(--sf-on-surface-inverse);
-    color: var(--sf-tooltip-text--color, var(--sf-tooltip-color, var(--sf-on-surface-inverse)));
     font-family: var(--sf-tooltip-text--font-family);
     font-size: var(--sf-text-size-1\/3);
     font-size: var(--sf-tooltip-text--font-size, var(--sf-text-size-1\/3));
@@ -1097,7 +1101,6 @@
     gap: var(--sf-space-1\/3);
   }
   .sf-tooltip .sf-tooltip-supporting-text {
-    color: var(--sf-tooltip-supporting-text--color);
     font-family: var(--sf-tooltip-supporting-text--font-family);
     font-size: var(--sf-tooltip-supporting-text--font-size);
     font-weight: var(--sf-tooltip-supporting-text--font-weight);
@@ -1108,8 +1111,6 @@
     --sf-tooltip-supporting-text--line-height: var(--sf-text-height-1\/3);
   }
   .sf-tooltip .sf-tooltip-tail {
-    background-color: var(--sf-tooltip-tail--background-color);
-    color: var(--sf-tooltip-tail--color);
     font-family: var(--sf-tooltip-tail--font-family);
     font-size: var(--sf-tooltip-tail--font-size);
     font-weight: var(--sf-tooltip-tail--font-weight);
@@ -1139,6 +1140,49 @@
     /* A light tooltip is a raised surface, like every floating one: the plain
        surface-1 with no border or shadow vanished into a light page. */
     --sf-tooltip-content--background-color: var(--sf-tooltip-background-color, var(--sf-surface-popup));
+  }
+  /* Every tooltip's elevation is the window's, shadow only (C20: a tooltip
+     carries --sf-shadow-overlay; C59: every window only with a shadow, no
+     frame; a page may still set --sf-tooltip-border-width) -- the dark one,
+     the default and <sf-tooltip>'s, too: it stood flat, and in the dark theme,
+     where it is the light inverse surface on a dark page, plainly so (study
+     P1). The shadow is drawn over the whole painted shape -- the content and
+     the tail -- as --sf-shadow-overlay-filter (the two layers of
+     --sf-shadow-overlay as drop-shadows), so an arrow carries the same shadow
+     as the window; a box-shadow stopped at the content's box and left the tail
+     flat (C59 arrow rule, research 2026-11-11 §3a). */
+  .sf-tooltip {
+    -webkit-filter: var(--sf-shadow-overlay-filter);
+            filter: var(--sf-shadow-overlay-filter);
+  }
+  .sf-tooltip--light .sf-tooltip-text {
+    --sf-tooltip-text--color: var(--sf-tooltip-color, var(--sf-on-surface));
+  }
+}
+@layer sf.paint {
+  .sf-tooltip {
+    background-color: transparent;
+    background-color: var(--sf-tooltip--background-color, transparent);
+  }
+  .sf-tooltip .sf-tooltip-content {
+    background-color: var(--sf-surface-inverse);
+    background-color: var(--sf-tooltip-content--background-color, var(--sf-tooltip-background-color, var(--sf-surface-inverse)));
+  }
+  .sf-tooltip .sf-tooltip-wrap {
+    background-color: var(--sf-tooltip-wrap--background-color);
+  }
+  .sf-tooltip .sf-tooltip-text {
+    color: var(--sf-on-surface-inverse);
+    color: var(--sf-tooltip-text--color, var(--sf-tooltip-color, var(--sf-on-surface-inverse)));
+  }
+  .sf-tooltip .sf-tooltip-supporting-text {
+    color: var(--sf-tooltip-supporting-text--color);
+  }
+  .sf-tooltip .sf-tooltip-tail {
+    background-color: var(--sf-tooltip-tail--background-color);
+    color: var(--sf-tooltip-tail--color);
+  }
+  .sf-tooltip--light .sf-tooltip-content {
     --sf-surface-place: var(--sf-tooltip-background-color, var(--sf-surface-popup));
     --sf-surface-place-solid: var(--sf-tooltip-background-color, var(--sf-surface-popup));
     --sf-surface-place-ground: var(--sf-tooltip-background-color, var(--sf-surface-popup));
@@ -1260,22 +1304,5 @@
     --sf-place--popup-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-70));
     --sf-elevation-3--surface: var(--sf-surface-popup);
     --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
-  }
-  /* Every tooltip's elevation is the window's, shadow only (C20: a tooltip
-     carries --sf-shadow-overlay; C59: every window only with a shadow, no
-     frame; a page may still set --sf-tooltip-border-width) -- the dark one,
-     the default and <sf-tooltip>'s, too: it stood flat, and in the dark theme,
-     where it is the light inverse surface on a dark page, plainly so (study
-     P1). The shadow is drawn over the whole painted shape -- the content and
-     the tail -- as --sf-shadow-overlay-filter (the two layers of
-     --sf-shadow-overlay as drop-shadows), so an arrow carries the same shadow
-     as the window; a box-shadow stopped at the content's box and left the tail
-     flat (C59 arrow rule, research 2026-11-11 §3a). */
-  .sf-tooltip {
-    -webkit-filter: var(--sf-shadow-overlay-filter);
-            filter: var(--sf-shadow-overlay-filter);
-  }
-  .sf-tooltip--light .sf-tooltip-text {
-    --sf-tooltip-text--color: var(--sf-tooltip-color, var(--sf-on-surface));
   }
 }

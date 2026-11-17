@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification-form .sf-code-input-required {
     margin-left: var(--sf-space-1\/3);
@@ -25,6 +25,10 @@
   .sf-verification-form .sf-code-input-required {
     -webkit-margin-start: var(--sf-space-1\/3);
             margin-inline-start: var(--sf-space-1\/3);
+  }
+}
+@layer sf.paint {
+  .sf-verification-form .sf-code-input-required {
     color: var(--sf-error);
   }
 }

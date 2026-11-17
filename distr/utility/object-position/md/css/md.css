@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
   @media (min-width: 44rem) {
     .md\:object-bottom {
@@ -36,6 +36,30 @@
     .md\:object-top {
       -o-object-position: top;
          object-position: top;
+    }
+    .md\:object-inline-start:where(:dir(rtl)) {
+      -o-object-position: right;
+         object-position: right;
+    }
+    .md\:object-inline-start-bottom:where(:dir(rtl)) {
+      -o-object-position: right bottom;
+         object-position: right bottom;
+    }
+    .md\:object-inline-start-top:where(:dir(rtl)) {
+      -o-object-position: right top;
+         object-position: right top;
+    }
+    .md\:object-inline-end:where(:dir(rtl)) {
+      -o-object-position: left;
+         object-position: left;
+    }
+    .md\:object-inline-end-bottom:where(:dir(rtl)) {
+      -o-object-position: left bottom;
+         object-position: left bottom;
+    }
+    .md\:object-inline-end-top:where(:dir(rtl)) {
+      -o-object-position: left top;
+         object-position: left top;
     }
   }
 }

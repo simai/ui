@@ -1187,9 +1187,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6b629b4c1b7e");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("243fec56a554");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("834c8c68675a");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("5bd53c217eca");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("47068da1f922");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2610c6032931");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("504b63c18e7b");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("2610c6032931");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_1__]);
 ([_core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__, _core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // Smart entry for the inline text editor. The loader fetches this bundle when
@@ -1205,24 +1204,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_4__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_5__.runtime
-};
  // The words the module does not carry itself (the link window's hint and
 // reasons, «Ещё», the new-block label; owner decision C172) are the
 // language files'.
 
-(0,_core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.useInlineEditorWords)({
-  en,
-  ru
-});
+(0,_core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.useInlineEditorWords)(_lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__.files);
 globalThis.SF = globalThis.SF || {};
 globalThis.SF.InlineEditor = Object.freeze({
   INLINE_ENTER_MODES: _core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.INLINE_ENTER_MODES,
@@ -1244,10 +1235,7 @@ globalThis.SF.InlineEditor = Object.freeze({
 globalThis.SF.Composition?.loadEditorWords?.();
 (0,_core_js_composition_inline_editor_mjs__WEBPACK_IMPORTED_MODULE_0__.defineInlineEditor)(globalThis.customElements, {
   base: (0,_core_js_composition_manifest_host_mjs__WEBPACK_IMPORTED_MODULE_1__.manifestHost)(_component_json__WEBPACK_IMPORTED_MODULE_2__, {
-    lang: {
-      en,
-      ru
-    },
+    lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__.files,
     source: 'ru',
     aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_3__,
     positional: ['edit']
@@ -1379,7 +1367,6 @@ function emitInline(element, key, id, content, next) {
 }
 
 const MESSAGES = {
-  ru: { toolbar: 'Форматирование', strong: 'Полужирный', em: 'Курсив', code: 'Код', strike: 'Зачёркнутый', link: 'Ссылка', url: 'Адрес ссылки', apply: 'Применить', unlink: 'Убрать ссылку', editing: '{label}: редактирование. Enter — сохранить, Escape — отменить.', invalid: 'Недопустимый адрес ссылки' },
   en: { toolbar: 'Formatting', strong: 'Bold', em: 'Italic', code: 'Code', strike: 'Strikethrough', link: 'Link', url: 'Link address', apply: 'Apply', unlink: 'Remove link', editing: '{label}: editing. Enter saves, Escape cancels.', invalid: 'Invalid link address' },
 };
 const SHORTCUTS = { strong: 'b', em: 'i', code: 'e' };
@@ -2971,6 +2958,28 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "504b63c18e7b"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5bd53c217eca");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "834c8c68675a"
 (module) {
 
@@ -2981,21 +2990,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-edito
 /***/ "243fec56a554"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-inline","tag":"sf-editor-inline","version":"1.11.3","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-inline","tag":"sf-editor-inline","version":"1.12.2","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
 
 /***/ },
 
 /***/ "5bd53c217eca"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Inline editor","runtime":{"apply":"Apply","code":"Code","editing":"{label}: editing. Enter saves, Escape cancels.","editing-block":"{label}: editing. Enter starts a new block, Escape cancels.","em":"Italic","invalid":"Invalid link address","link":"Link","link-empty":"Enter the link address","link-hint":"https://…, mailto:, tel: or a path on this site such as /about","link-long":"The address is longer than {max} characters","link-scheme":"This address is not allowed: start with https://, mailto: or tel:","link-slashes":"An address on this site starts with a single slash /","link-spaces":"Remove the spaces: an address has none","link-start":"The address has no start: https://, or / for a page of this site","more":"More","strong":"Bold","toolbar":"Formatting","unlink":"Remove link","url":"Link address"}}');
-
-/***/ },
-
-/***/ "47068da1f922"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Редактор текста на холсте","runtime":{"apply":"Применить","code":"Код","editing":"{label}: редактирование. Enter — сохранить, Escape — отменить.","editing-block":"{label}: редактирование. Enter — новый блок, Escape — отменить.","em":"Курсив","invalid":"Недопустимый адрес ссылки","link":"Ссылка","link-empty":"Введите адрес ссылки","link-hint":"https://…, mailto:, tel: или путь на этом сайте, например /about","link-long":"Адрес длиннее {max} знаков","link-scheme":"Такой адрес нельзя: начните с https://, mailto: или tel:","link-slashes":"Адрес на этом сайте начинается с одной косой черты /","link-spaces":"Уберите пробелы: в адресе их не бывает","link-start":"Не хватает начала адреса: https:// или / для страницы этого сайта","more":"Ещё","strong":"Полужирный","toolbar":"Форматирование","unlink":"Убрать ссылку","url":"Адрес ссылки"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Inline editor","runtime":{"apply":"Apply","code":"Code","editing":"{label}: editing. Enter saves, Escape cancels.","editing-block":"{label}: editing. Enter starts a new block, Escape cancels.","em":"Italic","invalid":"Invalid link address","link":"Link","link-empty":"Enter the link address","link-hint":"https://…, mailto:, tel: or a path on this site such as /about","link-long":"The address is longer than {max} characters","link-scheme":"This address is not allowed: start with https://, mailto: or tel:","link-slashes":"An address on this site starts with a single slash /","link-spaces":"Remove the spaces: an address has none","link-start":"The address has no start: https://, or / for a page of this site","more":"More","strong":"Bold","toolbar":"Formatting","unlink":"Remove link","url":"Link address","strike":"Strikethrough"}}');
 
 /***/ }
 

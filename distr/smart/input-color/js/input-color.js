@@ -1266,11 +1266,6 @@ const INHERITED_TEXT = {
     inherited: 'inherited',
     reset: 'Reset to inherited',
     described: 'Inherited: {value}'
-  },
-  ru: {
-    inherited: 'наследуется',
-    reset: 'Сбросить к наследуемому',
-    described: 'Наследуется: {value}'
   }
 }; // Each control declares the three in its own props -- inherited-value,
 // inherited-text and reset-label -- written out rather than spread from here, so
@@ -1533,19 +1528,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_recent_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d26fa9fee686");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("8a9b84fc1bd6");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("865ba3b0c2c6");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("068ec0d4d41c");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("fc14def3c2cf");
-/* harmony import */ var _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("c9ce0852ac73");
-/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("43090d1c8307");
-/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("d3818183b14c");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_13__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_14__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_15__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_13__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_14__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_15__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("66c1d5ac920d");
+/* harmony import */ var _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("c9ce0852ac73");
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_12__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_13__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_14__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_12__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_13__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_14__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_14__);
 
 
 
@@ -1560,16 +1554,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_11__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_12__.runtime
-}; // A colour, for anywhere a colour is set: a theme, a site's own look, a label, a
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// A colour, for anywhere a colour is set: a theme, a site's own look, a label, a
 // chart series. It was built because the property set had no colour at all while a
 // running Larena site declares fourteen of them, but nothing here is about a
 // property view -- it is a control like a switch or a date.
@@ -1596,10 +1585,7 @@ const ru = {
 
 const ColorElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default())),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__.files,
   source: "ru",
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__,
   actions: {
@@ -1896,11 +1882,11 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownV
 
 
   _ratioText(ratio) {
-    const decimal = (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_14__.registeredWord)(this.localName, "decimal", this);
-    if (decimal === undefined) return (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_13__.formatNumber)(ratio, "number", {
+    const decimal = (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_13__.registeredWord)(this.localName, "decimal", this);
+    if (decimal === undefined) return (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_12__.formatNumber)(ratio, "number", {
       node: this
     });
-    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_15__.noteDeprecated)({
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_14__.noteDeprecated)({
       component: this.localName,
       tag: this.localName,
       kind: "word",
@@ -3707,6 +3693,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "66c1d5ac920d"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("068ec0d4d41c");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "865ba3b0c2c6"
 (module) {
 
@@ -3717,7 +3725,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "8a9b84fc1bd6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.18.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme","brand"],"default":"field"},"target":{"type":"string","default":""},"swatches":{"type":"string","default":""},"palette":{"type":"boolean","default":true},"custom":{"type":"boolean","default":true},"alpha":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"},"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"input":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.19.4","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme","brand"],"default":"field"},"target":{"type":"string","default":""},"swatches":{"type":"string","default":""},"palette":{"type":"boolean","default":true},"custom":{"type":"boolean","default":true},"alpha":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"},"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"input":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
 
 /***/ },
 
@@ -3725,13 +3733,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-in
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Color","runtime":{"choose":"Choose a colour","clear":"Use the inherited colour","inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}","value-missing":"Choose a colour.","theme":"Theme colour","theme-reset":"Use the original theme colour","brand-reset":"Restore SIMAI colour","how":"How to choose the colour","palette":"Palette","own":"Custom","product":"Product colours","recent":"Recent custom colours","recent-one":"Custom colour {value}","recent-alpha":"Custom colour {value}, opacity {alpha} %","shade":"Saturation and brightness","shade-value":"saturation {saturation} %, brightness {brightness} %","hue":"Hue","hue-value":"hue {hue}°","alpha":"Transparency","alpha-value":"opacity {alpha} %","eyedropper":"Pick a colour from the screen","eyedropper-missing":"The eyedropper is only in Chrome and Edge on a computer","code":"Colour code","copy":"Copy the code","apply":"Apply","opacity":"Opacity, per cent","not-a-colour":"This does not read as a colour","hue-red":"Red","hue-orange":"Orange","hue-amber":"Amber","hue-yellow":"Yellow","hue-lime":"Lime","hue-green":"Green","hue-teal":"Teal","hue-cyan":"Cyan","hue-sky":"Sky","hue-blue":"Blue","hue-indigo":"Indigo","hue-violet":"Violet","hue-purple":"Purple","hue-pink":"Pink","hue-brown":"Brown","hue-gray":"Grey","check-adjusted-dark":"The colour is very dark: buttons get the lighter {to} instead of {from}, or they would not stand out from the text.","check-adjusted-light":"The colour is light: buttons get the darker {to} instead of {from}, or their text could not be read.","check-contrast":"Text on a button is hard to read in the {scheme} theme: {ratio} : 1, 4.5 is needed.","check-grey":"The colour is nearly grey: the accents are grey too, and buttons and links stand out little from the text.","check-status-error":"The colour is close to the error colour: an ordinary button and «Delete» will look almost the same.","check-status-info":"The colour is close to the information colour: an accent may read as a hint or a notice.","check-status-success":"The colour is close to the success colour: an accent may read as «Done» or «Paid».","check-status-warning":"The colour is close to the warning colour: an accent may read as «Attention».","checks":"Colour check","scheme-dark":"dark","scheme-light":"light","brand":"Brand colour","help":"More about: {label}"}}');
-
-/***/ },
-
-/***/ "fc14def3c2cf"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Цвет","runtime":{"choose":"Выбрать цвет","clear":"Вернуть унаследованный","inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}","value-missing":"Выберите цвет.","theme":"Цвет темы","theme-reset":"Вернуть исходный цвет темы","brand-reset":"Вернуть цвет SIMAI","how":"Как выбрать цвет","palette":"Палитра","own":"Своё","product":"Цвета продукта","recent":"Недавние свои цвета","recent-one":"Свой цвет {value}","recent-alpha":"Свой цвет {value}, непрозрачность {alpha} %","shade":"Насыщенность и яркость","shade-value":"насыщенность {saturation} %, яркость {brightness} %","hue":"Оттенок","hue-value":"оттенок {hue}°","alpha":"Прозрачность","alpha-value":"непрозрачность {alpha} %","eyedropper":"Взять цвет с экрана","eyedropper-missing":"Пипетка есть только в Chrome и Edge на компьютере","code":"Код цвета","copy":"Скопировать код","apply":"Применить","opacity":"Непрозрачность, процентов","not-a-colour":"Не похоже на цвет","hue-red":"Красный","hue-orange":"Оранжевый","hue-amber":"Янтарный","hue-yellow":"Жёлтый","hue-lime":"Лайм","hue-green":"Зелёный","hue-teal":"Бирюзовый","hue-cyan":"Голубой","hue-sky":"Небесный","hue-blue":"Синий","hue-indigo":"Индиго","hue-violet":"Фиолетовый","hue-purple":"Пурпурный","hue-pink":"Розовый","hue-brown":"Коричневый","hue-gray":"Серый","check-adjusted-dark":"Цвет очень тёмный: кнопки получат более светлый {to} вместо {from}, иначе их не отличить от текста.","check-adjusted-light":"Цвет светлый: кнопки получат более тёмный {to} вместо {from}, иначе текст на них не прочитать.","check-contrast":"Текст на кнопке плохо читается в {scheme} теме: {ratio} : 1, нужно 4,5.","check-grey":"Цвет почти серый: акценты тоже будут серыми, кнопки и ссылки мало отличаются от текста.","check-status-error":"Цвет похож на цвет ошибки: обычная кнопка и «Удалить» будут почти одинаковы.","check-status-info":"Цвет похож на цвет сведений: акцент можно принять за подсказку или уведомление.","check-status-success":"Цвет похож на цвет успеха: акцент можно принять за «Готово» или «Оплачен».","check-status-warning":"Цвет похож на цвет предупреждения: акцент можно принять за «Внимание».","checks":"Проверка цвета","scheme-dark":"тёмной","scheme-light":"светлой","brand":"Фирменный цвет","help":"Подробнее: {label}"}}');
 
 /***/ }
 

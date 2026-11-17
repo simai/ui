@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.base {
   .sf-tile-metric {
     --sf-surface-place: var(--sf-tile-metric-background-color, var(--sf-tile-metric-background, var(--sf-surface-card)));
@@ -179,13 +179,10 @@
     block-size: 100%;
     margin: 0;
     padding: var(--sf-tile-metric--padding);
-    border: var(--sf-tile-metric--border) solid var(--sf-outline-variant);
-    border: var(--sf-tile-metric--border) solid var(--sf-tile-metric-border-color, var(--sf-outline-variant));
+    border-width: var(--sf-tile-metric--border);
+    border-style: solid;
     border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-tile-metric-radius, var(--sf-radius--surface));
-    background: var(--sf-surface-card);
-    background: var(--sf-tile-metric-background-color, var(--sf-tile-metric-background, var(--sf-surface-card)));
-    color: var(--sf-on-surface);
     font: inherit;
     font-family: var(--sf-text--family);
     font-size: var(--sf-tile-metric--font-size);
@@ -213,12 +210,6 @@
   .sf-tile-metric.sf-tile-metric--target {
     cursor: pointer;
   }
-  @media (hover: hover) {
-    .sf-tile-metric.sf-tile-metric--target:hover {
-      background: var(--sf-surface-container-hover);
-      background: var(--sf-tile-metric-hover-background-color, var(--sf-tile-metric-hover-background, var(--sf-surface-container-hover)));
-    }
-  }
   .sf-tile-metric.sf-tile-metric--target.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
@@ -226,13 +217,6 @@
   .sf-tile-metric.sf-tile-metric--target:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
-  }
-  .sf-tile-metric-label,
-  .sf-tile-metric-flat,
-  .sf-tile-metric-period,
-  .sf-tile-metric-limit,
-  .sf-tile-metric-hint {
-    color: var(--sf-on-surface-variant);
   }
   .sf-tile-metric-label {
     display: block;
@@ -251,8 +235,6 @@
     min-width: 0;
     min-inline-size: 0;
     overflow: hidden;
-    color: var(--sf-on-surface);
-    color: var(--sf-tile-metric-value-color, var(--sf-on-surface));
     font-size: var(--sf-tile-metric--value-size);
     -webkit-font-feature-settings: "tnum";
             font-feature-settings: "tnum";
@@ -262,9 +244,6 @@
     line-height: var(--sf-tile-metric--value-line);
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  .sf-tile-metric-unit {
-    color: var(--sf-on-surface-variant);
   }
   /* The change, the meter's words and the hint: lines of the rung below. */
   .sf-tile-metric-delta,
@@ -307,18 +286,6 @@
     flex-wrap: nowrap;
     align-items: flex-start;
   }
-  .sf-tile-metric-status--success .sf-tile-metric-status-icon {
-    color: var(--sf-success);
-  }
-  .sf-tile-metric-status--info .sf-tile-metric-status-icon {
-    color: var(--sf-info);
-  }
-  .sf-tile-metric-status--warning .sf-tile-metric-status-icon {
-    color: var(--sf-warning);
-  }
-  .sf-tile-metric-status--error .sf-tile-metric-status-icon {
-    color: var(--sf-error);
-  }
   .sf-tile-metric-hint {
     min-width: 0;
     min-inline-size: 0;
@@ -333,7 +300,6 @@
     display: block;
     min-width: 0;
     min-inline-size: 0;
-    color: var(--sf-on-surface-variant);
   }
   .sf-tile-metric-chart > * {
     display: block;
@@ -377,7 +343,6 @@
     left: 0;
     inset: 0;
     border-radius: var(--sf-radius--ui);
-    background: var(--sf-surface-container);
     -webkit-animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
             animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
   }
@@ -422,6 +387,53 @@
     .sf-tile-metric-grid > sf-tile-metric:not([size="1/2"]) > .sf-tile-metric {
       grid-column: 1/-1;
     }
+  }
+}
+@layer sf.paint {
+  .sf-tile-metric {
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-tile-metric-border-color, var(--sf-outline-variant));
+    background: var(--sf-surface-card);
+    background: var(--sf-tile-metric-background-color, var(--sf-tile-metric-background, var(--sf-surface-card)));
+    color: var(--sf-on-surface);
+  }
+  @media (hover: hover) {
+    .sf-tile-metric.sf-tile-metric--target:hover {
+      background: var(--sf-surface-container-hover);
+      background: var(--sf-tile-metric-hover-background-color, var(--sf-tile-metric-hover-background, var(--sf-surface-container-hover)));
+    }
+  }
+  .sf-tile-metric-label,
+  .sf-tile-metric-flat,
+  .sf-tile-metric-period,
+  .sf-tile-metric-limit,
+  .sf-tile-metric-hint {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-tile-metric-value {
+    color: var(--sf-on-surface);
+    color: var(--sf-tile-metric-value-color, var(--sf-on-surface));
+  }
+  .sf-tile-metric-unit {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-tile-metric-status--success .sf-tile-metric-status-icon {
+    color: var(--sf-success);
+  }
+  .sf-tile-metric-status--info .sf-tile-metric-status-icon {
+    color: var(--sf-info);
+  }
+  .sf-tile-metric-status--warning .sf-tile-metric-status-icon {
+    color: var(--sf-warning);
+  }
+  .sf-tile-metric-status--error .sf-tile-metric-status-icon {
+    color: var(--sf-error);
+  }
+  .sf-tile-metric-chart {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-tile-metric-skeleton--shape::after {
+    background: var(--sf-surface-container);
   }
   @media (forced-colors: active) {
     .sf-tile-metric {

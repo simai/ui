@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* A strip on the panel's edge, wider than it looks so a pointer finds it: the
      line it draws on hover, focus and drag is a hairline in the middle. The
@@ -187,8 +187,6 @@
     width: calc(2 * var(--sf-px));
     width: var(--sf-resizer-line-width, calc(2 * var(--sf-px)));
     inline-size: var(--sf-resizer-line-width, calc(2 * var(--sf-px)));
-    background-color: transparent;
-    background-color: var(--sf-resizer-line-color, transparent);
     transition: background-color 0.15s ease;
     transition: background-color var(--sf-duration-fast, 0.15s) var(--sf-animation, ease);
   }
@@ -379,6 +377,12 @@
        -moz-user-select: none !important;
         -ms-user-select: none !important;
             user-select: none !important;
+  }
+}
+@layer sf.paint {
+  sf-resizer::after {
+    background-color: transparent;
+    background-color: var(--sf-resizer-line-color, transparent);
   }
 }
 @layer sf.states {

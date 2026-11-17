@@ -17,10 +17,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("06e8cd089f28");
 /* harmony import */ var _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c9ce0852ac73");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _progress_threshold__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("a9f36a72486a");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("1eba9aa7827a");
 
 
 
 
+
+ // The words live in the component's language files, the Smart bar's words
+// under the same name (sf-progress-bar), so a pack serves both.
+
+
+const PAUSED_WORDS = {
+  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__["default"].en,
+  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__["default"].ru
+};
 const PROGRESS_BAR_SELECTOR = '.sf-progress-bar';
 const PROGRESS_BAR_BOUND_FLAG = 'sfProgressBarBound';
 
@@ -169,6 +181,20 @@ function isIndeterminate(root) {
 
 function isPaused(root) {
   return root.classList.contains('sf-progress-bar--paused') || root.dataset.paused === 'true';
+} // A paused bar is at least a warning, as the Smart bar draws it (C34; examples
+// pass EX-2): an error stays an error. The page's status stays in data-tone,
+// so the bar takes it back when the work goes on.
+
+
+function pausedTone(tone, paused) {
+  return paused && (_progress_threshold__WEBPACK_IMPORTED_MODULE_5__.STATUS_RANK[tone] ?? 0) < _progress_threshold__WEBPACK_IMPORTED_MODULE_5__.STATUS_RANK.warning ? 'warning' : tone;
+} // What a screen reader hears for a paused bar, as the Smart bar says it:
+// «35 %, на паузе», or «на паузе» while the size of the work is not known.
+
+
+function pausedValueText(root, value) {
+  if (isIndeterminate(root)) return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageText)(PAUSED_WORDS, 'paused', root, 'sf-progress-bar');
+  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageText)(PAUSED_WORDS, 'paused-value', root, 'sf-progress-bar').replace('{value}', String(Math.round(value * 100) / 100));
 } // Meter (owner decision C131 (7)): an amount within a known range (a quota
 // used), not a task's progress: role meter. A meter always has a value.
 
@@ -197,19 +223,21 @@ function syncProgressAccessibility(root, value) {
   // bar shows, «72 %» (C203 (3)); nothing while the size is not known.
 
 
-  const valueText = root.dataset.valueText || (isIndeterminate(root) ? '' : (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_3__.percentText)(value, root));
+  const valueText = root.dataset.valueText || (isPaused(root) ? pausedValueText(root, value) : '') || (isIndeterminate(root) ? '' : (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_3__.percentText)(value, root));
 
   if (valueText) {
     root.setAttribute('aria-valuetext', valueText);
   } else {
     root.removeAttribute('aria-valuetext');
   }
-} // One status class at most; no status has none.
+} // One status class at most; no status has none. The class drawn is the
+// paused bar's warning (pausedTone); data-tone keeps the page's status.
 
 
 function syncTone(root, tone) {
+  const drawn = pausedTone(tone, isPaused(root));
   ['primary', ...TONES].forEach(name => {
-    root.classList.toggle(`sf-progress-bar--${name}`, name === tone);
+    root.classList.toggle(`sf-progress-bar--${name}`, name === drawn);
   });
   if (tone) root.dataset.tone = tone;else delete root.dataset.tone;
 }
@@ -507,6 +535,49 @@ __webpack_require__.r(__webpack_exports__);
 * - Base function component (_component_name.js)
 */
 
+
+/***/ },
+
+/***/ "a9f36a72486a"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   STATUS_RANK: () => (/* binding */ STATUS_RANK),
+/* harmony export */   effectiveStatus: () => (/* binding */ effectiveStatus),
+/* harmony export */   readThreshold: () => (/* binding */ readThreshold),
+/* harmony export */   thresholdStatus: () => (/* binding */ thresholdStatus)
+/* harmony export */ });
+// The status a progress indicator draws (owner decision C131 (7)): the more
+// serious of the page's status and the threshold its value reached. The
+// thresholds are the page's, in per cent like the value; unset (null, an
+// empty attribute, a word) is no threshold. neutral, info and success rank
+// below warning, warning below error. One source for sf-progress-bar,
+// sf-progress-scale and the class scale (div.sf-progress-scale with
+// data-warning-at / data-error-at), so a scale and a bar with the same
+// numbers draw the same colour.
+const STATUS_RANK = {
+  warning: 1,
+  error: 2
+};
+function thresholdStatus(value, warningAt, errorAt) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return '';
+  if (Number.isFinite(errorAt) && number >= errorAt) return 'error';
+  if (Number.isFinite(warningAt) && number >= warningAt) return 'warning';
+  return '';
+}
+function effectiveStatus(status, value, warningAt, errorAt) {
+  const reached = thresholdStatus(value, warningAt, errorAt);
+  return (STATUS_RANK[reached] ?? 0) > (STATUS_RANK[status] ?? 0) ? reached : status;
+} // A threshold as an attribute holds it: a number, else none. An empty or
+// missing attribute is none, never 0 (Number('') is 0).
+
+function readThreshold(raw) {
+  if (raw === null || raw === undefined || String(raw).trim() === '') return null;
+  const number = Number(raw);
+  return Number.isFinite(number) ? number : null;
+}
 
 /***/ },
 
@@ -1276,6 +1347,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   registeredWord: () => (/* binding */ registeredWord)
 /* harmony export */ });
 /* harmony import */ var _tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
+/* harmony import */ var _lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("feccc97e5d7d");
 // What language a component speaks, and how a product adds one.
 //
 // The Framework speaks English by default and whatever the page says otherwise:
@@ -1310,6 +1382,9 @@ __webpack_require__.r(__webpack_exports__);
 // was published from core's copy, the table read its own, and registering a
 // language changed nothing on screen. Only a browser shows that, and it did
 // (2026-10-11).
+ // The languages built into the bundles (owner decision C282): English; every
+// other language, Russian too, is a language file (core/js/language-packs.js).
+
 
 
 const STORE = (() => {
@@ -1328,9 +1403,10 @@ const STORE = (() => {
 })();
 
 const LISTENERS = STORE.listeners;
-const REGISTERED = STORE.registered; // Language packs (owner decision C177, 2026-11-14): every language but the two
-// built in is one file per language and delivery, fetched only by a page that
-// speaks it. A pack's words go into the same registry as words registered one
+const REGISTERED = STORE.registered; // Language packs (owner decision C177, 2026-11-14; C282, 2026-11-17): every
+// language but English, the one built in, is one file per language and
+// delivery, fetched only by a page that speaks it (or included before core as
+// its script form, core/lang/<code>.js). A pack's words go into the same registry as words registered one
 // by one -- so a bundle built before packs existed reads them too -- a
 // Framework pack's beneath what is there, any other pack's over it: a product
 // overrides a Framework word whichever arrived first. The fetching is core's
@@ -1341,12 +1417,13 @@ const PACKS = STORE.packs ??= {
   loaded: new Map(),
   pending: new Map(),
   request: null
-};
+}; // The languages built into the bundles: English, and in a rollback build Russian
+// too (src/core/lang/built-in.json, C282).
 
-const isBuiltIn = code => code === 'ru' || code === 'en';
+const isBuiltIn = code => code === 'en' || (_lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]?.built_in ?? []).includes(code);
 /**
- * Ask core for the pack of a language this page speaks (nothing for ru and
- * en), and for the part that holds `component`'s words: the Framework's pack
+ * Ask core for the pack of a language this page speaks (nothing for a
+ * built-in language), and for the part that holds `component`'s words: the Framework's pack
  * comes in parts by family (core/js/language-packs.js). A core from before
  * parts takes the language alone.
  */
@@ -2331,6 +2408,61 @@ if (typeof globalThis !== 'undefined') {
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "1eba9aa7827a"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("05f645d429b2");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "feccc97e5d7d"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _built_in_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6a56aa4367e4");
+// The languages built into the component bundles (owner decision C282),
+// for page-language.js: built-in.json, the build switch
+// scripts/build-language-packs.mjs reads too. A module, as lang/index.mjs, so
+// the bundle and Node read the JSON alike.
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_built_in_json__WEBPACK_IMPORTED_MODULE_0__);
+
+
+/***/ },
+
+/***/ "05f645d429b2"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"paused-value":"{value} %, paused","paused":"paused"}}');
+
+/***/ },
+
+/***/ "6a56aa4367e4"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-built-in","schema_version":1,"$comment":"The languages built into the component bundles (owner decision C282, 2026-11-17): English only. Russian and every other language ship as language files (core/lang/<code>.js before core.js, or the parts core/lang/<code>/<family>.json core fetches). complete: the languages that must say every word (scripts/language-coverage.mjs exits 1 on a gap). Rollback: built_in [\\"en\\", \\"ru\\"], then node scripts/build-language-packs.mjs and a rebuild put Russian back into the bundles (the language files still ship, so a page that includes ru.js stays right).","built_in":["en"],"complete":["en","ru"]}');
 
 /***/ }
 

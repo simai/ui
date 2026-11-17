@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
 *
@@ -106,7 +106,6 @@
     width: auto;
     -webkit-animation: none;
             animation: none;
-    background-color: color-mix(in srgb, var(--sf-progress-bar-progress--background-color) 32%, transparent);
   }
   @-webkit-keyframes sf-progress-bar-run {
     from {
@@ -137,6 +136,15 @@
       width: auto;
       -webkit-animation: none;
               animation: none;
+    }
+  }
+}
+@layer sf.paint {
+  .sf-progress-bar.sf-progress-bar--indeterminate.sf-progress-bar--paused .sf-progress-bar-progress {
+    background-color: color-mix(in srgb, var(--sf-progress-bar-progress--background-color) 32%, transparent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sf-progress-bar.sf-progress-bar--indeterminate .sf-progress-bar-progress {
       background-color: color-mix(in srgb, var(--sf-progress-bar-progress--background-color) 32%, transparent);
     }
   }
@@ -144,10 +152,6 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) */
   .sf-progress-bar {
-    background-color: transparent;
-    background-color: var(--sf-progress-bar--background-color, transparent);
-    color: var(--sf-on-surface);
-    color: var(--sf-progress-bar--color, var(--sf-on-surface));
     font-family: var(--sf-text--family);
     font-family: var(--sf-progress-bar--font-family, var(--sf-text--family));
     font-weight: var(--sf-font-weight-regular);
@@ -163,7 +167,6 @@
     --sf-progress-bar-main--background-color: var(--sf-progress-bar-track-color, var(--sf-surface-container));
     /* Round ends at every thickness (owner decision C131 (3)). */
     --sf-progress-bar-main--border-radius: var(--sf-progress-bar-radius, var(--sf-radius-circle));
-    background-color: var(--sf-progress-bar-main--background-color);
     border-radius: var(--sf-progress-bar-main--border-radius);
     height: var(--sf-progress-bar-main--height);
     height: var(--sf-progress-bar-height, var(--sf-progress-bar-main--height));
@@ -171,7 +174,6 @@
   .sf-progress-bar .sf-progress-bar-progress {
     --sf-progress-bar-progress--background-color: var(--sf-progress-bar-fill-color, var(--sf-primary));
     --sf-progress-bar-progress--border-radius: var(--sf-progress-bar-radius, var(--sf-radius-circle));
-    background-color: var(--sf-progress-bar-progress--background-color);
     border-radius: var(--sf-progress-bar-progress--border-radius);
   }
   /* No status draws the theme's primary; neutral is the grey of sf-dot and
@@ -264,6 +266,20 @@
     }
   }
 }
+@layer sf.paint {
+  .sf-progress-bar {
+    background-color: transparent;
+    background-color: var(--sf-progress-bar--background-color, transparent);
+    color: var(--sf-on-surface);
+    color: var(--sf-progress-bar--color, var(--sf-on-surface));
+  }
+  .sf-progress-bar .sf-progress-bar-main {
+    background-color: var(--sf-progress-bar-main--background-color);
+  }
+  .sf-progress-bar .sf-progress-bar-progress {
+    background-color: var(--sf-progress-bar-progress--background-color);
+  }
+}
 @layer sf.components {
   /* The text (owner decision C131 (4)): top -- the name at the start and the
      value at the end, on one text line over the bar -- or inline-end, the value
@@ -321,8 +337,6 @@
   }
   .sf-progress-bar .sf-progress-bar-text {
     flex: none;
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-progress-bar-color, var(--sf-on-surface-variant));
     -webkit-font-feature-settings: "tnum";
             font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
@@ -392,6 +406,12 @@
     min-width: calc(3ch + 1.4em);
     min-inline-size: calc(3ch + 1.4em);
     text-align: end;
+  }
+}
+@layer sf.paint {
+  .sf-progress-bar .sf-progress-bar-text {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-progress-bar-color, var(--sf-on-surface-variant));
   }
   .sf-progress-bar.sf-progress-bar--inline.sf-progress-bar--warning .sf-progress-bar-text {
     color: var(--sf-warning);

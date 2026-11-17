@@ -12,9 +12,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("251572daff8d");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("91caf1e1e58a");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("8898abd551c7");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d5a87cc95e86");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("13d97237b26f");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("06be59085add");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d63d1e6e1a0f");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("06be59085add");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -30,16 +29,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_5__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_6__.runtime
-};
  // From its component.json (standard simai.smart-component 1.3.8 §3, §4,
 // §7.4.1, §8): settings are attributes and properties made by
 // core/js/element-manifest.js, the words are lang/<locale>.json (a product
@@ -48,10 +42,7 @@ const ru = {
 
 const EmptyStateElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_3__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
 }); // The icon rule (owner decision C120): an empty place shows the icon of its
@@ -439,6 +430,28 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "d63d1e6e1a0f"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d5a87cc95e86");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "8898abd551c7"
 (module) {
 
@@ -449,7 +462,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-empty
 /***/ "91caf1e1e58a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.empty-state","tag":"sf-empty-state","version":"1.5.0","kind":"leaf","settings":{"kind":{"type":"enum","values":["no-data","first-use","nothing-found","no-access","error","offline","processing"],"default":"no-data"},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"value":{"type":"number","nullable":true,"default":null,"min":0,"max":100},"text":{"type":"string","default":""},"heading-level":{"type":"number","default":3,"integer":true,"min":2,"max":6},"layout":{"type":"enum","values":["block","inline"],"default":"block"},"live":{"type":"enum","values":["auto","alert","off"],"default":"auto"},"expressive":{"type":"boolean","default":false},"actions":{"type":"list","of":{"id":"id","text":"string","appearance":"string"}}},"values":{},"events":{"action":{"carries":{"id":"string","auto":"boolean"},"own-verb":true}},"actions":{},"css-variables":{"--sf-empty-state-max-inline-size":{"type":"length","state":"default"},"--sf-empty-state-color":{"type":"color","state":"default"},"--sf-empty-state-text-color":{"type":"color","state":"default"},"--sf-empty-state-gap":{"type":"length","state":"default"},"--sf-empty-state-padding-block":{"type":"length","state":"default"},"--sf-empty-state-actions-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.empty-state","tag":"sf-empty-state","version":"1.6.5","kind":"leaf","settings":{"kind":{"type":"enum","values":["no-data","first-use","nothing-found","no-access","error","offline","processing"],"default":"no-data"},"size":{"type":"enum","values":["1/3","1/2","1","2"],"default":"1"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"value":{"type":"number","nullable":true,"default":null,"min":0,"max":100},"text":{"type":"string","default":""},"heading-level":{"type":"number","default":3,"integer":true,"min":2,"max":6},"layout":{"type":"enum","values":["block","inline"],"default":"block"},"live":{"type":"enum","values":["auto","alert","off"],"default":"auto"},"expressive":{"type":"boolean","default":false},"actions":{"type":"list","of":{"id":"id","text":"string","appearance":"string"}}},"values":{},"events":{"action":{"carries":{"id":"string","auto":"boolean"},"own-verb":true}},"actions":{},"css-variables":{"--sf-empty-state-max-inline-size":{"type":"length","state":"default"},"--sf-empty-state-color":{"type":"color","state":"default"},"--sf-empty-state-text-color":{"type":"color","state":"default"},"--sf-empty-state-gap":{"type":"length","state":"default"},"--sf-empty-state-padding-block":{"type":"length","state":"default"},"--sf-empty-state-actions-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -457,13 +470,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.empty-state","tag":"sf-em
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Empty state","runtime":{"create":"Create","error-text":"Try again","error-title":"Could not load","first-use-text":"Create the first record and it will appear here","first-use-title":"Nothing here yet","no-access-text":"Ask an administrator for access","no-access-title":"No access","no-data-text":"They will appear here once added","no-data-title":"No records yet","nothing-found-text":"Try another query or other filters","nothing-found-title":"Nothing found","offline-text":"Check your connection; we will try again once it is back","offline-title":"No connection","processing-share":"Done","processing-text":"This may take a few minutes. The result will appear here; you can close the page","processing-title":"Being prepared","retry":"Try again"},"events":{"action":{"label":"Do the empty state\'s action"}}}');
-
-/***/ },
-
-/***/ "13d97237b26f"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Пустое состояние","runtime":{"create":"Создать","error-text":"Попробуйте ещё раз","error-title":"Не удалось загрузить","first-use-text":"Создайте первую запись — она появится здесь","first-use-title":"Здесь пока пусто","no-access-text":"Обратитесь к администратору","no-access-title":"Нет доступа","no-data-text":"Они появятся здесь, когда их добавят","no-data-title":"Записей пока нет","nothing-found-text":"Попробуйте изменить запрос или фильтры","nothing-found-title":"Ничего не найдено","offline-text":"Проверьте подключение — повторим сами, когда сеть вернётся","offline-title":"Нет связи","processing-share":"Готово","processing-text":"Это может занять несколько минут. Результат появится здесь — страницу можно закрыть","processing-title":"Готовится","retry":"Повторить"},"events":{"action":{"label":"Выполнить действие пустого состояния"}}}');
 
 /***/ }
 

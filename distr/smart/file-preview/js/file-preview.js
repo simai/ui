@@ -327,9 +327,10 @@ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_resu
 // effects (format-intl.js). The same functions as core/js/format.js,
 // composition/file-size.mjs and SF.format.fileSize.
  // The four words of a size live in core's language files
-// (core/js/lang/file-size, localization study LC-3): ru and en ship; any
-// other language takes the words a product registers for `sf-file-size`
-// (SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
+// (core/js/lang/file-size, localization study LC-3): English ships in the
+// bundle; Russian and any other language take the words their language file
+// or a product registers for `sf-file-size` (owner decision C282;
+// SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
 // English words with its own digits. A component with words of its own passes
 // them as `units`. The registry is read from the shared global the page
 // language keeps (core/js/page-language.js), so this module still runs
@@ -342,17 +343,28 @@ function unitsOf(words) {
   return Object.freeze(UNIT_KEYS.map(key => words[key]));
 }
 
-const FILE_SIZE_UNITS = /* @__PURE__ */Object.freeze({
-  en: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en),
-  ru: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru)
-});
-
 function registeredUnits(code) {
   const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-file-size')?.get?.(code);
   return words && UNIT_KEYS.every(key => typeof words[key] === 'string') ? unitsOf(words) : null;
-}
-/** The unit words for a locale: registered for it, its own, its language's, else English. */
+} // The built-in languages' units (English; owner decision C282), and `ru` as
+// before for a reader of SF.format.FILE_SIZE_UNITS.ru: the units the ru
+// language file registered, null until it is on the page.
 
+
+function unitTable(words) {
+  const table = {};
+
+  for (const [code, own] of Object.entries(words)) table[code] = unitsOf(own);
+
+  if (!table.ru) Object.defineProperty(table, 'ru', {
+    enumerable: true,
+    get: () => registeredUnits('ru')
+  });
+  return Object.freeze(table);
+}
+
+const FILE_SIZE_UNITS = /* @__PURE__ */unitTable(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]);
+/** The unit words for a locale: registered for it, its own, its language's, else English. */
 
 function fileSizeUnits(locale = 'en') {
   const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
@@ -897,8 +909,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("15b4e93ff6ed");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("f3f4ec5c87ca");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("49343ffee6b1");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("ba7a8d52b29c");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("66b9acf74a27");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("c9af6094a160");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__, _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_6__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__, _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -913,16 +924,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-}; // sf-file-preview from its component.json (standard simai.smart-component
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-file-preview from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4, §8; vocabulary 1.1.5 §5 download and detach): its settings
 // are attributes and properties made by core/js/element-manifest.js, its words
 // are lang/<locale>.json (a product adds a language through
@@ -932,10 +938,7 @@ const ru = {
 
 const FilePreviewElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
 });
@@ -1959,16 +1962,41 @@ __webpack_async_result__();
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
 /* harmony export */ });
 /* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3694b5e2bf39");
-/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("220979cc98c6");
-// The unit words of a file size (localization study LC-3), for the bundle and
-// for Node alike: the runtime words of the language files, by language.
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
 
 
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "c9af6094a160"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ba7a8d52b29c");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
 
 
 /***/ },
@@ -1987,13 +2015,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"B","kb":"KB","mb":"MB
 
 /***/ },
 
-/***/ "220979cc98c6"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"Б","kb":"КБ","mb":"МБ","gb":"ГБ"}}');
-
-/***/ },
-
 /***/ "49343ffee6b1"
 (module) {
 
@@ -2004,7 +2025,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-
 /***/ "f3f4ec5c87ca"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.5.0","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"file-date":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"duration":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["row","chip","tile"],"default":"row"},"download":{"type":"boolean","default":true},"target":{"type":"string","default":""},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"stored":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","uploading","error"],"default":"ready"},"value":{"type":"number","optional":true,"min":0,"max":100},"error-text":{"type":"string","default":""},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"retry":{"carries":{"id":"string","action":"string","value":"object"}}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.5.3","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"file-date":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"duration":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["row","chip","tile"],"default":"row"},"download":{"type":"boolean","default":true},"target":{"type":"string","default":""},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"stored":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","uploading","error"],"default":"ready"},"value":{"type":"number","optional":true,"min":0,"max":100},"error-text":{"type":"string","default":""},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"retry":{"carries":{"id":"string","action":"string","value":"object"}}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
@@ -2012,13 +2033,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-f
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"File Preview","runtime":{"aria-label":"File","download-label":"Download {name}","remove-label":"Remove {name}","uploading-label":"Uploading {name}","error-text":"Not uploaded","error-line":"Not uploaded: {message}","retry-text":"Retry","retry-label":"Retry {name}","delete-label":"Delete {name}","delete-question":"Delete “{name}”?","delete-text":"Delete","viewer-previous":"Previous file","viewer-next":"Next file"}}');
-
-/***/ },
-
-/***/ "66b9acf74a27"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Предпросмотр файла","runtime":{"aria-label":"Файл","download-label":"Скачать {name}","remove-label":"Убрать {name}","uploading-label":"Загрузка {name}","error-text":"Не загрузился","error-line":"Не загрузился: {message}","retry-text":"Повторить","retry-label":"Повторить {name}","delete-label":"Удалить {name}","delete-question":"Удалить «{name}»?","delete-text":"Удалить","viewer-previous":"Предыдущий файл","viewer-next":"Следующий файл"}}');
 
 /***/ }
 

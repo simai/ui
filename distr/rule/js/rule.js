@@ -5457,6 +5457,14 @@ SF.RuleLoader['cl-progress-ring'] = {
   js: true,
   relation: [{
     name: 'progress-ring'
+  }, // An avatar in the ring's content (slot="content", C152 (8)): the ring sheet sizes .sf-avatar from the avatar's own variables, and the element warns about an sf-avatar put in without the slot (C250: declared, fetched after the page is ready).
+  {
+    name: 'avatars',
+    lazy: true
+  }, // The sf-avatar element the ring holds or warns about (C250).
+  {
+    name: 'cl-avatar',
+    lazy: true
   }]
 };
 
@@ -6307,42 +6315,42 @@ SF.RuleLoader['appearance/default'] = new RegExp("^(?:appearance-none)(?![\\s\\S
 /***/ "4a625f67f9fa"
 () {
 
-SF.RuleLoader['aspect-ratio/default'] = new RegExp("^(?:aspect-(?:1(?:6x9|x(?:1|2))|2x(?:1|3)|3x(?:1|2|4)|4x(?:1|3)|9x16))(?![\\s\\S])");
+SF.RuleLoader['aspect-ratio/default'] = new RegExp("^(?:aspect-(?:1(?:6x9|x(?:1|2))|2(?:1x9|x(?:1|3))|3x(?:1|2|4)|4x(?:1|3)|9x16|auto))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "d70680527cad"
 () {
 
-SF.RuleLoader['aspect-ratio/lg'] = new RegExp("^(?:lg:aspect-(?:1(?:6x9|x(?:1|2))|2x(?:1|3)|3x(?:1|2|4)|4x(?:1|3)|9x16))(?![\\s\\S])");
+SF.RuleLoader['aspect-ratio/lg'] = new RegExp("^(?:lg:aspect-(?:1(?:6x9|x(?:1|2))|2(?:1x9|x(?:1|3))|3x(?:1|2|4)|4x(?:1|3)|9x16|auto))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "70fa0c66c9ad"
 () {
 
-SF.RuleLoader['aspect-ratio/md'] = new RegExp("^(?:md:aspect-(?:1(?:6x9|x(?:1|2))|2x(?:1|3)|3x(?:1|2|4)|4x(?:1|3)|9x16))(?![\\s\\S])");
+SF.RuleLoader['aspect-ratio/md'] = new RegExp("^(?:md:aspect-(?:1(?:6x9|x(?:1|2))|2(?:1x9|x(?:1|3))|3x(?:1|2|4)|4x(?:1|3)|9x16|auto))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "85104d54f937"
 () {
 
-SF.RuleLoader['aspect-ratio/sm'] = new RegExp("^(?:sm:aspect-(?:1(?:6x9|x(?:1|2))|2x(?:1|3)|3x(?:1|2|4)|4x(?:1|3)|9x16))(?![\\s\\S])");
+SF.RuleLoader['aspect-ratio/sm'] = new RegExp("^(?:sm:aspect-(?:1(?:6x9|x(?:1|2))|2(?:1x9|x(?:1|3))|3x(?:1|2|4)|4x(?:1|3)|9x16|auto))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "4507340eed4a"
 () {
 
-SF.RuleLoader['aspect-ratio/xl'] = new RegExp("^(?:xl:aspect-(?:1(?:6x9|x(?:1|2))|2x(?:1|3)|3x(?:1|2|4)|4x(?:1|3)|9x16))(?![\\s\\S])");
+SF.RuleLoader['aspect-ratio/xl'] = new RegExp("^(?:xl:aspect-(?:1(?:6x9|x(?:1|2))|2(?:1x9|x(?:1|3))|3x(?:1|2|4)|4x(?:1|3)|9x16|auto))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "b54f412b6b29"
 () {
 
-SF.RuleLoader['aspect-ratio/xxl'] = new RegExp("^(?:xxl:aspect-(?:1(?:6x9|x(?:1|2))|2x(?:1|3)|3x(?:1|2|4)|4x(?:1|3)|9x16))(?![\\s\\S])");
+SF.RuleLoader['aspect-ratio/xxl'] = new RegExp("^(?:xxl:aspect-(?:1(?:6x9|x(?:1|2))|2(?:1x9|x(?:1|3))|3x(?:1|2|4)|4x(?:1|3)|9x16|auto))(?![\\s\\S])");
 
 /***/ },
 
@@ -10035,7 +10043,7 @@ SF.RuleLoader['placeholder-opacity/hover'] = new RegExp("^(?:hover:placeholder-o
 /***/ "55a08d0fdedd"
 () {
 
-SF.RuleLoader['pointer-events/default'] = new RegExp("^(?:pointer-event-(?:auto|none))(?![\\s\\S])");
+SF.RuleLoader['pointer-events/default'] = new RegExp("^(?:pointer-event(?:-(?:auto|none)|s-(?:auto|none)))(?![\\s\\S])");
 
 /***/ },
 
@@ -10317,7 +10325,7 @@ SF.RuleLoader['scroll-margin-ext/default'] = new RegExp("^(?:(?:-scroll-m(?:-(?:
 /***/ "22cbdc3fc57d"
 () {
 
-SF.RuleLoader['scroll-margin/default'] = new RegExp("^(?:scroll-m(?:-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|b-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|t-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))(?![\\s\\S])");
+SF.RuleLoader['scroll-margin/default'] = new RegExp("^(?:scroll-m(?:-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|b(?:lock-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|ottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|inline-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|b-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|t-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))(?![\\s\\S])");
 
 /***/ },
 
@@ -10331,7 +10339,7 @@ SF.RuleLoader['scroll-padding-ext/default'] = new RegExp("^(?:(?:-scroll-p(?:-(?
 /***/ "05b04f5b99db"
 () {
 
-SF.RuleLoader['scroll-padding/default'] = new RegExp("^(?:scroll-p(?:-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|b-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|l-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|r-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|t-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))(?![\\s\\S])");
+SF.RuleLoader['scroll-padding/default'] = new RegExp("^(?:scroll-p(?:-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8|bottom-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|inline-(?:end-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|start-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|top-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|b-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|l-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|r-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|t-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))(?![\\s\\S])");
 
 /***/ },
 
@@ -10940,14 +10948,14 @@ SF.RuleLoader['transform-rotate/hover'] = new RegExp("^(?:hover:rotate-(?:0|1(?:
 /***/ "7a457ed478e0"
 () {
 
-SF.RuleLoader['transform-scale/default'] = new RegExp("^(?:scale-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4)))(?![\\s\\S])");
+SF.RuleLoader['transform-scale/default'] = new RegExp("^(?:scale-(?:0|1(?:(?:\\/(?:2|3|4)|0(?:0|5)|10|20))?|2|3|4|80|9(?:0|5)|x-(?:0|1(?:(?:\\/(?:2|3|4)|0(?:0|5)|10|20))?|2|3|4|80|9(?:0|5))|y-(?:0|1(?:(?:\\/(?:2|3|4)|0(?:0|5)|10|20))?|2|3|4|80|9(?:0|5))))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "83cbf6937cb2"
 () {
 
-SF.RuleLoader['transform-scale/hover'] = new RegExp("^(?:hover:scale-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|x-(?:0|1(?:\\/(?:2|3|4))?|2|3|4)|y-(?:0|1(?:\\/(?:2|3|4))?|2|3|4)))(?![\\s\\S])");
+SF.RuleLoader['transform-scale/hover'] = new RegExp("^(?:hover:scale-(?:0|1(?:(?:\\/(?:2|3|4)|0(?:0|5)|10|20))?|2|3|4|80|9(?:0|5)|x-(?:0|1(?:(?:\\/(?:2|3|4)|0(?:0|5)|10|20))?|2|3|4|80|9(?:0|5))|y-(?:0|1(?:(?:\\/(?:2|3|4)|0(?:0|5)|10|20))?|2|3|4|80|9(?:0|5))))(?![\\s\\S])");
 
 /***/ },
 

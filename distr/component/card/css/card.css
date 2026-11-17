@@ -1,4 +1,4 @@
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
   .sf-card > h1 {
     font-size: var(--sf-heading-6--size);
@@ -776,45 +776,6 @@
     --sf-link-hover: var(--sf-place--found-link-hover);
     --sf-link-active: var(--sf-place--found-link-active);
   }
-  .sf-card {
-    background-color: var(--sf-surface-card);
-    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-surface-card)));
-  }
-  .sf-card:not(.does-not-exist):not(.does-not-exist) .sf-card:not(.sf-card--plain) {
-    background-color: var(--sf-transparent);
-    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-transparent)));
-  }
-  .sf-modal-surface:not(.does-not-exist):not(.does-not-exist) .sf-card:not(.sf-card--plain) {
-    background-color: var(--sf-transparent);
-    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-transparent)));
-  }
-  :is(.sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel) .sf-card:not(.sf-card--plain) {
-    background-color: var(--sf-transparent);
-    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-transparent)));
-  }
-  :is(sf-popover > [slot=content]:not(.does-not-exist):not(.does-not-exist)) .sf-card:not(.sf-card--plain) {
-    background-color: var(--sf-transparent);
-    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-transparent)));
-  }
-  .bg-surface-popup:not(.does-not-exist):not(.does-not-exist) .sf-card:not(.sf-card--plain) {
-    background-color: var(--sf-transparent);
-    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-transparent)));
-  }
-  .bg-surface-popup-nested:not(.does-not-exist):not(.does-not-exist) .sf-card:not(.sf-card--plain) {
-    background-color: var(--sf-transparent);
-    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-transparent)));
-  }
-  a.sf-card[href]:not(.sf-card--plain):hover {
-    background-color: var(--sf-surface-raised);
-    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-surface-raised)));
-  }
-  button.sf-card:not(.does-not-exist):not(.sf-card--plain):hover {
-    background-color: var(--sf-surface-raised);
-    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-surface-raised)));
-  }
-  .sf-card--plain {
-    background-color: var(--sf-transparent);
-  }
 }
 @layer sf.components {
   .sf-card {
@@ -842,10 +803,9 @@
     padding-right: min(var(--sf-space-2), 8%);
     padding-right: var(--sf-card-padding-inline, min(var(--sf-space-2), 8%));
     padding-inline: var(--sf-card-padding-inline, min(var(--sf-space-2), 8%));
-    color: var(--sf-on-surface);
-    color: var(--sf-card-color, var(--sf-on-surface));
-    border: var(--sf-px) solid var(--sf-outline-variant);
-    border: var(--sf-card-border-width, var(--sf-px)) solid var(--sf-card-border-color, var(--sf-outline-variant));
+    border-width: var(--sf-px);
+    border-width: var(--sf-card-border-width, var(--sf-px));
+    border-style: solid;
     border-radius: var(--sf-card--radius);
     box-shadow: 0 0 transparent, 0 0 transparent;
     box-shadow: var(--sf-ring-shadow, 0 0 transparent), var(--sf-place-shadow, 0 0 transparent);
@@ -1394,7 +1354,6 @@
   }
   .sf-card--plain {
     padding: var(--sf-0);
-    border-color: var(--sf-transparent);
     border-radius: var(--sf-0);
   }
   @media (prefers-reduced-motion: reduce) {
@@ -1404,6 +1363,56 @@
     button.sf-card:not(.does-not-exist):not(.sf-card--plain) {
       transition: none;
     }
+  }
+}
+@layer sf.paint {
+  .sf-card {
+    background-color: var(--sf-surface-card);
+    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-surface-card)));
+  }
+  .sf-card:not(.does-not-exist):not(.does-not-exist) .sf-card:not(.sf-card--plain) {
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-transparent)));
+  }
+  .sf-modal-surface:not(.does-not-exist):not(.does-not-exist) .sf-card:not(.sf-card--plain) {
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-transparent)));
+  }
+  :is(.sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel) .sf-card:not(.sf-card--plain) {
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-transparent)));
+  }
+  :is(sf-popover > [slot=content]:not(.does-not-exist):not(.does-not-exist)) .sf-card:not(.sf-card--plain) {
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-transparent)));
+  }
+  .bg-surface-popup:not(.does-not-exist):not(.does-not-exist) .sf-card:not(.sf-card--plain) {
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-transparent)));
+  }
+  .bg-surface-popup-nested:not(.does-not-exist):not(.does-not-exist) .sf-card:not(.sf-card--plain) {
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-transparent)));
+  }
+  a.sf-card[href]:not(.sf-card--plain):hover {
+    background-color: var(--sf-surface-raised);
+    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-surface-raised)));
+  }
+  button.sf-card:not(.does-not-exist):not(.sf-card--plain):hover {
+    background-color: var(--sf-surface-raised);
+    background-color: var(--sf-card-background-color, var(--sf-card-background, var(--sf-surface-raised)));
+  }
+  .sf-card--plain {
+    background-color: var(--sf-transparent);
+  }
+  .sf-card {
+    color: var(--sf-on-surface);
+    color: var(--sf-card-color, var(--sf-on-surface));
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-card-border-color, var(--sf-outline-variant));
+  }
+  .sf-card--plain {
+    border-color: var(--sf-transparent);
   }
   @media (forced-colors: active) {
     .sf-card:not(.sf-card--plain) {

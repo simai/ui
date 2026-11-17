@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   .sf-button-group {
     display: inline-flex;
@@ -3576,11 +3576,6 @@
     gap: var(--sf-button-group--padding);
     padding: var(--sf-button-group--padding);
     border-radius: var(--sf-button-group--radius);
-    /* The track is a translucent container fill, so the dimmed ink on it is the
-       container's: 4.5:1 over the surfaces 0 to 3 in both themes. */
-    background-color: var(--sf-surface-container);
-    background-color: var(--sf-button-group-background-color, var(--sf-surface-container));
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
   }
   /* The size ladder: the track takes the button's height, its padding the
      difference to the compact step, the count the label's step. */
@@ -3626,6 +3621,15 @@
   }
   .sf-button-group--segmented.sf-button-group--radius-rounded {
     --sf-button-group--plate-radius: var(--sf-radius-rounded);
+  }
+}
+@layer sf.paint {
+  .sf-button-group.sf-button-group--segmented {
+    /* The track is a translucent container fill, so the dimmed ink on it is the
+       container's: 4.5:1 over the surfaces 0 to 3 in both themes. */
+    background-color: var(--sf-surface-container);
+    background-color: var(--sf-button-group-background-color, var(--sf-surface-container));
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
   }
 }
 @layer sf.override {

@@ -903,8 +903,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("64feefebb417");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("5bb33fb22db3");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("902a6f38915d");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("d7b6a56d1dd6");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("96bdb2ff5f5d");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("16d3d315e23f");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_7__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_8__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_7__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -925,16 +924,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_13__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_14__.runtime
-};
 const COMPONENT_ATTRIBUTES = new Set(["template", "size", "height", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "full-width", "root-class", "loading", "segment", "disabled", "native-type", "form", "name", "value", "href", "target", "rel", "expanded", "pressed", "text-pressed", "cycle", "theme-cycle", "menu", "split", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // height (1.10.0, decision C27): the size's tightness steps. A value outside
 // the list reads as default and is said once per button.
 
@@ -1125,10 +1119,7 @@ function applyButtonAttributes(host, button) {
 
 const ButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__.files,
   source: "ru",
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_12__
 });
@@ -1684,7 +1675,7 @@ class SfButton extends ButtonElement {
 
   createIcon(name, filled = false) {
     if (!name) return "";
-    return (0,lit__WEBPACK_IMPORTED_MODULE_3__.html)`<sf-icon icon="${name}" ?filled=${filled} root-class="pointer-event-none" aria-hidden="true"></sf-icon>`;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_3__.html)`<sf-icon icon="${name}" ?filled=${filled} root-class="pointer-events-none" aria-hidden="true"></sf-icon>`;
   }
 
   set value(nextValue) {
@@ -1821,10 +1812,10 @@ function renderButtonTemplate(context) {
             ${overlayContent}
             ${startContent}
             ${textContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
-                    class="sf-button-text-container text-${textPosition} pointer-event-none${fullText ? ' flex-1' : ''}">
+                    class="sf-button-text-container text-${textPosition} pointer-events-none${fullText ? ' flex-1' : ''}">
         ${textContent}
       </span>` : ''}
-            ${endContent}${shortcutCaps.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-shortcut pointer-event-none" aria-hidden="true"><kbd class="sf-kbd--group">${shortcutCaps.map((cap, at) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${at && context.shortcutJoin ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-kbd-join">+</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<kbd class=${cap.square ? 'sf-kbd--square' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${cap.text}</kbd>`)}</kbd></span>` : ''}
+            ${endContent}${shortcutCaps.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-shortcut pointer-events-none" aria-hidden="true"><kbd class="sf-kbd--group">${shortcutCaps.map((cap, at) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${at && context.shortcutJoin ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-kbd-join">+</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<kbd class=${cap.square ? 'sf-kbd--square' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${cap.text}</kbd>`)}</kbd></span>` : ''}
 `; // href (1.4.0): a link with the button's look. The browser's own link
   // follows it (Enter, the context menu, a new tab); a button's states that
   // a link has no words for -- native-type, expanded, pressed -- do not
@@ -2568,6 +2559,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "16d3d315e23f"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d7b6a56d1dd6");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "902a6f38915d"
 (module) {
 
@@ -2578,7 +2591,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "5bb33fb22db3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.16.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"full-width":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true},"text-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"menu":{"type":"list","default":[],"of":{"id":"string","text":"string","icon":{"type":"icon","optional":true},"caption":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"kind":{"type":"string","optional":true}}},"split":{"type":"boolean","default":false}},"values":{},"events":{"press":{"carries":{}},"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}},"select":{"carries":{"id":{"type":"string","nullable":true},"entry":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"},"--sf-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-button-pressed-color":{"type":"color","state":"pressed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.16.8","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"full-width":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true},"text-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"menu":{"type":"list","default":[],"of":{"id":"string","text":"string","icon":{"type":"icon","optional":true},"caption":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"kind":{"type":"string","optional":true}}},"split":{"type":"boolean","default":false}},"values":{},"events":{"press":{"carries":{}},"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}},"select":{"carries":{"id":{"type":"string","nullable":true},"entry":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"},"--sf-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-button-pressed-color":{"type":"color","state":"pressed"}}}');
 
 /***/ },
 
@@ -2586,13 +2599,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Buttons","runtime":{"theme":"Theme","theme-system":"system","theme-light":"light","theme-dark":"dark","theme-system-now":"system (now {theme})","cycle-next":"{name}. Press for {next}","split-more":"More options: {label}"}}');
-
-/***/ },
-
-/***/ "96bdb2ff5f5d"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Кнопки","runtime":{"theme":"Тема","theme-system":"как в системе","theme-light":"светлая","theme-dark":"тёмная","theme-system-now":"как в системе (сейчас {theme})","cycle-next":"{name}. Нажмите — {next}","split-more":"Другие варианты: {label}"}}');
 
 /***/ }
 

@@ -18,13 +18,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c9ce0852ac73");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _progress_threshold__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("a9f36a72486a");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("1eba9aa7827a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__]);
+([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__);
 
 
 
 
+
+ // The words live in the component's language files, the Smart bar's words
+// under the same name (sf-progress-bar), so a pack serves both.
+
+
+const PAUSED_WORDS = {
+  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__["default"].en,
+  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__["default"].ru
+};
 const PROGRESS_BAR_SELECTOR = '.sf-progress-bar';
 const PROGRESS_BAR_BOUND_FLAG = 'sfProgressBarBound';
 
@@ -173,6 +186,20 @@ function isIndeterminate(root) {
 
 function isPaused(root) {
   return root.classList.contains('sf-progress-bar--paused') || root.dataset.paused === 'true';
+} // A paused bar is at least a warning, as the Smart bar draws it (C34; examples
+// pass EX-2): an error stays an error. The page's status stays in data-tone,
+// so the bar takes it back when the work goes on.
+
+
+function pausedTone(tone, paused) {
+  return paused && (_progress_threshold__WEBPACK_IMPORTED_MODULE_5__.STATUS_RANK[tone] ?? 0) < _progress_threshold__WEBPACK_IMPORTED_MODULE_5__.STATUS_RANK.warning ? 'warning' : tone;
+} // What a screen reader hears for a paused bar, as the Smart bar says it:
+// «35 %, на паузе», or «на паузе» while the size of the work is not known.
+
+
+function pausedValueText(root, value) {
+  if (isIndeterminate(root)) return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageText)(PAUSED_WORDS, 'paused', root, 'sf-progress-bar');
+  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageText)(PAUSED_WORDS, 'paused-value', root, 'sf-progress-bar').replace('{value}', String(Math.round(value * 100) / 100));
 } // Meter (owner decision C131 (7)): an amount within a known range (a quota
 // used), not a task's progress: role meter. A meter always has a value.
 
@@ -201,19 +228,21 @@ function syncProgressAccessibility(root, value) {
   // bar shows, «72 %» (C203 (3)); nothing while the size is not known.
 
 
-  const valueText = root.dataset.valueText || (isIndeterminate(root) ? '' : (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_3__.percentText)(value, root));
+  const valueText = root.dataset.valueText || (isPaused(root) ? pausedValueText(root, value) : '') || (isIndeterminate(root) ? '' : (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_3__.percentText)(value, root));
 
   if (valueText) {
     root.setAttribute('aria-valuetext', valueText);
   } else {
     root.removeAttribute('aria-valuetext');
   }
-} // One status class at most; no status has none.
+} // One status class at most; no status has none. The class drawn is the
+// paused bar's warning (pausedTone); data-tone keeps the page's status.
 
 
 function syncTone(root, tone) {
+  const drawn = pausedTone(tone, isPaused(root));
   ['primary', ...TONES].forEach(name => {
-    root.classList.toggle(`sf-progress-bar--${name}`, name === tone);
+    root.classList.toggle(`sf-progress-bar--${name}`, name === drawn);
   });
   if (tone) root.dataset.tone = tone;else delete root.dataset.tone;
 }
@@ -935,8 +964,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_progress_threshold__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("a9f36a72486a");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e023bc52f90d");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("361e38151042");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("8c9a03a2745a");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("2cbf36776b51");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("710a5651d6d4");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_progress_bar_js_progressbar__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_5__]);
 ([_component_progress_bar_js_progressbar__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
@@ -951,16 +979,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-}; // sf-progress-bar from its component.json (standard simai.smart-component
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-progress-bar from its component.json (standard simai.smart-component
 // 1.3.8 §3, §4, §4.4): its settings are attributes and properties made by
 // core/js/element-manifest.js; a job's part arrives as the stream fact chunk
 // {done, total} (vocabulary 1.1.5 §5.2), which a rule hands to the action
@@ -971,10 +994,7 @@ const ru = {
 
 const ProgressBarElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__,
   actions: {
@@ -1331,6 +1351,57 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "1eba9aa7827a"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("05f645d429b2");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "710a5651d6d4"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8c9a03a2745a");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "05f645d429b2"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"paused-value":"{value} %, paused","paused":"paused"}}');
+
+/***/ },
+
 /***/ "361e38151042"
 (module) {
 
@@ -1341,7 +1412,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "e023bc52f90d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-bar","tag":"sf-progress-bar","version":"1.5.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"text-position":{"type":"enum","values":["none","top","inline-end"],"default":"none"},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"paused":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"inline":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-bar-fill-color":{"type":"color","state":"default"},"--sf-progress-bar-track-color":{"type":"color","state":"default"},"--sf-progress-bar-height":{"type":"length","state":"default"},"--sf-progress-bar-radius":{"type":"length","state":"default"},"--sf-progress-bar-color":{"type":"color","state":"default"},"--sf-progress-bar-gap":{"type":"length","state":"default"},"--sf-progress-bar-track-size":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-bar","tag":"sf-progress-bar","version":"1.5.4","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"text-position":{"type":"enum","values":["none","top","inline-end"],"default":"none"},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"paused":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"inline":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-bar-fill-color":{"type":"color","state":"default"},"--sf-progress-bar-track-color":{"type":"color","state":"default"},"--sf-progress-bar-height":{"type":"length","state":"default"},"--sf-progress-bar-radius":{"type":"length","state":"default"},"--sf-progress-bar-color":{"type":"color","state":"default"},"--sf-progress-bar-gap":{"type":"length","state":"default"},"--sf-progress-bar-track-size":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 
@@ -1349,13 +1420,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-bar","tag":"sf-p
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Progress Bar","runtime":{"paused-value":"{value} %, paused","paused":"paused"}}');
-
-/***/ },
-
-/***/ "2cbf36776b51"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Прогресс","runtime":{"paused-value":"{value} %, на паузе","paused":"на паузе"}}');
 
 /***/ }
 

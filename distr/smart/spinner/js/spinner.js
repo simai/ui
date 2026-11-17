@@ -285,10 +285,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-const SPINNER_TEXT = {
-  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__["default"].en,
-  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__["default"].ru
-};
+const SPINNER_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_4__["default"];
 const SPINNER_SELECTOR = '.sf-loader-container';
 const SPINNER_BOUND_FLAG = 'sfSpinnerBound';
 
@@ -877,8 +874,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f4cc1d3fd22e");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4f18051b2e24");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("446b69079a47");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e0d992e70cd1");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("1de2b9d83763");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("5f76e6024a0d");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _component_spinner_js_spinner__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _component_spinner_js_spinner__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -893,16 +889,11 @@ const SPINNER_KINDS = ['', 'arc'];
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-}; // sf-spinner from its component.json (standard simai.smart-component 1.3.8
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-spinner from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §4.8): its settings are attributes and properties made by
 // core/js/element-manifest.js, its one word («Загрузка…») is lang/<locale>.json
 // (a product adds a language through SF.language.register("sf-spinner", code,
@@ -911,10 +902,7 @@ const ru = {
 
 const SpinnerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__,
   actions: {
@@ -930,7 +918,16 @@ const SpinnerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__
 // attribute-spinner-pixel-geometry): no longer settings, still drawn by the
 // shared spinner, which notes each use, until the sweep.
 
-const PIXEL_GEOMETRY = ['width', 'height', 'stroke-width', 'dot-radius'];
+const PIXEL_GEOMETRY = ['width', 'height', 'stroke-width', 'dot-radius']; // The dots look's settings, retired with the look (owner decision C130 (5);
+// Smart joint pass SM-SP-3, 2026-11-17; journal
+// attribute-spinner-dots-settings-retired): the arc has no dots, so dots,
+// filled and direction draw nothing. Accepted and noted until the date.
+
+const DOTS_SETTINGS = ['dots', 'filled', 'direction'];
+const DOTS_RETIRED = {
+  since: '2026-11-17',
+  remove_after: '2027-01-01'
+};
 
 class SfSpinner extends SpinnerElement {
   static get props() {
@@ -951,7 +948,7 @@ class SfSpinner extends SpinnerElement {
   }
 
   static get observedAttributes() {
-    return [...new Set([...super.observedAttributes, ...PIXEL_GEOMETRY])];
+    return [...new Set([...super.observedAttributes, ...PIXEL_GEOMETRY, ...DOTS_SETTINGS])];
   }
 
   constructor() {
@@ -969,6 +966,20 @@ class SfSpinner extends SpinnerElement {
 
   templateContext() {
     const props = this.getPropsContext();
+
+    for (const name of DOTS_SETTINGS) {
+      if (this.hasAttribute(name)) {
+        (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__.noteDeprecated)({
+          component: 'sf-spinner',
+          tag: 'sf-spinner',
+          kind: 'attribute',
+          from: name,
+          to: null,
+          ...DOTS_RETIRED
+        });
+      }
+    }
+
     return this.createTemplateContext({ ...props,
       // label="" is a spinner with no words -- the table's, which names its
       // busy state elsewhere; only an absent label takes the language file's.
@@ -1063,7 +1074,9 @@ function normalizeChoice(value, allowed, fallback) {
 }
 
 function renderSpinnerTemplate(context) {
-  const rootClasses = joinClasses('sf-loader-container', `sf-loader--size-${normalizeChoice(context.size, ['1/3', '1/2', '1', '2', '3'], '1')}`, context.rootClass); // width, height, stroke-width and dot-radius are the deprecated pixel geometry
+  const rootClasses = joinClasses('sf-loader-container', `sf-loader--size-${normalizeChoice(context.size, ['1/3', '1/2', '1', '2', '3'], '1')}`, context.rootClass); // dots, filled and direction are not written (retired with the dots look,
+  // SM-SP-3): the arc draws without them.
+  // width, height, stroke-width and dot-radius are the deprecated pixel geometry
   // (journal attribute-spinner-pixel-geometry): still written through to the
   // spinner, which reads and notes them until the sweep.
 
@@ -1075,15 +1088,12 @@ function renderSpinnerTemplate(context) {
       data-width=${valueOrNothing(context.width)}
       data-height=${valueOrNothing(context.height)}
       data-label=${context.label ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      data-dots=${valueOrNothing(context.dots)}
-      data-filled=${valueOrNothing(context.filled)}
       data-stroke-width=${valueOrNothing(context.strokeWidth)}
       data-dot-radius=${valueOrNothing(context.dotRadius)}
       data-infinite=${String(!!context.infinite)}
       data-announce=${String(!!context.announce)}
       data-label-hidden=${context.labelHidden ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-delay=${context.component?.hasAttribute?.('delay') ? String(context.delay ?? 1000) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      data-direction=${normalizeChoice(context.direction, ['clockwise', 'counterclockwise'], 'clockwise')}
     ></div>
   `;
 }
@@ -1132,16 +1142,41 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
 /* harmony export */ });
 /* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e56111faf8e4");
-/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("b6daee30ac8b");
-// The component's words for the bundle and for Node alike (localization study
-// LC-4/LC-5): the runtime words of its language files, by language.
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
 
 
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "5f76e6024a0d"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e0d992e70cd1");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
 
 
 /***/ },
@@ -1153,24 +1188,17 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"label":"Loading…"}}');
 
 /***/ },
 
-/***/ "b6daee30ac8b"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"label":"Загрузка…"}}');
-
-/***/ },
-
 /***/ "446b69079a47"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-spinner for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), detail-adds (the new detail holds the old fields), attribute-and-property, host-attribute (no shim), manifest-only (the DOM name does not change), retired (no new name; kept and noted by the component until the date).","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"variant","to":"kind","kind":"setting","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","section":"the axis\'s old name (contracts/public-api-axes.json)"},{"from":"width","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"height","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"stroke-width","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"dot-radius","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"getSpinnerRoot","to":null,"kind":"action","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.4","note":"a reader retires; the method stays until the date and notes each call"},{"from":"breathing","to":"arc","kind":"value","setting":"kind","component":"sf-spinner","since":"2026-11-13","remove_after":"2027-01-01","section":"owner decision C130 (5)","note":"journal value-spinner-one-look: one look, the arc; the former look draws the arc until the date"},{"from":"comet","to":"arc","kind":"value","setting":"kind","component":"sf-spinner","since":"2026-11-13","remove_after":"2027-01-01","section":"owner decision C130 (5)","note":"journal value-spinner-one-look: one look, the arc; the former look draws the arc until the date"},{"from":"dots","to":"arc","kind":"value","setting":"kind","component":"sf-spinner","since":"2026-11-13","remove_after":"2027-01-01","section":"owner decision C130 (5)","note":"journal value-spinner-one-look: one look, the arc; the former look draws the arc until the date"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-spinner for the shim (core/js/aliases.js, standard §16 item 20). mode: same-detail (the shim sends the new and the old name), detail-adds (the new detail holds the old fields), attribute-and-property, host-attribute (no shim), manifest-only (the DOM name does not change), retired (no new name; kept and noted by the component until the date).","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"variant","to":"kind","kind":"setting","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","section":"the axis\'s old name (contracts/public-api-axes.json)"},{"from":"width","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"height","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"stroke-width","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"dot-radius","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§16 item 20 (compatibility.deprecations, since 1.1.0)","note":"the pixel geometry: replaced by size; still drawn by the shared spinner and noted there until the date"},{"from":"getSpinnerRoot","to":null,"kind":"action","component":"sf-spinner","since":"2026-10-27","remove_after":"2026-12-01","mode":"retired","section":"§4.4","note":"a reader retires; the method stays until the date and notes each call"},{"from":"breathing","to":"arc","kind":"value","setting":"kind","component":"sf-spinner","since":"2026-11-13","remove_after":"2027-01-01","section":"owner decision C130 (5)","note":"journal value-spinner-one-look: one look, the arc; the former look draws the arc until the date"},{"from":"comet","to":"arc","kind":"value","setting":"kind","component":"sf-spinner","since":"2026-11-13","remove_after":"2027-01-01","section":"owner decision C130 (5)","note":"journal value-spinner-one-look: one look, the arc; the former look draws the arc until the date"},{"from":"dots","to":"arc","kind":"value","setting":"kind","component":"sf-spinner","since":"2026-11-13","remove_after":"2027-01-01","section":"owner decision C130 (5)","note":"journal value-spinner-one-look: one look, the arc; the former look draws the arc until the date"},{"from":"dots","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-11-17","remove_after":"2027-01-01","mode":"retired","section":"owner decision C130 (5); Smart joint pass SM-SP-3","note":"journal attribute-spinner-dots-settings-retired: the number of dots of the dots look; the look is gone (one look, the arc), so it draws nothing; accepted and noted in SF.deprecations until the date"},{"from":"filled","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-11-17","remove_after":"2027-01-01","mode":"retired","section":"owner decision C130 (5); Smart joint pass SM-SP-3","note":"journal attribute-spinner-dots-settings-retired: the lit dots of the dots look; the look is gone (one look, the arc), so it draws nothing; accepted and noted in SF.deprecations until the date"},{"from":"direction","to":null,"kind":"attribute","component":"sf-spinner","since":"2026-11-17","remove_after":"2027-01-01","mode":"retired","section":"owner decision C130 (5); Smart joint pass SM-SP-3","note":"journal attribute-spinner-dots-settings-retired: the order the dots light in; the look is gone (one look, the arc), so it draws nothing; accepted and noted in SF.deprecations until the date"}]}');
 
 /***/ },
 
 /***/ "4f18051b2e24"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.spinner","tag":"sf-spinner","version":"1.4.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default-from":"runtime.label"},"delay":{"type":"number","default":1000,"integer":true,"min":0},"label-hidden":{"type":"boolean","default":false},"kind":{"type":"enum","values":["","arc"],"default":""},"dots":{"type":"number","default":8,"integer":true,"min":1},"filled":{"type":"number","default":3,"integer":true,"min":0},"infinite":{"type":"boolean","default":false},"announce":{"type":"boolean","default":false},"direction":{"type":"enum","values":["clockwise","counterclockwise"],"default":"clockwise"}},"values":{},"events":{},"actions":{"refresh-spinner":{}},"css-variables":{"--sf-spinner-color":{"type":"color","state":"default"},"--sf-spinner-track-color":{"type":"color","state":"default"},"--sf-spinner-size":{"type":"length","state":"default"},"--sf-spinner-stroke-width":{"type":"number","state":"default"},"--sf-spinner-gap":{"type":"length","state":"default"},"--sf-spinner-text-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.spinner","tag":"sf-spinner","version":"1.5.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default-from":"runtime.label"},"delay":{"type":"number","default":1000,"integer":true,"min":0},"label-hidden":{"type":"boolean","default":false},"kind":{"type":"enum","values":["","arc"],"default":""},"infinite":{"type":"boolean","default":false},"announce":{"type":"boolean","default":false}},"values":{},"events":{},"actions":{"refresh-spinner":{}},"css-variables":{"--sf-spinner-color":{"type":"color","state":"default"},"--sf-spinner-track-color":{"type":"color","state":"default"},"--sf-spinner-size":{"type":"length","state":"default"},"--sf-spinner-stroke-width":{"type":"number","state":"default"},"--sf-spinner-gap":{"type":"length","state":"default"},"--sf-spinner-text-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
@@ -1178,13 +1206,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.spinner","tag":"sf-spinne
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Spinner","runtime":{"label":"Loading…"}}');
-
-/***/ },
-
-/***/ "1de2b9d83763"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Спиннер","runtime":{"label":"Загрузка…"}}');
 
 /***/ }
 

@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-close{
@@ -59,8 +59,6 @@
     padding-left: var(--sf-close-padding-inline, var(--sf-close--padding-inline-end));
   }
   .sf-close {
-    background-color: transparent;
-    background-color: var(--sf-close--background-color, var(--sf-close-background-color, transparent));
     -webkit-padding-start: var(--sf-close--padding-inline-start);
             padding-inline-start: var(--sf-close--padding-inline-start);
     -webkit-padding-start: var(--sf-close-padding-inline, var(--sf-close--padding-inline-start));
@@ -96,9 +94,6 @@
     -webkit-mask-image: var(--sf-close-icon---webkit-mask-image);
     -webkit-mask-repeat: var(--sf-close-icon---webkit-mask-repeat);
     -webkit-mask-size: var(--sf-close-icon---webkit-mask-size);
-    background-color: var(--sf-close-icon--background-color);
-    border-color: transparent;
-    border-color: var(--sf-close-icon--border-color, transparent);
     font-size: var(--sf-close-icon--font-size);
     height: var(--sf-close-icon--height);
     height: var(--sf-close-glyph-size, var(--sf-close-icon--height));
@@ -227,6 +222,22 @@
     .sf-close .sf-close-icon,
     .sf-icon-button .sf-close .sf-close-icon {
       forced-color-adjust: none;
+    }
+  }
+}
+@layer sf.paint {
+  .sf-close {
+    background-color: transparent;
+    background-color: var(--sf-close--background-color, var(--sf-close-background-color, transparent));
+  }
+  .sf-close .sf-close-icon {
+    background-color: var(--sf-close-icon--background-color);
+    border-color: transparent;
+    border-color: var(--sf-close-icon--border-color, transparent);
+  }
+  @media (forced-colors: active) {
+    .sf-close .sf-close-icon,
+    .sf-icon-button .sf-close .sf-close-icon {
       background-color: CanvasText;
     }
     :disabled .sf-close .sf-close-icon,

@@ -7438,11 +7438,62 @@ SFLoaderPlugin.prototype.preloadScript = function (pluginURL) {
   link.as = 'script';
   link.href = href;
   document.head.append(link);
-};
+}; // The page's language file while it is on its way (owner decision C282,
+// 2026-11-17). English is the only language built into the components; a page
+// in any other language takes its words from a language file. When the page
+// included its script form before core (core/lang/<code>.js) the words are
+// here and nothing waits. Otherwise core fetches the parts of the page's
+// language when it starts (core/js/language-packs.js), and a component whose
+// script ran before they arrived drew English first and the page's language a
+// moment later (study 2026-11-17: 9 of 9 loads at a 300 ms file). So the
+// scripts the Loader adds wait for those words, at most `languageWait` ms
+// (SF_BOOT_CONFIG.languageWait, 800 by default, 0 never waits); they are
+// preloaded meanwhile, so nothing is fetched later than without the wait.
+// Past the limit they run, say English and draw again when the words come.
+
+
+const LANGUAGE_WAIT_MS = 800;
+const languageHoldSince = new WeakMap();
+
+function languageWaitLimit() {
+  const configured = Number(globalThis.SF_BOOT_CONFIG?.languageWait);
+  return Number.isFinite(configured) && configured >= 0 ? configured : LANGUAGE_WAIT_MS;
+}
+/** A promise that settles when the page's language words are here (or the limit passes), or null when nothing is on its way. */
+
+
+function languageHold() {
+  const store = globalThis.__sfPageLanguage;
+  const pending = store?.packs?.pending;
+  if (!pending?.size) return null;
+  const limit = languageWaitLimit();
+  if (!limit) return null;
+  const root = globalThis.document?.documentElement;
+  const wanted = String(store.chosen || root?.getAttribute?.('lang') || '').trim().toLowerCase().replace('_', '-');
+  const waits = [...new Set([wanted, wanted.split('-')[0]])].filter(Boolean).map(code => pending.get(code)).filter(Boolean);
+  if (!waits.length) return null;
+
+  const now = () => globalThis.performance?.now?.() ?? Date.now();
+
+  const holds = waits.map(words => {
+    if (!languageHoldSince.has(words)) languageHoldSince.set(words, now());
+    const left = limit - (now() - languageHoldSince.get(words));
+    if (left <= 0) return null;
+    return Promise.race([Promise.resolve(words).catch(() => null), new Promise(resolve => {
+      setTimeout(resolve, left);
+    })]);
+  }).filter(Boolean);
+  return holds.length ? Promise.all(holds) : null;
+}
 
 SFLoaderPlugin.prototype.addScript = function (pluginURL, param = {}) {
   const src = this.versionAssetUrl(pluginURL);
-  return onceByUrl('scripts', src, () => this.insertScript(src, pluginURL, param));
+  return onceByUrl('scripts', src, () => {
+    const hold = languageHold();
+    if (!hold) return this.insertScript(src, pluginURL, param);
+    this.preloadScript(pluginURL);
+    return hold.then(() => this.insertScript(src, pluginURL, param));
+  });
 };
 
 SFLoaderPlugin.prototype.insertScript = function (src, pluginURL, param = {}) {
@@ -8878,7 +8929,7 @@ __webpack_require__.r(__webpack_exports__);
     "component": "utility",
     "since": "2026-11-16",
     "remove_after": "2027-01-01",
-    "note": "Lengths with no exact twin in the system steps: they keep drawing what they drew until remove_after, and the name to write is the nearest, which looks different. w-1 ... w-99 (percent) -> the nearest fraction in lowest terms (w-33 -> w-1/3). space-x-N / space-y-N (margins on every child but the first) -> gap-x-N / gap-y-N on a flex or grid parent; space-x-reverse and space-y-reverse go with them (a gap needs no reverse). The raw rungs a0 ... i9 of margin-ext, padding-ext, scroll-margin-ext and scroll-padding-ext (retired by C187 (2)) -> the space step nearest to the rung on a desktop at the default root size (m-b6 -> m-1; a step is 4 ... 80 and follows the device, a rung does not); scroll-p-inline-start/-end -> scroll-pl/-pr; a negative scroll rung has no step. basis-1 ... basis-99 (percent, flex-basis-ext) -> the nearest fraction in lowest terms, as w-N (basis-33 -> basis-1/3).",
+    "note": "Lengths with no exact twin in the system steps: they keep drawing what they drew until remove_after, and the name to write is the nearest, which looks different. w-1 ... w-99 (percent) -> the nearest fraction in lowest terms (w-33 -> w-1/3). space-x-N / space-y-N (margins on every child but the first) -> gap-x-N / gap-y-N on a flex or grid parent; space-x-reverse and space-y-reverse go with them (a gap needs no reverse). The raw rungs a0 ... i9 of margin-ext, padding-ext, scroll-margin-ext and scroll-padding-ext (retired by C187 (2)) -> the space step nearest to the rung on a desktop at the default root size (m-b6 -> m-1; a step is 4 ... 80 and follows the device, a rung does not); the scroll rungs name the C266 sides (scroll-mt-b6 -> scroll-m-top-1, scroll-p-inline-start-b6 -> scroll-p-inline-start-1); a negative scroll rung has no step. basis-1 ... basis-99 (percent, flex-basis-ext) -> the nearest fraction in lowest terms, as w-N (basis-33 -> basis-1/3).",
     "names": {
       "w-1": "w-1/12",
       "w-2": "w-1/12",
@@ -9081,8 +9132,10 @@ __webpack_require__.r(__webpack_exports__);
       "to": "$1-$2",
       "values": {
         "1": {
-          "scroll-p-inline-start": "scroll-pl",
-          "scroll-p-inline-end": "scroll-pr"
+          "scroll-mt": "scroll-m-top",
+          "scroll-mb": "scroll-m-bottom",
+          "scroll-pt": "scroll-p-top",
+          "scroll-pb": "scroll-p-bottom"
         },
         "2": {
           "a0": "0",
@@ -10083,6 +10136,150 @@ __webpack_require__.r(__webpack_exports__);
       "tracking-no-tracking": "tracking-normal"
     }
   }, {
+    "journal": "class-c264-aspect-list",
+    "decision": "C264",
+    "component": "utility",
+    "since": "2026-11-17",
+    "remove_after": "2027-01-01",
+    "note": "One list of proportions for pictures, galleries, card images and the aspect-* utility (C188 (6), C230, C264): 1x1, 4x3, 3x2, 16x9, 21x9, 3x4, auto (aspect-21x9 and aspect-auto are new, utility.aspect-ratio 1.1.0). The six other names keep drawing their own ratio until remove_after; the name to write is the nearest of the list, which looks different (9x16, 1x2, 2x3 -> 3x4; 2x1 -> 16x9; 3x1, 4x1 -> 21x9).",
+    "names": {
+      "aspect-9x16": "aspect-3x4",
+      "aspect-1x2": "aspect-3x4",
+      "aspect-2x3": "aspect-3x4",
+      "aspect-2x1": "aspect-16x9",
+      "aspect-3x1": "aspect-21x9",
+      "aspect-4x1": "aspect-21x9"
+    }
+  }, {
+    "journal": "class-c266-scroll-side-names",
+    "decision": "C266",
+    "component": "utility",
+    "since": "2026-11-17",
+    "remove_after": "2027-01-01",
+    "note": "The scroll margins and paddings name their sides as m-* and p-* do (C266): scroll-m-top, scroll-m-bottom, scroll-m-block, scroll-m-inline(-start/-end); scroll-p-top, scroll-p-bottom, scroll-p-inline-start, scroll-p-inline-end, scroll-p-x, scroll-p-y (utility.scroll-margin and utility.scroll-padding 1.1.0). The short letters (scroll-mt, scroll-pl ...; l and r meant the start and the end of the line, the other way under dir=\"rtl\") keep drawing until remove_after.",
+    "patterns": [{
+      "from": "scroll-mt-*",
+      "pattern": "^scroll-mt-(0|1/[234]|[1-8])$",
+      "to": "scroll-m-top-$1"
+    }, {
+      "from": "scroll-mb-*",
+      "pattern": "^scroll-mb-(0|1/[234]|[1-8])$",
+      "to": "scroll-m-bottom-$1"
+    }, {
+      "from": "scroll-my-*",
+      "pattern": "^scroll-my-(0|1/[234]|[1-8])$",
+      "to": "scroll-m-block-$1"
+    }, {
+      "from": "scroll-pt-*",
+      "pattern": "^scroll-pt-(0|1/[234]|[1-8])$",
+      "to": "scroll-p-top-$1"
+    }, {
+      "from": "scroll-pb-*",
+      "pattern": "^scroll-pb-(0|1/[234]|[1-8])$",
+      "to": "scroll-p-bottom-$1"
+    }, {
+      "from": "scroll-pl-*",
+      "pattern": "^scroll-pl-(0|1/[234]|[1-8])$",
+      "to": "scroll-p-inline-start-$1"
+    }, {
+      "from": "scroll-pr-*",
+      "pattern": "^scroll-pr-(0|1/[234]|[1-8])$",
+      "to": "scroll-p-inline-end-$1"
+    }, {
+      "from": "scroll-px-*",
+      "pattern": "^scroll-px-(0|1/[234]|[1-8])$",
+      "to": "scroll-p-x-$1"
+    }, {
+      "from": "scroll-py-*",
+      "pattern": "^scroll-py-(0|1/[234]|[1-8])$",
+      "to": "scroll-p-y-$1"
+    }]
+  }, {
+    "journal": "class-c268-pointer-events",
+    "decision": "C268",
+    "component": "utility",
+    "since": "2026-11-17",
+    "remove_after": "2027-01-01",
+    "note": "The class is named as the property (C268): pointer-events-none and pointer-events-auto (utility.pointer-events 1.1.0). pointer-event-none and pointer-event-auto keep drawing until remove_after; the Loader no longer converts the Tailwind name, which is now the class.",
+    "patterns": [{
+      "from": "pointer-event-*",
+      "pattern": "^pointer-event-(none|auto)$",
+      "to": "pointer-events-$1"
+    }]
+  }, {
+    "journal": "class-c271-scale-percent",
+    "decision": "C271",
+    "component": "utility",
+    "since": "2026-11-17",
+    "remove_after": "2027-01-01",
+    "note": "The scale says its percent (C271): scale-80, 90, 95, 100, 105, 110, 120 and their -x- and -y- forms (utility.transform-scale 1.1.0); scale-0 stays. The fraction and step names draw the same scale until remove_after.",
+    "names": {
+      "scale-1/4": "scale-80",
+      "scale-1/3": "scale-90",
+      "scale-1/2": "scale-95",
+      "scale-1": "scale-100",
+      "scale-2": "scale-105",
+      "scale-3": "scale-110",
+      "scale-4": "scale-120",
+      "scale-x-1/4": "scale-x-80",
+      "scale-x-1/3": "scale-x-90",
+      "scale-x-1/2": "scale-x-95",
+      "scale-x-1": "scale-x-100",
+      "scale-x-2": "scale-x-105",
+      "scale-x-3": "scale-x-110",
+      "scale-x-4": "scale-x-120",
+      "scale-y-1/4": "scale-y-80",
+      "scale-y-1/3": "scale-y-90",
+      "scale-y-1/2": "scale-y-95",
+      "scale-y-1": "scale-y-100",
+      "scale-y-2": "scale-y-105",
+      "scale-y-3": "scale-y-110",
+      "scale-y-4": "scale-y-120"
+    }
+  }, {
+    "journal": "utility-c272-skew-retired",
+    "decision": "C272",
+    "component": "utility",
+    "since": "2026-11-17",
+    "remove_after": "2027-01-01",
+    "note": "The slant leaves the utilities (C272): skew-x-* and skew-y-* (0, 1, 2, 3, 5, 15 degrees, and their hover: forms) were used by no Framework part, product or example; they keep drawing until remove_after. A slant a design needs belongs to the effects package (C57).",
+    "sheets": {
+      "transform-skew": null
+    }
+  }, {
+    "journal": "class-c274-text-role-short-names",
+    "decision": "C274",
+    "component": "utility",
+    "since": "2026-11-17",
+    "remove_after": "2027-01-01",
+    "note": "The text roles are written .sf-display-N, .sf-body-*, .sf-label-*, or with the text utilities of C212 (text-N) (C274). .d1-6 and .display1-6 are .sf-display-N under another name; .text, .text-small, .text-medium, .text-large, .label, .label-small, .label-medium and .label-large draw only the size and the line of a role, without its family and weight; .body-text, .body-text-small, .body-text-medium and .body-text-large are the same rules as .text, .text-small, .text-medium and .text-large under a longer name. They keep drawing until remove_after; the name to write draws the same (text-N, sf-display-N), except label-large, which has no text step: its role .sf-label-large also sets the family and the regular weight.",
+    "names": {
+      "d1": "sf-display-1",
+      "display1": "sf-display-1",
+      "d2": "sf-display-2",
+      "display2": "sf-display-2",
+      "d3": "sf-display-3",
+      "display3": "sf-display-3",
+      "d4": "sf-display-4",
+      "display4": "sf-display-4",
+      "d5": "sf-display-5",
+      "display5": "sf-display-5",
+      "d6": "sf-display-6",
+      "display6": "sf-display-6",
+      "text": "text-1",
+      "text-medium": "text-1",
+      "text-small": "text-1/2",
+      "text-large": "text-2",
+      "label": "text-1/3",
+      "label-medium": "text-1/3",
+      "label-small": "text-1/4",
+      "label-large": "sf-label-large",
+      "body-text": "text-1",
+      "body-text-medium": "text-1",
+      "body-text-small": "text-1/2",
+      "body-text-large": "text-2"
+    }
+  }, {
     "journal": "utility-c208-scrollbar-retired-sheets",
     "decision": "C208 (2), (3)",
     "component": "utility",
@@ -10120,8 +10317,8 @@ __webpack_require__.r(__webpack_exports__);
     }
   }],
   "extended": {
-    "decision": "C187 (2), (3)",
-    "note": "Kept, documented together on one «extended» page, not a page per class.",
+    "decision": "C187 (2), (3); C270",
+    "note": "Kept, documented together on one «extended» page, not a page per class. C270 (2026-11-17): the SVG stroke and the text decoration line follow the border widths, 0, 1, 2 on --sf-line--*; their wider steps join this page.",
     "sheets": ["width-ext", "height-ext", "max-width-ext", "max-height-ext", "flex-basis-ext", "element-position-ext"],
     "patterns": [{
       "family": "border-width 3-10",
@@ -10138,6 +10335,12 @@ __webpack_require__.r(__webpack_exports__);
     }, {
       "family": "divide widths 3-4",
       "pattern": "^divide-[xy]-[34]$"
+    }, {
+      "family": "stroke-width 3-10",
+      "pattern": "^stroke-(?:[3-9]|10)$"
+    }, {
+      "family": "text-decoration-thickness 3-4",
+      "pattern": "^decoration-[34]$"
     }, {
       "family": "ring-offset-color strong and overlay",
       "pattern": "^ring-offset-[a-z-]+-(?:container-strong|transparent-overlay)$"
@@ -10340,8 +10543,6 @@ function mapTailwindBaseClass(className) {
     'flex-center': 'center-center',
     't-left': 'text-start',
     't-right': 'text-end',
-    'pointer-events-none': 'pointer-event-none',
-    'pointer-events-auto': 'pointer-event-auto',
     'not-italic': 'italic-none',
     'normal-case': 'normalcase',
     'no-underline': 'decoration-none',
@@ -10659,7 +10860,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _retired_classes_table_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("cef5a448c23d");
 /* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("06e8cd089f28");
 // Retired class names (owner decisions C185 (2), C186 (8) and C187 (1), 2026-11-14;
-// C208 (2), (3), 2026-11-15; C212 (6), 2026-11-16; C208 (2), (3) and C210 (5), 2026-11-15; C208 (2), (3) and C210 (5), 2026-11-15; C212 (6), 2026-11-16).
+// C208 (2), (3), 2026-11-15; C212 (6), 2026-11-16; C208 (2),
+// (3) and C210 (5), 2026-11-15; C208 (2), 2026-11-16), 2026-11-16; C264,
+// C266, C268, C271, C272, C274, 2026-11-17).
 // One table, core/js/retired-classes.table.js, lists every class
 // the Framework retires: a name, a family (pattern) or a whole utility sheet.
 // A retired class keeps drawing what it drew until remove_after, and the
@@ -10674,7 +10877,10 @@ __webpack_require__.r(__webpack_exports__);
 // class-ut1-bg-position, class-ut1-blur, class-ut1-radius-square,
 // class-ut1-tracking, utility-c210-scrollbar-retired-sheets,
 // class-c210-scrollbar-class, class-avatar-offline-point-retired,
-// class-c238-menu-default-navigation, class-steps-1-2-stages-retired.
+// class-c238-menu-default-navigation, class-steps-1-2-stages-retired,
+// class-c264-aspect-list, class-c266-scroll-side-names,
+// class-c268-pointer-events, class-c271-scale-percent,
+// utility-c272-skew-retired, class-c274-text-role-short-names.
 
 
 const VARIANT = /^((?:[a-z-]+:)*)(.*)$/;
@@ -10956,7 +11162,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"version":1,"aliases":{"column-gap/de
 /***/ "e7acc025fab1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-alert-bar":["sr-only/default"],"cl-avatar":["align-items/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default","sr-only/default"],"cl-button-close":["align-items/default","display/default","justify-content/default","place-items/default","pointer-events/default"],"cl-button-copy":["display/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default","sr-only/default"],"cl-change":["display/default","sr-only/default"],"cl-checkbox":["cursor/default","display/default"],"cl-confirm":["display/default"],"cl-confirm-change":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-display-settings":["font-family/default","text-decoration/default"],"cl-drawer":["display/default","margin/default","position/default","resize/default","text-max-width/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-preview":["display/default"],"cl-file-upload":["align-items/default","cursor/default","display/default","flex-direction/default","gap/default","grid-template-columns/default","width/default"],"cl-form":["display/default","position/default"],"cl-gallery":["display/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-wrap/default","margin/default","min-width/default","position/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-choice":["align-items/default","cursor/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default","position/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default","sr-only/default"],"cl-input-image":["display/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","resize/default","transition-property/default"],"cl-language":["display/default"],"cl-list":["align-items/default","display/default","flex/default","justify-content/default","position/default","sr-only/default"],"cl-list-attention":["sr-only/default"],"cl-list-description":["display/default","font-family/default","sr-only/default","text-overflow/default"],"cl-list-feed":["display/default","sr-only/default"],"cl-list-item":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","place-items/default"],"cl-list-timeline":["display/default","position/default","sr-only/default"],"cl-menu":["display/default","position/default","visibility/default"],"cl-menu-context":["display/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","width/default","z-index/default"],"cl-pager":["align-items/default","display/default","sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","pointer-events/default","text-align/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-run":["sr-only/default","white-space/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","justify-content/default"],"cl-reference-link":["align-items/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-segmented":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-settings":["display/default","position/default","text-decoration/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["sr-only/default"],"cl-switch":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-tabs":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","pointer-events/default","position/default","text-decoration/default","visibility/default"],"cl-tag":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default"],"cl-tag-group":["display/default"],"cl-tile-metric":["position/default","sr-only/default"],"cl-time":["display/default","position/default","sr-only/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"],"cl-wizard":["display/default","sr-only/default"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-alert-bar":["sr-only/default"],"cl-avatar":["align-items/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default","sr-only/default"],"cl-button-close":["align-items/default","display/default","justify-content/default","place-items/default","pointer-events/default"],"cl-button-copy":["display/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default","sr-only/default"],"cl-change":["display/default","sr-only/default"],"cl-checkbox":["cursor/default","display/default"],"cl-confirm":["display/default"],"cl-confirm-change":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-display-settings":["font-family/default","text-decoration/default"],"cl-drawer":["display/default","margin/default","position/default","resize/default","text-max-width/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-preview":["display/default"],"cl-file-upload":["align-items/default","cursor/default","display/default","flex-direction/default","gap/default","grid-template-columns/default","width/default"],"cl-form":["display/default","position/default"],"cl-gallery":["display/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-wrap/default","margin/default","min-width/default","position/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-choice":["align-items/default","cursor/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default","position/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["align-items/default","display/default","element-position/default","flex-direction/default","gap/default","grid-template-columns/default","justify-content/default","overflow/default","position/default","sr-only/default"],"cl-input-image":["display/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","resize/default","transition-property/default"],"cl-language":["display/default"],"cl-list":["align-items/default","display/default","flex/default","justify-content/default","position/default","sr-only/default"],"cl-list-attention":["sr-only/default"],"cl-list-description":["display/default","font-family/default","sr-only/default","text-overflow/default"],"cl-list-feed":["display/default","sr-only/default"],"cl-list-item":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","place-items/default"],"cl-list-timeline":["display/default","position/default","sr-only/default"],"cl-menu":["display/default","position/default","visibility/default"],"cl-menu-context":["display/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","width/default","z-index/default"],"cl-pager":["align-items/default","display/default","sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","pointer-events/default","text-align/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-run":["sr-only/default","white-space/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","justify-content/default"],"cl-reference-link":["align-items/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-segmented":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-settings":["display/default","position/default","text-decoration/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["sr-only/default"],"cl-switch":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-tabs":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","pointer-events/default","position/default","text-decoration/default","visibility/default"],"cl-tag":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default","pointer-events/default"],"cl-tag-group":["display/default"],"cl-tile-metric":["position/default","sr-only/default"],"cl-time":["display/default","position/default","sr-only/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"],"cl-wizard":["display/default","sr-only/default"]}');
 
 /***/ }
 

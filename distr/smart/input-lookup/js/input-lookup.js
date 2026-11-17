@@ -1202,6 +1202,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getInitials: () => (/* binding */ getInitials),
 /* harmony export */   normalizeInitialsWords: () => (/* binding */ normalizeInitialsWords)
 /* harmony export */ });
+// c282-allow-start: input parsing (initials read from Russian names, C152)
 const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]); // Words a name carries that are not the person's or the organisation's own
 // (owner decision C152 (3), 2026-11-14): legal forms (ООО «Ромашка» → Р),
 // titles (Dr. John Smith → JS) and name particles (Мария фон Штейн → МШ) are
@@ -1211,7 +1212,8 @@ const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "д
 const INITIALS_SERVICE_WORDS = new Set([// legal forms
 "ооо", "оао", "зао", "пао", "ао", "нао", "ип", "нко", "ано", "гуп", "муп", "фгуп", "гбу", "мбу", "чоп", "llc", "inc", "ltd", "gmbh", "ag", "corp", "co", "llp", "plc", "lp", "bv", "oy", "ab", "srl", "sarl", // titles
 "dr", "prof", "mr", "mrs", "ms", "mx", "miss", "sir", "jr", "sr", "phd", "д-р", "проф", "акад", "г-н", "г-жа", "доц", // particles
-"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]);
+"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]); // c282-allow-end
+
 function normalizeInitialsWords(value = "") {
   return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
 } // The first character a reader sees: a whole grapheme, so a letter written
@@ -1318,9 +1320,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("91c9715ba00a");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("8bb18691f333");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("e99a820fffdb");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("d94fcb6a8f59");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("ea441b000040");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("1cabccb560d5");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("3faa8129e16d");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("1cabccb560d5");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_6__, _component_field_size__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_3__, _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_6__, _component_field_size__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -1343,16 +1344,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_14__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_15__.runtime
-};
  // sf-input-lookup: the people and object picker. A form field whose value is the
 // field renderer's lookup value -- {value, label}, or a list of them when
 // multiple -- chosen from a search the host answers through `provider`, or
@@ -1372,10 +1368,7 @@ const ru = {
 
 const LookupElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_14__.files,
   source: 'en',
   // The old tag's event names (sf-lookup-create) until 2027-01-01.
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_13__
@@ -3797,6 +3790,7 @@ function foldChar(char, locale) {
   } catch {
     lower = char.toLowerCase();
   }
+  // c282-allow: input parsing (ё is searched as е)
   return lower.normalize('NFD').replace(/[\u0300-\u036f]/gu, '').replace(/ё/gu, 'е');
 }
 
@@ -3910,6 +3904,7 @@ function foldText(text, locale) {
   } catch {
     lower = String(text ?? '').toLowerCase();
   }
+  // c282-allow: input parsing (ё is searched as е)
   return lower.normalize('NFD').replace(/[̀-ͯ]/gu, '').replace(/ё/gu, 'е').trim();
 }
 
@@ -4058,6 +4053,28 @@ function moveActive(index, count, key) {
 
 /***/ },
 
+/***/ "3faa8129e16d"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d94fcb6a8f59");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "e99a820fffdb"
 (module) {
 
@@ -4068,7 +4085,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "8bb18691f333"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-lookup","tag":"sf-input-lookup","version":"1.16.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"chips":{"type":"enum","values":["wrap","row"],"default":"wrap"},"max-items":{"type":"number","default":0},"min-length":{"type":"number","default":2},"suggest":{"type":"boolean","default":false},"max-results":{"type":"number","default":20},"debounce":{"type":"number","default":120},"maxlength":{"type":"number","default":0},"options":{"type":"list","default":[]},"exclude":{"type":"list","default":[]},"provider":{"type":"object","default":null},"create":{"type":"string","default":null},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"input":{"carries":"native"},"change":{"carries":"native"},"create":{"carries":{"text":{"type":"string"},"kind":{"type":"enum","values":["item","email"]},"respond":{"type":"function"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-lookup-background-color":{"type":"color","state":"default"},"--sf-lookup-border-color":{"type":"color","state":"default"},"--sf-lookup-color":{"type":"color","state":"default"},"--sf-lookup-radius":{"type":"length","state":"default"},"--sf-lookup-padding-inline":{"type":"length","state":"default"},"--sf-lookup-padding-block":{"type":"length","state":"default"},"--sf-lookup-invalid-border-color":{"type":"color","state":"invalid"},"--sf-lookup-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-lookup","tag":"sf-input-lookup","version":"1.17.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"chips":{"type":"enum","values":["wrap","row"],"default":"wrap"},"max-items":{"type":"number","default":0},"min-length":{"type":"number","default":2},"suggest":{"type":"boolean","default":false},"max-results":{"type":"number","default":20},"debounce":{"type":"number","default":120},"maxlength":{"type":"number","default":0},"options":{"type":"list","default":[]},"exclude":{"type":"list","default":[]},"provider":{"type":"object","default":null},"create":{"type":"string","default":null},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"input":{"carries":"native"},"change":{"carries":"native"},"create":{"carries":{"text":{"type":"string"},"kind":{"type":"enum","values":["item","email"]},"respond":{"type":"function"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-lookup-background-color":{"type":"color","state":"default"},"--sf-lookup-border-color":{"type":"color","state":"default"},"--sf-lookup-color":{"type":"color","state":"default"},"--sf-lookup-radius":{"type":"length","state":"default"},"--sf-lookup-padding-inline":{"type":"length","state":"default"},"--sf-lookup-padding-block":{"type":"length","state":"default"},"--sf-lookup-invalid-border-color":{"type":"color","state":"invalid"},"--sf-lookup-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 
@@ -4076,13 +4093,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-lookup","tag":"sf-i
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Lookup","runtime":{"hint-min-length":{"one":"Type at least {n} character","other":"Type at least {n} characters"},"searching":"Searching…","nothing-found":"Nothing found","unavailable":"Search is unavailable","error":"Search failed","retry":"Retry","show-more":"Show more","max-items":"No more than {n}","remove":"Remove {label}","clear":"Clear","results":{"one":"{n} result","other":"{n} results"},"value-missing":"Choose a value","more-chips":{"one":"{n} more: {names}","other":"{n} more: {names}"},"create-item":"Create «{text}»","create-email":"Add the address {text}","create-error":"Could not create it","chip-position":"{label}, {position} of {total}, Delete to remove","done":"Done","help":"More about: {label}"}}');
-
-/***/ },
-
-/***/ "ea441b000040"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Поиск и выбор","runtime":{"hint-min-length":{"one":"Введите хотя бы {n} символ","few":"Введите хотя бы {n} символа","many":"Введите хотя бы {n} символов","other":"Введите хотя бы {n} символа"},"searching":"Поиск…","nothing-found":"Ничего не найдено","unavailable":"Поиск недоступен","error":"Не удалось выполнить поиск","retry":"Повторить","show-more":"Показать ещё","max-items":"Не больше {n}","remove":"Удалить {label}","clear":"Очистить","results":{"one":"{n} результат","few":"{n} результата","many":"{n} результатов","other":"{n} результата"},"value-missing":"Выберите значение","more-chips":{"one":"Ещё {n}: {names}","few":"Ещё {n}: {names}","many":"Ещё {n}: {names}","other":"Ещё {n}: {names}"},"create-item":"Создать «{text}»","create-email":"Добавить адрес {text}","create-error":"Не удалось создать","chip-position":"{label}, {position} из {total}, Delete — убрать","done":"Готово","help":"Подробнее: {label}"}}');
 
 /***/ }
 

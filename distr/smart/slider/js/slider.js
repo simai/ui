@@ -36,35 +36,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4a85acfb05c1");
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("43090d1c8307");
 /* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("209b36906371");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__]);
 ([_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__);
 
 
- // The words a slider says about itself (SL-5), for the class block; sf-slider
-// hands its own from lang/ through the root's attributes, which win. A product
-// adds a language with SF.language.register('sf-slider', code, words).
+ // The words a slider says about itself (SL-5), for the class block: lang/,
+// English built in, the other languages from a language file (C282);
+// sf-slider hands its own from its lang/ through the root's attributes, which
+// win. A product adds a language with SF.language.register('sf-slider', code, words).
 
-const SLIDER_TEXT = {
-  en: {
-    label: 'Slides',
-    carousel: 'carousel',
-    slide: 'slide',
-    position: '{n} of {count}',
-    pause: 'Stop slides',
-    play: 'Start slides',
-    thumb: 'Go to slide {n}'
-  },
-  ru: {
-    label: 'Слайды',
-    carousel: 'карусель',
-    slide: 'слайд',
-    position: '{n} из {count}',
-    pause: 'Остановить прокрутку',
-    play: 'Запустить прокрутку',
-    thumb: 'Перейти к слайду {n}'
-  }
-};
+
 const SLIDER_SELECTOR = '.sf-slider'; // Up to seven slides are dots; from eight a counter «2 / 12» stands in their
 // place (C143 (4), as sf-gallery counts pictures, C97).
 
@@ -616,7 +599,7 @@ function createAutoplayGuard(root, slider, rotationButton, words = {}) {
 
 
 function sliderWord(root, key) {
-  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(SLIDER_TEXT, key, root, 'sf-slider');
+  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(_lang_index_mjs__WEBPACK_IMPORTED_MODULE_3__["default"], key, root, 'sf-slider');
 }
 
 function applyRegionSemantics(root) {
@@ -1398,8 +1381,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c43a175b4439");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("85a15fb0aee7");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2487a822fc8d");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("dd6cee132a1d");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("c9b3780c37ac");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("f010edaa189e");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _component_slider_js_slider__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__, _component_slider_js_slider__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -1413,16 +1395,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-}; // sf-slider from its component.json (standard simai.smart-component 1.3.8 §3,
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-slider from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §8): its settings are attributes and properties made by
 // core/js/element-manifest.js, the arrows' words are lang/<locale>.json (a
 // product adds a language through SF.language.register("sf-slider", code,
@@ -1430,10 +1407,7 @@ const ru = {
 
 const SliderElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
 });
@@ -2005,6 +1979,57 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "209b36906371"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("39172fd0fcd2");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "f010edaa189e"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("dd6cee132a1d");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "39172fd0fcd2"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"label":"Slides","carousel":"carousel","slide":"slide","position":"{n} of {count}","pause":"Stop slides","play":"Start slides","thumb":"Go to slide {n}"}}');
+
+/***/ },
+
 /***/ "2487a822fc8d"
 (module) {
 
@@ -2015,7 +2040,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-slide
 /***/ "85a15fb0aee7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider","tag":"sf-slider","version":"1.3.6","kind":"leaf","settings":{"button-type":{"type":"string","default":"secondary"},"button-size":{"type":"string","default":"1"},"dots":{"type":"boolean","default":true},"dots-type":{"type":"string","default":"primary-container"},"dots-size":{"type":"string","default":"2"},"thumbs":{"type":"boolean","default":false},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"arrows":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"space-between":{"type":"number","default":12},"speed":{"type":"number","default":450},"slide-class":{"type":"string","default":""},"ratio":{"type":"enum","values":["16/9","4/3","3/2","1/1","21/9","auto"],"default":"16/9"}},"values":{},"events":{"change":{"carries":{"active-index":"number","real-index":"number","previous-index":"number"}}},"actions":{"refresh":{},"slide-next":{},"slide-prev":{}},"css-variables":{"--sf-slider-gap":{"type":"length","state":"default"},"--sf-slider-arrow-offset-inline":{"type":"length","state":"default"},"--sf-slider-dots-offset-block":{"type":"length","state":"default"},"--sf-slider-thumbnail-size":{"type":"length","state":"default"},"--sf-slider-thumbnail-radius":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider","tag":"sf-slider","version":"1.3.9","kind":"leaf","settings":{"button-type":{"type":"string","default":"secondary"},"button-size":{"type":"string","default":"1"},"dots":{"type":"boolean","default":true},"dots-type":{"type":"string","default":"primary-container"},"dots-size":{"type":"string","default":"2"},"thumbs":{"type":"boolean","default":false},"thumbs-class":{"type":"string","default":""},"thumb-class":{"type":"string","default":""},"arrows":{"type":"boolean","default":true},"loop":{"type":"boolean","default":false},"space-between":{"type":"number","default":12},"speed":{"type":"number","default":450},"slide-class":{"type":"string","default":""},"ratio":{"type":"enum","values":["16/9","4/3","3/2","1/1","21/9","auto"],"default":"16/9"}},"values":{},"events":{"change":{"carries":{"active-index":"number","real-index":"number","previous-index":"number"}}},"actions":{"refresh":{},"slide-next":{},"slide-prev":{}},"css-variables":{"--sf-slider-gap":{"type":"length","state":"default"},"--sf-slider-arrow-offset-inline":{"type":"length","state":"default"},"--sf-slider-dots-offset-block":{"type":"length","state":"default"},"--sf-slider-thumbnail-size":{"type":"length","state":"default"},"--sf-slider-thumbnail-radius":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -2023,13 +2048,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider","tag":"sf-slider"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Slider","runtime":{"next":"Next slide","previous":"Previous slide","label":"Slides","carousel":"carousel","slide":"slide","position":"{n} of {count}","pause":"Stop slides","play":"Start slides"}}');
-
-/***/ },
-
-/***/ "c9b3780c37ac"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Слайдер контента","runtime":{"next":"Следующий слайд","previous":"Предыдущий слайд","label":"Слайды","carousel":"карусель","slide":"слайд","position":"{n} из {count}","pause":"Остановить прокрутку","play":"Запустить прокрутку"}}');
 
 /***/ }
 

@@ -153,10 +153,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_fie
 // SF.language.register('sf-file-upload', code, words); a ternary on «ru» allowed two
 // and no more.
 
-const FILE_UPLOAD_ITEM_TEXT = {
-  en: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__["default"].en,
-  ru: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__["default"].ru
-};
+const FILE_UPLOAD_ITEM_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__["default"];
 const FILE_UPLOAD_SELECTOR = '.sf-file-upload';
 const FILE_UPLOAD_BOUND_FLAG = 'sfFileUploadBound';
 
@@ -642,11 +639,11 @@ function createUploadProgressItem(item, owner = null) {
     retry.className = 'sf-button sf-button--size-1 sf-button--ghost sf-button--link sf-button--primary flex items-cross-center';
     retry.dataset.action = 'retry';
     const retryIcon = document.createElement('i');
-    retryIcon.className = 'sf-icon pointer-event-none';
+    retryIcon.className = 'sf-icon pointer-events-none';
     retryIcon.setAttribute('aria-hidden', 'true');
     retryIcon.textContent = 'refresh';
     const retryText = document.createElement('span');
-    retryText.className = 'sf-button-text-container text-center pointer-event-none';
+    retryText.className = 'sf-button-text-container text-center pointer-events-none';
     retryText.textContent = row.retryText;
     retry.append(retryIcon, retryText);
     retryHost.append(retry);
@@ -1915,9 +1912,10 @@ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_resu
 // effects (format-intl.js). The same functions as core/js/format.js,
 // composition/file-size.mjs and SF.format.fileSize.
  // The four words of a size live in core's language files
-// (core/js/lang/file-size, localization study LC-3): ru and en ship; any
-// other language takes the words a product registers for `sf-file-size`
-// (SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
+// (core/js/lang/file-size, localization study LC-3): English ships in the
+// bundle; Russian and any other language take the words their language file
+// or a product registers for `sf-file-size` (owner decision C282;
+// SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
 // English words with its own digits. A component with words of its own passes
 // them as `units`. The registry is read from the shared global the page
 // language keeps (core/js/page-language.js), so this module still runs
@@ -1930,17 +1928,28 @@ function unitsOf(words) {
   return Object.freeze(UNIT_KEYS.map(key => words[key]));
 }
 
-const FILE_SIZE_UNITS = /* @__PURE__ */Object.freeze({
-  en: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en),
-  ru: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru)
-});
-
 function registeredUnits(code) {
   const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-file-size')?.get?.(code);
   return words && UNIT_KEYS.every(key => typeof words[key] === 'string') ? unitsOf(words) : null;
-}
-/** The unit words for a locale: registered for it, its own, its language's, else English. */
+} // The built-in languages' units (English; owner decision C282), and `ru` as
+// before for a reader of SF.format.FILE_SIZE_UNITS.ru: the units the ru
+// language file registered, null until it is on the page.
 
+
+function unitTable(words) {
+  const table = {};
+
+  for (const [code, own] of Object.entries(words)) table[code] = unitsOf(own);
+
+  if (!table.ru) Object.defineProperty(table, 'ru', {
+    enumerable: true,
+    get: () => registeredUnits('ru')
+  });
+  return Object.freeze(table);
+}
+
+const FILE_SIZE_UNITS = /* @__PURE__ */unitTable(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]);
+/** The unit words for a locale: registered for it, its own, its language's, else English. */
 
 function fileSizeUnits(locale = 'en') {
   const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
@@ -2486,8 +2495,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("fb0bdf7719f0");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("35944d444d78");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("3cdda2d4c43b");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("8623c4e59417");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("d49e89d651d7");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("e904ece1a098");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_7__]);
 ([_component_file_upload_js_file_upload__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
@@ -2503,16 +2511,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_com
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_11__.runtime
-}; // Every word this component says is lang/<locale>.json runtime (standard
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// Every word this component says is lang/<locale>.json runtime (standard
 // 1.3.8 §11); a product adds any other language through
 // SF.language.register("sf-file-upload", code, words).
 // The class component's events, each with the name the host sends it by
@@ -2553,10 +2556,7 @@ const itemProgress = item => Math.max(0, Math.min(100, Number(item?.progress ?? 
 
 const FileUploadElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__,
   actions: {
@@ -4275,16 +4275,19 @@ function acceptFormats(accept, kindWord = (kind) => kind) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
 /* harmony export */ });
 /* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d4b3cd9346d9");
-/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6e4269348082");
-// The component's words for the bundle and for Node alike (localization study
-// LC-4/LC-5): the runtime words of its language files, by language.
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
 
 
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
 
 
 /***/ },
@@ -4367,16 +4370,41 @@ __webpack_async_result__();
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
 /* harmony export */ });
 /* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3694b5e2bf39");
-/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("220979cc98c6");
-// The unit words of a file size (localization study LC-3), for the bundle and
-// for Node alike: the runtime words of the language files, by language.
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
 
 
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "e904ece1a098"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8623c4e59417");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
 
 
 /***/ },
@@ -4388,24 +4416,10 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Remove","uploadi
 
 /***/ },
 
-/***/ "6e4269348082"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Убрать","uploading":"Загрузка","uploading-name":"Загрузка {name}","retry":"Повторить","remove-name":"Убрать {name}","retry-name":"Повторить {name}","linkText":"Выберите файл","text":"или перетащите его сюда","not-added":"Не добавлено {n}:","reject-type":"«{name}» не подходит: можно {formats}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-size":"«{name}» — {size}, а можно до {max}","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","formats-image":"изображения","formats-video":"видео","formats-audio":"аудио","done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}","said-added":"«{name}» добавлен","said-added-many":{"one":"Добавлен {n} файл","few":"Добавлено {n} файла","many":"Добавлено {n} файлов","other":"Добавлено {n} файла"},"said-done":"«{name}» загружен","said-error":"«{name}» не загрузился","said-error-line":"«{name}» не загрузился: {message}"}}');
-
-/***/ },
-
 /***/ "3694b5e2bf39"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"B","kb":"KB","mb":"MB","gb":"GB"}}');
-
-/***/ },
-
-/***/ "220979cc98c6"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"Б","kb":"КБ","mb":"МБ","gb":"ГБ"}}');
 
 /***/ },
 
@@ -4419,7 +4433,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "35944d444d78"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-upload","tag":"sf-file-upload","version":"1.5.1","kind":"leaf","settings":{"name":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default":""},"help":{"type":"string","default":""},"icon":{"type":"icon","default":"upload_file"},"link-text":{"type":"string","default-from":"runtime.link-text"},"text":{"type":"string","default-from":"runtime.text"},"formats":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"accept":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-size":{"type":"number","default":0},"min-size":{"type":"number","default":0},"max-files":{"type":"number","default":0},"max-total-size":{"type":"number","default":0},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"items":{"type":"list","default":[],"of":{"id":"id","name":"string","file-size":{"type":"string","optional":true},"progress":{"type":"number","optional":true},"state":{"type":"enum","values":["ready","process","done","error"]},"error-message":{"type":"string","optional":true},"retry-text":{"type":"string","optional":true},"image-url":{"type":"string","optional":true},"stored":{"type":"boolean","optional":true},"file":{"type":"object","optional":true}}},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"list","default":[]}},"events":{"change":{"carries":{"files":"list","source":{"type":"enum","values":["input","drop"]}}},"attach":{"carries":{"files":{"type":"list","schema":{"items":{"type":"object"}}},"source":{"type":"enum","values":["input","drop"]},"multiple":"boolean"}},"attached":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"source":"string","multiple":"boolean"}},"detach":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"action":{"type":"enum","values":["remove","delete"]}}},"rejected":{"carries":{"files":"list","rejected":{"type":"list"},"accept":"string","source":"string"}},"retry":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"begun":{"carries":{"id":"id","item":"object"}},"chunk":{"carries":{"id":"id","done":"number","total":"number","item":"object"}},"completed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"failed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id","item":"object"}},"finished":{"carries":{"items":{"type":"list","schema":{"items":{"type":"object"}}}}}},"actions":{"remove-item":{"with":{"index":"number"}},"clear":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-file-upload-background-color":{"type":"color","state":"rest"},"--sf-file-upload-border-color":{"type":"color","state":"rest"},"--sf-file-upload-radius":{"type":"length"},"--sf-file-upload-link-color":{"type":"color","state":"rest"},"--sf-file-upload-text-color":{"type":"color","state":"rest"},"--sf-file-upload-dragged-over-background-color":{"type":"color","state":"dragged-over"},"--sf-file-upload-dragged-over-border-color":{"type":"color","state":"dragged-over"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-upload","tag":"sf-file-upload","version":"1.5.4","kind":"leaf","settings":{"name":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default":""},"help":{"type":"string","default":""},"icon":{"type":"icon","default":"upload_file"},"link-text":{"type":"string","default-from":"runtime.link-text"},"text":{"type":"string","default-from":"runtime.text"},"formats":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"accept":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-size":{"type":"number","default":0},"min-size":{"type":"number","default":0},"max-files":{"type":"number","default":0},"max-total-size":{"type":"number","default":0},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"items":{"type":"list","default":[],"of":{"id":"id","name":"string","file-size":{"type":"string","optional":true},"progress":{"type":"number","optional":true},"state":{"type":"enum","values":["ready","process","done","error"]},"error-message":{"type":"string","optional":true},"retry-text":{"type":"string","optional":true},"image-url":{"type":"string","optional":true},"stored":{"type":"boolean","optional":true},"file":{"type":"object","optional":true}}},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"list","default":[]}},"events":{"change":{"carries":{"files":"list","source":{"type":"enum","values":["input","drop"]}}},"attach":{"carries":{"files":{"type":"list","schema":{"items":{"type":"object"}}},"source":{"type":"enum","values":["input","drop"]},"multiple":"boolean"}},"attached":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"source":"string","multiple":"boolean"}},"detach":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"action":{"type":"enum","values":["remove","delete"]}}},"rejected":{"carries":{"files":"list","rejected":{"type":"list"},"accept":"string","source":"string"}},"retry":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"begun":{"carries":{"id":"id","item":"object"}},"chunk":{"carries":{"id":"id","done":"number","total":"number","item":"object"}},"completed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"failed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id","item":"object"}},"finished":{"carries":{"items":{"type":"list","schema":{"items":{"type":"object"}}}}}},"actions":{"remove-item":{"with":{"index":"number"}},"clear":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-file-upload-background-color":{"type":"color","state":"rest"},"--sf-file-upload-border-color":{"type":"color","state":"rest"},"--sf-file-upload-radius":{"type":"length"},"--sf-file-upload-link-color":{"type":"color","state":"rest"},"--sf-file-upload-text-color":{"type":"color","state":"rest"},"--sf-file-upload-dragged-over-background-color":{"type":"color","state":"dragged-over"},"--sf-file-upload-dragged-over-border-color":{"type":"color","state":"dragged-over"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
 
 /***/ },
 
@@ -4427,13 +4441,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-upload","tag":"sf-fi
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"File Upload","runtime":{"done":"Uploaded","done-line":"{size} · uploaded","error":"Not uploaded","error-line":"Not uploaded: {message}","formats-audio":"audio","formats-image":"images","formats-video":"video","link-text":"Click to upload","not-added":"Not added: {n}","reject-count":{"one":"“{name}” was not added: up to {n} file","other":"“{name}” was not added: up to {n} files"},"reject-duplicate":"“{name}” is already in the list","reject-empty":"“{name}” is empty","reject-min-size":"“{name}” is {size}; it must be at least {min}","reject-one":"“{name}” was not added: this field takes one file","reject-size":"“{name}” is {size}; the limit is {max}","reject-total":"“{name}” was not added: all files together up to {max}","reject-type":"“{name}” is not accepted: allowed {formats}","remove":"Remove","remove-failed":"Remove or retry the files that failed","retry":"Try again","text":"or drag and drop","uploading":"Uploading","value-missing":"Add a file","value-missing-many":"Add at least one file","wait-for-uploads":"Wait until the files are uploaded","file-removed":"File removed","undo":"Undo","help":"More about: {label}","said-added":"“{name}” added","said-added-many":{"one":"{n} file added","other":"{n} files added"},"said-done":"“{name}” uploaded","said-error":"“{name}” was not uploaded","said-error-line":"“{name}” was not uploaded: {message}"}}');
-
-/***/ },
-
-/***/ "d49e89d651d7"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Загрузка файлов","runtime":{"done":"Загружен","done-line":"{size} · загружен","error":"Не загрузился","error-line":"Не загрузился: {message}","formats-audio":"аудио","formats-image":"изображения","formats-video":"видео","link-text":"Выберите файл","not-added":"Не добавлено {n}:","reject-count":{"one":"«{name}» не добавлен: можно не больше {n} файла","few":"«{name}» не добавлен: можно не больше {n} файлов","many":"«{name}» не добавлен: можно не больше {n} файлов","other":"«{name}» не добавлен: можно не больше {n} файла"},"reject-duplicate":"«{name}» уже добавлен","reject-empty":"«{name}» пустой — в нём нет данных","reject-min-size":"«{name}» — {size}, а нужно от {min}","reject-one":"«{name}» не добавлен: сюда можно только один файл","reject-size":"«{name}» — {size}, а можно до {max}","reject-total":"«{name}» не добавлен: все файлы вместе — до {max}","reject-type":"«{name}» не подходит: можно {formats}","remove":"Убрать","remove-failed":"Уберите или повторите файлы с ошибкой","retry":"Повторить","text":"или перетащите его сюда","uploading":"Загрузка","value-missing":"Добавьте файл","value-missing-many":"Добавьте хотя бы один файл","wait-for-uploads":"Дождитесь, пока файлы загрузятся","file-removed":"Файл убран","undo":"Вернуть","help":"Подробнее: {label}","said-added":"«{name}» добавлен","said-added-many":{"one":"Добавлен {n} файл","few":"Добавлено {n} файла","many":"Добавлено {n} файлов","other":"Добавлено {n} файла"},"said-done":"«{name}» загружен","said-error":"«{name}» не загрузился","said-error-line":"«{name}» не загрузился: {message}"}}');
 
 /***/ }
 

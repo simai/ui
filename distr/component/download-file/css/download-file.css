@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
 *
@@ -87,9 +87,8 @@
     max-inline-size: 100%;
     padding: calc(var(--sf-download-file--padding-block) - var(--sf-download-file--border-width)) calc(var(--sf-download-file--padding-inline) - var(--sf-download-file--border-width));
     padding: var(--sf-file-download-padding, var(--sf-download-file-padding, calc(var(--sf-download-file--padding-block) - var(--sf-download-file--border-width)) calc(var(--sf-download-file--padding-inline) - var(--sf-download-file--border-width))));
-    color: var(--sf-download-file--accent);
-    background-color: var(--sf-download-file--background-color);
-    border: var(--sf-px) solid var(--sf-download-file--border-color);
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-file-download-radius, var(--sf-download-file-radius, var(--sf-radius--ui)));
     font-family: var(--sf-text--family);
@@ -103,6 +102,32 @@
     -webkit-appearance: none;
        -moz-appearance: none;
             appearance: none;
+  }
+  /* Ready: a file to fetch, the row a person presses (the Smart element's
+     view word, written by the class too). It points and its hover and press
+     plates move on the motion scale, as the transition utility does, so a
+     row needs no utility class to read as pressable (examples pass EX-8:
+     the class had no rule). A disabled ready row keeps the arrow. */
+  .sf-download-file.sf-download-file--ready {
+    cursor: pointer;
+    transition-property: color, background-color, border-color;
+    transition-duration: var(--sf-duration-normal);
+    transition-timing-function: var(--sf-ease-move);
+  }
+  .sf-download-file.sf-download-file--ready:disabled {
+    cursor: default;
+  }
+  .sf-download-file.sf-download-file--ready.disabled {
+    cursor: default;
+  }
+  .sf-download-file.sf-download-file--ready[aria-disabled=true] {
+    cursor: default;
+  }
+  /* Reduced motion: the plate changes at once. */
+  @media (prefers-reduced-motion: reduce) {
+    .sf-download-file.sf-download-file--ready {
+      transition-duration: 0s;
+    }
   }
   .sf-download-file.sf-download-file--full-width {
     width: 100%;
@@ -159,7 +184,6 @@
   .sf-download-file__reason {
     display: block;
     margin: var(--sf-0);
-    color: var(--sf-on-surface-variant);
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1\/2);
     font-size: var(--sf-download-file--note-size, var(--sf-text-size-1\/2));
@@ -184,7 +208,6 @@
     gap: var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap)));
     min-width: var(--sf-0);
     min-inline-size: var(--sf-0);
-    color: var(--sf-download-file--accent);
     font: inherit;
   }
   /* The name and, right after it, the type and the size (decision C51) --
@@ -219,7 +242,6 @@
   }
   .sf-download-file :where(.sf-download-file__size, .sf-download-file-file-size) {
     flex: none;
-    color: var(--sf-on-surface-variant);
     font: inherit;
     white-space: nowrap;
   }
@@ -233,7 +255,6 @@
     min-width: var(--sf-0);
     min-inline-size: var(--sf-0);
     gap: var(--sf-space-1\/4);
-    color: var(--sf-on-surface-variant);
     white-space: nowrap;
   }
   /* Preparing: the status is words, not two short facts, and it never takes
@@ -251,9 +272,6 @@
     min-width: var(--sf-0);
     min-inline-size: var(--sf-0);
     white-space: normal;
-  }
-  .sf-download-file :where(.sf-download-file__type) {
-    color: var(--sf-on-surface-variant);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-download-file :where(.sf-download-file__type + .sf-download-file__size:not(:empty))::before{
     margin-right: var(--sf-space-1\/4);
@@ -325,8 +343,6 @@
     height: var(--sf-download-file--icon-size);
     height: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     block-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
-    color: var(--sf-download-file--accent);
-    color: var(--sf-file-download-icon-color, var(--sf-download-file-icon-color, var(--sf-download-file--accent)));
   }
   .sf-download-file :where(.sf-download-file__spinner) .sf-loader--loading-indicator {
     display: block;
@@ -579,22 +595,10 @@
   .sf-download-file :where(.sf-download-file__tip[hidden]) {
     display: none;
   }
-  .sf-download-file.sf-download-file--error :where(.sf-download-file__icon, .sf-download-file__meta) {
-    color: var(--sf-error);
-  }
   /* Ready after a long wait (decision C51): the success sign, «Готово · CSV ·
      2,4 МБ» and «Скачать» beside it -- the download is a fresh press. */
   .sf-download-file.sf-download-file--offer {
     cursor: default;
-  }
-  .sf-download-file.sf-download-file--offer :where(.sf-download-file__icon) {
-    color: var(--sf-success);
-  }
-  .sf-download-file.sf-download-file--error :where(.sf-download-file__main, .sf-download-file__name) {
-    color: var(--sf-on-surface);
-  }
-  .sf-download-file.sf-download-file--offer :where(.sf-download-file__main, .sf-download-file__name) {
-    color: var(--sf-on-surface);
   }
   .sf-download-file :where(.sf-download-file__icon, .sf-icon) {
     flex: none;
@@ -608,8 +612,6 @@
     width: var(--sf-download-file--icon-size);
     width: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     inline-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
-    color: var(--sf-download-file--accent);
-    color: var(--sf-file-download-icon-color, var(--sf-download-file-icon-color, var(--sf-download-file--accent)));
     font-size: var(--sf-download-file--icon-size);
     font-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     /* The glyph's own sheet is unlayered and sizes .sf-icon from these, so the
@@ -685,6 +687,116 @@
       font-size: var(--sf-text-size-1\/2);
       line-height: var(--sf-text-height-1\/2);
     }
+    /* Class markup written by hand (the class documentation's row: the size
+       a child of the wrap, beside the container) draws the same phone row
+       as sf-file-download, the reference twin (C251, SM-DL-2): the size goes
+       under the name, a step smaller, from the name's start. Before, it
+       stood beside the name: 264x36 against the Smart row's 219x52. */
+    .sf-download-file :where(.sf-download-file-wrap:has(> .sf-download-file-file-size)) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--sf-0);
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
+      margin-left: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+      margin-left: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
+      margin-left: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+      margin-left: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
+      }
+    }
+    .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size):where(:dir(ltr)){
+      margin-left: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+      margin-left: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
+      margin-right: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+      margin-right: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
+      margin-right: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+      margin-right: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
+      }
+    }
+    .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size):where(:dir(rtl)){
+      margin-right: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+      margin-right: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
+      margin-left: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+    }
+    @supports not (margin-inline-start: initial){
+    html:not([dir="rtl"]) .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
+      margin-left: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+      }
+    }
+    .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size):where(:dir(ltr)){
+      margin-left: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
+      margin-right: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+    }
+    @supports not (margin-inline-start: initial){
+    [dir="rtl"] .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
+      margin-right: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+      }
+    }
+    .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size):where(:dir(rtl)){
+      margin-right: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+    }
+    .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size) {
+      -webkit-margin-start: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+              margin-inline-start: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
+      -webkit-margin-start: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
+              margin-inline-start: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
+      font-size: var(--sf-text-size-1\/2);
+      line-height: var(--sf-text-height-1\/2);
+    }
+  }
+}
+@layer sf.paint {
+  .sf-download-file {
+    color: var(--sf-download-file--accent);
+    background-color: var(--sf-download-file--background-color);
+    border-color: var(--sf-download-file--border-color);
+  }
+  .sf-download-file__reason {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-download-file :where(.sf-download-file__main, .sf-download-file-container) {
+    color: var(--sf-download-file--accent);
+  }
+  .sf-download-file :where(.sf-download-file__size, .sf-download-file-file-size) {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-download-file :where(.sf-download-file__meta) {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-download-file :where(.sf-download-file__type) {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-download-file :where(.sf-download-file__spinner) {
+    color: var(--sf-download-file--accent);
+    color: var(--sf-file-download-icon-color, var(--sf-download-file-icon-color, var(--sf-download-file--accent)));
+  }
+  .sf-download-file.sf-download-file--error :where(.sf-download-file__icon, .sf-download-file__meta) {
+    color: var(--sf-error);
+  }
+  .sf-download-file.sf-download-file--offer :where(.sf-download-file__icon) {
+    color: var(--sf-success);
+  }
+  .sf-download-file.sf-download-file--error :where(.sf-download-file__main, .sf-download-file__name) {
+    color: var(--sf-on-surface);
+  }
+  .sf-download-file.sf-download-file--offer :where(.sf-download-file__main, .sf-download-file__name) {
+    color: var(--sf-on-surface);
+  }
+  .sf-download-file :where(.sf-download-file__icon, .sf-icon) {
+    color: var(--sf-download-file--accent);
+    color: var(--sf-file-download-icon-color, var(--sf-download-file-icon-color, var(--sf-download-file--accent)));
   }
 }
 @layer sf.states {

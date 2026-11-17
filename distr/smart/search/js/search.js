@@ -640,9 +640,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3298a6643d1e");
 /* harmony import */ var _js_host__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("9e5c88241328");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e264eb73f918");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("b6bee636c245");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("028000b98469");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("ce3ad881d0a0");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("42ad4537fcaf");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ce3ad881d0a0");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
@@ -693,16 +692,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-};
 
 const DEBOUNCE = 120; // A search that takes longer than this draws the «Поиск…» line with the
 // spinner over the rows it keeps (owner decisions C139 (4), C130 (8): the
@@ -823,10 +817,7 @@ function highlight(title, query) {
 }
 const SearchElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
   source: 'ru',
   actions: {
     open() {
@@ -1378,8 +1369,11 @@ class SfSearch extends SearchElement {
   } // A scope pressed is the same question as a keystroke (the port: scope is a
   // field of query.change, never an intent of its own), so the host is asked
   // again; the panel also filters what it holds, so the tags answer at once.
-  // The tags are one sf-tag-group of single choice (C175 (4)): the focus stays
-  // on the tag pressed, and the reader hears the scope and its count.
+  // The tags are one sf-tag-group of single choice (C175 (4)): chosen from the
+  // keyboard, the focus stays on the tag, and the reader hears the scope and
+  // its count; chosen with a pointer, the focus goes back to the field
+  // (dispatcher 2026-11-16, as the scope pills before 1.10 kept it there), so
+  // the person types on without a click into the field.
 
 
   setScope(id, {
@@ -1407,9 +1401,21 @@ class SfSearch extends SearchElement {
       selected
     } = event.detail ?? {};
     const key = String(id ?? '');
+    const pointer = this._scopePointer === true;
+    this._scopePointer = false;
     this.setScope(selected && key !== _js_templates_default__WEBPACK_IMPORTED_MODULE_6__.ALL_SCOPE_KEY ? key : '', {
-      focus: false
+      focus: pointer
     });
+  } // How the next scope choice comes: a press of a pointer on the tags, or a
+  // key (Enter or Space on a tag, which is a click too).
+
+
+  onScopePointer() {
+    this._scopePointer = true;
+  }
+
+  onScopeKey() {
+    this._scopePointer = false;
   } // ---------------------------------------------------------- operators
 
   /** The operators the host reads, with the words that name them. */
@@ -3527,8 +3533,9 @@ function renderSearchWindow(context) {
         aria-label=${words.clear} aria-keyshortcuts="Escape" @click=${() => component.onClearPress()}></sf-button-icon>`) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
     ${scopes.length > 1 ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag-group class="sf-search-scopes" selection="one" layout="wrap" aria-label=${words.scopes}
+      @pointerdown=${() => component.onScopePointer()} @keydown=${() => component.onScopeKey()}
       @sf-tag-group-select=${event => component.onScopeSelect(event)}>
-      ${scopes.map(scope => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag key=${scope.id || ALL_SCOPE_KEY} size="1/2" text=${scope.label} count=${String(scope.count)}
+      ${scopes.map(scope => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag kind="checkbox" key=${scope.id || ALL_SCOPE_KEY} size="1/2" text=${scope.label} count=${String(scope.count)}
         ?active=${(0,lit_directives_live_js__WEBPACK_IMPORTED_MODULE_2__.live)(scope.pressed)}></sf-tag>`)}
     </sf-tag-group>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${notice ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-search-notice" role="alert">${notice}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -3709,10 +3716,32 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "42ad4537fcaf"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("b6bee636c245");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "e264eb73f918"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.10.4","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.1.0","contract":"src/core/contracts/ports/simai.search-port/1.1.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background-color":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.11.5","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.1.0","contract":"src/core/contracts/ports/simai.search-port/1.1.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background-color":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
 
 /***/ },
 
@@ -3720,13 +3749,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Site search","runtime":{"label":"Site search","placeholder":"Search the site","clear-label":"Clear","close-label":"Close","back-label":"Back","scopes-label":"Search in","all-label":"All","results-label":"Results","recent-label":"Recent","recent-clear-label":"Clear","recent-remove-label":"Remove “{query}”","popular-label":"Popular","actions-label":"Quick actions","start-text":"Start typing to search","loading-text":"Searching…","error-text":"Search is unavailable now","empty-text":"Nothing found for “{query}”","empty-advice-text":"Nothing found for “{query}”. Check the word or pick a frequent query","count-text":{"one":"{n} result","other":"{n} results"},"key-select-label":"select","key-open-label":"open","key-clear-label":"clear","key-close-label":"close","correction-text":"Did you mean “{query}”?","preview-label":"Preview","refused-text":"That is not available to you","action-text":"The command did not run","short-text":"Type a little more","forbidden-text":"You have no access to this","not-found-text":"It is no longer there","step-placeholder":"Choose an option","new-tab-label":"Open in a new tab (Ctrl+↵)","copy-link-label":"Copy link","copied-text":"Link copied","copy-failed-text":"Could not copy the link","remove-tag-label":"Remove tag","refine-label":"Refine","more-text":"All results: {count}","search-all-label":"Search everywhere","options-text":{"one":"{n} option","other":"{n} options"},"key-apply-label":"apply","key-tag-label":"add tag","key-back-label":"back","operator-from":"from","operator-subject":"subject","operator-has":"has","operator-date":"date","operator-from-label":"Sender","operator-subject-label":"Subject","operator-has-label":"Has","operator-date-label":"Date","operator-from-hint":"person","operator-subject-hint":"words of the subject","operator-has-hint":"attachment","operator-date-hint":"period"}}');
-
-/***/ },
-
-/***/ "028000b98469"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Поиск по сайту","runtime":{"label":"Поиск по сайту","placeholder":"Найти на сайте","clear-label":"Очистить","close-label":"Закрыть","back-label":"Назад","scopes-label":"Где искать","all-label":"Все","results-label":"Результаты","recent-label":"Недавние","recent-clear-label":"Очистить","recent-remove-label":"Убрать «{query}»","popular-label":"Часто ищут","actions-label":"Быстрые действия","start-text":"Начните вводить запрос","loading-text":"Поиск…","error-text":"Поиск сейчас недоступен","empty-text":"Ничего не нашлось по «{query}»","empty-advice-text":"Ничего не нашлось по «{query}». Проверьте слово или выберите частый запрос","count-text":{"one":"{n} результат","few":"{n} результата","many":"{n} результатов","other":"{n} результата"},"key-select-label":"выбрать","key-open-label":"открыть","key-clear-label":"очистить","key-close-label":"закрыть","correction-text":"Возможно, вы искали «{query}»","preview-label":"Предпросмотр","refused-text":"Это вам недоступно","action-text":"Команда не выполнилась","short-text":"Введите ещё немного","forbidden-text":"У вас нет к этому доступа","not-found-text":"Этого больше нет","step-placeholder":"Выберите вариант","new-tab-label":"Открыть в новой вкладке (Ctrl+↵)","copy-link-label":"Копировать ссылку","copied-text":"Ссылка скопирована","copy-failed-text":"Не удалось скопировать ссылку","remove-tag-label":"Убрать тег","refine-label":"Уточнить","more-text":"Все результаты: {count}","search-all-label":"Искать во всех","options-text":{"one":"{n} вариант","few":"{n} варианта","many":"{n} вариантов","other":"{n} варианта"},"key-apply-label":"применить","key-tag-label":"добавить тег","key-back-label":"назад","operator-from":"от","operator-subject":"тема","operator-has":"есть","operator-date":"дата","operator-from-label":"Отправитель","operator-subject-label":"Тема","operator-has-label":"Есть","operator-date-label":"Дата","operator-from-hint":"человек","operator-subject-hint":"слова из темы","operator-has-hint":"вложение","operator-date-hint":"период"}}');
 
 /***/ }
 

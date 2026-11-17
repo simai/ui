@@ -119,8 +119,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_file_types_index_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f3cba14ced8a");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38c83d62c9cb");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3caeafa9a937");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("873f949da61a");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("73a6f336a620");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("04d98ec41367");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -144,22 +143,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-};
 const TreeItemElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__,
   actions: {
@@ -835,6 +826,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "04d98ec41367"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("873f949da61a");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "9bbeb11fb966"
 (module) {
 
@@ -852,7 +865,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tree-
 /***/ "38c83d62c9cb"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tree-item","tag":"sf-tree-item","version":"1.3.3","kind":"leaf","settings":{"label":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"kind":{"type":"enum","values":["folder","file","page","document","image","code","data","table","archive","video","audio","link"],"default":""},"value":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"has-children":{"type":"boolean","default":false},"items-data":{"type":"list","default":[],"of":{"id":"id","label":"string","href":"string","target":"string","rel":"string","kind":{"type":"enum","values":["folder","file","page","document","image","code","data","table","archive","video","audio","link"]},"value":"string","open":"boolean","selected":"boolean","active":"boolean","disabled":"boolean","has-children":"boolean","icon":{"anyOf":[{"type":"icon"},{"type":"boolean"}]},"open-icon":"icon","closed-icon":"icon","chevron-open-icon":"icon","chevron-closed-icon":"icon","open-label":"string","close-label":"string","revision":"string","children":"list"},"entries":{"key":"id","changes":"content"}},"open-icon":{"type":"icon","default":"folder_open"},"closed-icon":{"type":"icon","default":"folder"},"icon":{"type":"string","default":""},"chevron-open-icon":{"type":"icon","default":"keyboard_arrow_down"},"chevron-closed-icon":{"type":"icon","default":"chevron_right"},"open-label":{"type":"string","default-from":"runtime.open-label"},"close-label":{"type":"string","default-from":"runtime.close-label"},"item-class":{"type":"string","default":""},"container-class":{"type":"string","default":""},"name-class":{"type":"string","default":""}},"values":{"open":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false},"active":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","value":"string"}},"toggle":{"carries":{"id":"string","open":"boolean","value":"string"}}},"actions":{"expand":{},"collapse":{},"toggle-open":{},"activate":{},"focus-item":{}},"css-variables":{"--sf-tree-item-gap":{"type":"length","state":"default"},"--sf-tree-item-name-color":{"type":"color","state":"default"},"--sf-tree-item-icon-color":{"type":"color","state":"default"},"--sf-tree-item-drop-background-color":{"type":"color","state":"drop-target"},"--sf-tree-item-drop-outline-color":{"type":"color","state":"drop-target"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tree-item","tag":"sf-tree-item","version":"1.3.4","kind":"leaf","settings":{"label":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"kind":{"type":"enum","values":["folder","file","page","document","image","code","data","table","archive","video","audio","link"],"default":""},"value":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"has-children":{"type":"boolean","default":false},"items-data":{"type":"list","default":[],"of":{"id":"id","label":"string","href":"string","target":"string","rel":"string","kind":{"type":"enum","values":["folder","file","page","document","image","code","data","table","archive","video","audio","link"]},"value":"string","open":"boolean","selected":"boolean","active":"boolean","disabled":"boolean","has-children":"boolean","icon":{"anyOf":[{"type":"icon"},{"type":"boolean"}]},"open-icon":"icon","closed-icon":"icon","chevron-open-icon":"icon","chevron-closed-icon":"icon","open-label":"string","close-label":"string","revision":"string","children":"list"},"entries":{"key":"id","changes":"content"}},"open-icon":{"type":"icon","default":"folder_open"},"closed-icon":{"type":"icon","default":"folder"},"icon":{"type":"string","default":""},"chevron-open-icon":{"type":"icon","default":"keyboard_arrow_down"},"chevron-closed-icon":{"type":"icon","default":"chevron_right"},"open-label":{"type":"string","default-from":"runtime.open-label"},"close-label":{"type":"string","default-from":"runtime.close-label"},"item-class":{"type":"string","default":""},"container-class":{"type":"string","default":""},"name-class":{"type":"string","default":""}},"values":{"open":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false},"active":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","value":"string"}},"toggle":{"carries":{"id":"string","open":"boolean","value":"string"}}},"actions":{"expand":{},"collapse":{},"toggle-open":{},"activate":{},"focus-item":{}},"css-variables":{"--sf-tree-item-gap":{"type":"length","state":"default"},"--sf-tree-item-name-color":{"type":"color","state":"default"},"--sf-tree-item-icon-color":{"type":"color","state":"default"},"--sf-tree-item-drop-background-color":{"type":"color","state":"drop-target"},"--sf-tree-item-drop-outline-color":{"type":"color","state":"drop-target"}}}');
 
 /***/ },
 
@@ -860,13 +873,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tree-item","tag":"sf-tree
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Tree item","runtime":{"open-label":"Open item","close-label":"Close item"}}');
-
-/***/ },
-
-/***/ "73a6f336a620"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Элемент дерева","runtime":{"open-label":"Развернуть","close-label":"Свернуть"}}');
 
 /***/ }
 

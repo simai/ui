@@ -1666,8 +1666,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38ea8d53f301");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("b9154ac40cf8");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c00a7eefcca1");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("7ee257be389e");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("63dac91f9223");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("564ff42b975b");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_radio_js_radio__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_radio_js_radio__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -1680,16 +1679,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-}; // sf-radio from its component.json (standard simai.smart-component 1.3.8 §3,
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-radio from its component.json (standard simai.smart-component 1.3.8 §3,
 // §4, §17.1, §17.2). The settings and the value checked are made by
 // core/js/element-manifest.js; `error` is a dated alias of `invalid` (§17.2,
 // aliases.json). The host is the form control through ElementInternals: a
@@ -1706,10 +1700,7 @@ const ru = {
 
 const RadioElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
 }); // The id the inner radios' form attribute names: no element carries it.
@@ -1998,9 +1989,11 @@ function renderRadioTemplate(context) {
   ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span data-sf-radio-description>${context.component.getSlotContent('description')}</span>` : description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-radio-button-description">${description}</span>` : '';
   const helpContent = (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__.renderCheckableHelp)(context, 'sf-radio-button-help');
   const showContainer = !!(labelContent || descriptionContent);
-  rootClasses.push(...(0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__.checkableClasses)(size, showContainer));
-  const control = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <label class=${rootClasses.filter(Boolean).join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} @click=${_component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_1__.keepHelpOutOfLabel}>
+  rootClasses.push(...(0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__.checkableClasses)(size, showContainer)); // position="end" (C251, SM-RD-1): the box after the text column, as
+  // sf-checkbox's and the class markup's (the box the label's last child).
+
+  const atEnd = context.position === 'end';
+  const box = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
       <span class="sf-radio-button-box flex items-cross-center content-main-center">
         <input
           type="radio"
@@ -2011,12 +2004,15 @@ function renderRadioTemplate(context) {
           ?disabled=${disabled}
         />
         <span class="sf-radio-button-mark" aria-hidden="true"></span>
-      </span>
-
+      </span>`;
+  const control = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <label class=${rootClasses.filter(Boolean).join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} @click=${_component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_1__.keepHelpOutOfLabel}>
+      ${atEnd ? '' : box}
       ${(0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__.renderCheckableText)({
     column: 'sf-radio-button-container',
     top: 'sf-radio-button-top'
   }, labelContent, descriptionContent)}
+      ${atEnd ? box : ''}
     </label>
   `;
   return (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__.renderCheckableRow)(size, control, helpContent);
@@ -2070,6 +2066,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "564ff42b975b"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7ee257be389e");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "48d00b6bd847"
 (module) {
 
@@ -2087,7 +2105,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-radio
 /***/ "b9154ac40cf8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.radio","tag":"sf-radio","version":"1.3.5","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-radio-button-background-color":{"type":"color","state":"default"},"--sf-radio-button-border-color":{"type":"color","state":"default"},"--sf-radio-button-border-width":{"type":"length","state":"default"},"--sf-radio-button-color":{"type":"color","state":"default"},"--sf-radio-button-size":{"type":"length","state":"default"},"--sf-radio-button-gap":{"type":"length","state":"default"},"--sf-radio-button-checked-color":{"type":"color","state":"checked"},"--sf-radio-button-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.radio","tag":"sf-radio","version":"1.4.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-radio-button-background-color":{"type":"color","state":"default"},"--sf-radio-button-border-color":{"type":"color","state":"default"},"--sf-radio-button-border-width":{"type":"length","state":"default"},"--sf-radio-button-color":{"type":"color","state":"default"},"--sf-radio-button-size":{"type":"length","state":"default"},"--sf-radio-button-gap":{"type":"length","state":"default"},"--sf-radio-button-checked-color":{"type":"color","state":"checked"},"--sf-radio-button-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 
@@ -2095,13 +2113,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.radio","tag":"sf-radio","
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Radio buttons","runtime":{"help":"More about: {label}"}}');
-
-/***/ },
-
-/***/ "63dac91f9223"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Радиокнопки","runtime":{"help":"Подробнее: {label}"}}');
 
 /***/ }
 

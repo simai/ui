@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* sf-input-color 1.7.0 (owner decision C83): a field of the control ladder that
      opens the Framework's own compact window. Every size, space, radius and
@@ -42,8 +42,9 @@
     --sf-color--text-size: var(--sf-text-size-2);
     --sf-color--text-height: var(--sf-text-height-2);
   }
+  /* C153 (1), SM-CLR-1: the label in the text ink, as sf-input's (it was
+     on-surface-variant, the hint's ink). On a phone (below 60rem, the text tokens' own break) the label of size 1 stays 14, the value's step there, as sf-input's. */
   .sf-color-label {
-    color: var(--sf-on-surface-variant);
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1\/2);
     font-weight: var(--sf-font-weight-regular);
@@ -66,8 +67,11 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  .sf-color-field:has(.sf-color-trigger:disabled) .sf-color-label {
-    color: var(--sf-on-surface-disabled);
+  @media not all and (min-width: 60rem) {
+    .sf-color-field.sf-color-field--size-1 .sf-color-label {
+      font-size: var(--sf-text-size-1);
+      line-height: var(--sf-text-height-1);
+    }
   }
   .sf-color {
     display: flex;
@@ -111,20 +115,13 @@
     padding-left: var(--sf-color--space-x);
     padding-right: var(--sf-color--space-x);
     padding-inline: var(--sf-color--space-x);
-    border: var(--sf-px) solid var(--sf-outline);
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-radius--ui);
-    background-color: transparent;
-    color: var(--sf-on-surface);
     cursor: pointer;
     transition-duration: var(--sf-duration-fast);
     transition-property: background-color, border-color;
     transition-timing-function: var(--sf-animation);
-  }
-  .sf-color-frame:hover:not([data-disabled]):not([data-readonly]) {
-    background-color: var(--sf-surface-state-hover);
-  }
-  .sf-color[data-open=true] .sf-color-frame {
-    border-color: var(--sf-primary);
   }
   .sf-color-frame:has(.sf-color-trigger.focus-visible) {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
@@ -135,14 +132,11 @@
     outline-offset: var(--sf-focus--offset);
   }
   .sf-color-frame[data-disabled] {
-    border-color: var(--sf-surface-disabled);
-    color: var(--sf-on-surface-disabled);
     cursor: default;
   }
   /* Read-only (as sf-input's): the value in the text's ink, the region line
      for the edge, nothing to press. */
   .sf-color-frame[data-readonly] {
-    border-color: var(--sf-outline-variant);
     cursor: default;
   }
   /* The trigger is the swatch and the value: the button a keyboard reaches.
@@ -179,8 +173,7 @@
     min-inline-size: 0;
     padding: 0;
     border: 0;
-    background: none;
-    color: inherit;
+    border-color: revert-layer;
     font-family: var(--sf-text--family);
     font-size: var(--sf-color--text-size);
     line-height: var(--sf-color--text-height);
@@ -198,10 +191,6 @@
   }
   .sf-color-text code {
     font-family: var(--sf-code--font-family);
-  }
-  .sf-color-empty {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-color-inherited-color, var(--sf-on-surface-variant));
   }
   /* The slot every field uses, inside the frame: its marker's words end where
      the field's text would, its reset stands one inset from the edge. */
@@ -238,7 +227,6 @@
     --sf-icon--height: var(--sf-color--icon-size, var(--sf-color--text-height));
     --sf-icon--width: var(--sf-color--icon-size, var(--sf-color--text-height));
     flex: none;
-    color: var(--sf-on-surface-variant);
     font-size: var(--sf-color--text-height);
     font-size: var(--sf-color--icon-size, var(--sf-color--text-height));
     width: var(--sf-color--text-height);
@@ -272,23 +260,14 @@
     height: var(--sf-text-height-1);
     height: var(--sf-color--icon-size, var(--sf-color--text-height, var(--sf-text-height-1)));
     block-size: var(--sf-color--icon-size, var(--sf-color--text-height, var(--sf-text-height-1)));
-    border: var(--sf-px) solid var(--sf-outline-variant);
-    border: var(--sf-px) solid var(--sf-color-chip-border-color, var(--sf-outline-variant));
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-radius-1\/2);
     border-radius: var(--sf-color-chip-radius, var(--sf-radius-1\/2));
-    background-color: transparent;
-    background-color: var(--sf-color-fill, transparent);
     background-clip: padding-box;
   }
   .sf-color-chip--round {
     border-radius: var(--sf-radius-circle);
-  }
-  /* How the swatch is bounded (CO-06: the three looks drew the same, because
-     the chip's own colour was painted under its translucent border): bordered
-     is the hairline of outline-variant, outlined the field's stronger outline,
-     plain no border at all. */
-  .sf-color--outlined .sf-color-chip {
-    border-color: var(--sf-outline);
   }
   .sf-color--plain .sf-color-chip {
     border-width: 0;
@@ -303,18 +282,12 @@
      the colour as it is over the checkerboard, so a faint colour still shows
      its hue. */
   .sf-color-chip[data-alpha] {
-    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0,transparent 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
-    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0 50%, var(--sf-outline-variant) 0 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
     background-clip: padding-box;
   }
   .sf-color-option[data-alpha] {
-    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0,transparent 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
-    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0 50%, var(--sf-outline-variant) 0 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
     background-clip: padding-box;
   }
   .sf-color-thumb[data-alpha] {
-    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0,transparent 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
-    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0 50%, var(--sf-outline-variant) 0 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
     background-clip: padding-box;
   }
   /* --------------------------------------------- variant brand (C84) */
@@ -346,20 +319,12 @@
     display: flex;
     align-items: flex-start;
     gap: var(--sf-space-1\/2);
-    color: var(--sf-on-surface);
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1\/2);
     line-height: var(--sf-text-height-1\/2);
   }
   .sf-color-check > sf-icon {
     flex: none;
-    color: var(--sf-on-surface-variant);
-  }
-  .sf-color-check[data-level=warning] > sf-icon {
-    color: var(--sf-on-warning-container-graphic);
-  }
-  .sf-color-check[data-level=error] > sf-icon {
-    color: var(--sf-on-error-container-graphic);
   }
   /* ------------------------------------------------- variant theme (C84) */
   /* Only a circle of the current colour, as a site header holds it: the
@@ -398,15 +363,9 @@
     block-size: var(--sf-color--control-height);
     padding: 0;
     border: 0;
+    border-color: revert-layer;
     border-radius: var(--sf-radius--ui);
-    background: transparent;
     cursor: pointer;
-  }
-  .sf-color-dot:hover:not(:disabled) {
-    background-color: var(--sf-surface-state-hover);
-  }
-  .sf-color-dot[aria-expanded=true] {
-    background-color: var(--sf-surface-state-select);
   }
   .sf-color-dot.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
@@ -465,8 +424,6 @@
     padding: var(--sf-color--window-padding);
     overflow: auto;
     border-radius: var(--sf-radius--surface);
-    background-color: var(--sf-surface-popup);
-    color: var(--sf-on-surface);
     box-shadow: var(--sf-shadow-overlay);
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1\/2);
@@ -538,7 +495,6 @@
     padding: var(--sf-space-1) var(--sf-space-1) calc(var(--sf-space-1) + env(safe-area-inset-bottom, var(--sf-a0)));
     border-end-end-radius: 0;
     border-end-start-radius: 0;
-    background-color: var(--sf-surface-popup);
     box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
     box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
   }
@@ -571,9 +527,10 @@
     padding-top: var(--sf-space-1\/2);
     -webkit-padding-before: var(--sf-space-1\/2);
             padding-block-start: var(--sf-space-1\/2);
-    border-top: var(--sf-px) solid var(--sf-outline-variant);
-    -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
-            border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    border-top-width: var(--sf-px);
+    border-block-start-width: var(--sf-px);
+    border-top-style: solid;
+    border-block-start-style: solid;
   }
   /* A radio group of swatches. Selection and focus are drawn inside the swatch
      (inset rings and a check), so nothing reaches the gap and no ring touches
@@ -598,22 +555,14 @@
     height: var(--sf-color--swatch);
     block-size: var(--sf-color--swatch);
     padding: 0;
-    border: var(--sf-px) solid var(--sf-outline-variant);
-    border: var(--sf-px) solid var(--sf-color-chip-border-color, var(--sf-outline-variant));
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-color-chip-radius, var(--sf-radius--ui));
-    background-color: transparent;
-    background-color: var(--sf-color-fill, transparent);
     background-clip: padding-box;
-    color: var(--sf-on-surface);
-    color: var(--sf-color-ink, var(--sf-on-surface));
     cursor: pointer;
   }
-  .sf-color-option:hover:not(:disabled) {
-    border-color: var(--sf-outline);
-  }
   .sf-color-option[aria-checked=true] {
-    border-color: var(--sf-on-surface);
     box-shadow: inset 0 0 0 var(--sf-px) var(--sf-on-surface), inset 0 0 0 calc(var(--sf-px) * 3) var(--sf-surface-popup);
   }
   .sf-color-option.focus-visible {
@@ -625,8 +574,6 @@
     outline-offset: var(--sf-focus--inset);
   }
   .sf-color-check {
-    color: var(--sf-on-surface);
-    color: var(--sf-color-ink, var(--sf-on-surface));
     font-size: var(--sf-text-size-1\/2);
     pointer-events: none;
   }
@@ -638,9 +585,6 @@
     height: var(--sf-e5);
     block-size: var(--sf-e5);
     border-radius: var(--sf-radius--ui);
-    background: linear-gradient(to top, var(--sf-black), transparent), linear-gradient(to right, var(--sf-white), hsl(0, 100%, 50%));
-    background: linear-gradient(to top, var(--sf-black), transparent), linear-gradient(to right, var(--sf-white), hsl(0, 100%, 50%));
-    background: linear-gradient(to top, var(--sf-black), transparent), linear-gradient(to right, var(--sf-white), hsl(var(--sf-color-hue, 0) 100% 50%));
     cursor: crosshair;
     touch-action: none;
   }
@@ -688,11 +632,10 @@
             margin-block-start: calc(var(--sf-b6) / -2);
     -webkit-margin-start: calc(var(--sf-b6) / -2);
             margin-inline-start: calc(var(--sf-b6) / -2);
-    border: calc(var(--sf-px) * 2) solid var(--sf-white);
+    border-width: calc(var(--sf-px) * 2);
+    border-style: solid;
     border-radius: var(--sf-radius-circle);
     box-shadow: 0 0 0 var(--sf-px) var(--sf-black);
-    background-color: transparent;
-    background-color: var(--sf-color-fill, transparent);
     background-clip: padding-box;
     pointer-events: none;
   }
@@ -723,13 +666,6 @@
   .sf-color-strip .sf-color-thumb {
     top: 50%;
     inset-block-start: 50%;
-  }
-  .sf-color-strip--hue {
-    background: linear-gradient(to right, hsl(0, 100%, 50%), hsl(60, 100%, 50%), hsl(120, 100%, 50%), hsl(180, 100%, 50%), hsl(240, 100%, 50%), hsl(300, 100%, 50%), hsl(0, 100%, 50%));
-  }
-  .sf-color-strip--alpha {
-    background: linear-gradient(to right, transparent, var(--sf-color-solid)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0,transparent 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
-    background: linear-gradient(to right, transparent, var(--sf-color-solid)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0 50%, var(--sf-outline-variant) 0 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
   }
   /* The bottom row of «Своё» (owner decision C209, prototype
      colour-field-study #q-cf-simple B): the code field and «Применить» on its
@@ -773,9 +709,9 @@
     height: var(--sf-ui-1\/2--control-height);
     block-size: var(--sf-ui-1\/2--control-height);
     overflow: hidden;
-    border: var(--sf-px) solid var(--sf-outline);
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-radius--ui);
-    background-color: transparent;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-code-row:has(> .sf-color-copy:last-child){
     padding-right: var(--sf-field-action--inset);
@@ -803,12 +739,6 @@
     -webkit-padding-end: var(--sf-field-action--inset);
             padding-inline-end: var(--sf-field-action--inset);
   }
-  .sf-color-code-row:has(.sf-color-code:focus, .sf-color-alpha-input:focus) {
-    border-color: var(--sf-primary);
-  }
-  .sf-color-code-row:has(.sf-color-code[aria-invalid=true]) {
-    border-color: var(--sf-error);
-  }
   .sf-color-copy {
     flex: none;
   }
@@ -820,8 +750,7 @@
     padding-bottom: 0;
     padding-block: 0;
     border: 0;
-    background: transparent;
-    color: var(--sf-on-surface);
+    border-color: revert-layer;
     font: inherit;
     font-family: var(--sf-code--font-family);
     outline: none;
@@ -912,26 +841,48 @@
     padding-left: var(--sf-space-1\/2);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-percent{
-    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    border-left-width: var(--sf-px);
   }
-  @supports not (border-inline-start: initial){
+  @supports not (border-inline-start-width: initial){
   html:not([dir="rtl"]) .sf-color-percent{
-    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    border-left-width: var(--sf-px);
     }
   }
   .sf-color-percent:where(:dir(ltr)){
-    border-left: var(--sf-px) solid var(--sf-outline-variant);
+    border-left-width: var(--sf-px);
   }
   _:-ms-input-placeholder, [dir="rtl"] .sf-color-percent{
-    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    border-right-width: var(--sf-px);
   }
-  @supports not (border-inline-start: initial){
+  @supports not (border-inline-start-width: initial){
   [dir="rtl"] .sf-color-percent{
-    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    border-right-width: var(--sf-px);
     }
   }
   .sf-color-percent:where(:dir(rtl)){
-    border-right: var(--sf-px) solid var(--sf-outline-variant);
+    border-right-width: var(--sf-px);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-percent{
+    border-left-style: solid;
+  }
+  @supports not (border-inline-start-style: initial){
+  html:not([dir="rtl"]) .sf-color-percent{
+    border-left-style: solid;
+    }
+  }
+  .sf-color-percent:where(:dir(ltr)){
+    border-left-style: solid;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-color-percent{
+    border-right-style: solid;
+  }
+  @supports not (border-inline-start-style: initial){
+  [dir="rtl"] .sf-color-percent{
+    border-right-style: solid;
+    }
+  }
+  .sf-color-percent:where(:dir(rtl)){
+    border-right-style: solid;
   }
   .sf-color-percent {
     display: inline-flex;
@@ -941,9 +892,8 @@
     width: var(--sf-d8);
     inline-size: var(--sf-d8);
     padding-inline: var(--sf-space-1\/3) var(--sf-space-1\/2);
-    -webkit-border-start: var(--sf-px) solid var(--sf-outline-variant);
-            border-inline-start: var(--sf-px) solid var(--sf-outline-variant);
-    color: var(--sf-on-surface-variant);
+    border-inline-start-width: var(--sf-px);
+    border-inline-start-style: solid;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-alpha-input{
     padding-left: 0;
@@ -1013,20 +963,198 @@
     padding-inline: 0 var(--sf-a2);
     text-align: end;
   }
-  .sf-color-error {
-    color: var(--sf-error);
-  }
   .sf-color-error:empty {
     display: none;
+  }
+  @media (forced-colors: active) {
+    .sf-color-option[aria-checked=true] {
+      outline: calc(var(--sf-px) * 2) solid Highlight;
+      outline-offset: calc(var(--sf-px) * -4);
+    }
+  }
+}
+/* Paint (C273): the fill, edge and place colour of these parts stand in
+   sf.paint, under the utilities, so bg-*, border-* and color-* on them
+   win; their geometry stays in sf.components, over the utilities. */
+@layer sf.paint {
+  .sf-color-label {
+    color: var(--sf-on-surface);
+  }
+  .sf-color-field:has(.sf-color-trigger:disabled) .sf-color-label {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-color-frame {
+    border-color: var(--sf-outline);
+    background-color: transparent;
+    color: var(--sf-on-surface);
+  }
+  .sf-color-frame:hover:not([data-disabled]):not([data-readonly]) {
+    background-color: var(--sf-surface-state-hover);
+  }
+  .sf-color[data-open=true] .sf-color-frame {
+    border-color: var(--sf-primary);
+  }
+  .sf-color-frame[data-disabled] {
+    border-color: var(--sf-surface-disabled);
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-color-frame[data-readonly] {
+    border-color: var(--sf-outline-variant);
+  }
+  .sf-color-trigger {
+    border: 0;
+    background: none;
+    color: inherit;
+  }
+  .sf-color-empty {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-color-inherited-color, var(--sf-on-surface-variant));
+  }
+  .sf-color-chevron {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-color-chip {
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-color-chip-border-color, var(--sf-outline-variant));
+    background-color: transparent;
+    background-color: var(--sf-color-fill, transparent);
+  }
+  /* How the swatch is bounded (CO-06: the three looks drew the same, because
+     the chip's own colour was painted under its translucent border): bordered
+     is the hairline of outline-variant, outlined the field's stronger outline,
+     plain no border at all. */
+  .sf-color--outlined .sf-color-chip {
+    border-color: var(--sf-outline);
+  }
+  .sf-color-chip[data-alpha] {
+    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0,transparent 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
+    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0 50%, var(--sf-outline-variant) 0 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
+  }
+  .sf-color-option[data-alpha] {
+    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0,transparent 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
+    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0 50%, var(--sf-outline-variant) 0 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
+  }
+  .sf-color-thumb[data-alpha] {
+    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0,transparent 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
+    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0 50%, var(--sf-outline-variant) 0 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
+  }
+  .sf-color-check {
+    color: var(--sf-on-surface);
+  }
+  .sf-color-check > sf-icon {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-color-check[data-level=warning] > sf-icon {
+    color: var(--sf-on-warning-container-graphic);
+  }
+  .sf-color-check[data-level=error] > sf-icon {
+    color: var(--sf-on-error-container-graphic);
+  }
+  .sf-color-dot {
+    border: 0;
+    background: transparent;
+  }
+  .sf-color-dot:hover:not(:disabled) {
+    background-color: var(--sf-surface-state-hover);
+  }
+  .sf-color-dot[aria-expanded=true] {
+    background-color: var(--sf-surface-state-select);
+  }
+  .sf-color-window {
+    background-color: var(--sf-surface-popup);
+    color: var(--sf-on-surface);
+  }
+  .sf-color-window[data-sf-sheet] {
+    background-color: var(--sf-surface-popup);
+  }
+  .sf-color-recent {
+    border-top-color: var(--sf-outline-variant);
+    border-block-start-color: var(--sf-outline-variant);
+  }
+  .sf-color-option {
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-color-chip-border-color, var(--sf-outline-variant));
+    background-color: transparent;
+    background-color: var(--sf-color-fill, transparent);
+    color: var(--sf-on-surface);
+    color: var(--sf-color-ink, var(--sf-on-surface));
+  }
+  .sf-color-option:hover:not(:disabled) {
+    border-color: var(--sf-outline);
+  }
+  .sf-color-option[aria-checked=true] {
+    border-color: var(--sf-on-surface);
+  }
+  .sf-color-check {
+    color: var(--sf-on-surface);
+    color: var(--sf-color-ink, var(--sf-on-surface));
+  }
+  .sf-color-area {
+    background: linear-gradient(to top, var(--sf-black), transparent), linear-gradient(to right, var(--sf-white), hsl(0, 100%, 50%));
+    background: linear-gradient(to top, var(--sf-black), transparent), linear-gradient(to right, var(--sf-white), hsl(0, 100%, 50%));
+    background: linear-gradient(to top, var(--sf-black), transparent), linear-gradient(to right, var(--sf-white), hsl(var(--sf-color-hue, 0) 100% 50%));
+  }
+  .sf-color-thumb {
+    border-color: var(--sf-white);
+    background-color: transparent;
+    background-color: var(--sf-color-fill, transparent);
+  }
+  .sf-color-strip--hue {
+    background: linear-gradient(to right, hsl(0, 100%, 50%), hsl(60, 100%, 50%), hsl(120, 100%, 50%), hsl(180, 100%, 50%), hsl(240, 100%, 50%), hsl(300, 100%, 50%), hsl(0, 100%, 50%));
+  }
+  .sf-color-strip--alpha {
+    background: linear-gradient(to right, transparent, var(--sf-color-solid)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0,transparent 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
+    background: linear-gradient(to right, transparent, var(--sf-color-solid)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0 50%, var(--sf-outline-variant) 0 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
+  }
+  .sf-color-code-row {
+    border-color: var(--sf-outline);
+    background-color: transparent;
+  }
+  .sf-color-code-row:has(.sf-color-code:focus, .sf-color-alpha-input:focus) {
+    border-color: var(--sf-primary);
+  }
+  .sf-color-code-row:has(.sf-color-code[aria-invalid=true]) {
+    border-color: var(--sf-error);
+  }
+  .sf-color-code,
+  .sf-color-alpha-input {
+    border: 0;
+    background: transparent;
+    color: var(--sf-on-surface);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-percent{
+    border-left-color: var(--sf-outline-variant);
+  }
+  @supports not (border-inline-start-color: initial){
+  html:not([dir="rtl"]) .sf-color-percent{
+    border-left-color: var(--sf-outline-variant);
+    }
+  }
+  .sf-color-percent:where(:dir(ltr)){
+    border-left-color: var(--sf-outline-variant);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-color-percent{
+    border-right-color: var(--sf-outline-variant);
+  }
+  @supports not (border-inline-start-color: initial){
+  [dir="rtl"] .sf-color-percent{
+    border-right-color: var(--sf-outline-variant);
+    }
+  }
+  .sf-color-percent:where(:dir(rtl)){
+    border-right-color: var(--sf-outline-variant);
+  }
+  .sf-color-percent {
+    border-inline-start-color: var(--sf-outline-variant);
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-color-error {
+    color: var(--sf-error);
   }
   @media (forced-colors: active) {
     .sf-color-chip,
     .sf-color-option {
       border-color: CanvasText;
-    }
-    .sf-color-option[aria-checked=true] {
-      outline: calc(var(--sf-px) * 2) solid Highlight;
-      outline-offset: calc(var(--sf-px) * -4);
     }
     .sf-color-frame {
       border-color: CanvasText;
@@ -1080,7 +1208,6 @@
      had neither). The label's type, a step below the field's text; the error
      also takes the frame's edge. */
   .sf-color-hint {
-    color: var(--sf-on-surface-variant);
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1\/2);
     font-weight: var(--sf-font-weight-regular);
@@ -1101,6 +1228,14 @@
   .sf-color-field--size-3 .sf-color-hint {
     font-size: var(--sf-text-size-2);
     line-height: var(--sf-text-height-2);
+  }
+}
+/* Paint (C273): the fill, edge and place colour of these parts stand in
+   sf.paint, under the utilities, so bg-*, border-* and color-* on them
+   win; their geometry stays in sf.components, over the utilities. */
+@layer sf.paint {
+  .sf-color-hint {
+    color: var(--sf-on-surface-variant);
   }
   .sf-color-field.error .sf-color-hint {
     color: var(--sf-error);

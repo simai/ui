@@ -386,8 +386,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("1373e294ec38");
 /* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("386ef0670247");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("f70b067ace85");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2382ba7a3e18");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("f357767ed4d2");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("f8100b8a90a6");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -419,22 +418,14 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_7__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-};
 const ConfirmElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__.files,
   source: "ru"
 });
 const APPEARANCES = ["inline", "card", "window"]; // Below sm the two answers share the row in halves (default.css); a label
@@ -1338,10 +1329,13 @@ function renderConfirmFooter(context, block, {
   // that appears together with its words is not heard. With statusLast it
   // follows the answers in the markup too (sf-confirm-change 1.9.0: the
   // deadline under the answers, an sf-time that may take a Tab after them).
+  // The status sign is 16, the ladder's 1/3 (C151 (1)): size="1" was the old
+  // icon scale's name for it, noted in SF.deprecations on every state
+  // (Smart joint pass SM-CNF-1, SM-CCH-1).
 
   const status = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                 <p class=${part("status")} role="status" tabindex="-1">
-                    ${context.statusText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.statusIcon} size="1" aria-hidden="true"></sf-icon>
+                    ${context.statusText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.statusIcon} data-sf-icon-scale="ladder" size="1/3" aria-hidden="true"></sf-icon>
                             <span>${context.statusText}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 </p>`; // While the answer is applied (pending) the answers stay where they were:
   // the pressed one busy, with the button's own spinner and aria-busy, the
@@ -1432,10 +1426,32 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "f8100b8a90a6"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2382ba7a3e18");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "f70b067ace85"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.4.0","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card","window"],"default":"inline"},"consequence":{"type":"string","default":""},"require":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.5.4","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card","window"],"default":"inline"},"consequence":{"type":"string","default":""},"require":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
@@ -1443,13 +1459,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confir
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Confirmation","runtime":{"accept-text":"Confirm","accepted-text":"Done","accepting-text":"Working…","decline-text":"Cancel","declining-text":"Cancelling…","expired-text":"The time to answer has passed","question-label":"Confirmation","require-error":"Type “{name}” exactly as above","require-text":"To confirm, type {name}","until-text":"Answer by {time}"},"events":{"expired":{"label":"Expired"}}}');
-
-/***/ },
-
-/***/ "f357767ed4d2"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Подтверждение","runtime":{"accept-text":"Подтвердить","accepted-text":"Готово","accepting-text":"Выполняется…","decline-text":"Отмена","declining-text":"Отменяется…","expired-text":"Время ответа истекло","question-label":"Подтверждение","require-error":"Введите «{name}» — так же, как выше","require-text":"Чтобы подтвердить, введите {name}","until-text":"Ответить можно до {time}"},"events":{"expired":{"label":"Время истекло"}}}');
 
 /***/ }
 

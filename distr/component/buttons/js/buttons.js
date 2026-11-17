@@ -11,6 +11,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _register_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("58661bec99a6");
 /* harmony import */ var _button_checks_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("01473540635d");
 /* harmony import */ var _spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("50d2a204ba4c");
+/* harmony import */ var _link_alias__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("b995e1476acd");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("06e8cd089f28");
+
+
 
 
 
@@ -41,17 +45,35 @@ class Buttons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
       disabled = false,
       utilities = {}
     } = this.params || {};
-    const className = this.attrs.class || this.attrs.className;
+    const className = this.attrs.class || this.attrs.className; // type 'link' is ghost's former name (C15): the button gets both classes
+    // until 2027-01-01, as the Smart sf-button draws it, and the option is noted.
+
+    const look = type === 'link' ? 'ghost' : type;
+
+    if (type === 'link') {
+      (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_6__.noteDeprecated)({ ..._link_alias__WEBPACK_IMPORTED_MODULE_5__.BUTTON_LINK_ALIAS,
+        kind: 'option',
+        attribute: 'type',
+        from: 'link',
+        to: 'ghost'
+      });
+    }
+
     this.button = document.createElement('button');
 
     if (this.id) {
       this.button.id = this.id;
     }
 
-    this.button.classList.add('sf-button', `sf-button--size-${size}`, `sf-button--${type}`, `sf-button--${scheme}`); // The readable names for the same steps: compact, comfortable, spacious.
+    this.button.classList.add('sf-button', `sf-button--size-${size}`, `sf-button--${look}`, `sf-button--${scheme}`);
+
+    if (look === 'ghost') {
+      this.button.classList.add('sf-button--link');
+    } // The readable names for the same steps: compact, comfortable, spacious.
     // `normal` is the default and needs no class. When both options are given,
     // `spacing` wins, as it does on the Smart element (control-spacing.js), so
     // one control never carries two different steps.
+
 
     const hasSpacing = ['normal', 'compact', 'comfortable', 'spacious'].includes(spacing);
 
@@ -190,6 +212,16 @@ Buttons.utilityMap = _json_button_utility_json__WEBPACK_IMPORTED_MODULE_1__;
 
 (0,_button_checks_js__WEBPACK_IMPORTED_MODULE_3__.watchButtons)();
 
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => (0,_link_alias__WEBPACK_IMPORTED_MODULE_5__.watchButtonLinks)(document), {
+      once: true
+    });
+  } else {
+    (0,_link_alias__WEBPACK_IMPORTED_MODULE_5__.watchButtonLinks)(document);
+  }
+}
+
 /***/ },
 
 /***/ "01473540635d"
@@ -265,9 +297,10 @@ const KINDS = {
     toggle: BUTTON_TOGGLE,
     iconOnly: BUTTON_ICON_ONLY
   },
+  // The plain look draws a pressed glyph too (C232: sf-highlight's wrap toggle).
   'sf-icon-button': {
     pressedClass: 'sf-icon-button--pressed',
-    toggle: ICON_BUTTON_TOGGLE,
+    toggle: `${ICON_BUTTON_TOGGLE}, .sf-icon-button--plain`,
     iconOnly: null
   }
 };
@@ -461,6 +494,87 @@ __webpack_require__.r(__webpack_exports__);
 * - Base function component (_component_name.js)
 */
 
+
+/***/ },
+
+/***/ "b995e1476acd"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BUTTON_LINK_ALIAS: () => (/* binding */ BUTTON_LINK_ALIAS),
+/* harmony export */   isFormerLinkOnly: () => (/* binding */ isFormerLinkOnly),
+/* harmony export */   noteButtonLink: () => (/* binding */ noteButtonLink),
+/* harmony export */   watchButtonLinks: () => (/* binding */ watchButtonLinks)
+/* harmony export */ });
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("06e8cd089f28");
+ // sf-button--link is the former name of sf-button--ghost (decision C15,
+// journal class-button-link-to-ghost): the sheets draw both the same until
+// 2027-01-01, and a page that still writes the former name alone is noted in
+// SF.deprecations (with a console line when data-sf-deprecations="warn").
+// The Smart sf-button, sf-segmented and sf-alert write both classes until the
+// date, so a button that carries ghost as well is not the page's spelling and
+// is not noted. noteDeprecated keeps one record per name, so one note is
+// enough: the watch stops after it.
+
+const BUTTON_LINK_ALIAS = Object.freeze({
+  component: 'buttons',
+  kind: 'class',
+  from: 'sf-button--link',
+  to: 'sf-button--ghost',
+  since: '2026-11-11',
+  remove_after: '2027-01-01'
+});
+const FORMER_ONLY = '.sf-button.sf-button--link:not(.sf-button--ghost)';
+function isFormerLinkOnly(element) {
+  return Boolean(element?.classList?.contains('sf-button') && element.classList.contains('sf-button--link') && !element.classList.contains('sf-button--ghost'));
+}
+function noteButtonLink() {
+  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)(BUTTON_LINK_ALIAS);
+}
+
+function found(root) {
+  if (!root) return false;
+  if (root.nodeType === 1 && isFormerLinkOnly(root)) return true;
+  return Boolean(root.querySelector?.(FORMER_ONLY));
+}
+
+function watchButtonLinks(doc = globalThis.document) {
+  const view = doc?.defaultView || globalThis;
+  if (!doc?.documentElement || view.__sfButtonLinkWatch) return;
+  Object.defineProperty(view, '__sfButtonLinkWatch', {
+    value: true,
+    configurable: true
+  });
+  let observer = null;
+
+  const done = () => {
+    noteButtonLink();
+    observer?.disconnect();
+    observer = null;
+  };
+
+  if (found(doc.documentElement)) {
+    done();
+    return;
+  }
+
+  if (typeof view.MutationObserver !== 'function') return;
+  observer = new view.MutationObserver(records => {
+    for (const record of records) {
+      if (record.type === 'attributes' ? isFormerLinkOnly(record.target) : [...record.addedNodes].some(found)) {
+        done();
+        return;
+      }
+    }
+  });
+  observer.observe(doc.documentElement, {
+    subtree: true,
+    childList: true,
+    attributes: true,
+    attributeFilter: ['class']
+  });
+}
 
 /***/ },
 

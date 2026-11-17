@@ -369,9 +369,10 @@ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_resu
 // effects (format-intl.js). The same functions as core/js/format.js,
 // composition/file-size.mjs and SF.format.fileSize.
  // The four words of a size live in core's language files
-// (core/js/lang/file-size, localization study LC-3): ru and en ship; any
-// other language takes the words a product registers for `sf-file-size`
-// (SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
+// (core/js/lang/file-size, localization study LC-3): English ships in the
+// bundle; Russian and any other language take the words their language file
+// or a product registers for `sf-file-size` (owner decision C282;
+// SF.language.register('sf-file-size', 'de', {b, kb, mb, gb})), else the
 // English words with its own digits. A component with words of its own passes
 // them as `units`. The registry is read from the shared global the page
 // language keeps (core/js/page-language.js), so this module still runs
@@ -384,17 +385,28 @@ function unitsOf(words) {
   return Object.freeze(UNIT_KEYS.map(key => words[key]));
 }
 
-const FILE_SIZE_UNITS = /* @__PURE__ */Object.freeze({
-  en: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en),
-  ru: /* @__PURE__ */unitsOf(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].ru)
-});
-
 function registeredUnits(code) {
   const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-file-size')?.get?.(code);
   return words && UNIT_KEYS.every(key => typeof words[key] === 'string') ? unitsOf(words) : null;
-}
-/** The unit words for a locale: registered for it, its own, its language's, else English. */
+} // The built-in languages' units (English; owner decision C282), and `ru` as
+// before for a reader of SF.format.FILE_SIZE_UNITS.ru: the units the ru
+// language file registered, null until it is on the page.
 
+
+function unitTable(words) {
+  const table = {};
+
+  for (const [code, own] of Object.entries(words)) table[code] = unitsOf(own);
+
+  if (!table.ru) Object.defineProperty(table, 'ru', {
+    enumerable: true,
+    get: () => registeredUnits('ru')
+  });
+  return Object.freeze(table);
+}
+
+const FILE_SIZE_UNITS = /* @__PURE__ */unitTable(_lang_file_size_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]);
+/** The unit words for a locale: registered for it, its own, its language's, else English. */
 
 function fileSizeUnits(locale = 'en') {
   const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
@@ -1608,6 +1620,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getInitials: () => (/* binding */ getInitials),
 /* harmony export */   normalizeInitialsWords: () => (/* binding */ normalizeInitialsWords)
 /* harmony export */ });
+// c282-allow-start: input parsing (initials read from Russian names, C152)
 const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]); // Words a name carries that are not the person's or the organisation's own
 // (owner decision C152 (3), 2026-11-14): legal forms (ООО «Ромашка» → Р),
 // titles (Dr. John Smith → JS) and name particles (Мария фон Штейн → МШ) are
@@ -1617,7 +1630,8 @@ const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "д
 const INITIALS_SERVICE_WORDS = new Set([// legal forms
 "ооо", "оао", "зао", "пао", "ао", "нао", "ип", "нко", "ано", "гуп", "муп", "фгуп", "гбу", "мбу", "чоп", "llc", "inc", "ltd", "gmbh", "ag", "corp", "co", "llp", "plc", "lp", "bv", "oy", "ab", "srl", "sarl", // titles
 "dr", "prof", "mr", "mrs", "ms", "mx", "miss", "sir", "jr", "sr", "phd", "д-р", "проф", "акад", "г-н", "г-жа", "доц", // particles
-"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]);
+"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]); // c282-allow-end
+
 function normalizeInitialsWords(value = "") {
   return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
 } // The first character a reader sees: a whole grapheme, so a letter written
@@ -1794,8 +1808,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("1c69b52a2c3c");
 /* harmony import */ var _list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("50e7fd61ac57");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("2677706b5ec9");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("c1c5abcf20ed");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("0c29db1e15d7");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("31dd7f648272");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_6__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -1865,16 +1878,11 @@ function endInReach(sentinel, root) {
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_10__.runtime
-}; // A text longer than this is not a name; the rename field stops there, as the
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// A text longer than this is not a name; the rename field stops there, as the
 // server that stores it most likely does.
 
 const TEXT_LIMIT = 200;
@@ -1997,10 +2005,7 @@ const pageArguments = (first, second) => {
 
 const ListElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
   source: "ru"
 });
 let listCount = 0;
@@ -3470,16 +3475,19 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
 /* harmony export */ });
 /* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3694b5e2bf39");
-/* harmony import */ var _ru_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("220979cc98c6");
-// The unit words of a file size (localization study LC-3), for the bundle and
-// for Node alike: the runtime words of the language files, by language.
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
 
 
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime, ru: _ru_json__WEBPACK_IMPORTED_MODULE_1__.runtime });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
 
 
 /***/ },
@@ -3569,6 +3577,28 @@ function resolveAvatarTone(setting, name) {
 
 /***/ },
 
+/***/ "31dd7f648272"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("c1c5abcf20ed");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "3694b5e2bf39"
 (module) {
 
@@ -3576,17 +3606,10 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"B","kb":"KB","mb":"MB
 
 /***/ },
 
-/***/ "220979cc98c6"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"Б","kb":"КБ","mb":"МБ","gb":"ГБ"}}');
-
-/***/ },
-
 /***/ "2677706b5ec9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.20.2","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"unread":{"type":"boolean","optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"leading":{"type":"enum","values":["auto","none","icon","avatar"],"default":"auto"},"lines":{"type":"enum","values":["auto","1","2"],"default":"auto"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"time-format":{"type":"enum","values":["none","auto","relative","exact"],"default":"none"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"sticky-headings":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.21.4","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"unread":{"type":"boolean","optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"leading":{"type":"enum","values":["auto","none","icon","avatar"],"default":"auto"},"lines":{"type":"enum","values":["auto","1","2"],"default":"auto"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"time-format":{"type":"enum","values":["none","auto","relative","exact"],"default":"none"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"sticky-headings":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
@@ -3594,13 +3617,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","ve
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"List","runtime":{"actions-label":"Actions: {text}","count-label":{"one":"{n} unread","other":"{n} unread"},"empty-text":"Nothing here yet","label":"List","loading-more-text":"Loading…","loading-text":"Loading the list","more-text":"Show more","pinned-text":"Pinned","rename-label":"New name","rename-text":"Rename","undated-text":"No date","ungrouped-text":"Other","unread-text":"unread","untitled-text":"Untitled"}}');
-
-/***/ },
-
-/***/ "0c29db1e15d7"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Список","runtime":{"actions-label":"Действия: {text}","count-label":{"one":"{n} непрочитанное","few":"{n} непрочитанных","many":"{n} непрочитанных","other":"{n} непрочитанного"},"empty-text":"Здесь пока пусто","label":"Список","loading-more-text":"Загружаю…","loading-text":"Загружаю список","more-text":"Показать ещё","pinned-text":"Закреплённые","rename-label":"Новое название","rename-text":"Переименовать","undated-text":"Без даты","ungrouped-text":"Другое","unread-text":"не прочитано","untitled-text":"Без названия"}}');
 
 /***/ }
 

@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.search",
-  "version": "1.10.4",
+  "version": "1.11.5",
   "title": "Site search",
   "summary": "Site search in a window: a large rounded field and a separate results card under it over the shared scrim, opened by a trigger or a key (Command/Control+K, /), a full-screen sheet on a phone. The panel asks a host through simai.search-port and draws what the host announces it can answer: grouped results, scopes, recent and popular queries, commands, a correction and a preview beside the list. Each block is also a setting, so the capability says what is possible and the setting says what is wanted. A page with no host of its own gets the built-in ones: a static JSON index (index) or a provider function.",
   "kind": "smart",
@@ -416,15 +416,15 @@
     "source_artifacts": [
       {
         "path": "src/smart/search/index.js",
-        "sha256": "b3409932f26aca8b12460cf90c8e462c29a2f0e3a8c4c230d9e57355924a8033"
+        "sha256": "40bc5ecb8da7dff910698d7ea39613d072009b46fc74a7030c18a6d9a29a3966"
       },
       {
         "path": "src/smart/search/js/templates/default.js",
-        "sha256": "9dc439b7c847edc12a9cd6645439f2416b50106fd6a881ed03435e5b5d854d47"
+        "sha256": "8d49547327bb304547af14a784eb1d671883049a0eec99665f454e89e4e3b472"
       },
       {
         "path": "src/smart/search/scss/_smart__search.scss",
-        "sha256": "cf66804b499d71b9f2b0562dba8a39a5ef1491fb919825e6027310d5bc928cf3"
+        "sha256": "e6f50bfa7b81db0d76e02cf6f56476d8b1690bcffb6b2fd072c6163029b449c8"
       },
       {
         "path": "src/smart/search/rule.js",
@@ -432,7 +432,7 @@
       },
       {
         "path": "src/smart/search/docs.md",
-        "sha256": "6950c735615ddf38596f8b3a2c32a15ecbf3b1791df5bb05b9fd6f383676af67"
+        "sha256": "a19e1289158bdf531d8cc79d2d4129af513bb5bf3e2a1c8edcff3443e7a2ffa3"
       }
     ],
     "generated_runtime": []

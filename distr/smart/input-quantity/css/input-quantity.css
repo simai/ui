@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* The inherited-value slot (simai/ui-source#28): the «inherited» marker while
      the field holds nothing of its own, the reset button once it does. Each
@@ -56,7 +56,6 @@
     padding-left: var(--sf-field-inherited-slot--inset, 0px);
   }
   .sf-field-inherited {
-    color: var(--sf-on-surface-variant);
     white-space: nowrap;
     -webkit-padding-end: 0px;
             padding-inline-end: 0px;
@@ -537,122 +536,192 @@
   @media (forced-colors: active) {
     sf-input[data-inherited] .sf-input .sf-input-field input::-webkit-input-placeholder {
       --sf-input-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input[data-inherited] .sf-input .sf-input-field input::-moz-placeholder {
       --sf-input-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input[data-inherited] .sf-input .sf-input-field input:-ms-input-placeholder {
       --sf-input-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input[data-inherited] .sf-input .sf-input-field input::-ms-input-placeholder {
       --sf-input-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input[data-inherited] .sf-input .sf-input-field input::placeholder {
       --sf-input-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-textarea[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-textarea[data-inherited] .sf-textarea textarea::-moz-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-textarea[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-textarea[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-textarea[data-inherited] .sf-textarea textarea::placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-textarea[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-textarea[data-inherited] .sf-textarea textarea::-moz-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-textarea[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-textarea[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-textarea[data-inherited] .sf-textarea textarea::placeholder {
       --sf-textarea-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-webkit-input-placeholder {
       --sf-dropdown-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-moz-placeholder {
       --sf-dropdown-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input:-ms-input-placeholder {
       --sf-dropdown-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-ms-input-placeholder {
       --sf-dropdown-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::placeholder {
       --sf-dropdown-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
-      color: CanvasText;
     }
     sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
       --sf-quantity-placeholder--color: CanvasText;
+    }
+  }
+}
+/* Paint (C273): the fill, edge and place colour of these parts stand in
+   sf.paint, under the utilities, so bg-*, border-* and color-* on them
+   win; their geometry stays in sf.components, over the utilities. */
+@layer sf.paint {
+  .sf-field-inherited {
+    color: var(--sf-on-surface-variant);
+  }
+  @media (forced-colors: active) {
+    sf-input[data-inherited] .sf-input .sf-input-field input::-webkit-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input[data-inherited] .sf-input .sf-input-field input::-moz-placeholder {
+      color: CanvasText;
+    }
+    sf-input[data-inherited] .sf-input .sf-input-field input:-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input[data-inherited] .sf-input .sf-input-field input::-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input[data-inherited] .sf-input .sf-input-field input::placeholder {
+      color: CanvasText;
+    }
+    sf-input-textarea[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input-textarea[data-inherited] .sf-textarea textarea::-moz-placeholder {
+      color: CanvasText;
+    }
+    sf-input-textarea[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input-textarea[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input-textarea[data-inherited] .sf-textarea textarea::placeholder {
+      color: CanvasText;
+    }
+    sf-textarea[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
+      color: CanvasText;
+    }
+    sf-textarea[data-inherited] .sf-textarea textarea::-moz-placeholder {
+      color: CanvasText;
+    }
+    sf-textarea[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-textarea[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-textarea[data-inherited] .sf-textarea textarea::placeholder {
+      color: CanvasText;
+    }
+    sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-webkit-input-placeholder {
+      color: CanvasText;
+    }
+    sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-moz-placeholder {
+      color: CanvasText;
+    }
+    sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input:-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::placeholder {
+      color: CanvasText;
+    }
+    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
+      color: CanvasText;
+    }
+    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
+      color: CanvasText;
+    }
+    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
+      color: CanvasText;
+    }
+    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
+      color: CanvasText;
+    }
+    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
+      color: CanvasText;
+    }
+    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
       color: CanvasText;
     }
   }

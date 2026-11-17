@@ -287,8 +287,24 @@ function createDropdownInteraction(root, adapter) {
     button.setAttribute('aria-haspopup', 'listbox');
     button.setAttribute('aria-controls', identify(container, owner, 'listbox'));
     button.querySelectorAll('.sf-icon').forEach(icon => icon.setAttribute('aria-hidden', 'true'));
-    if (field() !== button) field().tabIndex = -1;
-    if (input()) input().tabIndex = -1;
+    if (field() !== button) field().tabIndex = -1; // The visible field is named as the Smart one is (its readonly input says
+    // the drawn label, else the host's own name): the page's aria-labelledby,
+    // else its aria-label, else the visible label. The class markup's text
+    // input was left nameless beside a named button (examples pass EX-1).
+
+    const shown = input();
+
+    if (shown) {
+      shown.tabIndex = -1;
+      const mine = assigned.get(shown) || {};
+      const authorInputName = ['aria-label', 'aria-labelledby'].some(name => shown.hasAttribute(name) && mine[name] !== shown.getAttribute(name));
+
+      if (!authorInputName) {
+        own(shown, 'aria-labelledby', ownerRefs || (!ownerLabel ? labelId : ''));
+        own(shown, 'aria-label', ownerLabel);
+      }
+    }
+
     container.setAttribute('role', 'listbox');
     container.setAttribute('aria-multiselectable', String(adapter.isMultiple()));
     own(container, 'aria-labelledby', ownerRefs || labelId || buttonId);
@@ -928,8 +944,9 @@ class PanelScrollbar {
 /***/ },
 
 /***/ "1b42c5117087"
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+(module, __webpack_exports__, __webpack_require__) {
 
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ICON_CHOICES: () => (/* binding */ ICON_CHOICES),
@@ -937,6 +954,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   iconWords: () => (/* binding */ iconWords)
 /* harmony export */ });
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _lang_icon_search_index_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("4bd9c3b168e0");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_page_language_js__WEBPACK_IMPORTED_MODULE_0__);
 // The glyphs a person may mark a part of an interface with -- a section of a
 // record, a row of a menu, a tile of a dashboard. A hundred and twenty names
 // from the Framework's own icon set, the ones products actually reach for,
@@ -952,492 +975,40 @@ __webpack_require__.r(__webpack_exports__);
 // (C151 point 8). The choice
 // itself is drawn by sf-dropdown with options of kind icon (layout grid,
 // search), as sf-view-properties and sf-admin-menu do.
-// The words a person searches the choice by (owner decision C151 point 8): a
+
+ // The words a person searches the choice by (owner decision C151 point 8): a
 // Russian and an English word or two for each glyph, the name's own words
 // among the English ones. sf-dropdown matches its icon options against them
 // in either language, so «папка» finds folder and «folder» still does.
-const ICON_CHOICE_WORDS = Object.freeze({
-  folder: {
-    ru: ["папка", "каталог"],
-    en: ["folder", "directory"]
-  },
-  folder_open: {
-    ru: ["открытая", "папка"],
-    en: ["open", "folder"]
-  },
-  topic: {
-    ru: ["тема", "раздел"],
-    en: ["topic", "section"]
-  },
-  home: {
-    ru: ["главная", "дом"],
-    en: ["home", "main"]
-  },
-  dashboard: {
-    ru: ["панель", "сводка"],
-    en: ["dashboard", "overview"]
-  },
-  apartment: {
-    ru: ["здание", "организация"],
-    en: ["building", "organisation"]
-  },
-  store: {
-    ru: ["магазин"],
-    en: ["store", "shop"]
-  },
-  storefront: {
-    ru: ["витрина", "магазин"],
-    en: ["storefront", "shop"]
-  },
-  business_center: {
-    ru: ["портфель", "бизнес"],
-    en: ["business", "briefcase"]
-  },
-  work: {
-    ru: ["работа", "портфель"],
-    en: ["work", "briefcase"]
-  },
-  badge: {
-    ru: ["пропуск", "удостоверение"],
-    en: ["badge", "pass", "id"]
-  },
-  person: {
-    ru: ["человек", "пользователь"],
-    en: ["person", "user"]
-  },
-  group: {
-    ru: ["группа", "люди"],
-    en: ["group", "people"]
-  },
-  groups: {
-    ru: ["группы", "сообщество"],
-    en: ["groups", "community"]
-  },
-  account_circle: {
-    ru: ["профиль", "аккаунт"],
-    en: ["account", "profile"]
-  },
-  manage_accounts: {
-    ru: ["управление", "пользователями"],
-    en: ["manage", "accounts", "users"]
-  },
-  supervisor_account: {
-    ru: ["руководитель", "команда"],
-    en: ["supervisor", "team"]
-  },
-  contacts: {
-    ru: ["контакты"],
-    en: ["contacts"]
-  },
-  school: {
-    ru: ["обучение", "школа"],
-    en: ["school", "learning"]
-  },
-  menu_book: {
-    ru: ["книга", "справочник"],
-    en: ["book", "manual"]
-  },
-  assignment: {
-    ru: ["задание"],
-    en: ["assignment"]
-  },
-  task: {
-    ru: ["задача"],
-    en: ["task"]
-  },
-  description: {
-    ru: ["документ", "описание"],
-    en: ["document", "description"]
-  },
-  article: {
-    ru: ["статья"],
-    en: ["article"]
-  },
-  note_alt: {
-    ru: ["заметка"],
-    en: ["note"]
-  },
-  edit_note: {
-    ru: ["правка", "заметки"],
-    en: ["edit", "note"]
-  },
-  draft: {
-    ru: ["черновик"],
-    en: ["draft"]
-  },
-  receipt: {
-    ru: ["чек", "квитанция"],
-    en: ["receipt"]
-  },
-  receipt_long: {
-    ru: ["счёт", "чек"],
-    en: ["bill", "receipt"]
-  },
-  request_quote: {
-    ru: ["смета", "предложение"],
-    en: ["quote", "estimate"]
-  },
-  inventory_2: {
-    ru: ["архив", "склад"],
-    en: ["archive", "inventory"]
-  },
-  category: {
-    ru: ["категории"],
-    en: ["category"]
-  },
-  label: {
-    ru: ["метка", "ярлык"],
-    en: ["label", "tag"]
-  },
-  sell: {
-    ru: ["цена", "продажа"],
-    en: ["price", "sell"]
-  },
-  local_offer: {
-    ru: ["скидка", "предложение"],
-    en: ["offer", "discount"]
-  },
-  shopping_cart: {
-    ru: ["корзина"],
-    en: ["shopping", "cart"]
-  },
-  shopping_bag: {
-    ru: ["покупки", "сумка"],
-    en: ["shopping", "bag"]
-  },
-  payments: {
-    ru: ["оплата", "деньги"],
-    en: ["payments", "money"]
-  },
-  savings: {
-    ru: ["сбережения", "копилка"],
-    en: ["savings"]
-  },
-  credit_card: {
-    ru: ["карта", "оплата"],
-    en: ["credit", "card"]
-  },
-  account_balance: {
-    ru: ["банк"],
-    en: ["bank", "account"]
-  },
-  calculate: {
-    ru: ["калькулятор", "расчёт"],
-    en: ["calculator"]
-  },
-  percent: {
-    ru: ["процент"],
-    en: ["percent"]
-  },
-  trending_up: {
-    ru: ["рост", "тренд"],
-    en: ["trend", "growth"]
-  },
-  analytics: {
-    ru: ["аналитика"],
-    en: ["analytics"]
-  },
-  insights: {
-    ru: ["выводы", "инсайты"],
-    en: ["insights"]
-  },
-  monitoring: {
-    ru: ["мониторинг"],
-    en: ["monitoring"]
-  },
-  bar_chart: {
-    ru: ["диаграмма", "график"],
-    en: ["bar", "chart"]
-  },
-  pie_chart: {
-    ru: ["круговая", "диаграмма"],
-    en: ["pie", "chart"]
-  },
-  table_chart: {
-    ru: ["таблица"],
-    en: ["table"]
-  },
-  schedule: {
-    ru: ["время", "часы", "расписание"],
-    en: ["time", "clock", "schedule"]
-  },
-  event: {
-    ru: ["событие"],
-    en: ["event"]
-  },
-  today: {
-    ru: ["сегодня"],
-    en: ["today"]
-  },
-  calendar_month: {
-    ru: ["календарь"],
-    en: ["calendar"]
-  },
-  date_range: {
-    ru: ["период", "даты"],
-    en: ["date", "range"]
-  },
-  history: {
-    ru: ["история"],
-    en: ["history"]
-  },
-  alarm: {
-    ru: ["будильник", "напоминание"],
-    en: ["alarm"]
-  },
-  timer: {
-    ru: ["таймер"],
-    en: ["timer"]
-  },
-  update: {
-    ru: ["обновление"],
-    en: ["update"]
-  },
-  hourglass_top: {
-    ru: ["ожидание", "песочные", "часы"],
-    en: ["hourglass", "waiting"]
-  },
-  mail: {
-    ru: ["почта", "письмо"],
-    en: ["mail", "email", "letter"]
-  },
-  outgoing_mail: {
-    ru: ["исходящие", "отправка"],
-    en: ["outgoing", "mail"]
-  },
-  chat: {
-    ru: ["чат", "сообщение"],
-    en: ["chat", "message"]
-  },
-  forum: {
-    ru: ["обсуждение", "форум"],
-    en: ["forum", "discussion"]
-  },
-  sms: {
-    ru: ["смс", "сообщение"],
-    en: ["sms", "text"]
-  },
-  call: {
-    ru: ["звонок", "телефон"],
-    en: ["call", "phone"]
-  },
-  phone_in_talk: {
-    ru: ["разговор"],
-    en: ["phone", "call", "talk"]
-  },
-  contact_support: {
-    ru: ["поддержка"],
-    en: ["support", "help"]
-  },
-  campaign: {
-    ru: ["рассылка", "объявление"],
-    en: ["campaign", "announcement"]
-  },
-  notifications: {
-    ru: ["уведомления"],
-    en: ["notifications"]
-  },
-  language: {
-    ru: ["язык", "мир"],
-    en: ["language", "world"]
-  },
-  public: {
-    ru: ["сайт", "мир", "интернет"],
-    en: ["public", "web", "world"]
-  },
-  place: {
-    ru: ["место"],
-    en: ["place"]
-  },
-  map: {
-    ru: ["карта"],
-    en: ["map"]
-  },
-  location_on: {
-    ru: ["адрес", "место"],
-    en: ["location", "address"]
-  },
-  travel_explore: {
-    ru: ["поиск", "по", "миру"],
-    en: ["travel", "explore"]
-  },
-  flight: {
-    ru: ["перелёт", "самолёт"],
-    en: ["flight", "plane"]
-  },
-  local_shipping: {
-    ru: ["доставка"],
-    en: ["shipping", "delivery"]
-  },
-  route: {
-    ru: ["маршрут"],
-    en: ["route"]
-  },
-  directions: {
-    ru: ["направление"],
-    en: ["directions"]
-  },
-  settings: {
-    ru: ["настройки"],
-    en: ["settings"]
-  },
-  tune: {
-    ru: ["фильтр", "параметры"],
-    en: ["tune", "filter"]
-  },
-  build: {
-    ru: ["инструменты", "сборка"],
-    en: ["build", "tools"]
-  },
-  construction: {
-    ru: ["стройка"],
-    en: ["construction"]
-  },
-  handyman: {
-    ru: ["ремонт", "мастер"],
-    en: ["handyman", "repair"]
-  },
-  code: {
-    ru: ["код"],
-    en: ["code"]
-  },
-  terminal: {
-    ru: ["терминал", "консоль"],
-    en: ["terminal", "console"]
-  },
-  data_object: {
-    ru: ["объект", "данные"],
-    en: ["data", "object"]
-  },
-  api: {
-    ru: ["интерфейс", "api"],
-    en: ["api"]
-  },
-  bug_report: {
-    ru: ["ошибка", "баг"],
-    en: ["bug"]
-  },
-  database: {
-    ru: ["база", "данных"],
-    en: ["database"]
-  },
-  storage: {
-    ru: ["хранилище"],
-    en: ["storage"]
-  },
-  cloud: {
-    ru: ["облако"],
-    en: ["cloud"]
-  },
-  backup: {
-    ru: ["резервная", "копия"],
-    en: ["backup"]
-  },
-  sync: {
-    ru: ["синхронизация"],
-    en: ["sync"]
-  },
-  folder_zip: {
-    ru: ["архив", "zip"],
-    en: ["zip", "archive"]
-  },
-  upload_file: {
-    ru: ["загрузка", "файла"],
-    en: ["upload", "file"]
-  },
-  download: {
-    ru: ["скачать"],
-    en: ["download"]
-  },
-  attach_file: {
-    ru: ["вложение", "скрепка"],
-    en: ["attach", "file"]
-  },
-  link: {
-    ru: ["ссылка"],
-    en: ["link"]
-  },
-  lock: {
-    ru: ["замок", "доступ"],
-    en: ["lock"]
-  },
-  lock_open: {
-    ru: ["открытый", "доступ"],
-    en: ["unlock", "open"]
-  },
-  shield: {
-    ru: ["защита"],
-    en: ["shield", "protection"]
-  },
-  verified_user: {
-    ru: ["проверено", "безопасность"],
-    en: ["verified", "user"]
-  },
-  key: {
-    ru: ["ключ"],
-    en: ["key"]
-  },
-  admin_panel_settings: {
-    ru: ["администрирование"],
-    en: ["admin"]
-  },
-  policy: {
-    ru: ["правила", "политика"],
-    en: ["policy"]
-  },
-  gavel: {
-    ru: ["закон", "право"],
-    en: ["law", "gavel"]
-  },
-  fingerprint: {
-    ru: ["отпечаток"],
-    en: ["fingerprint"]
-  },
-  visibility: {
-    ru: ["видимость", "просмотр"],
-    en: ["visibility", "view"]
-  },
-  palette: {
-    ru: ["палитра", "цвет"],
-    en: ["palette", "colour", "color"]
-  },
-  format_paint: {
-    ru: ["оформление", "кисть"],
-    en: ["format", "paint"]
-  },
-  image: {
-    ru: ["картинка", "изображение"],
-    en: ["image", "picture"]
-  },
-  photo_library: {
-    ru: ["фото", "галерея"],
-    en: ["photos", "gallery"]
-  },
-  collections: {
-    ru: ["коллекции"],
-    en: ["collections"]
-  },
-  movie: {
-    ru: ["видео", "фильм"],
-    en: ["movie", "video"]
-  },
-  play_circle: {
-    ru: ["воспроизведение"],
-    en: ["play"]
-  },
-  mic: {
-    ru: ["микрофон"],
-    en: ["microphone"]
-  },
-  headphones: {
-    ru: ["наушники", "звук"],
-    en: ["headphones", "audio"]
-  },
-  brush: {
-    ru: ["кисть", "рисование"],
-    en: ["brush"]
+// The words live in core's language files (owner decision C282):
+// src/core/js/lang/icon-search/<code>.json, a glyph's words joined by commas.
+// English is built in; Russian (and any other language) is the words its
+// language file registered for sf-icon-search, its icon-search part, fetched
+// the first time a search asks for them. ICON_CHOICE_WORDS keeps its shape,
+// {name: {ru: [...], en: [...]}}: ru reads the registered words when it is read.
+
+const splitWords = text => String(text ?? '').split(',').map(word => word.trim()).filter(Boolean);
+
+function languageWords(code, name) {
+  const own = _lang_icon_search_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"][code]?.[name];
+  if (own !== undefined) return splitWords(own); // localeText asks core for the language's icon-search part when it is not
+  // here yet (and says the English words meanwhile); only a word registered
+  // for the language itself counts.
+
+  (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.localeText)(_lang_icon_search_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"], name, code, 'sf-icon-search');
+  return splitWords(globalThis.__sfPageLanguage?.registered?.get?.('sf-icon-search')?.get?.(code)?.[name]);
+}
+
+const ICON_CHOICE_WORDS = /* @__PURE__ */Object.freeze(Object.fromEntries(Object.keys(_lang_icon_search_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en).map(name => [name, Object.freeze(Object.defineProperties({}, {
+  ru: {
+    enumerable: true,
+    get: () => languageWords('ru', name)
+  },
+  en: {
+    enumerable: true,
+    value: Object.freeze(splitWords(_lang_icon_search_index_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].en[name]))
   }
-}); // The words of any glyph name: the choice's words, or the name read as words
+}))]))); // The words of any glyph name: the choice's words, or the name read as words
 // (folder_open -> folder open) for a glyph outside the choice.
 
 function iconWords(name) {
@@ -1462,6 +1033,8 @@ if (typeof globalThis !== 'undefined') {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ICON_CHOICES);
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
 
 /***/ },
 
@@ -1694,10 +1267,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_icon_choices_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("1b42c5117087");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("b4d28078de6f");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("f15c795f1055");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("ad680c489766");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("8b3dd54aeaa8");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("9e00e9c642d7");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__, _core_js_icon_choices_js__WEBPACK_IMPORTED_MODULE_12__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__, _core_js_icon_choices_js__WEBPACK_IMPORTED_MODULE_12__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__);
@@ -1717,16 +1289,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_15__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_16__.runtime
-}; // sf-dropdown from its component.json (standard simai.smart-component 1.3.8
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// sf-dropdown from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §8, §17, §19): its settings are attributes and properties made by
 // core/js/element-manifest.js, its words are lang/<locale>.json, and the old
 // names -- type, sf-dropdown:change -- are dated aliases. Since 1.9.0 the
@@ -1773,10 +1340,7 @@ const actions = {
 };
 const DropdownElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_13__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default())),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_15__.files,
   source: 'ru',
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_14__,
   actions
@@ -2165,11 +1729,18 @@ class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.Fo
 
   get shownInvalid() {
     return Boolean(this.invalid) || this.shownMissing;
-  }
+  } // The line under the field: the error while one is shown, else the hint
+  // (as sf-input's: an invalid field with no message keeps its hint).
+
 
   get shownMessage() {
-    if (this.invalid) return this.errorMessage || '';
-    return this.shownMissing ? this.sfWord('value-missing') : '';
+    if (this.invalid && this.errorMessage) return this.errorMessage;
+    if (this.shownMissing) return this.sfWord('value-missing');
+    return this.hint || '';
+  }
+
+  get shownMessageIsError() {
+    return Boolean(this.invalid && this.errorMessage || this.shownMissing);
   } // The trigger is the control: focus(), the browser's pointer at the first
   // invalid field and the error's aria all go to it.
 
@@ -2232,7 +1803,7 @@ class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.Fo
     this._messageRef = id;
     if (refs.length) trigger.setAttribute('aria-describedby', refs.join(' '));else trigger.removeAttribute('aria-describedby');
     if (this.shownInvalid) trigger.setAttribute('aria-invalid', 'true');else trigger.removeAttribute('aria-invalid');
-    if (this.shownInvalid && id) trigger.setAttribute('aria-errormessage', id);else trigger.removeAttribute('aria-errormessage');
+    if (this.shownInvalid && this.shownMessageIsError && id) trigger.setAttribute('aria-errormessage', id);else trigger.removeAttribute('aria-errormessage');
   }
 
   captureOptions() {
@@ -2320,6 +1891,7 @@ class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.Fo
       controlName: (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.innerControlName)(this, this.name),
       invalid: this.shownInvalid,
       message: this.shownMessage,
+      messageIsError: this.shownMessageIsError,
       messageId: (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__.instancePath)(this, {
         kind: 'sf-dropdown'
       }), 'message'),
@@ -2976,7 +2548,7 @@ function renderDropdownTemplate(context) {
   ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
             id=${context.messageId}
             class="sf-dropdown-message"
-            data-field-message=${context.invalid ? "error" : "hint"}
+            data-field-message=${context.messageIsError ? "error" : "hint"}
           >${context.message}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
 
       <div
@@ -3686,11 +3258,6 @@ const INHERITED_TEXT = {
     inherited: 'inherited',
     reset: 'Reset to inherited',
     described: 'Inherited: {value}'
-  },
-  ru: {
-    inherited: 'наследуется',
-    reset: 'Сбросить к наследуемому',
-    described: 'Наследуется: {value}'
   }
 }; // Each control declares the three in its own props -- inherited-value,
 // inherited-text and reset-label -- written out rather than spread from here, so
@@ -3942,6 +3509,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getInitials: () => (/* binding */ getInitials),
 /* harmony export */   normalizeInitialsWords: () => (/* binding */ normalizeInitialsWords)
 /* harmony export */ });
+// c282-allow-start: input parsing (initials read from Russian names, C152)
 const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "до", "за", "из", "из-за", "из-под", "и", "к", "ко", "между", "на", "над", "о", "об", "от", "по", "под", "при", "про", "с", "со", "у", "через", "the", "a", "an", "and", "for", "from", "in", "of", "on", "to"]); // Words a name carries that are not the person's or the organisation's own
 // (owner decision C152 (3), 2026-11-14): legal forms (ООО «Ромашка» → Р),
 // titles (Dr. John Smith → JS) and name particles (Мария фон Штейн → МШ) are
@@ -3951,7 +3519,8 @@ const INITIALS_SKIP_WORDS = new Set(["а", "без", "в", "во", "для", "д
 const INITIALS_SERVICE_WORDS = new Set([// legal forms
 "ооо", "оао", "зао", "пао", "ао", "нао", "ип", "нко", "ано", "гуп", "муп", "фгуп", "гбу", "мбу", "чоп", "llc", "inc", "ltd", "gmbh", "ag", "corp", "co", "llp", "plc", "lp", "bv", "oy", "ab", "srl", "sarl", // titles
 "dr", "prof", "mr", "mrs", "ms", "mx", "miss", "sir", "jr", "sr", "phd", "д-р", "проф", "акад", "г-н", "г-жа", "доц", // particles
-"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]);
+"фон", "ван", "дер", "де", "ди", "да", "дю", "ла", "ле", "ибн", "бен", "оглы", "кызы", "von", "van", "der", "den", "de", "di", "da", "du", "del", "della", "la", "le", "ten", "ter", "bin", "ibn"]); // c282-allow-end
+
 function normalizeInitialsWords(value = "") {
   return String(value || "").trim().split(/[\s/|]+/).map(word => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")).filter(Boolean);
 } // The first character a reader sees: a whole grapheme, so a letter written
@@ -4392,6 +3961,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "4bd9c3b168e0"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("4bc232cd5c70");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "a6b3ed0c1589"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
@@ -4477,6 +4068,35 @@ function resolveAvatarTone(setting, name) {
 
 /***/ },
 
+/***/ "9e00e9c642d7"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ad680c489766");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "4bc232cd5c70"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"folder":"folder, directory","folder_open":"open, folder","topic":"topic, section","home":"home, main","dashboard":"dashboard, overview","apartment":"building, organisation","store":"store, shop","storefront":"storefront, shop","business_center":"business, briefcase","work":"work, briefcase","badge":"badge, pass, id","person":"person, user","group":"group, people","groups":"groups, community","account_circle":"account, profile","manage_accounts":"manage, accounts, users","supervisor_account":"supervisor, team","contacts":"contacts","school":"school, learning","menu_book":"book, manual","assignment":"assignment","task":"task","description":"document, description","article":"article","note_alt":"note","edit_note":"edit, note","draft":"draft","receipt":"receipt","receipt_long":"bill, receipt","request_quote":"quote, estimate","inventory_2":"archive, inventory","category":"category","label":"label, tag","sell":"price, sell","local_offer":"offer, discount","shopping_cart":"shopping, cart","shopping_bag":"shopping, bag","payments":"payments, money","savings":"savings","credit_card":"credit, card","account_balance":"bank, account","calculate":"calculator","percent":"percent","trending_up":"trend, growth","analytics":"analytics","insights":"insights","monitoring":"monitoring","bar_chart":"bar, chart","pie_chart":"pie, chart","table_chart":"table","schedule":"time, clock, schedule","event":"event","today":"today","calendar_month":"calendar","date_range":"date, range","history":"history","alarm":"alarm","timer":"timer","update":"update","hourglass_top":"hourglass, waiting","mail":"mail, email, letter","outgoing_mail":"outgoing, mail","chat":"chat, message","forum":"forum, discussion","sms":"sms, text","call":"call, phone","phone_in_talk":"phone, call, talk","contact_support":"support, help","campaign":"campaign, announcement","notifications":"notifications","language":"language, world","public":"public, web, world","place":"place","map":"map","location_on":"location, address","travel_explore":"travel, explore","flight":"flight, plane","local_shipping":"shipping, delivery","route":"route","directions":"directions","settings":"settings","tune":"tune, filter","build":"build, tools","construction":"construction","handyman":"handyman, repair","code":"code","terminal":"terminal, console","data_object":"data, object","api":"api","bug_report":"bug","database":"database","storage":"storage","cloud":"cloud","backup":"backup","sync":"sync","folder_zip":"zip, archive","upload_file":"upload, file","download":"download","attach_file":"attach, file","link":"link","lock":"lock","lock_open":"unlock, open","shield":"shield, protection","verified_user":"verified, user","key":"key","admin_panel_settings":"admin","policy":"policy","gavel":"law, gavel","fingerprint":"fingerprint","visibility":"visibility, view","palette":"palette, colour, color","format_paint":"format, paint","image":"image, picture","photo_library":"photos, gallery","collections":"collections","movie":"movie, video","play_circle":"play","mic":"microphone","headphones":"headphones, audio","brush":"brush"}}');
+
+/***/ },
+
 /***/ "f15c795f1055"
 (module) {
 
@@ -4487,7 +4107,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-dropd
 /***/ "b4d28078de6f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.18.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","bordered"],"default":"bordered"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"help":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.20.3","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","bordered"],"default":"bordered"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
 
 /***/ },
 
@@ -4495,13 +4115,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropd
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Dropdown","runtime":{"search":"Search","empty":"Not selected","value-missing":"Choose an option","help":"More about: {label}"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
-
-/***/ },
-
-/***/ "8b3dd54aeaa8"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Выпадающий список","runtime":{"search":"Поиск","empty":"Не выбрано","value-missing":"Выберите вариант","help":"Подробнее: {label}"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"наследуется","reset":"Сбросить к наследуемому","described":"Наследуется: {value}"}}}');
 
 /***/ }
 

@@ -359,8 +359,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("a57d260bd333");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("344edfee8242");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("90fab10c70dd");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("38d83a636029");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("96e8b718b20a");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("97c2f8ebc346");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -374,16 +373,12 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
 
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_8__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_9__.runtime
-}; // sf-pagination from its component.json (standard simai.smart-component 1.3.8
+const en = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files.en; // sf-pagination from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §8, §11): its settings are attributes and properties made by
 // core/js/element-manifest.js, every word it says is lang/<locale>.json (an
 // English page used to read «Всего:» under a list that had switched, owner
@@ -465,10 +460,7 @@ function pageWindow(current, count, slots) {
 }
 const PaginationElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
   source: "ru",
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__,
   formerWords: {
@@ -1331,26 +1323,6 @@ class SfPagination extends PaginationElement {
     const props = this.getPropsContext();
     return this.createTemplateContext({ ...props,
       component: this,
-      ariaLabel: this.text("ariaLabel", "aria-label"),
-      pagesLabel: this.text("pagesLabel", "pages-label"),
-      pageLabel: this.text("pageLabel", "page-label"),
-      previousLabel: this.text("previousLabel", "previous-label"),
-      nextLabel: this.text("nextLabel", "next-label"),
-      lastLabel: this.text("lastLabel", "last-label"),
-      totalLabel: this.text("totalLabel", "total-label"),
-      selectedLabel: this.text("selectedLabel", "selected-label"),
-      showMoreText: this.text("showMoreText", "show-more-text"),
-      pageSizeLabel: this.text("pageSizeLabel", "page-size-label"),
-      actionApplyText: this.text("actionApplyText", "action-apply-text"),
-      actionForAllLabel: this.text("actionForAllLabel", "action-for-all-label"),
-      actionsLabel: this.text("actionsLabel", "actions-label"),
-      actionChooseLabel: this.text("actionChooseLabel", "action-choose-label"),
-      actionsRegionLabel: this.text("actionsRegionLabel", "actions-region-label"),
-      clearSelectionLabel: this.text("clearSelectionLabel", "clear-selection-label"),
-      showCountLabel: this.text("showCountLabel", "show-count-label"),
-      countingLabel: this.text("countingLabel", "counting-label"),
-      firstLabel: this.text("firstLabel", "first-label"),
-      pageFieldLabel: this.text("pageFieldLabel", "page-field-label"),
       rootClass: this.getRootClass(),
       appearance: this.appearance,
       footer: this.footer,
@@ -2235,7 +2207,7 @@ function renderDirection(context, {
           title=${label}
           aria-label=${label}
           @click=${event => href ? context.component.followLink(event, page) : event.preventDefault()}
-        ><sf-icon root-class="pointer-event-none" icon=${icon} weight="400" aria-hidden="true"></sf-icon></a>
+        ><sf-icon root-class="pointer-events-none" icon=${icon} weight="400" aria-hidden="true"></sf-icon></a>
       </li>
     `;
   }
@@ -2325,7 +2297,7 @@ function renderPageSlot(context, component, slot) {
 
   const classes = joinClasses("sf-pagination-page", "sf-button", `sf-button--size-${stepOf(context)}`, slot.selected ? "sf-button--tonal sf-button--primary sf-pagination-page--current" : "sf-button--ghost sf-button--link sf-button--on-surface", "flex", "items-cross-center");
   const label = `${context.pageLabel} ${slot.value}`;
-  const text = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-text-container text-center pointer-event-none flex-1">${slot.value}</span>`;
+  const text = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-text-container text-center pointer-events-none flex-1">${slot.value}</span>`;
   const href = context.href ? component.pageHref(slot.value) : "";
   const body = href ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a
         class=${classes}
@@ -2716,6 +2688,28 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "97c2f8ebc346"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("38d83a636029");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
 /***/ "90fab10c70dd"
 (module) {
 
@@ -2726,7 +2720,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-pagin
 /***/ "344edfee8242"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pagination","tag":"sf-pagination","version":"1.8.4","kind":"leaf","settings":{"appearance":{"type":"enum","values":["field","numbers","arrows","cursor","more"],"default":"field"},"top":{"type":"boolean","default":true},"middle":{"type":"boolean","default":true},"bottom":{"type":"boolean","default":true},"top-class":{"type":"string","default":""},"main-class":{"type":"string","default":""},"bottom-class":{"type":"string","default":""},"pages-label":{"type":"string","default-from":"runtime.pages-label"},"page-label":{"type":"string","default-from":"runtime.page-label"},"previous-label":{"type":"string","default-from":"runtime.previous-label"},"next-label":{"type":"string","default-from":"runtime.next-label"},"last-label":{"type":"string","default-from":"runtime.last-label"},"total-label":{"type":"string","default-from":"runtime.total-label"},"selected-label":{"type":"string","default-from":"runtime.selected-label"},"selected-count":{"type":"number","integer":true,"min":0,"default":0},"show-more-text":{"type":"string","default-from":"runtime.show-more-text"},"total":{"type":"number","integer":true,"min":0,"default":10},"page-size":{"type":"number","integer":true,"min":1,"default":10},"page-sizes":{"type":"string","default":"10,20,30,40"},"show-page-size":{"type":"boolean","default":true},"page-size-label":{"type":"string","default-from":"runtime.page-size-label"},"show-actions":{"type":"boolean","default":true},"actions":{"type":"string","default":""},"action":{"type":"string","default":""},"action-apply-text":{"type":"string","default-from":"runtime.action-apply-text"},"show-action-for-all":{"type":"boolean","default":false},"action-for-all":{"type":"boolean","default":false},"action-for-all-label":{"type":"string","default-from":"runtime.action-for-all-label"},"actions-label":{"type":"string","default-from":"runtime.actions-label"},"action-choose-label":{"type":"string","default-from":"runtime.action-choose-label"},"actions-region-label":{"type":"string","default-from":"runtime.actions-region-label"},"clear-selection-label":{"type":"string","default-from":"runtime.clear-selection-label"},"count-known":{"type":"boolean","default":true},"total-exact":{"type":"boolean","default":true},"can-count":{"type":"boolean","default":false},"counting":{"type":"boolean","default":false},"has-next":{"type":"boolean","default":false},"show-count-label":{"type":"string","default-from":"runtime.show-count-label"},"counting-label":{"type":"string","default-from":"runtime.counting-label"},"first-label":{"type":"string","default-from":"runtime.first-label"},"page-field-label":{"type":"string","default-from":"runtime.page-field-label"},"show-more-busy":{"type":"boolean","default":false},"shown-label":{"type":"string","default-from":"runtime.shown"},"load":{"type":"enum","values":["button","auto"],"default":"button"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"href":{"type":"string","default":""},"page-param":{"type":"string","default":""},"page-in-title":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":1,"default":1}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true},"page-size":"number"}},"size-change":{"carries":{"previous":"number","page-size":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true}}},"count":{"carries":{"reason":{"type":"enum","values":["total","last-page","action-for-all"]},"current":"number","page-size":"number"}},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true},"has-next":"boolean"}},"selection-clear":{"carries":{"selected-count":"number","total":"number"},"own-verb":true},"action-change":{"carries":{"previous":"string","action":"string"}},"action-for-all-change":{"carries":{"previous":"boolean","action-for-all":"boolean"}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["selection","filter"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true}}}},"actions":{"go-to-page":{"with":{"page":"number"}},"show-more":{}},"css-variables":{"--sf-pagination-background-color":{"type":"color","state":"default"},"--sf-pagination-color":{"type":"color","state":"default"},"--sf-pagination-gap":{"type":"length","state":"default"},"--sf-pagination-divider-color":{"type":"color","state":"default"},"--sf-pagination-page-background-color":{"type":"color","state":"default"},"--sf-pagination-page-color":{"type":"color","state":"default"},"--sf-pagination-page-radius":{"type":"length","state":"default"},"--sf-pagination-current-background-color":{"type":"color","state":"current"},"--sf-pagination-current-color":{"type":"color","state":"current"},"--sf-pagination-block-size-1/2":{"type":"length","state":"default","x-published":"root"},"--sf-pagination-block-size-1":{"type":"length","state":"default","x-published":"root"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pagination","tag":"sf-pagination","version":"1.8.9","kind":"leaf","settings":{"appearance":{"type":"enum","values":["field","numbers","arrows","cursor","more"],"default":"field"},"top":{"type":"boolean","default":true},"middle":{"type":"boolean","default":true},"bottom":{"type":"boolean","default":true},"top-class":{"type":"string","default":""},"main-class":{"type":"string","default":""},"bottom-class":{"type":"string","default":""},"pages-label":{"type":"string","default-from":"runtime.pages-label"},"page-label":{"type":"string","default-from":"runtime.page-label"},"previous-label":{"type":"string","default-from":"runtime.previous-label"},"next-label":{"type":"string","default-from":"runtime.next-label"},"last-label":{"type":"string","default-from":"runtime.last-label"},"total-label":{"type":"string","default-from":"runtime.total-label"},"selected-label":{"type":"string","default-from":"runtime.selected-label"},"selected-count":{"type":"number","integer":true,"min":0,"default":0},"show-more-text":{"type":"string","default-from":"runtime.show-more-text"},"total":{"type":"number","integer":true,"min":0,"default":10},"page-size":{"type":"number","integer":true,"min":1,"default":10},"page-sizes":{"type":"string","default":"10,20,30,40"},"show-page-size":{"type":"boolean","default":true},"page-size-label":{"type":"string","default-from":"runtime.page-size-label"},"show-actions":{"type":"boolean","default":true},"actions":{"type":"string","default":""},"action":{"type":"string","default":""},"action-apply-text":{"type":"string","default-from":"runtime.action-apply-text"},"show-action-for-all":{"type":"boolean","default":false},"action-for-all":{"type":"boolean","default":false},"action-for-all-label":{"type":"string","default-from":"runtime.action-for-all-label"},"actions-label":{"type":"string","default-from":"runtime.actions-label"},"action-choose-label":{"type":"string","default-from":"runtime.action-choose-label"},"actions-region-label":{"type":"string","default-from":"runtime.actions-region-label"},"clear-selection-label":{"type":"string","default-from":"runtime.clear-selection-label"},"count-known":{"type":"boolean","default":true},"total-exact":{"type":"boolean","default":true},"can-count":{"type":"boolean","default":false},"counting":{"type":"boolean","default":false},"has-next":{"type":"boolean","default":false},"show-count-label":{"type":"string","default-from":"runtime.show-count-label"},"counting-label":{"type":"string","default-from":"runtime.counting-label"},"first-label":{"type":"string","default-from":"runtime.first-label"},"page-field-label":{"type":"string","default-from":"runtime.page-field-label"},"show-more-busy":{"type":"boolean","default":false},"shown-label":{"type":"string","default-from":"runtime.shown"},"load":{"type":"enum","values":["button","auto"],"default":"button"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"href":{"type":"string","default":""},"page-param":{"type":"string","default":""},"page-in-title":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":1,"default":1}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true},"page-size":"number"}},"size-change":{"carries":{"previous":"number","page-size":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true}}},"count":{"carries":{"reason":{"type":"enum","values":["total","last-page","action-for-all"]},"current":"number","page-size":"number"}},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true},"has-next":"boolean"}},"selection-clear":{"carries":{"selected-count":"number","total":"number"},"own-verb":true},"action-change":{"carries":{"previous":"string","action":"string"}},"action-for-all-change":{"carries":{"previous":"boolean","action-for-all":"boolean"}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["selection","filter"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true}}}},"actions":{"go-to-page":{"with":{"page":"number"}},"show-more":{}},"css-variables":{"--sf-pagination-background-color":{"type":"color","state":"default"},"--sf-pagination-color":{"type":"color","state":"default"},"--sf-pagination-gap":{"type":"length","state":"default"},"--sf-pagination-divider-color":{"type":"color","state":"default"},"--sf-pagination-page-background-color":{"type":"color","state":"default"},"--sf-pagination-page-color":{"type":"color","state":"default"},"--sf-pagination-page-radius":{"type":"length","state":"default"},"--sf-pagination-current-background-color":{"type":"color","state":"current"},"--sf-pagination-current-color":{"type":"color","state":"current"},"--sf-pagination-block-size-1/2":{"type":"length","state":"default","x-published":"root"},"--sf-pagination-block-size-1":{"type":"length","state":"default","x-published":"root"}}}');
 
 /***/ },
 
@@ -2734,13 +2728,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pagination","tag":"sf-pag
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Pagination","runtime":{"action-apply-text":"Apply","action-choose-label":"Choose an action","action-for-all-label":"For all","actions-label":"Action for the selected records","actions-region-label":"Actions for the selected","aria-label":"Result pages","clear-selection-label":"Clear the selection","counting-label":"Counting","cursor-next-text":"Next","first-label":"First","last-label":"Last","next-label":"Next page","next-text":"Next","of-pages":"{page} of {count}","page-field-label":"Page:","page-label":"Page","page-size-label":"Per page:","page-size-text":"{size} per page","pages-label":"Pages:","previous-label":"Previous page","previous-text":"Back","range":"{from}–{to} of {total}","range-many":"{from}–{to} of many","selected-label":"Selected:","show-count-label":"count","show-more-count":"Show {count} more","show-more-text":"Show more","shown":"Showing {shown} of {total}","title-page":"Page {page}","total-label":"Total:"},"events":{"selection-clear":{"label":"Selection cleared"}}}');
-
-/***/ },
-
-/***/ "96e8b718b20a"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Пагинация","events":{"selection-clear":{"label":"Выделение снято"}},"runtime":{"action-apply-text":"Применить","action-choose-label":"Выберите действие","action-for-all-label":"Для всех","actions-label":"Действие с выбранными элементами","actions-region-label":"Действия с отмеченными","aria-label":"Страницы результатов","clear-selection-label":"Снять выделение","counting-label":"Считаем","cursor-next-text":"Дальше","first-label":"В начало","last-label":"Последняя","next-label":"Следующая страница","next-text":"Далее","of-pages":"{page} из {count}","page-field-label":"Страница:","page-label":"Страница","page-size-label":"На странице:","page-size-text":"По {size}","pages-label":"Страницы:","previous-label":"Предыдущая страница","previous-text":"Назад","range":"{from}–{to} из {total}","range-many":"{from}–{to} из многих","selected-label":"Отмечено:","show-count-label":"посчитать","show-more-count":"Показать ещё {count}","show-more-text":"Показать ещё","shown":"Показано {shown} из {total}","title-page":"Страница {page}","total-label":"Всего:"}}');
 
 /***/ }
 

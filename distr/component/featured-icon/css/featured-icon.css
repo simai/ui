@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 /*
 * Main SCSS file for including styles for component.
 *
@@ -42,9 +42,9 @@
     justify-content: center;
     box-sizing: border-box;
     padding: var(--sf-featured-icon--padding);
-    border: 0 solid var(--sf-featured-icon--container);
+    border-width: 0;
+    border-style: solid;
     border-radius: var(--sf-featured-icon--radius);
-    background-color: var(--sf-featured-icon--background-color);
     background-clip: padding-box;
     box-shadow: var(--sf-featured-icon--box-shadow);
     line-height: 0;
@@ -168,5 +168,11 @@
       outline: var(--sf-a1) solid CanvasText;
       outline-offset: calc(-1 * var(--sf-a1));
     }
+  }
+}
+@layer sf.paint {
+  .sf-featured-icon {
+    border-color: var(--sf-featured-icon--container);
+    background-color: var(--sf-featured-icon--background-color);
   }
 }

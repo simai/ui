@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   .sf-menu {
     list-style: none;
@@ -374,7 +374,6 @@
             padding-inline-start: calc(var(--sf-space-1) - var(--sf-menu-element--border-width));
     -webkit-padding-start: calc(var(--sf-menu-element--padding-inline-start, var(--sf-space-1)) - var(--sf-menu-element--border-width));
             padding-inline-start: calc(var(--sf-menu-element--padding-inline-start, var(--sf-space-1)) - var(--sf-menu-element--border-width));
-    border-color: var(--sf-menu-element--border-color);
     border-style: solid;
     border-style: var(--sf-menu-element--border-style, solid);
     border-top-width: var(--sf-menu-element--border-width);
@@ -399,8 +398,6 @@
     border-end-start-radius: var(--sf-menu-element--border-bottom-left-radius, var(--sf-menu-element--radius));
     border-end-end-radius: var(--sf-menu-element--radius);
     border-end-end-radius: var(--sf-menu-element--border-bottom-right-radius, var(--sf-menu-element--radius));
-    color: var(--sf-menu-element--color);
-    background-color: var(--sf-menu-element--background-color);
     font-family: var(--sf-text--family);
     font-family: var(--sf-menu-element--font-family, var(--sf-text--family));
     font-size: var(--sf-text-size-1);
@@ -437,7 +434,6 @@
     min-width: var(--sf-0);
     min-width: var(--sf-0);
     min-inline-size: var(--sf-0);
-    color: inherit;
     font: inherit;
   }
   .sf-menu-element-text {
@@ -608,7 +604,6 @@
               margin-inline-start: calc(-1 * min(var(--sf-menu--split-grow) - var(--sf-menu--split-end), var(--sf-menu-element--gap, var(--sf-space-1\/3))));
       -webkit-margin-end: calc(-1 * var(--sf-menu--split-end));
               margin-inline-end: calc(-1 * var(--sf-menu--split-end));
-      background-color: var(--sf-transparent);
       box-shadow: none;
     }
     _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu-element > button.sf-icon-button::before{
@@ -648,8 +643,6 @@
       aspect-ratio: 1;
       box-sizing: border-box;
       border-radius: inherit;
-      background-color: var(--sf-transparent);
-      background-color: var(--sf-icon-button--background-color, var(--sf-transparent));
       box-shadow: 0 0 var(--sf-transparent), 0 0 var(--sf-transparent);
       box-shadow: var(--sf-icon-button--focus-inset, 0 0 var(--sf-transparent)), var(--sf-icon-button--box-shadow, 0 0 var(--sf-transparent));
       -webkit-transform: translate(-50%, -50%);
@@ -697,16 +690,12 @@
        anchored badge's ring is the row's colour (C43 D4). The fill reads the
        row's variable, so a look that writes its own background (the
        documentation tree's unfilled open branch) is followed. */
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu-element.open,
   .sf-menu-element[aria-expanded=true] {
     --sf-menu-element--background-color: var(--sf-surface-container-active);
     --sf-menu-element--border-color: var(--sf-surface-container-active);
     /* A translucent fill, as the hover row (C43 D4). */
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu-element[aria-expanded=false]:dir(rtl) > .sf-icon-button .sf-icon {
     -webkit-transform: scaleX(-1);
@@ -809,7 +798,6 @@
     flex: none;
     -webkit-margin-start: auto;
             margin-inline-start: auto;
-    color: var(--sf-on-surface-variant);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu-element .sf-badge ~ .sf-menu-element-external{
     margin-left: var(--sf-0);
@@ -878,6 +866,37 @@
     }
   }
 }
+@layer sf.paint {
+  .sf-menu-element {
+    border-color: var(--sf-menu-element--border-color);
+    color: var(--sf-menu-element--color);
+    background-color: var(--sf-menu-element--background-color);
+  }
+  .sf-menu-element .sf-menu-element-wrap {
+    color: inherit;
+  }
+  @media not (pointer: coarse) {
+    .sf-menu-element > button.sf-icon-button {
+      background-color: var(--sf-transparent);
+    }
+    .sf-menu-element > button.sf-icon-button::before {
+      background-color: var(--sf-transparent);
+      background-color: var(--sf-icon-button--background-color, var(--sf-transparent));
+    }
+  }
+  .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu-element.open,
+  .sf-menu-element[aria-expanded=true] {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu-element .sf-menu-element-external {
+    color: var(--sf-on-surface-variant);
+  }
+}
 /* The split chevron's focus ring (R219) is the icon button's own ring, drawn
    on the square: the icon button writes its ring in sf.states, so the move is
    written there too. */
@@ -902,7 +921,7 @@
 /* The words a search matched (C30 amended, R071 a): sf-menu lays them in the
    sf-menu-match highlight (CSS Custom Highlight API), drawn with the
    Framework's mark colour; the markup is not touched. */
-@layer sf.components {
+@layer sf.paint {
   ::highlight(sf-menu-match) {
     background-color: var(--sf-mark);
     background-color: var(--sf-mark--color, var(--sf-mark));
@@ -935,11 +954,6 @@
     max-width: 100%;
     max-width: 100%;
     max-inline-size: 100%;
-    /* The public variables (src/core/contracts/public-variables.v1.json) wrap
-       the values the menu drew before them, so a page that sets none sees no
-       change. */
-    background-color: transparent;
-    background-color: var(--sf-menu--background-color, var(--sf-menu-background-color, transparent));
     gap: var(--sf-space-1\/3);
     gap: var(--sf-menu--gap, var(--sf-menu-gap, var(--sf-space-1\/3)));
   }
@@ -957,7 +971,6 @@
     max-width: 100%;
     max-width: 100%;
     max-inline-size: 100%;
-    background-color: var(--sf-menu-item--background-color);
     gap: var(--sf-menu-item--gap);
   }
   /* The root level becomes a row; every submenu keeps the ordinary vertical menu model. */
@@ -1019,139 +1032,11 @@
     padding-left: var(--sf-menu--inset);
     padding-right: var(--sf-menu--inset);
     padding-inline: var(--sf-menu--inset);
-    border: var(--sf-menu--border-width) solid var(--sf-outline-variant);
-    border: var(--sf-menu--border-width) solid var(--sf-menu-horizontal-submenu--border-color, var(--sf-menu-submenu-border-color, var(--sf-outline-variant)));
+    border-width: var(--sf-menu--border-width);
+    border-style: solid;
     border-radius: var(--sf-menu--radius);
-    background: var(--sf-surface-popup);
-    background: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
-    --sf-surface-place: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
-    --sf-surface-place-solid: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
-    --sf-surface-place-ground: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
-    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
-    --sf-place--ink: initial;
-    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
-    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
-    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
-    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
-    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
-    --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
-    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
-    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
-    --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-on-surface-muted: var(--sf-on-surface-disabled);
-    --sf-surface-underlay: initial;
-    --sf-surface-place-fill: initial;
-    --sf-disable: var(--sf-surface-disabled);
-    --sf-on-disable: var(--sf-on-surface-disabled);
-    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
-    --sf-surface-transparent-active: var(--sf-surface-state-active);
-    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
-    --sf-surface-transparent-select: var(--sf-surface-state-select);
-    --sf-code--color: var(--sf-on-surface);
-    --sf-code--background: var(--sf-surface-container);
-    --sf-place--container-outline: initial;
     box-shadow: var(--sf-shadow-overlay);
     box-shadow: var(--sf-menu-horizontal-submenu--box-shadow, var(--sf-shadow-overlay));
-  }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu,
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-menu.sf-menu--horizontal .sf-menu .sf-menu-item > .sf-menu {
-    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
-    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
-  }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu,
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-menu.sf-menu--horizontal .sf-menu .sf-menu-item > .sf-menu {
-    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
-    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
-    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
-    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
-    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
-    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
-    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
-    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
-    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
-    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
-    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
-    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
-    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
-    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
-    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
-    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
-    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
-    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
-    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
-    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
-    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
-    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
-    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
-    --sf-place--plate: initial;
-    --sf-place--on-plate: initial;
-    --sf-place--fill-placeholder: initial;
-    --sf-place--control-hover: initial;
-    --sf-place--control-active: initial;
-  }
-  :where(.sf-surface-media) .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu,
-  :where(.sf-surface-media) .sf-menu.sf-menu--horizontal .sf-menu .sf-menu-item > .sf-menu {
-    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
-    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
-    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
-    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
-    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
-    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
-    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
-    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
-    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
-    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
-    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
-    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
-    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
-    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
-    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
-    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
-    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
-    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
-    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
-    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
-    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
-    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
-    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
-  }
-  :where(.bg-surface-4) .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu,
-  :where(.bg-surface-4) .sf-menu.sf-menu--horizontal .sf-menu .sf-menu-item > .sf-menu {
-    --sf-primary: var(--sf-place--found-primary);
-    --sf-primary-hover: var(--sf-place--found-primary-hover);
-    --sf-primary-active: var(--sf-place--found-primary-active);
-    --sf-link: var(--sf-place--found-link);
-    --sf-link-hover: var(--sf-place--found-link-hover);
-    --sf-link-active: var(--sf-place--found-link-active);
-  }
-  .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu > *,
-  .sf-menu.sf-menu--horizontal .sf-menu .sf-menu-item > .sf-menu > * {
-    --sf-surface-popup: var(--sf-surface-popup-nested);
-    --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
-    --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
-    --sf-place--popup-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-70));
-    --sf-elevation-3--surface: var(--sf-surface-popup);
-    --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu{
     left: 0;
@@ -1258,138 +1143,14 @@
     z-index: 3;
     z-index: var(--sf-menu-horizontal-submenu--z-index, 3);
     padding: var(--sf-space-1);
-    border: var(--sf-px) solid var(--sf-outline-variant);
-    border: var(--sf-px) solid var(--sf-menu-horizontal-submenu--border-color, var(--sf-menu-submenu-border-color, var(--sf-outline-variant)));
+    border-width: var(--sf-px);
+    border-style: solid;
     border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-menu-horizontal-submenu--radius, var(--sf-menu-submenu-radius, var(--sf-radius--surface)));
-    background: var(--sf-surface-popup);
-    background: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
-    --sf-surface-place: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
-    --sf-surface-place-solid: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
-    --sf-surface-place-ground: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
-    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
-    --sf-place--ink: initial;
-    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
-    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
-    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
-    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
-    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
-    --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
-    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
-    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
-    --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-on-surface-muted: var(--sf-on-surface-disabled);
-    --sf-surface-underlay: initial;
-    --sf-surface-place-fill: initial;
-    --sf-disable: var(--sf-surface-disabled);
-    --sf-on-disable: var(--sf-on-surface-disabled);
-    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
-    --sf-surface-transparent-active: var(--sf-surface-state-active);
-    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
-    --sf-surface-transparent-select: var(--sf-surface-state-select);
-    --sf-code--color: var(--sf-on-surface);
-    --sf-code--background: var(--sf-surface-container);
-    --sf-place--container-outline: initial;
     box-shadow: var(--sf-shadow-overlay);
     box-shadow: var(--sf-menu-horizontal-submenu--box-shadow, var(--sf-shadow-overlay));
-    color: var(--sf-on-surface);
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
-  }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-menu .sf-menu-region {
-    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
-    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
-  }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-menu .sf-menu-region {
-    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
-    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
-    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
-    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
-    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
-    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
-    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
-    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
-    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
-    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
-    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
-    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
-    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
-    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
-    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
-    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
-    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
-    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
-    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
-    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
-    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
-    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
-    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
-    --sf-place--plate: initial;
-    --sf-place--on-plate: initial;
-    --sf-place--fill-placeholder: initial;
-    --sf-place--control-hover: initial;
-    --sf-place--control-active: initial;
-  }
-  :where(.sf-surface-media) .sf-menu .sf-menu-region {
-    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
-    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
-    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
-    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
-    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
-    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
-    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
-    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
-    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
-    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
-    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
-    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
-    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
-    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
-    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
-    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
-    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
-    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
-    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
-    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
-    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
-    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
-    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
-  }
-  :where(.bg-surface-4) .sf-menu .sf-menu-region {
-    --sf-primary: var(--sf-place--found-primary);
-    --sf-primary-hover: var(--sf-place--found-primary-hover);
-    --sf-primary-active: var(--sf-place--found-primary-active);
-    --sf-link: var(--sf-place--found-link);
-    --sf-link-hover: var(--sf-place--found-link-hover);
-    --sf-link-active: var(--sf-place--found-link-active);
-  }
-  .sf-menu .sf-menu-region > * {
-    --sf-surface-popup: var(--sf-surface-popup-nested);
-    --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
-    --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
-    --sf-place--popup-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-70));
-    --sf-elevation-3--surface: var(--sf-surface-popup);
-    --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu-region{
     left: 0;
@@ -1486,9 +1247,10 @@
     padding-top: var(--sf-space-1\/2);
     -webkit-padding-before: var(--sf-space-1\/2);
             padding-block-start: var(--sf-space-1\/2);
-    border-top: var(--sf-px) solid var(--sf-outline-variant);
-    -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
-            border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    border-top-width: var(--sf-px);
+    border-block-start-width: var(--sf-px);
+    border-top-style: solid;
+    border-block-start-style: solid;
   }
   .sf-menu .sf-menu-region .sf-menu-element {
     --sf-menu-element--border-width: calc(var(--sf-px) * 0);
@@ -1549,76 +1311,56 @@
   .sf-menu.sf-menu--navigation .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
     /* A translucent fill, as the current row (C43 D4). */
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
     --sf-menu-element--border-color: var(--sf-transparent);
   }
   .sf-menu:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
     /* A translucent fill, as the current row (C43 D4). */
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
     --sf-menu-element--border-color: var(--sf-transparent);
   }
   .sf-menu.sf-menu--navigation .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
     /* A translucent fill, as the current row (C43 D4). */
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
     /* A translucent fill, as the current row (C43 D4). */
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation .sf-menu-element[aria-current=page]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation .sf-menu-element[aria-current=true]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):has(> [aria-current=page], > [aria-current=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu-element[aria-current=page]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu-element[aria-current=true]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):has(> [aria-current=page], > [aria-current=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation .sf-menu-element[aria-current=page] .sf-menu-element-icon {
     --sf-icon--color: var(--sf-on-primary-container);
@@ -1817,7 +1559,8 @@
     padding-top: var(--sf-menu--inset);
     padding-bottom: var(--sf-menu--inset);
     padding-block: var(--sf-menu--inset);
-    border: var(--sf-menu--border-width) solid var(--sf-outline-variant);
+    border-width: var(--sf-menu--border-width);
+    border-style: solid;
     border-radius: var(--sf-menu--radius);
     --sf-menu--line-border: var(--sf-menu--border-width, var(--sf-px));
   }
@@ -1827,7 +1570,8 @@
     padding-top: var(--sf-menu--inset);
     padding-bottom: var(--sf-menu--inset);
     padding-block: var(--sf-menu--inset);
-    border: var(--sf-menu--border-width) solid var(--sf-outline-variant);
+    border-width: var(--sf-menu--border-width);
+    border-style: solid;
     border-radius: var(--sf-menu--radius);
     --sf-menu--line-border: var(--sf-menu--border-width, var(--sf-px));
   }
@@ -2012,7 +1756,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--bordered:not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before{
@@ -2172,7 +1915,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--bordered:not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist)::before{
@@ -2332,7 +2074,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--bordered:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before{
@@ -2492,7 +2233,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--bordered:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before{
@@ -2652,7 +2392,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--bordered:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist)::before{
@@ -2812,7 +2551,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   .sf-menu.sf-menu--navigation.sf-menu--bordered:not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) > .sf-menu-item:first-child > .sf-menu-element {
@@ -2830,27 +2568,21 @@
   @media (forced-colors: active) {
     .sf-menu.sf-menu--navigation.sf-menu--bordered:not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--navigation.sf-menu--bordered:not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--navigation.sf-menu--bordered:not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist)::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--bordered:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--bordered:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--bordered:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist)::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
   }
   /* A column's group headings (R070): the rows' size and weight of type in
@@ -2885,14 +2617,10 @@
   .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu-element.open:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
     /* A translucent fill, as the current row (C43 D4). */
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu-element.open:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
     /* A translucent fill, as the current row (C43 D4). */
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   /* A row's panels (R084): every level of the path has a medium label and the
      2px line on the panel's start border; the › stays neutral. */
@@ -3101,7 +2829,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before{
@@ -3261,7 +2988,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist)::before{
@@ -3421,7 +3147,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before{
@@ -3581,7 +3306,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before{
@@ -3741,7 +3465,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist)::before{
@@ -3901,7 +3624,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu > .sf-menu-item:first-child > .sf-menu-element {
@@ -3919,27 +3641,21 @@
   @media (forced-colors: active) {
     .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist)::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist)::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
   }
   /* A header row's current section (C30): the line on the header's edge, or
@@ -4078,183 +3794,111 @@
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
     --sf-menu-element--background-color: var(--sf-surface-state-select);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
     --sf-menu-element--background-color: var(--sf-surface-state-active);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element .sf-menu-element-icon {
     --sf-icon--color: var(--sf-on-surface);
@@ -4417,7 +4061,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true])::after{
@@ -4527,7 +4170,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
@@ -4637,7 +4279,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
@@ -4747,7 +4388,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page])::after{
@@ -4857,7 +4497,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true])::after{
@@ -4967,7 +4606,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page])::after{
@@ -5077,7 +4715,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true])::after{
@@ -5187,7 +4824,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current)::after{
@@ -5297,7 +4933,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page])::after{
@@ -5407,7 +5042,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true])::after{
@@ -5517,7 +5151,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after{
@@ -5627,7 +5260,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after{
@@ -5737,7 +5369,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page])::after{
@@ -5847,7 +5478,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true])::after{
@@ -5957,7 +5587,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page])::after{
@@ -6067,7 +5696,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true])::after{
@@ -6177,7 +5805,6 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current)::after{
@@ -6287,81 +5914,62 @@
     border-start-end-radius: var(--sf-a2);
     border-end-start-radius: var(--sf-0);
     border-end-end-radius: var(--sf-0);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   @media (forced-colors: active) {
     .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current)::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true])::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current)::after {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
@@ -6369,144 +5977,108 @@
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-region [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-region [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-region [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-region [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) .sf-menu-element-icon {
     --sf-icon--color: var(--sf-on-primary-container);
@@ -6750,16 +6322,12 @@
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--documentation-tree .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):has(> [aria-current=page]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--documentation-tree .sf-menu-element[aria-current=page] .sf-menu-element-icon:not(.does-not-exist) {
     --sf-icon--color: var(--sf-on-primary-container);
@@ -6773,16 +6341,9 @@
   .sf-menu.sf-menu--documentation-tree .sf-menu-element:has(> [aria-current=page]) :is(.sf-icon-button .sf-icon) {
     --sf-icon--color: var(--sf-on-primary-container);
   }
-  .sf-menu.sf-menu--documentation-tree .sf-menu-element > [aria-current=page] {
-    color: inherit;
-  }
   .sf-menu.sf-menu--documentation-tree [aria-current=page]:not(.sf-menu-element):not(.sf-menu-element > *) {
-    background: var(--sf-primary-container-active);
-    color: var(--sf-on-primary-container);
     font-weight: var(--sf-font-weight-medium);
     --sf-icon--color: var(--sf-on-primary-container);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-primary-container-active);
   }
   .sf-menu.sf-menu--documentation-tree .sf-menu-element.open:not([aria-current=page]):not(:has(> [aria-current=page])) {
     --sf-menu-element--background-color: var(--sf-transparent);
@@ -6808,6 +6369,756 @@
     outline-offset: var(--sf-focus--inset);
   }
 }
+@layer sf.paint {
+  .sf-menu {
+    /* The public variables (src/core/contracts/public-variables.v1.json) wrap
+       the values the menu drew before them, so a page that sets none sees no
+       change. */
+    background-color: transparent;
+    background-color: var(--sf-menu--background-color, var(--sf-menu-background-color, transparent));
+  }
+  .sf-menu .sf-menu-item {
+    background-color: var(--sf-menu-item--background-color);
+  }
+  .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu,
+  .sf-menu.sf-menu--horizontal .sf-menu .sf-menu-item > .sf-menu {
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-menu-horizontal-submenu--border-color, var(--sf-menu-submenu-border-color, var(--sf-outline-variant)));
+    background: var(--sf-surface-popup);
+    background: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
+    --sf-surface-place: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
+    --sf-surface-place-solid: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
+    --sf-surface-place-ground: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
+    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+    --sf-place--ink: initial;
+    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
+    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
+    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
+    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-on-surface-muted: var(--sf-on-surface-disabled);
+    --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-disable: var(--sf-surface-disabled);
+    --sf-on-disable: var(--sf-on-surface-disabled);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
+    --sf-place--container-outline: initial;
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu,
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-menu.sf-menu--horizontal .sf-menu .sf-menu-item > .sf-menu {
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu,
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-menu.sf-menu--horizontal .sf-menu .sf-menu-item > .sf-menu {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
+    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
+    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
+    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
+    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
+    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
+    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
+    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
+    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
+    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
+    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
+    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
+    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
+    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
+    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
+    --sf-place--plate: initial;
+    --sf-place--on-plate: initial;
+    --sf-place--fill-placeholder: initial;
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
+  }
+  :where(.sf-surface-media) .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu,
+  :where(.sf-surface-media) .sf-menu.sf-menu--horizontal .sf-menu .sf-menu-item > .sf-menu {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
+    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
+    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
+    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
+    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
+    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
+    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
+    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
+    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
+    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
+    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
+    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
+    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
+    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
+    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
+  }
+  :where(.bg-surface-4) .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu,
+  :where(.bg-surface-4) .sf-menu.sf-menu--horizontal .sf-menu .sf-menu-item > .sf-menu {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
+  }
+  .sf-menu.sf-menu--horizontal > .sf-menu-item > .sf-menu > *,
+  .sf-menu.sf-menu--horizontal .sf-menu .sf-menu-item > .sf-menu > * {
+    --sf-surface-popup: var(--sf-surface-popup-nested);
+    --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
+    --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
+    --sf-place--popup-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-70));
+    --sf-elevation-3--surface: var(--sf-surface-popup);
+    --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
+  }
+  .sf-menu .sf-menu-region {
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-menu-horizontal-submenu--border-color, var(--sf-menu-submenu-border-color, var(--sf-outline-variant)));
+    background: var(--sf-surface-popup);
+    background: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
+    --sf-surface-place: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
+    --sf-surface-place-solid: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
+    --sf-surface-place-ground: var(--sf-menu-horizontal-submenu--background-color, var(--sf-menu-submenu-background-color, var(--sf-surface-popup)));
+    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
+    --sf-place--ink: initial;
+    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
+    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
+    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
+    --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
+    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
+    --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
+    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
+    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
+    --sf-on-surface-muted: var(--sf-on-surface-disabled);
+    --sf-surface-underlay: initial;
+    --sf-surface-place-fill: initial;
+    --sf-disable: var(--sf-surface-disabled);
+    --sf-on-disable: var(--sf-on-surface-disabled);
+    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
+    --sf-surface-transparent-active: var(--sf-surface-state-active);
+    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
+    --sf-surface-transparent-select: var(--sf-surface-state-select);
+    --sf-code--color: var(--sf-on-surface);
+    --sf-code--background: var(--sf-surface-container);
+    --sf-place--container-outline: initial;
+    color: var(--sf-on-surface);
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-menu .sf-menu-region {
+    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
+    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+  }
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-menu .sf-menu-region {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
+    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
+    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
+    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
+    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
+    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
+    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
+    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
+    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
+    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
+    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
+    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
+    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
+    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
+    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
+    --sf-place--plate: initial;
+    --sf-place--on-plate: initial;
+    --sf-place--fill-placeholder: initial;
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
+  }
+  :where(.sf-surface-media) .sf-menu .sf-menu-region {
+    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
+    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
+    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
+    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
+    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
+    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
+    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
+    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
+    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
+    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
+    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
+    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
+    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
+    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
+    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
+    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
+    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
+    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
+    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
+    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
+    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
+    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
+    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
+    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
+    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
+    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
+  }
+  :where(.bg-surface-4) .sf-menu .sf-menu-region {
+    --sf-primary: var(--sf-place--found-primary);
+    --sf-primary-hover: var(--sf-place--found-primary-hover);
+    --sf-primary-active: var(--sf-place--found-primary-active);
+    --sf-link: var(--sf-place--found-link);
+    --sf-link-hover: var(--sf-place--found-link-hover);
+    --sf-link-active: var(--sf-place--found-link-active);
+  }
+  .sf-menu .sf-menu-region > * {
+    --sf-surface-popup: var(--sf-surface-popup-nested);
+    --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
+    --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
+    --sf-place--popup-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-70));
+    --sf-elevation-3--surface: var(--sf-surface-popup);
+    --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
+  }
+  .sf-menu-region-foot {
+    border-top-color: var(--sf-outline-variant);
+    border-block-start-color: var(--sf-outline-variant);
+  }
+  .sf-menu.sf-menu--navigation .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation .sf-menu-element[aria-current=page]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation .sf-menu-element[aria-current=true]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):has(> [aria-current=page], > [aria-current=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu-element[aria-current=page]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu-element[aria-current=true]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):has(> [aria-current=page], > [aria-current=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--bordered:not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) {
+    border-color: var(--sf-outline-variant);
+  }
+  .sf-menu.sf-menu--bordered:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) {
+    border-color: var(--sf-outline-variant);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--bordered:not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--bordered:not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--bordered:not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist)::before {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--bordered:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--bordered:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--bordered:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist)::before {
+    background-color: var(--sf-primary);
+  }
+  @media (forced-colors: active) {
+    .sf-menu.sf-menu--navigation.sf-menu--bordered:not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation.sf-menu--bordered:not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation.sf-menu--bordered:not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist)::before {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--bordered:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--bordered:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) :is(.sf-menu-item:not(.open):has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--bordered:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--horizontal):not(.sf-menu-item > .sf-menu) .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist)::before {
+      background-color: Highlight;
+    }
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu-element.open:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu-element.open:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist)::before {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist)::before {
+    background-color: var(--sf-primary);
+  }
+  @media (forced-colors: active) {
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal .sf-menu .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist)::before {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not([aria-current]))::before {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu :is(.sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not([aria-current]))::before {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) .sf-menu .sf-menu-element.sf-menu-element--holds-current:not([aria-current]):not(.does-not-exist):not(.does-not-exist)::before {
+      background-color: Highlight;
+    }
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):hover {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true]) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current) > .sf-menu-element:not(.open):not(:disabled):not(.disabled):not([aria-disabled=true]):active {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current)::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true])::after {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current)::after {
+    background-color: var(--sf-primary);
+  }
+  @media (forced-colors: active) {
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--navigation.sf-menu--horizontal:not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current)::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=page])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element[aria-current=true])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=page])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu [aria-current=true])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=page])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-region [aria-current=true])::after {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--horizontal:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist):not(.sf-menu--indicator-fill) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current)::after {
+      background-color: Highlight;
+    }
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-region [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-region [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--navigation.sf-menu--horizontal.sf-menu--indicator-fill > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-element[aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-element[aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-element > [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-element > [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-region [aria-current=page]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-region [aria-current=true]) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--horizontal.sf-menu--indicator-fill:where(:not(.sf-menu--framed):not(.sf-menu--documentation-tree):not(.sf-menu .sf-menu)):not(.does-not-exist) > .sf-menu-item:has(> .sf-menu-element.sf-menu-element--holds-current) > .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element[aria-current=page]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):has(> [aria-current=page]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--documentation-tree .sf-menu-element > [aria-current=page] {
+    color: inherit;
+  }
+  .sf-menu.sf-menu--documentation-tree [aria-current=page]:not(.sf-menu-element):not(.sf-menu-element > *) {
+    background: var(--sf-primary-container-active);
+    color: var(--sf-on-primary-container);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-primary-container-active);
+  }
+}
 /* A section that is a page and has subsections, in a column or a panel (C30
    R058, C224): the row (div.sf-menu-element) holds its link
    (a.sf-menu-element-wrap) and the chevron's button side by side. sf-menu
@@ -6816,7 +7127,6 @@
    drew the pair without them. */
 @layer sf.components {
   .sf-menu .sf-menu-element > a.sf-menu-element-wrap {
-    color: inherit;
     text-decoration: none;
     border-radius: inherit;
   }
@@ -7114,6 +7424,11 @@
     }
   }
 }
+@layer sf.paint {
+  .sf-menu .sf-menu-element > a.sf-menu-element-wrap {
+    color: inherit;
+  }
+}
 @property --sf-badge--anchor-radius {
   syntax: "<length-percentage>";
   inherits: false;
@@ -7195,6 +7510,7 @@
             clip-path: inset(50%);
     white-space: nowrap;
     border: 0;
+    border-color: revert-layer;
   }
   .sf-menu.sf-menu--compact .sf-menu-element-text {
     position: absolute;
@@ -7209,6 +7525,7 @@
             clip-path: inset(50%);
     white-space: nowrap;
     border: 0;
+    border-color: revert-layer;
   }
   .sf-menu.sf-menu--rail .sf-menu-element > .sf-icon-button {
     display: none;
@@ -7419,47 +7736,37 @@
   @media (forced-colors: active) {
     .sf-menu.sf-menu--rail .sf-menu-element-wrap > .sf-badge {
       forced-color-adjust: none;
-      background-color: Highlight;
-      color: HighlightText;
       box-shadow: none;
       outline: var(--sf-badge--ring-width) solid Canvas;
     }
     .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge {
       forced-color-adjust: none;
-      background-color: Highlight;
-      color: HighlightText;
       box-shadow: none;
       outline: var(--sf-badge--ring-width) solid Canvas;
     }
   }
   .sf-menu.sf-menu--rail .sf-menu-element-wrap > .sf-badge.sf-badge--neutral:not(.sf-badge--dot):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist) {
     --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-surface-container));
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
   }
   .sf-menu.sf-menu--rail .sf-menu-element-wrap > .sf-badge.sf-badge--on-surface:not(.sf-badge--dot):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist) {
     --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-surface-container));
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
   }
   .sf-menu.sf-menu--rail .sf-menu-element-wrap > .sf-badge:not(.sf-badge--dot):not(.sf-badge--primary):not(.sf-badge--secondary):not(.sf-badge--error):not(.sf-badge--danger):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--info) {
     --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-surface-container));
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
   }
   .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge.sf-badge--neutral:not(.sf-badge--dot):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist) {
     --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-surface-container));
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
   }
   .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge.sf-badge--on-surface:not(.sf-badge--dot):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist) {
     --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-surface-container));
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
   }
   .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge:not(.sf-badge--dot):not(.sf-badge--primary):not(.sf-badge--secondary):not(.sf-badge--error):not(.sf-badge--danger):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--info) {
     --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-surface-container));
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
     --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
   }
   .sf-menu.sf-menu--rail .sf-menu-element[aria-current=page]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
@@ -7467,48 +7774,36 @@
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--rail .sf-menu-element[aria-current=true]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--rail .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):has(> [aria-current=page], > [aria-current=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--compact .sf-menu-element[aria-current=page]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--compact .sf-menu-element[aria-current=true]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--compact .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):has(> [aria-current=page], > [aria-current=true]) {
     --sf-menu-element--background-color: var(--sf-primary-container-active);
     --sf-menu-element--border-color: var(--sf-transparent);
     --sf-menu-element--color: var(--sf-on-primary-container);
     --sf-menu-element--font-weight: var(--sf-font-weight-medium);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-menu-element--background-color);
   }
   .sf-menu.sf-menu--rail .sf-menu-element[aria-current=page] .sf-menu-element-icon {
     --sf-icon--color: var(--sf-on-primary-container);
@@ -7707,7 +8002,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before{
@@ -7867,7 +8161,6 @@
     border-end-start-radius: var(--sf-0);
     border-start-end-radius: var(--sf-a2);
     border-end-end-radius: var(--sf-a2);
-    background-color: var(--sf-primary);
     pointer-events: none;
   }
   .sf-menu.sf-menu--rail > .sf-menu-item:first-child > .sf-menu-element {
@@ -7885,11 +8178,9 @@
   @media (forced-colors: active) {
     .sf-menu.sf-menu--rail .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
     .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
       forced-color-adjust: none;
-      background-color: Highlight;
     }
   }
   .sf-menu.sf-menu--rail .sf-menu-element-wrap:has(> .sf-avatar:not(.sf-avatar--square)) > .sf-badge {
@@ -7915,6 +8206,80 @@
     --sf-badge--anchored-max: var(--sf-badge--anchored-dot);
     --sf-badge--anchored-padding: var(--sf-a0);
     --sf-badge--anchored-font-size: var(--sf-a0);
+  }
+}
+@layer sf.paint {
+  .sf-menu.sf-menu--rail .sf-menu-element-text {
+    border: 0;
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-text {
+    border: 0;
+  }
+  @media (forced-colors: active) {
+    .sf-menu.sf-menu--rail .sf-menu-element-wrap > .sf-badge {
+      background-color: Highlight;
+      color: HighlightText;
+    }
+    .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge {
+      background-color: Highlight;
+      color: HighlightText;
+    }
+  }
+  .sf-menu.sf-menu--rail .sf-menu-element-wrap > .sf-badge.sf-badge--neutral:not(.sf-badge--dot):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist) {
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+  }
+  .sf-menu.sf-menu--rail .sf-menu-element-wrap > .sf-badge.sf-badge--on-surface:not(.sf-badge--dot):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist) {
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+  }
+  .sf-menu.sf-menu--rail .sf-menu-element-wrap > .sf-badge:not(.sf-badge--dot):not(.sf-badge--primary):not(.sf-badge--secondary):not(.sf-badge--error):not(.sf-badge--danger):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--info) {
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge.sf-badge--neutral:not(.sf-badge--dot):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist) {
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge.sf-badge--on-surface:not(.sf-badge--dot):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist) {
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element-wrap > .sf-badge:not(.sf-badge--dot):not(.sf-badge--primary):not(.sf-badge--secondary):not(.sf-badge--error):not(.sf-badge--danger):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--info) {
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+  }
+  .sf-menu.sf-menu--rail .sf-menu-element[aria-current=page]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--rail .sf-menu-element[aria-current=true]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--rail .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):has(> [aria-current=page], > [aria-current=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element[aria-current=page]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element[aria-current=true]:not(:disabled):not(.disabled):not([aria-disabled=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element:not(:disabled):not(.disabled):not([aria-disabled=true]):has(> [aria-current=page], > [aria-current=true]) {
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-menu-element--background-color);
+  }
+  .sf-menu.sf-menu--rail .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    background-color: var(--sf-primary);
+  }
+  .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+    background-color: var(--sf-primary);
+  }
+  @media (forced-colors: active) {
+    .sf-menu.sf-menu--rail .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+      background-color: Highlight;
+    }
+    .sf-menu.sf-menu--compact .sf-menu-element.sf-menu-element--holds-current:not([aria-current])::before {
+      background-color: Highlight;
+    }
   }
 }
 @layer sf.components {
@@ -7969,10 +8334,9 @@
     padding-right: calc(var(--sf-space-1) + var(--sf-menu-group-heading--border-width));
     padding-inline: calc(var(--sf-space-1) + var(--sf-menu-group-heading--border-width));
     border: var(--sf-0);
+    border-color: revert-layer;
     border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-menu-item-radius, var(--sf-radius--ui));
-    background: var(--sf-transparent);
-    color: var(--sf-on-surface-variant);
     font-family: var(--sf-text--family);
     font-size: var(--sf-text-size-1\/2);
     font-weight: var(--sf-font-weight-medium);
@@ -8025,14 +8389,7 @@
             appearance: none;
     cursor: pointer;
   }
-  button.sf-menu-group-heading:not(:disabled):hover {
-    background: var(--sf-surface-state-hover);
-  }
-  button.sf-menu-group-heading:not(:disabled):active {
-    background: var(--sf-surface-state-active);
-  }
   button.sf-menu-group-heading:disabled {
-    color: var(--sf-on-surface-disabled);
     cursor: default;
   }
   button.sf-menu-group-heading:focus {
@@ -8230,6 +8587,7 @@
             clip-path: inset(50%);
     white-space: nowrap;
     border: var(--sf-0);
+    border-color: revert-layer;
   }
   @media (forced-colors: active) {
     button.sf-menu-group-heading.focus-visible {
@@ -8238,5 +8596,24 @@
     button.sf-menu-group-heading:focus-visible {
       outline: var(--sf-focus--width) solid currentColor;
     }
+  }
+}
+@layer sf.paint {
+  .sf-menu-group-heading {
+    border: var(--sf-0);
+    background: var(--sf-transparent);
+    color: var(--sf-on-surface-variant);
+  }
+  button.sf-menu-group-heading:not(:disabled):hover {
+    background: var(--sf-surface-state-hover);
+  }
+  button.sf-menu-group-heading:not(:disabled):active {
+    background: var(--sf-surface-state-active);
+  }
+  button.sf-menu-group-heading:disabled {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-menu-element-status {
+    border: var(--sf-0);
   }
 }

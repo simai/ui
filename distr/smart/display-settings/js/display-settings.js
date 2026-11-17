@@ -17,7 +17,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   SCHEMES: () => (/* binding */ SCHEMES),
 /* harmony export */   STORAGE_KEY: () => (/* binding */ STORAGE_KEY),
 /* harmony export */   TEXT_SCALES: () => (/* binding */ TEXT_SCALES),
-/* harmony export */   WORDS: () => (/* binding */ WORDS),
+/* harmony export */   WORDS: () => (/* reexport safe */ _lang_skip_link_index_mjs__WEBPACK_IMPORTED_MODULE_3__["default"]),
 /* harmony export */   applySettings: () => (/* binding */ applySettings),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   forcedColors: () => (/* binding */ forcedColors),
@@ -34,6 +34,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("43090d1c8307");
 /* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("2ee7a47e9b10");
+/* harmony import */ var _lang_skip_link_index_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("b8a4348874ab");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_deprecations_js__WEBPACK_IMPORTED_MODULE_0__, _page_language_js__WEBPACK_IMPORTED_MODULE_1__]);
 ([_deprecations_js__WEBPACK_IMPORTED_MODULE_0__, _page_language_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _deprecations_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_deprecations_js__WEBPACK_IMPORTED_MODULE_0__);
@@ -82,17 +83,13 @@ const LEGACY_SCHEMES = Object.freeze({
   green: 'yellow-on-black'
 });
 const LEGACY_SINCE = '2026-11-15';
-const LEGACY_REMOVE_AFTER = '2027-01-01'; // The words core says itself; the same as sf-display-settings' language files
-// (tests/display-settings.contract.test.mjs holds them equal).
+const LEGACY_REMOVE_AFTER = '2027-01-01'; // The words core says itself (core/js/lang/skip-link: English built in, the
+// other languages from a language file, C282); the same as
+// sf-display-settings' language files (tests/display-settings.contract.test.mjs
+// holds them equal).
 
-const WORDS = {
-  en: {
-    'skip-link-text': 'Skip to content'
-  },
-  ru: {
-    'skip-link-text': 'Перейти к содержимому'
-  }
-};
+
+
 const DEFAULTS = Object.freeze({
   scheme: '',
   textScale: 100,
@@ -389,10 +386,19 @@ function installSkipLink(doc = globalThis.document) {
   const link = doc.createElement('a');
   link.className = 'sf-skip-link';
   link.href = `#${main.id}`;
-  link.setAttribute('data-sf-skip-link', 'core');
-  link.textContent = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(WORDS, 'skip-link-text', doc.documentElement, {
-    component: 'sf-display-settings',
-    source: 'ru'
+  link.setAttribute('data-sf-skip-link', 'core'); // Its word comes from the page's language part, which may arrive after the
+  // link is drawn (C282): it is written again whenever words arrive.
+
+  const draw = () => {
+    link.textContent = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.pageWord)(_lang_skip_link_index_mjs__WEBPACK_IMPORTED_MODULE_3__["default"], 'skip-link-text', doc.documentElement, {
+      component: 'sf-display-settings',
+      source: 'ru'
+    });
+  };
+
+  draw();
+  _page_language_js__WEBPACK_IMPORTED_MODULE_1__.language.onChange?.(() => {
+    if (link.isConnected) draw();
   });
   doc.body.prepend(link);
   return link;
@@ -416,11 +422,14 @@ function start() {
   const ready = () => {
     installSkipLink(doc);
     if (root.getAttribute(ATTRIBUTES.images) === 'hide') followImages(doc, true);
-  };
+  }; // A microtask later when the page is already parsed: core installs its
+  // language-pack fetcher after this module runs, and a word asked before it
+  // has no pack on its way (C282, group build 10).
+
 
   if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', ready, {
     once: true
-  });else ready(); // Another tab of the site changed the choice.
+  });else if (typeof queueMicrotask === 'function') queueMicrotask(ready);else ready(); // Another tab of the site changed the choice.
 
   globalThis.addEventListener?.('storage', event => {
     if (event.key !== STORAGE_KEY || event.storageArea !== storage()) return;
@@ -522,8 +531,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("031d130e6727");
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("24030a2aa914");
 /* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("ea80db6314cf");
-/* harmony import */ var _lang_en_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("9f95a15b5ded");
-/* harmony import */ var _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("afcc2ad257c5");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("5c0f586d3f5e");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_display_settings_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_display_settings_js__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -552,16 +560,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
-
- // Only the words on screen ship in the bundle; the title, settings and events
-// stay in the language files for the Studio and the docs (localization study LC-2).
-
-const en = {
-  runtime: _lang_en_json__WEBPACK_IMPORTED_MODULE_6__.runtime
-};
-const ru = {
-  runtime: _lang_ru_json__WEBPACK_IMPORTED_MODULE_7__.runtime
-}; // The panel's ids, one per element on the page (stable across renders).
+ // Only the words on screen ship in the bundle, English only (owner decision
+// C282): Russian and every other language come from a language file. The
+// title, settings and events stay in the language files for the Studio and the
+// docs (localization study LC-2).
+// The panel's ids, one per element on the page (stable across renders).
 
 let sequence = 0;
 
@@ -587,10 +590,7 @@ function nextTextScale(scale, direction) {
 }
 const DisplaySettingsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: {
-    en,
-    ru
-  },
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__.files,
   source: 'ru',
   actions: {
     reset() {
@@ -923,10 +923,61 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "b8a4348874ab"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f9d8a56b347c");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "5c0f586d3f5e"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   files: () => (/* binding */ files)
+/* harmony export */ });
+/* harmony import */ var _en_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9f95a15b5ded");
+// Written by scripts/build-language-packs.mjs from src/core/lang/built-in.json
+// (owner decision C282); do not edit. The words this bundle carries: the
+// built-in languages' (en); every other language comes from
+// a language file (core/lang/<code>.js or its parts).
+
+
+const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } };
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ en: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime });
+
+
+/***/ },
+
+/***/ "f9d8a56b347c"
+(module) {
+
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"skip-link-text":"Skip to content"}}');
+
+/***/ },
+
 /***/ "24030a2aa914"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.display-settings","tag":"sf-display-settings","version":"1.0.0","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label-text"},"layout":{"type":"enum","values":["disclosure","panel"],"default":"disclosure"},"open":{"type":"boolean","default":false},"show-font":{"type":"boolean","default":false},"show-links":{"type":"boolean","default":false}},"values":{"settings":{"type":"object"}},"events":{"change":{"x-native":false,"carries":{"settings":{"type":"object"},"previous":{"type":"object"},"setting":{"type":"string"}}}},"actions":{"reset":{}},"host-states":{"data-open":"boolean","data-forced-colors":"boolean"},"css-variables":{"--sf-display-settings-background":{"type":"color","state":"default"},"--sf-display-settings-border-color":{"type":"color","state":"default"},"--sf-display-settings-label-color":{"type":"color","state":"default"},"--sf-display-settings-gap":{"type":"length","state":"default"},"--sf-display-settings-group-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.display-settings","tag":"sf-display-settings","version":"1.1.3","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label-text"},"layout":{"type":"enum","values":["disclosure","panel"],"default":"disclosure"},"open":{"type":"boolean","default":false},"show-font":{"type":"boolean","default":false},"show-links":{"type":"boolean","default":false}},"values":{"settings":{"type":"object"}},"events":{"change":{"x-native":false,"carries":{"settings":{"type":"object"},"previous":{"type":"object"},"setting":{"type":"string"}}}},"actions":{"reset":{}},"host-states":{"data-open":"boolean","data-forced-colors":"boolean"},"css-variables":{"--sf-display-settings-background":{"type":"color","state":"default"},"--sf-display-settings-border-color":{"type":"color","state":"default"},"--sf-display-settings-label-color":{"type":"color","state":"default"},"--sf-display-settings-gap":{"type":"length","state":"default"},"--sf-display-settings-group-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
@@ -934,13 +985,6 @@ module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.display-settings","tag":"
 (module) {
 
 module.exports = /*#__PURE__*/JSON.parse('{"title":"Display settings","runtime":{"label-text":"Display settings","text-label":"Text","text-smaller":"Smaller text","text-larger":"Larger text","text-smaller-mark":"A−","text-larger-mark":"A+","text-value":"{value}%","colour-label":"Colour","scheme-site":"As on the site","scheme-black-on-white":"Black on white","scheme-white-on-black":"White on black","scheme-yellow-on-black":"Yellow on black","scheme-blue-on-sky":"Blue on light blue","scheme-brown-on-cream":"Brown on cream","colour-system":"Colours are set by your device","spacing-label":"Spacing","spacing-normal":"Normal","spacing-wide":"Wider","images-label":"Images","images-colour":"Colour","images-grey":"Greyscale","images-hide":"Hide","motion-label":"Motion","motion-system":"As on the device","motion-reduce":"Stop","motion-device":"Your device already reduces motion","font-label":"Font","site-font":"The site\'s","sans-font":"Sans serif","serif-font":"Serif","links-label":"Links","underline-links":"Underline","reset-text":"Standard view","skip-link-text":"Skip to content"}}');
-
-/***/ },
-
-/***/ "afcc2ad257c5"
-(module) {
-
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Настройки отображения","runtime":{"label-text":"Настройки отображения","text-label":"Текст","text-smaller":"Текст меньше","text-larger":"Текст больше","text-smaller-mark":"А−","text-larger-mark":"А+","text-value":"{value} %","colour-label":"Цвет","scheme-site":"Как на сайте","scheme-black-on-white":"Чёрный на белом","scheme-white-on-black":"Белый на чёрном","scheme-yellow-on-black":"Жёлтый на чёрном","scheme-blue-on-sky":"Синий на голубом","scheme-brown-on-cream":"Коричневый на кремовом","colour-system":"Цвета задаёт система","spacing-label":"Интервалы","spacing-normal":"Обычные","spacing-wide":"Шире","images-label":"Картинки","images-colour":"Цветные","images-grey":"Чёрно-белые","images-hide":"Скрыть","motion-label":"Движение","motion-system":"Как в системе","motion-reduce":"Остановить","motion-device":"Устройство уже уменьшает движение","font-label":"Шрифт","site-font":"Сайта","sans-font":"Без засечек","serif-font":"С засечками","links-label":"Ссылки","underline-links":"Подчёркивать","reset-text":"Обычная версия","skip-link-text":"Перейти к содержимому"}}');
 
 /***/ }
 

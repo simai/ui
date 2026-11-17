@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@layer sf.reset, sf.tokens, sf.base, sf.utilities, sf.components, sf.overrides, sf.states;
+@layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @property --sf-badge--anchor-radius {
   syntax: "<length-percentage>";
   inherits: false;
@@ -94,11 +94,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background-color: var(--sf-surface-page);
-    background-color: var(--sf-admin-menu-panel--background-color, var(--sf-surface-page));
     --sf-badge--surface: var(--sf-admin-menu-panel--background-color, var(--sf-surface-page));
-    border-color: var(--sf-outline-variant);
-    border-color: var(--sf-admin-menu-panel--border-color, var(--sf-outline-variant));
     border-top-width: var(--sf-px);
     border-top-width: var(--sf-admin-menu-panel--border-top-width, var(--sf-px));
     border-inline-end-width: var(--sf-px);
@@ -224,14 +220,10 @@
     padding-bottom: var(--sf-admin-menu-head--padding-bottom, var(--sf-space-1));
     border-bottom-width: var(--sf-px);
     border-bottom-width: var(--sf-admin-menu-head--border-bottom-width, var(--sf-px));
-    border-color: var(--sf-outline-variant);
-    border-color: var(--sf-admin-menu-head--border-color, var(--sf-outline-variant));
   }
   .sf-admin-menu-head-container {
     gap: var(--sf-space-1\/2);
     gap: var(--sf-admin-menu-head-container--gap, var(--sf-space-1\/2));
-    color: var(--sf-on-surface);
-    color: var(--sf-admin-menu-head-container--color, var(--sf-on-surface));
     font-family: var(--sf-text--family);
     font-family: var(--sf-admin-menu-head-container--font-family, var(--sf-text--family));
     font-size: var(--sf-text-size-3);
@@ -425,13 +417,11 @@
     padding-bottom: var(--sf-space-1\/3);
     padding-bottom: var(--sf-admin-menu-search-group-head--padding-block, var(--sf-space-1\/3));
     padding-block: var(--sf-admin-menu-search-group-head--padding-block, var(--sf-space-1\/3));
-    color: var(--sf-on-surface-variant);
     font-size: var(--sf-text-size-1\/3);
     line-height: var(--sf-text-height-1\/3);
     text-transform: uppercase;
   }
   .sf-admin-menu-search-group-head a {
-    color: var(--sf-primary);
     text-transform: none;
     letter-spacing: normal;
     text-decoration: none;
@@ -440,16 +430,10 @@
      the primary container rather than the surface one — a reader moving with
      the arrows can tell the two apart. */
   .sf-admin-menu-search-row.selected {
-    background-color: var(--sf-primary-container);
     /* A translucent fill: a tonal badge on it keeps its own tone (C43), an
        anchored badge's ring is the row's colour (C43 D3). */
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-primary-container);
   }
   .sf-admin-menu-search-mark {
-    background-color: var(--sf-warning-container);
-    background-color: var(--sf-admin-menu-search-mark--background-color, var(--sf-warning-container));
-    color: inherit;
     border-radius: var(--sf-radius--ui);
   }
   /* Two rows of nothing while the host is answering. The shimmer is held for a
@@ -493,9 +477,10 @@
     }
   }
   .sf-admin-menu-search-keys {
-    border-top: var(--sf-px) solid var(--sf-outline-variant);
-    -webkit-border-before: var(--sf-px) solid var(--sf-outline-variant);
-            border-block-start: var(--sf-px) solid var(--sf-outline-variant);
+    border-top-width: var(--sf-px);
+    border-block-start-width: var(--sf-px);
+    border-top-style: solid;
+    border-block-start-style: solid;
     padding-left: var(--sf-space-1);
     padding-right: var(--sf-space-1);
     padding-inline: var(--sf-space-1);
@@ -512,7 +497,6 @@
     padding-bottom: var(--sf-space-1\/2);
     padding-bottom: var(--sf-admin-menu-search-keys--padding-block, var(--sf-space-1\/2));
     padding-block: var(--sf-admin-menu-search-keys--padding-block, var(--sf-space-1\/2));
-    color: var(--sf-on-surface-variant);
     font-size: var(--sf-text-size-1\/3);
     line-height: var(--sf-text-height-1\/3);
   }
@@ -851,8 +835,6 @@
   .sf-admin-menu-divider span {
     height: var(--sf-px);
     height: var(--sf-admin-menu-divider--height, var(--sf-px));
-    background-color: var(--sf-outline-variant);
-    background-color: var(--sf-admin-menu-divider--background-color, var(--sf-outline-variant));
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-admin-menu-item-segment{
     border-right-width: 0;
@@ -1023,8 +1005,6 @@
     border-top-right-radius: var(--sf-admin-menu-item-segment--border-start-start-radius, var(--sf-radius--ui));
   }
   .sf-admin-menu-item-segment {
-    border-color: var(--sf-outline-variant);
-    border-color: var(--sf-admin-menu-item-segment--border-color, var(--sf-outline-variant));
     border-top-width: 0;
     border-top-width: var(--sf-admin-menu-item-segment--border-top-width, 0);
     border-inline-end-width: 0;
@@ -1043,8 +1023,6 @@
     border-start-end-radius: var(--sf-admin-menu-item-segment--border-start-end-radius, var(--sf-radius--ui));
     border-start-start-radius: var(--sf-radius--ui);
     border-start-start-radius: var(--sf-admin-menu-item-segment--border-start-start-radius, var(--sf-radius--ui));
-    background-color: var(--sf-transparent);
-    background-color: var(--sf-admin-menu-item-segment--background-color, var(--sf-transparent));
   }
   .sf-admin-menu-item-placeholder {
     width: var(--sf-text-size-3);
@@ -1057,8 +1035,6 @@
     line-height: var(--sf-admin-menu-item-placeholder--line-height, var(--sf-text-height-1\/4));
     border-radius: var(--sf-radius-rounded);
     border-radius: var(--sf-admin-menu-item-placeholder--border-radius, var(--sf-radius-rounded));
-    background-color: var(--sf-outline-variant);
-    background-color: var(--sf-admin-menu-item-placeholder--background-color, var(--sf-outline-variant));
   }
   .sf-admin-menu-item-icon {
     width: var(--sf-text-size-3);
@@ -1313,10 +1289,6 @@
     border-start-end-radius: var(--sf-admin-menu-item--border-start-end-radius, var(--sf-radius--ui));
     border-start-start-radius: var(--sf-radius--ui);
     border-start-start-radius: var(--sf-admin-menu-item--border-start-start-radius, var(--sf-radius--ui));
-    background-color: var(--sf-transparent);
-    background-color: var(--sf-admin-menu-item--background-color, var(--sf-transparent));
-    border-color: var(--sf-outline-variant);
-    border-color: var(--sf-admin-menu-item--border-color, var(--sf-outline-variant));
     border-top-width: 0;
     border-top-width: var(--sf-admin-menu-item--border-top-width, 0);
     border-inline-end-width: 0;
@@ -1350,8 +1322,6 @@
   .sf-admin-menu-item-container {
     gap: var(--sf-space-1\/2);
     gap: var(--sf-admin-menu-item-container--gap, var(--sf-space-1\/2));
-    color: var(--sf-on-surface);
-    color: var(--sf-admin-menu-item-container--color, var(--sf-on-surface));
     font-family: var(--sf-text--family);
     font-family: var(--sf-admin-menu-item-container--font-family, var(--sf-text--family));
     font-size: var(--sf-text-size-1\/2);
@@ -1585,6 +1555,7 @@
             clip-path: inset(50%);
     white-space: nowrap;
     border: 0;
+    border-color: revert-layer;
   }
   .sf-admin-menu-panel.small .sf-admin-menu-item .sf-admin-menu-item-container > .sf-badge[hidden] {
     display: none;
@@ -1675,8 +1646,6 @@
   @media (forced-colors: active) {
     .sf-admin-menu-panel.small .sf-admin-menu-item .sf-admin-menu-item-container > .sf-badge:not([hidden]) {
       forced-color-adjust: none;
-      background-color: Highlight;
-      color: HighlightText;
       box-shadow: none;
       outline: var(--sf-badge--ring-width) solid Canvas;
     }
@@ -1702,6 +1671,7 @@
             clip-path: inset(50%);
     white-space: nowrap;
     border: 0;
+    border-color: revert-layer;
     display: block;
   }
   @media (max-width: 32rem) {
@@ -1711,6 +1681,80 @@
     }
     /* The open panel is translateX(0) at every width now, so there is nothing
        left for this breakpoint to correct. */
+  }
+}
+@layer sf.paint {
+  .sf-admin-menu-panel {
+    background-color: var(--sf-surface-page);
+    background-color: var(--sf-admin-menu-panel--background-color, var(--sf-surface-page));
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-admin-menu-panel--border-color, var(--sf-outline-variant));
+  }
+  .sf-admin-menu-head {
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-admin-menu-head--border-color, var(--sf-outline-variant));
+  }
+  .sf-admin-menu-head-container {
+    color: var(--sf-on-surface);
+    color: var(--sf-admin-menu-head-container--color, var(--sf-on-surface));
+  }
+  .sf-admin-menu-search-group-head {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-admin-menu-search-group-head a {
+    color: var(--sf-primary);
+  }
+  .sf-admin-menu-search-row.selected {
+    background-color: var(--sf-primary-container);
+    --sf-surface-underlay: var(--sf-surface-place-solid);
+    --sf-surface-place-fill: var(--sf-primary-container);
+  }
+  .sf-admin-menu-search-mark {
+    background-color: var(--sf-warning-container);
+    background-color: var(--sf-admin-menu-search-mark--background-color, var(--sf-warning-container));
+    color: inherit;
+  }
+  .sf-admin-menu-search-keys {
+    border-top-color: var(--sf-outline-variant);
+    border-block-start-color: var(--sf-outline-variant);
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-admin-menu-divider span {
+    background-color: var(--sf-outline-variant);
+    background-color: var(--sf-admin-menu-divider--background-color, var(--sf-outline-variant));
+  }
+  .sf-admin-menu-item-segment {
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-admin-menu-item-segment--border-color, var(--sf-outline-variant));
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-admin-menu-item-segment--background-color, var(--sf-transparent));
+  }
+  .sf-admin-menu-item-placeholder {
+    background-color: var(--sf-outline-variant);
+    background-color: var(--sf-admin-menu-item-placeholder--background-color, var(--sf-outline-variant));
+  }
+  .sf-admin-menu-item {
+    background-color: var(--sf-transparent);
+    background-color: var(--sf-admin-menu-item--background-color, var(--sf-transparent));
+    border-color: var(--sf-outline-variant);
+    border-color: var(--sf-admin-menu-item--border-color, var(--sf-outline-variant));
+  }
+  .sf-admin-menu-item-container {
+    color: var(--sf-on-surface);
+    color: var(--sf-admin-menu-item-container--color, var(--sf-on-surface));
+  }
+  .sf-admin-menu-panel.small .sf-admin-menu-item .sf-admin-menu-item-container span:not(.sf-admin-menu-item-icon):not(.sf-admin-menu-item-placeholder):not(.sf-badge) {
+    border: 0;
+  }
+  @media (forced-colors: active) {
+    .sf-admin-menu-panel.small .sf-admin-menu-item .sf-admin-menu-item-container > .sf-badge:not([hidden]) {
+      background-color: Highlight;
+      color: HighlightText;
+    }
+  }
+  .sf-admin-menu-panel.small .sf-admin-menu-item span.sf-badge-anchored-text,
+  .sf-admin-menu-panel.small .sf-admin-menu-item > span.sf-badge-anchored-text {
+    border: 0;
   }
 }
 @layer sf.states {
