@@ -2014,18 +2014,22 @@ class SfSettings extends SettingsElement {
       open: Boolean(this._open),
       search: Boolean(this.search),
       apply: this.applyMode,
-      count: (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.applyCount)(items),
+      // The page's own number of conditions (a filter whose conditions are
+      // not rows of this panel), else what the panel counts.
+      count: Number.isInteger(this.applyCount) && this.applyCount >= 0 ? this.applyCount : (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.applyCount)(items),
       current: this._current,
+      // The panel's words: the element's own (close-label, search-placeholder,
+      // empty-text, pin-label, unpin-label, move-label), else the page language's.
       words: {
         label: this.sfWord('label'),
-        close: this.sfWord('close'),
+        close: this.closeLabel || this.sfWord('close'),
         reset: this.sfWord('reset'),
         apply: this.sfWord('apply'),
-        search: this.sfWord('search'),
-        empty: this.sfWord('empty'),
-        pin: this.sfWord('pin'),
-        unpin: this.sfWord('unpin'),
-        moveHint: this.sfWord('move-hint')
+        search: this.searchPlaceholder || this.sfWord('search'),
+        empty: this.emptyText || this.sfWord('empty'),
+        pin: this.pinLabel || this.sfWord('pin'),
+        unpin: this.unpinLabel || this.sfWord('unpin'),
+        moveHint: this.moveLabel || this.sfWord('move-hint')
       }
     };
   } // The scroll area's mark (the scroll-area inset rule, C105 addendum): the
@@ -2088,6 +2092,55 @@ class SfSettings extends SettingsElement {
       item: next
     });
     return true;
+  } // A list's new order or pin: a fields list's value, or the order of a
+  // choice that orders (its value stays the chosen option).
+
+
+  async commitArrangement(id, value) {
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.shownItems(), id);
+    if (!item || item.type !== 'choice') return this.commitValue(id, value);
+
+    if (this.applyMode === 'button') {
+      const patch = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.orderPatch)(item, value);
+      if (!patch) return false;
+      this._draft = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.rewriteValues)(this.shownItems(), one => one.id === id ? patch : null).list;
+      this.requestComponentUpdate('draft');
+      await this.whenRendered?.();
+      return true;
+    }
+
+    return this.writeOrdered(id, value);
+  } // arrange (cancellable), then the write and arranged: a choice's order.
+
+
+  writeOrdered(id, order) {
+    const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.items, id);
+    const patch = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.orderPatch)(item, order);
+    if (!patch) return false;
+    const next = { ...item,
+      ...patch
+    };
+    const previous = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.choiceOrder)(item);
+    const asked = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.choiceOrder)(next);
+    if (same(previous, asked)) return true;
+    const detail = {
+      id,
+      order: asked,
+      previous,
+      value: (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.itemValue)(item),
+      item: next
+    };
+
+    if (!this.sfEmit('arrange', detail, {
+      cancelable: true
+    })) {
+      this.requestComponentUpdate('refused');
+      return false;
+    }
+
+    this.writeItems((0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.rewriteValues)(this.items, one => one.id === id ? patch : null).list);
+    this.sfEmit('arranged', detail);
+    return true;
   } // «Применить»: every setting the draft moved is asked and written, as at
   // once; then the popup closes.
 
@@ -2101,6 +2154,11 @@ class SfSettings extends SettingsElement {
       const now = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valueMap)(this.items);
 
       for (const [id, value] of Object.entries(wanted)) if (!same(now[id], value)) this.writeAsked(id, value);
+
+      const order = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.orderMap)(draft);
+      const was = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.orderMap)(this.items);
+
+      for (const [id, value] of Object.entries(order)) if (!same(was[id], value)) this.writeOrdered(id, value);
     }
 
     this.requestComponentUpdate('draft');
@@ -2188,7 +2246,7 @@ class SfSettings extends SettingsElement {
     const value = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.toggledField)(item, option, 'pinned');
     if (!value) return;
     const focused = button === document.activeElement;
-    await this.commitValue(id, value);
+    await this.commitArrangement(id, value);
     await this.whenRendered?.();
     if (focused) this.rowControl(id, option, `${PIN} button`)?.focus({
       preventScroll: true
@@ -2332,7 +2390,7 @@ class SfSettings extends SettingsElement {
     const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.shownItems(), id);
     const value = item && (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.movedField)(item, option, step);
     if (!value) return;
-    await this.commitValue(id, value);
+    await this.commitArrangement(id, value);
     await this.whenRendered?.();
     this.afterMove(id, option);
   }
@@ -2345,7 +2403,7 @@ class SfSettings extends SettingsElement {
       preventScroll: false
     });
     const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.shownItems(), id);
-    const options = item ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.itemValue)(item) : [];
+    const options = !item ? [] : (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.choiceArranges)(item) ? (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.choiceOrder)(item) : (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.itemValue)(item);
     const index = options.findIndex(one => one.id === option) + 1;
     const label = main.querySelector('.sf-settings-row-label')?.textContent ?? '';
     this.announce(this.sfWord('position', {
@@ -2410,7 +2468,7 @@ class SfSettings extends SettingsElement {
       const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.shownItems(), id);
       const value = before === undefined || !item ? null : (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.placedField)(item, option, before);
       if (!value) return;
-      await this.commitValue(id, value);
+      await this.commitArrangement(id, value);
       await this.whenRendered?.();
       this.afterMove(id, option);
     };
@@ -2579,7 +2637,8 @@ class SfSettings extends SettingsElement {
   draftMoved() {
     if (!this._draft) return false;
     const now = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valueMap)(this.items);
-    return Object.entries((0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valueMap)(this._draft)).some(([id, value]) => !same(now[id], value));
+    const order = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.orderMap)(this.items);
+    return Object.entries((0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.valueMap)(this._draft)).some(([id, value]) => !same(now[id], value)) || Object.entries((0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.orderMap)(this._draft)).some(([id, value]) => !same(order[id], value));
   } // show(id) in the panel: a popup opens, the tab that holds the setting is
   // chosen, the focus goes to its row.
 
@@ -2615,6 +2674,66 @@ class SfSettings extends SettingsElement {
       outcome: 'applied'
     };
   }
+  /** The tab the panel shows (its groups as tabs), 0 when they are sections or it is not a panel. */
+
+
+  get tab() {
+    if (!this.isPanel || (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.panelLayout)(this.shownItems(), {
+      search: Boolean(this.search)
+    }) !== 'tabs') return 0;
+    return Math.min(this._tab, Math.max(0, (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.panelGroups)(this.shownItems()).length - 1));
+  }
+  /**
+   * Opens a popup panel against its first trigger, on a tab when one is
+   * given (its index): open(), open(1) or open({tab: 1}). Refused for
+   * another look or an inline panel; unavailable without a trigger;
+   * cancelled when the page cancels open.
+   */
+
+
+  async open(given) {
+    const tab = given && typeof given === 'object' ? given.tab : given;
+    if (!this.isPanel || !this.popup) return {
+      outcome: 'refused',
+      reason: 'not-popup'
+    };
+    await this.whenRendered?.();
+    if (Number.isInteger(tab) && tab >= 0 && tab < (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.panelGroups)(this.shownItems()).length) this.chooseGroup(tab);
+
+    if (this._open) {
+      await this.whenRendered?.();
+      return {
+        outcome: 'applied'
+      };
+    }
+
+    const anchor = this.anchor();
+    if (!anchor) return {
+      outcome: 'unavailable',
+      reason: 'no-trigger'
+    };
+    return (await this.openPanel(anchor)) ? {
+      outcome: 'applied'
+    } : {
+      outcome: 'cancelled'
+    };
+  }
+  /** Closes an open popup panel, as its close button does (close, cancellable; reason api). */
+
+
+  close() {
+    if (!this._open) return {
+      outcome: 'refused',
+      reason: 'not-open'
+    };
+    return this.closePanel({
+      reason: 'api'
+    }) ? {
+      outcome: 'applied'
+    } : {
+      outcome: 'cancelled'
+    };
+  }
 
 }
 
@@ -2640,6 +2759,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   SIZES: () => (/* binding */ SIZES),
 /* harmony export */   TYPES: () => (/* binding */ TYPES),
 /* harmony export */   applyCount: () => (/* binding */ applyCount),
+/* harmony export */   choiceArranges: () => (/* binding */ choiceArranges),
+/* harmony export */   choiceOptions: () => (/* binding */ choiceOptions),
+/* harmony export */   choiceOrder: () => (/* binding */ choiceOrder),
 /* harmony export */   colorCode: () => (/* binding */ colorCode),
 /* harmony export */   colorFill: () => (/* binding */ colorFill),
 /* harmony export */   entriesFor: () => (/* binding */ entriesFor),
@@ -2651,6 +2773,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   lookOf: () => (/* binding */ lookOf),
 /* harmony export */   matches: () => (/* binding */ matches),
 /* harmony export */   movedField: () => (/* binding */ movedField),
+/* harmony export */   optionMoves: () => (/* binding */ optionMoves),
+/* harmony export */   optionPins: () => (/* binding */ optionPins),
+/* harmony export */   orderMap: () => (/* binding */ orderMap),
+/* harmony export */   orderPatch: () => (/* binding */ orderPatch),
 /* harmony export */   panelGroups: () => (/* binding */ panelGroups),
 /* harmony export */   panelLayout: () => (/* binding */ panelLayout),
 /* harmony export */   placedField: () => (/* binding */ placedField),
@@ -3147,61 +3273,144 @@ function applyCount(items) {
   }
 
   return count;
+} // ─── order and pins: a fields list, and a choice that orders (C106 (3), (6))
+//
+// A choice of one -- a filter's saved templates -- may order and pin its
+// options as a fields list does: {id, type: 'choice', sortable, pinnable,
+// options: [{id, text, pinned}]}. Its value stays the chosen option's id; its
+// order is its options' order, the pinned first, read as [{id, pinned}]
+// (choiceOrder) and given back by orderPatch. An option may say sortable:
+// false or pinnable: false -- a table's system column: it has no handle or no
+// pin, and it keeps its place while the others move round it.
+
+/** Whether a list's option moves: the list orders and the option does not refuse. */
+
+const optionMoves = (item, option) => Boolean(item?.sortable) && option?.sortable !== false;
+/** Whether a list's option pins: the list pins and the option does not refuse. */
+
+const optionPins = (item, option) => Boolean(item?.pinnable) && option?.pinnable !== false;
+/** Whether a choice orders or pins its options (then its order is reported). */
+
+const choiceArranges = item => item?.type === 'choice' && Boolean(item.sortable || item.pinnable);
+/** A choice's options in the order they stand, the pinned first (as a fields list's). */
+
+const choiceOptions = item => fieldOptions(item);
+/** A choice's order: [{id, pinned}] as its options stand, the pinned first. */
+
+function choiceOrder(item) {
+  return choiceOptions(item).map(option => ({
+    id: option.id,
+    pinned: Boolean(option.pinned)
+  }));
 }
 /**
- * A fields list with one option moved by `step` places within its own block
- * (the pinned or the rest: a pinned field stays above every other), or null
- * when it cannot move that way. Its value, ready for valuePatch.
+ * What to write into a choice to give it an order ([{id, pinned}] or ids):
+ * the options listed come first in that order, the ones left out follow;
+ * null when an id is not the choice's. The chosen option stays chosen.
  */
 
-function movedField(item, optionId, step) {
-  const options = fieldOptions(item);
-  const at = options.findIndex(option => option.id === optionId);
-  const to = at + step;
-  if (at < 0 || to < 0 || to >= options.length || Boolean(options[to].pinned) !== Boolean(options[at].pinned)) return null;
-  const list = [...options];
-  const [moved] = list.splice(at, 1);
-  list.splice(to, 0, moved);
-  return list.map(option => ({
+function orderPatch(item, order) {
+  if (item?.type !== 'choice' || !Array.isArray(order)) return null;
+  const options = optionsOf(item);
+  const byId = new Map(options.map(option => [option.id, option]));
+  const given = order.map(one => typeof one === 'string' ? {
+    id: one
+  } : one);
+  if (!given.every(one => one && typeof one === 'object' && byId.has(one.id))) return null;
+  const listed = new Set(given.map(one => one.id));
+  const ordered = given.map(one => {
+    const option = { ...byId.get(one.id)
+    };
+    if (typeof one.pinned === 'boolean') option.pinned = one.pinned;
+    return option;
+  });
+  return {
+    options: fieldOptions({
+      options: [...ordered, ...options.filter(option => !listed.has(option.id))]
+    })
+  };
+}
+/** Every ordering choice's order by its id, at the depth it sits. */
+
+function orderMap(items, into = {}) {
+  for (const item of Array.isArray(items) ? items : []) {
+    if (holdsValue(item) && choiceArranges(item)) into[item.id] = choiceOrder(item);
+    if (item?.type === 'group') orderMap(item.items, into);
+  }
+
+  return into;
+} // A list's arrangement for its options in a new order: a fields list's value
+// ([{id, checked, pinned}]), a choice's order ([{id, pinned}]).
+
+function arranged(item, options) {
+  return item?.type === 'choice' ? options.map(option => ({
+    id: option.id,
+    pinned: Boolean(option.pinned)
+  })) : options.map(option => ({
     id: option.id,
     checked: Boolean(option.checked),
     pinned: Boolean(option.pinned)
   }));
+} // The options again with the ones that do not move back at the places they
+// stood (`before`), the moving ones in the order `moved` gives them.
+
+
+function keepFixed(item, before, moved) {
+  const loose = moved.filter(option => optionMoves(item, option));
+  let at = 0;
+  return before.map(option => optionMoves(item, option) ? loose[at++] : option);
 }
-/** A fields list's value with one option put before another of the same block (a drag), or null. */
+/**
+ * A list with one option moved by `step` places within its own block (the
+ * pinned or the rest: a pinned option stays above every other), passing the
+ * options that do not move, which keep their places; null when it cannot
+ * move that way. A fields list's value or a choice's order.
+ */
+
+
+function movedField(item, optionId, step) {
+  const options = fieldOptions(item);
+  const option = options.find(one => one.id === optionId);
+  if (!option || !optionMoves(item, option)) return null;
+  const loose = options.filter(one => optionMoves(item, one));
+  const at = loose.indexOf(option);
+  const to = at + step;
+  if (to < 0 || to >= loose.length || Boolean(loose[to].pinned) !== Boolean(option.pinned)) return null;
+  const list = [...loose];
+  list.splice(at, 1);
+  list.splice(to, 0, option);
+  return arranged(item, keepFixed(item, options, list));
+}
+/** A list with one option put before another of the same block (a drag), or null. */
 
 function placedField(item, optionId, beforeId) {
   const options = fieldOptions(item);
   const moving = options.find(option => option.id === optionId);
-  if (!moving || optionId === beforeId) return null;
+  if (!moving || optionId === beforeId || !optionMoves(item, moving)) return null;
   const rest = options.filter(option => option.id !== optionId);
   let at = beforeId === null ? rest.length : rest.findIndex(option => option.id === beforeId);
-  if (at < 0) return null; // A pinned field stays among the pinned, the rest below them.
+  if (at < 0) return null; // A pinned option stays among the pinned, the rest below them.
 
   const pinned = rest.filter(option => option.pinned).length;
   at = moving.pinned ? Math.min(at, pinned) : Math.max(at, pinned);
   rest.splice(at, 0, moving);
-  const value = rest.map(option => ({
-    id: option.id,
-    checked: Boolean(option.checked),
-    pinned: Boolean(option.pinned)
-  }));
-  return sameValue(value, itemValue(item)) ? null : value;
+  const value = arranged(item, keepFixed(item, options, rest));
+  return sameValue(value, arranged(item, options)) ? null : value;
 }
-/** A fields list's value with one option checked or pinned the other way, or null. */
+/**
+ * A list with one option checked or pinned the other way, or null: a fields
+ * list's value, a choice's order (pinned only). An option that does not pin
+ * is not pinned or unpinned.
+ */
 
 function toggledField(item, optionId, key = 'checked') {
   const options = fieldOptions(item);
   const option = options.find(one => one.id === optionId);
-  if (!option || key === 'checked' && option.disabled) return null;
-  return options.map(one => ({
-    id: one.id,
-    checked: Boolean(one.checked),
-    pinned: Boolean(one.pinned),
-    ...(one.id === optionId ? {
-      [key]: !one[key]
-    } : {})
-  }));
+  if (!option || key === 'checked' && (option.disabled || item?.type !== 'fields')) return null;
+  if (key === 'pinned' && !optionPins(item, option)) return null;
+  return arranged(item, options.map(one => one.id === optionId ? { ...one,
+    [key]: !one[key]
+  } : one));
 }
 
 /***/ },
@@ -3356,7 +3565,12 @@ function mark(kind, checked) {
   if (kind === 'field') return icon('check', 'sf-settings-row-check');
   return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // One row. `row` is {key, kind: field|switch|option, role, checked, text,
-// caption, disabled, hidden, current, setting, option, handle, pin, pinned}.
+// caption, disabled, hidden, current, setting, option, handle, pin, pinned,
+// sorts, pins}. sorts and pins say the list orders or pins; handle and pin
+// that this row does. A row that does not (an option with sortable: false or
+// pinnable: false, a table's system column) keeps the handle's and the pin's
+// places empty, so its text stands where its neighbours' does (C105 H2: a row
+// without an icon among rows with icons keeps the icon's place).
 
 
 function renderRow(row, context) {
@@ -3370,12 +3584,12 @@ function renderRow(row, context) {
             tabindex=${row.current ? '0' : '-1'}
             data-sf-setting=${row.setting}
             data-sf-option=${row.option ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
-            ${row.handle ? icon('drag_indicator', 'sf-settings-row-handle') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${row.handle ? icon('drag_indicator', 'sf-settings-row-handle') : row.sorts ? icon('drag_indicator', 'sf-settings-row-handle-place') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             <span class="sf-settings-row-text">
                 <span class="sf-settings-row-label">${row.text}</span>
                 ${row.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-settings-row-caption">${row.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             </span>
-            ${row.pin ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-settings-row-pin-place" aria-hidden="true"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            ${row.pins ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-settings-row-pin-place" aria-hidden="true"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${mark(row.kind, row.checked)}
         </span>`; // The pin is the Framework's icon button (defect ST-2, owner decision
   // C166; C160 (1)): it shows its name as the Framework tooltip (the short
@@ -3391,7 +3605,7 @@ function renderRow(row, context) {
                 aria-label=${`${row.pinned ? words.unpin : words.pin}: ${row.text}`}
                 title=${row.pinned ? words.unpin : words.pin}
                 data-sf-setting=${row.setting} data-sf-option=${row.option}></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${['sf-settings-row', `sf-settings-row--${row.kind}`, row.pin ? 'sf-settings-row--pins' : ''].filter(Boolean).join(' ')}
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${['sf-settings-row', `sf-settings-row--${row.kind}`, row.pins ? 'sf-settings-row--pins' : ''].filter(Boolean).join(' ')}
             ?hidden=${row.hidden}
             ?data-checked=${row.checked}
             ?data-pinned=${row.pinned}
@@ -3471,8 +3685,14 @@ function renderItems(items, context) {
 
     if (item.type === 'choice') {
       const value = (0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.itemValue)(item);
-      const hit = (0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.matches)(context.query, item.text);
-      const rows = (Array.isArray(item.options) ? item.options : []).filter(option => option && option.id !== undefined && option.id !== null).map(option => ({
+      const hit = (0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.matches)(context.query, item.text); // A choice that orders (a filter's templates, C106 (3), (6)): the
+      // fill alone for the chosen one, the handle at the start, the pin
+      // at the end, the pinned on top -- a fields list's row without its
+      // check.
+
+      const arranges = (0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.choiceArranges)(item);
+      const options = arranges ? (0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.choiceOptions)(item) : (Array.isArray(item.options) ? item.options : []).filter(option => option && option.id !== undefined && option.id !== null);
+      const rows = options.map(option => ({
         key: String(option.id),
         kind: 'option',
         role: 'radio',
@@ -3481,10 +3701,17 @@ function renderItems(items, context) {
         checked: option.id === value,
         text: option.text ?? '',
         disabled: Boolean(item.disabled || option.disabled),
-        hidden: !hit && !(0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.matches)(context.query, option.text)
+        pinned: arranges && Boolean(item.pinnable && option.pinned),
+        sorts: Boolean(item.sortable),
+        pins: Boolean(item.pinnable),
+        handle: (0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.optionMoves)(item, option),
+        pin: (0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.optionPins)(item, option),
+        hidden: !hit && !(0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.matches)(context.query, option.text, option.keywords)
       }));
       if (item.text) parts.push((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-label" role="presentation" ?hidden=${rows.every(row => row.hidden)}>${item.text}</div>`);
-      parts.push(listOf(`choice:${item.id}`, 'radiogroup', item.text, rows, context));
+      parts.push(listOf(`choice:${item.id}`, 'radiogroup', item.text, rows, context, {
+        sortable: Boolean(item.sortable)
+      }));
       continue;
     }
 
@@ -3499,8 +3726,10 @@ function renderItems(items, context) {
         pinned: Boolean(option.pinned),
         text: option.text ?? '',
         disabled: Boolean(item.disabled || option.disabled),
-        handle: Boolean(item.sortable),
-        pin: Boolean(item.pinnable),
+        sorts: Boolean(item.sortable),
+        pins: Boolean(item.pinnable),
+        handle: (0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.optionMoves)(item, option),
+        pin: (0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.optionPins)(item, option),
         hidden: !(0,_settings_js__WEBPACK_IMPORTED_MODULE_2__.matches)(context.query, option.text, option.keywords)
       }));
       if (item.text && context.layout !== 'tabs') parts.push((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-label" role="presentation" ?hidden=${rows.every(row => row.hidden)}>${item.text}</div>`);
@@ -3549,7 +3778,7 @@ function renderHead(context) {
     event.stopPropagation();
     context.component.chooseGroup(Number(event.detail?.current ?? 0));
   }}></sf-tabs>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-settings-panel-title">${context.label}</span>`;
-  const close = context.popup ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-settings-panel-close" appearance="ghost" scheme="on-surface" size="1/2" icon="close"
+  const close = context.popup ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-settings-panel-close" appearance="ghost" scheme="on-surface" size=${buttonSize(context)} icon="close"
                 aria-label=${words.close} title=${words.close} data-sf-close></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-head">${tabs}${close}</div>`;
 }
@@ -3561,7 +3790,13 @@ function renderSearch(context) {
         <input type="search" class="sf-settings-panel-search-input" autocomplete="off" spellcheck="false"
             placeholder=${context.words.search} aria-label=${context.words.search} .value=${context.query} data-sf-search>
     </label>`;
-}
+} // The panel's buttons take its size (owner decision C22: no hand size 1/2;
+// the density of the region steps them down with the rows).
+
+
+const buttonSize = context => context.size === '1' ? '1' : '1/2'; // A filter's footer: «Применить (N)» first, then «Сбросить» (owner decision
+// C157 (3): the actions at the start, the main one first).
+
 
 function renderFooter(context) {
   const {
@@ -3569,10 +3804,11 @@ function renderFooter(context) {
     apply,
     count
   } = context;
-  const reset = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button size="1/2" appearance="outline" scheme="on-surface" text=${words.reset} data-sf-reset></sf-button>`;
+  const size = buttonSize(context);
+  const reset = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button size=${size} appearance="outline" scheme="on-surface" text=${words.reset} data-sf-reset></sf-button>`;
   if (apply !== 'button') return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-footer">${reset}</div>`;
   const label = count ? `${words.apply} (${count})` : words.apply;
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-footer">${reset}<sf-button size="1/2" text=${label} data-sf-apply></sf-button></div>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-footer"><sf-button size=${size} text=${label} data-sf-apply></sf-button>${reset}</div>`;
 }
 
 function renderPanel(context) {
@@ -3708,7 +3944,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-setti
 /***/ "72cabd0f91e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.7.4","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","color","heading","separator","group","fields"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"custom":{"type":"boolean"},"disabled":{"type":"boolean"},"sortable":{"type":"boolean"},"pinnable":{"type":"boolean"},"keywords":{"type":"array"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","panel"],"default":"drill"},"apply":{"type":"enum","values":["instant","button"],"default":"instant"},"search":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"}},"values":{"values":{"type":"object"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.8.0","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","color","heading","separator","group","fields"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"custom":{"type":"boolean"},"disabled":{"type":"boolean"},"sortable":{"type":"boolean"},"pinnable":{"type":"boolean"},"keywords":{"type":"array"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","panel"],"default":"drill"},"apply":{"type":"enum","values":["instant","button"],"default":"instant"},"search":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"apply-count":{"type":"number","optional":true},"close-label":{"type":"string","default-from":"runtime.close"},"search-placeholder":{"type":"string","default-from":"runtime.search"},"empty-text":{"type":"string","default-from":"runtime.empty"},"pin-label":{"type":"string","default-from":"runtime.pin"},"unpin-label":{"type":"string","default-from":"runtime.unpin"},"move-label":{"type":"string","default-from":"runtime.move-hint"}},"values":{"values":{"type":"object"},"tab":{"type":"number"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"arrange":{"carries":{"id":{"type":"string"},"order":{"type":"list"},"previous":{"type":"list"},"value":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"arranged":{"carries":{"id":{"type":"string"},"order":{"type":"list"},"previous":{"type":"list"},"value":{"type":"id"},"item":{"type":"object"}}}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"},"open":{"with":{"tab":{"type":"number","optional":true}},"waits":true},"close":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"}}');
 
 /***/ },
 

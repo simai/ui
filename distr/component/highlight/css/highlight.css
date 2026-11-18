@@ -186,6 +186,11 @@
     padding-right: var(--sf-space-1);
     padding-inline: var(--sf-space-1);
   }
+  /* Line marks are classes of the row (1.10.0): sf-code-line--added,
+     --removed, --highlight, --focus, --prompt and --output, so a page that
+     writes its rows at build time (a documentation site) marks them with Framework
+     classes. The runtime writes the same classes; the data-line-* attributes
+     it wrote before stay on its rows and draw the same. */
   .sf-highlight__wrap > .sf-scrollbar__viewport:has(> code > .sf-code-lines) {
     padding-left: 0;
     padding-right: 0;
@@ -201,6 +206,10 @@
     padding-right: 0;
     padding-inline: 0;
   }
+  /* The column holds three digits (more when the runtime widens it for a
+     longer number, --sf-code-line--number-size) plus its end room: the box
+     is border-box, so 3ch alone held under two digits with the room, and
+     rows 9 and 10 started their code at different places (1.10.0). */
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line__number{
     padding-right: var(--sf-space-1\/2);
   }
@@ -247,11 +256,11 @@
   }
   .sf-code-line__number {
     flex: none;
-    min-width: 3ch;
-    min-inline-size: 3ch;
-    min-width: 3ch;
-    min-width: var(--sf-code-line--number-size, 3ch);
-    min-inline-size: var(--sf-code-line--number-size, 3ch);
+    min-width: calc(3ch + var(--sf-space-1\/2));
+    min-inline-size: calc(3ch + var(--sf-space-1\/2));
+    min-width: calc(3ch + var(--sf-space-1\/2));
+    min-width: calc(var(--sf-code-line--number-size, 3ch) + var(--sf-space-1\/2));
+    min-inline-size: calc(var(--sf-code-line--number-size, 3ch) + var(--sf-space-1\/2));
     -webkit-padding-end: var(--sf-space-1\/2);
             padding-inline-end: var(--sf-space-1\/2);
     text-align: end;
@@ -291,8 +300,14 @@
         -ms-user-select: none;
             user-select: none;
   }
+  .sf-code-line.sf-code-line--added > .sf-code-line__sign::before {
+    content: "+"/"";
+  }
   .sf-code-line[data-line-diff=add] > .sf-code-line__sign::before {
     content: "+"/"";
+  }
+  .sf-code-line.sf-code-line--removed > .sf-code-line__sign::before {
+    content: "−"/"";
   }
   .sf-code-line[data-line-diff=remove] > .sf-code-line__sign::before {
     content: "−"/"";
@@ -311,6 +326,32 @@
   }
   .sf-code-line__prompt::before {
     content: "$"/"";
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line.sf-code-line--output > .sf-code-line__content{
+    padding-left: 2ch;
+  }
+  @supports not (padding-inline-start: initial){
+  html:not([dir="rtl"]) .sf-code-line.sf-code-line--output > .sf-code-line__content{
+    padding-left: 2ch;
+    }
+  }
+  .sf-code-line.sf-code-line--output > .sf-code-line__content:where(:dir(ltr)){
+    padding-left: 2ch;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-code-line.sf-code-line--output > .sf-code-line__content{
+    padding-right: 2ch;
+  }
+  @supports not (padding-inline-start: initial){
+  [dir="rtl"] .sf-code-line.sf-code-line--output > .sf-code-line__content{
+    padding-right: 2ch;
+    }
+  }
+  .sf-code-line.sf-code-line--output > .sf-code-line__content:where(:dir(rtl)){
+    padding-right: 2ch;
+  }
+  .sf-code-line.sf-code-line--output > .sf-code-line__content {
+    -webkit-padding-start: 2ch;
+            padding-inline-start: 2ch;
   }
   _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line[data-line-output] > .sf-code-line__content{
     padding-left: 2ch;
@@ -419,6 +460,22 @@
             column-gap: var(--sf-gap--actions);
     min-height: var(--sf-ui-1--control-height);
     min-block-size: var(--sf-ui-1--control-height);
+  }
+  /* The head's parts stand on its middle with no block margin of their own
+     (defects-d12, DEV msg-dd9ece44): the language label carries the text
+     utility sf-text-1/2, whose flow rule (.sf-text-1/2 + *, sf.base) gave
+     the next part, the wrap toggle, 16 above it, and the head drew 48, not
+     the step's 40 (36 on a phone). The read-aloud status keeps the sr-only
+     box. */
+  .sf-highlight__head > :not(.sr-only):not(.sf-highlight__status) {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-block: 0;
+  }
+  .sf--highlight-head > :not(.sr-only):not(.sf-highlight__status) {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-block: 0;
   }
   .sf-highlight__head {
     padding: 0 var(--sf-space-1);
@@ -814,14 +871,26 @@
     color: var(--sf-on-surface-variant);
     color: var(--sf-place--ink-variant, var(--sf-on-surface-variant));
   }
+  .sf-code-line.sf-code-line--added {
+    background: var(--sf-highlight-addition-background);
+  }
   .sf-code-line[data-line-diff=add] {
     background: var(--sf-highlight-addition-background);
+  }
+  .sf-code-line.sf-code-line--removed {
+    background: var(--sf-highlight-deletion-background);
   }
   .sf-code-line[data-line-diff=remove] {
     background: var(--sf-highlight-deletion-background);
   }
+  .sf-code-line.sf-code-line--added > .sf-code-line__sign::before {
+    color: var(--sf-success);
+  }
   .sf-code-line[data-line-diff=add] > .sf-code-line__sign::before {
     color: var(--sf-success);
+  }
+  .sf-code-line.sf-code-line--removed > .sf-code-line__sign::before {
+    color: var(--sf-error);
   }
   .sf-code-line[data-line-diff=remove] > .sf-code-line__sign::before {
     color: var(--sf-error);
@@ -830,6 +899,18 @@
      (12 % light, 24 % dark), and a 2 px bar at the line's start in primary
      -- a second cue that leaves the code's contrast alone. Focus is drawn
      the same: the other lines are neither dimmed nor blurred. */
+  .sf-code-line.sf-code-line--highlight {
+    /* The bar is a background layer, not an inset shadow (a shadow is the
+       retired focus ring's tool); code runs left to right here (direction:
+       ltr on the scroller), so its start is the left edge. */
+    background: linear-gradient(var(--sf-primary), var(--sf-primary)) left/calc(2 * var(--sf-px)) 100% no-repeat, var(--sf-primary-container);
+  }
+  .sf-code-line.sf-code-line--focus {
+    /* The bar is a background layer, not an inset shadow (a shadow is the
+       retired focus ring's tool); code runs left to right here (direction:
+       ltr on the scroller), so its start is the left edge. */
+    background: linear-gradient(var(--sf-primary), var(--sf-primary)) left/calc(2 * var(--sf-px)) 100% no-repeat, var(--sf-primary-container);
+  }
   .sf-code-line[data-line-mark] {
     /* The bar is a background layer, not an inset shadow (a shadow is the
        retired focus ring's tool); code runs left to right here (direction:
@@ -846,9 +927,16 @@
     color: var(--sf-on-surface-variant);
     color: var(--sf-highlight--punctuation, var(--sf-on-surface-variant));
   }
+  .sf-code-line.sf-code-line--output > .sf-code-line__content {
+    color: var(--sf-on-surface-variant);
+    color: var(--sf-highlight--comment, var(--sf-on-surface-variant));
+  }
   .sf-code-line[data-line-output] > .sf-code-line__content {
     color: var(--sf-on-surface-variant);
     color: var(--sf-highlight--comment, var(--sf-on-surface-variant));
+  }
+  .sf-code-line.sf-code-line--output > .sf-code-line__content * {
+    color: inherit;
   }
   .sf-code-line[data-line-output] > .sf-code-line__content * {
     color: inherit;

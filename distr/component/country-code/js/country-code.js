@@ -8,8 +8,10 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   bindCountryCode: () => (/* binding */ bindCountryCode),
+/* harmony export */   countryForLocale: () => (/* binding */ countryForLocale),
 /* harmony export */   countryFormValue: () => (/* binding */ countryFormValue),
 /* harmony export */   countryName: () => (/* binding */ countryName),
+/* harmony export */   localeRegion: () => (/* binding */ localeRegion),
 /* harmony export */   normalizeCountriesList: () => (/* binding */ normalizeCountriesList),
 /* harmony export */   normalizeIso2: () => (/* binding */ normalizeIso2),
 /* harmony export */   resolveDefaultFlagBase: () => (/* binding */ resolveDefaultFlagBase),
@@ -451,6 +453,9 @@ function resolveConfig(root, input) {
     // The page's language as it is: ru and en name countries from the table,
     // any other language through Intl (C177 (9): a third language was English).
     locale: locale.split('-')[0] || 'en',
+    // The same language with its region, for the country an empty field
+    // starts on (countryForLocale).
+    localeTag: countryLocaleTag(root, input),
     useMask: toBoolean(root.dataset.useMask ?? input?.dataset.useMask, false),
     useCountryMasks: toBoolean(root.dataset.useCountryMasks ?? input?.dataset.useCountryMasks, true),
     showCode: toBoolean(root.dataset.showCode ?? input?.dataset.showCode, true),
@@ -468,6 +473,16 @@ function resolveConfig(root, input) {
     // an empty one for the recent choices alone; without it no group at all.
     preferred: root.dataset.preferred === undefined ? undefined : String(root.dataset.preferred).split(/[\s,;]+/u).map(normalizeIso2).filter(Boolean)
   };
+} // The locale with its region (en-GB is Britain): the Smart host's own
+// `locale` setting as written, else the page's -- its template writes the
+// language alone into data-locale. Plain markup: data-locale as authored,
+// else the page's.
+
+
+function countryLocaleTag(root, input) {
+  const host = root.closest?.((0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_10__.tagSelector)('sf-input-country'));
+  const own = host ? host.getAttribute('locale') : root.dataset.locale || input?.dataset.locale;
+  return String(own || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_8__.pageLocale)(root) || '').trim();
 } // A country's name in a language the table does not carry, from Intl; null
 // where Intl has no name for it (it answers the code back).
 
@@ -832,7 +847,40 @@ async function applyMaskForRoot(root, input, maskPattern, config = null) {
 }
 
 function resolveInitialCountry(config, root, value = '') {
-  return resolveCountry(root, config.defaultIso2) || resolveCountry(root, '', config.fixedDialCode) || countryFromNumber(root, value) || root.__sfCountryOptions?.[0] || COUNTRY_ITEMS[0] || null;
+  return resolveCountry(root, config.defaultIso2) || resolveCountry(root, '', config.fixedDialCode) || countryFromNumber(root, value) || countryForLocale(root, config.localeTag) || root.__sfCountryOptions?.[0] || COUNTRY_ITEMS[0] || null;
+} // The country an empty field starts on when nothing names one (FL-7, property
+// page study 2026-11-17): the page's. An empty phone on a Russian page opened
+// on the first row of the table, Australia and +61. The region the locale
+// writes wins (en-GB is Britain, pt-BR Brazil); a bare language takes its
+// likely region from Intl (ru is Russia, en the United States, ar Egypt); a
+// language Intl cannot place, the United States. Only a country the field
+// offers: a field given its own list starts on that list's first row. An
+// iso2 or a dial code set on the field, or the number's own code, come first.
+
+
+const LOCALE_FALLBACK_COUNTRY = 'US';
+
+function localeRegion(tag) {
+  const text = String(tag || '').trim().replace(/_/gu, '-');
+  if (!text) return '';
+
+  try {
+    const locale = new Intl.Locale(text);
+    return locale.region || locale.maximize().region || '';
+  } catch {
+    return text.split('-').slice(1).find(part => /^[a-z]{2}$/iu.test(part)) || '';
+  }
+}
+
+function countryForLocale(root, tag) {
+  const options = root?.__sfCountryOptions?.length ? root.__sfCountryOptions : COUNTRY_ITEMS;
+
+  const offered = iso2 => {
+    const iso = normalizeIso2(iso2);
+    return iso && options.find(country => country.iso2 === iso) || null;
+  };
+
+  return offered(localeRegion(tag)) || offered(LOCALE_FALLBACK_COUNTRY);
 } // Where several countries share a dial code, the one a number with that code
 // means unless its next digits say otherwise (+7 6xx and +7 7xx are
 // Kazakhstan).

@@ -405,7 +405,10 @@ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_resu
  *   number (default)  1 234,5   as many digits as `step` needs, at most 6; 2 without one
  *   integer           1 235
  *   decimal-<n>       n digits after the point, always (0 to 20)
- *   percent           a share 0..1 as 12 %
+ *   share             a share 0..1 as 12 % (0.125 is 12,5 %)
+ *   percent           the same share: the charts' word, kept
+ *   unit-percent      a value that already is the percent (12.5 is 12,5 %),
+ *                     as the property type `percent` stores it
  *   compact           1,2 тыс.  /  1.2K
  *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
  *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
@@ -432,8 +435,12 @@ function numberOptions(format = 'number', step = 0) {
   if (word === 'integer') return {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
-  };
-  if (word === 'percent') return {
+  }; // Two meanings of «percent» met in the Framework (C294, MP-4): this word
+  // multiplies a share by 100, while the property type `percent` holds the
+  // percent itself. `share` says which one it is; `percent` stays its alias for
+  // the charts that write it, and `unit-percent` is the percent itself.
+
+  if (word === 'share' || word === 'percent') return {
     style: 'percent',
     maximumFractionDigits: 1
   };
@@ -496,7 +503,10 @@ function formatNumber(value, format = 'number', {
  */
 
 function percentSign(text) {
-  return String(text).replace(/[\s\u00a0\u202f]*%$/u, '\u00a0%');
+  // A right-to-left language writes direction marks around the sign («12.5‎%‎»
+  // in Arabic); they go with the space it had, and the number keeps the mark
+  // it starts with (C294).
+  return String(text).replace(/[\s\u00a0\u202f\u200e\u200f\u061c]*%[\u200e\u200f\u061c]*$/u, '\u00a0%');
 }
 /**
  * A value that already is a per cent (0..100, «72», «72.5») as the progress
@@ -511,6 +521,534 @@ function percentText(value, node) {
     node,
     grouping: false
   })}%`);
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "c11c730f061a"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DATE_FUTURE_PERIODS: () => (/* binding */ DATE_FUTURE_PERIODS),
+/* harmony export */   DATE_PERIODS: () => (/* binding */ DATE_PERIODS),
+/* harmony export */   LEGACY_DATE_OPERATORS: () => (/* binding */ LEGACY_DATE_OPERATORS),
+/* harmony export */   LEGACY_DATE_OPERATORS_UNTIL: () => (/* binding */ LEGACY_DATE_OPERATORS_UNTIL),
+/* harmony export */   buildFilterRequest: () => (/* binding */ buildFilterRequest),
+/* harmony export */   dateConditionLabel: () => (/* binding */ dateConditionLabel),
+/* harmony export */   dateConditionOf: () => (/* binding */ dateConditionOf),
+/* harmony export */   dateConditionPhrase: () => (/* binding */ dateConditionPhrase),
+/* harmony export */   dateConditionValue: () => (/* binding */ dateConditionValue),
+/* harmony export */   dateFilterChipText: () => (/* binding */ dateFilterChipText),
+/* harmony export */   dateFilterConditions: () => (/* binding */ dateFilterConditions),
+/* harmony export */   dateFilterKind: () => (/* binding */ dateFilterKind),
+/* harmony export */   dateGroupLabel: () => (/* binding */ dateGroupLabel),
+/* harmony export */   filterRequestContext: () => (/* binding */ filterRequestContext),
+/* harmony export */   isEmptyFilterEntry: () => (/* binding */ isEmptyFilterEntry),
+/* harmony export */   normalizeFilterEntry: () => (/* binding */ normalizeFilterEntry),
+/* harmony export */   resolveDatePeriod: () => (/* binding */ resolveDatePeriod)
+/* harmony export */ });
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _input_date_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c4779e51fee1");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("354525e80715");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__]);
+([_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__);
+// The date filter's conditions, its server contract and its words (owner
+// decision C293, 2026-11-17; study ui-control
+// prototypes/date-filter-conditions-study.html, notes
+// control/research/2026-11-17-date-filter/README.md).
+//
+// A field holds one date (a date, or a date and time) or a period (a start and
+// an end). The filter is a condition first and then exactly what the condition
+// needs: nothing, one day, two days, a number of days, or -- for a period
+// field -- a period by name or two days. One condition per field travels to the
+// server as {operator, value}:
+//
+//   one date    eq, lt, gt, gte, lte          value: "yyyy-mm-dd"
+//               between                       value: ["yyyy-mm-dd", "yyyy-mm-dd"], both days in
+//               period                        value: a period's name (DATE_PERIODS)
+//               last-days, next-days          value: a whole number of days, today counted
+//   a period    overlaps, within, starts, ends   value: a period's name or two days
+//               contains                      value: "yyyy-mm-dd"
+//   both        empty, not-empty              value: true
+//
+// The request carries the context the server resolves the periods in,
+// {timeZone, weekStart} (weekStart 0 Sunday .. 6 Saturday, as Date#getDay
+// counts): «this week» is the server's to work out, by name, so a saved view
+// stays «this week» and the browser's clock is not trusted. A date and time is
+// compared by its day in that time zone.
+//
+// The operators today, week and month (fix/date-pd) are read as the periods
+// today, this-week and this-month until 2027-01-01 (contracts/changes/journal.json
+// value-date-filter-period-operators).
+//
+// No DOM here and no Lit: the table, a record view and a server-side test read
+// the same rules.
+
+
+
+
+const SET_NAME = 'sf-field-renderers'; // Whole calendar periods (this week is Monday to Sunday where the week starts
+// on Monday, this month to its last day, this year to 31 December) and the
+// rolling «last 7 days», today and the six days before it.
+
+const DATE_PERIODS = Object.freeze(['today', 'yesterday', 'this-week', 'last-week', 'last-7-days', 'this-month', 'last-month', 'this-year']); // A deadline field (filter.future: true) also looks forward. «Overdue» is not
+// a date condition: it depends on the record's status.
+
+const DATE_FUTURE_PERIODS = Object.freeze(['tomorrow', 'next-week', 'next-month']);
+const LEGACY_DATE_OPERATORS = Object.freeze({
+  today: 'today',
+  week: 'this-week',
+  month: 'this-month'
+});
+const LEGACY_DATE_OPERATORS_UNTIL = '2027-01-01'; // What a condition needs: none | day | days | count | when (a period's name or
+// two days).
+
+const DAY_OPERATORS = ['eq', 'lt', 'gt', 'gte', 'lte'];
+const PERIOD_FIELD_OPERATORS = ['overlaps', 'within', 'starts', 'ends'];
+
+function condition(operator, need, group, period = '') {
+  return Object.freeze({
+    key: period ? `period:${period}` : operator,
+    operator,
+    need,
+    group,
+    ...(period ? {
+      period
+    } : {})
+  });
+}
+
+function singleConditions(future) {
+  return [condition('eq', 'day', 'date'), condition('between', 'days', 'date'), condition('lt', 'day', 'date'), condition('gt', 'day', 'date'), condition('gte', 'day', 'date'), condition('lte', 'day', 'date'), ...DATE_PERIODS.map(name => condition('period', 'none', 'period', name)), condition('last-days', 'count', 'period'), ...(future ? [condition('period', 'none', 'period', 'tomorrow'), condition('period', 'none', 'period', 'next-week'), condition('next-days', 'count', 'period'), condition('period', 'none', 'period', 'next-month')] : []), condition('empty', 'none', 'filled'), condition('not-empty', 'none', 'filled')];
+}
+
+function periodFieldConditions() {
+  return [...PERIOD_FIELD_OPERATORS.map(operator => condition(operator, 'when', 'range')), condition('contains', 'day', 'range'), condition('empty', 'none', 'filled'), condition('not-empty', 'none', 'filled')];
+} // A field is a period when it says so: its property type or control is
+// `period`, or its filter's kind is. Every other date field holds one date.
+
+
+function dateFilterKind(field = {}) {
+  const asked = [field.filter?.kind, field.filter?.control, field.propertyType, field.type];
+  return asked.includes('period') ? 'period' : 'date';
+}
+
+function isDueField(field = {}) {
+  return field.filter?.future === true || field.future === true;
+} // The conditions the field's filter offers, in the order of the list. A host's
+// filter.operators narrows them: an operator it names stays, `period` keeps
+// every period, and the old today, week and month keep every period and «last
+// N days» (they were the list's periods).
+
+
+function dateFilterConditions(field = {}) {
+  const all = dateFilterKind(field) === 'period' ? periodFieldConditions() : singleConditions(isDueField(field));
+  const asked = field.filter?.operators;
+  if (!Array.isArray(asked) || !asked.length) return all;
+  const names = new Set();
+
+  for (const operator of asked) {
+    const name = String(operator);
+
+    if (LEGACY_DATE_OPERATORS[name]) {
+      names.add('period');
+      names.add('last-days');
+      names.add('next-days');
+    } else names.add(name);
+  }
+
+  const kept = all.filter(one => names.has(one.operator));
+  return kept.length ? kept : all;
+}
+
+function isDay(value) {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/u.test(value);
+}
+
+function dayOf(value) {
+  if (typeof value !== 'string') return '';
+  const day = value.slice(0, 10);
+  return isDay(day) ? day : '';
+}
+
+function isTwoDays(value) {
+  return Array.isArray(value) && value.length === 2 && isDay(dayOf(value[0])) && isDay(dayOf(value[1]));
+}
+
+function isPeriodName(value) {
+  return typeof value === 'string' && (DATE_PERIODS.includes(value) || DATE_FUTURE_PERIODS.includes(value));
+}
+
+function isCount(value) {
+  const number = Number(value);
+  return value !== '' && value !== null && value !== true && Number.isInteger(number) && number > 0;
+} // The old operators as the new periods, noted once per page in
+// SF.deprecations until LEGACY_DATE_OPERATORS_UNTIL.
+
+
+function normalizeFilterEntry(entry) {
+  if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return entry;
+  const period = LEGACY_DATE_OPERATORS[entry.operator];
+  if (!period) return entry;
+  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__.noteDeprecated)({
+    component: SET_NAME,
+    kind: 'value',
+    attribute: 'filter operator',
+    from: entry.operator,
+    to: `period ${period}`,
+    since: '2026-11-17',
+    remove_after: LEGACY_DATE_OPERATORS_UNTIL
+  });
+  return { ...entry,
+    operator: 'period',
+    value: period
+  };
+}
+
+function isBlank(value) {
+  if (value === null || value === undefined) return true;
+  if (Array.isArray(value)) return value.every(isBlank);
+  if (typeof value === 'string') return value.trim() === '';
+  if (typeof value === 'object') return Object.values(value).every(isBlank);
+  return false;
+} // Whether a filter entry says nothing yet, so the table drops it with its
+// chip. It reads the operator (DF-1): a period, «empty» and «not empty» are
+// whole by themselves, and a condition that needs a day is empty without one.
+// An entry of any other field keeps the old reading: empty when its value or
+// values are.
+
+
+function isEmptyFilterEntry(entry) {
+  if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return isBlank(entry);
+  const one = LEGACY_DATE_OPERATORS[entry.operator] ? normalizeFilterEntry(entry) : entry;
+  const {
+    operator,
+    value
+  } = one;
+
+  switch (operator) {
+    case 'empty':
+    case 'not-empty':
+      return false;
+
+    case 'period':
+      return !isPeriodName(value);
+
+    case 'last-days':
+    case 'next-days':
+      return !isCount(value);
+
+    case 'overlaps':
+    case 'within':
+    case 'starts':
+    case 'ends':
+      return !(isPeriodName(value) || isTwoDays(value));
+
+    default:
+      break;
+  }
+
+  if (Object.prototype.hasOwnProperty.call(one, 'values')) return isBlank(one.values);
+  if (Object.prototype.hasOwnProperty.call(one, 'value')) return isBlank(one.value);
+  return Object.entries(one).filter(([key]) => !['operator', 'control', 'type'].includes(key)).every(([, item]) => isBlank(item));
+} // The value a condition starts with when it is chosen: the stale day of the
+// condition before is not carried into a period (DF-2), but a day stays a day
+// and two days stay two days.
+
+function dateConditionValue(next, previous = {}) {
+  const before = previous?.value;
+
+  switch (next.need) {
+    case 'none':
+      return next.period || true;
+
+    case 'day':
+      return isDay(dayOf(before)) ? dayOf(before) : null;
+
+    case 'days':
+      return isTwoDays(before) ? before.map(dayOf) : null;
+
+    case 'count':
+      return isCount(before) ? Number(before) : 30;
+
+    case 'when':
+      return isPeriodName(before) || isTwoDays(before) ? before : 'this-week';
+
+    default:
+      return null;
+  }
+} // The condition an entry stands for, in the field's list.
+
+function dateConditionOf(field, entry) {
+  const list = dateFilterConditions(field);
+  const one = normalizeFilterEntry(entry || {});
+  if (one?.operator === 'period') return list.find(item => item.period === one.value) ?? null;
+  return list.find(item => item.operator === one?.operator) ?? null;
+} // The context a request carries: the time zone and the first day of the week
+// the server resolves the periods in. A host that knows the person's own
+// (monday.com takes them from the profile) passes them; otherwise the
+// browser's zone and the page language's week.
+
+function filterRequestContext(node = null, {
+  timeZone,
+  weekStart
+} = {}) {
+  let zone = typeof timeZone === 'string' && timeZone ? timeZone : '';
+
+  if (!zone) {
+    try {
+      zone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    } catch {
+      zone = 'UTC';
+    }
+  }
+
+  const start = Number.isInteger(weekStart) && weekStart >= 0 && weekStart <= 7 ? weekStart % 7 : (0,_input_date_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_2__.localeWeekStart)((0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node));
+  return {
+    timeZone: zone,
+    weekStart: start
+  };
+} // A filter's values as the server is asked for them: the old operators read as
+// periods, empty entries left out, and the context beside them.
+
+function buildFilterRequest(values = {}, {
+  node = null,
+  context
+} = {}) {
+  const out = {};
+
+  for (const [key, entry] of Object.entries(values || {})) {
+    if (isEmptyFilterEntry(entry)) continue;
+    out[key] = normalizeFilterEntry(entry);
+  }
+
+  return {
+    values: out,
+    context: filterRequestContext(node, context || {})
+  };
+} // A period's first and last day for a given today, as the server is asked to
+// resolve it (a reference for a host's server and for the tests). `today` is
+// yyyy-mm-dd in the request's time zone.
+
+function resolveDatePeriod(name, {
+  today,
+  weekStart = 1
+} = {}) {
+  if (!isDay(today)) return null;
+  const [y, m, d] = today.split('-').map(Number);
+
+  const at = (year, month, day) => {
+    const date = new Date(Date.UTC(year, month - 1, day));
+    return date.toISOString().slice(0, 10);
+  };
+
+  const shift = days => at(y, m, d + days);
+
+  const dow = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+  const back = (dow - weekStart % 7 + 7) % 7;
+
+  switch (name) {
+    case 'today':
+      return [today, today];
+
+    case 'yesterday':
+      return [shift(-1), shift(-1)];
+
+    case 'tomorrow':
+      return [shift(1), shift(1)];
+
+    case 'this-week':
+      return [shift(-back), shift(6 - back)];
+
+    case 'last-week':
+      return [shift(-back - 7), shift(-back - 1)];
+
+    case 'next-week':
+      return [shift(7 - back), shift(13 - back)];
+
+    case 'last-7-days':
+      return [shift(-6), today];
+
+    case 'this-month':
+      return [at(y, m, 1), at(y, m + 1, 0)];
+
+    case 'last-month':
+      return [at(y, m - 1, 1), at(y, m, 0)];
+
+    case 'next-month':
+      return [at(y, m + 1, 1), at(y, m + 2, 0)];
+
+    case 'this-year':
+      return [at(y, 1, 1), at(y, 12, 31)];
+
+    default:
+      return null;
+  }
+} // ---- Words ----
+
+const camel = text => String(text).replace(/-([a-z0-9])/gu, (_, letter) => letter.toUpperCase());
+
+function word(node, key, vars, count) {
+  return (0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageWord)(_lang_index_mjs__WEBPACK_IMPORTED_MODULE_3__["default"], key, node, {
+    component: SET_NAME,
+    vars,
+    count
+  });
+} // A condition's name in the list: «Точная дата», «Прошлый месяц», «Пусто».
+
+
+function dateConditionLabel(node, item) {
+  if (!item) return '';
+  if (item.period) return word(node, `datePeriod_${camel(item.period)}`);
+  return word(node, `dateCondition_${camel(item.operator)}`);
+}
+function dateGroupLabel(node, group) {
+  return word(node, `dateGroup_${group}`);
+}
+
+function currentYear(timeZone) {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone,
+      year: 'numeric'
+    }).format(new Date());
+  } catch {
+    return String(new Date().getFullYear());
+  }
+}
+
+function dayDate(day) {
+  const [y, m, d] = day.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d, 12));
+} // A day as the chip says it: «17 ноября», «20 января 2025» -- the year only when
+// it is not this year.
+
+
+function dayText(node, day, timeZone) {
+  if (!isDay(day)) return '…';
+  const withYear = day.slice(0, 4) !== currentYear(timeZone);
+
+  try {
+    return new Intl.DateTimeFormat((0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node), {
+      day: 'numeric',
+      month: 'long',
+      ...(withYear ? {
+        year: 'numeric'
+      } : {}),
+      timeZone: 'UTC'
+    }).format(dayDate(day));
+  } catch {
+    return day;
+  }
+} // Two days as one span: «1–15 ноября», «28 октября – 3 ноября».
+
+
+function spanText(node, from, to, timeZone) {
+  const a = dayOf(from);
+  const b = dayOf(to);
+  if (!isDay(a) || !isDay(b)) return dayText(node, a || b, timeZone);
+  if (a === b) return dayText(node, a, timeZone);
+  const year = currentYear(timeZone);
+  const withYear = a.slice(0, 4) !== year || b.slice(0, 4) !== year;
+
+  try {
+    const format = new Intl.DateTimeFormat((0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node), {
+      day: 'numeric',
+      month: 'long',
+      ...(withYear ? {
+        year: 'numeric'
+      } : {}),
+      timeZone: 'UTC'
+    });
+    return format.formatRange(dayDate(a), dayDate(b));
+  } catch {
+    return `${dayText(node, a, timeZone)} – ${dayText(node, b, timeZone)}`;
+  }
+}
+
+function periodPhrase(node, name) {
+  return word(node, `datePeriodIn_${camel(name)}`);
+} // What a condition says after the field's name on its chip: «в прошлом
+// месяце», «не позже 17 ноября», «идёт на этой неделе», «пусто» (DF-4).
+
+
+function dateConditionPhrase(field, entry, node = null, {
+  timeZone
+} = {}) {
+  const one = normalizeFilterEntry(entry || {});
+  const zone = timeZone || filterRequestContext(node).timeZone;
+  const {
+    operator,
+    value
+  } = one || {};
+
+  const when = () => isPeriodName(value) ? periodPhrase(node, value) : isTwoDays(value) ? spanText(node, value[0], value[1], zone) : '…';
+
+  switch (operator) {
+    case 'eq':
+      return dayText(node, dayOf(value), zone);
+
+    case 'between':
+      return Array.isArray(value) ? spanText(node, value[0], value[1], zone) : '…';
+
+    case 'lt':
+    case 'gt':
+    case 'gte':
+    case 'lte':
+      return word(node, `dateChip_${operator}`, {
+        date: dayText(node, dayOf(value), zone)
+      });
+
+    case 'period':
+      return isPeriodName(value) ? periodPhrase(node, value) : '…';
+
+    case 'last-days':
+    case 'next-days':
+      return word(node, `dateChip_${camel(operator)}`, undefined, isCount(value) ? Number(value) : 0);
+
+    case 'empty':
+    case 'not-empty':
+      return word(node, `dateChip_${camel(operator)}`);
+
+    case 'overlaps':
+    case 'starts':
+    case 'ends':
+      return word(node, `dateChip_${operator}`, {
+        when: when()
+      });
+
+    case 'within':
+      return isPeriodName(value) ? word(node, 'dateChip_within', {
+        when: when()
+      }) : word(node, 'dateChip_withinDays', {
+        when: when()
+      });
+
+    case 'contains':
+      return word(node, 'dateChip_contains', {
+        date: dayText(node, dayOf(value), zone)
+      });
+
+    default:
+      return '';
+  }
+} // The chip of a date filter: «Дата оплаты: в прошлом месяце». A condition the
+// set does not know keeps the field's name alone.
+
+function dateFilterChipText(field = {}, entry, node = null, options = {}) {
+  const name = String(field.label ?? field.key ?? '');
+  const phrase = dateConditionPhrase(field, entry, node, options);
+  return phrase ? word(node, 'dateChip', {
+    field: name,
+    condition: phrase
+  }) : name;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -683,12 +1221,24 @@ function composeTime(original, text) {
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CURRENCY_DISPLAYS: () => (/* binding */ CURRENCY_DISPLAYS),
+/* harmony export */   addDecimal: () => (/* binding */ addDecimal),
+/* harmony export */   compareDecimal: () => (/* binding */ compareDecimal),
+/* harmony export */   currencyCodes: () => (/* binding */ currencyCodes),
+/* harmony export */   currencyDisplayOf: () => (/* binding */ currencyDisplayOf),
+/* harmony export */   currencyOf: () => (/* binding */ currencyOf),
+/* harmony export */   editableDecimal: () => (/* binding */ editableDecimal),
 /* harmony export */   formatDecimal: () => (/* binding */ formatDecimal),
 /* harmony export */   formatMoney: () => (/* binding */ formatMoney),
 /* harmony export */   formatPercent: () => (/* binding */ formatPercent),
 /* harmony export */   fractionDigits: () => (/* binding */ fractionDigits),
+/* harmony export */   isRtlLocale: () => (/* binding */ isRtlLocale),
+/* harmony export */   minorUnits: () => (/* binding */ minorUnits),
 /* harmony export */   moneyParts: () => (/* binding */ moneyParts),
-/* harmony export */   readDecimal: () => (/* binding */ readDecimal)
+/* harmony export */   moneyTotals: () => (/* binding */ moneyTotals),
+/* harmony export */   readDecimal: () => (/* binding */ readDecimal),
+/* harmony export */   readTypedDecimal: () => (/* binding */ readTypedDecimal),
+/* harmony export */   restingDecimal: () => (/* binding */ restingDecimal)
 /* harmony export */ });
 /* harmony import */ var _core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("15b4e93ff6ed");
 /* harmony import */ var _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c9ce0852ac73");
@@ -700,15 +1250,21 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // and a decimal, a money amount and a percent are shown in the page's language
 // through Intl, which formats a string by its digits: «1500.10» never passes
 // through a float on the way to «1 500,10 ₽». Pure, so the unit suite reads it
-// without a browser; the View set draws the editors of money, percent and
-// items with its own copy of the same rules.
+// without a browser. Money and percent are the Framework's in every mode
+// (owner decision C291 (2)) and their display, paste and totals follow owner
+// decision C294 (2026-11-17, MP-1..MP-12): the standard sign, never the
+// narrow one; a minus and nothing else for a negative; the amount and its
+// sign never broken apart; a direction mark on a right-to-left page; what a
+// person pastes («1 234,50 ₽», «$1,234.50») read as a decimal string. The
+// View set's items, compound and ru.requisites call these functions instead
+// of keeping a copy.
 
 
 const TYPED = /^([+-]?)(\d*)(?:[.,](\d*))?$/u; // Spaces a person or a formatter puts between groups of digits: the plain
 // space, the no-break space and the narrow no-break space ru-RU writes, and
 // the apostrophe some locales group with.
 
-const GROUP_SPACES = /[\s  ']/gu;
+const GROUP_SPACES = /[\s\u00a0\u202f']/gu;
 /**
  * What a person typed, read as a decimal: `{ok: true, value}` with the
  * canonical string (an optional minus, the integer digits without leading
@@ -760,24 +1316,76 @@ function fractionDigits(value) {
   const at = String(value ?? '').indexOf('.');
   return at === -1 ? 0 : String(value).length - at - 1;
 } // A float a host sent anyway is shown, not refused: a cell is not the place to
-// argue with a stored value. Only what reads as a decimal is formatted.
+// argue with a stored value. Only what reads as a decimal is formatted. A
+// float that is not a whole number is rounded to `digits` when they are given
+// (a currency's minor units, a percent's six) -- 0.1 + 0.2 roubles are
+// «0,30 ₽», never «0,30000000000000004 ₽» (MP-2) -- and the page hears it once
+// in the console: the value should have been a decimal string.
 
-function decimalOf(value) {
-  if (typeof value === 'number') return Number.isFinite(value) ? String(value) : null;
+const FLOAT_WARNED = new Set();
+
+function warnFloat(kind) {
+  if (FLOAT_WARNED.has(kind)) return;
+  FLOAT_WARNED.add(kind);
+  globalThis.console?.warn?.(`SF.fieldRenderers: a ${kind} value came as a number; send a decimal string ("1500.5"), a float loses digits.`);
+}
+
+function decimalOf(value, digits = null, kind = 'number') {
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) return null;
+    if (Number.isInteger(value)) return Number.isSafeInteger(value) ? String(value) : BigInt(value).toString();
+    if (!Number.isInteger(digits)) return String(value);
+    warnFloat(kind);
+    return readDecimal(value.toFixed(Math.min(20, digits)).replace(/(\.\d*?)0+$/u, '$1').replace(/\.$/u, '')).value;
+  }
+
   const read = readDecimal(value);
   return read.ok ? read.value : null;
-}
-/** A decimal string in the locale's digits, with every digit it has: «1 500,5». */
+} // Right-to-left languages: a number drawn there starts with the right-to-left
+// mark, so a minus, a sign or a «%» never jumps to the other end of the line
+// (C294, MP-9). Intl writes the mark for a negative already; the positive
+// amount had none.
 
 
-function formatDecimal(value, locale) {
-  const decimal = decimalOf(value);
+const RTL_LANGUAGES = new Set(['ar', 'he', 'iw', 'fa', 'ur', 'ps', 'yi', 'dv', 'ckb', 'sd', 'ug']);
+const DIRECTION_MARKS = /[\u200e\u200f\u061c\u2066-\u2069]/gu;
+function isRtlLocale(locale) {
+  return RTL_LANGUAGES.has(String(locale || '').toLowerCase().split(/[-_]/u)[0]);
+} // On a right-to-left page a sign that ends in a neutral mark («US$», «CA$»)
+// is isolated left to right (U+2066 .. U+2069), or the browser draws «$US»; a
+// percent is held left to right as a whole («12.5 %»), as Intl's Arabic
+// pattern holds «12.5%» with its marks.
+
+function directed(text, locale, {
+  wholeLtr = false
+} = {}) {
+  if (!text || !isRtlLocale(locale)) return text;
+  if (wholeLtr) return `\u200f\u200e${text.replace(DIRECTION_MARKS, '')}\u200e`;
+  const glued = text.replace(/[A-Za-z]+[^\sA-Za-z\d\u00a0\u202f\u200e\u200f\u061c\u2066-\u2069.,\u066b\u066c-]+/gu, '\u2066$&\u2069');
+  return glued.startsWith('\u200f') ? glued : `\u200f${glued}`;
+} // The amount and its sign stay on one line: every plain space Intl leaves
+// between them becomes a no-break one (ru, de write U+00A0 already).
+
+
+const unbroken = text => text.replace(/ /gu, '\u00a0');
+/**
+ * A decimal string in the locale's digits and groups, with every digit it has
+ * and at least `minDigits`: «1 500,5», «1 234 567,5» (the Number type, MP-5;
+ * money and percent use the same groups). A float that is not whole keeps at
+ * most six digits.
+ */
+
+
+function formatDecimal(value, locale, {
+  minDigits = 0
+} = {}) {
+  const decimal = decimalOf(value, 6);
   if (decimal === null) return '';
-  const digits = Math.min(20, fractionDigits(decimal));
-  return (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
+  const digits = Math.min(20, Math.max(minDigits, fractionDigits(decimal)));
+  return directed(unbroken((0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits
-  }).format(decimal);
+  }).format(decimal)), locale);
 }
 /** A money value as {amount, currency}; a field that fixes the currency takes a bare amount. */
 
@@ -799,11 +1407,38 @@ function moneyParts(value, fixed) {
     amount: value,
     currency
   };
+} // How a field names its currency (C294, q-mp-sign): Intl's standard sign
+// (`symbol`, the default) -- «₽» on a Russian page, «$» for the US dollar on an
+// English one and «CA$» for the Canadian dollar, so two currencies never read
+// the same -- or the code (`code`, for accounting and exports) or the name
+// (`name`). The narrow sign wrote USD, CAD and AUD all as «$» (MP-3): a field
+// asking for it gets the standard sign.
+
+const CURRENCY_DISPLAYS = Object.freeze(['symbol', 'code', 'name']);
+function currencyDisplayOf(field = {}) {
+  return CURRENCY_DISPLAYS.includes(field?.currencyDisplay) ? field.currencyDisplay : 'symbol';
+}
+/** ISO 4217 minor units of a currency (RUB 2, JPY 0, KWD 3); 2 for a code Intl does not know. */
+
+function minorUnits(currency) {
+  try {
+    return new Intl.NumberFormat('en', {
+      style: 'currency',
+      currency
+    }).resolvedOptions().maximumFractionDigits ?? 2;
+  } catch {
+    return 2;
+  }
 }
 /**
- * An amount with its currency, as a person reads it: «1 500,50 ₽», «$1,500.50».
- * The digits after the point are at least the currency's minor units (ISO
- * 4217) and every digit the amount has. Without a currency, the amount alone.
+ * An amount with its currency, as a person reads it: «1 500,50 ₽», «$1,500.50»,
+ * «CA$10.00» (C294). The digits after the point are at least the currency's
+ * minor units (ISO 4217) and every digit the amount has; a float is rounded
+ * to the minor units, with one console warning. A negative amount has the
+ * minus where the language writes it and nothing else -- no colour, no
+ * brackets (q-mp-negative). The amount and the sign never break apart, and a
+ * right-to-left page gets the direction mark. Without a currency, the amount
+ * alone.
  */
 
 function formatMoney(value, field = {}, locale = 'en') {
@@ -811,35 +1446,316 @@ function formatMoney(value, field = {}, locale = 'en') {
     amount,
     currency
   } = moneyParts(value, field.currency);
-  const decimal = decimalOf(amount);
+  const minor = currency ? minorUnits(currency) : 2;
+  const decimal = decimalOf(amount, minor, 'money');
   if (decimal === null) return '';
   if (!currency) return formatDecimal(decimal, locale);
-  const minor = (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
-    style: 'currency',
-    currency
-  }).resolvedOptions().maximumFractionDigits ?? 2;
   const digits = Math.min(20, Math.max(minor, fractionDigits(decimal)));
-  return (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
+  return directed(unbroken((0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
     style: 'currency',
     currency,
-    currencyDisplay: 'narrowSymbol',
+    currencyDisplay: currencyDisplayOf(field),
     minimumFractionDigits: digits,
     maximumFractionDigits: digits
-  }).format(decimal);
+  }).format(decimal)), locale);
 }
-/** A percent, «12,5 %» or «12.5%»: the value is the percent ("20" is 20 %), never the share. */
+/**
+ * A percent, «12,5 %» and «12.5 %»: the value is the percent ("20" is 20 %),
+ * never the share -- the share is SF.format's word `share` (MP-4). One
+ * spelling in every language (C203 (3)): the number, a no-break space, «%».
+ * A float keeps at most six digits, with one console warning.
+ */
 
 function formatPercent(value, locale = 'en') {
-  const decimal = decimalOf(value);
+  const decimal = decimalOf(value, 6, 'percent');
   if (decimal === null) return '';
-  const digits = Math.min(20, fractionDigits(decimal)); // One spelling in every language (C203 (3)): «12,5 %», «12.5 %».
-
-  return (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__.percentSign)((0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
+  const digits = Math.min(20, fractionDigits(decimal));
+  return directed((0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__.percentSign)((0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
     style: 'unit',
     unit: 'percent',
     minimumFractionDigits: digits,
     maximumFractionDigits: digits
-  }).format(decimal));
+  }).format(decimal)), locale, {
+    wholeLtr: true
+  });
+}
+/** The sum of decimal strings, by their digits (a column total): "1500.5" + "0.75" is "1501.25"; null when one is not a decimal. */
+
+function addDecimal(...values) {
+  let scale = 0;
+  const read = [];
+
+  for (const value of values.flat()) {
+    if (value === null || value === undefined || value === '') continue;
+    const one = decimalOf(value, 20);
+    if (one === null) return null;
+    read.push(one);
+    scale = Math.max(scale, fractionDigits(one));
+  }
+
+  let total = 0n;
+
+  for (const one of read) {
+    const negative = one.startsWith('-');
+    const [whole, fraction = ''] = one.replace('-', '').split('.');
+    const units = BigInt(whole + fraction.padEnd(scale, '0'));
+    total += negative ? -units : units;
+  }
+
+  const negative = total < 0n;
+  const digits = (negative ? -total : total).toString().padStart(scale + 1, '0');
+  const whole = digits.slice(0, digits.length - scale) || '0';
+  const fraction = scale ? digits.slice(-scale).replace(/0+$/u, '') : '';
+  const zero = /^0*$/u.test(whole + fraction);
+  return `${negative && !zero ? '-' : ''}${whole}${fraction ? `.${fraction}` : ''}`;
+}
+/**
+ * A money column's total (C294): the amounts added by their digits, one sum
+ * per currency, in the order the currencies first appear -- a column of
+ * dollars and euros is two sums, never one. [{currency, amount, text}];
+ * values that are not money are left out.
+ */
+
+function moneyTotals(values = [], field = {}, locale = 'en') {
+  const sums = new Map();
+
+  for (const value of values) {
+    const {
+      amount,
+      currency
+    } = moneyParts(value, field.currency);
+    const decimal = decimalOf(amount, currency ? minorUnits(currency) : null);
+    if (decimal === null) continue;
+    const key = currency ?? '';
+    sums.set(key, addDecimal(sums.get(key) ?? '0', decimal));
+  }
+
+  return [...sums].map(([currency, amount]) => ({
+    currency: currency || null,
+    amount,
+    text: formatMoney(currency ? {
+      amount,
+      currency
+    } : amount, {
+      currencyDisplay: field.currencyDisplay
+    }, locale)
+  }));
+} // What a person pastes or types, read as a decimal (C294, MP-8). Arabic-Indic
+// digits and separators are read as ASCII; the currency's signs and code,
+// «%», spaces, apostrophes and direction marks are dropped; a minus may stand
+// before or after the digits. With both a point and a comma the last one
+// separates the fraction; a separator that repeats groups; a single one is
+// the fraction, unless it is the page's group separator followed by exactly
+// three digits -- «1,234» on an English page is 1234, on a Russian one 1,234.
+
+const CURRENCY_MARKS = /[$€£¥₽₸₴₺₹₩₪₦₱฿₫¤]/gu;
+
+function signsOf(currency, locale) {
+  if (typeof currency !== 'string' || !/^[A-Z]{3}$/u.test(currency)) return [];
+  const signs = new Set([currency]);
+
+  for (const display of ['symbol', 'narrowSymbol', 'code', 'name']) {
+    try {
+      for (const part of new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency,
+        currencyDisplay: display
+      }).formatToParts(2)) {
+        if (part.type === 'currency') signs.add(part.value);
+      }
+    } catch {// A code Intl does not know keeps its letters only.
+    }
+  }
+
+  return [...signs].sort((a, b) => b.length - a.length);
+}
+
+function separatorsOf(locale) {
+  try {
+    const parts = new Intl.NumberFormat(locale).formatToParts(1234567.5);
+    return {
+      group: parts.find(part => part.type === 'group')?.value ?? ',',
+      decimal: parts.find(part => part.type === 'decimal')?.value ?? '.'
+    };
+  } catch {
+    return {
+      group: ',',
+      decimal: '.'
+    };
+  }
+}
+/**
+ * `{ok: true, value, typedDigits}` for what reads as a number -- the canonical
+ * decimal string (no groups, a point, no trailing zeros after it; null for
+ * nothing typed) and how many digits were typed after the separator -- or
+ * `{ok: false}`. `currency` names the code whose signs may stand in the text.
+ */
+
+
+function readTypedDecimal(text, {
+  locale = 'en',
+  currency = null
+} = {}) {
+  if (text === null || text === undefined) return {
+    ok: true,
+    value: null,
+    typedDigits: 0
+  };
+
+  if (typeof text === 'number') {
+    const read = readDecimal(Number.isInteger(text) ? text : String(text));
+    return read.ok ? {
+      ok: true,
+      value: read.value,
+      typedDigits: fractionDigits(read.value ?? '')
+    } : {
+      ok: false
+    };
+  }
+
+  let plain = String(text).replace(/[\u0660-\u0669]/gu, digit => String(digit.charCodeAt(0) - 0x660)).replace(/[\u06f0-\u06f9]/gu, digit => String(digit.charCodeAt(0) - 0x6f0)).replace(/\u066b/gu, '.').replace(/\u066c/gu, '');
+
+  for (const sign of signsOf(currency, locale)) plain = plain.split(sign).join('');
+
+  plain = plain.replace(CURRENCY_MARKS, '').replace(/[%\u066a]/gu, '').replace(DIRECTION_MARKS, '').replace(/[\s\u00a0\u202f'\u2019]/gu, '').replace(/[\u2212\u2013]/gu, '-');
+  if (plain === '') return {
+    ok: true,
+    value: null,
+    typedDigits: 0
+  };
+  let negative = false;
+
+  if (plain.startsWith('-')) {
+    negative = true;
+    plain = plain.slice(1);
+  } else if (plain.startsWith('+')) {
+    plain = plain.slice(1);
+  } else if (plain.endsWith('-')) {
+    negative = true;
+    plain = plain.slice(0, -1);
+  }
+
+  const dots = (plain.match(/\./gu) || []).length;
+  const commas = (plain.match(/,/gu) || []).length;
+
+  if (dots && commas) {
+    const mark = plain.charAt(Math.max(plain.lastIndexOf('.'), plain.lastIndexOf(',')));
+    plain = plain.split(mark === '.' ? ',' : '.').join('');
+    if (mark === ',') plain = plain.replace(',', '.');
+  } else if (dots + commas > 1) {
+    plain = plain.split(dots ? '.' : ',').join('');
+  } else if (dots + commas === 1) {
+    const mark = dots ? '.' : ',';
+    const after = plain.length - plain.indexOf(mark) - 1;
+    if (mark === separatorsOf(locale).group && after === 3) plain = plain.replace(mark, '');else plain = plain.replace(',', '.');
+  }
+
+  if (!/^\d*(?:\.\d*)?$/u.test(plain) || !/\d/u.test(plain)) return {
+    ok: false
+  };
+  const [whole = '', fraction = ''] = plain.split('.');
+  const integer = whole.replace(/^0+(?=\d)/u, '') || '0';
+  const digits = fraction.replace(/0+$/u, '');
+  const zero = /^0*$/u.test(integer + digits);
+  return {
+    ok: true,
+    value: `${negative && !zero ? '-' : ''}${integer}${digits ? `.${digits}` : ''}`,
+    typedDigits: fraction.length
+  };
+}
+/** A decimal at rest in an edit field: the locale's groups and point, at least `minDigits` after it, no sign («1 500,50»). */
+
+function restingDecimal(value, locale = 'en', minDigits = 0) {
+  const read = readDecimal(value);
+  if (!read.ok || read.value === null) return '';
+  const digits = Math.min(20, Math.max(minDigits, fractionDigits(read.value)));
+  return unbroken((0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits
+  }).format(read.value));
+}
+/** Every ISO 4217 code the browser knows, for a currency field that names no list; the ten offered codes where Intl cannot list them. */
+
+function currencyCodes(fallback = []) {
+  try {
+    const codes = Intl.supportedValuesOf?.('currency');
+    if (Array.isArray(codes) && codes.length) return codes;
+  } catch {// An older engine: the offered list.
+  }
+
+  return [...fallback];
+} // What the editors of money and percent need (owner decision C291 (2): the two
+// types are the Framework's in every mode, the View set's editors were the
+// reference): the sign and minor units of a currency, two decimals compared by
+// their digits, and a decimal as it is typed back in an input.
+
+/**
+ * A currency in a locale: {sign, before, minor} -- the sign the locale writes
+ * by the field's `currencyDisplay` (the standard sign by default: «₽», «$»,
+ * «CA$»; C294), whether it stands before the amount, and its ISO 4217 minor
+ * units (RUB 2, JPY 0, KWD 3). A code Intl does not know keeps its letters,
+ * after the amount, with two minor digits.
+ */
+
+function currencyOf(code, locale = 'en', display = 'symbol') {
+  const fallback = {
+    sign: String(code ?? ''),
+    before: false,
+    minor: 2
+  };
+  if (typeof code !== 'string' || !/^[A-Z]{3}$/u.test(code)) return fallback;
+
+  try {
+    const format = new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: code,
+      currencyDisplay: CURRENCY_DISPLAYS.includes(display) ? display : 'symbol'
+    });
+    const parts = format.formatToParts(1);
+    const at = parts.findIndex(part => part.type === 'currency');
+    if (at === -1) return fallback;
+    return {
+      sign: parts[at].value,
+      before: at < parts.findIndex(part => part.type === 'integer'),
+      minor: format.resolvedOptions().maximumFractionDigits ?? 2
+    };
+  } catch {
+    return fallback;
+  }
+}
+/** -1, 0 or 1: two decimals (canonical strings or integers) compared by their digits, never as floats; null when either is not a decimal. */
+
+function compareDecimal(a, b) {
+  const left = readDecimal(a);
+  const right = readDecimal(b);
+  if (!left.ok || !right.ok || left.value === null || right.value === null) return null;
+  const scale = Math.max(fractionDigits(left.value), fractionDigits(right.value));
+
+  const units = value => {
+    const negative = value.startsWith('-');
+    const [whole, fraction = ''] = value.replace('-', '').split('.');
+    const digits = BigInt(whole + fraction.padEnd(scale, '0'));
+    return negative ? -digits : digits;
+  };
+
+  const x = units(left.value);
+  const y = units(right.value);
+  return x === y ? 0 : x < y ? -1 : 1;
+}
+/** A decimal as typed back into an input: the locale's point, no groups («1500,5» on a Russian page); '' for nothing or not a decimal. */
+
+function editableDecimal(value, locale = 'en') {
+  const read = readDecimal(value);
+  if (!read.ok || read.value === null) return '';
+  let point = '.';
+
+  try {
+    point = (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('NumberFormat', locale, {}).formatToParts(1.5).find(part => part.type === 'decimal')?.value || '.';
+  } catch {
+    point = '.';
+  }
+
+  return read.value.replace('.', point);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -896,14 +1812,26 @@ function htmlText(value) {
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DATE_FUTURE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_FUTURE_PERIODS),
+/* harmony export */   DATE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_PERIODS),
 /* harmony export */   FILTER_RENDERERS: () => (/* binding */ FILTER_RENDERERS),
+/* harmony export */   NUMBER_FILTER_OPERATORS: () => (/* binding */ NUMBER_FILTER_OPERATORS),
 /* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES),
+/* harmony export */   buildFilterRequest: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.buildFilterRequest),
+/* harmony export */   dateFilterChipText: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateFilterChipText),
+/* harmony export */   dateFilterConditions: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateFilterConditions),
 /* harmony export */   dateTimeAttribute: () => (/* binding */ dateTimeAttribute),
+/* harmony export */   filterRequestContext: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.filterRequestContext),
+/* harmony export */   isEmptyFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.isEmptyFilterEntry),
+/* harmony export */   isNumericType: () => (/* binding */ isNumericType),
+/* harmony export */   normalizeFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.normalizeFilterEntry),
 /* harmony export */   propertyModes: () => (/* binding */ propertyModes),
 /* harmony export */   renderCellField: () => (/* binding */ renderCellField),
 /* harmony export */   renderEditField: () => (/* binding */ renderEditField),
 /* harmony export */   renderFilterField: () => (/* binding */ renderFilterField),
-/* harmony export */   renderViewField: () => (/* binding */ renderViewField)
+/* harmony export */   renderTotalField: () => (/* binding */ renderTotalField),
+/* harmony export */   renderViewField: () => (/* binding */ renderViewField),
+/* harmony export */   resolveDatePeriod: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.resolveDatePeriod)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("073f05ff1a81");
@@ -916,9 +1844,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("01ae054f01b4");
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _decimal_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ab3947ea3647");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("354525e80715");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__, _decimal_js__WEBPACK_IMPORTED_MODULE_10__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__, _decimal_js__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _phone_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("25be1c2df717");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("354525e80715");
+/* harmony import */ var _date_filter_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("c11c730f061a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__, _decimal_js__WEBPACK_IMPORTED_MODULE_10__, _date_filter_js__WEBPACK_IMPORTED_MODULE_13__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__, _decimal_js__WEBPACK_IMPORTED_MODULE_10__, _date_filter_js__WEBPACK_IMPORTED_MODULE_13__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
@@ -933,8 +1863,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 
 
 
+
  // The set's words and the property types' names live in its language files
 // (localization study LC-5), as a Smart component keeps them.
+
 
  // The Framework's field renderers, addressed by a property type and a template
 // rather than by a control name.
@@ -1045,134 +1977,416 @@ function renderRangeFilterControl(field, host) {
             </sf-dropdown>
         </div>
     `;
+} // The number filter (owner decision C294, MP-6, MP-7; the same order as the
+// date filter): the condition comes first and under it exactly what it needs
+// -- one number, two («Между», both ends included) or nothing («Пусто», «Не
+// пусто», whose value is true). The nine conditions are the ones AG Grid, MUI
+// X and spreadsheets agree on; a field's `filter.operators` may name fewer.
+// The value is typed with the decimal keyboard and the sign in the field (a
+// fixed currency's sign where the language writes it, «%» after a percent),
+// pasted text is read as a person means it («1 234,50 ₽», «$1,234.50») and
+// the request carries a decimal string, never the typed text. A money field
+// whose currency lives in the value adds a currency choice (q-mp-mix): the
+// request carries `currency` and compares amounts within it. A new condition
+// of another shape drops the old value.
+
+
+const NUMBER_FILTER_OPERATORS = Object.freeze(['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'between', 'empty', 'not-empty']);
+const NUMBER_NO_VALUE_OPERATORS = new Set(['empty', 'not-empty']);
+
+const operatorShape = operator => NUMBER_NO_VALUE_OPERATORS.has(operator) ? 'none' : operator === 'between' ? 'two' : 'one';
+
+function numberOperatorLabel(host, operator) {
+  return NUMBER_FILTER_OPERATORS.includes(operator) ? setText(host, `numberOperator_${operator}`) : host.getFilterOperatorLabel(operator);
 }
 
-function renderNumberFilterControl(field, host) {
-  const control = host.getFilterControlValue(field.key);
-  const operators = field.filter?.operators || ['eq'];
+function renderNumberFilterControl(field, host, look = {}) {
+  const control = host.getFilterControlValue(field.key) || {};
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
+  const operators = field.filter?.operators || NUMBER_FILTER_OPERATORS;
   const selectedOperator = control.operator || field.filter?.defaultOperator || operators[0];
-  const isBetween = selectedOperator === 'between';
+  const shape = operatorShape(selectedOperator);
   const rawValue = control.value;
-  const rangeValue = Array.isArray(rawValue) ? rawValue : [rawValue || '', ''];
+  const rangeValue = Array.isArray(rawValue) ? rawValue : [rawValue ?? '', ''];
+  const currencies = look.currencies || null;
+  const currency = currencies ? currencies.includes(control.currency) ? control.currency : currencies[0] : look.currency || null;
+  const sign = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(currency, locale, (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyDisplayOf)(field)) : null;
+  const textStart = sign?.before ? sign.sign : '';
+  const textEnd = look.percent ? '%' : sign && !sign.before ? sign.sign : '';
+  const minDigits = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(currency, locale).minor : 0;
 
-  const patchNumberValue = (index, nextInputValue) => {
-    if (!isBetween) {
-      host.patchTempFilterValue(field.key, {
-        value: nextInputValue || '',
-        operator: selectedOperator
+  const shown = value => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.restingDecimal)(value, locale, value === '' || value === null || value === undefined ? 0 : minDigits);
+
+  const withCurrency = patch => currencies ? { ...patch,
+    currency
+  } : patch;
+
+  const patch = next => host.patchTempFilterValue(field.key, withCurrency({
+    operator: selectedOperator,
+    ...next
+  }));
+
+  const typed = (index, event) => {
+    const input = event.currentTarget ?? event.target;
+    const text = String(input?.value ?? '');
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(text, {
+      locale,
+      currency
+    });
+
+    if (input) {
+      input.toggleAttribute('invalid', !read.ok);
+      if (read.ok) input.removeAttribute('error-message');else input.setAttribute('error-message', setText(host, 'notNumber'));
+    }
+
+    if (!read.ok) return;
+    const value = read.value ?? '';
+
+    if (shape !== 'two') {
+      patch({
+        value
       });
       return;
     }
 
-    const nextValue = [...rangeValue];
-    nextValue[index] = nextInputValue || '';
-    host.patchTempFilterValue(field.key, {
-      value: nextValue,
-      operator: selectedOperator
+    const next = [...rangeValue];
+    next[index] = value;
+    patch({
+      value: next
     });
   };
 
+  const input = (index, label, value) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input
+                size=${filterSize(host)}
+                appearance="bordered"
+                root-class="flex-1 min-w-0"
+                label=${label}
+                value=${shown(value)}
+                inputmode=${look.integer ? 'numeric' : 'decimal'}
+                text-start=${textStart || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                text-end=${textEnd || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                name="sf_filter_${field.key || 'number'}${index ? '_second' : ''}"
+                @change=${event => typed(index, event)}
+        ></sf-input>`;
+
+  const valueWord = setText(host, look.money ? 'filterAmount' : look.percent ? 'filterPercent' : 'filterNumber');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="flex gap-1/3 flex-col">
-            <div class="sf-filter-operator-inputs flex gap-1/3 items-cross-center">
-                <sf-input
-                        size=${filterSize(host)}
-                        appearance="bordered"
-                        root-class="flex-1 min-w-0"
-                        label="${isBetween ? setText(host, 'rangeFrom') : host.getFilterOperatorLabel(selectedOperator)}"
-                        value="${isBetween ? rangeValue[0] || '' : rawValue || ''}"
-                        name="sf_filter_${field.key || 'number'}"
-                        @change=${event => {
-    patchNumberValue(0, event.target?.value);
-  }}
-                ></sf-input>
-                ${isBetween ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                    <sf-input
-                            size=${filterSize(host)}
-                            appearance="bordered"
-                            label="${setText(host, 'rangeTo')}"
-                            root-class="flex-1 min-w-0"
-                            value="${rangeValue[1] || ''}"
-                            name="sf_filter_${field.key || 'number'}_second"
-                            @change=${event => {
-    patchNumberValue(1, event.target?.value);
-  }}
-                    ></sf-input>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            </div>
             <sf-dropdown
                     size=${filterSize(host)}
                     appearance="bordered"
                     mode="select"
-                    placeholder="${setText(host, 'operator')}"
+                    label=${setText(host, 'condition')}
+                    placeholder=${setText(host, 'condition')}
                     root-class="flex-1"
                     search="false"
+                    data-sf-filter-part="operator"
                     @change=${event => {
+    if (event.target !== event.currentTarget) return;
     const operator = event.detail?.values?.[0] || event.detail?.value || selectedOperator;
-    host.patchTempFilterValue(field.key, {
-      operator
-    });
+    if (operator === selectedOperator) return;
+    const next = operatorShape(operator); // A new condition of another shape drops the old value:
+    // one amount and two amounts are not the same question.
+
+    const value = next === 'none' ? true : next === shape ? rawValue : next === 'two' ? ['', ''] : '';
+    host.patchTempFilterValue(field.key, withCurrency({
+      operator,
+      value
+    }));
   }}
             >
                 ${operators.map(operator => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                     <sf-list-item
                             kind="text"
                             size=${filterSize(host)}
-                            text="${host.getFilterOperatorLabel(operator)}"
+                            text="${numberOperatorLabel(host, operator)}"
                             value="${operator}"
                             ?selected=${operator === selectedOperator}
                     ></sf-list-item>
                 `)}
             </sf-dropdown>
+            ${shape === 'none' ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : shape === 'two' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <div class="sf-filter-operator-inputs flex gap-1/3 items-cross-start">
+                    ${input(0, setText(host, 'rangeFrom'), rangeValue[0])}
+                    ${input(1, setText(host, 'rangeTo'), rangeValue[1])}
+                </div>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <div class="sf-filter-operator-inputs flex gap-1/3 items-cross-start">
+                    ${input(0, valueWord, Array.isArray(rawValue) ? rawValue[0] : rawValue)}
+                </div>`}
+            ${currencies && shape !== 'none' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <sf-dropdown
+                        size=${filterSize(host)}
+                        appearance="bordered"
+                        mode="select"
+                        label=${setText(host, 'currency')}
+                        root-class="flex-1"
+                        search=${currencies.length > 12 ? 'true' : 'false'}
+                        data-sf-filter-part="currency"
+                        .options=${currencies.map(code => ({
+    type: 'text',
+    size: filterSize(host),
+    value: code,
+    text: code,
+    selected: code === currency
+  }))}
+                        @change=${event => {
+    if (event.target !== event.currentTarget) return;
+    const code = event.detail?.values?.[0] || event.detail?.value;
+    if (!code || code === currency) return;
+    host.patchTempFilterValue(field.key, {
+      operator: selectedOperator,
+      value: rawValue,
+      currency: code
+    });
+  }}
+                ></sf-dropdown>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         </div>
     `;
 }
 
+function renderIntegerFilterControl(field, host) {
+  return renderNumberFilterControl(field, host, {
+    integer: true
+  });
+} // Money and percent are filtered as numbers with their own sign in the field
+// (owner decisions C291 (2), C294): «%» after a percent, a fixed currency's
+// sign where the locale writes it. A money field whose currency lives in the
+// value chooses the currency in the filter, from the field's `currencies`.
+
+
+function renderMoneyFilterControl(field, host) {
+  const fixed = fixedCurrency(field);
+  return renderNumberFilterControl(field, host, {
+    money: true,
+    currency: fixed,
+    currencies: fixed ? null : fieldCurrencies(field)
+  });
+}
+
+function renderPercentFilterControl(field, host) {
+  return renderNumberFilterControl(field, host, {
+    percent: true
+  });
+} // The date filter (owner decision C293, 2026-11-17; it replaces the operator
+// words and quick ranges of PD-6/PD-7). A condition first, then exactly what it
+// needs: nothing (a period by name, «Пусто», «Не пусто»), one day, two days (a
+// range calendar whose quick ranges are the whole periods; pressing one makes
+// the condition that period by name), a number of days, or -- for a period
+// field -- «when»: a period by name or two days of one's own. The list is
+// grouped: Дата, Период, Заполнено (a period field: Период записи,
+// Заполнено). Choosing a condition writes its own starting value, so a stale
+// day never travels with a period (DF-2); a period, «Пусто» and «Не пусто»
+// carry a value of their own, so the table keeps them (DF-1). The rules and
+// the words are date-filter.js; this draws them. The day controls keep PD-4,
+// PD-5 and PD-8: the table's size, the page's language, the condition above.
+
+
+function dateFilterPresets(field) {
+  const presets = field.filter?.presets;
+
+  if (presets === undefined || presets === null) {
+    return [..._date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_FUTURE_PERIODS : [])].join(',');
+  }
+
+  return Array.isArray(presets) ? presets : String(presets);
+}
+
+function defaultDateCondition(field, list) {
+  const asked = field.filter?.defaultOperator;
+
+  if (asked) {
+    const one = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateConditionOf)(field, {
+      operator: asked,
+      value: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.LEGACY_DATE_OPERATORS[asked] || asked
+    });
+    const named = list.find(item => item.key === asked);
+    if (named || one) return named || one;
+  } // One date: «Между» (the list's second, after the exact day); a period
+  // field: «Идёт в».
+
+
+  return list.find(item => item.operator === ((0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateFilterKind)(field) === 'period' ? 'overlaps' : 'between')) ?? list[0];
+}
+
+function dateFilterContext(host) {
+  return (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.filterRequestContext)(host ?? null, host?.getFilterContext?.() || {});
+}
+
 function renderDateFilterControl(field, host) {
-  const control = host.getFilterControlValue(field.key);
-  const operators = field.filter?.operators || ['eq'];
-  const selectedOperator = control.operator || field.filter?.defaultOperator || operators[0];
-  const isBetween = selectedOperator === 'between';
-  const dateValue = isBetween && Array.isArray(control.value) ? control.value : isBetween ? ['', ''] : control.value || '';
+  const control = host.getFilterControlValue(field.key) || {};
+  const list = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateFilterConditions)(field);
+  const asked = control.operator ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateConditionOf)(field, control) : null;
+  const current = asked ?? defaultDateCondition(field, list);
+  const value = asked ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.normalizeFilterEntry)(control).value : control.value;
+  const size = filterSize(host);
+
+  const patch = next => host.patchTempFilterValue(field.key, next);
+
+  const isDateTime = (field.propertyType || field.type) === 'datetime';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="flex flex-col gap-1/3">
-            <sf-input-date
-                    .value=${dateValue}
-                    ?range=${isBetween}
-                    name="sf_filter_${field.key || 'date'}"
-                    locale="ru-Ru"
-                    @change=${event => {
-    host.patchTempFilterValue(field.key, {
-      value: event.detail.value,
-      operator: selectedOperator
-    });
-  }}
-            ></sf-input-date>
             <sf-dropdown
-                    size=${filterSize(host)}
+                    size=${size}
                     appearance="bordered"
                     mode="select"
-                    placeholder="${setText(host, 'operator')}"
+                    label="${setText(host, 'dateCondition')}"
+                    .value=${current.key}
+                    hint=${isDateTime ? setWord(host, 'dateByDayIn', {
+    zone: dateFilterContext(host).timeZone
+  }) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     root-class="flex-1"
                     search="false"
                     @change=${event => {
-    const operator = event.detail?.values?.[0] || event.detail?.value || selectedOperator;
-    host.patchTempFilterValue(field.key, {
-      operator
+    const key = event.detail?.values?.[0] || event.detail?.value || current.key;
+    const next = list.find(item => item.key === key); // The condition shown before any is chosen is the default;
+    // choosing it writes it, with its own starting value.
+
+    if (!next || asked && next.key === current.key) return;
+    patch({
+      operator: next.operator,
+      value: (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateConditionValue)(next, {
+        value
+      })
     });
   }}
             >
-                ${operators.map(operator => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                ${list.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                     <sf-list-item
                             kind="text"
-                            size=${filterSize(host)}
-                            text="${host.getFilterOperatorLabel(operator)}"
-                            value="${operator}"
-                            ?selected=${operator === selectedOperator}
+                            size=${size}
+                            group=${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateGroupLabel)(host, item.group)}
+                            text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateConditionLabel)(host, item)}"
+                            value="${item.key}"
+                            ?selected=${item.key === current.key}
                     ></sf-list-item>
                 `)}
             </sf-dropdown>
+            ${renderDateConditionValue(field, host, current, value, patch)}
         </div>
     `;
+}
+
+function renderDateConditionValue(field, host, current, value, patch) {
+  const size = filterSize(host);
+  const name = `sf_filter_${field.key || 'date'}`;
+  if (current.need === 'none') return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+
+  if (current.need === 'count') {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <sf-input-quantity
+                    size=${size}
+                    label="${setText(host, current.operator === 'next-days' ? 'dateCountNext' : 'dateCountLast')}"
+                    min="1"
+                    max="366"
+                    unit="${setText(host, 'dateCountUnit')}"
+                    name="${name}_count"
+                    .value=${Number(value) > 0 ? Number(value) : 30}
+                    @change=${event => {
+      if (event.target !== event.currentTarget) return;
+      const count = Math.round(Number(event.detail?.value));
+      patch({
+        operator: current.operator,
+        value: count > 0 ? count : null
+      });
+    }}
+            ></sf-input-quantity>`;
+  }
+
+  if (current.need === 'day') {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <sf-input-date
+                    size=${size}
+                    label="${setText(host, current.operator === 'contains' ? 'dateValueDay' : 'dateValueDate')}"
+                    .value=${typeof value === 'string' ? value.slice(0, 10) : ''}
+                    name="${name}"
+                    @change=${event => {
+      if (event.target !== event.currentTarget) return;
+      patch({
+        operator: current.operator,
+        value: event.detail?.value || null
+      });
+    }}
+            ></sf-input-date>`;
+  }
+
+  if (current.need === 'days') return renderDateRangeValue(field, host, current, value, patch); // «when» (a period field): a period by name, or two days of one's own.
+
+  const own = Array.isArray(value);
+  const periods = [..._date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_FUTURE_PERIODS : [])];
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-dropdown
+                size=${size}
+                appearance="bordered"
+                mode="select"
+                label="${setText(host, 'dateWhen')}"
+                .value=${own ? 'own' : typeof value === 'string' ? value : ''}
+                root-class="flex-1"
+                search="false"
+                @change=${event => {
+    const key = event.detail?.values?.[0] || event.detail?.value;
+    if (!key) return;
+
+    if (key === 'own') {
+      if (!own) patch({
+        operator: current.operator,
+        value: ['', '']
+      });
+      return;
+    }
+
+    if (key !== value) patch({
+      operator: current.operator,
+      value: key
+    });
+  }}
+        >
+            ${periods.map(period => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <sf-list-item kind="text" size=${size} text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateConditionLabel)(host, {
+    period
+  })}" value="${period}"
+                        ?selected=${!own && value === period}></sf-list-item>
+            `)}
+            <sf-list-item kind="text" size=${size} text="${setText(host, 'dateOwnDays')}" value="own" ?selected=${own}></sf-list-item>
+        </sf-dropdown>
+        ${own ? renderDateRangeValue(field, host, current, value, patch) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`;
+} // Two days on a range calendar. Its quick ranges are the whole periods: one
+// pressed is the period by name -- in «Между» the condition becomes that
+// period (C293 (4)), in a period field's «when» the value is its name.
+
+
+function renderDateRangeValue(field, host, current, value, patch) {
+  const days = Array.isArray(value) ? value.map(day => typeof day === 'string' ? day.slice(0, 10) : '') : ['', ''];
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-date
+                size=${filterSize(host)}
+                range
+                label="${setText(host, 'dateValuePeriod')}"
+                .value=${days}
+                .presets=${dateFilterPresets(field)}
+                name="sf_filter_${field.key || 'date'}"
+                @change=${event => {
+    if (event.target !== event.currentTarget) return;
+    const preset = event.detail?.preset?.id;
+
+    if (preset && (_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_PERIODS.includes(preset) || _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_FUTURE_PERIODS.includes(preset))) {
+      patch(current.operator === 'between' ? {
+        operator: 'period',
+        value: preset
+      } : {
+        operator: current.operator,
+        value: preset
+      });
+      return;
+    }
+
+    const next = Array.isArray(event.detail?.value) ? event.detail.value : [event.detail?.startValue || '', event.detail?.endValue || ''];
+    patch({
+      operator: current.operator,
+      value: next
+    });
+  }}
+        ></sf-input-date>`;
 }
 
 function renderMultiSelectFilterControl(field, host) {
@@ -1278,11 +2492,14 @@ const FILTER_RENDERERS = {
   text: renderTextFilterControl,
   string: renderTextFilterControl,
   number: renderNumberFilterControl,
-  integer: renderNumberFilterControl,
+  integer: renderIntegerFilterControl,
   date: renderDateFilterControl,
   datetime: renderDateFilterControl,
   range: renderRangeFilterControl,
   'date-range': renderDateFilterControl,
+  // A period field (a start and an end, C293): its own conditions -- overlaps,
+  // within, starts, ends, contains a day.
+  period: renderDateFilterControl,
   'multi-select': renderMultiSelectFilterControl,
   'single-select': renderMultiSelectFilterControl,
   choice: renderMultiSelectFilterControl,
@@ -1296,14 +2513,17 @@ const FILTER_RENDERERS = {
   lookup: renderEntityMultiSelectFilterControl,
   file: renderFileFilterControl,
   color: renderColorFilterControl,
-  // The types a component set draws (property-view port 1.18.0): a money
-  // amount and a percent are filtered as numbers (the host compares the
-  // amount, as a decimal), and an items field by its number of rows.
-  money: renderNumberFilterControl,
-  percent: renderNumberFilterControl,
-  items: renderNumberFilterControl
+  // A money amount and a percent are filtered as decimals with their sign
+  // (C291 (2)); an items field, which the View set draws, by its number of
+  // rows (property-view port 1.18.0).
+  money: renderMoneyFilterControl,
+  percent: renderPercentFilterControl,
+  items: renderIntegerFilterControl
 }; // What a field asks to be filtered by: its own declared control if it has one,
 // otherwise its property type, otherwise text.
+// The date filter's rules for a host that builds the request or draws the
+// chips itself (sf-view-table): the same functions as SF.fieldRenderers.dateFilter.
+
 
 function renderFilterField(field = {}, host) {
   const asked = field.filter?.control || field.propertyType || field.type || field.dataType || 'text';
@@ -1688,7 +2908,12 @@ function renderNumericCell(field, value, host) {
   const number = Number(scalarValue(value));
 
   if (variant !== 'scale' && variant !== 'meter' || !Number.isFinite(number)) {
-    return renderHostFormattedCell(field, value, host);
+    // The host's text first; else the number in the page's language, as
+    // the view prints it («12,5»), where the table printed «12.5».
+    const formatted = renderHostFormattedCell(field, value, host);
+    if (formatted !== null) return formatted;
+    if (carriesText(value)) return value.text || null;
+    return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || null;
   }
 
   if (number < 0 || number > 100) return null;
@@ -1825,7 +3050,9 @@ const EDIT_RENDERERS = {
   choices: renderChoicesEdit,
   file: renderFileEdit,
   color: renderColorEdit,
-  include: renderIncludeEdit
+  include: renderIncludeEdit,
+  money: renderMoneyEdit,
+  percent: renderPercentEdit
 };
 
 function fieldName(field) {
@@ -1834,22 +3061,64 @@ function fieldName(field) {
 // already has a control that knows country codes, dial prefixes and masks, so a
 // `string` whose variant is `phone` gets it and everything else about a string
 // stays true. Counted on a running Larena site, which declares one.
+//
+// What it writes is E.164, `+79161234567` (FL-1): the control's own form value,
+// whatever the box shows -- `+7 916 123-45-67` written back changed a stored
+// number on every save. It reads E.164 and the formatted strings stored before.
+//
+// An extension (`;ext=12`) is not the control's to edit: the number goes to
+// it alone and the extension is written back after it, so a save keeps it.
+//
+// The country an empty field starts on (FL-7): `defaultCountry` (ISO 3166
+// alpha-2, "RU") where the field names one, else the page's (ru is Russia,
+// en-GB Britain; sf-input-country's own rule). A stored number names its own
+// country, so the setting is passed only while the field is empty.
 
 
 function renderPhoneEdit(field, value, host) {
+  const {
+    number: stored,
+    extension
+  } = (0,_phone_js__WEBPACK_IMPORTED_MODULE_11__.splitPhone)(scalarValue(value) ?? '');
+  const preferred = String(field.defaultCountry ?? '').trim().toUpperCase();
+  const iso2 = /^[A-Z]{2}$/u.test(preferred) && !String(stored).trim() ? preferred : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input-country
                 size=${EDIT_SIZE}
                 name=${fieldName(field)}
-                value=${scalarValue(value) ?? ''}
+                value=${stored}
+                iso2=${iso2}
                 aria-label=${field.label || field.key || ''}
                 ?required=${Boolean(field.required)}
                 ?disabled=${field.readonly === true}
                 use-mask="true"
                 show-code="true"
-                @change=${event => host.setFieldValue(field, event.detail?.value ?? event.target?.value ?? '')}
+                @change=${event => host.setFieldValue(field, phoneWritten(event, extension))}
         ></sf-input-country>
     `;
+} // The control's form value (E.164; nothing for the dial code alone), or the
+// box's text brought to E.164 where the element is not defined yet.
+
+
+function phoneWritten(event, extension = '') {
+  const control = event.currentTarget;
+  const number = typeof control?.sfFormValue === 'function' ? control.sfFormValue() ?? '' : (0,_phone_js__WEBPACK_IMPORTED_MODULE_11__.phoneE164)(event.detail?.value ?? event.target?.value ?? '');
+  return number && extension ? `${number};ext=${extension}` : number;
+}
+
+function isPhoneField(field) {
+  return String(field.variant ?? '') === 'phone';
+} // A phone shown: the host's text first (formatFieldValue, or {value, text}),
+// as for any string; else the number
+// laid out by its country, left to right on a right-to-left page too (an
+// Arabic page drew the groups in reverse order).
+
+
+function phoneText(field, value, host) {
+  const formatted = host?.formatFieldValue?.(field, value);
+  if (typeof formatted === 'string') return formatted;
+  if (carriesText(value)) return value.text;
+  return (0,_phone_js__WEBPACK_IMPORTED_MODULE_11__.formatPhone)(scalarValue(value), setText(host, 'phoneExtension'));
 } // A password is a string the set never shows (owner, 2026-10-19; Larena's
 // storage settings). The host never sends one: the value of a `password`
 // variant is {set: true} or {set: false}, and null or an absent value reads as
@@ -1915,11 +3184,22 @@ function renderPasswordEdit(field, value, host) {
 }
 
 function renderStringCell(field, value, host) {
+  if (isPhoneField(field)) {
+    const text = phoneText(field, value, host);
+    return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<bdi dir="ltr">${text}</bdi>` : null;
+  }
+
   return isPasswordField(field) ? passwordState(host, value) : null;
 }
 
 function renderStringView(field, value, host) {
   if (isPasswordField(field)) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${passwordState(host, value)}</span>`;
+
+  if (isPhoneField(field)) {
+    const text = phoneText(field, value, host);
+    return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view"><bdi dir="ltr">${text}</bdi></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  }
+
   return renderTextView(field, value, host);
 } // A file shown as what it is. The site keeps logos, so a file whose variant says
 // image is drawn as the image rather than as a row with a paperclip -- the same
@@ -2267,6 +3547,335 @@ function renderNumberEdit(field, value, host) {
                 @change=${event => write(event, true)}
         ></sf-input>
     `;
+} // Money and percent are the Framework's in every mode (owner decision C291
+// (2), 2026-11-17; set boundary study BQ-2): the View set's editors were the
+// reference, its option names kept -- `currency` (a fixed ISO 4217 code),
+// `min`, `max`, `precision` (a percent's digits; money's are its currency's
+// minor units, ISO 4217) and `placeholder`, as simai.property-view-port 1.18.0
+// declares them. Every value is a decimal string, never a float:
+//
+//   percent   "12.5" -- the percent, not the share; 0 to 100 unless the
+//             field bounds it otherwise
+//   money     {amount: "1500.50", currency: "RUB"}; a field with a fixed
+//             currency also reads a bare amount, and writes the pair
+//
+// One sf-input with the decimal keyboard and the sign in the field («%», a
+// fixed currency's «₽» after the amount or «$» before it, as the page's
+// language writes it); a money field without a fixed currency has a currency
+// dropdown beside the amount. What is typed is read with a comma or a point
+// and written canonical; the input shows it back in the page's language
+// («1500,5»). An entry that is not a value yet -- text that is not a number,
+// more digits after the point than allowed, a bound crossed, an amount without
+// a currency -- is written as typed and said through setFieldError, which holds
+// a save (port 1.16.0, as a masked string's), and under the field once the
+// person leaves it. A host without setFieldError hears undefined, as for a
+// number.
+// The codes a currency choice offers when a field names no `currencies` and
+// the browser cannot list ISO 4217 (Intl.supportedValuesOf).
+
+
+const OFFERED_CURRENCIES = ['RUB', 'USD', 'EUR', 'CNY', 'KZT', 'BYN', 'AED', 'TRY', 'GBP', 'JPY']; // A field's `currencies` (C294, MP-10): an array of ISO 4217 codes or a
+// comma-separated string; absent, every code the browser knows.
+
+function fieldCurrencies(field) {
+  const asked = Array.isArray(field?.currencies) ? field.currencies : typeof field?.currencies === 'string' ? field.currencies.split(',') : [];
+  const codes = asked.map(code => String(code).trim().toUpperCase()).filter(code => /^[A-Z]{3}$/u.test(code));
+  return codes.length ? [...new Set(codes)] : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyCodes)(OFFERED_CURRENCIES);
+} // What a person is typing, per host and field: the value written is
+// canonical («12.5»), and drawn back as such it would move the caret under
+// «12,50» or swallow the comma of «12,». The typed text is shown while it
+// still reads as the value, and forgotten when the field is left.
+
+
+const DECIMAL_DRAFTS = new WeakMap();
+
+function draftOf(host, key) {
+  return host && typeof host === 'object' ? DECIMAL_DRAFTS.get(host)?.get(key) : undefined;
+}
+
+function keepDraft(host, key, text) {
+  if (!host || typeof host !== 'object') return;
+  let drafts = DECIMAL_DRAFTS.get(host);
+
+  if (!drafts) {
+    drafts = new Map();
+    DECIMAL_DRAFTS.set(host, drafts);
+  }
+
+  if (text === undefined) drafts.delete(key);else drafts.set(key, text);
+} // At rest the amount shows its groups and at least `minDigits` after the
+// point («1 500,50»); while it is typed, as typed (C294).
+
+
+function decimalShown(host, key, value, {
+  currency = null,
+  minDigits = 0
+} = {}) {
+  if (value === null || value === undefined || value === '') return '';
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
+  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(value, {
+    locale: 'en',
+    currency
+  });
+  if (!read.ok) return String(value);
+  const draft = draftOf(host, key);
+
+  if (typeof draft === 'string') {
+    const typed = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(draft, {
+      locale,
+      currency
+    });
+    if (typed.ok && typed.value === read.value) return draft;
+  }
+
+  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.restingDecimal)(read.value, locale, minDigits);
+}
+
+const hasBound = bound => bound !== null && bound !== undefined && bound !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readDecimal)(bound).ok; // What is wrong with a typed decimal, or '': not a number, more digits after
+// the point than `digits` (never rounded away: «1500,555» is an error, while
+// «1500,500» is 1500.5), outside min..max.
+
+
+function decimalError(host, text, {
+  digits = null,
+  min = null,
+  max = null,
+  currency = null
+} = {}) {
+  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(text, {
+    locale: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null),
+    currency
+  });
+  if (!read.ok) return setText(host, 'notNumber');
+  if (read.value === null) return '';
+
+  if (Number.isInteger(digits) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.fractionDigits)(read.value) > digits) {
+    return digits === 0 ? setText(host, 'fractionNone') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, 'precisionMax', host ?? null, {
+      component: SET_NAME,
+      count: digits
+    });
+  }
+
+  const low = hasBound(min) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.compareDecimal)(read.value, min) === -1;
+  const high = hasBound(max) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.compareDecimal)(read.value, max) === 1;
+  if (!low && !high) return '';
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
+  const vars = {
+    min: hasBound(min) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatDecimal)(min, locale) : '',
+    max: hasBound(max) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatDecimal)(max, locale) : ''
+  };
+  if (hasBound(min) && hasBound(max)) return setWord(host, 'boundBetween', vars);
+  return low ? setWord(host, 'boundAtLeast', vars) : setWord(host, 'boundAtMost', vars);
+} // The value goes to the host with what is wrong with it: a value that is not
+// one yet is written as typed while setFieldError holds the save.
+
+
+function writeDecimal(field, host, value, message) {
+  if (message) {
+    if (typeof host.setFieldError === 'function') {
+      host.setFieldError(field, message);
+      host.setFieldValue(field, value);
+    } else {
+      host.setFieldValue(field, undefined);
+    }
+
+    return;
+  }
+
+  host.setFieldError?.(field, null);
+  host.setFieldValue(field, value);
+}
+
+function decimalInput(field, value, host, {
+  key,
+  check,
+  write,
+  currency = null,
+  minDigits = 0,
+  textStart = '',
+  textEnd = '',
+  rootClass = ''
+}) {
+  const own = EDIT_ERROR;
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
+
+  const typed = (event, left) => {
+    const input = event.currentTarget ?? event.target;
+    const text = String(input?.value ?? '');
+    keepDraft(host, key, left ? undefined : text);
+    const message = check(text);
+
+    if (input && !own) {
+      if (message && left) {
+        input.setAttribute('error-message', message);
+        input.toggleAttribute('invalid', true);
+      } else if (!message && input.hasAttribute?.('invalid') && !input.hasAttribute('data-sf-form-invalid')) {
+        input.toggleAttribute('invalid', false);
+        input.removeAttribute('error-message');
+      }
+    }
+
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(text, {
+      locale,
+      currency
+    });
+    write(read.ok ? read.value : text, message);
+  };
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input
+                size=${EDIT_SIZE}
+                appearance="bordered"
+                name=${fieldName(field)}
+                value=${decimalShown(host, key, value, {
+    currency,
+    minDigits
+  })}
+                inputmode="decimal"
+                text-start=${textStart || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                text-end=${textEnd || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                placeholder=${field.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                root-class=${rootClass || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ?required=${Boolean(field.required)}
+                ?invalid=${Boolean(own)}
+                error-message=${own || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${field.label || field.key || ''}
+                @input=${event => typed(event, false)}
+                @change=${event => typed(event, true)}
+        ></sf-input>
+    `;
+}
+
+function fixedCurrency(field) {
+  return typeof field?.currency === 'string' && /^[A-Z]{3}$/u.test(field.currency) ? field.currency : null;
+} // A percent's digits after the point: `precision`, else the digits its
+// `step` has («0.1» is one), else as many as typed.
+
+
+function percentDigits(field) {
+  if (Number.isInteger(field.precision)) return field.precision;
+  const step = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readDecimal)(field.step);
+  return step.ok && step.value !== null && Number(step.value) > 0 ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.fractionDigits)(step.value) : null;
+} // A percent is the percent itself, «12.5» is 12,5 % (C294); it is bounded
+// only by the field's min and max -- a growth of 150 % or a change of −5 % is
+// a percent too (MP-11: the View set bounded it 0..100 without saying why).
+
+
+function renderPercentEdit(field, value, host) {
+  const key = String(field.key ?? '');
+  const min = hasBound(field.min) ? field.min : null;
+  const max = hasBound(field.max) ? field.max : null;
+  const digits = percentDigits(field);
+  return decimalInput(field, scalarValue(value), host, {
+    key,
+    textEnd: '%',
+    check: text => decimalError(host, text, {
+      digits,
+      min,
+      max
+    }),
+    write: (next, message) => writeDecimal(field, host, next, message)
+  });
+}
+
+function renderMoneyEdit(field, value, host) {
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
+  const key = String(field.key ?? '');
+  const fixed = fixedCurrency(field);
+  const display = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyDisplayOf)(field);
+  const parts = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.moneyParts)(scalarValue(value), fixed); // A currency chosen before an amount is typed waits here: a value is an
+  // amount and its currency, never a currency alone.
+
+  const currencyKey = `${key}#currency`;
+  const currency = parts.currency || draftOf(host, currencyKey) || null;
+  const min = hasBound(field.min) ? field.min : null;
+  const max = hasBound(field.max) ? field.max : null;
+
+  const check = (text, code) => {
+    const message = decimalError(host, text, {
+      digits: code ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(code, locale).minor : null,
+      min,
+      max,
+      currency: code
+    });
+    if (message) return message;
+    return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(text, {
+      locale,
+      currency: code
+    }).value !== null && !code ? setText(host, 'chooseCurrency') : '';
+  };
+
+  const write = (amount, message, code) => writeDecimal(field, host, amount === null || amount === '' ? null : {
+    amount,
+    currency: code ?? null
+  }, message);
+
+  const sign = fixed ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(fixed, locale, display) : null;
+  const amount = decimalInput(field, parts.amount, host, {
+    key,
+    currency,
+    minDigits: currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(currency, locale).minor : 0,
+    textStart: sign?.before ? sign.sign : '',
+    textEnd: sign && !sign.before ? sign.sign : '',
+    rootClass: fixed ? '' : 'flex-1 min-w-0',
+    check: text => check(text, currency),
+    write: (next, message) => write(next, message, currency)
+  });
+  if (fixed) return amount; // The field's `currencies`, the value's own currency first when the list
+  // lacks it; without a list, every ISO 4217 code with a search.
+
+  const listed = fieldCurrencies(field);
+  const offered = [...new Set([...(currency ? [currency] : []), ...listed])];
+  const name = setText(host, 'currency');
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="flex gap-1/3 items-cross-start min-w-0 w-full">
+            ${amount}
+            <sf-dropdown
+                    size=${EDIT_SIZE}
+                    appearance="bordered"
+                    mode="select"
+                    search=${offered.length > 12 ? 'true' : 'false'}
+                    root-class="basis-1/3 min-w-0"
+                    name=${`${fieldName(field)}_currency`}
+                    value=${currency ?? ''}
+                    placeholder=${name}
+                    aria-label=${name}
+                    .options=${offered.map(code => {
+    const {
+      sign: mark
+    } = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(code, locale, display);
+    return {
+      type: 'text',
+      size: '1',
+      value: code,
+      text: mark === code ? code : `${code} ${mark}`,
+      selected: code === currency
+    };
+  })}
+                    @change=${event => {
+    const code = event.detail?.values?.[0] || event.detail?.value || null;
+    keepDraft(host, currencyKey, code ?? undefined);
+    const typed = parts.amount; // The dropdown shows the code itself; a value is written
+    // only with an amount.
+    // The stored amount is checked as the page would show it.
+
+    if (typed !== null && typed !== undefined && typed !== '') write(typed, check((0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.restingDecimal)(typed, locale), code), code);
+  }}
+            ></sf-dropdown>
+        </div>
+    `;
+}
+
+function renderPercentView(field, value, host) {
+  const formatted = host?.formatFieldValue?.(field, value);
+  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || viewText(field, value, null);
+  return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+}
+
+function renderMoneyView(field, value, host) {
+  const formatted = host?.formatFieldValue?.(field, value);
+  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // A date control has no clock. `sf-input-date` declares a format and a date,
 // and its parser is anchored (`^\d{4}-\d{2}-\d{2}$`), so a datetime value
 // falls through to a loose digit scan that reads `2026-11-27T13:26:00` as day
@@ -2295,6 +3904,14 @@ function splitDateTime(value) {
     date: match[1],
     suffix: `T${match[2]}${match[3] || ''}`
   };
+} // min and max bound the day (PD-2, as a datetime's do): an ISO date, or the
+// day of an ISO date and time; the calendar disables the days outside them
+// and a typed day outside them is put back. The host still validates.
+
+
+function dayBound(bound) {
+  const match = typeof bound === 'string' ? bound.trim().match(/^\d{4}-\d{2}-\d{2}/u) : null;
+  return match ? match[0] : '';
 }
 
 function renderDateEdit(field, value, host) {
@@ -2303,13 +3920,19 @@ function renderDateEdit(field, value, host) {
     date,
     suffix
   } = splitDateTime(value);
+  const min = dayBound(field.min);
+  const max = dayBound(field.max);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input-date
                 size=${EDIT_SIZE}
                 name=${fieldName(field)}
                 value=${date ?? ''}
+                min-date=${min || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                max-date=${max || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-label=${field.label || field.key || ''}
                 ?required=${Boolean(field.required)}
+                ?invalid=${Boolean(EDIT_ERROR)}
+                error-message=${EDIT_ERROR || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 @change=${event => {
     const next = event.detail?.value ?? event.target?.value ?? null;
     host.setFieldValue(field, next && suffix ? `${next}${suffix}` : next);
@@ -2363,6 +3986,8 @@ function renderDateTimeEdit(field, value, host) {
                 minute-step=${step || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-label=${field.label || field.key || ''}
                 ?required=${Boolean(field.required)}
+                ?invalid=${Boolean(EDIT_ERROR)}
+                error-message=${EDIT_ERROR || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 @change=${event => {
     // The picker's own change, not a native one from its field.
     if (event.target !== event.currentTarget) return;
@@ -2400,6 +4025,8 @@ function renderTimeEdit(field, value, host) {
                 minute-step=${step || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-label=${field.label || field.key || ''}
                 ?required=${Boolean(field.required)}
+                ?invalid=${Boolean(EDIT_ERROR)}
+                error-message=${EDIT_ERROR || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 @change=${event => {
     if (event.target !== event.currentTarget) return;
     const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeTime)(stored, String(event.detail?.value ?? ''));
@@ -2698,7 +4325,7 @@ function renderChoicesEdit(field, value, host) {
 // keeps exactly what was published.
 
 
-const SET_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__["default"]; // The host's word wins, as it always did; the set's own fallback now follows
+const SET_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__["default"]; // The host's word wins, as it always did; the set's own fallback now follows
 // the page's language instead of being Russian whatever the page is. `host` is
 // the component that called the set, which is the node the rule reads from.
 // The set is not an element, so it is named here rather than taken from the
@@ -2709,6 +4336,20 @@ const SET_NAME = 'sf-field-renderers';
 
 function setText(host, key) {
   return host?.getFieldText?.(key) ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SET_TEXT, key, host ?? null, SET_NAME);
+} // A word with places in it ({zone}, {n}): the host's word wins, as setText's.
+
+
+function setWord(host, key, vars) {
+  const own = host?.getFieldText?.(key);
+
+  if (own !== undefined && own !== null) {
+    return String(own).replace(/\{([a-z][\w-]*)\}/giu, (whole, name) => vars && name in vars ? String(vars[name]) : whole);
+  }
+
+  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, key, host ?? null, {
+    component: SET_NAME,
+    vars
+  });
 } // One job, one component (owner decision C139 (1), 2026-11-14): a record, a
 // relation, a user and a paged lookup are chosen with sf-input-lookup -- the
 // search the host answers, its rows with a picture and a caption, its states
@@ -3308,7 +4949,15 @@ const keepsControlWhenLocked = (asked, field) => asked === 'choice' && isChoiceB
 // differently; for every other one a disabled field is a read-only one.
 
 
-let EDIT_DISABLED = false;
+let EDIT_DISABLED = false; // `options.error`: what is wrong with the field now, a sentence, or empty (PD-1,
+// property type study «Дата»). A control that says its own error (sf-input-date
+// for a date, a datetime and a time) is drawn invalid with the sentence under
+// it, the error-message of the field family, so a host that is not sf-form --
+// a record card -- marks the field itself instead of writing a line under a
+// field with a normal border. sf-form keeps setting invalid on the controls it
+// draws, as before.
+
+let EDIT_ERROR = '';
 function renderEditField(field = {}, value, host, options = {}) {
   const asked = field.propertyType || field.type || field.dataType;
   const disabled = options?.disabled === true; // A field the person may not change is shown, not offered as a control that
@@ -3325,7 +4974,9 @@ function renderEditField(field = {}, value, host, options = {}) {
   const outerDisabled = EDIT_DISABLED;
   const outerPicker = EDIT_PICKER;
   const outerApply = EDIT_APPLY;
+  const outerError = EDIT_ERROR;
   EDIT_SIZE = sizeOption(options);
+  EDIT_ERROR = typeof options?.error === 'string' ? options.error.trim() : '';
   EDIT_DISABLED = disabled; // `options.picker: 'dropdown'`: the record, relation, user and paged lookup
   // fields drawn as before C139, a searchable sf-dropdown (until 2027-01-01).
 
@@ -3339,6 +4990,7 @@ function renderEditField(field = {}, value, host, options = {}) {
     EDIT_DISABLED = outerDisabled;
     EDIT_PICKER = outerPicker;
     EDIT_APPLY = outerApply;
+    EDIT_ERROR = outerError;
   }
 } // A density asked for one field is a region around it that draws no box of its
 // own: the variables of the density rules (core/scss/_sf_css__density.scss)
@@ -3404,6 +5056,18 @@ function renderTextView(field, value, host) {
 function renderHtmlView(field, value) {
   const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_8__.cleanHtml)(value);
   return clean ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-field-view sf-field-html">${(0,lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__.unsafeHTML)(clean)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+} // A number in the page's language (set boundary study, 2026-11-17): «12,5 кг»
+// on a Russian page, «12.5 kg» on an English one, through Intl with every
+// digit the value has (decimal.js formatDecimal, never through a float on the
+// way). The host's formatFieldValue and a value's own text still win; what is
+// not a number is shown as it came.
+
+
+function numberText(field, value, host) {
+  const formatted = host?.formatFieldValue?.(field, value);
+  if (typeof formatted === 'string') return formatted;
+  if (carriesText(value)) return value.text;
+  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || viewText(field, value, null);
 } // A number carries its unit when the field declares one, and nothing when it
 // does not -- the set does not guess at a unit, and «42» with an invented «шт»
 // beside it is a worse answer than «42».
@@ -3426,7 +5090,7 @@ function renderNumberView(field, value, host) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-bar inline meter value=${String(number)} label=${label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-progress-bar>`;
   }
 
-  const text = viewText(field, value, host);
+  const text = numberText(field, value, host);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${field.unit ? `${text} ${field.unit}` : text}</span>`;
 } // A date is the host's to format first: formatFieldValue wins, and so does a
 // value that carries its own text. Without it the set used to print the stored
@@ -3439,17 +5103,22 @@ function renderNumberView(field, value, host) {
 // reads them as written, in the host's zone): nothing is moved to the reader's
 // time zone, which would show a different day near midnight. A value that is
 // not a date at all is shown as it came, never guessed at.
+//
+// `format` is the field's display setting (PD-3): the length of the date,
+// Intl's dateStyle in the page's language -- short «17.11.2026» / «11/17/26»,
+// medium (the default) «17 нояб. 2026 г.» / «Nov 17, 2026», long «17 ноября
+// 2026 г.» / «November 17, 2026», full with the weekday. A datetime keeps its
+// clock beside it. It is read by the view and the cell; the edit control
+// types the locale's digits whatever it says. Any other value is medium, and
+// the host's formatFieldValue or text still wins.
 
 
-const DATE_VIEW = {
-  dateStyle: 'medium',
-  timeZone: 'UTC'
-};
-const DATETIME_VIEW = {
-  dateStyle: 'medium',
-  timeStyle: 'short',
-  timeZone: 'UTC'
-};
+const DATE_FORMATS = new Set(['short', 'medium', 'long', 'full']);
+
+function dateFormatOf(field) {
+  const format = String(field?.format ?? '').trim();
+  return DATE_FORMATS.has(format) ? format : 'medium';
+}
 
 function defaultDateText(field, value, host) {
   if (carriesText(value)) return null;
@@ -3462,14 +5131,22 @@ function defaultDateText(field, value, host) {
     const date = new Date(0);
     date.setUTCFullYear(year, month - 1, day);
     const type = field?.propertyType || field?.type || field?.dataType;
+    const dateStyle = dateFormatOf(field);
     if (type !== 'datetime' || !parts.time) return (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__.formatDate)(date, {
-      intl: DATE_VIEW,
+      intl: {
+        dateStyle,
+        timeZone: 'UTC'
+      },
       locale
     }) || null;
     const [hours, minutes] = parts.time.split(':').map(Number);
     date.setUTCHours(hours, minutes, 0, 0);
     return (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__.formatDate)(date, {
-      intl: DATETIME_VIEW,
+      intl: {
+        dateStyle,
+        timeStyle: 'short',
+        timeZone: 'UTC'
+      },
       locale
     }) || null;
   } catch {
@@ -3646,11 +5323,40 @@ const VIEW_RENDERERS = {
   lookup: renderLookupView,
   file: renderFileView,
   color: renderColorView,
-  include: renderIncludeView
+  include: renderIncludeView,
+  money: renderMoneyView,
+  percent: renderPercentView
 }; // A field shown rather than edited. `host` is optional and used for one thing
 // only -- formatFieldValue, where a consumer's own formatting of a number or a
 // date belongs. Null when the set has no view for that type.
+// A column total (owner decision C294, MP-12): the table owns its totals
+// row, the set gives the sum by the digits and its display. Money is summed
+// per currency -- a column of dollars and euros is two lines, never one
+// number -- and a number or an integer is one sum; a percent, a choice or a
+// text has no total (null). `values` are the column's stored values; what is
+// not a number is left out.
 
+function renderTotalField(field = {}, values = [], host) {
+  const type = field.propertyType || field.type || field.dataType;
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
+  const list = (Array.isArray(values) ? values : []).map(value => scalarValue(value));
+
+  if (type === 'money') {
+    const totals = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.moneyTotals)(list, field, locale);
+    return totals.length ? totals.map(total => total.text) : null;
+  }
+
+  if (type !== 'number' && type !== 'integer') return null;
+  const numbers = list.filter(value => value !== null && value !== undefined && value !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(value).ok);
+  if (!numbers.length) return null;
+  const sum = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.addDecimal)(numbers);
+  return sum === null ? null : [(0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatDecimal)(sum, locale)];
+} // Whether a type is a number a table aligns to the end of the line with
+// figures of one width (the registry's `numeric`, C294 MP-12).
+
+function isNumericType(type) {
+  return Boolean(_registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES.find(entry => entry.type === type)?.numeric);
+}
 function propertyModes(type) {
   return (0,_registry_js__WEBPACK_IMPORTED_MODULE_5__.modesOf)(type, {
     view: VIEW_RENDERERS,
@@ -3690,7 +5396,44 @@ if (typeof window !== 'undefined') {
     renderEditField,
     renderFilterField,
     renderViewField,
+    renderTotalField,
     FILTER_RENDERERS,
+    // The nine number conditions in the filter's order (C294).
+    NUMBER_FILTER_OPERATORS,
+    isNumericType,
+    // Decimal strings as the set reads and shows them (C294): the View
+    // set's items, compound and ru.requisites call these instead of
+    // keeping a copy. format(value), money(value, field), percent(value)
+    // take a locale (the page's when absent); read(text, {locale,
+    // currency}) reads what a person typed or pasted; add(...values) and
+    // compare(a, b) work by the digits; totals(values, field) sums money
+    // per currency; currency(code, locale, display) is {sign, before, minor}.
+    decimal: {
+      format: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatDecimal)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
+      money: (value, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatMoney)(value, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
+      percent: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatPercent)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
+      read: (text, options = {}) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(text, {
+        locale: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null),
+        ...options
+      }),
+      add: _decimal_js__WEBPACK_IMPORTED_MODULE_10__.addDecimal,
+      compare: _decimal_js__WEBPACK_IMPORTED_MODULE_10__.compareDecimal,
+      totals: (values, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.moneyTotals)(values, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
+      currency: (code, locale, display) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(code, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null), display)
+    },
+    // The date filter's rules (C293): the chip's words, when an entry is
+    // empty, the request with its context, a period's days.
+    dateFilter: {
+      conditions: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateFilterConditions,
+      chipText: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateFilterChipText,
+      isEmptyEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.isEmptyFilterEntry,
+      normalizeEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.normalizeFilterEntry,
+      requestContext: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.filterRequestContext,
+      buildRequest: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.buildFilterRequest,
+      resolvePeriod: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.resolveDatePeriod,
+      periods: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_PERIODS,
+      futurePeriods: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_FUTURE_PERIODS
+    },
     // A datetime's value read and written back, for a host that draws its
     // own control: split(value), compose(stored, {date, time}),
     // normalizeTime(text); and a time of day's: splitTime(value),
@@ -3836,6 +5579,133 @@ function maskState(text, pattern, placeholder = '_') {
 
 /***/ },
 
+/***/ "25be1c2df717"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatPhone: () => (/* binding */ formatPhone),
+/* harmony export */   phoneDialCode: () => (/* binding */ phoneDialCode),
+/* harmony export */   phoneE164: () => (/* binding */ phoneE164),
+/* harmony export */   splitPhone: () => (/* binding */ splitPhone)
+/* harmony export */ });
+// A telephone number, stored and shown (FL-1, FL-7 of the property page study,
+// 2026-11-17). Larena keeps a phone in E.164 -- `+79161234567`, a plus and the
+// digits, nothing else (Larena decision 2026-10-24) -- and so does every form
+// that submits sf-input-country (standard simai.smart-component §17.1 item 2).
+// The edit control used to write the text as the box showed it,
+// `+7 916 123-45-67`, so opening a record and saving it changed the stored
+// value. Edit writes E.164 now; view and cell lay the number out by its
+// country, as the box does, and read the formatted strings stored before.
+// The national part of each dial code's number, laid out as sf-input-country
+// lays it out (its `formatByPattern`): `0` is a digit, anything else is
+// written as it stands. Derived from src/component/country-code/data/countries.json
+// -- each dial code's pattern without its own code; where countries share a
+// code, the country the code means (+7 Russia, +1 the United States, +44
+// Britain) -- and held equal to it by tests/phone-e164-fl.contract.test.mjs,
+// so the set carries 2 KB instead of the 54 KB table.
+const PATTERNS = [['0 00 00 00', '46'], ['0 00 00 00 00', '33 212 237'], ['0 000 00 00', '386'], ['0 000 000', '95 248 265 291 359 961 967 975'], ['0 000 0000', '36 64 66 389 599 850 962 964 970 971'], ['0 0000 000', '385'], ['0 0000 0000', '61 63 886'], ['0 000000', '252'], ['0 0000000', '51 53 591'], ['0 00000000', '20'], ['0 000000000', '43'], ['0-000-0000', '82 593 972'], ['0-0000 0000', '60'], ['0-0000-0000', '81'], ['0-0000000', '880 977'], ['0/000 000 00', '421'], ['00 00 0 00000', '225'], ['00 00 00', '299 508 681'], ['00 00 00 00', '32 45 47 213 222 223 224 226 227 228 235 236 241 253 257 352 377 689'], ['00 00 00 00 00', '229'], ['00 00 000 00', '261'], ['00 00 0000', '509'], ['00 00-00-00', '993'], ['00 000', '682 688'], ['00 000 00 00', '41 48 221 994 995 998'], ['00 000 000', '216 231 258 264 355 371 373 382 383 855 856'], ['00 000 0000', '27 31 40 93 233 242 249 251 255 351 595 963 966'], ['00 000-000', '387'], ['00 0000', '672'], ['00 0000 0000', '30 39 86 98'], ['00 0000-0000', '54 55'], ['00 00000', '243 263 353'], ['00 000000', '49 232 357 374 381 968'], ['00 0000000', '62 254 256 358'], ['00 00000000', '92'], ['00-000', '676'], ['00-0000000', '218'], ['00.00.00', '687'], ['000 00 00', '238 269 423'], ['000 00 00 00', '34 262 590 594 596'], ['000 00 0000', '992'], ['000 00-00-00', '375'], ['000 000', '376'], ['000 000 00 00', '90'], ['000 000 000', '56 94 211 240 244 245 250 260 420 996'], ['000 000 0000', '44 52'], ['000 000-00-00', '7'], ['000 0000', '220 239 246 267 297 354 372 592 670 673 674 675 679 680 691'], ['000 0000 000', '84'], ['000 00000', '350 370'], ['000 0000000', '57'], ['000-000', '597'], ['000-000-0000', '1'], ['000-0000', '501 507 692 960'], ['000-0000000', '58'], ['0000', '683 690'], ['0000 00 0000', '234'], ['0000 0000', '65 230 266 268 356 502 503 505 506 598 852 853 965 973 974 976'], ['0000 00000', '380'], ['0000 000000', '378'], ['0000-0000', '504'], ['00000', '290 500 677 678 685 686'], ['00000 00000', '91'], ['000000', '298']];
+const NATIONAL = new Map();
+
+for (const [pattern, codes] of PATTERNS) for (const code of codes.split(' ')) NATIONAL.set(code, pattern);
+
+const digitsOf = text => String(text ?? '').replace(/\D/gu, ''); // An extension rides after the number: Larena writes `+73472468500;ext=12`
+// (RFC 3966), and a person may have typed «доб. 12» or «ext. 12». Its digits
+// are not the number's: read into the number they made `+7347246850012`.
+
+
+const EXTENSION = /\s*(?:;\s*ext\s*=\s*|,?\s*(?:ext|доб)\.?\s*)(\d+)\s*$/iu;
+/** The number and its extension apart: {number, extension}; extension '' for none. */
+
+function splitPhone(value) {
+  const text = String(value ?? '').trim();
+  const match = text.match(EXTENSION);
+  if (!match || !/\d/u.test(text.slice(0, match.index))) return {
+    number: text,
+    extension: ''
+  };
+  return {
+    number: text.slice(0, match.index).trim(),
+    extension: match[1]
+  };
+}
+
+function numberE164(text) {
+  const digits = digitsOf(text);
+  if (!digits) return '';
+  if (text.startsWith('+')) return `+${digits}`;
+  if (/^00[1-9]/u.test(text.replace(/[\s\-().]/gu, ''))) return `+${digits.slice(2)}`;
+  return text;
+}
+/**
+ * The number in E.164: `+` and the digits. A text that starts with `+` (or the
+ * international `00`) is a full number, laid out however it was:
+ * `+7 916 123-45-67`, `+7 (916) 123 45 67` and `+79161234567` are one number.
+ * A text without a country code is returned as it came, trimmed: which country
+ * it belongs to is not the renderer's to guess. Empty for no digits. An
+ * extension is kept as `;ext=<digits>`: `+7 347 246-85-00 доб. 12` is
+ * `+73472468500;ext=12`.
+ */
+
+
+function phoneE164(value) {
+  const {
+    number,
+    extension
+  } = splitPhone(value);
+  const e164 = numberE164(number);
+  return extension && e164.startsWith('+') ? `${e164};ext=${extension}` : extension ? String(value ?? '').trim() : e164;
+}
+/** The dial code (digits) an E.164 number starts with: the longest one known. */
+
+function phoneDialCode(e164) {
+  const digits = digitsOf(e164);
+
+  for (let length = Math.min(4, digits.length); length > 0; length -= 1) {
+    if (NATIONAL.has(digits.slice(0, length))) return digits.slice(0, length);
+  }
+
+  return '';
+}
+/**
+ * The number as a person reads it: `+79161234567` reads `+7 916 123-45-67`,
+ * by the country its code names. Digits beyond the pattern stay at the end, a
+ * number is never cut; an unknown code reads `+<digits>`; a number without a
+ * country code is shown as it came. An extension follows the number after the
+ * page language's word for it (`extensionWord`, «доб.» on a Russian page).
+ */
+
+function formatPhone(value, extensionWord = 'ext.') {
+  const {
+    number,
+    extension
+  } = splitPhone(value);
+  const main = formatNumber(number);
+  if (!extension || !main.startsWith('+')) return extension && !main.startsWith('+') ? String(value ?? '').trim() : main;
+  return `${main} ${extensionWord} ${extension}`;
+}
+
+function formatNumber(value) {
+  const e164 = numberE164(String(value ?? '').trim());
+  if (!e164.startsWith('+')) return e164;
+  const digits = e164.slice(1);
+  const code = phoneDialCode(e164);
+  if (!code) return e164;
+  const rest = digits.slice(code.length);
+  if (!rest) return `+${code}`;
+  let out = '',
+      index = 0;
+
+  for (const char of NATIONAL.get(code)) {
+    if (index >= rest.length) break;
+    out += char === '0' ? rest[index++] : char;
+  }
+
+  return `+${code} ${out}${rest.slice(index)}`.trimEnd();
+}
+
+/***/ },
+
 /***/ "fc654eb7fab0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -3899,7 +5769,9 @@ const PROPERTY_TYPES = Object.freeze([{
   // included, and an incomplete one is reported, not written as a value.
   // nullable: false makes a cleared masked field write "" instead of null.
   // Read by the plain string alone: phone and password keep their controls.
-  params: ['placeholder', 'mask', 'nullable', 'required', 'readonly']
+  // defaultCountry (FL-7): the phone variant's country while it is empty,
+  // ISO 3166 alpha-2; without it, the page's.
+  params: ['placeholder', 'mask', 'nullable', 'defaultCountry', 'required', 'readonly']
 }, {
   type: 'text',
   label: typeLabel('type-text'),
@@ -3915,9 +5787,13 @@ const PROPERTY_TYPES = Object.freeze([{
   params: ['placeholder', 'required', 'readonly']
 }, // stepper: edited with sf-quantity, «−» and «+» and the arrow keys; min,
 // max and step (and a number's precision) are read by that variant alone.
+// numeric (C294, MP-12): a number a table aligns to the end of the line
+// with figures of one width -- integer, number, money and percent -- read
+// from here by any table instead of each keeping its own list.
 {
   type: 'integer',
   label: typeLabel('type-integer'),
+  numeric: true,
   variants: [{
     id: 'stepper',
     label: typeLabel('variant-integer-stepper')
@@ -3926,6 +5802,7 @@ const PROPERTY_TYPES = Object.freeze([{
 }, {
   type: 'number',
   label: typeLabel('type-number'),
+  numeric: true,
   variants: [{
     id: 'scale',
     label: typeLabel('variant-number-scale')
@@ -3939,19 +5816,23 @@ const PROPERTY_TYPES = Object.freeze([{
     label: typeLabel('variant-number-stepper')
   }],
   params: ['unit', 'min', 'max', 'step', 'precision', 'required', 'readonly']
-}, {
+}, // date (PD-2, PD-3): min and max bound the day, an ISO date (the day of a
+// date and time is read); format is the length the view and the cell print
+// the date in, Intl's dateStyle: short, medium (the default), long, full.
+{
   type: 'date',
   label: typeLabel('type-date'),
   variants: [],
-  params: ['required', 'readonly']
+  params: ['min', 'max', 'format', 'required', 'readonly']
 }, // datetime and time: sf-input-date in mode datetime and time (1.4.0). min
 // and max bound the value -- an ISO date or date and time for a datetime,
-// hh:mm for a time -- and step is the minute step, 1 to 60.
+// hh:mm for a time -- and step is the minute step, 1 to 60. A datetime's
+// format is its date's length, as a date's; the clock stays short.
 {
   type: 'datetime',
   label: typeLabel('type-datetime'),
   variants: [],
-  params: ['min', 'max', 'step', 'required', 'readonly']
+  params: ['min', 'max', 'step', 'format', 'required', 'readonly']
 }, {
   type: 'time',
   label: typeLabel('type-time'),
@@ -4042,26 +5923,36 @@ const PROPERTY_TYPES = Object.freeze([{
   label: typeLabel('type-include'),
   variants: [],
   params: ['language', 'required', 'readonly']
-}, // The types a component set draws (property-view port 1.18.0; Larena
-// property types standard, notes of 2026-11-03): `set` names the set whose
-// components show and edit them -- the View set's sf-view-properties and
-// sf-view-flow -- and the Framework draws their table cells and filters
-// (money and percent as numbers, items by its number of rows). `params` are
-// the keys the type reads, in the set's renderers and in these. Every
-// number is a decimal string, never a float.
+}, // money and percent (owner decisions C291 (2) and C294, 2026-11-17): the
+// Framework's in every mode -- view, cell, edit and filter. Every number
+// is a decimal string, never a float. money is {amount, currency}:
+// `currency` fixes an ISO 4217 code (a bare amount is then read in it, and
+// no currency is offered); `currencies` lists the codes a value may carry
+// (absent: every ISO 4217 code, with a search); `currencyDisplay` is how
+// the currency is written -- symbol (default: «₽», «$», «CA$»), code or
+// name; the digits after the point are at most the currency's minor units
+// (more is a field error, never rounded); min and max bound the amount.
+// percent is the percent ("12.5" is 12,5 %), bounded only by min and max;
+// its digits after the point are `precision`, else those of `step`.
 {
   type: 'money',
   label: typeLabel('type-money'),
-  set: 'view',
+  numeric: true,
   variants: [],
-  params: ['currency', 'min', 'max', 'required', 'readonly']
+  params: ['currency', 'currencies', 'currencyDisplay', 'min', 'max', 'placeholder', 'required', 'readonly']
 }, {
   type: 'percent',
   label: typeLabel('type-percent'),
-  set: 'view',
+  numeric: true,
   variants: [],
-  params: ['min', 'max', 'required', 'readonly']
-}, {
+  params: ['min', 'max', 'step', 'precision', 'placeholder', 'required', 'readonly']
+}, // The types a component set draws (property-view port 1.18.0; Larena
+// property types standard, notes of 2026-11-03): `set` names the set whose
+// components show and edit them -- the View set's sf-view-properties -- and
+// the Framework draws their table cells and filters (items by its number
+// of rows). `params` are the keys the type reads, in the set's renderers
+// and in these.
+{
   type: 'items',
   label: typeLabel('type-items'),
   set: 'view',
@@ -4112,13 +6003,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e92fd2d1a38c");
 /* harmony import */ var _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e5483002f3ea");
 /* harmony import */ var _helpers_form_field_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("219db2ce051d");
-/* harmony import */ var _js_choice_list_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("20014fad50c0");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ae2fca904cab");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("75937516ef9b");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("db3a39d580e9");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_6__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("adbddb2f4d35");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("219db2ce051d");
+/* harmony import */ var _js_choice_list_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("20014fad50c0");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ae2fca904cab");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("75937516ef9b");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("db3a39d580e9");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_7__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
@@ -4150,16 +6042,32 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // Only the words on screen ship in the bundle, English only (owner decision
 // C282): Russian and every other language come from a language file. The
 // title, settings and events stay in the language files for the Studio and the
 // docs (localization study LC-2).
 
 
-const WIDTHS = ['s', 'm', 'full']; // The controls of the field family that say an error in their own message
+const WIDTHS = ['s', 'm', 'full']; // apply answer (owner decision C291 (3), FO-8): the states of the confirm
+// surface, of which open and pending draw the fields to answer.
+
+const ANSWERING = new Set(['open', 'pending']); // The property types already reported as unknown, once per page for each.
+
+const UNKNOWN_TYPES_TOLD = new Set();
+
+function warnUnknownType(field) {
+  const type = String(field?.propertyType ?? '');
+  if (UNKNOWN_TYPES_TOLD.has(type)) return;
+  const modes = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__.propertyModes)(type);
+  if (modes.view || modes.edit) return;
+  UNKNOWN_TYPES_TOLD.add(type);
+  console.warn(`sf-form: the field «${field?.key ?? ''}» is left out: the Framework's field renderers draw no property type «${type}»`);
+} // The controls of the field family that say an error in their own message
 // line, linked to their native control (C153 (3)): the form gives them
 // invalid and error-message. Every other control gets its error line from the
 // form. Read by tag, so it is known before the control's bundle arrives.
+
 
 const SPEAKING_TAGS = new Set(['sf-input', 'sf-input-choice', 'sf-input-code', 'sf-input-color', 'sf-input-country', 'sf-input-date', 'sf-input-image', 'sf-input-lookup', 'sf-input-quantity', 'sf-input-rich', 'sf-input-textarea', 'sf-dropdown']); // The element a screen reader reads a field's description with: a group of
 // choices as a whole, else the control's own focus target, else its first
@@ -4251,9 +6159,9 @@ function groupFields(fields, groups) {
   });
   return out;
 }
-const FormElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const FormElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
   source: 'ru',
   actions: {
     'check-validity'() {
@@ -4291,7 +6199,10 @@ class SfForm extends FormElement {
     this._dirty = false; // The mode the form returns to after a save or a cancel: view when it was
     // opened from view.
 
-    this._fromView = false;
+    this._fromView = false; // apply answer: which answer is on its way, true (Отправить) or false
+    // (Отмена); null when the host set pending itself.
+
+    this._pressed = null;
     this._hosts = new Map();
 
     this._onSubmit = event => this.onNativeSubmit(event);
@@ -4355,12 +6266,22 @@ class SfForm extends FormElement {
 
   get list() {
     return normalizeFields(this.fields);
-  } // The fields the form shows now: every field the renderers draw.
+  } // The fields the form shows now: every field the renderers draw. A field of
+  // a type the renderers do not know at all (items or compound, which a
+  // component set draws, or a misspelt type) is still left out, and the page
+  // hears it once per type, with the field that brought it (set boundary
+  // study, 2026-11-17): it was dropped without a word.
 
 
   shownFields() {
+    // An answer declined or run out shows only its outcome (the confirm
+    // surface; C35: a declined answer says nothing).
+    if (this.isAnswer && !ANSWERING.has(this.answerState) && this.answerState !== 'accepted') return [];
     const editing = this.isEditing;
-    return this.list.filter(field => editing ? this.drawsEdit(field) : this.drawsView(field));
+    return this.list.filter(field => {
+      warnUnknownType(field);
+      return editing ? this.drawsEdit(field) : this.drawsView(field);
+    });
   } // A field of a type the renderers do not draw in this mode is left out.
 
 
@@ -4374,7 +6295,17 @@ class SfForm extends FormElement {
   }
 
   get isEditing() {
+    if (this.isAnswer) return ANSWERING.has(this.answerState);
     return this.mode !== 'view';
+  } // apply answer: a form a person answers once (C291 (3)); mode is not read.
+
+
+  get isAnswer() {
+    return this.apply === 'answer';
+  }
+
+  get answerState() {
+    return _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_5__.CONFIRM_STATES.includes(this.state) ? this.state : 'open';
   }
 
   get isInstant() {
@@ -4382,9 +6313,12 @@ class SfForm extends FormElement {
   }
 
   renderOptions() {
-    return this.isInstant ? {
+    const options = this.isInstant ? {
       apply: 'instant'
-    } : {};
+    } : {}; // size 1/2: the controls a rung down, for a form in a message (C291 (3)).
+
+    if (this.size === '1/2') options.size = '1/2';
+    return options;
   }
 
   forget() {
@@ -4527,7 +6461,14 @@ class SfForm extends FormElement {
   applyHostErrors(errors) {
     const shown = new Set(this.list.map(field => field.key));
     const entries = Object.entries(errors).map(([key, message]) => [text(key), text(message)]).filter(([key, message]) => key && message);
-    if (entries.length && !entries.some(([key]) => shown.has(key))) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('missing');
+    if (entries.length && !entries.some(([key]) => shown.has(key))) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('missing'); // apply answer: the host's errors answer a Send that could not be taken;
+    // the form is open again with them. An answer settled is not reopened.
+
+    if (this.isAnswer) {
+      if (!ANSWERING.has(this.answerState)) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('closed');
+      if (this.answerState === 'pending') this.state = 'open';
+    }
+
     this._hostErrors = new Map(entries.filter(([key]) => shown.has(key)));
 
     if (!this._hostErrors.size) {
@@ -4555,6 +6496,7 @@ class SfForm extends FormElement {
   }
 
   submit() {
+    if (this.isAnswer) return this.answer(true);
     if (!this.isEditing || this.isInstant) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('mode');
     if (!this.checkFields({
       focus: true
@@ -4572,11 +6514,54 @@ class SfForm extends FormElement {
   }
 
   cancel() {
+    if (this.isAnswer) return this.answer(false);
     this.restore();
     this.sfEmit('cancel', {
       value: this.value
     });
     if (this._fromView) this.toView();
+  } // apply answer: «Отправить» (true) checks the fields and sends the values,
+  // «Отмена» (false) declines. The form goes pending before the event, so a
+  // host may set the outcome in its handler; a cancelled event is an answer
+  // the host did not take, and the form is open again (the confirm surface).
+
+
+  answer(accepted) {
+    if (this.answerState !== 'open') return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('closed');
+    if (accepted && !this.checkFields({
+      focus: true
+    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('invalid');
+    const focusWasInside = this.contains(this.ownerDocument.activeElement);
+    this._pressed = accepted;
+    this.state = 'pending';
+    const detail = accepted ? {
+      accepted,
+      value: this.value
+    } : {
+      accepted
+    };
+
+    if (!this.sfEmit('answer', detail, {
+      cancelable: true
+    })) {
+      this._pressed = null;
+      this.state = 'open';
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('prevented');
+    } // The values sent are what the read view shows after the answer.
+
+
+    if (accepted) {
+      this._saved = clone(this._values);
+      this.forget();
+    } // The pressed button is gone with the answers: the line that says what
+    // happened takes the focus rather than the page.
+
+
+    if (focusWasInside) this.whenDrawn(() => this.querySelector('.sf-form-state')?.focus({
+      preventScroll: true
+    }));
+    this.requestComponentUpdate('answer');
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   }
 
   restore() {
@@ -4759,6 +6744,7 @@ class SfForm extends FormElement {
         id
       }))
     }));
+    const answer = this.isAnswer ? this.answerContext() : null;
     const errors = editing ? fields.filter(field => this._errors.has(field.key)).map(field => ({
       key: field.key,
       message: this._errors.get(field.key),
@@ -4766,19 +6752,23 @@ class SfForm extends FormElement {
     })) : [];
     this.sfHostState('data-mode', editing ? 'edit' : 'view');
     this.sfHostState('data-dirty', this._dirty);
+    this.sfHostState('data-state', answer ? answer.state : null);
     return this.createTemplateContext({ ...this.getPropsContext(),
       component: this,
       id,
       label: text(this.label),
       editing,
       instant,
+      answer,
+      size: this.size === '1/2' ? '1/2' : '1',
       labels: this.labels === 'start' ? 'start' : 'top',
       footer: this.footer === 'sticky' ? 'sticky' : 'static',
       groups,
-      requiredNote: editing && !instant && fields.some(field => field.required === true && field.readonly !== true && field.propertyType !== 'boolean'),
+      requiredNote: editing && !instant && !(answer && answer.state !== 'open') && fields.some(field => field.required === true && field.readonly !== true && field.propertyType !== 'boolean'),
       errorList: editing && this._submitted && errors.length > 1 ? errors : null,
-      dirty: this._dirty,
+      dirty: answer ? false : this._dirty,
       words: {
+        send: word('send'),
         requiredNote: word('required-note'),
         submit: word('submit'),
         cancel: word('cancel'),
@@ -4790,6 +6780,26 @@ class SfForm extends FormElement {
       },
       rootClass: this.getRootClass()
     });
+  } // apply answer: the state, the line under the fields and its glyph (the
+  // confirm surface's: schedule, check_circle, timer_off).
+
+
+  answerContext() {
+    const state = this.answerState;
+    if (state !== 'pending') this._pressed = null;
+    const line = {
+      pending: this._pressed === false ? 'answer-cancelling' : 'answer-sending',
+      accepted: 'answer-sent',
+      expired: 'answer-expired'
+    }[state];
+    return {
+      state,
+      open: state === 'open',
+      pending: state === 'pending',
+      pressed: state === 'pending' ? this._pressed : null,
+      text: line ? this.sfWord(line) : '',
+      icon: line ? _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_5__.CONFIRM_ICON[state] : ''
+    };
   }
 
   fieldContext(field, {
@@ -4800,7 +6810,9 @@ class SfForm extends FormElement {
     const value = this._values[field.key];
     const host = this.hostOf(field); // A short choice is a ready group of radios or checks (C165 (1)).
 
-    const control = editing ? (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_6__.isListChoice)(field) ? (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_6__.renderChoiceList)(field, value, host) : (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__.renderEditField)(field, value, host, this.renderOptions()) : (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__.renderViewField)(field, value, host); // A required yes/no under apply submit is a checkbox, which carries its
+    const control = editing ? (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_7__.isListChoice)(field) ? (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_7__.renderChoiceList)(field, value, host) : (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__.renderEditField)(field, value, host, this.renderOptions()) : (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_3__.renderViewField)(field, value, host, this.size === '1/2' ? {
+      size: '1/2'
+    } : {}); // A required yes/no under apply submit is a checkbox, which carries its
     // label beside the box (C165 (4)): no label row over it.
 
     const checkbox = editing && !instant && field.propertyType === 'boolean' && field.required === true && field.readonly !== true;
@@ -4832,7 +6844,7 @@ class SfForm extends FormElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderFormTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderFormTemplate)(this.templateContext());
   }
 
 }
@@ -4975,6 +6987,12 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 //   after it (C159 (4)), «Есть несохранённые изменения» under them as a
 //   polite status; in view «Изменить». footer="sticky" makes it a bar at the
 //   bottom of the scrolling place.
+// - apply answer (C291 (3)): «Отправить» first, «Отмена» after it, at the
+//   form's size; the status line under them is always in the page (a polite
+//   live region that appears with its words is not heard) and takes the focus
+//   when the buttons go. pending locks the fields and the pressed button
+//   waits; accepted is the read view with the line «Отправлено» and its glyph,
+//   no «Изменить»; expired is the line alone; declined draws nothing.
 
 function labelRow(field) {
   if (!field.labelRow) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
@@ -5015,8 +7033,26 @@ function summaryBlock(context) {
   </div>`;
 }
 
+function answerFooter(context) {
+  const answer = context.answer;
+  const line = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-form-state sf-form-mark" role="status" tabindex="-1" data-state=${answer.state}>${answer.text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon class="sf-form-mark-icon" icon=${answer.icon} size="1/2" aria-hidden="true"></sf-icon><span>${answer.text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</p>`;
+  if (answer.state === 'declined') return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  if (!answer.open && !answer.pending) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-footer">${line}</div>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-footer" data-sticky=${context.footer === 'sticky' ? '' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+    <div class="sf-form-actions">
+      <sf-button class="sf-form-submit" scheme="primary" size=${context.size === '1/2' ? '1/2' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} native-type="submit" text=${context.words.send}
+        ?loading=${answer.pressed === true} ?disabled=${answer.pending && answer.pressed !== true}></sf-button>
+      <sf-button class="sf-form-cancel" appearance="ghost" scheme="on-surface" size=${context.size === '1/2' ? '1/2' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${context.words.cancel}
+        ?loading=${answer.pressed === false} ?disabled=${answer.pending && answer.pressed !== false}
+        @click=${() => context.component.cancel()}></sf-button>
+    </div>
+    ${line}
+  </div>`;
+}
+
 function footerBlock(context) {
   if (context.instant) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  if (context.answer) return answerFooter(context);
 
   if (!context.editing) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-footer">
@@ -5027,8 +7063,8 @@ function footerBlock(context) {
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-footer" data-sticky=${context.footer === 'sticky' ? '' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
     <div class="sf-form-actions">
-      <sf-button class="sf-form-submit" scheme="primary" native-type="submit" text=${context.words.submit}></sf-button>
-      <sf-button class="sf-form-cancel" appearance="ghost" scheme="on-surface" text=${context.words.cancel}
+      <sf-button class="sf-form-submit" scheme="primary" size=${context.size === '1/2' ? '1/2' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} native-type="submit" text=${context.words.submit}></sf-button>
+      <sf-button class="sf-form-cancel" appearance="ghost" scheme="on-surface" size=${context.size === '1/2' ? '1/2' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${context.words.cancel}
         @click=${() => context.component.cancel()}></sf-button>
     </div>
     <p class="sf-form-state" role="status">${context.dirty ? context.words.unsaved : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</p>
@@ -5040,12 +7076,567 @@ function renderFormTemplate(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<form class=${classes} novalidate
     aria-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     data-labels=${context.labels}
-    data-apply=${context.instant ? 'instant' : 'submit'}>
+    data-apply=${context.answer ? 'answer' : context.instant ? 'instant' : 'submit'}
+    data-size=${context.size === '1/2' ? '1/2' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
     ${context.editing && context.requiredNote ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-form-note">${context.words.requiredNote}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${summaryBlock(context)}
-    <div class="sf-form-body">${context.groups.map(groupBlock)}</div>
+    ${context.answer && !context.groups.length ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-body" ?inert=${Boolean(context.answer?.pending)}>${context.groups.map(groupBlock)}</div>`}
     ${footerBlock(context)}
   </form>`;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "adbddb2f4d35"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CONFIRM_ICON: () => (/* binding */ CONFIRM_ICON),
+/* harmony export */   CONFIRM_SIZES: () => (/* binding */ CONFIRM_SIZES),
+/* harmony export */   CONFIRM_STATES: () => (/* binding */ CONFIRM_STATES),
+/* harmony export */   confirmSurface: () => (/* binding */ confirmSurface),
+/* harmony export */   renderConfirmFooter: () => (/* binding */ renderConfirmFooter)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
+/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e577837dd70a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_3__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
+// The behaviour of a question put to a person in place: two answers, a
+// pending state while the answer is applied, the outcome, and an optional time
+// the offer runs out. sf-confirm (the plain question) and
+// sf-confirm-change (the same question over values as they were and as they
+// will be) are this one surface (duplication audit 2026-11-03, A-5): it was
+// written once in sf-confirm-change and five more times by hand in the chat
+// and view components (a delete asked in its row, a member removed, a view
+// reset).
+//
+// The element never applies anything. A press moves it to `pending`, which
+// takes both answers away so that nothing is pressed twice, and says what is
+// happening; the host then sets the outcome -- `accepted`, `declined`, or back
+// to `open` when the answer could not be delivered. It is a confirm surface in
+// the §19.4 sense: an assembly's `ask` opens it and waits for the answer.
+//
+// confirmSurface(Base, {kind, block, answerId}) gives a class built from a
+// manifest with the settings state, expires-at and disabled, the events
+// answer and expired, and the actions open, answer, confirm and cancel:
+//   kind      the element's tag, for the heading's instance path (§7.1.1);
+//   block     the class of the drawn surface (its __status and __actions);
+//   answerId  the setting the host names the question with (carried back).
+
+
+
+
+const CONFIRM_STATES = Object.freeze(["open", "pending", "accepted", "declined", "expired"]); // A timer longer than this is not a timer setTimeout keeps: past 2^31-1 ms it
+// fires at once. An offer valid for longer than 24 days is checked again daily.
+
+const LONGEST_WAIT = 24 * 60 * 60 * 1000; // The steps of the control ladder the answers stand on (C22): the element's
+// size, else 1, the size of a field and a button beside it. Compactness is
+// the region's density (data-sf-density), never a smaller size by hand.
+
+const CONFIRM_SIZES = Object.freeze(["1/3", "1/2", "1", "2", "3"]); // The glyph the status line shows beside its words, per state.
+
+const CONFIRM_ICON = Object.freeze({
+  open: "schedule",
+  pending: "schedule",
+  accepted: "check_circle",
+  declined: "cancel",
+  expired: "timer_off"
+});
+function confirmSurface(Base, {
+  kind,
+  block,
+  answerId = "answerId"
+} = {}) {
+  return class ConfirmSurface extends Base {
+    constructor() {
+      super();
+      this._pressed = null;
+      this._timer = null;
+      this._expiredSaid = false;
+      this._asks = []; // Declined here, by this person's answer (DEV D2 on C35): the
+      // question folds away. A host that draws a decision taken
+      // elsewhere (a declined change in a history) keeps it on screen.
+
+      this._declinedHere = false; // The control focused when the question was put, for the focus to
+      // go back to once the question folds away.
+
+      this._opener = null;
+    }
+
+    get state() {
+      const value = this.getAttribute("state");
+      return CONFIRM_STATES.includes(value) ? value : "open";
+    }
+
+    set state(value) {
+      this.setAttribute("state", CONFIRM_STATES.includes(value) ? value : "open");
+    } // An open offer past its time is expired whatever the attribute says:
+    // the host may not have heard yet, and a button that can no longer work
+    // must not be pressable in the meantime.
+
+
+    get expired() {
+      if (this.state === "expired") return true;
+      if (this.state !== "open") return false;
+      const until = Date.parse(this.getAttribute("expires-at") || "");
+      return Number.isFinite(until) && Date.now() >= until;
+    }
+
+    get shownState() {
+      return this.expired ? "expired" : this.state;
+    } // The heading's id is the surface's path (§7.1.1), never a counter.
+
+
+    get headingId() {
+      return (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__.instancePath)(this, {
+        kind
+      }), "heading");
+    } // The host's name for the question, carried back in every event. Not
+    // named after any setting: sf-confirm's own setting is confirmId.
+
+
+    get questionKey() {
+      return this[answerId] ?? "";
+    }
+
+    formatTime(value) {
+      const sameDay = (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_3__.calendarDayOffset)(value) === 0;
+      return (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_3__.formatDate)(value, {
+        node: this,
+        intl: sameDay ? {
+          hour: "2-digit",
+          minute: "2-digit"
+        } : {
+          day: "numeric",
+          month: "long",
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      });
+    }
+
+    statusText(shown) {
+      if (shown === "pending") return this.sfWord(this._pressed === false ? "declining-text" : "accepting-text");
+      if (shown === "accepted") return this.sfWord("accepted-text"); // Declined says nothing (owner decision C35, remark R067): the
+      // answer changed nothing -- no «Отменено», no «Отклонено»; the host
+      // puts the row back and the focus on what was pressed.
+
+      if (shown === "declined") return "";
+      if (shown === "expired") return this.sfWord("expired-text");
+      const until = this.getAttribute("expires-at");
+      const time = until ? this.formatTime(until) : "";
+      return time ? this.sfWord("until-text", {
+        vars: {
+          time
+        }
+      }) : "";
+    } // What every template of the surface reads: the state shown, the
+    // heading, the status line and the two answers.
+
+
+    confirmContext() {
+      const shown = this.shownState;
+      return {
+        component: this,
+        state: shown,
+        headingId: this.headingId,
+        heading: this.getProp("heading"),
+        headingLevel: this.getProp("headingLevel"),
+        hasDescription: this.hasSlotContent("description"),
+        descriptionContent: this.hasSlotContent("description") ? this.getSlotContent("description") : null,
+        acceptText: this.getProp("acceptText") || this.sfWord("accept-text"),
+        declineText: this.getProp("declineText") || this.sfWord("decline-text"),
+        statusText: this.statusText(shown),
+        statusIcon: CONFIRM_ICON[shown] ?? "schedule",
+        open: shown === "open",
+        pending: shown === "pending",
+        // Which answer is on its way: true, false, or null when the
+        // host set pending itself.
+        pressed: shown === "pending" ? this._pressed : null,
+        // Not named `disabled`: that is the setting, and this is more --
+        // the setting, or any state but open.
+        answersLocked: this.getProp("disabled") || shown !== "open",
+        // The step the answers stand on: a page's size, else 1 (C22).
+        size: CONFIRM_SIZES.includes(this.getAttribute("size")) ? this.getAttribute("size") : "1",
+        // Declined by the person here: the surface is hidden, and its
+        // empty status line no longer holds the focus (DEV D2 on C35).
+        collapsed: shown === "declined" && this._declinedHere
+      };
+    }
+
+    onConnected() {
+      super.onConnected?.();
+      this.rememberOpener();
+      this.schedule();
+    } // The control the person was on when the question appeared: the
+    // button that asked it, as a rule. Kept only while it is outside the
+    // question and is not the page itself.
+
+
+    rememberOpener() {
+      const active = this.ownerDocument?.activeElement;
+      if (active && active !== this.ownerDocument.body && !this.contains(active)) this._opener = active;
+    } // Where the focus goes when a declined question folds away: back to
+    // the control that put it, else the nearest focusable place around
+    // it, else the next (or previous) control in the page -- as when a
+    // row is removed. The ring is shown: the person came by keyboard.
+
+
+    returnFocus() {
+      const doc = this.ownerDocument;
+      const active = doc.activeElement;
+      if (active && active !== doc.body && !this.contains(active)) return;
+      const selector = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+      const usable = node => node?.isConnected && !this.contains(node) && node.getClientRects().length > 0;
+
+      let target = usable(this._opener) ? this._opener : null;
+
+      if (!target) {
+        let around = this.parentElement?.closest?.(`${selector}, [tabindex]`);
+
+        while (around && !usable(around)) around = around.parentElement?.closest?.(`${selector}, [tabindex]`);
+
+        target = around ?? null;
+      }
+
+      if (!target) {
+        const all = [...doc.querySelectorAll(selector)].filter(usable);
+
+        const position = node => this.compareDocumentPosition(node);
+
+        target = all.find(node => position(node) & Node.DOCUMENT_POSITION_FOLLOWING) ?? all.reverse().find(node => position(node) & Node.DOCUMENT_POSITION_PRECEDING) ?? null;
+      }
+
+      target?.focus({
+        preventScroll: true,
+        focusVisible: true
+      });
+    }
+
+    onDisconnected() {
+      clearTimeout(this._timer);
+      this._timer = null;
+      super.onDisconnected?.();
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+      super.attributeChangedCallback?.(name, oldValue, newValue);
+      if (name === "state" && newValue !== "pending") this._pressed = null;
+      if (name === "state" && newValue !== "declined" && newValue !== "pending") this._declinedHere = false; // The person's own decline, now set by the host: the question
+      // folds away and the focus goes back (DEV D2 on C35).
+
+      if (name === "state" && newValue === "declined" && oldValue !== "declined" && this._declinedHere) {
+        this.whenRendered(() => this.returnFocus(), {
+          next: true
+        });
+      }
+
+      if (name === "state" || name === "expires-at") {
+        // A new time, or the host reopening the offer, is a new chance
+        // to run out; the last expiry was about the last time.
+        if (name === "expires-at" || newValue === "open") this._expiredSaid = false;
+        this.schedule();
+      }
+    } // One timer, for the moment the offer runs out; nothing polls. When it
+    // fires the surface redraws as expired and the host hears it once.
+
+
+    schedule() {
+      clearTimeout(this._timer);
+      this._timer = null;
+      if (!this.isConnected || this.state !== "open") return;
+      const until = Date.parse(this.getAttribute("expires-at") || "");
+      if (!Number.isFinite(until)) return;
+      const wait = until - Date.now();
+
+      if (wait <= 0) {
+        this.expire();
+        return;
+      }
+
+      this._timer = setTimeout(() => {
+        this._timer = null;
+        if (Date.now() >= until) this.expire();else this.schedule();
+      }, Math.min(wait + 50, LONGEST_WAIT));
+    }
+
+    expire() {
+      this.requestComponentUpdate("expired");
+      this.settleAsks({
+        accepted: false,
+        reason: "expired"
+      });
+      if (this._expiredSaid) return;
+      this._expiredSaid = true;
+      this.sfEmit("expired", {
+        id: this.questionKey
+      });
+    } // ── actions (§4.4) ──────────────────────────────────────────────────
+
+    /**
+     * Puts the question again. Asked by an assembly -- a call that hands a
+     * signal -- it answers when the person answers or the time runs out,
+     * with {accepted, reason, value} (§19.4).
+     */
+
+
+    open(...args) {
+      // (params, {signal}): the parameters are none; the second is the ask's.
+      const {
+        signal
+      } = args[1] ?? {};
+      const reopened = this.state !== "open";
+      this.rememberOpener();
+      if (reopened) this.state = "open"; // The question is put to the person now: focus waits on the safe
+      // answer (decision C25), so a stray Enter or Space only takes the
+      // question back.
+
+      this.whenRendered(() => this.focusSafeAnswer(), {
+        next: reopened
+      });
+      return signal ? this.waitForAnswer(signal) : (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+    }
+    /** The person's answer as a call: {accepted: true} confirms, false declines. */
+
+
+    answer(params = {}) {
+      const accepted = this.readAnswer(params);
+      if (accepted === null) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("unknown");
+      if (this.shownState !== "open") return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("closed");
+      if (this.getProp("disabled")) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("disabled");
+      const focusWasInside = this.contains(this.ownerDocument.activeElement);
+      this._pressed = accepted; // Before the event: a host may set the outcome inside its handler.
+
+      this._declinedHere = !accepted;
+      this.setAttribute("state", "pending");
+      const delivered = this.sfEmit("answer", {
+        id: this.questionKey,
+        accepted
+      }); // A cancelled event is a host that did not take the answer: the
+      // question stands, and the person may answer again.
+
+      if (!delivered) {
+        this._pressed = null;
+        this._declinedHere = false;
+        this.setAttribute("state", "open");
+      } else {
+        this.settleAsks({
+          accepted,
+          reason: accepted ? "close" : "cancelled"
+        });
+      } // The pressed button is gone with the answers; focus moves to the
+      // sentence that says what happened rather than falling to the page.
+
+
+      if (focusWasInside) this.whenRendered(() => this.focusStatus(), {
+        next: true
+      });
+      return delivered ? (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)() : (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("prevented");
+    }
+    /** The acceptance (§19.4): data-sf-action="<id>.confirm". */
+
+
+    confirm() {
+      return this.answer({
+        accepted: true
+      });
+    }
+    /** The declining answer (vocabulary §5 cancel): data-sf-action="<id>.cancel". */
+
+
+    cancel() {
+      return this.answer({
+        accepted: false
+      });
+    }
+
+    readAnswer(params) {
+      if (params && typeof params === "object" && typeof params.accepted === "boolean") return params.accepted;
+      return null;
+    }
+
+    waitForAnswer(signal) {
+      return new Promise(resolve => {
+        const ask = {
+          resolve
+        };
+
+        this._asks.push(ask);
+
+        signal?.addEventListener?.("abort", () => {
+          this._asks = this._asks.filter(one => one !== ask);
+          resolve({
+            outcome: "cancelled"
+          });
+        }, {
+          once: true
+        });
+      });
+    }
+
+    settleAsks({
+      accepted,
+      reason
+    }) {
+      const asks = this._asks;
+      this._asks = [];
+
+      for (const ask of asks) ask.resolve({
+        outcome: "applied",
+        value: {
+          accepted,
+          reason,
+          value: null
+        }
+      });
+    } // The question took «no» and nothing came after: declined, or the
+    // decline on its way with no outcome from the host. A window that is
+    // opened again puts such a question again (sf-modal, decision C39).
+
+
+    get answeredNo() {
+      return this.state === "declined" || this.state === "pending" && this._pressed === false;
+    }
+
+    focusStatus() {
+      const target = this.querySelector(`.${block}__status`);
+      if (!target) return;
+      if (this.state === "open" && this.focusSafeAnswer()) return; // Folded away: returnFocus() has the focus (DEV D2 on C35).
+
+      if (this.shownState === "declined" && this._declinedHere) return;
+      target.focus({
+        preventScroll: true
+      });
+    } // The answer that changes nothing -- the declining one -- takes the
+    // focus whenever the question is put (decision C25, as Primer's
+    // ConfirmationDialog does for a dangerous one): Enter or Space pressed
+    // by habit closes the question, and the accepting answer needs a
+    // pointer or Tab. Answers false when there is no answer to focus.
+    // The surface's after-render can come before the answer can take the
+    // focus (its sf-button is drawn, or its region shown, a frame later):
+    // the focus then tries again for a few frames, unless the person has
+    // moved it meanwhile.
+
+
+    focusSafeAnswer(frames = 10) {
+      if (this.shownState !== "open" || this.getProp("disabled")) return false;
+      const host = this.querySelector(`.${block}__actions:not([hidden]) [data-action="decline"]`);
+      const button = host?.matches("button") ? host : host?.querySelector("button");
+      button?.focus({
+        preventScroll: true
+      });
+      const doc = this.ownerDocument;
+      if (button && doc.activeElement === button) return true;
+      const view = doc.defaultView;
+
+      if (host && frames > 0 && view?.requestAnimationFrame) {
+        view.requestAnimationFrame(() => {
+          const active = doc.activeElement;
+          if (!active || active === doc.body || this.contains(active)) this.focusSafeAnswer(frames - 1);
+        });
+      }
+
+      return false;
+    }
+
+  };
+} // The surface's footer, the same in every template: the status line, then the
+// two answers. `block` is the drawn surface's class; `acceptStatus` "danger"
+// marks a destructive acceptance (a delete, decision C13).
+//
+// The answers (decision C25): a dangerous question fills its accepting answer
+// with the danger colour; a plain one draws it as the template asks
+// (`acceptAppearance`, outlined by default; sf-confirm 1.3.6 asks for the
+// filled primary main answer, owner decision C183 and C176 by DEV's answer
+// msg-68999d65). The declining answer, the
+// question's «Отмена», is always the quiet one, ghost on-surface (decision
+// C116, #q-cancel: «Отмена» is quiet everywhere), so the two are told apart by
+// more than the red of a word. A surface whose declining answer is a decision
+// of its own weight rather than a cancel asks for `declineAppearance:
+// "outline"`; a surface whose accepting answer is the main one (sf-confirm-change
+// 1.9.0, owner decision C183 (6): «Подтвердить» filled primary, «Отклонить»
+// quiet) for `acceptAppearance: "default"`. Both stand on the element's size
+// (context.size, 1 unless the page gives one); a size a template gives is
+// relative, so a compact region (data-sf-density, C22) moves them down a step.
+//
+// In a window (sf-confirm appearance="window", decision C39) the answers come
+// before the status line, at the start; the declining one is ghost there too
+// (C116; it was tonal, the window's quiet answer).
+// `formerBlock` writes a renamed surface's former class beside each part's;
+// `statusLast` puts the status line after the answers in the markup as well
+// as on screen (the deadline under the answers, C183 (6)).
+
+function renderConfirmFooter(context, block, {
+  acceptStatus = "",
+  window = false,
+  acceptAppearance = "outline",
+  declineAppearance = "ghost",
+  formerBlock = "",
+  statusLast = false
+} = {}) {
+  const {
+    component
+  } = context; // A surface whose class was renamed writes its former block beside the
+  // new one until the alias date, so a page selector that reached it still
+  // does (sf-confirm-change 1.8.0: .sf-change-confirm__* until 2027-01-01).
+
+  const part = name => formerBlock ? `${block}__${name} ${formerBlock}__${name}` : `${block}__${name}`;
+
+  const danger = acceptStatus === "danger" || acceptStatus === "error";
+  const size = context.size || "1"; // Always in the page, empty while there is nothing to say: a live region
+  // that appears together with its words is not heard. With statusLast it
+  // follows the answers in the markup too (sf-confirm-change 1.9.0: the
+  // deadline under the answers, an sf-time that may take a Tab after them).
+  // The status sign is 16, the ladder's 1/3 (C151 (1)): size="1" was the old
+  // icon scale's name for it, noted in SF.deprecations on every state
+  // (Smart joint pass SM-CNF-1, SM-CCH-1).
+
+  const status = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <p class=${part("status")} role="status" tabindex="-1">
+                    ${context.statusText ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${context.statusIcon} data-sf-icon-scale="ladder" size="1/3" aria-hidden="true"></sf-icon>
+                            <span>${context.statusText}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                </p>`; // While the answer is applied (pending) the answers stay where they were:
+  // the pressed one busy, with the button's own spinner and aria-busy, the
+  // other disabled, so the card does not jump and the person sees which
+  // answer is on its way.
+
+  const actions = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                <div class=${part("actions")} ?hidden=${!context.open && !context.pending}>
+                    <sf-button
+                            appearance=${danger ? "default" : acceptAppearance}
+                            scheme="primary"
+                            status=${danger ? "danger" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                            size=${size}
+                            text=${context.acceptText}
+                            data-action="accept"
+                            ?loading=${context.pressed === true}
+                            ?disabled=${context.answersLocked && context.pressed !== true}
+                            @click=${() => component.confirm()}
+                    ></sf-button>
+                    <sf-button
+                            appearance=${declineAppearance}
+                            scheme="on-surface"
+                            size=${size}
+                            text=${context.declineText}
+                            data-action="decline"
+                            ?loading=${context.pressed === false}
+                            ?disabled=${context.answersLocked && context.pressed !== false}
+                            @click=${() => component.cancel()}
+                    ></sf-button>
+                </div>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <footer class=${part("footer")}>${statusLast ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${actions}${status}` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${status}${actions}`}
+            </footer>`;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -5715,6 +8306,163 @@ function optionBadgeProps(option = {}) {
     scheme: "neutral",
     rootStyle: ""
   };
+}
+
+/***/ },
+
+/***/ "c4779e51fee1"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatPlaceholder: () => (/* binding */ formatPlaceholder),
+/* harmony export */   localeDateFormat: () => (/* binding */ localeDateFormat),
+/* harmony export */   localeWeekStart: () => (/* binding */ localeWeekStart),
+/* harmony export */   localeWeekend: () => (/* binding */ localeWeekend),
+/* harmony export */   weekendDays: () => (/* binding */ weekendDays)
+/* harmony export */ });
+// What a locale says about its calendar, read from Intl once per locale: the
+// first day of the week and the days off (Intl.Locale#getWeekInfo, the older
+// weekInfo getter where a browser still has that). No DOM, so the rules are
+// unit-tested as they are (tests/datepicker-c62.contract.test.mjs).
+//
+// Days are numbered as Date#getDay numbers them, 0 Sunday to 6 Saturday; Intl
+// numbers them 1 Monday to 7 Sunday, so 7 is read as Sunday too.
+const weekInfos = new Map();
+
+function weekInfo(code) {
+  if (weekInfos.has(code)) return weekInfos.get(code);
+  let info = null;
+
+  try {
+    const locale = new Intl.Locale(code);
+    info = (typeof locale.getWeekInfo === 'function' ? locale.getWeekInfo() : locale.weekInfo) || null;
+  } catch {// An unknown locale keeps the defaults below.
+  }
+
+  weekInfos.set(code, info);
+  return info;
+} // The first day of the locale's week, read once per locale: the grid asks it
+// several times a render. Monday where the locale does not say.
+
+
+function localeWeekStart(code) {
+  const first = weekInfo(code)?.firstDay;
+  return Number.isInteger(first) ? first % 7 : 1;
+}
+const SATURDAY_SUNDAY = Object.freeze([6, 0]); // The locale's days off: Saturday and Sunday in ru, de and en-US, Friday and
+// Saturday in ar-EG and he-IL. Saturday and Sunday where the locale does not say.
+
+function localeWeekend(code) {
+  const days = weekInfo(code)?.weekend;
+  if (!Array.isArray(days) || !days.length) return SATURDAY_SUNDAY;
+  return Object.freeze(days.map(day => day % 7));
+} // The `weekend` setting (owner decision C62: days off are red, and a product
+// whose weekends are working days says so). Empty: the locale's days off.
+// "none": no day is a day off. Otherwise the days, comma or space separated,
+// 0 or 7 Sunday, 1 Monday to 6 Saturday ("6,7" as Intl writes Saturday and
+// Sunday, "5,6" for Friday and Saturday). Anything else in the list is left
+// out; a list with nothing left falls back to the locale.
+
+function weekendDays(setting, code) {
+  const text = String(setting ?? '').trim().toLowerCase();
+  if (!text) return new Set(localeWeekend(code));
+  if (text === 'none') return new Set();
+  const days = text.split(/[\s,]+/u).filter(part => /^[0-7]$/u.test(part)).map(part => Number(part) % 7);
+  return new Set(days.length ? days : localeWeekend(code));
+} // The date format of a locale, in the component's tokens (owner decision C62:
+// typing follows the language and the country, not a fixed «ДД.ММ.ГГГГ»). The
+// parts' order and the signs between them come from Intl alone:
+// formatToParts of a two-digit day and month and a numeric year gives
+// DD.MM.YYYY for ru and de, MM/DD/YYYY for en-US, DD/MM/YYYY for en-GB and fr,
+// YYYY-MM-DD for sv-SE and en-CA. A sign before the first part or after the
+// last («12.11.2026 г.» in bg, the closing dot of hu and ko) is left out: it is
+// not between two numbers, and a person does not type it. Right-to-left marks
+// are left out of the signs too. A locale Intl refuses, or a sign that is not
+// one a date is typed with (. / - , or a space), keeps DD.MM.YYYY.
+
+const DEFAULT_DATE_FORMAT = 'DD.MM.YYYY';
+const PART_TOKENS = {
+  day: 'DD',
+  month: 'MM',
+  year: 'YYYY'
+};
+const dateFormats = new Map();
+function localeDateFormat(code) {
+  if (dateFormats.has(code)) return dateFormats.get(code);
+  let format = DEFAULT_DATE_FORMAT;
+
+  try {
+    const parts = new Intl.DateTimeFormat(code, {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }).formatToParts(new Date(2026, 10, 12));
+    const tokens = [];
+    const signs = [];
+    let sign = '';
+
+    for (const part of parts) {
+      if (part.type === 'literal') {
+        sign += part.value.replace(/[\u200e\u200f\u061c]/gu, '');
+      } else if (PART_TOKENS[part.type]) {
+        if (tokens.length) signs.push(sign);
+        tokens.push(PART_TOKENS[part.type]);
+        sign = '';
+      }
+    }
+
+    const whole = tokens.length === 3 && new Set(tokens).size === 3 && signs.every(one => /^[\s./,-]+$/u.test(one));
+    if (whole) format = tokens.reduce((text, token, index) => text + (index ? signs[index - 1] : '') + token, '');
+  } catch {// An unknown locale keeps the default.
+  }
+
+  dateFormats.set(code, format);
+  return format;
+} // The hint in an empty field: the format written with the letters of the
+// locale's own names for the parts (Intl.DisplayNames, type dateTimeField):
+// ДД.ММ.ГГГГ in ru, MM/DD/YYYY in en-US, TT.MM.JJJJ in de, JJ/MM/AAAA in fr.
+// A name in a script without letter case or initials (日, 年) gives the Latin
+// D, M, Y, H instead.
+
+const LATIN_LETTERS = {
+  DD: 'D',
+  MM: 'M',
+  YYYY: 'Y',
+  YY: 'Y',
+  HH: 'H',
+  mm: 'M'
+};
+const FIELD_NAMES = {
+  DD: 'day',
+  MM: 'month',
+  YYYY: 'year',
+  YY: 'year',
+  HH: 'hour',
+  mm: 'minute'
+};
+const INITIAL_RE = /^[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}]/u;
+const placeholders = new Map();
+
+function letterOf(token, code) {
+  try {
+    const name = new Intl.DisplayNames(code, {
+      type: 'dateTimeField'
+    }).of(FIELD_NAMES[token]) || '';
+    const first = name.trim().charAt(0);
+    if (INITIAL_RE.test(first)) return first.toLocaleUpperCase(code);
+  } catch {// No names for this locale: the Latin letter below.
+  }
+
+  return LATIN_LETTERS[token];
+}
+
+function formatPlaceholder(format, code) {
+  const key = `${code}|${format}`;
+  if (placeholders.has(key)) return placeholders.get(key);
+  const text = String(format || '').replace(/YYYY|YY|MM|DD|HH|mm/gu, token => letterOf(token, code).repeat(token.length));
+  placeholders.set(key, text);
+  return text;
 }
 
 /***/ },
@@ -6765,21 +9513,21 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "f050502c25f8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":"At most {n} digits after the point","rowCount":{"one":"{n} row","other":"{n} rows"},"type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-meter":"Share of a limit","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","condition":"Condition","numberOperator_eq":"Equals","numberOperator_neq":"Not equal","numberOperator_gt":"Greater than","numberOperator_gte":"At least","numberOperator_lt":"Less than","numberOperator_lte":"At most","numberOperator_between":"Between","numberOperator_empty":"Empty","numberOperator_not-empty":"Not empty","filterNumber":"Number","filterAmount":"Amount","filterPercent":"Percent","dateCondition":"Condition","dateByDayIn":"Compared by day, time zone {zone}","dateGroup_date":"Date","dateGroup_period":"Period","dateGroup_filled":"Filled","dateGroup_range":"The record\'s period","dateCondition_eq":"Exact date","dateCondition_between":"Between","dateCondition_lt":"Before","dateCondition_gt":"After","dateCondition_gte":"On or after","dateCondition_lte":"On or before","dateCondition_lastDays":"Last N days","dateCondition_nextDays":"Next N days","dateCondition_empty":"Empty","dateCondition_notEmpty":"Not empty","dateCondition_overlaps":"Runs in","dateCondition_within":"Entirely in","dateCondition_starts":"Starts in","dateCondition_ends":"Ends in","dateCondition_contains":"Runs on the day","datePeriod_today":"Today","datePeriod_yesterday":"Yesterday","datePeriod_thisWeek":"This week","datePeriod_lastWeek":"Last week","datePeriod_last7Days":"Last 7 days","datePeriod_thisMonth":"This month","datePeriod_lastMonth":"Last month","datePeriod_thisYear":"This year","datePeriod_tomorrow":"Tomorrow","datePeriod_nextWeek":"Next week","datePeriod_nextMonth":"Next month","datePeriodIn_today":"today","datePeriodIn_yesterday":"yesterday","datePeriodIn_thisWeek":"this week","datePeriodIn_lastWeek":"last week","datePeriodIn_last7Days":"in the last 7 days","datePeriodIn_thisMonth":"this month","datePeriodIn_lastMonth":"last month","datePeriodIn_thisYear":"this year","datePeriodIn_tomorrow":"tomorrow","datePeriodIn_nextWeek":"next week","datePeriodIn_nextMonth":"next month","dateChip":"{field}: {condition}","dateChip_lt":"before {date}","dateChip_gt":"after {date}","dateChip_gte":"on or after {date}","dateChip_lte":"on or before {date}","dateChip_lastDays":{"one":"in the last day","other":"in the last {n} days"},"dateChip_nextDays":{"one":"in the next day","other":"in the next {n} days"},"dateChip_empty":"empty","dateChip_notEmpty":"not empty","dateChip_overlaps":"runs {when}","dateChip_within":"entirely {when}","dateChip_withinDays":"entirely within {when}","dateChip_starts":"starts {when}","dateChip_ends":"ends {when}","dateChip_contains":"runs on {date}","dateCountLast":"Days, today included","dateCountNext":"Days ahead, today included","dateCountUnit":"days","dateValueDate":"Date","dateValueDay":"Day","dateValuePeriod":"Period","dateWhen":"When","dateOwnDays":"Own dates","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","phoneExtension":"ext.","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":{"one":"At most {n} digit after the point","other":"At most {n} digits after the point"},"fractionNone":"A whole amount, no digits after the point","boundBetween":"From {min} to {max}","boundAtLeast":"At least {min}","boundAtMost":"At most {max}","currency":"Currency","chooseCurrency":"Choose a currency","rowCount":{"one":"{n} row","other":"{n} rows"},"type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-meter":"Share of a limit","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)"}}');
 
 /***/ },
 
 /***/ "ae2fca904cab"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.form","tag":"sf-form","version":"1.3.3","kind":"leaf","settings":{"fields":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"propertyType":{"type":"string"},"variant":{"type":"string"},"required":{"type":"boolean"},"readonly":{"type":"boolean"},"hint":{"type":"string"},"help":{"type":"string"},"width":{"type":"string","enum":["s","m","full"]},"group":{"type":"string"},"placeholder":{"type":"string"},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"}},"required":["key","label","propertyType"]}},"default":[]},"groups":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"}},"required":["key"]}},"default":[]},"apply":{"type":"enum","values":["submit","instant"],"default":"submit"},"labels":{"type":"enum","values":["top","start"],"default":"top"},"footer":{"type":"enum","values":["static","sticky"],"default":"static"},"label":{"type":"string","default":""}},"values":{"value":{"type":"object","default":{}},"mode":{"type":"enum","values":["edit","view"],"default":"edit"},"valid":{"type":"boolean"},"dirty":{"type":"boolean"}},"events":{"input":{"carries":{"key":"string","value":"any"},"x-native":false},"change":{"carries":{"key":"string","value":"any"},"x-native":false},"submit":{"carries":{"value":"object"},"cancelable":true},"invalid":{"carries":{"fields":"list"}},"cancel":{"carries":{"value":"object"}}},"actions":{"check-validity":{},"reset":{},"set-errors":{"with":{"errors":"object"}}},"presentation":{"skeleton":{"late":["fields","groups"]}},"host-states":{"data-dirty":"boolean","data-invalid":"boolean","data-mode":"string"},"css-variables":{"--sf-form-field-gap":{"type":"length","state":"default"},"--sf-form-group-gap":{"type":"length","state":"default"},"--sf-form-label-color":{"type":"color","state":"default"},"--sf-form-summary-background-color":{"type":"color","state":"default"},"--sf-form-footer-background-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.form","tag":"sf-form","version":"1.4.0","kind":"leaf","settings":{"fields":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"propertyType":{"type":"string"},"variant":{"type":"string"},"required":{"type":"boolean"},"readonly":{"type":"boolean"},"hint":{"type":"string"},"help":{"type":"string"},"width":{"type":"string","enum":["s","m","full"]},"group":{"type":"string"},"placeholder":{"type":"string"},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"}},"required":["key","label","propertyType"]}},"default":[]},"groups":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"}},"required":["key"]}},"default":[]},"apply":{"type":"enum","values":["submit","instant","answer"],"default":"submit"},"size":{"type":"enum","values":["1","1/2"],"default":"1"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"labels":{"type":"enum","values":["top","start"],"default":"top"},"footer":{"type":"enum","values":["static","sticky"],"default":"static"},"label":{"type":"string","default":""}},"values":{"value":{"type":"object","default":{}},"mode":{"type":"enum","values":["edit","view"],"default":"edit"},"valid":{"type":"boolean"},"dirty":{"type":"boolean"}},"events":{"input":{"carries":{"key":"string","value":"any"},"x-native":false},"change":{"carries":{"key":"string","value":"any"},"x-native":false},"submit":{"carries":{"value":"object"},"cancelable":true},"answer":{"carries":{"accepted":"boolean","value":{"type":"object","optional":true}},"cancelable":true},"invalid":{"carries":{"fields":"list"}},"cancel":{"carries":{"value":"object"}}},"actions":{"check-validity":{},"reset":{},"set-errors":{"with":{"errors":"object"}}},"presentation":{"skeleton":{"late":["fields","groups"]}},"host-states":{"data-dirty":"boolean","data-invalid":"boolean","data-mode":"string","data-state":"string"},"css-variables":{"--sf-form-field-gap":{"type":"length","state":"default"},"--sf-form-group-gap":{"type":"length","state":"default"},"--sf-form-label-color":{"type":"color","state":"default"},"--sf-form-summary-background-color":{"type":"color","state":"default"},"--sf-form-footer-background-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "2438c5fc3777"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Form","runtime":{"required-note":"* — required fields","submit":"Save","cancel":"Cancel","edit":"Edit","unsaved":"You have unsaved changes","errors-title":{"one":"Fix {n} field","other":"Fix {n} fields"},"value-missing":"Fill in the field “{label}”","help-label":"More about {label}"},"events":{"submit":{"label":"Save"},"cancel":{"label":"Cancel"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Form","runtime":{"required-note":"* — required fields","submit":"Save","cancel":"Cancel","edit":"Edit","send":"Send","answer-sending":"Sending…","answer-cancelling":"Cancelling…","answer-sent":"Sent","answer-expired":"The time to answer has passed","unsaved":"You have unsaved changes","errors-title":{"one":"Fix {n} field","other":"Fix {n} fields"},"value-missing":"Fill in the field “{label}”","help-label":"More about {label}"},"events":{"submit":{"label":"Save"},"answer":{"label":"Answer"},"cancel":{"label":"Cancel"}}}');
 
 /***/ }
 

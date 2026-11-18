@@ -3179,51 +3179,55 @@
             padding-inline-start: var(--sf-dropdown-field--padding-inline-start);
     padding-top: var(--sf-dropdown-field--padding-top);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-icon-button{
+  /* The field's own icon buttons are compact. The help mark's button after the
+     label (sf-help-mark) is no part of the field: it keeps the icon button's
+     own size, as after sf-input's label (32 / 28 at 1/2), so the «?» of every
+     field is one target (1.16.2; it was 28 / 24 here). */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
     padding-right: var(--sf-icon-button--padding-inline-end);
   }
   @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-icon-button{
+  html:not([dir="rtl"]) .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
     padding-right: var(--sf-icon-button--padding-inline-end);
     }
   }
-  .sf-dropdown .sf-icon-button:where(:dir(ltr)){
+  .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)):where(:dir(ltr)){
     padding-right: var(--sf-icon-button--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-icon-button{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
     padding-left: var(--sf-icon-button--padding-inline-end);
   }
   @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-icon-button{
+  [dir="rtl"] .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
     padding-left: var(--sf-icon-button--padding-inline-end);
     }
   }
-  .sf-dropdown .sf-icon-button:where(:dir(rtl)){
+  .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)):where(:dir(rtl)){
     padding-left: var(--sf-icon-button--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-icon-button{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
     padding-left: var(--sf-icon-button--padding-inline-start);
   }
   @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-icon-button{
+  html:not([dir="rtl"]) .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
     padding-left: var(--sf-icon-button--padding-inline-start);
     }
   }
-  .sf-dropdown .sf-icon-button:where(:dir(ltr)){
+  .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)):where(:dir(ltr)){
     padding-left: var(--sf-icon-button--padding-inline-start);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-icon-button{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
     padding-right: var(--sf-icon-button--padding-inline-start);
   }
   @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-dropdown .sf-icon-button{
+  [dir="rtl"] .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
     padding-right: var(--sf-icon-button--padding-inline-start);
     }
   }
-  .sf-dropdown .sf-icon-button:where(:dir(rtl)){
+  .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)):where(:dir(rtl)){
     padding-right: var(--sf-icon-button--padding-inline-start);
   }
-  .sf-dropdown .sf-icon-button {
+  .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)) {
     --sf-icon-button--padding-bottom: var(--sf-space-1\/4);
     --sf-icon-button--padding-inline-end: var(--sf-space-1\/4);
     --sf-icon-button--padding-inline-start: var(--sf-space-1\/4);

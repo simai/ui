@@ -63,14 +63,10 @@
     --sf-settings-panel--pad: var(--sf-ui-1--space-x);
     --sf-settings-panel--pin: calc(var(--sf-text-height-1) + 2 * var(--sf-ui-1--space-y-tightness-low));
   }
-  /* Compact (C22): the rows and the text a step down, the H4 inset 12. */
-  [data-sf-density=compact] .sf-settings-panel--size-1,
-  .sf-settings-panel--size-1[data-sf-density=compact] {
-    --sf-settings-panel--row-height: var(--sf-ui-1\/2--control-height);
-    --sf-settings-panel--text: var(--sf-text-size-1\/2);
-    --sf-settings-panel--line: var(--sf-text-height-1\/2);
-    --sf-settings-panel--pad: var(--sf-space-1\/2);
-  }
+  /* Compact (C22): no rule of its own. The density already moves the size's
+     tokens a step down (40 -> 32 rows, 16 -> 14 text, the H4 inset 12) on the
+     panel and on its buttons; a second step here drew 28 rows and 12 text
+     under 32 buttons. */
   /* Over the page: the popup's elevation, fitted to its room. */
   .sf-settings-panel--popup {
     max-height: calc(100dvh - var(--sf-space-4));
@@ -362,36 +358,51 @@
   /* The handle (C106 (6)): at the row's start, always shown. It stands a step
      into the inset, so a list that orders starts its text where a list that
      does not starts its handle. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-row-handle{
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-row-handle,html:not([dir="rtl"])
+  .sf-settings-row-handle-place{
     margin-left: calc(-1 * var(--sf-settings-panel--inset));
   }
   @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-settings-row-handle{
+  html:not([dir="rtl"]) .sf-settings-row-handle,html:not([dir="rtl"])
+  .sf-settings-row-handle-place{
     margin-left: calc(-1 * var(--sf-settings-panel--inset));
     }
   }
-  .sf-settings-row-handle:where(:dir(ltr)){
+  .sf-settings-row-handle:where(:dir(ltr)),
+  .sf-settings-row-handle-place:where(:dir(ltr)){
     margin-left: calc(-1 * var(--sf-settings-panel--inset));
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-row-handle{
+  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-row-handle,[dir="rtl"]
+  .sf-settings-row-handle-place{
     margin-right: calc(-1 * var(--sf-settings-panel--inset));
   }
   @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-settings-row-handle{
+  [dir="rtl"] .sf-settings-row-handle,[dir="rtl"]
+  .sf-settings-row-handle-place{
     margin-right: calc(-1 * var(--sf-settings-panel--inset));
     }
   }
-  .sf-settings-row-handle:where(:dir(rtl)){
+  .sf-settings-row-handle:where(:dir(rtl)),
+  .sf-settings-row-handle-place:where(:dir(rtl)){
     margin-right: calc(-1 * var(--sf-settings-panel--inset));
   }
-  .sf-settings-row-handle {
+  .sf-settings-row-handle,
+  .sf-settings-row-handle-place {
     display: inline-flex;
     flex: none;
     -webkit-margin-start: calc(-1 * var(--sf-settings-panel--inset));
             margin-inline-start: calc(-1 * var(--sf-settings-panel--inset));
+  }
+  .sf-settings-row-handle {
     cursor: -webkit-grab;
     cursor: grab;
     touch-action: none;
+  }
+  /* A row of an ordering list that does not move (an option with sortable:
+     false) keeps the handle's place empty, so its text stands with its
+     neighbours' (C105 H2). */
+  .sf-settings-row-handle-place {
+    visibility: hidden;
   }
   /* The check (C106 (2)): one column at the inline end, shown on a checked
      field. A choice of one has none (C106 (3)): the fill alone. */
@@ -448,6 +459,34 @@
     -webkit-margin-end: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
             margin-inline-end: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
     opacity: 0;
+  }
+  /* A choice that pins (C106 (3)) has no check column: its pin stands at the
+     row's end. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-row--option > .sf-settings-row-pin > .sf-icon-button{
+    margin-right: var(--sf-settings-panel--pad);
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-settings-row--option > .sf-settings-row-pin > .sf-icon-button{
+    margin-right: var(--sf-settings-panel--pad);
+    }
+  }
+  .sf-settings-row--option > .sf-settings-row-pin > .sf-icon-button:where(:dir(ltr)){
+    margin-right: var(--sf-settings-panel--pad);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-row--option > .sf-settings-row-pin > .sf-icon-button{
+    margin-left: var(--sf-settings-panel--pad);
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-settings-row--option > .sf-settings-row-pin > .sf-icon-button{
+    margin-left: var(--sf-settings-panel--pad);
+    }
+  }
+  .sf-settings-row--option > .sf-settings-row-pin > .sf-icon-button:where(:dir(rtl)){
+    margin-left: var(--sf-settings-panel--pad);
+  }
+  .sf-settings-row--option > .sf-settings-row-pin > .sf-icon-button {
+    -webkit-margin-end: var(--sf-settings-panel--pad);
+            margin-inline-end: var(--sf-settings-panel--pad);
   }
   .sf-settings-row:hover > .sf-settings-row-pin > .sf-icon-button,
   .sf-settings-row[data-pinned] > .sf-settings-row-pin > .sf-icon-button,

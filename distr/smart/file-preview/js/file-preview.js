@@ -524,7 +524,10 @@ _format_intl_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_resu
  *   number (default)  1 234,5   as many digits as `step` needs, at most 6; 2 without one
  *   integer           1 235
  *   decimal-<n>       n digits after the point, always (0 to 20)
- *   percent           a share 0..1 as 12 %
+ *   share             a share 0..1 as 12 % (0.125 is 12,5 %)
+ *   percent           the same share: the charts' word, kept
+ *   unit-percent      a value that already is the percent (12.5 is 12,5 %),
+ *                     as the property type `percent` stores it
  *   compact           1,2 тыс.  /  1.2K
  *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
  *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
@@ -551,8 +554,12 @@ function numberOptions(format = 'number', step = 0) {
   if (word === 'integer') return {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
-  };
-  if (word === 'percent') return {
+  }; // Two meanings of «percent» met in the Framework (C294, MP-4): this word
+  // multiplies a share by 100, while the property type `percent` holds the
+  // percent itself. `share` says which one it is; `percent` stays its alias for
+  // the charts that write it, and `unit-percent` is the percent itself.
+
+  if (word === 'share' || word === 'percent') return {
     style: 'percent',
     maximumFractionDigits: 1
   };
@@ -615,7 +622,10 @@ function formatNumber(value, format = 'number', {
  */
 
 function percentSign(text) {
-  return String(text).replace(/[\s\u00a0\u202f]*%$/u, '\u00a0%');
+  // A right-to-left language writes direction marks around the sign («12.5‎%‎»
+  // in Arabic); they go with the space it had, and the number keeps the mark
+  // it starts with (C294).
+  return String(text).replace(/[\s\u00a0\u202f\u200e\u200f\u061c]*%[\u200e\u200f\u061c]*$/u, '\u00a0%');
 }
 /**
  * A value that already is a per cent (0..100, «72», «72.5») as the progress
@@ -1262,6 +1272,11 @@ class SfFilePreview extends FilePreviewElement {
       removeAction: this.removeAction,
       disabled: this.disabled,
       ariaLabel: this.accessibleName,
+      // The reason of a failure is said by role alert (defects-d12), unless
+      // the host says it itself (data-said-by="host": an upload list says
+      // «<имя> не загрузился» in its own status line, and the reader would
+      // hear it twice).
+      announced: this.getAttribute('data-said-by') !== 'host',
       // «Скачать <имя>», «Убрать <имя>» or, for a stored file, «Удалить <имя>»
       // (C51, C149 (8)): a page's own label is kept.
       downloadLabel: this.getAttribute('download-label') || this.sfWord('download-label', {
@@ -1758,7 +1773,12 @@ function renderLine(context) {
   }
 
   if (context.state === 'error') {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-error">${context.words.failed}</span>`;
+    // The reason is said when it appears (role alert, as sf-form's summary
+    // and sf-alert-bar's live line; defects-d12): the row drew it in silence.
+    // Not when the host says it in its own status line (data-said-by).
+    // A chip cuts it to one line, so the whole reason is its title as well.
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-error" role=${context.announced ? 'alert' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      title=${context.view === 'chip' ? context.words.failed : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${context.words.failed}</span>`;
   }
 
   return context.meta ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-file-preview-meta sf-file-preview-size" aria-hidden="true" title=${context.view === 'tile' ? context.meta : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${context.meta}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
@@ -2025,7 +2045,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-
 /***/ "f3f4ec5c87ca"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.5.3","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"file-date":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"duration":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["row","chip","tile"],"default":"row"},"download":{"type":"boolean","default":true},"target":{"type":"string","default":""},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"stored":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","uploading","error"],"default":"ready"},"value":{"type":"number","optional":true,"min":0,"max":100},"error-text":{"type":"string","default":""},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"retry":{"carries":{"id":"string","action":"string","value":"object"}}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.5.4","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"file-date":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"duration":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["row","chip","tile"],"default":"row"},"download":{"type":"boolean","default":true},"target":{"type":"string","default":""},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"stored":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","uploading","error"],"default":"ready"},"value":{"type":"number","optional":true,"min":0,"max":100},"error-text":{"type":"string","default":""},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"retry":{"carries":{"id":"string","action":"string","value":"object"}}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

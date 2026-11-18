@@ -33,6 +33,7 @@
   }
   .table {
     --sf-table-color: var(--sf-on-surface);
+    --sf-table-head-color: var(--sf-on-surface-variant);
     --sf-table-border-color: var(--sf-outline-variant);
     --sf-table-accent-bg: var(--sf-transparent);
     --sf-table-stripe-color: var(--sf-on-surface);
@@ -149,7 +150,7 @@
     text-align: start;
   }
   .table > thead > tr > th {
-    color: var(--sf-on-surface-variant);
+    color: var(--sf-table-head-color);
     font-weight: var(--sf-weight--medium);
   }
   .table > tbody > tr > th[scope=row] {

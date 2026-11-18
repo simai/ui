@@ -6048,7 +6048,10 @@ __webpack_require__.r(__webpack_exports__);
  *   number (default)  1 234,5   as many digits as `step` needs, at most 6; 2 without one
  *   integer           1 235
  *   decimal-<n>       n digits after the point, always (0 to 20)
- *   percent           a share 0..1 as 12 %
+ *   share             a share 0..1 as 12 % (0.125 is 12,5 %)
+ *   percent           the same share: the charts' word, kept
+ *   unit-percent      a value that already is the percent (12.5 is 12,5 %),
+ *                     as the property type `percent` stores it
  *   compact           1,2 тыс.  /  1.2K
  *   currency-<CODE>   1 234,50 ₽ (an ISO 4217 code)
  *   unit-<unit>       45,3 ГБ (an Intl unit: gigabyte, megabit-per-second)
@@ -6075,8 +6078,12 @@ function numberOptions(format = 'number', step = 0) {
   if (word === 'integer') return {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
-  };
-  if (word === 'percent') return {
+  }; // Two meanings of «percent» met in the Framework (C294, MP-4): this word
+  // multiplies a share by 100, while the property type `percent` holds the
+  // percent itself. `share` says which one it is; `percent` stays its alias for
+  // the charts that write it, and `unit-percent` is the percent itself.
+
+  if (word === 'share' || word === 'percent') return {
     style: 'percent',
     maximumFractionDigits: 1
   };
@@ -6139,7 +6146,10 @@ function formatNumber(value, format = 'number', {
  */
 
 function percentSign(text) {
-  return String(text).replace(/[\s\u00a0\u202f]*%$/u, '\u00a0%');
+  // A right-to-left language writes direction marks around the sign («12.5‎%‎»
+  // in Arabic); they go with the space it had, and the number keeps the mark
+  // it starts with (C294).
+  return String(text).replace(/[\s\u00a0\u202f\u200e\u200f\u061c]*%[\u200e\u200f\u061c]*$/u, '\u00a0%');
 }
 /**
  * A value that already is a per cent (0..100, «72», «72.5») as the progress
@@ -7717,7 +7727,12 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     while (walker.nextNode()) {
       const node = walker.currentNode;
-      if (!node.nodeValue || !node.nodeValue.includes('[!')) continue;
+      if (!node.nodeValue || !node.nodeValue.includes('[!')) continue; // Code shows its text as written (C258), as the Loader's own reader
+      // does (SHORTCODE_SKIPPED): a line marker such as // [!code ++] in a
+      // code block was hidden in a comment here, while the page was parsed,
+      // so the highlighter never saw it and the line went unmarked.
+
+      if (node.parentElement?.closest?.('pre, code, script, style')) continue;
       toReplace.push(node);
     }
 
@@ -15061,7 +15076,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.60.0';
+const CORE_RUNTIME = '1.61.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -25155,7 +25170,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.20.3"
+    "version": "1.20.4"
   },
   "sf-icon": {
     "inputs": {
@@ -31855,7 +31870,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-built-in","s
 (module) {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-pack-index","schema_version":1,"delivery":"framework","languages":["ru"],"parts":{"ru":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]}},"coverage":{"ru":{"words":2043,"translated":2043,"share":100}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-pack-index","schema_version":1,"delivery":"framework","languages":["ru"],"parts":{"ru":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]}},"coverage":{"ru":{"words":2139,"translated":2139,"share":100}}}');
 
 /***/ }
 

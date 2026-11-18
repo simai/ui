@@ -4465,6 +4465,8 @@ SF.RuleLoader['cl-form'] = {
     name: 'cl-button'
   }, {
     name: 'cl-help-mark'
+  }, {
+    name: 'cl-icon'
   }]
 };
 

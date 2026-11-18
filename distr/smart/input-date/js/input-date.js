@@ -1182,10 +1182,15 @@ function getWeekdays(locale, weekStart = 1, weekday = 'short') {
 } // Quick ranges (owner, 2026-10-15). A relative one is resolved against today
 // in the person's own time zone, every time it is drawn, so a host that stores
 // «last 7 days» gets the last seven days tomorrow too. Weeks start where the
-// grid starts them.
+// grid starts them. The calendar periods are whole (owner decision C293,
+// 2026-11-17, DF-5): this week runs to its last day, this month to its last
+// day, this year to 31 December; they ended today, so «this week» meant
+// Monday to today and said something else than its name. The rolling ones
+// (last 7 and 30 days) end today. Last week and this year were missing; a
+// deadline's forward periods (tomorrow, next week, next month) are here too.
 
 
-const RELATIVE_PRESETS = ['today', 'yesterday', 'last-7-days', 'last-30-days', 'this-week', 'this-month', 'last-month'];
+const RELATIVE_PRESETS = ['today', 'yesterday', 'last-7-days', 'last-30-days', 'this-week', 'last-week', 'this-month', 'last-month', 'this-year', 'tomorrow', 'next-week', 'next-month'];
 
 function addDays(date, days) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
@@ -1193,6 +1198,7 @@ function addDays(date, days) {
 
 function resolveRelativePreset(id, today, weekStart = 1) {
   const day = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const weekFirst = addDays(day, -((day.getDay() - weekStart + 7) % 7));
 
   switch (id) {
     case 'today':
@@ -1201,6 +1207,9 @@ function resolveRelativePreset(id, today, weekStart = 1) {
     case 'yesterday':
       return [addDays(day, -1), addDays(day, -1)];
 
+    case 'tomorrow':
+      return [addDays(day, 1), addDays(day, 1)];
+
     case 'last-7-days':
       return [addDays(day, -6), day];
 
@@ -1208,13 +1217,25 @@ function resolveRelativePreset(id, today, weekStart = 1) {
       return [addDays(day, -29), day];
 
     case 'this-week':
-      return [addDays(day, -((day.getDay() - weekStart + 7) % 7)), day];
+      return [weekFirst, addDays(weekFirst, 6)];
+
+    case 'last-week':
+      return [addDays(weekFirst, -7), addDays(weekFirst, -1)];
+
+    case 'next-week':
+      return [addDays(weekFirst, 7), addDays(weekFirst, 13)];
 
     case 'this-month':
-      return [new Date(day.getFullYear(), day.getMonth(), 1), day];
+      return [new Date(day.getFullYear(), day.getMonth(), 1), new Date(day.getFullYear(), day.getMonth() + 1, 0)];
 
     case 'last-month':
       return [new Date(day.getFullYear(), day.getMonth() - 1, 1), new Date(day.getFullYear(), day.getMonth(), 0)];
+
+    case 'next-month':
+      return [new Date(day.getFullYear(), day.getMonth() + 1, 1), new Date(day.getFullYear(), day.getMonth() + 2, 0)];
+
+    case 'this-year':
+      return [new Date(day.getFullYear(), 0, 1), new Date(day.getFullYear(), 11, 31)];
 
     default:
       return null;
@@ -4586,7 +4607,7 @@ function joinClasses(...tokens) {
 
 function renderYearTop(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-datepicker-top flex content-main-between items-cross-center">
+        <div class="sf-datepicker-top sf-datepicker-top--years">
             <sf-button-icon appearance="ghost" scheme="on-surface" size="1/2" ?disabled=${context.disabled}
                 icon=${context.previousIcon} aria-label=${context.labels.previousYears}
                 @click=${() => context.component.shiftYearPage(-1)}></sf-button-icon>
@@ -4602,11 +4623,11 @@ function renderYearTop(context) {
 function renderTop(context) {
   if (context.context === 'year') return renderYearTop(context);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-datepicker-top grid items-cross-center">
+        <div class="sf-datepicker-top">
             <sf-button-icon appearance="ghost" scheme="on-surface" size="1/2" ?disabled=${context.disabled}
                 icon=${context.previousIcon} aria-label=${context.labels.previousMonth}
                 @click=${() => context.component.shiftMonth(-1)}></sf-button-icon>
-            <div class="sf-datepicker-period flex content-main-center items-cross-center">
+            <div class="sf-datepicker-period">
                 <!-- The toggles are size 1/2, as tall as the compact size 1 they were:
                      density no longer changes a button's height (C01). The arrows
                      beside them are the same size: one band of buttons, one height
@@ -4637,11 +4658,11 @@ function focusItem(items) {
 function renderMonthContext(context) {
   const focusable = focusItem(context.months);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-datepicker-context absolute top-0 bottom-0 inline-start-0 inline-end-0 grid grid-col-3 overflow-auto gap-1/4"
+        <div class="sf-datepicker-context"
              role="group" aria-label=${context.labels.chooseMonth}
              @keydown=${event => context.component.handleContextKeydown(event)}>
             ${context.months.map(month => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                <button class=${joinClasses('sf-datepicker-text flex content-main-center items-cross-center', month.selected ? 'active' : '', month.disabled ? 'disabled' : '')}
+                <button class=${joinClasses('sf-datepicker-text sf-datepicker-choice', month.selected ? 'active' : '', month.disabled ? 'disabled' : '')}
                     ?disabled=${month.disabled} aria-pressed=${month.selected ? 'true' : 'false'}
                     tabindex=${month === focusable ? '0' : '-1'}
                     type="button" @click=${() => context.component.selectMonth(month)}>
@@ -4653,11 +4674,11 @@ function renderMonthContext(context) {
 function renderYearContext(context) {
   const focusable = focusItem(context.years);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-datepicker-context absolute top-0 bottom-0 inline-start-0 inline-end-0 grid grid-col-3 overflow-auto gap-1/4"
+        <div class="sf-datepicker-context"
              role="group" aria-label=${context.labels.chooseYear}
              @keydown=${event => context.component.handleContextKeydown(event)}>
             ${context.years.map(year => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                <button class=${joinClasses('sf-datepicker-text flex content-main-center items-cross-center', year.selected ? 'active' : '', year.disabled ? 'disabled' : '')}
+                <button class=${joinClasses('sf-datepicker-text sf-datepicker-choice', year.selected ? 'active' : '', year.disabled ? 'disabled' : '')}
                     type="button" ?disabled=${year.disabled} aria-pressed=${year.selected ? 'true' : 'false'}
                     tabindex=${year === focusable ? '0' : '-1'}
                     @click=${() => context.component.selectYear(year)}>
@@ -4740,7 +4761,7 @@ function renderGrid(context) {
   for (let at = 0; at < context.days.length; at += 7) weeks.push(context.days.slice(at, at + 7));
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-datepicker-grid grid grid-col-7" role="grid" aria-label=${context.calendarLabel}
+        <div class="sf-datepicker-grid" role="grid" aria-label=${context.calendarLabel}
             aria-readonly=${context.valueLocked ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             @pointerleave=${() => context.component.showDayLine('')}
             @focusin=${() => context.component.noteDaysFocus(true)}
@@ -4772,14 +4793,14 @@ function renderPresets(context) {
 
   const custom = !items.some(item => item.pressed) && Boolean(context.startValue);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-datepicker-presets flex flex-col gap-1/4" role="group" aria-label=${context.labels.presets}
+        <div class="sf-datepicker-presets" role="group" aria-label=${context.labels.presets}
             @keydown=${event => context.component.handlePresetKeydown(event)}>
             ${items.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                <button class=${joinClasses('sf-datepicker-text sf-datepicker-preset flex items-cross-center', item.pressed ? 'active' : '')}
+                <button class=${joinClasses('sf-datepicker-text sf-datepicker-preset', item.pressed ? 'active' : '')}
                     type="button" ?disabled=${item.disabled || context.disabled} aria-pressed=${item.pressed ? 'true' : 'false'}
                     tabindex=${item === focusable ? '0' : '-1'} data-preset=${item.id}
                     @click=${() => context.component.choosePreset(item)}>${item.label}</button>`)}
-            <button class=${joinClasses('sf-datepicker-text sf-datepicker-preset flex items-cross-center', custom ? 'active' : '')}
+            <button class=${joinClasses('sf-datepicker-text sf-datepicker-preset', custom ? 'active' : '')}
                 type="button" ?disabled=${context.disabled} aria-pressed=${custom ? 'true' : 'false'} tabindex=${focusable || context.disabled ? '-1' : '0'} data-preset=""
                 @click=${() => context.component.chooseCustomRange()}>${context.labels.customRange}</button>
         </div>`;
@@ -4788,7 +4809,7 @@ function renderPresets(context) {
 // the arrow keys already do what it does. Still a real, named button.
 
 
-const TIME_STEPPER = 'sf-datepicker-time-step sf-icon-button sf-icon-button--size-1 sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface flex items-cross-center content-main-center';
+const TIME_STEPPER = 'sf-datepicker-time-step sf-icon-button sf-icon-button--size-1 sf-icon-button--icon sf-icon-button--ghost sf-icon-button--on-surface';
 
 function renderTimeStepper(context, part, direction) {
   const labels = context.labels;
@@ -4805,9 +4826,9 @@ function renderTimePart(context, part) {
   const value = parts[part];
   const shown = value === null ? '--' : String(value).padStart(2, '0');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-datepicker-time-part flex items-cross-center">
+        <div class="sf-datepicker-time-part">
             ${renderTimeStepper(context, part, -1)}
-            <span class="sf-datepicker-text sf-datepicker-time-value flex content-main-center items-cross-center"
+            <span class="sf-datepicker-text sf-datepicker-time-value"
                 role="spinbutton" data-time-part=${part}
                 tabindex=${context.disabled ? '-1' : '0'}
                 aria-label=${part === 'hours' ? context.labels.hours : context.labels.minutes}
@@ -4827,7 +4848,7 @@ function renderTimePart(context, part) {
 function renderTime(context) {
   if (!context.timeParts) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-datepicker-time flex content-main-center items-cross-center gap-1/4" role="group"
+        <div class="sf-datepicker-time" role="group"
             aria-label=${context.labels.time} dir="ltr">
             ${renderTimePart(context, 'hours')}
             <span class="sf-datepicker-time-separator" aria-hidden="true">:</span>
@@ -4839,7 +4860,7 @@ function renderTime(context) {
 
 
 function renderDatepickerPanel(context) {
-  const rootClasses = joinClasses('sf-datepicker inline-flex', context.input ? '' : 'sf-datepicker--inline', context.presetItems.length ? 'sf-datepicker--presets' : '', context.mode !== 'date' ? `sf-datepicker--${context.mode}` : '', // A period's popup (C227): its days keep the control height on a phone.
+  const rootClasses = joinClasses('sf-datepicker', context.input ? '' : 'sf-datepicker--inline', context.presetItems.length ? 'sf-datepicker--presets' : '', context.mode !== 'date' ? `sf-datepicker--${context.mode}` : '', // A period's popup (C227): its days keep the control height on a phone.
   context.range ? 'sf-datepicker--range' : '', context.rootClass);
 
   if (context.mode === 'time') {
@@ -4862,14 +4883,14 @@ function renderDatepickerPanel(context) {
             aria-disabled=${context.disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             @click=${event => context.component.handlePanelClick(event)}>
             ${renderPresets(context)}
-            <div class="sf-datepicker-container flex flex-col">
+            <div class="sf-datepicker-container">
                 <!-- The shown month, said when it changes (audit S18c); the year
                      page says its own range in its title. -->
                 <div class="sr-only" aria-live="polite" aria-atomic="true">${context.context === 'year' ? '' : context.calendarLabel}</div>
                 ${renderTop(context)}
-                <div class="sf-datepicker-main relative">
+                <div class="sf-datepicker-main">
                     ${renderContext(context)}
-                    <div class="sf-datepicker-weekdays grid grid-col-7" aria-hidden="true">
+                    <div class="sf-datepicker-weekdays" aria-hidden="true">
                         ${context.weekdays.map((weekday, at) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${context.weekdaysOff?.[at] ? 'sf-datepicker-weekday sf-datepicker-weekday-off' : 'sf-datepicker-weekday'}>${weekday}</span>`)}
                     </div>
                     ${renderGrid(context)}
@@ -4883,7 +4904,7 @@ function renderDatepickerPanel(context) {
 function renderDatepickerTemplate(context) {
   if (!context.input) return renderDatepickerPanel(context);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class=${joinClasses('sf-datepicker-wrap inline-flex flex-col relative', context.open ? 'is-open' : '', context.openAbove ? 'sf-datepicker-wrap--drop-up' : 'sf-datepicker-wrap--drop-down')}
+        <div class=${joinClasses('sf-datepicker-wrap', context.open ? 'is-open' : '', context.openAbove ? 'sf-datepicker-wrap--drop-up' : 'sf-datepicker-wrap--drop-down')}
             ${(0,lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__.ref)(context.component.refs.datePickerRoot)} data-portal=${context.portal ? 'true' : 'false'}>
             ${renderDatepickerInput(context)}
             ${context.open ? renderDatepickerPanel(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -4937,7 +4958,7 @@ function renderRibbonMonth(month, context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <section class="sf-datepicker-ribbon-month" data-month=${month.key}>
             <div class="sf-datepicker-ribbon-title" aria-hidden="true">${month.label}</div>
-            <div class="sf-datepicker-grid grid grid-col-7" role="grid" aria-label=${month.label}>
+            <div class="sf-datepicker-grid" role="grid" aria-label=${month.label}>
                 <div class="sf-datepicker-week" role="row">
                     ${context.weekdayNames.map(name => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sr-only" role="columnheader">${name}</span>`)}
                 </div>
@@ -4958,14 +4979,14 @@ function renderRibbonPresets(context) {
   if (!items.length) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const focusable = context.disabled ? null : items.find(item => item.pressed && !item.disabled) ?? items.find(item => !item.disabled);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-datepicker-presets sf-datepicker-sheet-presets flex gap-1/4" role="group" aria-label=${context.labels.presets}
+        <div class="sf-datepicker-presets sf-datepicker-sheet-presets" role="group" aria-label=${context.labels.presets}
             @keydown=${event => context.component.handlePresetKeydown(event)}>
             ${items.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                <button class=${joinClasses('sf-datepicker-text sf-datepicker-preset flex items-cross-center', item.pressed ? 'active' : '')}
+                <button class=${joinClasses('sf-datepicker-text sf-datepicker-preset', item.pressed ? 'active' : '')}
                     type="button" ?disabled=${item.disabled || context.disabled} aria-pressed=${item.pressed ? 'true' : 'false'}
                     tabindex=${item === focusable ? '0' : '-1'} data-preset=${item.id}
                     @click=${() => context.component.pickRibbonPreset(item)}>${item.label}</button>`)}
-            <button class=${joinClasses('sf-datepicker-text sf-datepicker-preset flex items-cross-center', context.customPressed ? 'active' : '')}
+            <button class=${joinClasses('sf-datepicker-text sf-datepicker-preset', context.customPressed ? 'active' : '')}
                 type="button" ?disabled=${context.disabled} aria-pressed=${context.customPressed ? 'true' : 'false'}
                 tabindex=${focusable || context.disabled ? '-1' : '0'} data-preset=""
                 @click=${() => context.component.pickRibbonCustomRange()}>${context.labels.customRange}</button>
@@ -5118,14 +5139,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "d7180f8fbd98"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.14.3","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"weekend":{"type":"string","default":""},"locale":{"type":"string","default":""},"format":{"type":"string","default":""},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"icon-start":{"type":"icon","default":""},"left-icon":{"type":"icon","default":""},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","this-month","last-month"],"optional":true},"range":{"type":"list","optional":true}}},"holidays":{"type":"list","default":[],"of":{"date":"string","kind":{"type":"enum","values":["holiday","day-off","working-day"]},"name":{"type":"string","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"},"--sf-datepicker-day-off":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.15.0","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"weekend":{"type":"string","default":""},"locale":{"type":"string","default":""},"format":{"type":"string","default":""},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"icon-start":{"type":"icon","default":""},"left-icon":{"type":"icon","default":""},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","last-week","this-month","last-month","this-year","tomorrow","next-week","next-month"],"optional":true},"range":{"type":"list","optional":true}}},"holidays":{"type":"list","default":[],"of":{"date":"string","kind":{"type":"enum","values":["holiday","day-off","working-day"]},"name":{"type":"string","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"},"--sf-datepicker-day-off":{"type":"color","state":"rest"}}}');
 
 /***/ },
 
 /***/ "2fe06cbdeec6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Datepicker","runtime":{"choose-end":"choose the end","choose-month":"Choose a month","choose-start":"Choose the start of the period","choose-year":"Choose a year","close":"Close","custom-range":"Custom range","day-off":"day off","done":"Done","earlier-hour":"Previous hour","earlier-minute":"Previous minutes","go-to-today":"Today","hours":"Hours","later-hour":"Next hour","later-minute":"Next minutes","minutes":"Minutes","next-month":"Next month","next-years":"Next years","period":"Period","preset-last-month":"Last month","preset-last30-days":"Last 30 days","preset-last7-days":"Last 7 days","preset-this-month":"This month","preset-this-week":"This week","preset-today":"Today","preset-yesterday":"Yesterday","presets":"Quick ranges","previous-month":"Previous month","previous-years":"Previous years","time":"Time","time-not-set":"Not set","value-missing":"Choose a date.","value-missing-datetime":"Choose a date and a time.","value-missing-time":"Choose a time."}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Datepicker","runtime":{"choose-end":"choose the end","choose-month":"Choose a month","choose-start":"Choose the start of the period","choose-year":"Choose a year","close":"Close","custom-range":"Custom range","day-off":"day off","done":"Done","earlier-hour":"Previous hour","earlier-minute":"Previous minutes","go-to-today":"Today","hours":"Hours","later-hour":"Next hour","later-minute":"Next minutes","minutes":"Minutes","next-month":"Next month","next-years":"Next years","period":"Period","preset-last-month":"Last month","preset-last-week":"Last week","preset-last30-days":"Last 30 days","preset-last7-days":"Last 7 days","preset-next-month":"Next month","preset-next-week":"Next week","preset-this-month":"This month","preset-this-week":"This week","preset-this-year":"This year","preset-today":"Today","preset-tomorrow":"Tomorrow","preset-yesterday":"Yesterday","presets":"Quick ranges","previous-month":"Previous month","previous-years":"Previous years","time":"Time","time-not-set":"Not set","value-missing":"Choose a date.","value-missing-datetime":"Choose a date and a time.","value-missing-time":"Choose a time."}}');
 
 /***/ }
 
