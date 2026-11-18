@@ -8,6 +8,14 @@
 
 ### Добавлено
 
+- Pair next 14 (group build 12, ui-source integration/pair-next-14: eight branches over ui-1ed6b6c9a040, accepted by DEV by measurement).
+- Fields: C294 money, percent and number (module.smart-field-renderers 1.19.0): money in the page language with the standard currency sign or the code, minus only for negatives, a float rounded to minor units with one warning, extra fraction digits are a field error, pasted «1 234,50 ₽» / «$1,234.50» / «12,5 %» read, decimal keyboard, totals per currency, `isNumericType`; nine number conditions with the condition first and a currency choice for mixed currencies. C293 date filter: the condition first, one grouped list (date, period, filled), «before / after» words, forward periods on deadline fields only, period field conditions, the server gets the period name with time zone and week start, the chip says the condition. FL-1/FL-7 phone: the edit writes E.164, view and cell laid out with the extension, an empty field takes the country of the page language.
+- Components: field hint marks 32/28 as sf-input's (sf-dropdown 1.20.4); C285 file name in the code head; C106 sf-settings 1.8.0 (single choice by fill, handles at the start, pinned rows on top, one reset); defects d12 (menu path line clearance, file-upload previews said by host); highlight hl2 line mark classes; set schema orders; simai.property-view-port 1.19.0; sf-form 1.4.0; sf-input-date 1.15.0; sf-input-country 1.10.0.
+- Versions without a step in ui-1ed6b6c9a040 now stepped (DEV R-1, R-2): utility.break-after / break-before / break-inside 1.0.1 (no legacy page-break fallback), module.special 2.2.2 (built-in language table).
+- Port gate: simai.document-port 1.0.0 is allowed (SF_PORT_GATE_ALLOW=document-port@1.0.0, DEV decision msg-34146b6b20d5463aaf0c: the port has no implementer yet).
+- Consumers: simai.property-view-port 1.19.0 (C294, additive) needs Pro pro-820bb267919e or newer (sf-view-properties 1.19.1) and @simai-studio/view 1.8.2 or newer (sf-view-properties 1.19.2); older Pro and view releases accept up to 1.18.0.
+- `core.runtime` 1.61.0, `core.styles` 1.18.0.
+
 - Pair next 13 (group builds 10 and 11, ui-source integration/pair-next-13: fourteen branches over ui-24d64b7f6eb7).
 - Languages: C282 Russian is a language file: Smart bundles carry English words only; Russian comes from `core/lang/ru.js` included before core, or from the family parts core fetches; the Loader holds a definition until its words arrive (at most 800 ms). The skip link is drawn after the language-pack fetcher and redrawn when words arrive.
 - Layers and utilities: C273 component paint lives in `sf.paint` under the utilities (a utility colour on sf-card or sf-button wins); C264/C266 utilities (scroll margin and padding sides), C268 `pointer-events-none`, C274 dated aliases for `.body-text*`, `.text*`, `.label*`, `.d1-6`; ring classes alone draw in the focus role.
