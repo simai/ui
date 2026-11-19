@@ -740,6 +740,11 @@ function confirmSurface(Base, {
         // Not named `disabled`: that is the setting, and this is more --
         // the setting, or any state but open.
         answersLocked: this.getProp("disabled") || shown !== "open",
+        // disabled locks the decisive answer only (Larena LF-5): the
+        // declining one, Escape and a window's close always work, so
+        // a person can leave a question whose acceptance waits.
+        acceptLocked: this.getProp("disabled") || shown !== "open",
+        declineLocked: shown !== "open",
         // The step the answers stand on: a page's size, else 1 (C22).
         size: CONFIRM_SIZES.includes(this.getAttribute("size")) ? this.getAttribute("size") : "1",
         // Declined by the person here: the surface is hidden, and its
@@ -887,8 +892,9 @@ function confirmSurface(Base, {
     answer(params = {}) {
       const accepted = this.readAnswer(params);
       if (accepted === null) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("unknown");
-      if (this.shownState !== "open") return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("closed");
-      if (this.getProp("disabled")) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("disabled");
+      if (this.shownState !== "open") return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("closed"); // disabled holds the acceptance only: «no» always goes (LF-5).
+
+      if (accepted && this.getProp("disabled")) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("disabled");
       const focusWasInside = this.contains(this.ownerDocument.activeElement);
       this._pressed = accepted; // Before the event: a host may set the outcome inside its handler.
 
@@ -1004,7 +1010,7 @@ function confirmSurface(Base, {
 
 
     focusSafeAnswer(frames = 10) {
-      if (this.shownState !== "open" || this.getProp("disabled")) return false;
+      if (this.shownState !== "open") return false;
       const host = this.querySelector(`.${block}__actions:not([hidden]) [data-action="decline"]`);
       const button = host?.matches("button") ? host : host?.querySelector("button");
       button?.focus({
@@ -1095,7 +1101,7 @@ function renderConfirmFooter(context, block, {
                             text=${context.acceptText}
                             data-action="accept"
                             ?loading=${context.pressed === true}
-                            ?disabled=${context.answersLocked && context.pressed !== true}
+                            ?disabled=${context.acceptLocked && context.pressed !== true}
                             @click=${() => component.confirm()}
                     ></sf-button>
                     <sf-button
@@ -1105,7 +1111,7 @@ function renderConfirmFooter(context, block, {
                             text=${context.declineText}
                             data-action="decline"
                             ?loading=${context.pressed === false}
-                            ?disabled=${context.answersLocked && context.pressed !== false}
+                            ?disabled=${context.declineLocked && context.pressed !== false}
                             @click=${() => component.cancel()}
                     ></sf-button>
                 </div>`;
@@ -1201,7 +1207,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-confi
 /***/ "404cdb27f6dc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm-change","tag":"sf-confirm-change","version":"1.10.4","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"enum","values":["2","3","4","5","6"],"default":"3"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"change-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"},"changes":{"type":"list","default":[],"of":{"label":"string","before":{"type":"string","nullable":true,"optional":true},"after":{"type":"string","nullable":true,"optional":true}}}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{"x-answer":"puts the question again (state open); asked by an assembly (ask, §19.4) it answers when the person answers or the time runs out, with value {accepted, reason, value}"},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"presentation":{"skeleton":{"late":["changes"]}},"host-states":{},"css-variables":{"--sf-confirm-change-radius":{"type":"length","state":"default"},"--sf-confirm-change-inset":{"type":"length","state":"default"},"--sf-confirm-change-gap":{"type":"length","state":"default"},"--sf-confirm-change-before-background-color":{"type":"color","state":"default"},"--sf-confirm-change-after-background-color":{"type":"color","state":"default"},"--sf-confirm-change-after-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm-change","tag":"sf-confirm-change","version":"1.10.6","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"enum","values":["2","3","4","5","6"],"default":"3"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"change-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"},"changes":{"type":"list","default":[],"of":{"label":"string","before":{"type":"string","nullable":true,"optional":true},"after":{"type":"string","nullable":true,"optional":true}}}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{"x-answer":"puts the question again (state open); asked by an assembly (ask, §19.4) it answers when the person answers or the time runs out, with value {accepted, reason, value}"},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"presentation":{"skeleton":{"late":["changes"]}},"host-states":{},"css-variables":{"--sf-confirm-change-radius":{"type":"length","state":"default"},"--sf-confirm-change-inset":{"type":"length","state":"default"},"--sf-confirm-change-gap":{"type":"length","state":"default"},"--sf-confirm-change-before-background-color":{"type":"color","state":"default"},"--sf-confirm-change-after-background-color":{"type":"color","state":"default"},"--sf-confirm-change-after-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

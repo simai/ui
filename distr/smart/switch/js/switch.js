@@ -707,7 +707,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CHECKABLE_HELP_SIZE: () => (/* binding */ CHECKABLE_HELP_SIZE),
 /* harmony export */   checkableClasses: () => (/* binding */ checkableClasses),
+/* harmony export */   linkCheckableMessage: () => (/* binding */ linkCheckableMessage),
 /* harmony export */   renderCheckableHelp: () => (/* binding */ renderCheckableHelp),
+/* harmony export */   renderCheckableMessage: () => (/* binding */ renderCheckableMessage),
 /* harmony export */   renderCheckableRow: () => (/* binding */ renderCheckableRow),
 /* harmony export */   renderCheckableText: () => (/* binding */ renderCheckableText)
 /* harmony export */ });
@@ -774,11 +776,34 @@ function checkableClasses(size, hasText) {
 // the control -- the label and its input never become :active, the box is not
 // painted pressed and the value does not change.
 
-function renderCheckableRow(size, control, help) {
-  if (!help) return control; // The help sits in a box of its own: sf-help-mark's host draws no box
+function renderCheckableRow(size, control, help, message = '') {
+  // The help sits in a box of its own: sf-help-mark's host draws no box
   // (display: contents), so the row places this one.
+  const row = help ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-checkable-row sf-checkable--size-${size} flex flex-nowrap items-cross-start`}>${control}<span class="sf-checkable-help">${help}</span></span>` : control;
+  if (!message) return row;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-checkable-field sf-checkable--size-${size} flex flex-col`}>${row}${message}</span>`;
+} // The error line of a checkbox or a switch while it is invalid (field orders
+// 2026-11-18, FO-1): what is wrong, under the control in the error role, as
+// every field of the family says it (sf-input, sf-input-choice), so a host
+// sets invalid and error-message on the control instead of writing a line of
+// its own under it. Nothing without both. Its id joins the native input's
+// aria-describedby (linkCheckableMessage).
 
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-checkable-row sf-checkable--size-${size} flex flex-nowrap items-cross-start`}>${control}<span class="sf-checkable-help">${help}</span></span>`;
+function renderCheckableMessage(context) {
+  if (!context.invalid || !context.errorMessage) return '';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-checkable-message" id=${context.messageId || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-field-message="error">${context.errorMessage}</span>`;
+} // The message's id on the input's aria-describedby, and off it once the line
+// is gone; ids put there by the author or the text link are kept.
+
+function linkCheckableMessage(host, input) {
+  if (!host || !input) return;
+  const line = host.querySelector('.sf-checkable-message');
+  const before = String(input.getAttribute('aria-describedby') || '').split(/\s+/u).filter(Boolean);
+  const kept = before.filter(id => id !== host.__sfCheckableMessageId);
+  const next = line?.id ? [...kept, line.id] : kept;
+  host.__sfCheckableMessageId = line?.id || '';
+  if (next.join(' ') === before.join(' ')) return;
+  if (next.length) input.setAttribute('aria-describedby', next.join(' '));else input.removeAttribute('aria-describedby');
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1123,13 +1148,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("d39911485561");
 /* harmony import */ var _helpers_checkableReset__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("078aa87e580e");
 /* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("778671c79fa6");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("7577d7eb26f7");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("4cf3e66c54bd");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d9554a45e946");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_switch_js_switch__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_5__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_switch_js_switch__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_checkable_row__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("496db683b2c5");
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("7577d7eb26f7");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("4cf3e66c54bd");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("d9554a45e946");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_switch_js_switch__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_5__, _helpers_checkable_row__WEBPACK_IMPORTED_MODULE_6__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_switch_js_switch__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_5__, _helpers_checkable_row__WEBPACK_IMPORTED_MODULE_6__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__);
+
+
 
 
 
@@ -1149,11 +1179,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // dated aliases are aliases.json, and a form gets its value from the host
 // through ElementInternals (§17.1). What stays here is behaviour.
 
-const SwitchElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+const SwitchElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_5__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default())),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__.files,
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__
 }); // A switch acts at once; in a form that is saved by a button the choice is
 // a checkbox (owner decision C165 (4)). The development warning says so once
 // per page, naming the first such switch; it reads only the form the switch
@@ -1285,6 +1315,10 @@ class SfSwitch extends SwitchElement {
           label: props.label
         }
       }) : '',
+      // The error line's id (error-message, FO-1): the switch is described by it.
+      messageId: (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__.instancePath)(this, {
+        kind: 'sf-switch'
+      }), 'error'),
       component: this
     });
   }
@@ -1316,6 +1350,7 @@ class SfSwitch extends SwitchElement {
         });
         input.addEventListener('change', this._handleChange);
         this._releaseReset = (0,_helpers_checkableReset__WEBPACK_IMPORTED_MODULE_4__.bindCheckableReset)(this, input);
+        (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_6__.linkCheckableMessage)(this, input);
       }
     }
 
@@ -1472,8 +1507,9 @@ function renderSwitchTemplate(context) {
     checkboxName,
     value,
     ariaLabel
-  } = context;
-  const rootClasses = ['sf-switch', `sf-switch--size-${size}`, context.short ? 'sf-switch--short' : '', 'flex', context.rootClass];
+  } = context; // invalid (FO-1): .error is the look, as sf-checkbox's (component.switch).
+
+  const rootClasses = ['sf-switch', `sf-switch--size-${size}`, context.short ? 'sf-switch--short' : '', context.invalid ? 'error' : '', 'flex', context.rootClass];
   const labelContent = context.component?.hasSlotContent?.('label') ? context.component.getSlotContent('label') : label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-switch-text">${label}</span>` : ''; // A slotted description is held in a plain span: the binding names it as the
   // checkbox's description (aria-describedby, simai/ui-source#44), and a bare
   // text node has no id. The span draws nothing of its own.
@@ -1497,6 +1533,7 @@ function renderSwitchTemplate(context) {
           .value=${value || 'on'}
           .checked=${checked}
           ?disabled=${disabled}
+          aria-invalid=${context.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           aria-label=${!labelContent && ariaLabel ? ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         />
         <span class="sf-switch-inner transition" aria-hidden="true">${icons}</span>
@@ -1517,7 +1554,7 @@ function renderSwitchTemplate(context) {
   })}
     </label>
   `;
-  return (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_3__.renderCheckableRow)(size, control, helpContent);
+  return (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_3__.renderCheckableRow)(size, control, helpContent, (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_3__.renderCheckableMessage)(context));
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1609,7 +1646,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-switc
 /***/ "7577d7eb26f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.9.3","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"short":{"type":"boolean","default":false},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"icon":{"type":"icon","default":""},"icon-on":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-switch-color":{"type":"color","state":"default"},"--sf-switch-background-color":{"type":"color","state":"default"},"--sf-switch-border-color":{"type":"color","state":"default"},"--sf-switch-border-width":{"type":"length","state":"default"},"--sf-switch-radius":{"type":"length","state":"default"},"--sf-switch-gap":{"type":"length","state":"default"},"--sf-switch-checked-background-color":{"type":"color","state":"checked"},"--sf-switch-checked-thumb-color":{"type":"color","state":"checked"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.10.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"short":{"type":"boolean","default":false},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"icon":{"type":"icon","default":""},"icon-on":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-switch-color":{"type":"color","state":"default"},"--sf-switch-background-color":{"type":"color","state":"default"},"--sf-switch-border-color":{"type":"color","state":"default"},"--sf-switch-border-width":{"type":"length","state":"default"},"--sf-switch-radius":{"type":"length","state":"default"},"--sf-switch-gap":{"type":"length","state":"default"},"--sf-switch-checked-background-color":{"type":"color","state":"checked"},"--sf-switch-checked-thumb-color":{"type":"color","state":"checked"}}}');
 
 /***/ },
 

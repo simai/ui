@@ -13,6 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ICONS: () => (/* binding */ ICONS),
 /* harmony export */   STATUSES: () => (/* binding */ STATUSES),
 /* harmony export */   SfListDescription: () => (/* binding */ SfListDescription),
+/* harmony export */   drawnValue: () => (/* binding */ drawnValue),
 /* harmony export */   normalizeAction: () => (/* binding */ normalizeAction),
 /* harmony export */   normalizeBadge: () => (/* binding */ normalizeBadge),
 /* harmony export */   normalizeItems: () => (/* binding */ normalizeItems),
@@ -41,8 +42,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // label over its value. A value is text: monospace, a link (navigate), copied
 // with an sf-button-copy, with a status icon and a hint, or a badge; an empty
 // one says so in words («Не указан»). A label can carry a help mark, a value
-// one action. Section items ({type: "section", label, action?}) split a record
-// into sections inside one grid, so every label of the record shares one
+// one action. A field template draws a value of its own (C302 (2), place
+// Показ): an item's slot names host content drawn as the value, or the value
+// is a node or a drawing given through the property (VP-24). Section items
+// ({type: "section", label, action?}) split a record into sections inside
+// one grid, so every label of the record shares one
 // column (owner decision C33, the record card); layout grid is the summary
 // under a record's heading, label over value in up to four columns. The list
 // is read-only and stores and loads nothing: an action asks the page (apply).
@@ -100,6 +104,17 @@ function normalizeBadge(value) {
     icon: text(value.icon)
   };
 }
+/**
+ * A drawn value (VP-24): a DOM node or a lit drawing (a field template's
+ * place Показ), given through the property; null for anything else.
+ */
+
+function drawnValue(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  if (typeof globalThis.Node === 'function' && value instanceof globalThis.Node) return value; // A drawing of any lit copy: every bundle carries its own (the marker is lit's own).
+
+  return '_$litType$' in value ? value : null;
+}
 /** A value as the list writes it: text; a list joined with commas; nothing is ''. */
 
 function valueText(value) {
@@ -114,9 +129,16 @@ function valueText(value) {
  * status outside the four words is none. An empty value (no text and no
  * badge) has no link, no copy button and no status: it says empty-text. A
  * value with a badge draws no status icon: the badge is its one mark.
+ * A drawn value -- the host content of the item's slot (hasSlot says it is
+ * there) or a node given as value -- stands in place of the text. The text
+ * (beside a slot the item's value, for a node its words) is what copy copies
+ * and the title of a cut value. A drawn value has no link: the drawing holds
+ * its own.
  */
 
-function normalizeItems(value) {
+function normalizeItems(value, {
+  hasSlot
+} = {}) {
   const list = Array.isArray(value) ? value : [];
   const items = [];
   list.forEach((item, at) => {
@@ -135,15 +157,22 @@ function normalizeItems(value) {
 
     const label = text(item.label);
     if (!label) return;
-    const shown = valueText(item.value);
+    const slot = text(item.slot);
+    const slotted = Boolean(slot) && typeof hasSlot === 'function' && Boolean(hasSlot(slot));
+    const node = slotted ? null : drawnValue(item.value);
+    const drawn = slotted || Boolean(node);
+    const shown = node ? valueText(typeof node.textContent === 'string' ? node.textContent : '') : valueText(item.value);
     const status = text(item.status).toLowerCase();
     const badge = normalizeBadge(item.badge);
-    const empty = shown === '' && !badge;
+    const empty = shown === '' && !badge && !drawn;
     items.push({
       kind: 'item',
       id: text(item.id) || String(at),
       label,
       value: shown,
+      slot: slotted ? slot : '',
+      node,
+      drawn,
       empty,
       emptyText: typeof item.empty === 'string' ? text(item.empty) : '',
       hint: text(item.hint),
@@ -151,6 +180,7 @@ function normalizeItems(value) {
       mono: item.mono === true,
       numeric: item.numeric === true || typeof item.value === 'number',
       copy: item.copy === true && shown !== '',
+      // A drawn value has no link of the list: the template draws it before a link.
       href: shown === '' ? '' : text(item.href),
       // One mark per value: a badge is the mark, so its row draws no status icon.
       status: !empty && !badge && STATUSES.includes(status) ? status : '',
@@ -168,7 +198,9 @@ const ListDescriptionElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MO
 
 class SfListDescription extends ListDescriptionElement {
   get list() {
-    return normalizeItems(this.items);
+    return normalizeItems(this.items, {
+      hasSlot: name => this.hasSlotContent?.(name)
+    });
   } // A value link: the request first; not cancelled, the browser follows it.
   // An action link (an item's or a section's action with href) asks the same.
 
@@ -280,7 +312,10 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // - A value is text: a link (href), monospace (mono), tabular figures
 //   (numeric), cut to one line (overflow truncate, then focusable with its
 //   whole text as title), a badge (sf-badge on the value's line), or
-//   empty-text when there is none. A status icon stands before a value, its
+//   empty-text when there is none. A field template's drawing (VP-24, C302
+//   (2), place Показ) stands in place of the text: the host content of the
+//   item's slot, or a node given as value, in .sf-list-description-drawn
+//   (after a badge, before the copy button and the action). A status icon stands before a value, its
 //   word visually hidden (never on an empty value); a copy button and the
 //   item's action after it; a hint under it.
 // - With no items: nothing at all.
@@ -334,6 +369,11 @@ function shown(context, item) {
   const badge = item.badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-list-description-badge" size=${BADGE[context.size]} line=${context.size} appearance="tonal"
         status=${item.badge.status || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} scheme=${item.badge.status ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : item.badge.scheme}
         icon=${item.badge.icon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${item.badge.text}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+
+  if (item.drawn) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${badge}<span class="sf-list-description-drawn" title=${titled && item.value ? item.value : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${item.slot ? component.getSlotContent(item.slot) : item.node}</span>`;
+  }
+
   if (!item.value) return badge;
 
   if (item.href) {
@@ -464,7 +504,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "7c0ab7bd0a28"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-description","tag":"sf-list-description","version":"1.3.4","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"string"},"hint":{"type":"string"},"mono":{"type":"boolean"},"copy":{"type":"boolean"},"href":{"type":"string"},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"type":{"type":"string","enum":["item","section"]},"badge":{"type":"object","properties":{"text":{"type":"string"},"status":{"type":"string","enum":["success","warning","error","info"]},"scheme":{"type":"string","enum":["neutral","primary","secondary","tertiary","on-surface"]},"icon":{"type":"string"}}},"help":{"type":"string"},"numeric":{"type":"boolean"},"empty":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"event":{"type":"string"},"href":{"type":"string"}}}},"required":["label"]}},"default":[]},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"layout":{"type":"enum","values":["auto","columns","stacked","grid"],"default":"auto"},"columns":{"type":"enum","values":["1","2","3","4"],"default":"4"},"dividers":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["wrap","truncate"],"default":"wrap"},"empty-text":{"type":"string","default-from":"runtime.empty-text"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"apply":{"carries":{"action":"string","scope":"string","ids":"list","id":"string","kind":"string"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean"},"css-variables":{"--sf-list-description-label-color":{"type":"color","state":"default"},"--sf-list-description-value-color":{"type":"color","state":"default"},"--sf-list-description-divider-color":{"type":"color","state":"default"},"--sf-list-description-label-width":{"type":"length","state":"default"},"--sf-list-description-gap":{"type":"length","state":"default"},"--sf-list-description-padding-inline":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-description","tag":"sf-list-description","version":"1.4.0","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"string"},"hint":{"type":"string"},"mono":{"type":"boolean"},"copy":{"type":"boolean"},"href":{"type":"string"},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"type":{"type":"string","enum":["item","section"]},"badge":{"type":"object","properties":{"text":{"type":"string"},"status":{"type":"string","enum":["success","warning","error","info"]},"scheme":{"type":"string","enum":["neutral","primary","secondary","tertiary","on-surface"]},"icon":{"type":"string"}}},"help":{"type":"string"},"numeric":{"type":"boolean"},"empty":{"type":"string"},"action":{"type":"object","properties":{"label":{"type":"string"},"event":{"type":"string"},"href":{"type":"string"}}},"slot":{"type":"string"}},"required":["label"]}},"default":[]},"label":{"type":"string","default":""},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"layout":{"type":"enum","values":["auto","columns","stacked","grid"],"default":"auto"},"columns":{"type":"enum","values":["1","2","3","4"],"default":"4"},"dividers":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["wrap","truncate"],"default":"wrap"},"empty-text":{"type":"string","default-from":"runtime.empty-text"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"apply":{"carries":{"action":"string","scope":"string","ids":"list","id":"string","kind":"string"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean"},"css-variables":{"--sf-list-description-label-color":{"type":"color","state":"default"},"--sf-list-description-value-color":{"type":"color","state":"default"},"--sf-list-description-divider-color":{"type":"color","state":"default"},"--sf-list-description-label-width":{"type":"length","state":"default"},"--sf-list-description-gap":{"type":"length","state":"default"},"--sf-list-description-padding-inline":{"type":"length","state":"default"}}}');
 
 /***/ },
 

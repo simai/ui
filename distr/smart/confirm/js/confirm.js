@@ -688,8 +688,9 @@ class SfConfirm extends ConfirmSurface {
       return;
     }
 
-    if (event.key !== "Escape" || event.defaultPrevented) return;
-    if (this.shownState !== "open" || this.getProp("disabled")) return;
+    if (event.key !== "Escape" || event.defaultPrevented) return; // Escape is the declining answer, which disabled never holds (LF-5).
+
+    if (this.shownState !== "open") return;
     const result = this.cancel();
     if (result?.outcome === "applied" && inWindow(this)) return;
     event.preventDefault();
@@ -997,6 +998,11 @@ function confirmSurface(Base, {
         // Not named `disabled`: that is the setting, and this is more --
         // the setting, or any state but open.
         answersLocked: this.getProp("disabled") || shown !== "open",
+        // disabled locks the decisive answer only (Larena LF-5): the
+        // declining one, Escape and a window's close always work, so
+        // a person can leave a question whose acceptance waits.
+        acceptLocked: this.getProp("disabled") || shown !== "open",
+        declineLocked: shown !== "open",
         // The step the answers stand on: a page's size, else 1 (C22).
         size: CONFIRM_SIZES.includes(this.getAttribute("size")) ? this.getAttribute("size") : "1",
         // Declined by the person here: the surface is hidden, and its
@@ -1144,8 +1150,9 @@ function confirmSurface(Base, {
     answer(params = {}) {
       const accepted = this.readAnswer(params);
       if (accepted === null) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("unknown");
-      if (this.shownState !== "open") return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("closed");
-      if (this.getProp("disabled")) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("disabled");
+      if (this.shownState !== "open") return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("closed"); // disabled holds the acceptance only: «no» always goes (LF-5).
+
+      if (accepted && this.getProp("disabled")) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)("disabled");
       const focusWasInside = this.contains(this.ownerDocument.activeElement);
       this._pressed = accepted; // Before the event: a host may set the outcome inside its handler.
 
@@ -1261,7 +1268,7 @@ function confirmSurface(Base, {
 
 
     focusSafeAnswer(frames = 10) {
-      if (this.shownState !== "open" || this.getProp("disabled")) return false;
+      if (this.shownState !== "open") return false;
       const host = this.querySelector(`.${block}__actions:not([hidden]) [data-action="decline"]`);
       const button = host?.matches("button") ? host : host?.querySelector("button");
       button?.focus({
@@ -1352,7 +1359,7 @@ function renderConfirmFooter(context, block, {
                             text=${context.acceptText}
                             data-action="accept"
                             ?loading=${context.pressed === true}
-                            ?disabled=${context.answersLocked && context.pressed !== true}
+                            ?disabled=${context.acceptLocked && context.pressed !== true}
                             @click=${() => component.confirm()}
                     ></sf-button>
                     <sf-button
@@ -1362,7 +1369,7 @@ function renderConfirmFooter(context, block, {
                             text=${context.declineText}
                             data-action="decline"
                             ?loading=${context.pressed === false}
-                            ?disabled=${context.answersLocked && context.pressed !== false}
+                            ?disabled=${context.declineLocked && context.pressed !== false}
                             @click=${() => component.cancel()}
                     ></sf-button>
                 </div>`;
@@ -1451,7 +1458,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "f70b067ace85"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.5.4","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card","window"],"default":"inline"},"consequence":{"type":"string","default":""},"require":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.5.6","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card","window"],"default":"inline"},"consequence":{"type":"string","default":""},"require":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

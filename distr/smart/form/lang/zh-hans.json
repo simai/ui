@@ -1,0 +1,20 @@
+{
+  "runtime": {
+    "required-note": "* — 必填项",
+    "submit": "保存",
+    "cancel": "取消",
+    "edit": "编辑",
+    "unsaved": "你有未保存的更改",
+    "errors-title": {
+      "other": "请修正 {n} 个字段"
+    },
+    "value-missing": "请填写“{label}”",
+    "help-label": "详细了解{label}",
+    "send": "发送",
+    "answer-sending": "正在发送…",
+    "answer-cancelling": "正在取消…",
+    "answer-sent": "已发送",
+    "answer-expired": "回答时间已过",
+    "empty-value": "未设置"
+  }
+}

@@ -484,7 +484,11 @@
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-fixed: var(--sf-neutral-10);
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    /* The pressed ink in the dark theme shares the hover step, 85 (DEV held
+       answers H1, msg-bc1702eb): 80 stood at 4.46 over the pressed fill of
+       an inverse place in the light theme (the place swaps to the dark half).
+       The press shows in the fill. */
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-85));
     /* The icon role (C107, owner 2026-11-12, replacing the three-role rule of
        2026-10-08): a neutral glyph inside a control -- a button, a segment, a
        tab, a header tool, and an icon button with no text -- is half a step
@@ -895,6 +899,8 @@
     --sf-surface-container: var(--sf-white--alfa-12);
     --sf-surface-container-hover: var(--sf-white--alfa-16);
     --sf-surface-container-active: var(--sf-white--alfa-20);
+    --sf-place--control-hover: var(--sf-white--alfa-8);
+    --sf-place--control-active: var(--sf-white--alfa-4);
     --sf-outline: var(--sf-white--alfa-64);
     --sf-outline-variant: var(--sf-white--alfa-24);
     --sf-place--container-outline: var(--sf-outline);
@@ -943,8 +949,8 @@
     --sf-primary-active: var(--sf-neutral-90);
     --sf-on-primary: var(--sf-black);
     --sf-primary-container: var(--sf-white--alfa-12);
-    --sf-primary-container-hover: var(--sf-white--alfa-16);
-    --sf-primary-container-active: var(--sf-white--alfa-20);
+    --sf-primary-container-hover: var(--sf-white--alfa-8);
+    --sf-primary-container-active: var(--sf-white--alfa-4);
     --sf-on-primary-container: var(--sf-white);
     --sf-link: var(--sf-white);
     --sf-link-hover: var(--sf-neutral-95);
@@ -5562,20 +5568,20 @@ body {
   .sf-editor-field-disclosure > summary.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
-    outline-offset: 2px;
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-editor-field-control.focus-visible,
   .sf-editor-field-disclosure > summary.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
-    outline-offset: 2px;
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-editor-field-control:focus-visible,
   .sf-editor-field-disclosure > summary:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
-    outline-offset: 2px;
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-editor-field-disclosure > summary {
     cursor: pointer;

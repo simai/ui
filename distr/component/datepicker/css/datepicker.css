@@ -361,71 +361,71 @@
   /* On a chosen day -- the selected one, a period's start or end -- the focus
      colour lay on the primary fill, 1.44:1 light and 1.31:1 dark (RG-DP-3;
      WCAG 2.4.11 asks 3:1). There the ring is the fill's own ink (on-primary,
-     the number's colour) one ring width further in, so a rim of the fill
-     stays round it and it reads as a ring on the surface as well as on a
-     period's band. */
+     the number's colour) drawn inside the day's edge, at the focus system's
+     inward offset (C212, one offset everywhere: msg-bc1702eb), so it reads as
+     a ring on the fill, on the surface and on a period's band. */
   .sf-datepicker-day.active.focus-visible:not(:disabled) {
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
-    outline-offset: calc(var(--sf-focus--width) * -2);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-day.sf-datepicker-day-start.focus-visible:not(:disabled) {
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
-    outline-offset: calc(var(--sf-focus--width) * -2);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-day.sf-datepicker-day-end.focus-visible:not(:disabled) {
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
-    outline-offset: calc(var(--sf-focus--width) * -2);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-day.active:not(:disabled).focus-visible {
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
-    outline-offset: calc(var(--sf-focus--width) * -2);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-day.active:not(:disabled).focus-visible {
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
-    outline-offset: calc(var(--sf-focus--width) * -2);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-day.active:not(:disabled):focus-visible {
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
-    outline-offset: calc(var(--sf-focus--width) * -2);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-day.sf-datepicker-day-start:not(:disabled).focus-visible {
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
-    outline-offset: calc(var(--sf-focus--width) * -2);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-day.sf-datepicker-day-start:not(:disabled).focus-visible {
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
-    outline-offset: calc(var(--sf-focus--width) * -2);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-day.sf-datepicker-day-start:not(:disabled):focus-visible {
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
-    outline-offset: calc(var(--sf-focus--width) * -2);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-day.sf-datepicker-day-end:not(:disabled).focus-visible {
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
-    outline-offset: calc(var(--sf-focus--width) * -2);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-day.sf-datepicker-day-end:not(:disabled).focus-visible {
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
-    outline-offset: calc(var(--sf-focus--width) * -2);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-day.sf-datepicker-day-end:not(:disabled):focus-visible {
     outline-color: var(--sf-on-primary);
     outline-color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
-    outline-offset: calc(var(--sf-focus--width) * -2);
+    outline-offset: var(--sf-focus--inset);
   }
   .sf-datepicker-day:not(:disabled):not(.disabled):active .sf-datepicker-day-date, .sf-datepicker-day.active .sf-datepicker-day-date {
     --sf-datepicker-day-date--color: var(--sf-datepicker-selected-color, var(--sf-on-primary));
@@ -1675,7 +1675,7 @@
     --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-85));
     --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
@@ -1704,7 +1704,7 @@
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-datepicker {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-85));
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-datepicker {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
@@ -1741,6 +1741,7 @@
     --sf-place--fill-placeholder: initial;
     --sf-place--control-hover: initial;
     --sf-place--control-active: initial;
+    --sf-place--tonal-edge: initial;
   }
   :where(.sf-surface-media) .sf-datepicker {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
@@ -1772,6 +1773,8 @@
     --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
     --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
     --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
   }
   :where(.bg-surface-4) .sf-datepicker {
     --sf-primary: var(--sf-place--found-primary);

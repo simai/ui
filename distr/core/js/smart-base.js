@@ -4436,6 +4436,44 @@ const PACKS = STORE.packs ??= {
   request: null
 }; // The languages built into the bundles: English, and in a rollback build Russian
 // too (src/core/lang/built-in.json, C282).
+// Which registered words came from a Framework pack and nothing has said over
+// since: name -> code -> Set of keys. A Framework pack is the Framework's own
+// words in a file, so for a component that names itself by a dated alias of
+// its record's tag (sf-message-log, the heir of sf-list-feed, both under
+// sf-list-feed's record) they are the successor's words, not its own: the
+// words that component ships win over them (ui-control evidence
+// 2026-11-18-pro-over-1ed6: «Лента» instead of «Переписка» once the ru pack
+// was fetched). A word a product registers, or a product pack, is still over
+// everything. Kept beside the words, not instead of them, so a copy of this
+// module from before it reads the registry as it did. A STORE made by an older
+// bundle has none yet: added here.
+
+const FLOOR = STORE.floor ??= new Map();
+
+const floorOf = (name, code) => {
+  if (!FLOOR.has(name)) FLOOR.set(name, new Map());
+  const byLanguage = FLOOR.get(name);
+  if (!byLanguage.has(code)) byLanguage.set(code, new Set());
+  return byLanguage.get(code);
+};
+
+const notFloor = (name, code, keys) => {
+  const marked = FLOOR.get(name)?.get(code);
+  if (!marked) return;
+
+  for (const key of keys) marked.delete(key);
+}; // Whether the word registered for `key` stands for the successor of the
+// component asking, so that its own shipped word is said instead: the asker
+// names a dated alias (its tag is not its record's), and the registered word
+// is a Framework pack's that no product has said over.
+
+
+function successorWord(owner, candidate, key) {
+  if (!owner) return false;
+  const name = normalise(owner);
+  const record = (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(name);
+  return record !== name && Boolean(FLOOR.get(record)?.get(candidate)?.has(key));
+}
 
 const isBuiltIn = code => code === 'en' || (_lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]?.built_in ?? []).includes(code);
 /**
@@ -4449,10 +4487,29 @@ const isBuiltIn = code => code === 'en' || (_lang_built_in_mjs__WEBPACK_IMPORTED
 function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
-  if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
+  if (!base || isBuiltIn(base)) return;
   const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+
+  if (typeof PACKS.request !== 'function') {
+    // Core has not run yet: a Smart bundle placed before core.js (a Docara
+    // page and its example frames load core last) draws before anyone can
+    // fetch. The ask is kept and core makes it when it starts
+    // (core/js/language-packs.js), so the family's part still comes.
+    const early = PACKS.early ??= new Map();
+    const named = aliasOf(wanted);
+
+    for (const one of new Set([base, wanted, ...(named ? [named] : [])])) {
+      if (!early.has(one)) early.set(one, new Set());
+      early.get(one).add(name ?? '');
+    }
+
+    return;
+  }
+
   PACKS.request(base, name);
   if (wanted !== base) PACKS.request(wanted, name);
+  const named = aliasOf(wanted);
+  if (named && named !== wanted && named !== base) PACKS.request(named, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -4463,8 +4520,31 @@ const wordsOf = component => REGISTERED.get((0,_tag_aliases_js__WEBPACK_IMPORTED
 
 function normalise(value) {
   return String(value ?? '').trim().toLowerCase().replace('_', '-');
+} // The pack a page language takes. Two tables, both from the localization
+// registry (C278) and both on the shared store, so a bundle carries neither:
+// core/lang/index.json `aliases` (the shipped packs: zh-cn, zh-sg and zh take
+// zh-hans, pt takes pt-br; PACKS.aliases, set by core) and the registry's
+// second names of every language (STORE.aliases, core/js/language-packs.js).
+// A word registered for the alias itself still comes first; any other code
+// is its own.
+
+
+function packOf(code) {
+  const one = PACKS?.aliases?.[code] ?? STORE?.aliases?.[code];
+  return typeof one === 'string' && one ? one : code;
 }
-/** The languages to try, most specific first, English last. */
+
+function aliasOf(code) {
+  const named = packOf(code);
+  return named !== code ? named : null;
+}
+/**
+ * The languages to try, most specific first, English last: the language, the
+ * pack it is an alias of, the language without its region and that one's
+ * pack. zh-CN: zh-cn, zh-hans, zh, en; zh-TW: zh-tw, zh, zh-hans, en; pt-PT:
+ * pt-pt, pt, pt-br, en. Until 2026-11-18 a zh-CN or pt page found no pack and
+ * spoke English.
+ */
 
 
 const chain = language => {
@@ -4472,7 +4552,7 @@ const chain = language => {
   const base = wanted.split('-')[0];
   const order = [];
 
-  for (const candidate of [wanted, base, 'en']) {
+  for (const candidate of [wanted, packOf(wanted), base, packOf(base), 'en']) {
     if (candidate && !order.includes(candidate)) order.push(candidate);
   }
 
@@ -4657,7 +4737,8 @@ function localeText(dictionary, key, locale, component) {
   needPack(order[0], component);
 
   for (const candidate of order) {
-    const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
+    let added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
+    if (added !== undefined && dictionary?.[candidate]?.[key] !== undefined && successorWord(component, candidate, key)) added = undefined;
 
     if (added !== undefined) {
       if (candidate === 'en' && added !== '') warnFallback(order, component, key);
@@ -4682,9 +4763,14 @@ function localeText(dictionary, key, locale, component) {
 // the shared global, because every bundle carries this module.
 
 function warnFallback(order, owner, key) {
-  const wanted = String(order[0] || '').split('-')[0]; // While its pack is on its way the English is a moment, not a gap.
+  const wanted = packOf(String(order[0] || '').split('-')[0]); // While its pack is on its way the English is a moment, not a gap (the
+  // registry name's pack too: zh-hans for a zh-CN page). Before core runs
+  // nothing can be on its way yet: the word is asked again when the pack core
+  // fetches arrives, and only a word still missing then is one (ui-view
+  // example frames reported sf-pagination "of-pages", which the ru pack holds,
+  // on loads where the bundle ran before core).
 
-  if (!wanted || wanted === 'en' || PACKS.pending.has(wanted)) return;
+  if (!wanted || wanted === 'en' || typeof PACKS.request !== 'function' || order.some(code => code !== 'en' && PACKS.pending.has(code))) return;
   const root = globalThis;
   if (!(root.__sfMissingWords instanceof Map)) root.__sfMissingWords = new Map();
   const seen = root.__sfMissingWords;
@@ -4764,6 +4850,7 @@ function pageWord(dictionary, key, node, {
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
     let added = registered?.[key];
+    if (added !== undefined && dictionary?.[candidate]?.[key] !== undefined && successorWord(owner, candidate, key)) added = undefined;
 
     if (added === undefined && registered) {
       const old = formerKeys.find(name => registered[name] !== undefined && registered[name] !== null);
@@ -4869,9 +4956,17 @@ const language = {
     if (!name || !code) throw new TypeError('a component and a language are required');
     if (!REGISTERED.has(name)) REGISTERED.set(name, new Map());
     const byLanguage = REGISTERED.get(name);
-    if (words === null) byLanguage.delete(code);else byLanguage.set(code, { ...(byLanguage.get(code) ?? {}),
-      ...words
-    });
+
+    if (words === null) {
+      byLanguage.delete(code);
+      FLOOR.get(name)?.delete(code);
+    } else {
+      byLanguage.set(code, { ...(byLanguage.get(code) ?? {}),
+        ...words
+      });
+      notFloor(name, code, Object.keys(words ?? {}));
+    }
+
     announce();
     return this;
   },
@@ -4906,6 +5001,15 @@ const language = {
       } : { ...now,
         ...byKey
       });
+
+      if (under) {
+        const marked = floorOf(name, code);
+
+        for (const key of Object.keys(byKey)) if (!Object.prototype.hasOwnProperty.call(now, key) || marked.has(key)) marked.add(key);
+      } else {
+        notFloor(name, code, Object.keys(byKey));
+      }
+
       words += Object.keys(byKey).length;
     }
 
@@ -4966,7 +5070,7 @@ const language = {
   missing(value) {
     const seen = globalThis.__sfMissingWords instanceof Map ? globalThis.__sfMissingWords : new Map();
     if (value === undefined) return Object.fromEntries([...seen].map(([code, words]) => [code, [...words]]));
-    return [...(seen.get(normalise(value).split('-')[0]) ?? [])];
+    return [...(seen.get(packOf(normalise(value).split('-')[0])) ?? [])];
   },
 
   /** Every component something has been registered for. */
@@ -4987,7 +5091,10 @@ const language = {
   /** Everything registered is forgotten. For tests, and for a product reset. */
   forget() {
     REGISTERED.clear();
-    PACKS.loaded.clear();
+    FLOOR.clear();
+    PACKS.loaded.clear(); // The asks kept before core ran go too: they were for the words forgotten.
+
+    PACKS.early?.clear?.();
     STORE.chosen = null;
     announce();
     return this;
@@ -6216,6 +6323,36 @@ function createSmartElement(type, props = {}) {
   const element = document.createElement(smartTagName(type));
   applySmartProps(element, props, null);
   return element;
+} // Where a host's focus() goes when the part names no control (Larena LF-7):
+// a host with no box of its own and no tabindex, which the browser cannot
+// focus, sends it to the first control inside it a person could reach with
+// Tab. focus() on such a host did nothing before.
+
+const TABBABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [contenteditable="true"], [tabindex]:not([tabindex="-1"])';
+
+function firstTabbableOf(host) {
+  if (host.hasAttribute?.("tabindex") || host.getClientRects?.().length) return null;
+
+  for (const candidate of host.querySelectorAll?.(TABBABLE) ?? []) {
+    if (candidate.getClientRects().length && !candidate.closest("[inert]")) return candidate;
+  }
+
+  return null;
+} // The element that is a host's box (Larena LF-7): the host itself when it has
+// one, else the first element it holds that has a box (depth first, in
+// order). null when nothing in it has a box.
+
+
+function boxOf(host) {
+  if (host.getClientRects?.().length) return host;
+  const walker = host.ownerDocument?.createTreeWalker?.(host, 1);
+  if (!walker) return null;
+
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (node.getClientRects().length) return node;
+  }
+
+  return null;
 }
 
 class SfBaseElement extends HTMLElement {
@@ -7562,7 +7699,7 @@ class SfBaseElement extends HTMLElement {
   }
 
   focus(options) {
-    const target = this.focusDelegate?.();
+    const target = this.focusDelegate?.() || firstTabbableOf(this);
 
     if (target && typeof target.focus === "function") {
       const activeWhenAsked = this.ownerDocument?.activeElement || null;
@@ -7574,7 +7711,7 @@ class SfBaseElement extends HTMLElement {
 
       if (!this.isRendered && (this.ownerDocument?.activeElement || null) === activeWhenAsked && activeWhenAsked !== target) {
         this.whenRendered(() => {
-          const ready = this.focusDelegate?.();
+          const ready = this.focusDelegate?.() || firstTabbableOf(this);
           if (!ready || typeof ready.focus !== "function") return;
           if ((this.ownerDocument?.activeElement || null) !== activeWhenAsked) return;
           ready.focus(options);
@@ -7589,7 +7726,7 @@ class SfBaseElement extends HTMLElement {
     if (!target && typeof this.focusDelegate === "function" && !this.isRendered) {
       const activeWhenAsked = this.ownerDocument?.activeElement || null;
       this.whenRendered(() => {
-        const ready = this.focusDelegate?.();
+        const ready = this.focusDelegate?.() || firstTabbableOf(this);
         if (!ready || typeof ready.focus !== "function") return;
         if ((this.ownerDocument?.activeElement || null) !== activeWhenAsked) return;
         ready.focus(options);
@@ -7598,10 +7735,30 @@ class SfBaseElement extends HTMLElement {
     }
 
     super.focus(options);
+  } // The host lays out as display: contents and has no box (Larena LF-7,
+  // 2026-11-18): scrollIntoView on it did nothing, so a page that scrolled to
+  // a wizard, a form or a button it had found stayed where it was. It
+  // scrolls to the part's own box instead: the first element it drew that
+  // has one. A host with a box of its own (sf-popover, sf-tag-group,
+  // sf-reference-link) and a part that draws in a portal (sf-modal,
+  // sf-drawer: nothing of theirs is in the host) scroll as before.
+
+
+  scrollIntoView(options) {
+    const box = boxOf(this);
+
+    if (box && box !== this) {
+      box.scrollIntoView(options);
+      return;
+    }
+
+    super.scrollIntoView(options);
   }
 
   blur() {
-    const target = this.focusDelegate?.();
+    // The control that took the host's focus (firstTabbableOf) gives it up.
+    const active = this.ownerDocument?.activeElement;
+    const target = this.focusDelegate?.() || (active && active !== this && this.contains(active) && !this.getClientRects().length ? active : null);
 
     if (target && typeof target.blur === "function") {
       target.blur();
@@ -8268,8 +8425,7 @@ class SfBaseElement extends HTMLElement {
       // and the caption (gallery GL evidence, 2026-11-14).
 
 
-      const shouldUnwrapSlotHost = !child.localName.includes("-") && child.localName !== "figure" && child.localName !== "picture" && !Array.from(child.children ?? []).some(node => node.localName === "figcaption") && child.getAttributeNames().length === 1 && child.hasAttribute("slot");
-      const slotNodes = shouldUnwrapSlotHost ? Array.from(child.childNodes) : [child];
+      const slotNodes = this.slotNodesOf(child);
 
       this._liveSlotNodes.get(slotName).push(...slotNodes); // The page's content: a size it gives stays the page's (density, C22; it
       // follows the region like any size since C79).
@@ -8278,6 +8434,14 @@ class SfBaseElement extends HTMLElement {
       (0,_density_js__WEBPACK_IMPORTED_MODULE_11__.noteAuthored)(slotNodes);
       this.holdSlotNode(child);
     });
+  } // The nodes a slotted child gives its slot: a plain wrapper's children, or
+  // the child itself (the rule above, captureSlotTemplates). sf-modal reads
+  // the children a page writes later with it (Larena LF-3).
+
+
+  slotNodesOf(child) {
+    const shouldUnwrapSlotHost = !child.localName.includes("-") && child.localName !== "figure" && child.localName !== "picture" && !Array.from(child.children ?? []).some(node => node.localName === "figcaption") && child.getAttributeNames().length === 1 && child.hasAttribute("slot");
+    return shouldUnwrapSlotHost ? Array.from(child.childNodes) : [child];
   } // A child the slots took: out of the element now, or -- for a component
   // that holds them (static holdsSlotNodesUntilDrawn) -- left where the page
   // wrote it until the first drawing, which takes it out and places it in

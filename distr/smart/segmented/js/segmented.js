@@ -2,6 +2,99 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "a2a9d3c2841e"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BADGE_MAIN_TONAL: () => (/* binding */ BADGE_MAIN_TONAL),
+/* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
+/* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
+/* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
+/* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
+/* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
+/* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
+/* harmony export */   isRetiredMain: () => (/* binding */ isRetiredMain),
+/* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
+/* harmony export */ });
+const BADGE_TYPES = Object.freeze(['main', 'tonal', 'outline']);
+const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiary', 'info', 'success', 'warning', 'error', 'on-surface']); // Former scheme names that still draw: `danger` was this component's word for
+// the error status before the shared vocabulary (contracts/public-api-axes.json,
+// journal class-status-aliases, until 2026-12-01). It is read as `error`, so the
+// Native constructor emits the canonical class, as sf-badge does; the
+// stylesheet matches `.sf-badge--danger` beside it for markup written by hand.
+
+const BADGE_SCHEME_ALIASES = Object.freeze({
+  danger: 'error'
+});
+const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The default look is tonal (owner decision C140 (1), badges study BG-1): a
+// badge without an appearance is the calm grey mark. It was main, the dark
+// grey fill nobody chose.
+
+const DEFAULT_BADGE_TYPE = 'tonal';
+const DEFAULT_BADGE_SCHEME = 'neutral';
+const DEFAULT_BADGE_SIZE = '1/3';
+
+const normalizeEnum = (value, allowed, fallback) => {
+  const normalized = String(value ?? fallback).trim().toLowerCase();
+  return allowed.includes(normalized) ? normalized : fallback;
+}; // The canonical scheme for a name, a former one included; '' when the name is
+// not a badge scheme.
+
+
+function canonicalBadgeScheme(value) {
+  const name = String(value ?? '').trim().toLowerCase();
+  const canonical = BADGE_SCHEME_ALIASES[name] ?? name;
+  return BADGE_SCHEMES.includes(canonical) ? canonical : '';
+} // The looks that are drawn: tonal and outline in every colour, main only with
+// the error status (C140 (4)).
+
+const BADGE_VARIANTS = Object.freeze(BADGE_SCHEMES.flatMap(scheme => BADGE_TYPES.filter(type => type !== 'main' || scheme === 'error').flatMap(type => BADGE_SIZES.map(size => Object.freeze({
+  type,
+  scheme,
+  size
+}))))); // The filled look is the attention count's alone (owner decision C140 (4)):
+// main with the error status. main with any other colour draws tonal; the
+// spelling keeps working until this date and each use is noted in
+// SF.deprecations (journal value-badge-appearance-main-to-tonal).
+
+const BADGE_MAIN_TONAL = Object.freeze({
+  since: '2026-11-14',
+  remove_after: '2027-01-01'
+}); // True when an appearance asked for is the filled one on a colour that draws
+// it tonal: the caller notes the old spelling.
+
+function isRetiredMain({
+  type,
+  scheme
+} = {}) {
+  const requested = String(type ?? '').trim().toLowerCase();
+  return requested === 'main' && (canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME) !== 'error';
+}
+function normalizeBadgeContract({
+  type,
+  scheme,
+  size
+} = {}) {
+  let normalizedType = normalizeEnum(type, BADGE_TYPES, DEFAULT_BADGE_TYPE);
+  const normalizedScheme = canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME;
+  const normalizedSize = normalizeEnum(size, BADGE_SIZES, DEFAULT_BADGE_SIZE); // main is the attention count's: with any other colour it is tonal. The
+  // tonal on-surface badge is the grey tonal one (the stylesheet draws
+  // sf-badge--on-surface tonal as neutral); it was drawn main, filled.
+
+  if (normalizedType === 'main' && normalizedScheme !== 'error') {
+    normalizedType = 'tonal';
+  }
+
+  return {
+    type: normalizedType,
+    scheme: normalizedScheme,
+    size: normalizedSize
+  };
+}
+
+/***/ },
+
 /***/ "67eed2647f47"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1234,6 +1327,154 @@ const ShownRequired = ShownValidity;
 
 /***/ },
 
+/***/ "b30ec5bc0edb"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   OPTION_BADGE_HUES: () => (/* binding */ OPTION_BADGE_HUES),
+/* harmony export */   OPTION_BADGE_PALETTE: () => (/* binding */ OPTION_BADGE_PALETTE),
+/* harmony export */   nearestPaletteHue: () => (/* binding */ nearestPaletteHue),
+/* harmony export */   optionBadgeProps: () => (/* binding */ optionBadgeProps),
+/* harmony export */   optionDotColor: () => (/* binding */ optionDotColor)
+/* harmony export */ });
+/* harmony import */ var _component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a2a9d3c2841e");
+
+const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i; // The hues of the static palette (owner decision C17), each with the OKLCH hue
+// angle of its tone 50 (src/core/scss/_sf_static_palette.scss, rounded to the
+// degree; tests/option-badge-palette.contract.test.mjs holds the two equal).
+// Brown and gray are not reached from a hex: brown sits between orange and
+// amber and differs from them by chroma alone, which a light or a dark hex
+// does not keep; a colour with less chroma than GREY_CHROMA is gray. Both are
+// reached by name.
+
+const OPTION_BADGE_HUES = Object.freeze({
+  red: 28,
+  orange: 47,
+  amber: 60,
+  yellow: 89,
+  lime: 119,
+  green: 144,
+  teal: 173,
+  cyan: 203,
+  sky: 232,
+  blue: 259,
+  indigo: 279,
+  violet: 299,
+  purple: 320,
+  pink: 347
+});
+const OPTION_BADGE_PALETTE = Object.freeze([...Object.keys(OPTION_BADGE_HUES), "brown", "gray"]);
+const GREY_CHROMA = 0.03;
+
+const linear = channel => {
+  const c = channel / 255;
+  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+}; // {chroma, hue} in OKLCH of a #rgb[a] / #rrggbb[aa]; the alpha is not read.
+
+
+function oklchOf(hex) {
+  let digits = hex.slice(1);
+  if (digits.length < 6) digits = [...digits].map(digit => digit + digit).join("");
+  const [r, g, b] = [0, 2, 4].map(at => linear(parseInt(digits.slice(at, at + 2), 16)));
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  const a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+  const bb = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+  return {
+    chroma: Math.hypot(a, bb),
+    hue: (Math.atan2(bb, a) * 180 / Math.PI + 360) % 360
+  };
+}
+/** The static palette hue nearest a hex colour: gray when it has no hue to speak of. */
+
+
+function nearestPaletteHue(hex) {
+  const {
+    chroma,
+    hue
+  } = oklchOf(hex);
+  if (chroma < GREY_CHROMA) return "gray";
+  let best = "gray";
+  let distance = Infinity;
+
+  for (const [name, angle] of Object.entries(OPTION_BADGE_HUES)) {
+    const apart = Math.abs((hue - angle + 540) % 360 - 180);
+
+    if (apart < distance) {
+      best = name;
+      distance = apart;
+    }
+  }
+
+  return best;
+} // The fill of a hue: tone 50 at the fill step 24 (C43: no new tones or steps;
+// the alpha scale's fill family), over the place in both themes, as the 24 %
+// mix of the data's hex was. The text stays on the surface colour, so the
+// label reads the same in both themes. Written to the badge's public
+// variables, --sf-badge-background-color and --sf-badge-color (owner decision
+// C140 (2), BG-7): a colour from data reaches the badge only through them and
+// only as a palette step, never the author's hex.
+
+const paletteStyle = hue => `--sf-badge-background-color: var(--sf-${hue}-50--alfa-24); --sf-badge-color: var(--sf-on-surface)`;
+/**
+ * Badge look for a filter option with optionRenderer 'badge'. option.color is
+ * a Framework badge scheme (success, error, info...), a hue of the static
+ * palette (red, teal, gray...; C17) or a hex colour. A hue tints the badge with
+ * its own palette step; a hex is drawn in the palette hue nearest it, never as
+ * the raw colour (C18, C43; badges study BG-7), so the label stays readable in
+ * both themes. Anything else is neutral.
+ */
+// The data view port names the badge look `scheme` on a column's options; a
+// filter option has always said `color`. Both are read: reading only `color`
+// left every port column's scheme unread and its badges neutral.
+
+
+function optionBadgeProps(option = {}) {
+  const raw = option?.scheme ?? option?.color;
+  const color = typeof raw === "string" ? raw.trim() : ""; // A former name (danger) reads as its canonical scheme (error).
+
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return {
+    scheme,
+    rootStyle: ""
+  };
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return {
+    scheme: "neutral",
+    rootStyle: paletteStyle(name)
+  };
+  if (HEX_COLOR.test(color)) return {
+    scheme: "neutral",
+    rootStyle: paletteStyle(nearestPaletteHue(color))
+  };
+  return {
+    scheme: "neutral",
+    rootStyle: ""
+  };
+} // The colour of an option drawn as a circle (FO4-1, FO4-2: option-look dot):
+// a scheme its role colour, a hue of the static palette its tone 50, a hex or
+// a CSS colour itself (the circle is a sample of the colour, not text on it);
+// neutral the outline colour. '' when nothing is given.
+
+const SCHEME_INK = Object.freeze({
+  neutral: "--sf-outline",
+  "on-surface": "--sf-on-surface-variant"
+});
+function optionDotColor(option = {}) {
+  const raw = option?.color ?? option?.scheme ?? option?.swatch;
+  const color = typeof raw === "string" ? raw.trim() : "";
+  if (!color) return "";
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return `var(${SCHEME_INK[scheme] ?? `--sf-${scheme}`})`;
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return `var(--sf-${name}-50)`;
+  return color;
+}
+
+/***/ },
+
 /***/ "6cafe904bdec"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -1250,16 +1491,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _component_form_reset_helper__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("67eed2647f47");
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("64feefebb417");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("9e8a0d4d39c8");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("58fa7b09c477");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("dc257f02dfa6");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("64feefebb417");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("9e8a0d4d39c8");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("58fa7b09c477");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("dc257f02dfa6");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__);
+
 
 
 
@@ -1402,6 +1646,9 @@ function normalizeItems(items = []) {
       count: source.count === null || typeof source.count === 'undefined' ? '' : String(source.count).trim(),
       // Only an icon can stand alone; the label stays as the accessible name.
       iconOnly: Boolean((source.iconOnly ?? source['icon-only']) && source.icon),
+      // An option's colour (owner decision C308 FO-4): the label is drawn
+      // as a tonal badge in it, as everywhere an option's colour is shown.
+      color: String(source.color || '').trim(),
       // A loading item shows the spinner and is disabled while it works, as
       // a loading button is (simai/ui-source#10).
       loading: Boolean(source.loading),
@@ -1416,11 +1663,11 @@ function normalizeItems(items = []) {
 // through ElementInternals.
 
 
-const ButtonGroupElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
+const ButtonGroupElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__.files,
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_9__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__,
   actions: {
     select({
       value: nextValue
@@ -1686,14 +1933,24 @@ class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.
       need,
       room
     };
+  } // A track its author lets wrap (root-class flex-wrap, as the field
+  // renderers' choice buttons do) takes more lines instead of folding: it
+  // was asked to show every option, and a dropdown in its place is another
+  // control (C302: the template is the administrator's choice; FW-2).
+
+
+  wrapsLines() {
+    const root = this.querySelector(':scope > .sf-button-group');
+    return Boolean(root) && globalThis.getComputedStyle?.(root)?.flexWrap === 'wrap';
   }
 
   checkFit() {
     if (!this.isConnected) return;
 
-    if (!this.foldable) {
+    if (!this.foldable || this.wrapsLines()) {
       if (this._folded) {
         this._folded = false;
+        this.toggleAttribute('data-sf-folded', false);
         this.requestComponentUpdate?.('fit');
       }
 
@@ -1741,11 +1998,16 @@ class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.
     // (R074): a segment drawn later (out of loading, items set afresh) finds
     // its glyph in the page's font instead of asking for a grown one.
 
-    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_7__.preloadControlIcons)(this, context.entries.filter(item => item.icon).map(item => ({
+    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_8__.preloadControlIcons)(this, context.entries.filter(item => item.icon).map(item => ({
       icon: item.icon,
       filled: false
-    })));
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderButtonGroupTemplate)(context);
+    }))); // The error line's id (error-message, FO-1).
+
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_2__.renderButtonGroupTemplate)({ ...context,
+      messageId: (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_7__.instancePath)(this, {
+        kind: 'sf-segmented'
+      }), 'error')
+    });
   } // Every form value control reports a committed change as `change` on its
   // host, once, under its native name and without the element in its detail
   // (§8, §17.3); the shim sends the legacy sf-button-group-change after it with
@@ -1950,12 +2212,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("50d2a204ba4c");
+/* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("b30ec5bc0edb");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
 
+ // An option's colour (owner decision C308 FO-4): its name is a tonal badge in
+// that colour (sf-badge tight, line 1), as in a cell, a view, a checklist and
+// a dropdown; the label stays the segment's name.
+
+function renderLabel(item) {
+  if (!item.color) return item.label;
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)({
+    color: item.color
+  });
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-button-group-badge" appearance="tonal" tight line="1" scheme=${badge.scheme}
+                        root-style=${badge.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${item.label}></sf-badge>`;
+}
 
 function segmentFor(index, total) {
   if (total <= 1) return '';
@@ -2032,7 +2307,7 @@ function renderSegment(item, context) {
     >
       ${item.loading && !item.icon ? spinner : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${icon}
-      ${item.iconOnly ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-group-label--hidden">${item.label}</span>${count}` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-text-container text-center pointer-events-none">${item.label}${count}</span>`}
+      ${item.iconOnly ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-group-label--hidden">${item.label}</span>${count}` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-text-container text-center pointer-events-none">${renderLabel(item)}${count}</span>`}
     </button>
   `;
 } // The labels do not fit on one line (owner decision C47 C): the same choice as
@@ -2052,6 +2327,7 @@ function renderFolded(context) {
         value=${context.value || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         aria-label=${context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ?disabled=${context.disabled}
+        ?invalid=${context.invalid}
         .options=${context.foldedOptions}
         @change=${event => context.component.handleFoldedChange(event)}
         @input=${event => event.stopPropagation()}
@@ -2071,7 +2347,10 @@ function renderFolded(context) {
 function renderButtonGroupTemplate(context) {
   const segmented = context.appearance !== 'buttons';
   const backdrop = segmented && context.backdrop && context.backdrop !== 'surface' ? context.backdrop : '';
-  const classes = ['sf-button-group', segmented ? 'sf-button-group--segmented' : '', segmented ? `sf-button-group--size-${context.size}` : '', segmented && context.plate !== 'scheme' ? 'sf-button-group--plate-raised' : '', segmented ? `sf-button-group--${context.scheme}` : '', backdrop ? `sf-button-group--backdrop-${backdrop}` : '', segmented && context.fullWidth ? 'sf-button-group--full-width' : '', segmented && context.folded ? 'sf-button-group--folded' : '', context.radius ? `sf-button-group--radius-${context.radius}` : '', context.rootClass].filter(Boolean).join(' ');
+  const classes = ['sf-button-group', segmented ? 'sf-button-group--segmented' : '', segmented ? `sf-button-group--size-${context.size}` : '', segmented && context.plate !== 'scheme' ? 'sf-button-group--plate-raised' : '', segmented ? `sf-button-group--${context.scheme}` : '', backdrop ? `sf-button-group--backdrop-${backdrop}` : '', segmented && context.fullWidth ? 'sf-button-group--full-width' : '', segmented && context.folded ? 'sf-button-group--folded' : '', context.radius ? `sf-button-group--radius-${context.radius}` : '', context.invalid ? 'sf-button-group--invalid' : '', context.rootClass].filter(Boolean).join(' '); // The error line while invalid (error-message, FO-1): under the group, in the
+  // error role, and the radio group is described by it.
+
+  const message = context.invalid && context.errorMessage ? context.errorMessage : '';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div
       class=${classes}
@@ -2081,12 +2360,15 @@ function renderButtonGroupTemplate(context) {
       aria-hidden=${segmented && context.folded ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-label=${context.ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-orientation=${context.orientation}
+      aria-invalid=${context.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-describedby=${message ? context.messageId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-value=${context.value || ''}
     >
       ${segmented ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-group-plate" aria-hidden="true"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${context.entries.map((item, index) => segmented ? renderSegment(item, context) : renderItem(item, index, context))}
     </div>
     ${segmented && context.folded ? renderFolded(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${message ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-button-group-message sf-button-group-message--size-${context.size}`} id=${context.messageId} data-field-message="error">${message}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${context.hiddenName ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<input class="sf-button-group-input" type="hidden" name=${context.hiddenName} value=${context.value || ''} ?disabled=${context.disabled}>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   `;
 }
@@ -2113,6 +2395,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("element-manifest", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("element-manifest", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "e92fd2d1a38c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("instance-path", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("instance-path", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -2162,7 +2451,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "9e8a0d4d39c8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.segmented","tag":"sf-segmented","version":"1.6.7","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","lang":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}}},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["track","buttons"],"default":"track"},"plate":{"type":"enum","values":["raised","scheme"],"default":"raised"},"backdrop":{"type":"enum","values":["surface","color","media"],"default":"surface"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":{"type":"string"},"item":{"type":"object","nullable":true}}}},"actions":{"select":{"with":{"value":"string"}},"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.segmented","tag":"sf-segmented","version":"1.8.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","lang":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}}},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["track","buttons"],"default":"track"},"plate":{"type":"enum","values":["raised","scheme"],"default":"raised"},"backdrop":{"type":"enum","values":["surface","color","media"],"default":"surface"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":{"type":"string"},"item":{"type":"object","nullable":true}}}},"actions":{"select":{"with":{"value":"string"}},"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

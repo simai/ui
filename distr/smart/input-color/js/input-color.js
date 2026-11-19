@@ -83,12 +83,29 @@ function syncFieldContract(root, control, {
 
   if (root.tagName === 'LABEL' && !root.hasAttribute('for')) {
     root.setAttribute('for', control.id);
+  } // A root that is not a label carries its label text as a <label> of its
+  // own (div.sf-input, 1.13.0): it points at the control too.
+
+
+  if (labelNode?.tagName === 'LABEL' && !labelNode.hasAttribute('for')) {
+    labelNode.setAttribute('for', control.id);
   } // Name the field by its visible label, not every hint or adjacent button.
   // Author-provided accessible names remain authoritative.
 
 
   if (labelNode?.textContent?.trim() && !control.hasAttribute('aria-label') && !control.hasAttribute('aria-labelledby')) {
-    if (!labelNode.id) labelNode.id = `${control.id}-label`;
+    // An id of its own: «<control>-label» may already name another element
+    // (a page that gave the field's root that id), and aria-labelledby would
+    // then read that element's whole text, the hint with it (DF-3).
+    if (!labelNode.id) {
+      const doc = labelNode.ownerDocument;
+      let id = `${control.id}-label`;
+
+      for (let n = 2; doc?.getElementById?.(id); n += 1) id = `${control.id}-label-${n}`;
+
+      labelNode.id = id;
+    }
+
     control.setAttribute('aria-labelledby', labelNode.id);
   }
 
@@ -3735,7 +3752,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "8a9b84fc1bd6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.19.4","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme","brand"],"default":"field"},"target":{"type":"string","default":""},"swatches":{"type":"string","default":""},"palette":{"type":"boolean","default":true},"custom":{"type":"boolean","default":true},"alpha":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"},"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"input":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.19.5","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme","brand"],"default":"field"},"target":{"type":"string","default":""},"swatches":{"type":"string","default":""},"palette":{"type":"boolean","default":true},"custom":{"type":"boolean","default":true},"alpha":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"},"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"input":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
 
 /***/ },
 

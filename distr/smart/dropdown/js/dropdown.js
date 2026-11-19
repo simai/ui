@@ -2,6 +2,99 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "a2a9d3c2841e"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BADGE_MAIN_TONAL: () => (/* binding */ BADGE_MAIN_TONAL),
+/* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
+/* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
+/* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
+/* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
+/* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
+/* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
+/* harmony export */   isRetiredMain: () => (/* binding */ isRetiredMain),
+/* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
+/* harmony export */ });
+const BADGE_TYPES = Object.freeze(['main', 'tonal', 'outline']);
+const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiary', 'info', 'success', 'warning', 'error', 'on-surface']); // Former scheme names that still draw: `danger` was this component's word for
+// the error status before the shared vocabulary (contracts/public-api-axes.json,
+// journal class-status-aliases, until 2026-12-01). It is read as `error`, so the
+// Native constructor emits the canonical class, as sf-badge does; the
+// stylesheet matches `.sf-badge--danger` beside it for markup written by hand.
+
+const BADGE_SCHEME_ALIASES = Object.freeze({
+  danger: 'error'
+});
+const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The default look is tonal (owner decision C140 (1), badges study BG-1): a
+// badge without an appearance is the calm grey mark. It was main, the dark
+// grey fill nobody chose.
+
+const DEFAULT_BADGE_TYPE = 'tonal';
+const DEFAULT_BADGE_SCHEME = 'neutral';
+const DEFAULT_BADGE_SIZE = '1/3';
+
+const normalizeEnum = (value, allowed, fallback) => {
+  const normalized = String(value ?? fallback).trim().toLowerCase();
+  return allowed.includes(normalized) ? normalized : fallback;
+}; // The canonical scheme for a name, a former one included; '' when the name is
+// not a badge scheme.
+
+
+function canonicalBadgeScheme(value) {
+  const name = String(value ?? '').trim().toLowerCase();
+  const canonical = BADGE_SCHEME_ALIASES[name] ?? name;
+  return BADGE_SCHEMES.includes(canonical) ? canonical : '';
+} // The looks that are drawn: tonal and outline in every colour, main only with
+// the error status (C140 (4)).
+
+const BADGE_VARIANTS = Object.freeze(BADGE_SCHEMES.flatMap(scheme => BADGE_TYPES.filter(type => type !== 'main' || scheme === 'error').flatMap(type => BADGE_SIZES.map(size => Object.freeze({
+  type,
+  scheme,
+  size
+}))))); // The filled look is the attention count's alone (owner decision C140 (4)):
+// main with the error status. main with any other colour draws tonal; the
+// spelling keeps working until this date and each use is noted in
+// SF.deprecations (journal value-badge-appearance-main-to-tonal).
+
+const BADGE_MAIN_TONAL = Object.freeze({
+  since: '2026-11-14',
+  remove_after: '2027-01-01'
+}); // True when an appearance asked for is the filled one on a colour that draws
+// it tonal: the caller notes the old spelling.
+
+function isRetiredMain({
+  type,
+  scheme
+} = {}) {
+  const requested = String(type ?? '').trim().toLowerCase();
+  return requested === 'main' && (canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME) !== 'error';
+}
+function normalizeBadgeContract({
+  type,
+  scheme,
+  size
+} = {}) {
+  let normalizedType = normalizeEnum(type, BADGE_TYPES, DEFAULT_BADGE_TYPE);
+  const normalizedScheme = canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME;
+  const normalizedSize = normalizeEnum(size, BADGE_SIZES, DEFAULT_BADGE_SIZE); // main is the attention count's: with any other colour it is tonal. The
+  // tonal on-surface badge is the grey tonal one (the stylesheet draws
+  // sf-badge--on-surface tonal as neutral); it was drawn main, filled.
+
+  if (normalizedType === 'main' && normalizedScheme !== 'error') {
+    normalizedType = 'tonal';
+  }
+
+  return {
+    type: normalizedType,
+    scheme: normalizedScheme,
+    size: normalizedSize
+  };
+}
+
+/***/ },
+
 /***/ "3a03d4610486"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -70,9 +163,16 @@ function createDropdownInteraction(root, adapter) {
   // keyboard, the focus and the aria state belong to whichever one is there.
 
 
-  const field = () => root.querySelector('.sf-dropdown-field, .sf-dropdown-trigger');
+  const field = () => root.querySelector('.sf-dropdown-field, .sf-dropdown-trigger'); // A trigger the consumer handed in is the control it holds (FF-9): its own
+  // button, or the inner button of an sf-button it gave. The wrapper then
+  // takes no role and no tab stop, so there is no button inside a button.
 
-  const trigger = () => field()?.querySelector(':scope > button') || field();
+
+  const trigger = () => {
+    const box = field();
+    if (!box) return null;
+    return box.querySelector(':scope > button') || (box.classList.contains('sf-dropdown-trigger') ? box.querySelector(':scope > * > button, :scope > a[href]') : null) || box;
+  };
 
   const input = () => field()?.querySelector('input:not([type="hidden"])'); // The search header (.sf-list-search, since R029) or a search field written
   // as an sf-input before it.
@@ -252,6 +352,7 @@ function createDropdownInteraction(root, adapter) {
   };
 
   const owner = adapter.owner || root;
+  let waits = 0;
   let summary = document.createElement('span');
   summary.className = 'sf-dropdown-value';
   root.append(summary);
@@ -271,7 +372,23 @@ function createDropdownInteraction(root, adapter) {
 
     const button = trigger(),
           container = popup?.querySelector('.sf-list-container');
-    if (!button || !container) return;
+    if (!button || !container) return; // FF-9: a handed control draws its button after it is defined; until it
+    // has, the wrapper stands in, and the wrapper gives its role and tab stop
+    // up once the control's button is there.
+
+    const box = field();
+
+    if (box?.classList.contains('sf-dropdown-trigger')) {
+      if (button === box && box.querySelector(':scope > :not(input, button, a):not(:has(button))') && waits < 20) {
+        waits += 1;
+        requestAnimationFrame(refresh);
+      }
+
+      if (button !== box) {
+        ['role', 'aria-expanded', 'aria-haspopup', 'aria-controls', 'aria-labelledby', 'aria-label', 'aria-describedby'].forEach(name => box.removeAttribute(name));
+      }
+    }
+
     if (!summary.isConnected) root.append(summary);
     const label = root.querySelector('.sf-dropdown-label .sf-dropdown-text');
     const labelId = label?.textContent.trim() ? identify(label, owner, 'label') : '';
@@ -1265,15 +1382,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("38ea8d53f301");
 /* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("e92fd2d1a38c");
 /* harmony import */ var _core_js_icon_choices_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("1b42c5117087");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("b4d28078de6f");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("f15c795f1055");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("9e00e9c642d7");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__, _core_js_icon_choices_js__WEBPACK_IMPORTED_MODULE_12__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__, _core_js_icon_choices_js__WEBPACK_IMPORTED_MODULE_12__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("c9769993fe5b");
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("b4d28078de6f");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("f15c795f1055");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("9e00e9c642d7");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__, _core_js_icon_choices_js__WEBPACK_IMPORTED_MODULE_12__, _helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_13__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_14__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_dropdown_interaction__WEBPACK_IMPORTED_MODULE_4__, _component_dropdown_portal__WEBPACK_IMPORTED_MODULE_6__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__, _core_js_icon_choices_js__WEBPACK_IMPORTED_MODULE_12__, _helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_13__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_14__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_14__);
+
+
 
 
 
@@ -1338,11 +1460,11 @@ const actions = {
   }
 
 };
-const DropdownElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_13__, {
+const DropdownElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_15__, {
   base: (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_9__.InheritedValueField)((_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default())),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_15__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_17__.files,
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_14__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_16__,
   actions
 });
 
@@ -1381,11 +1503,28 @@ function parseOptionNode(node, dropdownSize = '1') {
 } // An option may also arrive as data rather than as a child element. The shape is
 // the one parseOptionNode produces, so both paths answer the same questions and
 // a missing field falls back the same way.
+// An option's name is label, as sf-input-choice's and sf-input-lookup's
+// (Larena LF-2, 2026-11-18: one option shape, {value, label}). text, the
+// first spelling here, is read until 2027-01-01 and noted once in
+// SF.deprecations (journal sf-dropdown-option-text-to-label).
 
+
+const OPTION_TEXT_ALIAS = {
+  component: 'sf-dropdown',
+  tag: 'sf-dropdown',
+  kind: 'property',
+  attribute: 'options',
+  from: 'text',
+  to: 'label',
+  since: '2026-11-18',
+  remove_after: '2027-01-01'
+};
 
 function parseOptionData(option, dropdownSize = '1') {
   if (!option || typeof option !== 'object') return null;
-  const text = option.text === undefined || option.text === null ? '' : String(option.text);
+  const named = option.label ?? option.text;
+  if ((option.label === undefined || option.label === null) && option.text !== undefined && option.text !== null) (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_14__.noteDeprecated)(OPTION_TEXT_ALIAS);
+  const text = named === undefined || named === null ? '' : String(named);
   const value = option.value === undefined || option.value === null ? text : String(option.value);
   if (text === '' && value === '') return null;
   return {
@@ -1398,6 +1537,9 @@ function parseOptionData(option, dropdownSize = '1') {
     selected: (0,_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__.toBoolean)(option.selected),
     disabled: (0,_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__.toBoolean)(option.disabled),
     colorClass: option.colorClass ? String(option.colorClass) : 'bg-tertiary',
+    // An option's colour (owner decision C308 FO-4, C302's one data word): its
+    // name is drawn as a tonal badge in it.
+    color: typeof option.color === 'string' ? option.color.trim() : '',
     avatarImageUrl: option.avatarImageUrl ? String(option.avatarImageUrl) : '',
     avatarTitle: option.avatarTitle ? String(option.avatarTitle) : text,
     value,
@@ -1422,7 +1564,7 @@ function parseOptionList(value, dropdownSize = '1') {
 
   if (!Array.isArray(list)) return [];
   return list.map(option => typeof option === 'string' || typeof option === 'number' ? parseOptionData({
-    text: String(option),
+    label: String(option),
     value: String(option)
   }, dropdownSize) : parseOptionData(option, dropdownSize)).filter(Boolean);
 }
@@ -1541,6 +1683,14 @@ class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.Fo
       layout: {
         default: 'list',
         values: ['list', 'grid']
+      },
+      // How wide the open list is (FF-2): at least the field and up to the
+      // list's step by its options (field, C32), or the list's step whatever
+      // the field (list) -- a narrow filter button opened a list as narrow.
+      listWidth: {
+        attribute: 'list-width',
+        default: 'field',
+        values: ['field', 'list']
       },
       columns: {
         default: '6'
@@ -1819,12 +1969,39 @@ class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.Fo
 
     this._options = optionNodes.map(node => parseOptionNode(node, this.size)).filter(Boolean);
     this._optionsCaptured = true;
+    this.watchOptionNodes(optionNodes);
 
     if (!this.selectedValue && !this._selectedValues.length) {
       this._selectedValues = this._options.filter(option => option.selected).map(option => String(option.value));
     }
 
     optionNodes.forEach(child => child.remove());
+  }
+  /**
+   * The option elements taken out of the page keep their owner: a parent's
+   * template still writes them (a Lit repeat updates the nodes it made, in or
+   * out of the page). Their words follow it -- a page whose language changes
+   * redraws the parent, which rewrites each option's text, and the list showed
+   * the words it was first drawn with (field orders, open point 1). The taken
+   * elements are watched and read again when an attribute changes; what is
+   * chosen stays chosen.
+   */
+
+
+  watchOptionNodes(nodes) {
+    this._optionWatch?.disconnect();
+    this._optionWatch = null;
+    this._optionNodes = nodes;
+    if (!nodes.length || typeof globalThis.MutationObserver !== 'function') return;
+    this._optionWatch = new MutationObserver(() => {
+      if (this._optionsFromData || this._optionNodes !== nodes) return;
+      this._options = nodes.map(node => parseOptionNode(node, this.size)).filter(Boolean);
+      this.requestComponentUpdate('options');
+    });
+
+    for (const node of nodes) this._optionWatch.observe(node, {
+      attributes: true
+    });
   }
   /**
    * Options given as data instead of as child elements. A Smart parent that
@@ -1837,6 +2014,8 @@ class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.Fo
 
   set options(value) {
     const next = parseOptionList(value, this.size);
+    this._optionWatch?.disconnect();
+    this._optionWatch = null;
     this._optionsFromData = true;
     this._options = next;
     this._optionsCaptured = true;
@@ -1880,7 +2059,24 @@ class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.Fo
   }
 
   templateContext() {
-    const props = this.getPropsContext();
+    const props = this.getPropsContext(); // outlined, the former name of bordered (FM-9): said once per page in the
+    // console as well as noted (1.20.5, helpers/field-appearance.js).
+    // The alias layer writes bordered in place of outlined before the
+    // template reads it and notes the use; the note says it was there.
+
+    const look = String(this.getAttribute('appearance') ?? this.getAttribute('type') ?? '').trim().toLowerCase();
+    const noted = (globalThis.SF?.deprecations?.list?.() ?? []).some(one => one.component === 'sf-dropdown' && one.kind === 'value' && one.from === 'outlined');
+
+    if (look === 'outlined' || noted) {
+      (0,_helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_13__.sayFieldAppearanceFormer)('sf-dropdown', {
+        from: 'outlined',
+        to: 'bordered',
+        since: '2026-11-16',
+        journal: 'value-dropdown-appearance-outlined-to-bordered',
+        noted: look !== 'outlined'
+      });
+    }
+
     return this.createTemplateContext({ ...props,
       component: this,
       open: this._open,
@@ -1903,6 +2099,8 @@ class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.Fo
       selectedValues: this.selectedValues,
       selectedOptions: this.selectedOptions,
       options: this.visibleOptions,
+      listWidth: this.listWidth === 'list' ? 'list' : 'field',
+      nothingFound: String(this._searchValue || '').trim() && !this.visibleOptions.length ? this.sfWord('nothing-found') : '',
       inheritedValue: this.inheritedValue,
       inheritedLabel: this.hasInheritedValue ? this.inheritedDisplayValue() : ''
     });
@@ -2244,13 +2442,30 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f39dc444b059");
 /* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("778671c79fa6");
 /* harmony import */ var _avatar_js_picture__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c69a3dc158df");
-/* harmony import */ var _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("c22590307c6c");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_3__, _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_3__, _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("b30ec5bc0edb");
+/* harmony import */ var _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c22590307c6c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_3__, _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_3__, _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 
 
 
+
+ // An option's colour (owner decision C308 FO-4; color, one data word, C302):
+// the option's name is a tonal badge in that colour in its row, as in a cell,
+// a view, a checklist and segmented buttons; the badge's text is the row's
+// name.
+
+function optionName(option) {
+  if (!option.color || typeof option.text !== "string") return option;
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_4__.optionBadgeProps)({
+    color: option.color
+  });
+  return { ...option,
+    text: (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-dropdown-option-badge" appearance="tonal" tight line="1" scheme=${badge.scheme}
+                         root-style=${badge.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${option.text}></sf-badge>`
+  };
+}
 
 
 
@@ -2271,7 +2486,7 @@ function renderOptions(options = [], multiple = false) {
 
     if (next !== group) {
       group = next;
-      if (next) parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderListItemHeading)(next, option.size));
+      if (next) parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderListItemHeading)(next, option.size));
     } // Where several options may be chosen, each one carries the box that says
     // so: a plain row said it was chosen with a class and aria-selected alone,
     // so on a long list nothing on screen told the person what they had picked
@@ -2280,12 +2495,15 @@ function renderOptions(options = [], multiple = false) {
     // place the box would take; an avatar or a colour row then draws its box
     // after the picture, and only in a multiple list (C08: a single choice
     // is the row's fill, no box).
+    // The box stands at the row's end on every row (owner decision C308 (4),
+    // FF-3): a text or icon row draws it after its name, as a picture row does.
 
 
-    const withBox = multiple && (!option.type || option.type === "text");
-    parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderListItemOption)(withBox ? { ...option,
-      type: "checkbox"
-    } : option, {
+    const withBox = multiple && (!option.type || option.type === "text" || option.type === "icon");
+    const named = optionName(option);
+    parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderListItemOption)(withBox ? { ...named,
+      checkEnd: true
+    } : named, {
       multiple
     }));
   }
@@ -2554,6 +2772,7 @@ function renderDropdownTemplate(context) {
       <div
         class=${`sf-list sf-list--size-${context.size} flex flex-col${context.component?.hasSlotContent?.('trigger') ? " sf-list--free-width" : ""}`}
         style=${`--sf-list--cell: ${CELL[context.size] || CELL["1"]}`}
+        data-sf-list-width=${context.listWidth === "list" ? "list" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ?hidden=${!context.open}
       >
         ${context.search // The search is the panel's header (owner C06, docs review R029):
@@ -2582,11 +2801,101 @@ function renderDropdownTemplate(context) {
             @keydown=${event => context.component.handleOptionKeydown(event)}
           >
             ${renderOptions(context.options, context.multiple)}
+            ${context.nothingFound // A search that finds nothing says so, under the search header
+  // (FF-1): the header alone read as a list that had not loaded.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-empty" role="status">${context.nothingFound}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           </div>
         </div>
       </div>
     </div>
   `;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "c9769993fe5b"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_APPEARANCES: () => (/* binding */ FIELD_APPEARANCES),
+/* harmony export */   FIELD_APPEARANCE_DEFAULT: () => (/* binding */ FIELD_APPEARANCE_DEFAULT),
+/* harmony export */   FIELD_APPEARANCE_REMOVE_AFTER: () => (/* binding */ FIELD_APPEARANCE_REMOVE_AFTER),
+/* harmony export */   sayFieldAppearanceFormer: () => (/* binding */ sayFieldAppearanceFormer)
+/* harmony export */ });
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__);
+// One look vocabulary for every field (dispatcher decision 2026-11-17, Larena
+// record forms msg-9e7b5015; FM-9): a field is bordered (the default, a box
+// with a border) or filled (the container fill, no border, the bottom line).
+// sf-input, sf-input-textarea, sf-input-quantity, sf-input-lookup,
+// sf-input-rich, sf-input-code, sf-dropdown and sf-input-date answer to the
+// same two words on the same setting, appearance, so a form gives one look to
+// all its fields. A field may add a look of its own beside them (sf-input's
+// hidden, sf-input-textarea's flush); the shared two never mean anything else.
+// contracts/public-api-axes.json field_appearance holds the list.
+//
+// Former names keep working until 2027-01-01: they are noted in
+// SF.deprecations and said once per page in the console for each component
+// and name, whether or not the page opted in to deprecation warnings (the
+// order asks for the warning). Every bundle carries its own copy of this
+// module, so the names already said live on one shared global.
+
+const FIELD_APPEARANCES = Object.freeze(['bordered', 'filled']);
+const FIELD_APPEARANCE_DEFAULT = 'bordered';
+const FIELD_APPEARANCE_REMOVE_AFTER = '2027-01-01';
+
+function saidNames() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__sfFieldAppearanceSaid instanceof Set)) {
+    Object.defineProperty(root, '__sfFieldAppearanceSaid', {
+      value: new Set(),
+      configurable: true
+    });
+  }
+
+  return root.__sfFieldAppearanceSaid;
+} // A former name of the field's look was read: noted, and said once per page.
+// kind "value" is a former word of appearance (outlined); kind "attribute" a
+// former name of the setting itself (input-type).
+// noted: the shared alias layer (core/js/aliases.js, from the component's
+// aliases.json) already noted this use and put the new name in place before
+// the component read it; only the console line is left to say.
+
+
+function sayFieldAppearanceFormer(component, {
+  kind = 'value',
+  from,
+  to,
+  since,
+  journal,
+  noted = false
+} = {}) {
+  if (!component || !from) return;
+  if (!noted) (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+    component,
+    tag: component,
+    kind,
+    attribute: kind === 'value' ? 'appearance' : '',
+    from,
+    to,
+    since,
+    remove_after: FIELD_APPEARANCE_REMOVE_AFTER
+  });
+  const said = saidNames();
+  const key = `${component}|${kind}|${from}`;
+  if (said.has(key)) return;
+  said.add(key);
+  const what = kind === 'value' ? `appearance="${from}"` : `${from}`;
+  const write = kind === 'value' ? `appearance="${to}"` : `${to}`;
+  globalThis.console?.warn?.(`[SIMAI Framework] ${component}: ${what} is a former name until ${FIELD_APPEARANCE_REMOVE_AFTER}; write ${write} -- every field names its looks bordered and filled.${journal ? ` See contracts/changes/journal.json (${journal}).` : ''}`);
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -3501,6 +3810,154 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "b30ec5bc0edb"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   OPTION_BADGE_HUES: () => (/* binding */ OPTION_BADGE_HUES),
+/* harmony export */   OPTION_BADGE_PALETTE: () => (/* binding */ OPTION_BADGE_PALETTE),
+/* harmony export */   nearestPaletteHue: () => (/* binding */ nearestPaletteHue),
+/* harmony export */   optionBadgeProps: () => (/* binding */ optionBadgeProps),
+/* harmony export */   optionDotColor: () => (/* binding */ optionDotColor)
+/* harmony export */ });
+/* harmony import */ var _component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a2a9d3c2841e");
+
+const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i; // The hues of the static palette (owner decision C17), each with the OKLCH hue
+// angle of its tone 50 (src/core/scss/_sf_static_palette.scss, rounded to the
+// degree; tests/option-badge-palette.contract.test.mjs holds the two equal).
+// Brown and gray are not reached from a hex: brown sits between orange and
+// amber and differs from them by chroma alone, which a light or a dark hex
+// does not keep; a colour with less chroma than GREY_CHROMA is gray. Both are
+// reached by name.
+
+const OPTION_BADGE_HUES = Object.freeze({
+  red: 28,
+  orange: 47,
+  amber: 60,
+  yellow: 89,
+  lime: 119,
+  green: 144,
+  teal: 173,
+  cyan: 203,
+  sky: 232,
+  blue: 259,
+  indigo: 279,
+  violet: 299,
+  purple: 320,
+  pink: 347
+});
+const OPTION_BADGE_PALETTE = Object.freeze([...Object.keys(OPTION_BADGE_HUES), "brown", "gray"]);
+const GREY_CHROMA = 0.03;
+
+const linear = channel => {
+  const c = channel / 255;
+  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+}; // {chroma, hue} in OKLCH of a #rgb[a] / #rrggbb[aa]; the alpha is not read.
+
+
+function oklchOf(hex) {
+  let digits = hex.slice(1);
+  if (digits.length < 6) digits = [...digits].map(digit => digit + digit).join("");
+  const [r, g, b] = [0, 2, 4].map(at => linear(parseInt(digits.slice(at, at + 2), 16)));
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  const a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+  const bb = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+  return {
+    chroma: Math.hypot(a, bb),
+    hue: (Math.atan2(bb, a) * 180 / Math.PI + 360) % 360
+  };
+}
+/** The static palette hue nearest a hex colour: gray when it has no hue to speak of. */
+
+
+function nearestPaletteHue(hex) {
+  const {
+    chroma,
+    hue
+  } = oklchOf(hex);
+  if (chroma < GREY_CHROMA) return "gray";
+  let best = "gray";
+  let distance = Infinity;
+
+  for (const [name, angle] of Object.entries(OPTION_BADGE_HUES)) {
+    const apart = Math.abs((hue - angle + 540) % 360 - 180);
+
+    if (apart < distance) {
+      best = name;
+      distance = apart;
+    }
+  }
+
+  return best;
+} // The fill of a hue: tone 50 at the fill step 24 (C43: no new tones or steps;
+// the alpha scale's fill family), over the place in both themes, as the 24 %
+// mix of the data's hex was. The text stays on the surface colour, so the
+// label reads the same in both themes. Written to the badge's public
+// variables, --sf-badge-background-color and --sf-badge-color (owner decision
+// C140 (2), BG-7): a colour from data reaches the badge only through them and
+// only as a palette step, never the author's hex.
+
+const paletteStyle = hue => `--sf-badge-background-color: var(--sf-${hue}-50--alfa-24); --sf-badge-color: var(--sf-on-surface)`;
+/**
+ * Badge look for a filter option with optionRenderer 'badge'. option.color is
+ * a Framework badge scheme (success, error, info...), a hue of the static
+ * palette (red, teal, gray...; C17) or a hex colour. A hue tints the badge with
+ * its own palette step; a hex is drawn in the palette hue nearest it, never as
+ * the raw colour (C18, C43; badges study BG-7), so the label stays readable in
+ * both themes. Anything else is neutral.
+ */
+// The data view port names the badge look `scheme` on a column's options; a
+// filter option has always said `color`. Both are read: reading only `color`
+// left every port column's scheme unread and its badges neutral.
+
+
+function optionBadgeProps(option = {}) {
+  const raw = option?.scheme ?? option?.color;
+  const color = typeof raw === "string" ? raw.trim() : ""; // A former name (danger) reads as its canonical scheme (error).
+
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return {
+    scheme,
+    rootStyle: ""
+  };
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return {
+    scheme: "neutral",
+    rootStyle: paletteStyle(name)
+  };
+  if (HEX_COLOR.test(color)) return {
+    scheme: "neutral",
+    rootStyle: paletteStyle(nearestPaletteHue(color))
+  };
+  return {
+    scheme: "neutral",
+    rootStyle: ""
+  };
+} // The colour of an option drawn as a circle (FO4-1, FO4-2: option-look dot):
+// a scheme its role colour, a hue of the static palette its tone 50, a hex or
+// a CSS colour itself (the circle is a sample of the colour, not text on it);
+// neutral the outline colour. '' when nothing is given.
+
+const SCHEME_INK = Object.freeze({
+  neutral: "--sf-outline",
+  "on-surface": "--sf-on-surface-variant"
+});
+function optionDotColor(option = {}) {
+  const raw = option?.color ?? option?.scheme ?? option?.swatch;
+  const color = typeof raw === "string" ? raw.trim() : "";
+  if (!color) return "";
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return `var(${SCHEME_INK[scheme] ?? `--sf-${scheme}`})`;
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return `var(--sf-${name}-50)`;
+  return color;
+}
+
+/***/ },
+
 /***/ "cbce4a5232a6"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -3774,9 +4231,13 @@ function renderListItemTemplate(context) {
     // to mark (docs precheck smart content LI-01: an empty checkbox stood at
     // the end of every such row); an option of a single choice says it is
     // chosen with its fill alone (owner C08; DEV P2, owner R143, 2026-11-12).
+    // Every option of a list that may hold several chosen carries it there,
+    // at the row's end (owner decision C308 (4), FF-3): a text or icon row
+    // too, which drew its box at the start beside picture rows with theirs at
+    // the end.
 
 
-    if (isOption && context.multiple && (context.type === "avatar" || context.type === "color")) {
+    if (isOption && context.multiple && (context.type === "avatar" || context.type === "color" || context.checkEnd === true)) {
       return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <label
           class="sf-checkbox sf-checkbox--size-${context.sizeGroup.checkbox} flex"
@@ -3848,6 +4309,7 @@ function renderListItemOption(option = {}, {
     avatarImageUrl: option.avatarImageUrl,
     avatarTitle: option.avatarTitle,
     ariaLabel: option.ariaLabel,
+    checkEnd: option.checkEnd === true,
     multiple: Boolean(multiple),
     option: true
   });
@@ -4107,14 +4569,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-dropd
 /***/ "b4d28078de6f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.20.4","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","bordered"],"default":"bordered"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.22.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","bordered"],"default":"bordered"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"list-width":{"type":"enum","values":["field","list"],"default":"field"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
 
 /***/ },
 
 /***/ "ad680c489766"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Dropdown","runtime":{"search":"Search","empty":"Not selected","value-missing":"Choose an option","help":"More about: {label}"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Dropdown","runtime":{"search":"Search","empty":"Not selected","value-missing":"Choose an option","help":"More about: {label}","nothing-found":"Nothing found"},"x-trait-words":{"trait":"field-inherit@1","words":{"inherited":"inherited","reset":"Reset to inherited","described":"Inherited: {value}"}}}');
 
 /***/ }
 

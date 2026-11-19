@@ -1168,9 +1168,13 @@ function renderListItemTemplate(context) {
     // to mark (docs precheck smart content LI-01: an empty checkbox stood at
     // the end of every such row); an option of a single choice says it is
     // chosen with its fill alone (owner C08; DEV P2, owner R143, 2026-11-12).
+    // Every option of a list that may hold several chosen carries it there,
+    // at the row's end (owner decision C308 (4), FF-3): a text or icon row
+    // too, which drew its box at the start beside picture rows with theirs at
+    // the end.
 
 
-    if (isOption && context.multiple && (context.type === "avatar" || context.type === "color")) {
+    if (isOption && context.multiple && (context.type === "avatar" || context.type === "color" || context.checkEnd === true)) {
       return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <label
           class="sf-checkbox sf-checkbox--size-${context.sizeGroup.checkbox} flex"
@@ -1242,6 +1246,7 @@ function renderListItemOption(option = {}, {
     avatarImageUrl: option.avatarImageUrl,
     avatarTitle: option.avatarTitle,
     ariaLabel: option.ariaLabel,
+    checkEnd: option.checkEnd === true,
     multiple: Boolean(multiple),
     option: true
   });
@@ -1435,7 +1440,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-list-
 /***/ "f4c129a27dd4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-item","tag":"sf-list-item","version":"1.6.2","kind":"leaf","settings":{"value":{"type":"string","default":""},"kind":{"type":"enum","values":["text","icon","checkbox","avatar","color"],"default":"text"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"text":{"type":"string","default":""},"icon":{"type":"icon","default":"person"},"disabled":{"type":"boolean","default":false},"color-class":{"type":"string","default":"bg-tertiary"},"avatar-image-url":{"type":"string","default":""},"avatar-title":{"type":"string","default":""},"supporting":{"type":"string","default":""},"interactive":{"type":"boolean","default":false},"sortable-item":{"type":"string","default":""},"pinned":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"lines":{"type":"enum","values":["1","2"],"default":"1"}},"values":{"checked":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","trigger":{"type":"enum","values":["pointer","keyboard"]}}}},"actions":{},"css-variables":{"--sf-list-item-background-color":{"type":"color","state":"default"},"--sf-list-item-border-color":{"type":"color","state":"default"},"--sf-list-item-color":{"type":"color","state":"default"},"--sf-list-item-supporting-color":{"type":"color","state":"default"},"--sf-list-item-handle-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-item","tag":"sf-list-item","version":"1.7.0","kind":"leaf","settings":{"value":{"type":"string","default":""},"kind":{"type":"enum","values":["text","icon","checkbox","avatar","color"],"default":"text"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"text":{"type":"string","default":""},"icon":{"type":"icon","default":"person"},"disabled":{"type":"boolean","default":false},"color-class":{"type":"string","default":"bg-tertiary"},"avatar-image-url":{"type":"string","default":""},"avatar-title":{"type":"string","default":""},"supporting":{"type":"string","default":""},"interactive":{"type":"boolean","default":false},"sortable-item":{"type":"string","default":""},"pinned":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"lines":{"type":"enum","values":["1","2"],"default":"1"}},"values":{"checked":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","trigger":{"type":"enum","values":["pointer","keyboard"]}}}},"actions":{},"css-variables":{"--sf-list-item-background-color":{"type":"color","state":"default"},"--sf-list-item-border-color":{"type":"color","state":"default"},"--sf-list-item-color":{"type":"color","state":"default"},"--sf-list-item-supporting-color":{"type":"color","state":"default"},"--sf-list-item-handle-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

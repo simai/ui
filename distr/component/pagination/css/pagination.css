@@ -559,12 +559,12 @@
   }
   .sf-pagination .sf-pagination-shown.focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-a2);
+    outline-offset: var(--sf-focus--offset);
     border-radius: var(--sf-radius--ui);
   }
   .sf-pagination .sf-pagination-shown:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-a2);
+    outline-offset: var(--sf-focus--offset);
     border-radius: var(--sf-radius--ui);
   }
   /* The bar is as wide as eight controls of the step, or the row when it is

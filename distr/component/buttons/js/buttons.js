@@ -247,8 +247,9 @@ __webpack_require__.r(__webpack_exports__);
 // shared global and a button is named once whichever copy sees it first.
 //
 // - aria-pressed (or the --pressed class) on a button that is no toggle: the
-//   pressed look is drawn only on outline or ghost in the neutral scheme
-//   (C211 (1)); the button keeps its own look.
+//   pressed look is drawn on outline or ghost in the neutral scheme (C211 (1))
+//   and on a filled button of any scheme (C309 (2), 2026-11-18); a tonal
+//   one, or an outline or ghost one in another scheme, keeps its own look.
 // - an sf-button with an icon and no label: square, as an icon button, and it
 //   needs aria-label (C211 (2)).
 // - the set's former classes sf-button--secondary and sf-button--surface
@@ -288,8 +289,8 @@ const ICON_BUTTON_CLASS_ALIASES = Object.freeze({
 });
 const ICON_BUTTON_CLOSE_LOOKS = Object.freeze(['sf-icon-button--default', 'sf-icon-button--tonal', 'sf-icon-button--outline', 'sf-icon-button--surface']);
 const ICON_BUTTON_DENSITY_CLASSES = Object.freeze(['spacing-compact', 'spacing-comfortable', 'spacing-spacious', 'tightness-low', 'tightness-high', 'tightness-highest']);
-const BUTTON_TOGGLE = ':is(.sf-button--outline, .sf-button--ghost, .sf-button--link):is(.sf-button--on-surface, .sf-button--secondary)';
-const ICON_BUTTON_TOGGLE = ':is(.sf-icon-button--outline, .sf-icon-button--ghost, .sf-icon-button--link):is(.sf-icon-button--on-surface, .sf-icon-button--on-surface-variant, .sf-icon-button--secondary)';
+const BUTTON_TOGGLE = ':is(.sf-button--outline, .sf-button--ghost, .sf-button--link):is(.sf-button--on-surface, .sf-button--secondary), .sf-button--default';
+const ICON_BUTTON_TOGGLE = ':is(.sf-icon-button--outline, .sf-icon-button--ghost, .sf-icon-button--link):is(.sf-icon-button--on-surface, .sf-icon-button--on-surface-variant, .sf-icon-button--secondary), .sf-icon-button--default';
 const BUTTON_ICON_ONLY = ':has(> :is(.sf-icon, sf-icon, .sf-button-spinner)):not(:has(> .sf-button-text-container:not(:empty)))';
 const KINDS = {
   'sf-button': {
@@ -356,7 +357,7 @@ function checkButton(element, block) {
   const pressedSaid = element.hasAttribute('aria-pressed') || element.classList.contains(kind.pressedClass);
 
   if (pressedSaid && !matches(element, kind.toggle)) {
-    sayOnce(element, 'pressed', `[SIMAI Framework] ${block}: ${nameOf(element)} says aria-pressed, but the pressed look is drawn only on a toggle -- outline or ghost in on-surface (owner decision C211); this button keeps its own look. A choice of one among several (a view, a width, a theme) is sf-segmented.`);
+    sayOnce(element, 'pressed', `[SIMAI Framework] ${block}: ${nameOf(element)} says aria-pressed, but the pressed look is drawn only on a toggle -- a filled button, or outline or ghost in on-surface (owner decisions C211, C309); this button keeps its own look. A choice of one among several (a view, a width, a theme) is sf-segmented.`);
   }
 
   if (kind.iconOnly && matches(element, kind.iconOnly) && !hasName(element)) {

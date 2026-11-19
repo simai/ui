@@ -5902,9 +5902,14 @@ const FILE_SIZE_UNITS = /* @__PURE__ */unitTable(_lang_file_size_index_mjs__WEBP
 /** The unit words for a locale: registered for it, its own, its language's, else English. */
 
 function fileSizeUnits(locale = 'en') {
-  const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
+  const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-'); // A registry alias takes its pack's words (zh-cn: zh-hans, pt: pt-br;
+  // core/lang/index.json aliases, kept on the shared store by core).
 
-  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+  const pack = code => globalThis.__sfPageLanguage?.packs?.aliases?.[code] ?? code;
+
+  const base = wanted.split('-')[0];
+
+  for (const code of [...new Set([wanted, pack(wanted), base, pack(base)])]) {
     const units = registeredUnits(code) ?? (Object.hasOwn(FILE_SIZE_UNITS, code) ? FILE_SIZE_UNITS[code] : null);
     if (units) return units;
   }
@@ -6228,9 +6233,13 @@ function intlSpeaks(locale) {
 function packDayWord(offset, locale) {
   if (intlSpeaks(locale)) return null;
   const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-relative-day');
-  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-');
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-'); // A registry alias takes its pack's words (zh-cn: zh-hans, pt: pt-br).
 
-  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+  const pack = code => globalThis.__sfPageLanguage?.packs?.aliases?.[code] ?? code;
+
+  const base = wanted.split('-')[0];
+
+  for (const code of [...new Set([wanted, pack(wanted), base, pack(base)])]) {
     const word = words?.get?.(code)?.[DAY_KEYS[offset]];
     if (typeof word === 'string' && word.trim()) return word;
   }
@@ -7905,11 +7914,13 @@ if (typeof globalThis !== 'undefined') installInternal(globalThis);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   installLanguagePacks: () => (/* binding */ installLanguagePacks)
+/* harmony export */   installLanguagePacks: () => (/* binding */ installLanguagePacks),
+/* harmony export */   registryAliases: () => (/* binding */ registryAliases)
 /* harmony export */ });
 /* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e15813114531");
 /* harmony import */ var _lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("feccc97e5d7d");
-/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _contracts_language_registry_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("9c53c89350dc");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("8489d1f5bab4");
 // Fetching language packs (owner decision C177, 2026-11-14; format
 // docs/developer/language-packs.md, schema core/contracts/language-pack.v1.schema.json).
 //
@@ -7940,12 +7951,37 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 const BUILT_IN = new Set(['en', ...(_lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]?.built_in ?? [])]); // The family of core's own words (file sizes, relative days): fetched with the
 // language, as core formats without a component to ask for them.
 
 const CORE_PART = 'core';
 const STORE = globalThis.__sfPageLanguage;
-const PACKS = STORE?.packs; // Where core came from (public-path.js): core/lang/ beside core/js/.
+const PACKS = STORE?.packs;
+/**
+ * The registry's second names of each language, lower case, to its name
+ * (localization registry §3, C278: registry only): {'zh-cn': 'zh-hans',
+ * 'zh-sg': 'zh-hans'}. Put on the shared store, where every bundle's
+ * page-language.js reads it, so a page in lang="zh-CN" asks for and reads
+ * the zh-hans pack. No pack is added by this.
+ */
+
+function registryAliases(registry = _contracts_language_registry_mjs__WEBPACK_IMPORTED_MODULE_2__["default"]) {
+  const aliases = {};
+
+  for (const entry of registry?.languages ?? []) {
+    const slug = String(entry?.slug ?? '').trim().toLowerCase();
+    if (!slug) continue;
+
+    for (const name of [entry.locale, ...(entry.aliases ?? [])]) {
+      const code = String(name ?? '').trim().toLowerCase().replace('_', '-');
+      if (code && code !== slug) aliases[code] = slug;
+    }
+  }
+
+  return Object.freeze(aliases);
+}
+if (STORE && !STORE.aliases) STORE.aliases = registryAliases(); // Where core came from (public-path.js): core/lang/ beside core/js/.
 
 function coreRoot() {
   try {
@@ -7977,7 +8013,18 @@ function installLanguagePacks({
   const parts = new Map();
   const asked = new Set();
   const fetched = new Set();
-  const inFlight = new Map();
+  const inFlight = new Map(); // The page languages that take another code's pack (core/lang/index.json
+  // `aliases`, from the language registry): a page in zh-CN, zh-SG or zh
+  // speaks zh-hans, a page in pt speaks pt-br. Kept on the shared store, so
+  // every bundle's page-language.js looks words up through the same table.
+
+  if (packs?.aliases && typeof packs.aliases === 'object') {
+    PACKS.aliases = { ...(PACKS.aliases ?? {}),
+      ...packs.aliases
+    };
+  }
+
+  const packOf = code => PACKS.aliases?.[code] ?? STORE?.aliases?.[code] ?? code;
 
   const get = fetchJson ?? (url => globalThis.fetch(url, {
     credentials: 'same-origin'
@@ -7996,7 +8043,7 @@ function installLanguagePacks({
 
     const run = () => {
       drawing = false;
-      (0,_page_language_js__WEBPACK_IMPORTED_MODULE_2__.refreshLanguage)();
+      (0,_page_language_js__WEBPACK_IMPORTED_MODULE_3__.refreshLanguage)();
     };
 
     if (typeof globalThis.requestAnimationFrame === 'function') globalThis.requestAnimationFrame(run);else run();
@@ -8030,7 +8077,7 @@ function installLanguagePacks({
         taken = arrived.filter(Boolean).map(({
           pack,
           url
-        }) => _page_language_js__WEBPACK_IMPORTED_MODULE_2__.language.registerPack(pack, url));
+        }) => _page_language_js__WEBPACK_IMPORTED_MODULE_3__.language.registerPack(pack, url));
       } finally {
         PACKS.quiet -= 1;
       }
@@ -8107,19 +8154,23 @@ function installLanguagePacks({
   };
 
   PACKS.load = code => {
-    const codes = [...new Set([code.split('-')[0], code])];
+    const codes = [...new Set([code.split('-')[0], code].flatMap(one => [one, packOf(one)]))];
 
     for (const one of codes) begin(one);
 
     return Promise.all(codes.map(one => fetchSome(one, [...(sources.get(one) ?? []), ...(whole(one) ? [] : parts.get(one)?.urls.values() ?? [])]))).then(lists => lists.flat());
   }; // A bundle asks for a language and, from page-language.js of this pair on,
   // names the component that looks up a word: its family's part comes too.
+  // An alias asks for its pack (zh-cn: zh-hans) and for anything a product
+  // named under the alias itself.
 
 
   PACKS.request = (code, component) => {
-    begin(code);
-    const families = component && !whole(code) ? familiesOf(code, component) : [];
-    if (families.length) fetchSome(code, families.map(family => partUrl(code, family)));
+    const pack = packOf(code);
+    if (pack !== code) begin(code);
+    begin(pack);
+    const families = component && !whole(pack) ? familiesOf(pack, component) : [];
+    if (families.length) fetchSome(pack, families.map(family => partUrl(pack, family)));
   };
 
   for (const code of packs?.languages ?? []) {
@@ -8153,10 +8204,23 @@ function installLanguagePacks({
     for (const [code, urls] of Object.entries(configured)) {
       for (const url of [].concat(urls)) PACKS.add(String(code).trim().toLowerCase(), url);
     }
-  } // The page's own language, as soon as core runs, so the words are usually
+  } // What bundles that ran before core asked for (page-language.js needPack):
+  // their families' parts, which a component drawn in a shadow root would
+  // not get from what the document shows.
+
+
+  const early = PACKS.early;
+  PACKS.early = null;
+
+  for (const [code, components] of early ?? []) {
+    for (const component of components) PACKS.request(code, component || undefined);
+  } // Their words are asked again: a word no pack holds (a language without
+  // one) is reported then, as it would have been with core first.
+
+
+  if (early?.size) redraw(); // The page's own language, as soon as core runs, so the words are usually
   // here before the first component draws; the Loader holds the components
   // while they are on their way (core/js/loader.js languageHold, C282).
-
 
   const lang = globalThis.document?.documentElement?.getAttribute('lang');
 
@@ -8167,6 +8231,8 @@ function installLanguagePacks({
     if (!BUILT_IN.has(base)) {
       PACKS.request(base);
       if (wanted !== base) PACKS.request(wanted);
+      const named = STORE.aliases?.[wanted];
+      if (named && named !== wanted && named !== base) PACKS.request(named);
     }
   }
 
@@ -9513,7 +9579,14 @@ __webpack_require__.r(__webpack_exports__);
 //   Smart component holding it: a row menu of a table of size 1 is size 1);
 // - returnTo: where the focus goes when the menu closes (the row it acted
 //   on); left out, the menu gives the focus back to where it was, or to the
-//   anchor.
+//   anchor;
+// - align: 'start' (the default) lines the menu's start edge up with the
+//   anchor's, 'end' its end edge -- for a control at the end of a toolbar,
+//   whose menu would otherwise run past it towards the window's edge (view
+//   round 1, table group). Start and end follow the page's direction (in a
+//   right-to-left page 'end' is the left edge), and a menu that does not fit
+//   still flips to the other side and is shifted inside the window. At a
+//   point, 'end' puts the menu's end corner at the point.
 //
 // The menu is fetched by the Loader the first time (SF.Loader.ensure), one on
 // the page -- on the body, or in the open modal dialog the anchor is in, since
@@ -9527,6 +9600,7 @@ __webpack_require__.r(__webpack_exports__);
 // calls the published one.
 
 const SHARED = 'data-sf-menu-shared';
+const ALIGNS = new Set(['start', 'end']);
 
 function installMenuOpen() {
   let pending = null;
@@ -9612,7 +9686,9 @@ function installMenuOpen() {
       label = '',
       size = '',
       returnTo = null
-    } = options || {};
+    } = options || {}; // Logical, so a right-to-left page mirrors it; anything else is start.
+
+    const align = ALIGNS.has(options?.align) ? options.align : 'start';
     const atPoint = !(anchor instanceof Element);
     if (atPoint && !(Number.isFinite(Number(x)) && Number.isFinite(Number(y)))) return null;
     const doc = globalThis.document;
@@ -9657,14 +9733,15 @@ function installMenuOpen() {
       shown = pending;
       const mine = pending;
       const opening = atPoint ? typeof menu.openAt === 'function' ? menu.openAt(Number(x), Number(y), {
-        target: returnTo ?? undefined
+        target: returnTo ?? undefined,
+        align
       }) : menu.openFor(pointAnchor(Number(x), Number(y), returnTo), {
         side: 'block-end',
-        align: 'start',
+        align,
         focus: 'first'
       }) : menu.openFor(anchor, {
         side: 'block-end',
-        align: 'start',
+        align,
         focus: 'first'
       });
       Promise.resolve(opening).then(answer => {
@@ -11228,6 +11305,44 @@ const PACKS = STORE.packs ??= {
   request: null
 }; // The languages built into the bundles: English, and in a rollback build Russian
 // too (src/core/lang/built-in.json, C282).
+// Which registered words came from a Framework pack and nothing has said over
+// since: name -> code -> Set of keys. A Framework pack is the Framework's own
+// words in a file, so for a component that names itself by a dated alias of
+// its record's tag (sf-message-log, the heir of sf-list-feed, both under
+// sf-list-feed's record) they are the successor's words, not its own: the
+// words that component ships win over them (ui-control evidence
+// 2026-11-18-pro-over-1ed6: «Лента» instead of «Переписка» once the ru pack
+// was fetched). A word a product registers, or a product pack, is still over
+// everything. Kept beside the words, not instead of them, so a copy of this
+// module from before it reads the registry as it did. A STORE made by an older
+// bundle has none yet: added here.
+
+const FLOOR = STORE.floor ??= new Map();
+
+const floorOf = (name, code) => {
+  if (!FLOOR.has(name)) FLOOR.set(name, new Map());
+  const byLanguage = FLOOR.get(name);
+  if (!byLanguage.has(code)) byLanguage.set(code, new Set());
+  return byLanguage.get(code);
+};
+
+const notFloor = (name, code, keys) => {
+  const marked = FLOOR.get(name)?.get(code);
+  if (!marked) return;
+
+  for (const key of keys) marked.delete(key);
+}; // Whether the word registered for `key` stands for the successor of the
+// component asking, so that its own shipped word is said instead: the asker
+// names a dated alias (its tag is not its record's), and the registered word
+// is a Framework pack's that no product has said over.
+
+
+function successorWord(owner, candidate, key) {
+  if (!owner) return false;
+  const name = normalise(owner);
+  const record = (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(name);
+  return record !== name && Boolean(FLOOR.get(record)?.get(candidate)?.has(key));
+}
 
 const isBuiltIn = code => code === 'en' || (_lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]?.built_in ?? []).includes(code);
 /**
@@ -11241,10 +11356,29 @@ const isBuiltIn = code => code === 'en' || (_lang_built_in_mjs__WEBPACK_IMPORTED
 function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
-  if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
+  if (!base || isBuiltIn(base)) return;
   const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+
+  if (typeof PACKS.request !== 'function') {
+    // Core has not run yet: a Smart bundle placed before core.js (a Docara
+    // page and its example frames load core last) draws before anyone can
+    // fetch. The ask is kept and core makes it when it starts
+    // (core/js/language-packs.js), so the family's part still comes.
+    const early = PACKS.early ??= new Map();
+    const named = aliasOf(wanted);
+
+    for (const one of new Set([base, wanted, ...(named ? [named] : [])])) {
+      if (!early.has(one)) early.set(one, new Set());
+      early.get(one).add(name ?? '');
+    }
+
+    return;
+  }
+
   PACKS.request(base, name);
   if (wanted !== base) PACKS.request(wanted, name);
+  const named = aliasOf(wanted);
+  if (named && named !== wanted && named !== base) PACKS.request(named, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -11255,8 +11389,31 @@ const wordsOf = component => REGISTERED.get((0,_tag_aliases_js__WEBPACK_IMPORTED
 
 function normalise(value) {
   return String(value ?? '').trim().toLowerCase().replace('_', '-');
+} // The pack a page language takes. Two tables, both from the localization
+// registry (C278) and both on the shared store, so a bundle carries neither:
+// core/lang/index.json `aliases` (the shipped packs: zh-cn, zh-sg and zh take
+// zh-hans, pt takes pt-br; PACKS.aliases, set by core) and the registry's
+// second names of every language (STORE.aliases, core/js/language-packs.js).
+// A word registered for the alias itself still comes first; any other code
+// is its own.
+
+
+function packOf(code) {
+  const one = PACKS?.aliases?.[code] ?? STORE?.aliases?.[code];
+  return typeof one === 'string' && one ? one : code;
 }
-/** The languages to try, most specific first, English last. */
+
+function aliasOf(code) {
+  const named = packOf(code);
+  return named !== code ? named : null;
+}
+/**
+ * The languages to try, most specific first, English last: the language, the
+ * pack it is an alias of, the language without its region and that one's
+ * pack. zh-CN: zh-cn, zh-hans, zh, en; zh-TW: zh-tw, zh, zh-hans, en; pt-PT:
+ * pt-pt, pt, pt-br, en. Until 2026-11-18 a zh-CN or pt page found no pack and
+ * spoke English.
+ */
 
 
 const chain = language => {
@@ -11264,7 +11421,7 @@ const chain = language => {
   const base = wanted.split('-')[0];
   const order = [];
 
-  for (const candidate of [wanted, base, 'en']) {
+  for (const candidate of [wanted, packOf(wanted), base, packOf(base), 'en']) {
     if (candidate && !order.includes(candidate)) order.push(candidate);
   }
 
@@ -11449,7 +11606,8 @@ function localeText(dictionary, key, locale, component) {
   needPack(order[0], component);
 
   for (const candidate of order) {
-    const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
+    let added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
+    if (added !== undefined && dictionary?.[candidate]?.[key] !== undefined && successorWord(component, candidate, key)) added = undefined;
 
     if (added !== undefined) {
       if (candidate === 'en' && added !== '') warnFallback(order, component, key);
@@ -11474,9 +11632,14 @@ function localeText(dictionary, key, locale, component) {
 // the shared global, because every bundle carries this module.
 
 function warnFallback(order, owner, key) {
-  const wanted = String(order[0] || '').split('-')[0]; // While its pack is on its way the English is a moment, not a gap.
+  const wanted = packOf(String(order[0] || '').split('-')[0]); // While its pack is on its way the English is a moment, not a gap (the
+  // registry name's pack too: zh-hans for a zh-CN page). Before core runs
+  // nothing can be on its way yet: the word is asked again when the pack core
+  // fetches arrives, and only a word still missing then is one (ui-view
+  // example frames reported sf-pagination "of-pages", which the ru pack holds,
+  // on loads where the bundle ran before core).
 
-  if (!wanted || wanted === 'en' || PACKS.pending.has(wanted)) return;
+  if (!wanted || wanted === 'en' || typeof PACKS.request !== 'function' || order.some(code => code !== 'en' && PACKS.pending.has(code))) return;
   const root = globalThis;
   if (!(root.__sfMissingWords instanceof Map)) root.__sfMissingWords = new Map();
   const seen = root.__sfMissingWords;
@@ -11556,6 +11719,7 @@ function pageWord(dictionary, key, node, {
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
     let added = registered?.[key];
+    if (added !== undefined && dictionary?.[candidate]?.[key] !== undefined && successorWord(owner, candidate, key)) added = undefined;
 
     if (added === undefined && registered) {
       const old = formerKeys.find(name => registered[name] !== undefined && registered[name] !== null);
@@ -11661,9 +11825,17 @@ const language = {
     if (!name || !code) throw new TypeError('a component and a language are required');
     if (!REGISTERED.has(name)) REGISTERED.set(name, new Map());
     const byLanguage = REGISTERED.get(name);
-    if (words === null) byLanguage.delete(code);else byLanguage.set(code, { ...(byLanguage.get(code) ?? {}),
-      ...words
-    });
+
+    if (words === null) {
+      byLanguage.delete(code);
+      FLOOR.get(name)?.delete(code);
+    } else {
+      byLanguage.set(code, { ...(byLanguage.get(code) ?? {}),
+        ...words
+      });
+      notFloor(name, code, Object.keys(words ?? {}));
+    }
+
     announce();
     return this;
   },
@@ -11698,6 +11870,15 @@ const language = {
       } : { ...now,
         ...byKey
       });
+
+      if (under) {
+        const marked = floorOf(name, code);
+
+        for (const key of Object.keys(byKey)) if (!Object.prototype.hasOwnProperty.call(now, key) || marked.has(key)) marked.add(key);
+      } else {
+        notFloor(name, code, Object.keys(byKey));
+      }
+
       words += Object.keys(byKey).length;
     }
 
@@ -11758,7 +11939,7 @@ const language = {
   missing(value) {
     const seen = globalThis.__sfMissingWords instanceof Map ? globalThis.__sfMissingWords : new Map();
     if (value === undefined) return Object.fromEntries([...seen].map(([code, words]) => [code, [...words]]));
-    return [...(seen.get(normalise(value).split('-')[0]) ?? [])];
+    return [...(seen.get(packOf(normalise(value).split('-')[0])) ?? [])];
   },
 
   /** Every component something has been registered for. */
@@ -11779,7 +11960,10 @@ const language = {
   /** Everything registered is forgotten. For tests, and for a product reset. */
   forget() {
     REGISTERED.clear();
-    PACKS.loaded.clear();
+    FLOOR.clear();
+    PACKS.loaded.clear(); // The asks kept before core ran go too: they were for the words forgotten.
+
+    PACKS.early?.clear?.();
     STORE.chosen = null;
     announce();
     return this;
@@ -15076,7 +15260,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.61.0';
+const CORE_RUNTIME = '1.62.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -15728,8 +15912,9 @@ __webpack_require__.r(__webpack_exports__);
 // it. A page in another script loads its face on first use, as before.
 // Opt out with SF_BOOT_CONFIG.fonts.early = false.
 const TEXT_FONT_FAMILY = 'Inter Variable'; // Languages written in Cyrillic (ISO 639-1), read from <html lang>.
+// Languages of CIS countries other than Russian are not named (owner decision C278).
 
-const CYRILLIC_LANGUAGE = /^(ru|uk|be|bg|sr|mk|ky|tg|mn|ba|tt|cv|ce|os|sah|ab)(-|$)/i;
+const CYRILLIC_LANGUAGE = /^(ru|bg|sr|mk|mn|ba|tt|cv|ce|os|sah|ab)(-|$)/i;
 const LATIN_PROBE = 0x61; // a
 
 const CYRILLIC_PROBE = 0x430; // а
@@ -18431,6 +18616,26 @@ function rectToClientRect(rect) {
 }
 
 
+
+
+/***/ },
+
+/***/ "9c53c89350dc"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _language_registry_v1_json__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a601a7aa2941");
+// The SIMAI language registry (language-registry.v1.json beside it,
+// C278), for core/js/language-packs.js: core reads its second names of each
+// language (zh-CN for zh-Hans). A module, as core/lang/built-in.mjs, so the bundle and
+// Node read the JSON alike.
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_language_registry_v1_json__WEBPACK_IMPORTED_MODULE_0__);
 
 
 /***/ },
@@ -24585,7 +24790,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.badge",
-    "version": "1.6.3"
+    "version": "1.6.4"
   },
   "sf-button": {
     "inputs": {
@@ -24659,6 +24864,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": false,
           "type": "boolean"
         },
+        "max-width": {
+          "default": "",
+          "type": "string"
+        },
         "name": {
           "default": "",
           "type": "string"
@@ -24669,6 +24878,14 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "button",
             "submit",
             "reset"
+          ],
+          "type": "string"
+        },
+        "overflow": {
+          "default": "wrap",
+          "enum": [
+            "wrap",
+            "truncate"
           ],
           "type": "string"
         },
@@ -24785,7 +25002,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.16.8"
+    "version": "1.17.2"
   },
   "sf-button-icon": {
     "inputs": {
@@ -24965,7 +25182,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.13.8"
+    "version": "1.13.10"
   },
   "sf-checkbox": {
     "inputs": {
@@ -24990,6 +25207,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "disabled": {
           "default": false,
           "type": "boolean"
+        },
+        "error-message": {
+          "default": "",
+          "type": "string"
         },
         "help": {
           "default": "",
@@ -25037,7 +25258,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.checkbox",
-    "version": "1.5.5"
+    "version": "1.6.0"
   },
   "sf-divider": {
     "component": "component.content-divider",
@@ -25109,6 +25330,14 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           ],
           "type": "string"
         },
+        "list-width": {
+          "default": "field",
+          "enum": [
+            "field",
+            "list"
+          ],
+          "type": "string"
+        },
         "mode": {
           "default": "select",
           "enum": [
@@ -25170,7 +25399,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.20.4"
+    "version": "1.22.0"
   },
   "sf-icon": {
     "inputs": {
@@ -25262,7 +25491,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.4.2"
+    "version": "1.4.3"
   },
   "sf-input": {
     "inputs": {
@@ -25471,7 +25700,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.15.2"
+    "version": "1.15.3"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -25647,7 +25876,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.13.2"
+    "version": "1.13.3"
   },
   "sf-switch": {
     "inputs": {
@@ -25669,6 +25898,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": false,
           "type": "boolean"
         },
+        "error-message": {
+          "default": "",
+          "type": "string"
+        },
         "help": {
           "default": "",
           "type": "string"
@@ -25688,6 +25921,10 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "inherited-value": {
           "default": "",
           "type": "string"
+        },
+        "invalid": {
+          "default": false,
+          "type": "boolean"
         },
         "label": {
           "default": "",
@@ -25731,7 +25968,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.switch",
-    "version": "1.9.3"
+    "version": "1.10.0"
   }
 });
 
@@ -31794,6 +32031,14 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ },
 
+/***/ "a601a7aa2941"
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-registry","schema_version":1,"$comment":"The SIMAI language registry (localization standard §3, decision L4: kept in the Framework, products read it with the Framework). order is the switcher order, priority the translation order (null: ru is the language of writing). The registry declares that a language exists; a product publishes it (§4). Arabic ar added 11th by owner decision C278 (2026-11-17); languages of CIS countries other than Russian are not in the registry. pack: how the Framework\'s interface words reach a page in that language - built-in (English, inside every bundle) or shipped (a language file core/lang/<code>.js and its parts core/lang/<code>/<family>.json, listed in core/lang/index.json, owner decisions C282 and C278). The pack\'s code is the locale in lower case (pt-br, zh-hans). aliases: the page languages that take this language\'s pack, matched without regard to case (lang=\\"zh-CN\\" or \\"zh\\" speaks zh-hans, lang=\\"pt\\" speaks pt-br); a page language with a region the registry does not name takes its base language\'s (zh-TW -> zh -> zh-hans, pt-PT -> pt -> pt-br). Written into core/lang/index.json by scripts/build-language-packs.mjs.","languages":[{"locale":"en","slug":"en","name":"English","direction":"ltr","order":1,"priority":1,"plural":"intl","aliases":[],"pack":"built-in"},{"locale":"ru","slug":"ru","name":"Русский","direction":"ltr","order":2,"priority":null,"plural":"intl","aliases":[],"pack":"shipped"},{"locale":"zh-Hans","slug":"zh-hans","name":"简体中文","direction":"ltr","order":3,"priority":2,"plural":"intl","aliases":["zh","zh-CN","zh-SG"],"pack":"shipped"},{"locale":"es","slug":"es","name":"Español","direction":"ltr","order":4,"priority":3,"plural":"intl","aliases":[],"pack":"shipped"},{"locale":"pt-BR","slug":"pt-br","name":"Português (Brasil)","direction":"ltr","order":5,"priority":4,"plural":"intl","aliases":["pt"],"pack":"shipped"},{"locale":"de","slug":"de","name":"Deutsch","direction":"ltr","order":6,"priority":6,"plural":"intl","aliases":[],"pack":"shipped"},{"locale":"fr","slug":"fr","name":"Français","direction":"ltr","order":7,"priority":7,"plural":"intl","aliases":[],"pack":"shipped"},{"locale":"it","slug":"it","name":"Italiano","direction":"ltr","order":8,"priority":8,"plural":"intl","aliases":[],"pack":"shipped"},{"locale":"ja","slug":"ja","name":"日本語","direction":"ltr","order":9,"priority":5,"plural":"intl","aliases":[],"pack":"shipped"},{"locale":"ko","slug":"ko","name":"한국어","direction":"ltr","order":10,"priority":9,"plural":"intl","aliases":[],"pack":"shipped"},{"locale":"ar","slug":"ar","name":"العربية","direction":"rtl","order":11,"priority":10,"plural":"intl","aliases":[],"pack":"shipped"}]}');
+
+/***/ },
+
 /***/ "df4271a1745f"
 (module) {
 
@@ -31870,7 +32115,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-built-in","s
 (module) {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-pack-index","schema_version":1,"delivery":"framework","languages":["ru"],"parts":{"ru":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]}},"coverage":{"ru":{"words":2139,"translated":2139,"share":100}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-pack-index","schema_version":1,"delivery":"framework","languages":["ar","de","es","fr","it","ja","ko","pt-br","ru","zh-hans"],"aliases":{"pt":"pt-br","zh":"zh-hans","zh-cn":"zh-hans","zh-sg":"zh-hans"},"parts":{"ar":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"de":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"es":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"fr":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"it":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ja":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ko":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"pt-br":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ru":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"zh-hans":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]}},"coverage":{"ar":{"words":2258,"translated":2258,"share":100},"de":{"words":2258,"translated":2258,"share":100},"es":{"words":2258,"translated":2258,"share":100},"fr":{"words":2258,"translated":2258,"share":100},"it":{"words":2258,"translated":2258,"share":100},"ja":{"words":2258,"translated":2258,"share":100},"ko":{"words":2258,"translated":2258,"share":100},"pt-br":{"words":2258,"translated":2258,"share":100},"ru":{"words":2258,"translated":2258,"share":100},"zh-hans":{"words":2258,"translated":2258,"share":100}}}');
 
 /***/ }
 

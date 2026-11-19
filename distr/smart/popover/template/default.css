@@ -53,8 +53,16 @@
     --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
   }
 
-  sf-popover[data-open='false'] > [slot='content'] {
-    display: none;
+  /* Closed: the open attribute is the value (1.8.0); data-open is the
+     page's. Before the element is defined a closed surface stays hidden too.
+     Closed, the surface is not drawn whatever its own classes say: a page
+     content node with a display utility of its own (flex, grid) showed
+     while closed, since a page's or a utility's rule outranks this layer
+     (the FO component study, ui-control
+     control/research/2026-11-18-framework-parts-fo). An important
+     declaration in a layer outranks every normal one, layered or not. */
+  sf-popover:not([open]) > [slot='content'] {
+    display: none !important;
   }
 
   sf-popover[data-placement='bottom-end'] > [slot='content'] {
@@ -205,7 +213,7 @@
         --sf-surface-place-fill: initial;
         --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
         --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-        --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+        --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-85));
         --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
         --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
         --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
@@ -234,7 +242,7 @@
     :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, :is(.sf-alert-bar--error, .sf-alert-bar--danger, .sf-alert-bar--warning, .sf-alert-bar--info) :is(.sf-alert-bar-row, .sf-alert-bar-strip), .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) sf-popover > [slot='content'] {
         --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
         --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-        --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+        --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-85));
     }
     /* Inside bg-surface-4 the content takes back the accent the step found
        (mix sf-place-step-4-accent-back; DEV acceptance 2026-11-11, M3): the
@@ -284,6 +292,7 @@
         --sf-place--fill-placeholder: initial;
         --sf-place--control-hover: initial;
         --sf-place--control-active: initial;
+        --sf-place--tonal-edge: initial;
     }
     /* On glass (C70, mix sf-place-back-on-colour): the accent, the link and the
        focus ring the page had there; glass makes them its white ink. */
@@ -318,6 +327,10 @@
         --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
         --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
         --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
+        /* The glass's hover and press fill of a neutral button (H1): the
+           bubble is opaque and has its own. */
+        --sf-place--control-hover: initial;
+        --sf-place--control-active: initial;
     }
     sf-popover[arrow] > [slot='content'][data-sf-side]:not([data-sf-sheet])::before {
         background: inherit;

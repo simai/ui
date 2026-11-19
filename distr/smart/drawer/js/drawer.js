@@ -240,7 +240,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("0dc7c163a2e8");
 /* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d6e446f3d408");
 /* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d0eb591c1610");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("fefa0c5c3ed9");
+/* harmony import */ var _helpers_late_children_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("769e1a2f7462");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("fefa0c5c3ed9");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
@@ -249,6 +250,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__);
+
 
 
 
@@ -792,7 +794,13 @@ class SfDrawer extends DrawerElement {
     // Static markup is a picture of the drawer, not its content (§5.4).
     if (!this._contentNodes) this._contentNodes = Array.from(this.childNodes).filter(node => !node.hasAttribute?.('data-sf-static'));
     this.drawerId = this.resolveDrawerId();
-    super.connectedCallback();
+    super.connectedCallback(); // What the page writes into the host from now on is the drawer's (Larena
+    // LF-3): the content was taken once, when it connected.
+
+    if (this.isConnected && !this._lateChildren) {
+      this._lateChildren = (0,_helpers_late_children_js__WEBPACK_IMPORTED_MODULE_10__.watchLateChildren)(this, nodes => this.takeLateChildren(nodes));
+    }
+
     drawerManager.bindGlobalEvents();
     globalThis.addEventListener?.('resize', this.onWindowResize, {
       passive: true
@@ -815,6 +823,10 @@ class SfDrawer extends DrawerElement {
   }
 
   disconnectedCallback() {
+    this._themeObserver?.disconnect();
+    this._themeObserver = null;
+    this._lateChildren?.disconnect();
+    this._lateChildren = null;
     this._areaObserver?.disconnect();
     this._areaObserver = null;
     this._edgeObserver?.disconnect();
@@ -1305,7 +1317,8 @@ class SfDrawer extends DrawerElement {
       variables: DRAWER_VARIABLES,
       area: true,
       except: ['--sf-drawer-']
-    }); // Static markup printed for the first paint goes as the drawer draws
+    });
+    this.followTheme(portal); // Static markup printed for the first paint goes as the drawer draws
     // (standard 1.3.8 §5.4); the panel itself is rendered in the portal.
 
     if (!this.__sfFirstPaintEnded) {
@@ -1324,6 +1337,41 @@ class SfDrawer extends DrawerElement {
     });
     this.drawInto(result, portal);
     this.afterRender();
+  } // The panel follows the theme of the place it was opened from at every
+  // width (Larena LF-9). The portal at the end of the body took the theme
+  // (and the area's variables) once, when the drawer drew: a page that turned
+  // its region dark later -- a theme switch on a wrapper of the page, or a
+  // class a script sets after the drawer has drawn -- kept a light panel and
+  // light content (Larena «История» at 390 in the dark theme). The drawer
+  // watches the class of every element it stands in (the host up to the
+  // root, not the subtree) and carries the origin again when one changes.
+
+
+  followTheme(portal) {
+    const chain = [];
+
+    for (let node = this.parentElement; node; node = node.parentElement) chain.push(node);
+
+    const same = this._themeChain && this._themeChain.length === chain.length && this._themeChain.every((node, index) => node === chain[index]);
+
+    if (same && this._themeObserver) return;
+    this._themeObserver?.disconnect();
+    this._themeChain = chain;
+    if (typeof MutationObserver === 'undefined') return;
+    this._themeObserver = new MutationObserver(() => {
+      const target = this._portalRoot;
+      if (!target?.isConnected || !this.isConnected) return;
+      (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.carryLayerOrigin)(target, this, {
+        variables: DRAWER_VARIABLES,
+        area: true,
+        except: ['--sf-drawer-']
+      });
+    });
+
+    for (const node of chain) this._themeObserver.observe(node, {
+      attributes: true,
+      attributeFilter: ['class', 'data-sf-scheme']
+    });
   } // The panel is rendered at the end of the body, above the page -- or, when the
   // drawer stands inside a [data-sf-overlay-container] (or the older
   // [data-sf-drawer-container]), at the end of that box,
@@ -1360,6 +1408,23 @@ class SfDrawer extends DrawerElement {
     this._areaObserver.observe(this, {
       childList: true
     });
+  } // Content the page wrote into the host after the drawer connected -- a
+  // record's body fetched while the panel is open (Larena LF-3, 2026-11-18).
+  // It is the drawer's content now: it replaces what the body showed, in the
+  // order written, open or closed. A child asking for an area (edge, footer,
+  // header-action) is placed there by projectAreas, as before. To add to what
+  // the body shows, the page adds into a node it already placed (a holder).
+
+
+  takeLateChildren(nodes) {
+    const content = nodes.filter(node => !asksForArea(node));
+    if (!content.length) return;
+    this._contentNodes = [...(this._contentNodes || []).filter(asksForArea), ...content];
+    const body = this.getDrawerRoot()?.querySelector('[data-sf-drawer-body]'); // Not drawn yet: the drawing takes them (afterRender).
+
+    if (!body || body.dataset.sfDrawerContentReady !== '1') return;
+    body.replaceChildren(...content);
+    this.requestComponentUpdate('content');
   } // Whether a child asks for the head's action: a head with no title and no
   // close is still drawn for it.
 
@@ -2166,6 +2231,50 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "769e1a2f7462"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   isLateContent: () => (/* binding */ isLateContent),
+/* harmony export */   watchLateChildren: () => (/* binding */ watchLateChildren)
+/* harmony export */ });
+// Children a page writes into a panel's host after the panel connected
+// (Larena LF-3, 2026-11-18): sf-modal and sf-drawer took their content once,
+// when they connected, so a body fetched and written while the panel was
+// open stayed in the host -- out of the panel, and on the page itself, as the
+// host draws no box of its own. The panel watches its host instead: what the
+// page writes there later is handed to `take`, in the order written, once per
+// batch of changes (one task's writes arrive together).
+//
+// Not content: static markup (a picture of the element, §5.4), a settings
+// island, a comment and white space.
+function isLateContent(node) {
+  if (node.nodeType === 3) return node.textContent.trim() !== '';
+  if (node.nodeType !== 1) return false;
+  if (node.hasAttribute('data-sf-static')) return false;
+  return !(node.localName === 'script' && node.hasAttribute('data-sf-settings'));
+}
+function watchLateChildren(host, take) {
+  const observer = new MutationObserver(records => {
+    const added = [];
+
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        if (node.parentNode === host && !added.includes(node) && isLateContent(node)) added.push(node);
+      }
+    }
+
+    if (added.length) take(added);
+  });
+  observer.observe(host, {
+    childList: true
+  });
+  return observer;
+}
+
+/***/ },
+
 /***/ "fefa0c5c3ed9"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -2249,7 +2358,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-drawe
 /***/ "0dc7c163a2e8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.drawer","tag":"sf-drawer","version":"1.17.3","kind":"leaf","settings":{"placement":{"type":"enum","values":["left","right","inline-start","inline-end","bottom"],"default":"right"},"snap":{"type":"enum","values":["auto","half","full"],"default":"auto"},"overlay":{"type":"boolean","default":true},"modal":{"type":"boolean","default":true},"docked":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2","full"],"default":"1","x-scale":"width"},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"controlled":{"type":"boolean","default":false},"close-placement":{"type":"enum","values":["inside","outside"],"default":"inside"},"heading":{"type":"string","default":""},"label":{"type":"string","default":""},"close-label":{"type":"string","default-from":"runtime.close-label"},"width":{"type":"string","default":""},"stack-offset":{"type":"string","default":""},"dock-breakpoint":{"type":"string","default":""},"block-start":{"type":"string","default":""},"gutter":{"type":"string","default":""},"z-index":{"type":"string","default":""},"overlay-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"panel-style":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false}},"events":{"open":{"carries":{"drawer-id":"string"},"cancelable":true},"opened":{"carries":{"drawer-id":"string"}},"close":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"snapped":{"carries":{"drawer-id":"string","snap":{"type":"enum","values":["auto","half","full"]}}}},"actions":{"open":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"css-variables":{"--sf-drawer-background":{"type":"color","state":"default"},"--sf-drawer-color":{"type":"color","state":"default"},"--sf-drawer-overlay-background":{"type":"color","state":"overlay"},"--sf-drawer-gutter":{"type":"length","state":"default"},"--sf-drawer-block-start":{"type":"length","state":"default"},"--sf-drawer-dock-breakpoint":{"type":"length","state":"docked"},"--sf-drawer-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.drawer","tag":"sf-drawer","version":"1.18.0","kind":"leaf","settings":{"placement":{"type":"enum","values":["left","right","inline-start","inline-end","bottom"],"default":"right"},"snap":{"type":"enum","values":["auto","half","full"],"default":"auto"},"overlay":{"type":"boolean","default":true},"modal":{"type":"boolean","default":true},"docked":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2","full"],"default":"1","x-scale":"width"},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"controlled":{"type":"boolean","default":false},"close-placement":{"type":"enum","values":["inside","outside"],"default":"inside"},"heading":{"type":"string","default":""},"label":{"type":"string","default":""},"close-label":{"type":"string","default-from":"runtime.close-label"},"width":{"type":"string","default":""},"stack-offset":{"type":"string","default":""},"dock-breakpoint":{"type":"string","default":""},"block-start":{"type":"string","default":""},"gutter":{"type":"string","default":""},"z-index":{"type":"string","default":""},"overlay-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"panel-style":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false}},"events":{"open":{"carries":{"drawer-id":"string"},"cancelable":true},"opened":{"carries":{"drawer-id":"string"}},"close":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"snapped":{"carries":{"drawer-id":"string","snap":{"type":"enum","values":["auto","half","full"]}}}},"actions":{"open":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"css-variables":{"--sf-drawer-background":{"type":"color","state":"default"},"--sf-drawer-color":{"type":"color","state":"default"},"--sf-drawer-overlay-background":{"type":"color","state":"overlay"},"--sf-drawer-gutter":{"type":"length","state":"default"},"--sf-drawer-block-start":{"type":"length","state":"default"},"--sf-drawer-dock-breakpoint":{"type":"length","state":"docked"},"--sf-drawer-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

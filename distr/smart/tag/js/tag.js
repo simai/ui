@@ -1210,7 +1210,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   OPTION_BADGE_HUES: () => (/* binding */ OPTION_BADGE_HUES),
 /* harmony export */   OPTION_BADGE_PALETTE: () => (/* binding */ OPTION_BADGE_PALETTE),
 /* harmony export */   nearestPaletteHue: () => (/* binding */ nearestPaletteHue),
-/* harmony export */   optionBadgeProps: () => (/* binding */ optionBadgeProps)
+/* harmony export */   optionBadgeProps: () => (/* binding */ optionBadgeProps),
+/* harmony export */   optionDotColor: () => (/* binding */ optionDotColor)
 /* harmony export */ });
 /* harmony import */ var _component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a2a9d3c2841e");
 
@@ -1327,6 +1328,24 @@ function optionBadgeProps(option = {}) {
     scheme: "neutral",
     rootStyle: ""
   };
+} // The colour of an option drawn as a circle (FO4-1, FO4-2: option-look dot):
+// a scheme its role colour, a hue of the static palette its tone 50, a hex or
+// a CSS colour itself (the circle is a sample of the colour, not text on it);
+// neutral the outline colour. '' when nothing is given.
+
+const SCHEME_INK = Object.freeze({
+  neutral: "--sf-outline",
+  "on-surface": "--sf-on-surface-variant"
+});
+function optionDotColor(option = {}) {
+  const raw = option?.color ?? option?.scheme ?? option?.swatch;
+  const color = typeof raw === "string" ? raw.trim() : "";
+  if (!color) return "";
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return `var(${SCHEME_INK[scheme] ?? `--sf-${scheme}`})`;
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return `var(--sf-${name}-50)`;
+  return color;
 }
 
 /***/ },
@@ -1640,9 +1659,18 @@ function tagAppearance(element) {
 const BARE_TOGGLE = {
   since: '2026-11-17',
   remove_after: '2027-01-01'
-};
+}; // interactive written on the host, as the boolean attribute reads it.
+
+function isInteractive(element) {
+  return Boolean(element?.hasAttribute?.('interactive')) && normalize(element.getAttribute('interactive')) !== 'false';
+}
 
 function bareToggle(element) {
+  // An interactive tag opens something (a filter field's menu): its label is
+  // a button beside the remove action, never a toggle, in a group that
+  // selects or with a change listener (1.12.6, DEV order msg-d56fa72b: an
+  // interactive bare tag in such a group drew as a checkbox and toggled).
+  if (isInteractive(element)) return false;
   const original = element?._sfOriginal;
   if (original && original !== element) return original.kind === 'checkbox';
   const group = element?.parentElement;
@@ -2894,7 +2922,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tag f
 /***/ "7eee137ec5ff"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.12.5","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"default"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","outline","ghost","surface"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"href":{"type":"string","default":""},"key":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"color":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.12.6","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"default"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","outline","ghost","surface"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"href":{"type":"string","default":""},"key":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"color":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

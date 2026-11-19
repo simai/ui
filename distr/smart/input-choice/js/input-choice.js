@@ -2,6 +2,99 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "a2a9d3c2841e"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BADGE_MAIN_TONAL: () => (/* binding */ BADGE_MAIN_TONAL),
+/* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
+/* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
+/* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
+/* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
+/* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
+/* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
+/* harmony export */   isRetiredMain: () => (/* binding */ isRetiredMain),
+/* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
+/* harmony export */ });
+const BADGE_TYPES = Object.freeze(['main', 'tonal', 'outline']);
+const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiary', 'info', 'success', 'warning', 'error', 'on-surface']); // Former scheme names that still draw: `danger` was this component's word for
+// the error status before the shared vocabulary (contracts/public-api-axes.json,
+// journal class-status-aliases, until 2026-12-01). It is read as `error`, so the
+// Native constructor emits the canonical class, as sf-badge does; the
+// stylesheet matches `.sf-badge--danger` beside it for markup written by hand.
+
+const BADGE_SCHEME_ALIASES = Object.freeze({
+  danger: 'error'
+});
+const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The default look is tonal (owner decision C140 (1), badges study BG-1): a
+// badge without an appearance is the calm grey mark. It was main, the dark
+// grey fill nobody chose.
+
+const DEFAULT_BADGE_TYPE = 'tonal';
+const DEFAULT_BADGE_SCHEME = 'neutral';
+const DEFAULT_BADGE_SIZE = '1/3';
+
+const normalizeEnum = (value, allowed, fallback) => {
+  const normalized = String(value ?? fallback).trim().toLowerCase();
+  return allowed.includes(normalized) ? normalized : fallback;
+}; // The canonical scheme for a name, a former one included; '' when the name is
+// not a badge scheme.
+
+
+function canonicalBadgeScheme(value) {
+  const name = String(value ?? '').trim().toLowerCase();
+  const canonical = BADGE_SCHEME_ALIASES[name] ?? name;
+  return BADGE_SCHEMES.includes(canonical) ? canonical : '';
+} // The looks that are drawn: tonal and outline in every colour, main only with
+// the error status (C140 (4)).
+
+const BADGE_VARIANTS = Object.freeze(BADGE_SCHEMES.flatMap(scheme => BADGE_TYPES.filter(type => type !== 'main' || scheme === 'error').flatMap(type => BADGE_SIZES.map(size => Object.freeze({
+  type,
+  scheme,
+  size
+}))))); // The filled look is the attention count's alone (owner decision C140 (4)):
+// main with the error status. main with any other colour draws tonal; the
+// spelling keeps working until this date and each use is noted in
+// SF.deprecations (journal value-badge-appearance-main-to-tonal).
+
+const BADGE_MAIN_TONAL = Object.freeze({
+  since: '2026-11-14',
+  remove_after: '2027-01-01'
+}); // True when an appearance asked for is the filled one on a colour that draws
+// it tonal: the caller notes the old spelling.
+
+function isRetiredMain({
+  type,
+  scheme
+} = {}) {
+  const requested = String(type ?? '').trim().toLowerCase();
+  return requested === 'main' && (canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME) !== 'error';
+}
+function normalizeBadgeContract({
+  type,
+  scheme,
+  size
+} = {}) {
+  let normalizedType = normalizeEnum(type, BADGE_TYPES, DEFAULT_BADGE_TYPE);
+  const normalizedScheme = canonicalBadgeScheme(scheme ?? DEFAULT_BADGE_SCHEME) || DEFAULT_BADGE_SCHEME;
+  const normalizedSize = normalizeEnum(size, BADGE_SIZES, DEFAULT_BADGE_SIZE); // main is the attention count's: with any other colour it is tonal. The
+  // tonal on-surface badge is the grey tonal one (the stylesheet draws
+  // sf-badge--on-surface tonal as neutral); it was drawn main, filled.
+
+  if (normalizedType === 'main' && normalizedScheme !== 'error') {
+    normalizedType = 'tonal';
+  }
+
+  return {
+    type: normalizedType,
+    scheme: normalizedScheme,
+    size: normalizedSize
+  };
+}
+
+/***/ },
+
 /***/ "f39dc444b059"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -609,6 +702,154 @@ const ShownRequired = ShownValidity;
 
 /***/ },
 
+/***/ "b30ec5bc0edb"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   OPTION_BADGE_HUES: () => (/* binding */ OPTION_BADGE_HUES),
+/* harmony export */   OPTION_BADGE_PALETTE: () => (/* binding */ OPTION_BADGE_PALETTE),
+/* harmony export */   nearestPaletteHue: () => (/* binding */ nearestPaletteHue),
+/* harmony export */   optionBadgeProps: () => (/* binding */ optionBadgeProps),
+/* harmony export */   optionDotColor: () => (/* binding */ optionDotColor)
+/* harmony export */ });
+/* harmony import */ var _component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a2a9d3c2841e");
+
+const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i; // The hues of the static palette (owner decision C17), each with the OKLCH hue
+// angle of its tone 50 (src/core/scss/_sf_static_palette.scss, rounded to the
+// degree; tests/option-badge-palette.contract.test.mjs holds the two equal).
+// Brown and gray are not reached from a hex: brown sits between orange and
+// amber and differs from them by chroma alone, which a light or a dark hex
+// does not keep; a colour with less chroma than GREY_CHROMA is gray. Both are
+// reached by name.
+
+const OPTION_BADGE_HUES = Object.freeze({
+  red: 28,
+  orange: 47,
+  amber: 60,
+  yellow: 89,
+  lime: 119,
+  green: 144,
+  teal: 173,
+  cyan: 203,
+  sky: 232,
+  blue: 259,
+  indigo: 279,
+  violet: 299,
+  purple: 320,
+  pink: 347
+});
+const OPTION_BADGE_PALETTE = Object.freeze([...Object.keys(OPTION_BADGE_HUES), "brown", "gray"]);
+const GREY_CHROMA = 0.03;
+
+const linear = channel => {
+  const c = channel / 255;
+  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+}; // {chroma, hue} in OKLCH of a #rgb[a] / #rrggbb[aa]; the alpha is not read.
+
+
+function oklchOf(hex) {
+  let digits = hex.slice(1);
+  if (digits.length < 6) digits = [...digits].map(digit => digit + digit).join("");
+  const [r, g, b] = [0, 2, 4].map(at => linear(parseInt(digits.slice(at, at + 2), 16)));
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  const a = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+  const bb = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+  return {
+    chroma: Math.hypot(a, bb),
+    hue: (Math.atan2(bb, a) * 180 / Math.PI + 360) % 360
+  };
+}
+/** The static palette hue nearest a hex colour: gray when it has no hue to speak of. */
+
+
+function nearestPaletteHue(hex) {
+  const {
+    chroma,
+    hue
+  } = oklchOf(hex);
+  if (chroma < GREY_CHROMA) return "gray";
+  let best = "gray";
+  let distance = Infinity;
+
+  for (const [name, angle] of Object.entries(OPTION_BADGE_HUES)) {
+    const apart = Math.abs((hue - angle + 540) % 360 - 180);
+
+    if (apart < distance) {
+      best = name;
+      distance = apart;
+    }
+  }
+
+  return best;
+} // The fill of a hue: tone 50 at the fill step 24 (C43: no new tones or steps;
+// the alpha scale's fill family), over the place in both themes, as the 24 %
+// mix of the data's hex was. The text stays on the surface colour, so the
+// label reads the same in both themes. Written to the badge's public
+// variables, --sf-badge-background-color and --sf-badge-color (owner decision
+// C140 (2), BG-7): a colour from data reaches the badge only through them and
+// only as a palette step, never the author's hex.
+
+const paletteStyle = hue => `--sf-badge-background-color: var(--sf-${hue}-50--alfa-24); --sf-badge-color: var(--sf-on-surface)`;
+/**
+ * Badge look for a filter option with optionRenderer 'badge'. option.color is
+ * a Framework badge scheme (success, error, info...), a hue of the static
+ * palette (red, teal, gray...; C17) or a hex colour. A hue tints the badge with
+ * its own palette step; a hex is drawn in the palette hue nearest it, never as
+ * the raw colour (C18, C43; badges study BG-7), so the label stays readable in
+ * both themes. Anything else is neutral.
+ */
+// The data view port names the badge look `scheme` on a column's options; a
+// filter option has always said `color`. Both are read: reading only `color`
+// left every port column's scheme unread and its badges neutral.
+
+
+function optionBadgeProps(option = {}) {
+  const raw = option?.scheme ?? option?.color;
+  const color = typeof raw === "string" ? raw.trim() : ""; // A former name (danger) reads as its canonical scheme (error).
+
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return {
+    scheme,
+    rootStyle: ""
+  };
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return {
+    scheme: "neutral",
+    rootStyle: paletteStyle(name)
+  };
+  if (HEX_COLOR.test(color)) return {
+    scheme: "neutral",
+    rootStyle: paletteStyle(nearestPaletteHue(color))
+  };
+  return {
+    scheme: "neutral",
+    rootStyle: ""
+  };
+} // The colour of an option drawn as a circle (FO4-1, FO4-2: option-look dot):
+// a scheme its role colour, a hue of the static palette its tone 50, a hex or
+// a CSS colour itself (the circle is a sample of the colour, not text on it);
+// neutral the outline colour. '' when nothing is given.
+
+const SCHEME_INK = Object.freeze({
+  neutral: "--sf-outline",
+  "on-surface": "--sf-on-surface-variant"
+});
+function optionDotColor(option = {}) {
+  const raw = option?.color ?? option?.scheme ?? option?.swatch;
+  const color = typeof raw === "string" ? raw.trim() : "";
+  if (!color) return "";
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return `var(${SCHEME_INK[scheme] ?? `--sf-${scheme}`})`;
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return `var(--sf-${name}-50)`;
+  return color;
+}
+
+/***/ },
+
 /***/ "99f89ebdf0fb"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -623,15 +864,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("38ea8d53f301");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("0bbe2ffd494c");
 /* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f39dc444b059");
-/* harmony import */ var _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("a5350ee6efc2");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("0c1826bbbeb3");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d74311df0d54");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("0517be6f999f");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_5__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("a5350ee6efc2");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("0c1826bbbeb3");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d74311df0d54");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("0517be6f999f");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_5__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_5__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__);
+
 
 
 
@@ -670,13 +914,30 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // host's path id, so the radios of one element are one group and two elements
 // never share one.
 
-const ChoiceElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const ChoiceElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
   source: 'en'
+}); // An option named by text (sf-dropdown's first spelling) rather than label:
+// read until the date, noted once in SF.deprecations (Larena LF-2).
+
+const noteOptionAlias = (from, to) => (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_6__.noteDeprecated)({
+  component: 'sf-input-choice',
+  tag: 'sf-input-choice',
+  kind: 'property',
+  attribute: 'items',
+  from,
+  to,
+  since: '2026-11-18',
+  remove_after: '2027-01-01'
 }); // The id the inner inputs' form attribute names: no element carries it.
 
-const NO_FORM = 'sf-input-choice-no-form';
+
+const NO_FORM = 'sf-input-choice-no-form'; // A provider's page (FO-4): the options asked for at once, and the wait after
+// the last key of a search before the provider is asked.
+
+const PAGE_LIMIT = 50;
+const SEARCH_DEBOUNCE = 200;
 
 class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.ShownValidity)((0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.FormField)(ChoiceElement)) {
   static get props() {
@@ -710,28 +971,204 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
 
     this.addEventListener('input', this.onInnerEvent, true);
     this.addEventListener('change', this.onInnerEvent, true);
+  } // ---------------------------------------------------------- the host's pages (FO-4)
+  // searchable: a search field over the rows; without a provider it searches
+  // the options in hand. provider: the options come from the host, a page at
+  // a time -- async (query, {cursor, limit, signal}) answering {items,
+  // nextCursor?}, as sf-input-lookup's provider; a thrown error or a rejected
+  // promise is the error line with «Try again». The previous call is aborted
+  // through signal and an answer for an older call is dropped. The options in
+  // hand (items) stay first -- a chosen option the pages have not reached
+  // keeps its row.
+
+
+  get _pages() {
+    if (!this.__pages) this.__pages = {
+      provider: null,
+      items: [],
+      status: 'idle',
+      nextCursor: null,
+      retryCursor: null,
+      sequence: 0,
+      abort: null,
+      timer: 0,
+      query: ''
+    };
+    return this.__pages;
+  }
+
+  searchFor(query) {
+    const pages = this._pages;
+    pages.query = String(query ?? '');
+    clearTimeout(pages.timer);
+
+    if (typeof this.provider === 'function') {
+      pages.timer = setTimeout(() => this.loadPage(null), SEARCH_DEBOUNCE);
+      return;
+    }
+
+    this.requestComponentUpdate('search');
+  }
+
+  async loadPage(cursor = null) {
+    const provider = this.provider;
+    const pages = this._pages;
+    if (typeof provider !== 'function' || !this.isConnected) return false;
+    pages.abort?.abort();
+    const controller = typeof AbortController === 'function' ? new AbortController() : null;
+    pages.abort = controller;
+    const sequence = ++pages.sequence;
+    pages.status = 'loading';
+    pages.retryCursor = cursor;
+    this.requestComponentUpdate('page');
+
+    try {
+      const answer = await provider(pages.query, {
+        cursor,
+        limit: PAGE_LIMIT,
+        signal: controller?.signal
+      });
+      if (sequence !== pages.sequence || !this.isConnected) return false;
+      const items = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.normaliseItems)(Array.isArray(answer?.items) ? answer.items : []);
+      pages.items = cursor ? (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.mergeItems)(pages.items, items) : items;
+      pages.nextCursor = answer?.nextCursor ?? answer?.next_cursor ?? null;
+      pages.status = pages.items.length ? 'ready' : 'empty';
+      this.requestComponentUpdate('page');
+      return true;
+    } catch (error) {
+      if (sequence !== pages.sequence || error?.name === 'AbortError') return false;
+      pages.status = 'error';
+      this.requestComponentUpdate('page');
+      return false;
+    }
+  } // A provider given (or replaced) is asked for its first page.
+
+
+  _followProvider() {
+    const pages = this._pages;
+    const provider = typeof this.provider === 'function' ? this.provider : null;
+    if (provider === pages.provider) return;
+    pages.abort?.abort();
+    Object.assign(pages, {
+      provider,
+      items: [],
+      status: 'idle',
+      nextCursor: null,
+      retryCursor: null
+    });
+    if (provider) queueMicrotask(() => this.loadPage(null));
+  }
+
+  onDisconnected() {
+    super.onDisconnected?.();
+    this._opened = null;
+    this._moreWatch?.disconnect();
+    this._moreWatch = null;
+    this._moreWatched = null;
+    const pages = this._pages;
+    clearTimeout(pages.timer);
+    pages.abort?.abort(); // Back on the page, the provider is asked again.
+
+    pages.provider = null;
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     // The value attribute written again is the value again.
     if (name === 'value' && oldValue !== newValue) {
       this._value = undefined;
+      this._opened = null;
       this.requestComponentUpdate?.('value');
       this.sfSyncFormState?.();
     } // A list setting is a property (or the JSON island); the attribute holds
-    // the same list as JSON, as sf-menu's items.
+    // the same list as JSON, as sf-menu's items. A change after the element
+    // first connected is the property's list now (sfReadListAttributes below
+    // takes the first one).
 
 
-    if (name === 'items' && oldValue !== newValue) this.requestComponentUpdate?.('items');
+    if (name === 'items' && oldValue !== newValue) {
+      if (this.__sfListAttributesRead) this.adoptItemsAttribute(newValue);
+      this.requestComponentUpdate?.('items');
+    }
+
     super.attributeChangedCallback(name, oldValue, newValue);
+  } // The property says what the attribute gave (Larena LF-1, 2026-11-18:
+  // items read [] while the cards drew the attribute's options). The base
+  // reads a list attribute only for a setting no component observes; this
+  // one is observed, so the first reading is here, after the island and on
+  // the same terms: a property or the island that gave the list first wins.
+
+
+  sfReadListAttributes() {
+    const first = !this.__sfListAttributesRead;
+    super.sfReadListAttributes();
+    if (!first || !this.hasAttribute('items')) return;
+    const given = this.items;
+    const store = this.__sfManifestData ?? {};
+    if (Array.isArray(given) && given.length || Object.prototype.hasOwnProperty.call(store, 'items')) return;
+    this.adoptItemsAttribute(this.getAttribute('items'));
+  } // The attribute's JSON as the items property; not JSON or not a list:
+  // the property keeps its value (the cards still read the attribute).
+
+
+  adoptItemsAttribute(raw) {
+    let list;
+
+    try {
+      list = raw === null ? [] : JSON.parse(raw);
+    } catch {
+      return;
+    }
+
+    if (Array.isArray(list)) this.items = list;
   } // ---------------------------------------------------------- settings
   // The options: the property or the island, else the attribute's JSON.
 
 
   get options() {
     const given = this.items;
-    if (Array.isArray(given) && given.length) return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.normaliseItems)(given);
-    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.normaliseItems)(this.getAttribute('items'));
+    const own = Array.isArray(given) && given.length ? (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.normaliseItems)(given, {
+      onAlias: noteOptionAlias
+    }) : (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.normaliseItems)(this.getAttribute('items'), {
+      onAlias: noteOptionAlias
+    });
+    if (typeof this.provider === 'function') return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.mergeItems)(own, this._pages.items);
+    return own;
+  } // The rows drawn: the options, searched in place when the field is
+  // searchable and has no provider (a provider searches itself).
+
+
+  get shownOptions() {
+    const options = this.options;
+    const paged = typeof this.provider === 'function';
+    if (!this.searchable && !paged) return options; // FO4-5: with a search or a host's pages, what was chosen when the list
+    // opened stands first; the order does not move while it is open.
+
+    this._opened ??= new Set(this.selected);
+    const shown = paged ? options : (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.searchItems)(options, this._pages.query);
+    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.chosenFirst)(shown, this._opened);
+  } // The index of the last row that stands first because it was chosen when
+  // the list opened, while other rows follow it; -1 when nothing stands first.
+
+
+  chosenLastIndex() {
+    const opened = this._opened;
+    if (!opened?.size) return -1;
+    const shown = this.shownOptions;
+    let last = -1;
+
+    while (last + 1 < shown.length && opened.has(shown[last + 1].value)) last += 1;
+
+    return last >= 0 && last < shown.length - 1 ? last : -1;
+  } // Where a row's box stands (C308 FO-5): start, or end of the row.
+
+
+  get controlPositionValue() {
+    return this.getAttribute('control-position') === 'end' ? 'end' : 'start';
+  }
+
+  get optionLookValue() {
+    const look = this.getAttribute('option-look');
+    return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.OPTION_LOOKS.includes(look) ? look : '';
   }
 
   get effectiveDisabled() {
@@ -740,41 +1177,44 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
 
   get columnsValue() {
     const columns = String(this.columns ?? 'auto');
-    return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.CHOICE_COLUMNS.includes(columns) ? columns : 'auto';
+    return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.CHOICE_COLUMNS.includes(columns) ? columns : 'auto';
   }
 
   get appearanceValue() {
     const appearance = String(this.appearance ?? 'cards');
-    return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.CHOICE_APPEARANCES.includes(appearance) ? appearance : 'cards';
+    return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.CHOICE_APPEARANCES.includes(appearance) ? appearance : 'cards';
   }
 
   get layoutValue() {
     const layout = String(this.layout ?? 'tile');
-    return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.CHOICE_LAYOUTS.includes(layout) ? layout : 'tile';
+    return _js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.CHOICE_LAYOUTS.includes(layout) ? layout : 'tile';
   } // Appearance list (C165 (3)): row or column as asked; auto is a row for up
   // to three short options and a column for the rest.
 
 
   get flowValue() {
-    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.listFlow)(String(this.flow ?? 'auto'), this.options);
+    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.listFlow)(String(this.flow ?? 'auto'), this.options);
   }
   /** The chosen values, in the order of the options: one, or several when multiple. */
 
 
   get selected() {
     const raw = this._value !== undefined ? this._value : this.getAttribute('value');
-    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.orderValues)((0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.parseValue)(raw ?? '', Boolean(this.multiple)), this.options);
+    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.orderValues)((0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.parseValue)(raw ?? '', Boolean(this.multiple)), this.options);
   }
   /** One value, or the values joined by commas when multiple; '' when nothing is chosen. */
 
 
   get value() {
-    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.formatValue)(this.selected);
+    return (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.formatValue)(this.selected);
   } // Set from code it is not a change: no event, as for a native field.
 
 
   set value(next) {
-    this._value = next === undefined || next === null ? undefined : (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.formatValue)((0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.parseValue)(next, Boolean(this.multiple)));
+    this._value = next === undefined || next === null ? undefined : (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.formatValue)((0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.parseValue)(next, Boolean(this.multiple))); // A value the host sets is what was chosen when the list opened (FO4-5);
+    // a person's own choice (onChange) does not move the order.
+
+    this._opened = null;
     this.requestComponentUpdate?.('value');
     this.sfSyncFormState?.();
   }
@@ -805,8 +1245,8 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
     const item = this.options.find(one => one.value === input.value);
     if (!item) return;
     const multiple = Boolean(this.multiple);
-    const next = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.applyChoice)(this.selected, this.options, item.value, input.checked, multiple);
-    this._value = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.formatValue)(next);
+    const next = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.applyChoice)(this.selected, this.options, item.value, input.checked, multiple);
+    this._value = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.formatValue)(next);
     this.requestComponentUpdate('value');
     this.sfSyncFormState();
     const detail = {
@@ -855,10 +1295,35 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
     let values = state;
     if (typeof FormData === 'function' && state instanceof FormData) values = state.getAll(this.name || '').map(String);
     if (values === null || values === undefined) return;
-    this._value = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.formatValue)((0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_6__.parseValue)(values, Boolean(this.multiple)));
+    this._value = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.formatValue)((0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.parseValue)(values, Boolean(this.multiple)));
     this.requestComponentUpdate('restore');
   } // ---------------------------------------------------------- drawing
 
+
+  pagingContext() {
+    this._followProvider();
+
+    const pages = this._pages;
+    const paged = typeof this.provider === 'function';
+    const searchable = Boolean(this.searchable);
+    const status = paged ? pages.status : searchable && pages.query.trim() && !this.shownOptions.length ? 'empty' : 'ready';
+    return {
+      shown: paged || searchable,
+      searchable,
+      query: pages.query,
+      status,
+      nextCursor: paged ? pages.nextCursor : null,
+      retryCursor: pages.retryCursor,
+      words: {
+        search: this.sfWord('search-label'),
+        loading: this.sfWord('loading-options'),
+        error: this.sfWord('options-error'),
+        empty: this.sfWord('nothing-found'),
+        retry: this.sfWord('retry'),
+        more: this.sfWord('show-more')
+      }
+    };
+  }
 
   templateContext() {
     const props = this.getPropsContext();
@@ -869,13 +1334,17 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
     return this.createTemplateContext({ ...props,
       component: this,
       id,
-      items: this.options,
+      items: this.shownOptions,
+      chosenLast: this.chosenLastIndex(),
       chosen: new Set(this.selected),
+      paging: this.pagingContext(),
       multiple: Boolean(this.multiple),
       columns: this.columnsValue,
       appearance: this.appearanceValue,
       layout: this.layoutValue,
       flow: this.flowValue,
+      optionLook: this.optionLookValue,
+      controlPosition: this.controlPositionValue,
       label: this.label || '',
       // C165 (1), C153 (8): the «?» after the heading, named by its subject.
       help: this.help || '',
@@ -903,7 +1372,28 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
   afterRender(callback) {
     if (typeof callback === 'function') return super.afterRender(callback);
     this.sfSyncFormState();
+    this.watchMore();
     return undefined;
+  } // FO4-4: the host's next page loads when the list is scrolled to its end
+  // (the mark after «Показать ещё» comes into view, in the window or the
+  // box that scrolls the list); the button stays the last row, for the keyboard and for a
+  // browser without IntersectionObserver.
+
+
+  watchMore() {
+    const more = this.querySelector(':scope .sf-choice-end[data-sf-more]');
+    if (more === this._moreWatched) return;
+    this._moreWatch?.disconnect();
+    this._moreWatched = more;
+    const Observer = this.ownerDocument?.defaultView?.IntersectionObserver ?? globalThis.IntersectionObserver;
+    if (!more || typeof Observer !== 'function') return;
+    this._moreWatch ??= new Observer(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return;
+      const pages = this._pages;
+      if (pages.nextCursor && pages.status !== 'loading') this.loadPage(pages.nextCursor);
+    });
+
+    this._moreWatch.observe(more);
   }
 
 }
@@ -925,10 +1415,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("efa66f8927d1");
+/* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("b30ec5bc0edb");
+/* harmony import */ var _choice_model_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("a5350ee6efc2");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__);
+
+
 
  // sf-input-choice's markup: the label row, the cards and the hint or error
 // line under them (owner decision C28, prototype input-choice-world.html).
@@ -1022,7 +1516,9 @@ function renderCard(context, item, index) {
     ids
   })}
       <span class="sf-choice-body">
-        <span class="sf-choice-title">${item.icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-icon sf-choice-icon" aria-hidden="true">${item.icon}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<span class="sf-choice-title-text" id=${ids.title}>${item.label}</span>${item.badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-choice-badge" id=${ids.badge} text=${item.badge} appearance="tonal" scheme="primary" line="1/2"
+        <span class="sf-choice-title">${item.icon && !item.avatar ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-icon sf-choice-icon" aria-hidden="true">${item.icon}</span>` : renderVisual(context, item, {
+    icon: false
+  })}${renderName(context, item, disabled, ids.title)}${item.badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-choice-badge" id=${ids.badge} text=${item.badge} appearance="tonal" scheme="primary" line="1/2"
                            root-class=${disabled ? 'sf-badge--disabled' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
         ${item.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-caption" id=${ids.caption}>${item.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       </span>
@@ -1050,7 +1546,41 @@ function renderCard(context, item, index) {
 // The group is named by the heading and described by the hint and the error.
 // While invalid every row's control takes the error colour, as an invalid
 // sf-radio or sf-checkbox.
+// An option's visual (FO-4; in every appearance since FO4-1): a picture
+// (sf-avatar on the row's line), else its icon (FO4-3), else its colour as a
+// circle when the look is dot (the menu's colour row, C85); with the look
+// badge the name itself is a tonal badge (sf-badge tight, its scheme, palette
+// hue or hex through helpers/option-badge.js, as a table cell's choice). The
+// picture, the icon and the circle are not read: the name is.
 
+
+function renderVisual(context, item, {
+  icon = true
+} = {}) {
+  if (item.avatar) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-avatar class="sf-choice-avatar" size="1" line="1" aria-hidden="true"
+                           image-url=${item.avatar.image || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                           text=${item.avatar.text || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} heading=${item.label}></sf-avatar>`;
+  }
+
+  if (icon && item.icon) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-icon sf-choice-icon" aria-hidden="true">${item.icon}</span>`;
+
+  if (item.color && (0,_choice_model_mjs__WEBPACK_IMPORTED_MODULE_3__.optionLook)(item, context.optionLook) === 'dot') {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-swatch" style=${`--sf-choice--swatch: ${(0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionDotColor)(item)}`} aria-hidden="true"></span>`;
+  }
+
+  return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+}
+
+function renderName(context, item, disabled, id = '') {
+  if (!item.color || (0,_choice_model_mjs__WEBPACK_IMPORTED_MODULE_3__.optionLook)(item, context.optionLook) !== 'badge') return id ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-title-text" id=${id}>${item.label}</span>` : item.label;
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)({
+    color: item.color
+  });
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-choice-name-badge" id=${id || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} appearance="tonal" tight line="1" scheme=${badge.scheme}
+                        root-style=${badge.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} root-class=${disabled ? 'sf-badge--disabled' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                        text=${item.label}></sf-badge>`;
+}
 
 function renderRow(context, item, index) {
   const checked = context.chosen.has(item.value);
@@ -1063,19 +1593,59 @@ function renderRow(context, item, index) {
            value=${item.value} .checked=${checked} ?disabled=${disabled}
            aria-labelledby=${titleId} aria-describedby=${item.caption ? captionId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
            aria-invalid=${context.invalid ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>`;
-  const error = context.invalid ? 'error' : '';
+  const error = context.invalid ? 'error' : ''; // The last of what was chosen when the list opened, which stands first
+  // (FO4-5): a hairline under it parts it from the rest (filter field study).
+
+  const last = index === context.chosenLast ? 'sf-choice-row--chosen-last' : '';
 
   if (context.multiple) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class=${joinClasses('sf-checkbox', 'sf-checkbox--size-1', 'flex', 'sf-choice-row', disabled ? '' : 'cursor-pointer', error)}>
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class=${joinClasses('sf-checkbox', 'sf-checkbox--size-1', 'flex', 'sf-choice-row', last, disabled ? '' : 'cursor-pointer', error)}>
       <span class="sf-checkbox-box flex">${input}${checked ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-icon" aria-hidden="true">check</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
-      <span class="sf-checkbox-container flex flex-col"><span class="sf-checkbox-top flex"><span class="sf-checkbox-label" id=${titleId}>${item.label}</span></span>${item.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-checkbox-description" id=${captionId}>${item.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
+      <span class="sf-checkbox-container flex flex-col"><span class="sf-checkbox-top flex">${renderVisual(context, item)}<span class="sf-checkbox-label" id=${titleId}>${renderName(context, item, disabled)}</span></span>${item.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-checkbox-description" id=${captionId}>${item.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
     </label>`;
   }
 
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class=${joinClasses('sf-radio-button', 'sf-radio-button--size-1', 'flex', 'sf-choice-row', disabled ? '' : 'cursor-pointer', error)}>
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class=${joinClasses('sf-radio-button', 'sf-radio-button--size-1', 'flex', 'sf-choice-row', last, disabled ? '' : 'cursor-pointer', error)}>
     <span class="sf-radio-button-box flex items-cross-center content-main-center">${input}<span class="sf-radio-button-mark" aria-hidden="true"></span></span>
-    <span class="sf-radio-button-container flex flex-col"><span class="sf-radio-button-top flex"><span class="sf-radio-button-text" id=${titleId}>${item.label}</span></span>${item.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-radio-button-description" id=${captionId}>${item.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
+    <span class="sf-radio-button-container flex flex-col"><span class="sf-radio-button-top flex">${renderVisual(context, item)}<span class="sf-radio-button-text" id=${titleId}>${renderName(context, item, disabled)}</span></span>${item.caption ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-radio-button-description" id=${captionId}>${item.caption}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
   </label>`;
+} // The search over the rows and what the host's pages say under them (FO-4):
+// searchable puts the dropping panel's search header over the options (C06,
+// FF-7: one search look with sf-dropdown's and sf-settings' -- no frame, no
+// fill, a hairline under it, its text over the rows' text and its icon at
+// the end; it was a filled sf-input, a second look); a provider's answer is said in one polite status line --
+// loading, nothing found, the error with «Try again» -- and «Show more» asks
+// for its next page.
+
+
+function renderSearch(context) {
+  const {
+    paging
+  } = context;
+  if (!paging.searchable) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class="sf-choice-search">
+    <span class="sf-choice-search-icon" aria-hidden="true"><i class="sf-icon">search</i></span>
+    <input type="search" class="sf-choice-search-input" autocomplete="off" spellcheck="false"
+           placeholder=${paging.words.search} aria-label=${paging.words.search}
+           .value=${paging.query} ?disabled=${context.fieldDisabled}
+           @input=${event => {
+    // The search box's own input and change stop here:
+    // typing is not a change of the field's value.
+    event.stopPropagation();
+    context.component.searchFor(event.target?.value ?? '');
+  }}
+           @change=${event => event.stopPropagation()}>
+  </label>`;
+}
+
+function renderPaging(context) {
+  const {
+    paging
+  } = context;
+  const line = paging.status === 'loading' ? paging.words.loading : paging.status === 'error' ? paging.words.error : paging.status === 'empty' ? paging.words.empty : '';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-status" role="status" aria-live="polite" ?hidden=${!line}>${line}</span>${paging.status === 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-choice-more" size="1/2" appearance="ghost" scheme="on-surface" text=${paging.words.retry}
+                      @click=${() => context.component.loadPage(paging.retryCursor)}></sf-button>` : paging.nextCursor && paging.status !== 'loading' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-choice-more" size="1/2" appearance="ghost" scheme="on-surface" icon="expand_more" text=${paging.words.more}
+                        @click=${() => context.component.loadPage(paging.nextCursor)}></sf-button><span class="sf-choice-end" data-sf-more aria-hidden="true"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`;
 }
 
 function renderListTemplate(context) {
@@ -1085,9 +1655,11 @@ function renderListTemplate(context) {
   const error = context.invalid && context.errorMessage ? context.errorMessage : '';
   const described = [context.hint ? hintId : '', error ? messageId : ''].filter(Boolean).join(' ');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${joinClasses('sf-choice', 'sf-choice--list', context.multiple ? 'sf-choice--multiple' : '', context.invalid ? 'sf-choice--invalid' : '', context.fieldDisabled ? 'sf-choice--disabled' : '', context.rootClass)}
-                   style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-appearance="list" data-flow=${context.flow}>
+                   style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-appearance="list" data-flow=${context.flow}
+                   data-control-position=${context.controlPosition}>
     ${context.label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-choice-heading"><span class="sf-choice-heading-text" id=${labelId}>${context.label}${context.required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>${renderHelp(context)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${context.hint ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-hint" id=${hintId}>${context.hint}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${renderSearch(context)}
     <div class="sf-choice-options" role=${context.multiple ? 'group' : 'radiogroup'}
          aria-labelledby=${context.label ? labelId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
          aria-label=${!context.label && context.ariaLabel ? context.ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1097,6 +1669,7 @@ function renderListTemplate(context) {
          aria-disabled=${context.fieldDisabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
       ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(context.items, item => item.value, (item, index) => renderRow(context, item, index))}
     </div>
+    ${context.paging.shown ? renderPaging(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${error ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-message" id=${messageId} data-field-message="error"><span class="sf-icon sf-choice-message-icon" aria-hidden="true">error</span><span class="sf-choice-message-text">${error}</span></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   </div>`;
 } // The cards' label row: the label, then with help its «?» beside it in one
@@ -1140,6 +1713,13 @@ __webpack_async_result__();
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ },
+
+/***/ "d3818183b14c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -1187,14 +1767,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   CHOICE_COLUMNS: () => (/* binding */ CHOICE_COLUMNS),
 /* harmony export */   CHOICE_FLOWS: () => (/* binding */ CHOICE_FLOWS),
 /* harmony export */   CHOICE_LAYOUTS: () => (/* binding */ CHOICE_LAYOUTS),
+/* harmony export */   DEFAULT_OPTION_LOOK: () => (/* binding */ DEFAULT_OPTION_LOOK),
+/* harmony export */   OPTION_LOOKS: () => (/* binding */ OPTION_LOOKS),
 /* harmony export */   ROW_MOST: () => (/* binding */ ROW_MOST),
 /* harmony export */   SHORT_OPTION_LENGTH: () => (/* binding */ SHORT_OPTION_LENGTH),
 /* harmony export */   applyChoice: () => (/* binding */ applyChoice),
+/* harmony export */   chosenFirst: () => (/* binding */ chosenFirst),
 /* harmony export */   formatValue: () => (/* binding */ formatValue),
 /* harmony export */   listFlow: () => (/* binding */ listFlow),
+/* harmony export */   mergeItems: () => (/* binding */ mergeItems),
 /* harmony export */   normaliseItems: () => (/* binding */ normaliseItems),
+/* harmony export */   optionLook: () => (/* binding */ optionLook),
 /* harmony export */   orderValues: () => (/* binding */ orderValues),
-/* harmony export */   parseValue: () => (/* binding */ parseValue)
+/* harmony export */   parseValue: () => (/* binding */ parseValue),
+/* harmony export */   searchItems: () => (/* binding */ searchItems)
 /* harmony export */ });
 // The parts of sf-input-choice that are about data, not the page: the shape an
 // option takes, the value read from an attribute or a property, and a choice
@@ -1244,12 +1830,48 @@ function listFlow(asked, items) {
 
 const text = (value) => (value === null || value === undefined ? '' : String(value));
 
+// A colour an option stands for (FO-4; a colour row of a menu, C85): a CSS
+// colour -- a code, var() of a token, light-dark() of two; anything that
+// could close the declaration is not drawn.
+const SWATCH = /^[#\w\s(),.%/-]+$/u;
+
+// An option's picture (FO-4): an address, or {image | src, text | initials};
+// the initials are sf-avatar's when there is no picture. null without either.
+function avatarOf(given) {
+  if (!given) return null;
+  if (typeof given === 'string') return given.trim() ? {image: given.trim(), text: ''} : null;
+  if (typeof given !== 'object' || Array.isArray(given)) return null;
+  const image = text(given.image ?? given.src ?? given['image-url'] ?? given.imageUrl).trim();
+  const initials = text(given.text ?? given.initials).trim();
+  return image || initials ? {image, text: initials} : null;
+}
+
+// How an option's colour is drawn (FO4-2; C302: the look is a template
+// parameter, the colour is the option's data): badge -- the name itself as a
+// tonal badge in that colour, as a table cell draws it; dot -- a colour circle
+// before the name (the menu's colour row, C85).
+const OPTION_LOOKS = Object.freeze(['badge', 'dot']);
+// The look of an option's colour when nobody says (option-look unset, no
+// former key): the option's name in a tonal label, the same in every
+// template and place -- dropdown, buttons, checklist, view, cell (owner
+// decision C308 FO-4); the circle (dot) is a template's parameter (C302).
+const DEFAULT_OPTION_LOOK = 'badge';
+
 // One option: {value, label, caption?, icon?, badge?, price?, term?, image?,
-// disabled?} -- the shape of sf-input-lookup's options, with an icon, a badge,
-// a price with its term and an image. `title` is read as the label; a missing
-// label is the value. An option without a value, or repeating an earlier one, is left
-// out: one value names one card.
-function normaliseItems(items) {
+// avatar?, color?, disabled?} -- the shape of sf-input-lookup's options, with
+// an icon, a badge, a price with its term and an image. Three visuals draw in
+// every appearance (FO-4, FO4-1, FO4-3): avatar a picture before the name,
+// icon an icon before it, color the option's colour (a scheme, a hue of the
+// static palette or a hex), drawn by the look (option-look, OPTION_LOOKS).
+// FO4-2: one data word, color; the former swatch (a circle) and scheme (a
+// badge) are read as color with their look until 2027-01-01 (change journal
+// input-choice-option-colour-one-key). `title` is read as the label; a
+// missing label is the value. An option without a value, or repeating an
+// earlier one, is left out: one value names one card.
+// An option's name is label (title too); text, the name sf-dropdown's options
+// used first, is read as well until 2027-01-01 (Larena LF-2, 2026-11-18: one
+// option shape, {value, label}); onAlias is told when an option used it.
+function normaliseItems(items, {onAlias} = {}) {
   let list = items;
   if (typeof list === 'string') {
     const raw = list.trim();
@@ -1271,17 +1893,51 @@ function normaliseItems(items) {
     seen.add(value);
     result.push({
       value,
-      label: text(source.label ?? source.title) || value,
+      label: text(source.label ?? source.title ?? aliasText(source, onAlias)) || value,
       caption: text(source.caption),
       icon: text(source.icon).trim(),
       badge: text(source.badge).trim(),
       price: text(source.price).trim(),
       term: text(source.term).trim(),
       image: text(source.image).trim(),
+      avatar: avatarOf(source.avatar),
+      ...colourOf(source),
       disabled: Boolean(source.disabled),
     });
   }
   return result;
+}
+
+// An option's colour and the look its former key said (FO4-2): color, else
+// scheme (a badge) or swatch (a circle) until 2027-01-01. A colour that could
+// close a declaration is not drawn.
+function colourOf(source) {
+  const given = [['color', ''], ['scheme', 'badge'], ['swatch', 'dot']]
+    .map(([key, look]) => [text(source[key]).trim(), look])
+    .find(([value]) => value);
+  if (!given || !SWATCH.test(given[0])) return {color: '', look: ''};
+  return {color: given[0], look: given[1]};
+}
+
+/** The look an option's colour is drawn with: the field's option-look, else its former key's, else the default. */
+function optionLook(item, asked) {
+  if (OPTION_LOOKS.includes(asked)) return asked;
+  if (OPTION_LOOKS.includes(item?.look)) return item.look;
+  return DEFAULT_OPTION_LOOK;
+}
+
+// Chosen first (FO4-5): with a search or a host's pages, the options chosen
+// when the list opened stand first, in their order, then the rest; what the
+// person chooses while it is open moves nothing.
+function chosenFirst(items, opened) {
+  if (!opened?.size) return items;
+  return [...items.filter((item) => opened.has(item.value)), ...items.filter((item) => !opened.has(item.value))];
+}
+
+function aliasText(source, onAlias) {
+  if (source.text === undefined || source.text === null) return undefined;
+  onAlias?.('text', 'label');
+  return source.text;
 }
 
 // The chosen values from what a host gave: a string -- one value, or values
@@ -1326,6 +1982,27 @@ function applyChoice(values, items, value, checked, multiple = false) {
   return orderValues(values.concat(checked ? [value] : []).filter((one, at, all) => next.has(one) && all.indexOf(one) === at), items);
 }
 
+// The options a typed query keeps, searched in place (searchable without a
+// provider): the name or the description holds the query, case and accents
+// folded, as sf-input-lookup searches its inline options.
+const fold = (value) => text(value).normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase();
+function searchItems(items, query) {
+  const wanted = fold(query).trim();
+  if (!wanted) return items;
+  return items.filter((item) => fold(item.label).includes(wanted) || fold(item.caption).includes(wanted));
+}
+
+// The options a provider's pages give, after the options given in hand: one
+// value names one option, the first one given keeps its place, a later page
+// may fill it in.
+function mergeItems(given, paged) {
+  const seen = new Map();
+  for (const item of [...given, ...paged]) {
+    if (!seen.has(item.value)) seen.set(item.value, item);
+  }
+  return [...seen.values()];
+}
+
 
 /***/ },
 
@@ -1354,14 +2031,14 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "0c1826bbbeb3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-choice","tag":"sf-input-choice","version":"1.6.5","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"value":"string","label":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"price":{"type":"string","optional":true},"term":{"type":"string","optional":true},"image":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true}}},"multiple":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["cards","list"],"default":"cards"},"layout":{"type":"enum","values":["tile","list","picture"],"default":"tile"},"flow":{"type":"enum","values":["auto","row","column"],"default":"auto"},"columns":{"type":"enum","values":["auto","1","2","3","4"],"default":"auto"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-choice-gap":{"type":"length","state":"default"},"--sf-choice-min-inline-size":{"type":"length","state":"default"},"--sf-choice-padding":{"type":"length","state":"default"},"--sf-choice-radius":{"type":"length","state":"default"},"--sf-choice-background-color":{"type":"color","state":"default"},"--sf-choice-border-color":{"type":"color","state":"default"},"--sf-choice-selected-background-color":{"type":"color","state":"selected"},"--sf-choice-selected-border-color":{"type":"color","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-choice","tag":"sf-input-choice","version":"1.10.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"value":"string","label":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"price":{"type":"string","optional":true},"term":{"type":"string","optional":true},"image":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"avatar":{"type":"object","optional":true},"swatch":{"type":"string","optional":true},"scheme":{"type":"string","optional":true}}},"searchable":{"type":"boolean","default":false},"provider":{"type":"object","default":null},"option-look":{"type":"enum","values":["badge","dot"]},"control-position":{"type":"enum","values":["start","end"],"default":"start"},"multiple":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["cards","list"],"default":"cards"},"layout":{"type":"enum","values":["tile","list","picture"],"default":"tile"},"flow":{"type":"enum","values":["auto","row","column"],"default":"auto"},"columns":{"type":"enum","values":["auto","1","2","3","4"],"default":"auto"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-choice-gap":{"type":"length","state":"default"},"--sf-choice-min-inline-size":{"type":"length","state":"default"},"--sf-choice-padding":{"type":"length","state":"default"},"--sf-choice-radius":{"type":"length","state":"default"},"--sf-choice-background-color":{"type":"color","state":"default"},"--sf-choice-border-color":{"type":"color","state":"default"},"--sf-choice-selected-background-color":{"type":"color","state":"selected"},"--sf-choice-selected-border-color":{"type":"color","state":"selected"}}}');
 
 /***/ },
 
 /***/ "68b61d1e5ff4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Choice","runtime":{"value-missing":"Choose an option.","help":"More about: {label}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Choice","runtime":{"value-missing":"Choose an option.","help":"More about: {label}","search-label":"Find in the list","loading-options":"Loading the options","options-error":"The options could not be loaded","nothing-found":"Nothing found","retry":"Retry","show-more":"Show more"}}');
 
 /***/ }
 

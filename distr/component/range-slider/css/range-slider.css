@@ -472,21 +472,12 @@
   .sf-thumb:not(:disabled):not(.disabled).focus-visible .sf-thumb-handle,
   .sf-range-slider:not([disabled]):not(.disabled) .sf-range-slider-handle.focus-visible .sf-thumb-handle {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(0px + var(--sf-focus--offset));
-    outline-offset: calc(var(--sf-thumb-handle--ring-width, 0px) + var(--sf-focus--offset));
-  }
-  .sf-thumb:not(:disabled):not(.disabled).focus-visible .sf-thumb-handle,
-  .sf-range-slider:not([disabled]):not(.disabled) .sf-range-slider-handle.focus-visible .sf-thumb-handle {
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(0px + var(--sf-focus--offset));
-    outline-offset: calc(0px + var(--sf-focus--offset));
-    outline-offset: calc(var(--sf-thumb-handle--ring-width, 0px) + var(--sf-focus--offset));
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-thumb:not(:disabled):not(.disabled):focus-visible .sf-thumb-handle,
   .sf-range-slider:not([disabled]):not(.disabled) .sf-range-slider-handle:focus-visible .sf-thumb-handle {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: calc(0px + var(--sf-focus--offset));
-    outline-offset: calc(var(--sf-thumb-handle--ring-width, 0px) + var(--sf-focus--offset));
+    outline-offset: var(--sf-focus--offset);
   }
   .sf-thumb:not(:disabled):not([disabled]):not(.disabled):not([disabled] *):not(.disabled *):not(.readonly *):hover .sf-thumb-handle {
     box-shadow: 0 0 0 0px var(--sf-surface-place), 0 0 0 var(--sf-a8) var(--sf-primary-state-select), var(--sf-shadow-raised);

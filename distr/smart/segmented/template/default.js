@@ -1,5 +1,16 @@
 import { html, nothing } from 'lit';
 import { createInlineSpinner } from '../../../../component/spinner/js/_spinner-draw';
+import { optionBadgeProps } from '../../../helpers/option-badge.js';
+
+// An option's colour (owner decision C308 FO-4): its name is a tonal badge in
+// that colour (sf-badge tight, line 1), as in a cell, a view, a checklist and
+// a dropdown; the label stays the segment's name.
+function renderLabel(item) {
+  if (!item.color) return item.label;
+  const badge = optionBadgeProps({color: item.color});
+  return html`<sf-badge class="sf-button-group-badge" appearance="tonal" tight line="1" scheme=${badge.scheme}
+                        root-style=${badge.rootStyle || nothing} text=${item.label}></sf-badge>`;
+}
 
 function segmentFor(index, total) {
   if (total <= 1) return '';
@@ -99,7 +110,7 @@ function renderSegment(item, context) {
       ${icon}
       ${item.iconOnly
         ? html`<span class="sf-button-group-label--hidden">${item.label}</span>${count}`
-        : html`<span class="sf-button-text-container text-center pointer-events-none">${item.label}${count}</span>`}
+        : html`<span class="sf-button-text-container text-center pointer-events-none">${renderLabel(item)}${count}</span>`}
     </button>
   `;
 }
@@ -119,6 +130,7 @@ function renderFolded(context) {
         value=${context.value || nothing}
         aria-label=${context.ariaLabel || nothing}
         ?disabled=${context.disabled}
+        ?invalid=${context.invalid}
         .options=${context.foldedOptions}
         @change=${(event) => context.component.handleFoldedChange(event)}
         @input=${(event) => event.stopPropagation()}
@@ -148,8 +160,12 @@ export function renderButtonGroupTemplate(context) {
     segmented && context.fullWidth ? 'sf-button-group--full-width' : '',
     segmented && context.folded ? 'sf-button-group--folded' : '',
     context.radius ? `sf-button-group--radius-${context.radius}` : '',
+    context.invalid ? 'sf-button-group--invalid' : '',
     context.rootClass,
   ].filter(Boolean).join(' ');
+  // The error line while invalid (error-message, FO-1): under the group, in the
+  // error role, and the radio group is described by it.
+  const message = context.invalid && context.errorMessage ? context.errorMessage : '';
 
   return html`
     <div
@@ -160,12 +176,17 @@ export function renderButtonGroupTemplate(context) {
       aria-hidden=${segmented && context.folded ? 'true' : nothing}
       aria-label=${context.ariaLabel || nothing}
       aria-orientation=${context.orientation}
+      aria-invalid=${context.invalid ? 'true' : nothing}
+      aria-describedby=${message ? context.messageId : nothing}
       data-value=${context.value || ''}
     >
       ${segmented ? html`<span class="sf-button-group-plate" aria-hidden="true"></span>` : nothing}
       ${context.entries.map((item, index) => (segmented ? renderSegment(item, context) : renderItem(item, index, context)))}
     </div>
     ${segmented && context.folded ? renderFolded(context) : nothing}
+    ${message
+      ? html`<span class=${`sf-button-group-message sf-button-group-message--size-${context.size}`} id=${context.messageId} data-field-message="error">${message}</span>`
+      : nothing}
     ${context.hiddenName
       ? html`<input class="sf-button-group-input" type="hidden" name=${context.hiddenName} value=${context.value || ''} ?disabled=${context.disabled}>`
       : nothing}

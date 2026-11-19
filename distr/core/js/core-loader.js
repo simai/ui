@@ -2478,16 +2478,64 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
 
       window.addEventListener("sf-loader-ready", release);
       timer = setTimeout(check, budgetMs);
-    });
+    }); // Defined and connected, not drawn yet. A Smart element defined a frame
+    // before the hold looks draws its icons a moment later; the first request
+    // must carry them (menu-chevron-swap). Such an element is waited for until
+    // it has drawn once, for at most drawCapMs from the first time one is
+    // seen: one that waits for its data, or never draws, does not hold the
+    // page's icons longer than that (a drawing takes tens of milliseconds
+    // after the definition; a second font costs ten times more). An element
+    // inside another's printed first paint draws with that one.
+
+    const drawCapMs = 600;
+    let drawSeen = 0;
+
+    const undrawn = () => {
+      if (drawSeen && Date.now() - drawSeen >= drawCapMs) return [];
+      const page = globalThis.document;
+      if (typeof page?.querySelectorAll !== "function" || typeof page.addEventListener !== "function") return [];
+      const found = [];
+
+      for (const el of page.querySelectorAll("*")) {
+        if (!el.localName.startsWith("sf-") || el.isRendered !== false) continue;
+        if (el.closest("[data-sf-static]") || el.sfAwaitingData?.() === true) continue;
+        found.push(el);
+      }
+
+      if (found.length && !drawSeen) drawSeen = Date.now();
+      return found;
+    };
+
+    const drawn = elements => {
+      let timer = 0;
+      let done = null;
+
+      const left = () => elements.filter(el => el.isConnected && el.isRendered === false);
+
+      return new Promise(resolve => {
+        done = () => {
+          if (left().length) return;
+          resolve();
+        };
+
+        document.addEventListener("sf-after-render", done);
+        timer = setTimeout(resolve, Math.max(0, Math.min(capLeft(), drawSeen + drawCapMs - Date.now())));
+        done();
+      }).finally(() => {
+        clearTimeout(timer);
+        document.removeEventListener("sf-after-render", done);
+      });
+    };
 
     for (let round = 0; round < 8 && capLeft() > 0; round += 1) {
       await frame();
       const waiting = onTheWay();
-      if (!waiting.length) return; // Defined or failed: a tag whose module failed to load is let go at
+      const drawing = undrawn();
+      if (!waiting.length && !drawing.length) return; // Defined or failed: a tag whose module failed to load is let go at
       // once (D2: an aborted sf-tag held the first request for the whole cap).
 
       const pending = window.SF?.__internal?.pendingTags;
-      await withinCap(Promise.all(waiting.map(tag => pending?.settled?.(tag) || registry.whenDefined(tag))));
+      await withinCap(Promise.all([...waiting.map(tag => pending?.settled?.(tag) || registry.whenDefined(tag)), ...(drawing.length ? [drawn(drawing)] : [])]));
     }
   };
 
@@ -2521,7 +2569,17 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       if (!this.iconFirstRequestHeld) {
         this.iconFirstRequestHeld = this.holdFirstIconRequest().then(() => {
           this.iconFirstRequestReleased = true;
-          this.iconFirstRequestHeld = null;
+          this.iconFirstRequestHeld = null; // What the elements drew while the hold lasted is on the page, but
+          // the Loader's observer may still keep those records (until its
+          // search ends, then a debounce): sf-menu's chevrons, drawn before
+          // the hold let go, were tracked only after the first request had
+          // left with the header's menu glyph alone, and came in a second
+          // whole font 600-700 ms later (menu-chevron-swap). One scan of the
+          // page now tracks every drawn glyph without loading, so the first
+          // request carries them all; the observer's later records find them
+          // tracked and ask for nothing new.
+
+          if (globalThis.document?.body) this.scanStaticIcons(globalThis.document.body, false);
           return this.loadFonts();
         });
       }
@@ -7469,8 +7527,12 @@ function languageHold() {
   const limit = languageWaitLimit();
   if (!limit) return null;
   const root = globalThis.document?.documentElement;
-  const wanted = String(store.chosen || root?.getAttribute?.('lang') || '').trim().toLowerCase().replace('_', '-');
-  const waits = [...new Set([wanted, wanted.split('-')[0]])].filter(Boolean).map(code => pending.get(code)).filter(Boolean);
+  const wanted = String(store.chosen || root?.getAttribute?.('lang') || '').trim().toLowerCase().replace('_', '-'); // A registry alias waits for its pack (zh-cn: zh-hans, pt: pt-br).
+
+  const pack = code => store.packs.aliases?.[code] ?? code;
+
+  const base = wanted.split('-')[0];
+  const waits = [...new Set([wanted, pack(wanted), base, pack(base)])].filter(Boolean).map(code => pending.get(code)).filter(Boolean);
   if (!waits.length) return null;
 
   const now = () => globalThis.performance?.now?.() ?? Date.now();
@@ -8572,16 +8634,27 @@ SF.loadSmartBase = function loadSmartBase() {
 // -- from this script or from any bundle that carries a copy of it.
 
 
-let fieldRenderersReady = null;
+let fieldRenderersReady = null; // The set settles with its words (field orders FO-4): a host draws its fields
+// once the set is here, and a field is no element that draws again when the
+// page's language file arrives, so a page whose words core fetches (no
+// core/lang/<code>.js) drew «Contains…» and «From» on a Russian page. The set
+// asks for its part when it publishes itself; this waits for the parts on
+// their way, at most languageWait ms (800 by default), as the scripts the
+// Loader adds wait.
+
+const withSetWords = set => {
+  const hold = languageHold();
+  return hold ? hold.then(() => set, () => set) : Promise.resolve(set);
+};
 
 SF.whenFieldRenderers = function whenFieldRenderers() {
-  if (SF.fieldRenderers?.renderEditField) return Promise.resolve(SF.fieldRenderers);
+  if (SF.fieldRenderers?.renderEditField) return withSetWords(SF.fieldRenderers);
   if (fieldRenderersReady) return fieldRenderersReady;
   fieldRenderersReady = new Promise((resolve, reject) => {
     const settle = () => {
       if (!SF.fieldRenderers?.renderEditField) return false;
       document.removeEventListener('sf-field-renderers-ready', settle);
-      resolve(SF.fieldRenderers);
+      resolve(withSetWords(SF.fieldRenderers));
       return true;
     };
 
@@ -11162,7 +11235,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"version":1,"aliases":{"column-gap/de
 /***/ "e7acc025fab1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-alert-bar":["sr-only/default"],"cl-avatar":["align-items/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["display/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default","sr-only/default"],"cl-button-close":["align-items/default","display/default","justify-content/default","place-items/default","pointer-events/default"],"cl-button-copy":["display/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default","sr-only/default"],"cl-change":["display/default","sr-only/default"],"cl-checkbox":["cursor/default","display/default"],"cl-confirm":["display/default"],"cl-confirm-change":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-display-settings":["font-family/default","text-decoration/default"],"cl-drawer":["display/default","margin/default","position/default","resize/default","text-max-width/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-preview":["display/default"],"cl-file-upload":["align-items/default","cursor/default","display/default","flex-direction/default","gap/default","grid-template-columns/default","width/default"],"cl-form":["display/default","position/default"],"cl-gallery":["display/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-wrap/default","margin/default","min-width/default","position/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-choice":["align-items/default","cursor/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default","position/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["display/default","position/default","sr-only/default"],"cl-input-image":["display/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","resize/default","transition-property/default"],"cl-language":["display/default"],"cl-list":["align-items/default","display/default","flex/default","justify-content/default","position/default","sr-only/default"],"cl-list-attention":["sr-only/default"],"cl-list-description":["display/default","font-family/default","sr-only/default","text-overflow/default"],"cl-list-feed":["display/default","sr-only/default"],"cl-list-item":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","place-items/default"],"cl-list-timeline":["display/default","position/default","sr-only/default"],"cl-menu":["display/default","position/default","visibility/default"],"cl-menu-context":["display/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","width/default","z-index/default"],"cl-pager":["align-items/default","display/default","sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","pointer-events/default","text-align/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-run":["sr-only/default","white-space/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","justify-content/default"],"cl-reference-link":["align-items/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-segmented":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-settings":["display/default","position/default","text-decoration/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["sr-only/default"],"cl-switch":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-tabs":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","pointer-events/default","position/default","text-decoration/default","visibility/default"],"cl-tag":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default","pointer-events/default"],"cl-tag-group":["display/default"],"cl-tile-metric":["position/default","sr-only/default"],"cl-time":["display/default","position/default","sr-only/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"],"cl-wizard":["display/default","sr-only/default"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"cl-accordion":["display/default","flex-direction/default","gap/default","position/default"],"cl-alert":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default"],"cl-alert-bar":["sr-only/default"],"cl-avatar":["align-items/default","display/default","element-position/default","flex-direction/default","flex/default","height/default","justify-content/default","overflow/default","place-items/default","position/default","text-overflow/default","transition-property/default","white-space/default","width/default"],"cl-avatar-group":["align-items/default","display/default","flex-direction/default"],"cl-badge":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-breadcrumbs":["display/default"],"cl-bulk-actions":["display/default","sr-only/default","text-max-width/default","user-select/default","visibility/default"],"cl-button":["align-items/default","display/default","flex/default","pointer-events/default","sr-only/default","text-overflow/default"],"cl-button-close":["align-items/default","display/default","justify-content/default","place-items/default","pointer-events/default"],"cl-button-copy":["display/default"],"cl-button-icon":["align-items/default","display/default","pointer-events/default","sr-only/default"],"cl-change":["display/default","sr-only/default"],"cl-checkbox":["cursor/default","display/default"],"cl-confirm":["display/default"],"cl-confirm-change":["display/default"],"cl-contents":["display/default","position/default","width/default"],"cl-display-settings":["font-family/default","text-decoration/default"],"cl-drawer":["display/default","margin/default","position/default","resize/default","text-max-width/default","visibility/default"],"cl-dropdown":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","place-items/default","position/default","transition-property/default"],"cl-empty-state":["display/default"],"cl-file-download":["cursor/default","display/default","transition-property/default"],"cl-file-preview":["display/default"],"cl-file-upload":["align-items/default","cursor/default","display/default","flex-direction/default","gap/default","grid-template-columns/default","width/default"],"cl-form":["display/default","position/default","visibility/default"],"cl-gallery":["display/default"],"cl-header-page":["align-items/default","display/default","flex-direction/default","flex-wrap/default","margin/default","min-width/default","position/default","text-overflow/default"],"cl-header-site":["container/default","margin/default","position/default","width/default"],"cl-help-mark":["display/default"],"cl-icon":["font-weight/default"],"cl-input":["align-items/default","display/default","flex-direction/default","text-align/default","transition-property/default"],"cl-input-choice":["align-items/default","cursor/default","display/default","flex-direction/default","justify-content/default","transition-property/default"],"cl-input-code":["sr-only/default"],"cl-input-color":["display/default","position/default"],"cl-input-country":["display/default","flex-direction/default","place-items/default","transition-property/default"],"cl-input-date":["display/default","position/default","sr-only/default"],"cl-input-image":["display/default"],"cl-input-lookup":["align-items/default","display/default","flex-direction/default","flex-wrap/default","flex/default","overflow/default"],"cl-input-quantity":["display/default","filter-blur/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","sr-only/default"],"cl-input-rich":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","font-style/default","font-weight/default"],"cl-input-textarea":["display/default","flex-direction/default","resize/default","transition-property/default"],"cl-language":["display/default"],"cl-list":["align-items/default","display/default","flex/default","justify-content/default","position/default","sr-only/default"],"cl-list-attention":["sr-only/default"],"cl-list-description":["display/default","font-family/default","sr-only/default","text-overflow/default"],"cl-list-feed":["display/default","sr-only/default"],"cl-list-item":["align-items/default","background-color/default","cursor/default","display/default","flex-direction/default","flex-wrap/default","flex/default","justify-content/default","place-items/default"],"cl-list-timeline":["display/default","position/default","sr-only/default"],"cl-menu":["display/default","position/default","visibility/default"],"cl-menu-context":["display/default","text-decoration/default"],"cl-modal":["align-items/default","backdrop-filter-blur/default","border-radius/default","border-width/default","display/default","element-position/default","filter-blur/default","flex-direction/default","flex-wrap/default","font-size/default","gap/default","height/default","justify-content/default","margin/default","min-width/default","overflow/default","padding/default","place-items/default","position/default","text-color/default","width/default","z-index/default"],"cl-pager":["align-items/default","display/default","sr-only/default"],"cl-pagination":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","pointer-events/default","text-align/default"],"cl-popover":["display/default","position/default"],"cl-progress-bar":["align-items/default","display/default","flex-direction/default","transition-property/default"],"cl-progress-ring":["display/default"],"cl-progress-run":["sr-only/default","white-space/default"],"cl-progress-scale":["align-items/default","display/default","flex-direction/default","grid-template-columns/default","overflow/default"],"cl-radio":["align-items/default","display/default","justify-content/default"],"cl-reference-link":["align-items/default","display/default","flex-direction/default","justify-content/default","place-items/default"],"cl-resizer":["display/default","position/default","resize/default","text-max-width/default"],"cl-search":["display/default","sr-only/default"],"cl-segmented":["align-items/default","display/default","pointer-events/default","text-align/default"],"cl-settings":["display/default","position/default","text-decoration/default"],"cl-skeleton":["animation/default","display/default","flex/default"],"cl-slider":["background-color/default","border-radius/default","display/default","padding/default","text-color/default"],"cl-slider-range":["flex/default"],"cl-steps":["sr-only/default"],"cl-switch":["align-items/default","display/default","justify-content/default","transition-property/default"],"cl-tabs":["align-items/default","container/default","display/default","flex-direction/default","flex-wrap/default","justify-content/default","place-items/default","pointer-events/default","position/default","text-decoration/default","visibility/default"],"cl-tag":["display/default","flex-direction/default","flex-wrap/default","justify-content/default","min-width/default","place-items/default","pointer-events/default"],"cl-tag-group":["display/default"],"cl-tile-metric":["position/default","sr-only/default"],"cl-time":["display/default","position/default","sr-only/default"],"cl-toast":["align-items/default","display/default","flex-direction/default","flex/default","justify-content/default","place-items/default"],"cl-tooltip":["display/default","flex-direction/default","position/default"],"cl-tree":["display/default","flex-direction/default"],"cl-tree-item":["align-items/default","display/default","flex-direction/default","position/default"],"cl-wizard":["display/default","sr-only/default"]}');
 
 /***/ }
 

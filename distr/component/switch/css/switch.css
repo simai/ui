@@ -292,6 +292,12 @@
        SW-05); a pointer over it still shows the hover edge below. */
     --sf-switch-toggler--border-color: var(--sf-switch-checked-background-color, var(--sf-primary));
   }
+  /* invalid (sf-switch 1.10.0, field orders FO-1): the track's edge in the
+     error role, off and on, as an invalid field's edge and sf-checkbox's .error
+     box; disabled keeps its own look. */
+  .sf-switch.error:has(input):not(:has(input:disabled)) .sf-switch-toggler {
+    --sf-switch-toggler--border-color: var(--sf-error);
+  }
   /* The track stands as tall as the line of its size, which is the rule the
      checkbox box already follows, so the mobile and the desktop ladder both come
      out of the typography contract instead of being listed twice. Its length is
@@ -540,6 +546,13 @@
 @layer sf.components {
   .sf-switch {
     min-width: 0;
+  }
+  /* A switch with no text (named by aria-label) is its track and nothing
+     else: in a flex row it does not give way (cards study CV-8, as sf-checkbox).
+     min-width 0 above lets a labelled one wrap its words; a label-less one
+     shrank under its track, which then drew over the next element. */
+  .sf-switch:not(:has(> .sf-switch-container-wrap)) {
+    flex-shrink: 0;
   }
   /* The hit area is the track and its text, not the row (RG-CB-1, C63; C19: the
      class layer, as the Smart row in src/smart/helpers/checkable-row.css): the

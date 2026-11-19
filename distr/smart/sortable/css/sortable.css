@@ -24,18 +24,18 @@
   [data-sf-sortable-item].focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
-    outline-offset: 2px;
+    outline-offset: var(--sf-focus--offset);
   }
   [data-sf-sortable-item].focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
-    outline-offset: 2px;
+    outline-offset: var(--sf-focus--offset);
   }
   [data-sf-sortable-item]:focus-visible {
     outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
-    outline-offset: 2px;
+    outline-offset: var(--sf-focus--offset);
   }
   [data-sf-sortable-handle] {
     cursor: -webkit-grab;
@@ -116,8 +116,39 @@
     border-radius: var(--sf-radius--ui);
     pointer-events: none;
   }
+  /* The live region and the instructions: heard, not seen. Placed at the
+     start corner of whatever box holds them (BV-9): without an offset an
+     absolute box stands where it would have flowed, and in a list that
+     scrolls sideways inside a board with no position of its own that place
+     is past the page's end -- the page grew 1155 px wider at 390. At the
+     corner it is always inside its containing block, positioned or not. */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-sortable-live{
+    left: 0;
+  }
+  @supports not (inset-inline-start: initial){
+  html:not([dir="rtl"]) .sf-sortable-live{
+    left: 0;
+    }
+  }
+  .sf-sortable-live:where(:dir(ltr)){
+    left: 0;
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-sortable-live{
+    right: 0;
+  }
+  @supports not (inset-inline-start: initial){
+  [dir="rtl"] .sf-sortable-live{
+    right: 0;
+    }
+  }
+  .sf-sortable-live:where(:dir(rtl)){
+    right: 0;
+  }
   .sf-sortable-live {
     position: absolute;
+    top: 0;
+    inset-block-start: 0;
+    inset-inline-start: 0;
     width: 1px;
     inline-size: 1px;
     height: 1px;

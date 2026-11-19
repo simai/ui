@@ -195,6 +195,93 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "c9769993fe5b"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_APPEARANCES: () => (/* binding */ FIELD_APPEARANCES),
+/* harmony export */   FIELD_APPEARANCE_DEFAULT: () => (/* binding */ FIELD_APPEARANCE_DEFAULT),
+/* harmony export */   FIELD_APPEARANCE_REMOVE_AFTER: () => (/* binding */ FIELD_APPEARANCE_REMOVE_AFTER),
+/* harmony export */   sayFieldAppearanceFormer: () => (/* binding */ sayFieldAppearanceFormer)
+/* harmony export */ });
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__);
+// One look vocabulary for every field (dispatcher decision 2026-11-17, Larena
+// record forms msg-9e7b5015; FM-9): a field is bordered (the default, a box
+// with a border) or filled (the container fill, no border, the bottom line).
+// sf-input, sf-input-textarea, sf-input-quantity, sf-input-lookup,
+// sf-input-rich, sf-input-code, sf-dropdown and sf-input-date answer to the
+// same two words on the same setting, appearance, so a form gives one look to
+// all its fields. A field may add a look of its own beside them (sf-input's
+// hidden, sf-input-textarea's flush); the shared two never mean anything else.
+// contracts/public-api-axes.json field_appearance holds the list.
+//
+// Former names keep working until 2027-01-01: they are noted in
+// SF.deprecations and said once per page in the console for each component
+// and name, whether or not the page opted in to deprecation warnings (the
+// order asks for the warning). Every bundle carries its own copy of this
+// module, so the names already said live on one shared global.
+
+const FIELD_APPEARANCES = Object.freeze(['bordered', 'filled']);
+const FIELD_APPEARANCE_DEFAULT = 'bordered';
+const FIELD_APPEARANCE_REMOVE_AFTER = '2027-01-01';
+
+function saidNames() {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__sfFieldAppearanceSaid instanceof Set)) {
+    Object.defineProperty(root, '__sfFieldAppearanceSaid', {
+      value: new Set(),
+      configurable: true
+    });
+  }
+
+  return root.__sfFieldAppearanceSaid;
+} // A former name of the field's look was read: noted, and said once per page.
+// kind "value" is a former word of appearance (outlined); kind "attribute" a
+// former name of the setting itself (input-type).
+// noted: the shared alias layer (core/js/aliases.js, from the component's
+// aliases.json) already noted this use and put the new name in place before
+// the component read it; only the console line is left to say.
+
+
+function sayFieldAppearanceFormer(component, {
+  kind = 'value',
+  from,
+  to,
+  since,
+  journal,
+  noted = false
+} = {}) {
+  if (!component || !from) return;
+  if (!noted) (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+    component,
+    tag: component,
+    kind,
+    attribute: kind === 'value' ? 'appearance' : '',
+    from,
+    to,
+    since,
+    remove_after: FIELD_APPEARANCE_REMOVE_AFTER
+  });
+  const said = saidNames();
+  const key = `${component}|${kind}|${from}`;
+  if (said.has(key)) return;
+  said.add(key);
+  const what = kind === 'value' ? `appearance="${from}"` : `${from}`;
+  const write = kind === 'value' ? `appearance="${to}"` : `${to}`;
+  globalThis.console?.warn?.(`[SIMAI Framework] ${component}: ${what} is a former name until ${FIELD_APPEARANCE_REMOVE_AFTER}; write ${write} -- every field names its looks bordered and filled.${journal ? ` See contracts/changes/journal.json (${journal}).` : ''}`);
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "38ea8d53f301"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -741,30 +828,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e92fd2d1a38c");
-/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("292f5fe79a22");
-/* harmony import */ var _js_templates_ribbon_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d8c852b40b52");
-/* harmony import */ var _js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("c4779e51fee1");
-/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("116963e5e31b");
-/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("1373e294ec38");
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("43090d1c8307");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("d7180f8fbd98");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("881c6d727a36");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("ddad1383de99");
-/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("bf0cea966575");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, lit__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__, _js_templates_ribbon_js__WEBPACK_IMPORTED_MODULE_8__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_10__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_12__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, lit__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__, _js_templates_ribbon_js__WEBPACK_IMPORTED_MODULE_8__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_10__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_12__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c9769993fe5b");
+/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("292f5fe79a22");
+/* harmony import */ var _js_templates_ribbon_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d8c852b40b52");
+/* harmony import */ var _js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("c4779e51fee1");
+/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("116963e5e31b");
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("d7180f8fbd98");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("881c6d727a36");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("ddad1383de99");
+/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("bf0cea966575");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__, _component_field_size__WEBPACK_IMPORTED_MODULE_5__, lit__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _js_templates_ribbon_js__WEBPACK_IMPORTED_MODULE_9__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_11__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_13__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_17__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__, _component_field_size__WEBPACK_IMPORTED_MODULE_5__, lit__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _js_templates_ribbon_js__WEBPACK_IMPORTED_MODULE_9__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_11__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_13__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_17__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_17__);
+
 
 
 
@@ -1109,7 +1198,7 @@ function normalizeLocale(value = '', node = null) {
   // is the opposite of the rule (peer session, 2026-10-11).
 
 
-  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_12__.pageLocale)(node ?? globalThis.document?.documentElement ?? null);
+  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_13__.pageLocale)(node ?? globalThis.document?.documentElement ?? null);
 }
 
 function capitalizeFirstLetter(value = '') {
@@ -1265,11 +1354,11 @@ function getLabels(node) {
 // ElementInternals.
 
 
-const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_13__, {
+const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_14__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_15__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_16__.files,
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_14__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_15__,
   actions: {
     'open-panel'({
       options
@@ -1325,7 +1414,7 @@ const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
   }
 });
 
-class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownValidity)((0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.FormField)(DatepickerElement)) {
+class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.ShownValidity)((0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormField)(DatepickerElement)) {
   constructor() {
     super();
     this._input = null;
@@ -1445,9 +1534,13 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
         type: Boolean,
         default: true
       },
+      appearance: {
+        default: _helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_3__.FIELD_APPEARANCE_DEFAULT,
+        values: [..._helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_3__.FIELD_APPEARANCES]
+      },
       inputType: {
         attribute: 'input-type',
-        default: 'bordered'
+        default: ''
       },
       size: {
         default: '1'
@@ -1553,7 +1646,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
 
 
   get _panelId() {
-    return (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__.instancePath)(this, {
+    return (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__.instancePath)(this, {
       kind: 'sf-input-date'
     }), 'panel');
   }
@@ -2150,19 +2243,48 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
 
   get portal() {
     return this.getBooleanAttr('portal', true);
+  } // The field's look on the setting every field names it with (1.16.0,
+  // dispatcher decision 2026-11-17, helpers/field-appearance.js): bordered
+  // or filled. input-type is its legacy name, honoured until 2027-01-01,
+  // noted in SF.deprecations and said once per page; appearance wins when
+  // both are set, and input-type still passes any look of sf-input on.
+
+
+  get appearance() {
+    if (this.hasAttribute('appearance')) {
+      const look = String(this.getAttribute('appearance') || '').trim().toLowerCase();
+      return _helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_3__.FIELD_APPEARANCES.includes(look) ? look : _helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_3__.FIELD_APPEARANCE_DEFAULT;
+    }
+
+    if (this.hasAttribute('input-type')) {
+      (0,_helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_3__.sayFieldAppearanceFormer)('sf-input-date', {
+        kind: 'attribute',
+        from: 'input-type',
+        to: 'appearance',
+        since: '2026-11-17',
+        journal: 'attribute-input-date-input-type-to-appearance'
+      });
+      return String(this.getAttribute('input-type') || '').trim().toLowerCase() || _helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_3__.FIELD_APPEARANCE_DEFAULT;
+    }
+
+    return _helpers_field_appearance_js__WEBPACK_IMPORTED_MODULE_3__.FIELD_APPEARANCE_DEFAULT;
+  }
+
+  set appearance(value) {
+    if (value === null || value === undefined) this.removeAttribute('appearance');else this.setAttribute('appearance', String(value));
   }
 
   get inputType() {
-    return this.getAttribute('input-type') || 'bordered';
+    return this.appearance;
   } // `size` is the canonical name, as on every field; `input-size` is its
   // legacy name, honoured until 2027-01-01 and noted in SF.deprecations
   // (aliases.json, SM-DP-2). The canonical name wins when both are set.
 
 
   get size() {
-    if (this.hasAttribute('size')) return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_4__.ladderSize)(this.getAttribute('size'));
+    if (this.hasAttribute('size')) return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_5__.ladderSize)(this.getAttribute('size'));
     if (this.hasAttribute('input-size')) noteLegacyName('input-size', 'size');
-    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_4__.ladderSize)(this.getAttribute('input-size'));
+    return (0,_component_field_size__WEBPACK_IMPORTED_MODULE_5__.ladderSize)(this.getAttribute('input-size'));
   }
 
   get inputSize() {
@@ -2180,7 +2302,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
   get placeholder() {
     const written = this.getAttribute('placeholder') || '';
     if (written || !this.typed) return written;
-    return (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_9__.formatPlaceholder)(this.format, this.locale);
+    return (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_10__.formatPlaceholder)(this.format, this.locale);
   } // What the form gets (§17.1): the ISO date, never the display text; a
   // range as start/end (an ISO 8601 interval); nothing while disabled.
 
@@ -2323,7 +2445,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
       return Number.isInteger(day) && day >= 0 && day <= 7 ? day % 7 : 1;
     }
 
-    return (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_9__.localeWeekStart)(this.locale);
+    return (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_10__.localeWeekStart)(this.locale);
   }
 
   get locale() {
@@ -2340,7 +2462,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
 
 
   get weekendDays() {
-    return (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_9__.weekendDays)(this.weekend, this.locale);
+    return (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_10__.weekendDays)(this.weekend, this.locale);
   } // The display format of the mode. A written format the mode cannot use is
   // completed: datetime adds « HH:mm» to a date format, time takes HH:mm.
   // Without one the date's format is the locale's (owner decision C62): the
@@ -2353,10 +2475,10 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
   get format() {
     const written = this.getAttribute('format') || '';
     const mode = this.mode;
-    if (mode === 'date') return written || (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_9__.localeDateFormat)(this.locale);
+    if (mode === 'date') return written || (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_10__.localeDateFormat)(this.locale);
     if (mode === 'time') return written && formatPattern(written, 'time') ? written : 'HH:mm';
     if (written && formatPattern(written, 'datetime')) return written;
-    return `${written && formatPattern(written, 'date') ? written : (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_9__.localeDateFormat)(this.locale)} HH:mm`;
+    return `${written && formatPattern(written, 'date') ? written : (0,_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_10__.localeDateFormat)(this.locale)} HH:mm`;
   } // The name for a field whose label is drawn outside it -- a record panel
   // prints the label itself, and passing it to the control printed it twice.
 
@@ -2832,7 +2954,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
 
   get usesRibbon() {
     if (!this.range || !this.input || this._ribbonUnavailable) return false;
-    return (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_11__.matchesBreakpoint)('lg', {
+    return (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_12__.matchesBreakpoint)('lg', {
       below: true
     });
   }
@@ -2898,7 +3020,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
   ribbonSheet() {
     if (this._sheet?.isConnected && this._sheet.parentNode === this) return this._sheet;
     const sheet = document.createElement('sf-drawer');
-    sheet.id = (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__.instancePath)(this, {
+    sheet.id = (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_4__.instancePath)(this, {
       kind: 'sf-input-date'
     }), 'sheet');
     sheet.setAttribute('placement', 'bottom');
@@ -3461,7 +3583,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
 
   renderRibbon() {
     if (!this._sheetBody || !this._ribbon) return;
-    (0,lit__WEBPACK_IMPORTED_MODULE_6__.render)((0,_js_templates_ribbon_js__WEBPACK_IMPORTED_MODULE_8__.renderDatepickerRibbon)(this.ribbonContext()), this._sheetBody);
+    (0,lit__WEBPACK_IMPORTED_MODULE_7__.render)((0,_js_templates_ribbon_js__WEBPACK_IMPORTED_MODULE_9__.renderDatepickerRibbon)(this.ribbonContext()), this._sheetBody);
   } // What is typed is read through the declared format, so «14.10.2026» and
   // «2026-10-14» both land. Text that is not a date, or a date outside the
   // allowed range, puts the field back to the value it held: a half-typed date
@@ -3712,7 +3834,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
       return;
     }
 
-    if (!(0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__.isTopOpenSurface)(this)) {
+    if (!(0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_17__.isTopOpenSurface)(this)) {
       return;
     }
 
@@ -3732,7 +3854,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
 
   syncOverlayListeners() {
     const open = Boolean(this.input && this.open);
-    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__.holdOpenSurfaceMark)(this, open);
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_17__.holdOpenSurfaceMark)(this, open);
 
     if (open) {
       document.addEventListener('click', this._documentClickHandler);
@@ -3744,7 +3866,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
   }
 
   removeOverlayListeners() {
-    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_16__.holdOpenSurfaceMark)(this, false);
+    (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_17__.holdOpenSurfaceMark)(this, false);
     document.removeEventListener('click', this._documentClickHandler);
     document.removeEventListener('keydown', this._documentKeydownHandler, true);
     this.stopPanelPosition();
@@ -3775,7 +3897,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
       });
       this._panelAnchorPanel = panel;
       this._panelAnchorTrigger = trigger;
-      this._panelAnchor = (globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_10___default())).anchor(trigger, panel, {
+      this._panelAnchor = (globalThis.SF?.Position || (_core_js_position_js__WEBPACK_IMPORTED_MODULE_11___default())).anchor(trigger, panel, {
         side: 'block-end',
         align: 'start',
         onPosition: ({
@@ -4317,7 +4439,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.S
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_7__.renderDatepickerTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_8__.renderDatepickerTemplate)(this.templateContext());
   }
 
   afterRender() {
@@ -5132,14 +5254,14 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "881c6d727a36"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shim (core/js/aliases.js, standard simai.smart-component 1.3.8 §16.20). Event rows send the new name first, then the old one, with one detail; setting rows map the old attribute and property to the new; host-attribute rows (no \\"to\\") stay host attributes read by the browser or the base and are listed, refused by the shim on purpose; documentary rows (\\"shim\\": \\"none\\") record a rename the shim cannot serve.","component":"sf-input-date","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-input-date","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"sf-datepicker-change","to":"change","kind":"event","component":"sf-input-date","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"note":"sent by the shim after change, with the same detail; the detail no longer carries the element (§8)"},{"from":"sf-change","to":"change","kind":"event","component":"sf-input-date","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"note":"sent by the shim after change, with the same detail; the detail no longer carries the element (§8)"},{"from":"sf-datepicker","to":"sf-input-date","kind":"tag","component":"sf-input-date","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-input-date; sf-datepicker is a subclass defined beside it until the date"},{"from":"left-icon","to":"icon-start","kind":"attribute","component":"sf-input-date","since":"2026-11-17","remove_after":"2027-01-01","mode":"manifest-only","section":"§16 item 20, change journal attribute-input-date-legacy-names (SM-DP-2)","note":"the legacy name of icon-start; the element reads it itself until the date and notes it in SF.deprecations; icon-start wins when both are given","shim":"none"},{"from":"input-size","to":"size","kind":"attribute","component":"sf-input-date","since":"2026-11-17","remove_after":"2027-01-01","mode":"manifest-only","section":"§16 item 20, change journal attribute-input-date-legacy-names (SM-DP-2)","note":"the legacy name of size (contracts/public-api-axes.json); the element reads it itself until the date and notes it in SF.deprecations; size wins when both are given","shim":"none"}]}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shim (core/js/aliases.js, standard simai.smart-component 1.3.8 §16.20). Event rows send the new name first, then the old one, with one detail; setting rows map the old attribute and property to the new; host-attribute rows (no \\"to\\") stay host attributes read by the browser or the base and are listed, refused by the shim on purpose; documentary rows (\\"shim\\": \\"none\\") record a rename the shim cannot serve.","component":"sf-input-date","since":"2026-10-27","remove_after":"2026-12-01","aliases":[{"from":"aria-label","to":null,"kind":"attribute","component":"sf-input-date","since":"2026-10-27","remove_after":"2026-12-01","mode":"host-attribute","section":"§3.1","note":"stays a host attribute, read by the base (§3.1, §4.8); no shim"},{"from":"sf-datepicker-change","to":"change","kind":"event","component":"sf-input-date","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"note":"sent by the shim after change, with the same detail; the detail no longer carries the element (§8)"},{"from":"sf-change","to":"change","kind":"event","component":"sf-input-date","since":"2026-10-27","remove_after":"2026-12-01","mode":"same-detail","cancelable":false,"note":"sent by the shim after change, with the same detail; the detail no longer carries the element (§8)"},{"from":"sf-datepicker","to":"sf-input-date","kind":"tag","component":"sf-input-date","since":"2026-11-03","remove_after":"2027-01-01","section":"rename plan R0 (ui-control RENAME-PLAN-2026-11-03), naming decision 2026-11-02","note":"the element is sf-input-date; sf-datepicker is a subclass defined beside it until the date"},{"from":"left-icon","to":"icon-start","kind":"attribute","component":"sf-input-date","since":"2026-11-17","remove_after":"2027-01-01","mode":"manifest-only","section":"§16 item 20, change journal attribute-input-date-legacy-names (SM-DP-2)","note":"the legacy name of icon-start; the element reads it itself until the date and notes it in SF.deprecations; icon-start wins when both are given","shim":"none"},{"from":"input-size","to":"size","kind":"attribute","component":"sf-input-date","since":"2026-11-17","remove_after":"2027-01-01","mode":"manifest-only","section":"§16 item 20, change journal attribute-input-date-legacy-names (SM-DP-2)","note":"the legacy name of size (contracts/public-api-axes.json); the element reads it itself until the date and notes it in SF.deprecations; size wins when both are given","shim":"none"},{"from":"input-type","to":"appearance","kind":"attribute","component":"sf-input-date","since":"2026-11-17","remove_after":"2027-01-01","mode":"manifest-only","section":"§16 item 20, change journal attribute-input-date-input-type-to-appearance","note":"the legacy name of appearance (one look vocabulary for every field); the element reads it itself until the date, notes it in SF.deprecations and says it once per page; appearance wins when both are given","shim":"none"}]}');
 
 /***/ },
 
 /***/ "d7180f8fbd98"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.15.0","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"weekend":{"type":"string","default":""},"locale":{"type":"string","default":""},"format":{"type":"string","default":""},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"icon-start":{"type":"icon","default":""},"left-icon":{"type":"icon","default":""},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","last-week","this-month","last-month","this-year","tomorrow","next-week","next-month"],"optional":true},"range":{"type":"list","optional":true}}},"holidays":{"type":"list","default":[],"of":{"date":"string","kind":{"type":"enum","values":["holiday","day-off","working-day"]},"name":{"type":"string","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"},"--sf-datepicker-day-off":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.16.0","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"weekend":{"type":"string","default":""},"locale":{"type":"string","default":""},"format":{"type":"string","default":""},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"icon-start":{"type":"icon","default":""},"left-icon":{"type":"icon","default":""},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","last-week","this-month","last-month","this-year","tomorrow","next-week","next-month"],"optional":true},"range":{"type":"list","optional":true}}},"holidays":{"type":"list","default":[],"of":{"date":"string","kind":{"type":"enum","values":["holiday","day-off","working-day"]},"name":{"type":"string","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"},"--sf-datepicker-day-off":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

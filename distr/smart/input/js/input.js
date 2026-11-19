@@ -83,12 +83,29 @@ function syncFieldContract(root, control, {
 
   if (root.tagName === 'LABEL' && !root.hasAttribute('for')) {
     root.setAttribute('for', control.id);
+  } // A root that is not a label carries its label text as a <label> of its
+  // own (div.sf-input, 1.13.0): it points at the control too.
+
+
+  if (labelNode?.tagName === 'LABEL' && !labelNode.hasAttribute('for')) {
+    labelNode.setAttribute('for', control.id);
   } // Name the field by its visible label, not every hint or adjacent button.
   // Author-provided accessible names remain authoritative.
 
 
   if (labelNode?.textContent?.trim() && !control.hasAttribute('aria-label') && !control.hasAttribute('aria-labelledby')) {
-    if (!labelNode.id) labelNode.id = `${control.id}-label`;
+    // An id of its own: «<control>-label» may already name another element
+    // (a page that gave the field's root that id), and aria-labelledby would
+    // then read that element's whole text, the hint with it (DF-3).
+    if (!labelNode.id) {
+      const doc = labelNode.ownerDocument;
+      let id = `${control.id}-label`;
+
+      for (let n = 2; doc?.getElementById?.(id); n += 1) id = `${control.id}-label-${n}`;
+
+      labelNode.id = id;
+    }
+
     control.setAttribute('aria-labelledby', labelNode.id);
   }
 
@@ -331,8 +348,17 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_fie
 
 
 
+ // Two roots (1.13.0, DF-3). The wrapping label.sf-input names the input by
+// everything inside it, the hint and a help mark too, until this script points
+// aria-labelledby at the label text. div.sf-input keeps the hint out of the
+// name in the markup itself: the label text is a <label for> of its own
+// (label.sf-input-text), the hint a sibling the input points at with
+// aria-describedby.
 
-const INPUT_SELECTOR = 'label.sf-input';
+const INPUT_SELECTOR = '.sf-input:is(label, div)'; // What a press on the box hands to the input in a div root, where no wrapping
+// label does it: anything but a control of its own (an action, a link).
+
+const BOX_CONTROLS = 'input, button, a, select, textarea, label, [tabindex], sf-help-mark, sf-button, sf-button-icon';
 const INPUT_BOUND_FLAG = 'sfInputBound';
 const INPUT_TYPES = new Set(['text', 'email', 'password', 'search', 'tel', 'url']);
 const INPUT_MODES = new Set(['', 'none', 'text', 'tel', 'url', 'email', 'numeric', 'decimal', 'search']);
@@ -478,7 +504,23 @@ function bindInput(root) {
   input.addEventListener('blur', blurHandler);
   root.__sfInputNoopHandler = noopHandler;
   root.__sfInputPointerFocusHandler = pointerFocusHandler;
-  root.__sfInputBlurHandler = blurHandler;
+  root.__sfInputBlurHandler = blurHandler; // A div root: a press on the box (its padding, an icon, the text before or
+  // after the value) focuses the input, as the wrapping label does.
+
+  if (root.tagName !== 'LABEL') {
+    const boxHandler = event => {
+      if (event.button !== 0 || input.disabled) return;
+      const target = event.target;
+      if (!(target instanceof Element) || !target.closest('.sf-input-field')) return;
+      if (target.closest(BOX_CONTROLS)) return;
+      event.preventDefault();
+      input.focus();
+    };
+
+    root.addEventListener('pointerdown', boxHandler);
+    root.__sfInputBoxHandler = boxHandler;
+  }
+
   root.dataset[INPUT_BOUND_FLAG] = '1';
   const message = messageState(root);
   (0,_field_contract__WEBPACK_IMPORTED_MODULE_3__.syncFieldContract)(root, input, {
@@ -510,6 +552,9 @@ function unbindInput(root) {
   if (input && root.__sfInputBlurHandler) {
     input.removeEventListener('blur', root.__sfInputBlurHandler);
   }
+
+  if (root.__sfInputBoxHandler) root.removeEventListener('pointerdown', root.__sfInputBoxHandler);
+  delete root.__sfInputBoxHandler;
 
   if (root.__sfInputMask) {
     window.SF?.Mask?.destroy?.(root.__sfInputMask);
@@ -626,8 +671,10 @@ class Inputs extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
     const normalizedSize = (0,_field_size__WEBPACK_IMPORTED_MODULE_4__.inputSize)(size);
-    const normalizedVariant = boundedValue(type, INPUT_VARIANTS, 'bordered');
-    this.template = document.createElement('label');
+    const normalizedVariant = boundedValue(type, INPUT_VARIANTS, 'bordered'); // The div root (1.13.0, DF-3): the label text is the <label>, so the
+    // hint under the field is a description, never part of the name.
+
+    this.template = document.createElement('div');
     if (this.id) this.template.id = this.id;
     this.template.classList.add('sf-input', `sf-input--size-${normalizedSize}`, `sf-input--${normalizedVariant}`);
     this.template.classList.toggle('error', toBoolean(invalid || error, false));
@@ -643,7 +690,7 @@ class Inputs extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
 
     const labelWrap = document.createElement('span');
     labelWrap.classList.add('sf-input-label');
-    const labelText = document.createElement('span');
+    const labelText = document.createElement('label');
     labelText.classList.add('sf-input-text');
     labelText.textContent = label;
     labelWrap.append(labelText);
@@ -3570,7 +3617,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "fc92d2bbc3ce"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.15.2","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"appearance":{"type":"enum","values":["bordered","filled","hidden"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url","number"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"counter":{"type":"boolean","default":false},"pattern":{"type":"string","default":""},"min":{"type":"string","default":""},"max":{"type":"string","default":""},"step":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-start":{"type":"string","optional":true},"text-end":{"type":"string","optional":true},"shortcut":{"type":"string","default":""},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.15.3","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"appearance":{"type":"enum","values":["bordered","filled","hidden"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url","number"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"counter":{"type":"boolean","default":false},"pattern":{"type":"string","default":""},"min":{"type":"string","default":""},"max":{"type":"string","default":""},"step":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-start":{"type":"string","optional":true},"text-end":{"type":"string","optional":true},"shortcut":{"type":"string","default":""},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "id": "smart.change",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "title": "Change",
   "summary": "A field change as text: «Собран → Передан в доставку», the old value quiet, the new one in the text colour and medium weight, no badges and no strikethrough; inline in a sentence, as a list of several fields, or, for a long text, revealed in place as «Было» and «Стало».",
   "kind": "smart",
@@ -220,7 +220,7 @@
       },
       {
         "path": "src/smart/change/docs.md",
-        "sha256": "151ed0194ada733e51351abe9244c88f9e42d0efa2bebdd130e38b92833e911d"
+        "sha256": "5ad3bd8f89bf3e3d9fc5f658e044f41d7b4f54b742fb8decfb8762606af835e4"
       }
     ],
     "generated_runtime": []

@@ -1550,6 +1550,24 @@ class SfSearch extends SearchElement {
     if (id !== 'retry') return;
     this.focusField();
     this.askQuery(this.query.trim());
+  } // A result's picture (port 1.2.0 image) that did not load: the row draws
+  // its glyph instead, from the next drawing on, for as long as the window
+  // lives (the icon sheet's display stands outside the layers, so the glyph
+  // is not drawn and hidden: it is drawn or not).
+
+
+  pictureFailed(url) {
+    if (!url) return;
+    this._failedPictures ||= new Set();
+    if (this._failedPictures.has(url)) return;
+
+    this._failedPictures.add(url);
+
+    if (this.shown()) this.renderWindow();
+  }
+
+  pictureOk(url) {
+    return !this._failedPictures || !this._failedPictures.has(url);
   }
 
   hover(index) {
@@ -2804,9 +2822,12 @@ __webpack_require__.r(__webpack_exports__);
 // (steps: an array of options in a static index; a provider is asked the step
 // with options.step). A group may name the product's results page (more), and
 // so may the whole answer.
+//
+// 1.2.0 (C175 (2), msg-bc1702eb): an entry may carry its own picture (image:
+// a file's thumbnail or a record's image, an address).
 const PORT_ID = 'simai.search-port';
-const PORT_VERSION = '1.1.0';
-const SUPPORTED_PORT_VERSIONS = ['1.0.0', '1.1.0'];
+const PORT_VERSION = '1.2.0';
+const SUPPORTED_PORT_VERSIONS = ['1.0.0', '1.1.0', '1.2.0'];
 const BUILTIN_CAPABILITIES = ['scopes', 'recent', 'popular', 'actions'];
 const RECENT_LIMIT = 5;
 const RECENT_PAGES_LIMIT = 3;
@@ -2852,7 +2873,9 @@ function resultOf(entry, order) {
   if (text(entry?.badge)) result.badge = text(entry.badge);
   if (text(entry?.time)) result.time = text(entry.time);
   const avatar = avatarOf(entry?.avatar);
-  if (avatar) result.avatar = avatar;
+  if (avatar) result.avatar = avatar; // 1.2.0: the result's own picture, an address.
+
+  if (text(entry?.image).trim()) result.image = text(entry.image).trim();
   if (kind === 'action' && (entry?.steps === true || Array.isArray(entry?.steps) && entry.steps.length)) result.steps = true;
   return {
     result,
@@ -3365,14 +3388,31 @@ function rowEnd(context, row) {
 // avatar for a person or a chat. sf-avatar draws a button; in a row it is a
 // picture, so the host is inert: no Tab stop, nothing read, a press falls to
 // the row.
+//
+// A result's own picture (port 1.2.0 image, msg-bc1702eb): a file's thumbnail
+// or a record's image, on a plate of its own at the avatar's size -- the only
+// row picture with a plate. The picture is decoration beside the title (alt
+// empty); one that fails to load gives its place back to the glyph. Keyed by
+// the address, so a reused row never keeps another picture's failure.
 
 
-function rowLead(row) {
+function rowLead(context, row) {
   const avatar = row.avatar ?? row.item?.avatar;
 
   if (avatar && (avatar.name || avatar.image)) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-avatar class="sf-search-row-avatar" size="1/2" heading=${avatar.name || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} image-url=${avatar.image || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       hue="auto" inert></sf-avatar>`;
+  }
+
+  const image = typeof row.item?.image === 'string' ? row.item.image.trim() : '';
+  const {
+    component
+  } = context; // A picture of its own (port 1.2.0, C175 (2)) on its plate; one that failed
+  // to load gives the row its glyph back (sf-search pictureFailed).
+
+  if (image && (!component?.pictureOk || component.pictureOk(image))) {
+    return (0,lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__.keyed)(image, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-search-row-image" aria-hidden="true"><img class="sf-search-row-image-picture" src=${image} alt=""
+      loading="lazy" decoding="async" @error=${() => component?.pictureFailed?.(image)}></span>`);
   }
 
   return row.icon ? glyph(row.icon, 'sf-search-row-icon') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
@@ -3390,7 +3430,7 @@ function renderRow(context, row) {
   const item = row.item ?? {};
   const classes = ['sf-search-row', path ? 'sf-search-row--two' : '', row.kind === 'recent' || row.recentPage ? 'sf-search-row--recent' : '', row.kind === 'more' ? 'sf-search-row--more' : '', isSelected ? 'sf-search-row--selected' : ''].filter(Boolean).join(' ');
   const line = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-search-row-line"><span class="sf-search-row-title">${marked(row.title)}</span>${item.badge ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-search-row-badge" appearance="outline" size="1/3" text=${item.badge}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
-  const words = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${rowLead(row)}<span class="sf-search-row-text">${line}${path ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-search-row-path">${row.path}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
+  const words = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${rowLead(context, row)}<span class="sf-search-row-text">${line}${path ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-search-row-path">${row.path}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
   const {
     url
   } = row; // A page row is a link (C175 (6)): Ctrl/Command with a press and the middle
@@ -3741,7 +3781,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "e264eb73f918"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.11.5","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.1.0","contract":"src/core/contracts/ports/simai.search-port/1.1.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background-color":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.search","tag":"sf-search","version":"1.12.0","kind":"leaf","settings":{"index":{"type":"string","default":""},"provider":{"type":"object","default":null},"for":{"type":"string","default":""},"shortcut":{"type":"string","default":"mod+k /"},"label":{"type":"string","default-from":"runtime.label"},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"scopes":{"type":"boolean","default":true},"recent":{"type":"boolean","default":true},"recent-key":{"type":"string","default":"site"},"popular":{"type":"boolean","default":true},"actions":{"type":"boolean","default":true},"path":{"type":"boolean","default":true},"keys":{"type":"boolean","default":true}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"navigate":{"carries":{"id":{"type":"string"},"href":{"type":"string"},"action":{"type":"string"},"query":{"type":"string"},"group":{"type":"string"}},"cancelable":true},"intent":{"carries":{"intent":{"type":"enum","values":["query.change","result.open","result.preview","action.run","recent.forget","recent.clear"]},"payload":{"type":"object"},"answer":{"type":"object"}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"port":{"id":"simai.search-port","version":"1.2.0","contract":"src/core/contracts/ports/simai.search-port/1.2.0/port.json"},"presentation":{"skeleton":{"late":[]}},"host-states":{"data-open":"boolean"},"css-variables":{"--sf-search-inline-size":{"type":"length","state":"open"},"--sf-search-inset-block-start":{"type":"length","state":"open"},"--sf-search-background-color":{"type":"color","state":"open"},"--sf-search-scrim-color":{"type":"color","state":"open"},"--sf-search-mark-color":{"type":"color","state":"open"},"--sf-search-radius":{"type":"length","state":"open"},"--sf-search-list-max-block-size":{"type":"length","state":"open"}}}');
 
 /***/ },
 

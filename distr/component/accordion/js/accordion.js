@@ -33,10 +33,7 @@ const SINGLE_TOGGLE_ATTRIBUTE = 'data-single-section'; // Every closed panel is 
 // would take the text out of the search (accordion study AC-8). A browser
 // without until-found hides such a panel as it hides any hidden one.
 
-const UNTIL_FOUND = 'until-found'; // Marks a section whose panel is closed but still drawn while the section
-// shrinks to its header (C154 (4)); the class sheet keeps it in view.
-
-const CLOSING_ATTRIBUTE = 'data-sf-accordion-closing'; // The marker is the header's last icon; an icon before the title
+const UNTIL_FOUND = 'until-found'; // The marker is the header's last icon; an icon before the title
 // (.sf-accordion-lead) is not the marker and keeps its glyph.
 
 const MARKER_SELECTOR = '.sf-icon:not(.sf-accordion-lead)';
@@ -224,7 +221,7 @@ class SfAccordion {
     if (!this.content || this.staticHeader) return;
     const from = (0,_motion_js__WEBPACK_IMPORTED_MODULE_2__.sectionHeight)(this.el);
     (0,_motion_js__WEBPACK_IMPORTED_MODULE_2__.stopSectionMotion)(this.el);
-    this.el.removeAttribute(CLOSING_ATTRIBUTE);
+    (0,_motion_js__WEBPACK_IMPORTED_MODULE_2__.markClosing)(this.el, false);
 
     if (open) {
       this.closeSingleModeSiblings();
@@ -236,8 +233,8 @@ class SfAccordion {
 
     this.syncState();
     if (!motion) return;
-    const moving = (0,_motion_js__WEBPACK_IMPORTED_MODULE_2__.moveSection)(this.el, from, () => this.el.removeAttribute(CLOSING_ATTRIBUTE));
-    if (moving && !open) this.el.setAttribute(CLOSING_ATTRIBUTE, '');
+    const moving = (0,_motion_js__WEBPACK_IMPORTED_MODULE_2__.moveSection)(this.el, from, () => (0,_motion_js__WEBPACK_IMPORTED_MODULE_2__.markClosing)(this.el, false));
+    if (moving && !open) (0,_motion_js__WEBPACK_IMPORTED_MODULE_2__.markClosing)(this.el, true);
   }
 
   closeSingleModeSiblings() {
@@ -354,6 +351,8 @@ __webpack_require__.r(__webpack_exports__);
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CLOSING_ATTRIBUTE: () => (/* binding */ CLOSING_ATTRIBUTE),
+/* harmony export */   markClosing: () => (/* binding */ markClosing),
 /* harmony export */   moveSection: () => (/* binding */ moveSection),
 /* harmony export */   sectionClock: () => (/* binding */ sectionClock),
 /* harmony export */   sectionHeight: () => (/* binding */ sectionHeight),
@@ -367,7 +366,31 @@ __webpack_require__.r(__webpack_exports__);
 // changes --sf-accordion--duration or asks for reduced motion (the sheet
 // sets it to none) changes the motion here too. Shared by the class runtime
 // and sf-accordion; stateless, so each bundle may carry its own copy.
-const running = new WeakMap();
+const running = new WeakMap(); // The mark of a section that shrinks to its header: its closed panel stays
+// drawn (the class sheet), so the text leaves with the motion.
+
+const CLOSING_ATTRIBUTE = 'data-sf-accordion-closing'; // Panels made inert here, so only those are given back.
+
+const madeInert = new WeakSet(); // Marks a section closing or not. A closing panel is drawn but closed: from
+// the start of the close nothing in it takes focus, Tab or a click (inert),
+// as after the motion, when the sheet no longer draws it; it is given back
+// when the motion ends or the section opens again.
+
+function markClosing(section, closing) {
+  if (!section) return;
+  if (closing) section.setAttribute(CLOSING_ATTRIBUTE, '');else section.removeAttribute(CLOSING_ATTRIBUTE);
+  const panel = Array.from(section.children ?? []).find(child => child.classList?.contains('sf-accordion-content'));
+  if (!panel) return;
+
+  if (closing) {
+    if (panel.hasAttribute('inert')) return;
+    panel.setAttribute('inert', '');
+    madeInert.add(panel);
+  } else if (madeInert.has(panel)) {
+    madeInert.delete(panel);
+    panel.removeAttribute('inert');
+  }
+}
 
 function seconds(value) {
   const first = String(value || '').split(',')[0].trim();

@@ -774,6 +774,30 @@
       --sf-choice--row-pad: calc((max(var(--sf-ui-1--control-height), var(--sf-d1)) - var(--sf-text-height-1)) / 2);
     }
   }
+  /* control-position end (owner decision C308 FO-5, design d03, C106 (2)):
+     the box stands at the end of the row, the row as wide as the list, the
+     name taking the room before it (the single-field filter window). The
+     document keeps the box first. */
+  .sf-choice--list[data-control-position=end] .sf-choice-row {
+    width: 100%;
+    inline-size: 100%;
+  }
+  .sf-choice--list[data-control-position=end] .sf-choice-row > .sf-checkbox-box {
+    order: 1;
+  }
+  .sf-choice--list[data-control-position=end] .sf-choice-row > .sf-radio-button-box {
+    order: 1;
+  }
+  .sf-choice--list[data-control-position=end] .sf-choice-row > .sf-checkbox-container {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-choice--list[data-control-position=end] .sf-choice-row > .sf-radio-button-container {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-inline-size: 0;
+  }
   /* flow row (C165 (3)): side by side, the groups' gap between them (C105
      H6, --sf-space-1: 16, compact and phone 12); a row that does not fit
      wraps. */
@@ -792,6 +816,187 @@
     .sf-choice--list[data-flow=row] .sf-choice-options {
       flex-direction: column;
     }
+  }
+  /* An option's visual in a row (FO-4): the picture and the colour circle
+     stand before the name, the row's line tall, a quarter step from it (the
+     box-to-name gap of C105 H2); a name drawn as a tonal badge keeps the line.
+     The circle is the menu's colour row (C85): the line less a quarter step,
+     on a hairline. */
+  .sf-choice--list .sf-checkbox-top {
+    align-items: center;
+    gap: var(--sf-space-1\/4);
+  }
+  .sf-choice--list .sf-radio-button-top {
+    align-items: center;
+    gap: var(--sf-space-1\/4);
+  }
+  .sf-choice .sf-choice-avatar {
+    flex: none;
+  }
+  /* A card's picture or colour circle stands on the name line before the
+     name, as its icon does (FO4-1). */
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice:not(.sf-choice--list) .sf-choice-avatar{
+    margin-right: var(--sf-space-1\/2);
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-choice:not(.sf-choice--list) .sf-choice-avatar{
+    margin-right: var(--sf-space-1\/2);
+    }
+  }
+  .sf-choice:not(.sf-choice--list) .sf-choice-avatar:where(:dir(ltr)){
+    margin-right: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-choice:not(.sf-choice--list) .sf-choice-avatar{
+    margin-left: var(--sf-space-1\/2);
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-choice:not(.sf-choice--list) .sf-choice-avatar{
+    margin-left: var(--sf-space-1\/2);
+    }
+  }
+  .sf-choice:not(.sf-choice--list) .sf-choice-avatar:where(:dir(rtl)){
+    margin-left: var(--sf-space-1\/2);
+  }
+  .sf-choice:not(.sf-choice--list) .sf-choice-avatar {
+    -webkit-margin-end: var(--sf-space-1\/2);
+            margin-inline-end: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice:not(.sf-choice--list) .sf-choice-swatch{
+    margin-right: var(--sf-space-1\/2);
+  }
+  @supports not (margin-inline-end: initial){
+  html:not([dir="rtl"]) .sf-choice:not(.sf-choice--list) .sf-choice-swatch{
+    margin-right: var(--sf-space-1\/2);
+    }
+  }
+  .sf-choice:not(.sf-choice--list) .sf-choice-swatch:where(:dir(ltr)){
+    margin-right: var(--sf-space-1\/2);
+  }
+  _:-ms-input-placeholder, [dir="rtl"] .sf-choice:not(.sf-choice--list) .sf-choice-swatch{
+    margin-left: var(--sf-space-1\/2);
+  }
+  @supports not (margin-inline-end: initial){
+  [dir="rtl"] .sf-choice:not(.sf-choice--list) .sf-choice-swatch{
+    margin-left: var(--sf-space-1\/2);
+    }
+  }
+  .sf-choice:not(.sf-choice--list) .sf-choice-swatch:where(:dir(rtl)){
+    margin-left: var(--sf-space-1\/2);
+  }
+  .sf-choice:not(.sf-choice--list) .sf-choice-swatch {
+    -webkit-margin-end: var(--sf-space-1\/2);
+            margin-inline-end: var(--sf-space-1\/2);
+  }
+  .sf-choice .sf-choice-swatch {
+    box-sizing: border-box;
+    display: block;
+    flex: none;
+    width: calc(var(--sf-text-height-1) - var(--sf-space-1\/4));
+    inline-size: calc(var(--sf-text-height-1) - var(--sf-space-1\/4));
+    height: calc(var(--sf-text-height-1) - var(--sf-space-1\/4));
+    block-size: calc(var(--sf-text-height-1) - var(--sf-space-1\/4));
+    margin: calc(var(--sf-space-1\/4) / 2);
+    border-width: var(--sf-px);
+    border-style: solid;
+    border-radius: var(--sf-radius-circle);
+    background-clip: padding-box;
+  }
+  /* The search over the rows (searchable): the dropping panel's search header
+     (C06, FF-7), one look with sf-dropdown's and sf-settings': a row of the
+     step, no frame, no fill, a hairline under it. The rows have no inline
+     padding and no leading picture, so its text starts at the rows' text and
+     its icon stands at the end. What the host's pages say under the rows: one
+     line of text 1/2, and «Show more» or «Retry» at the rows' start. */
+  .sf-choice--list .sf-choice-search {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--sf-space-1\/2);
+    min-height: calc(var(--sf-ui-1--control-height) + calc(var(--sf-px) * 0) + calc(var(--sf-px) * 0));
+    min-block-size: calc(var(--sf-ui-1--control-height) + calc(var(--sf-px) * 0) + calc(var(--sf-px) * 0));
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-block: 0;
+    padding-left: calc(calc(var(--sf-px) * 0) + var(--sf-space-1\/2));
+    padding-right: calc(calc(var(--sf-px) * 0) + var(--sf-space-1\/2));
+    padding-inline: calc(calc(var(--sf-px) * 0) + var(--sf-space-1\/2)) calc(calc(var(--sf-px) * 0) + var(--sf-space-1\/2));
+    border: 0;
+    border-color: revert-layer;
+    border-bottom-width: var(--sf-px);
+    border-block-end-width: var(--sf-px);
+    border-bottom-style: solid;
+    border-block-end-style: solid;
+    padding-left: 0;
+    padding-right: 0;
+    padding-inline: 0;
+    margin-bottom: var(--sf-space-1\/4);
+    -webkit-margin-after: var(--sf-space-1\/4);
+            margin-block-end: var(--sf-space-1\/4);
+    font-family: var(--sf-text--family);
+    font-size: var(--sf-text-size-1);
+    line-height: var(--sf-text-height-1);
+    cursor: text;
+  }
+  .sf-choice--list .sf-choice-search-icon {
+    display: flex;
+    flex: none;
+    width: var(--sf-text-height-1);
+    inline-size: var(--sf-text-height-1);
+    overflow: hidden;
+    --sf-icon--color: var(--sf-on-surface-variant);
+    order: 1;
+  }
+  .sf-choice--list .sf-choice-search-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-color: revert-layer;
+    border-radius: 0;
+    outline: none;
+    font: inherit;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    caret-color: var(--sf-primary);
+    height: calc(var(--sf-ui-1--control-height) - var(--sf-px));
+    block-size: calc(var(--sf-ui-1--control-height) - var(--sf-px));
+  }
+  .sf-choice--list .sf-choice-search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+            appearance: none;
+  }
+  /* What was chosen when the list opened stands first (FO4-5); a hairline
+     under the last of it parts it from the rest, across the list's width. */
+  .sf-choice--list .sf-choice-row.sf-choice-row--chosen-last {
+    width: 100%;
+    inline-size: 100%;
+    border-bottom-width: var(--sf-px);
+    border-block-end-width: var(--sf-px);
+    border-bottom-style: solid;
+    border-block-end-style: solid;
+  }
+  .sf-choice--list .sf-choice-status {
+    font-family: var(--sf-text--family);
+    font-size: var(--sf-text-size-1\/2);
+    line-height: var(--sf-text-height-1\/2);
+  }
+  .sf-choice--list .sf-choice-status[hidden] {
+    display: none;
+  }
+  /* The end of the host's pages (FO4-4): a mark of no size after «Show more»;
+     when it comes into view the next page is asked for. */
+  .sf-choice--list .sf-choice-end {
+    display: block;
+    width: 100%;
+    inline-size: 100%;
+    height: var(--sf-px);
+    block-size: var(--sf-px);
+    margin-top: calc(var(--sf-px) * -1);
+    -webkit-margin-before: calc(var(--sf-px) * -1);
+            margin-block-start: calc(var(--sf-px) * -1);
   }
   /* The error under the last row: the error ink, text 1/2, the error icon a
      line tall first. */
@@ -915,6 +1120,43 @@
   .sf-choice--list .sf-choice-message {
     color: var(--sf-error);
   }
+  .sf-choice .sf-choice-swatch {
+    border-color: var(--sf-outline-variant);
+    background-color: transparent;
+    background-color: var(--sf-choice--swatch, transparent);
+  }
+  .sf-choice--list .sf-choice-status {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-choice--list .sf-choice-search {
+    border: 0;
+    border-bottom-color: var(--sf-outline-variant);
+    border-block-end-color: var(--sf-outline-variant);
+  }
+  .sf-choice--list .sf-choice-search-input {
+    border: 0;
+    background-color: transparent;
+    color: var(--sf-on-surface);
+  }
+  .sf-choice--list .sf-choice-search-input::-webkit-input-placeholder {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-choice--list .sf-choice-search-input::-moz-placeholder {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-choice--list .sf-choice-search-input:-ms-input-placeholder {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-choice--list .sf-choice-search-input::-ms-input-placeholder {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-choice--list .sf-choice-search-input::placeholder {
+    color: var(--sf-on-surface-variant);
+  }
+  .sf-choice--list .sf-choice-row.sf-choice-row--chosen-last {
+    border-bottom-color: var(--sf-outline-variant);
+    border-block-end-color: var(--sf-outline-variant);
+  }
 }
 /* The card owns the focus ring: the control gives its own up (one component,
    one ring). The class radio and checkbox draw theirs in sf.components with a
@@ -926,6 +1168,42 @@
   }
 }
 @layer sf.states {
+  /* The header's focus is its line in the primary colour (C06), as the
+     dropdown's; the bare field draws no ring of its own inside it. */
+  .sf-choice--list .sf-choice-search[focus-within] {
+    border-bottom-color: var(--sf-primary);
+    border-block-end-color: var(--sf-primary);
+  }
+  .sf-choice--list .sf-choice-search[focus-within] {
+    border-bottom-color: var(--sf-primary);
+    border-bottom-color: var(--sf-primary);
+    border-block-end-color: var(--sf-primary);
+  }
+  .sf-choice--list .sf-choice-search:focus-within {
+    border-bottom-color: var(--sf-primary);
+    border-block-end-color: var(--sf-primary);
+  }
+  @media (forced-colors: active) {
+    .sf-choice--list .sf-choice-search[focus-within] {
+      border-bottom-color: Highlight;
+      border-block-end-color: Highlight;
+    }
+    .sf-choice--list .sf-choice-search[focus-within] {
+      border-bottom-color: Highlight;
+      border-bottom-color: Highlight;
+      border-block-end-color: Highlight;
+    }
+    .sf-choice--list .sf-choice-search:focus-within {
+      border-bottom-color: Highlight;
+      border-block-end-color: Highlight;
+    }
+  }
+  .sf-choice--list .sf-choice-search-input.focus-visible {
+    outline: none !important;
+  }
+  .sf-choice--list .sf-choice-search-input:focus-visible {
+    outline: none !important;
+  }
   @media (forced-colors: active) {
     .sf-choice .sf-choice-card--checked,
     .sf-choice[data-layout=picture] .sf-choice-card--checked::after {

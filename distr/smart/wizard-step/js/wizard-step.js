@@ -145,7 +145,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "2afd628bb263"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.wizard-step","tag":"sf-wizard-step","version":"1.0.7","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"type":{"type":"enum","values":["info","form","action","review","result"],"default":"info"},"optional":{"type":"boolean","default":false},"href":{"type":"string","default":""},"action-text":{"type":"string","default":""},"message":{"type":"string","default":""}},"values":{"state":{"type":"enum","values":["","done","skipped","running","error"],"default":""}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.wizard-step","tag":"sf-wizard-step","version":"1.0.8","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"heading":{"type":"string","default":""},"description":{"type":"string","default":""},"type":{"type":"enum","values":["info","form","action","review","result"],"default":"info"},"optional":{"type":"boolean","default":false},"href":{"type":"string","default":""},"action-text":{"type":"string","default":""},"message":{"type":"string","default":""}},"values":{"state":{"type":"enum","values":["","done","skipped","running","error"],"default":""}}}');
 
 /***/ },
 

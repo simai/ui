@@ -2918,6 +2918,15 @@ function manifestHost(manifest, options = {}) {
 
   class PlainHost extends Html {
     connectedCallback() {
+      // An element placed inside another element's printed first paint (a
+      // list in a board's picture: the board drew the cards into it) is part
+      // of that picture, as a Smart element is (smart-base renderComponent):
+      // the children there are what the element around it drew, not this
+      // element's own static markup. It leaves them, and the element around
+      // it replaces the picture when its code comes. Clearing them took a
+      // board's cards away whenever sf-sortable's code came first (view
+      // round 2 board, 2026-11-18).
+      if (this.sfInPicture()) return;
       // Static markup printed for the first paint (standard 1.3.8 §5.4) goes
       // as the element connects: these elements draw in the same task.
       if (!this.__sfFirstPaintEnded) {
@@ -2939,6 +2948,13 @@ function manifestHost(manifest, options = {}) {
     }
 
     disconnectedCallback() {}
+
+    // True while the element stands in a printed first paint: it, or a node
+    // around it, is static markup (data-sf-static). A page's own host is
+    // never marked, so an element the page wrote ends its first paint.
+    sfInPicture() {
+      return Boolean(this.closest?.('[data-sf-static]'));
+    }
 
     // The generated actions read the instance's scope (§7.7); a plain host's
     // ends when the page removes it.
@@ -2990,7 +3006,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-edito
 /***/ "243fec56a554"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-inline","tag":"sf-editor-inline","version":"1.12.2","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-inline","tag":"sf-editor-inline","version":"1.12.3","kind":"leaf","settings":{},"values":{},"events":{"input":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"change":{"carries":{"id":{"type":"string","nullable":true},"content":{"type":"list","of":{"type":"string","value":"string","marks":"list","href":"string"}}},"x-native":false},"cancel":{"carries":{"id":{"type":"string","nullable":true}}}},"actions":{"edit":{"with":{"element":"object","options":"object"}}},"css-variables":{"--sf-inline-editor-outline-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-background-color":{"type":"color","state":"editing"},"--sf-inline-editor-toolbar-radius":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-gap":{"type":"length","state":"editing"},"--sf-inline-editor-toolbar-padding":{"type":"length","state":"editing"}}}');
 
 /***/ },
 

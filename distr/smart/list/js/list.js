@@ -149,6 +149,421 @@ function sizeStep(size) {
 
 /***/ },
 
+/***/ "3180ca98c567"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILES_OVER_ATTRIBUTE: () => (/* binding */ FILES_OVER_ATTRIBUTE),
+/* harmony export */   NO_DRAG_QUERY: () => (/* binding */ NO_DRAG_QUERY),
+/* harmony export */   carriesFiles: () => (/* binding */ carriesFiles),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   filesDragWords: () => (/* binding */ filesDragWords),
+/* harmony export */   filesDrop: () => (/* binding */ filesDrop)
+/* harmony export */ });
+// Files from the computer dropped on an element (Framework order FO-1 of the
+// view set study, ui-control control/research/2026-11-17-view-round-1/
+// framework-orders.md; returns FO1-1..FO1-6 of the component study,
+// control/research/2026-11-18-framework-parts-fo). sf-file-upload,
+// sf-input-image, sf-tree, sf-input-rich and the set's sf-view each read
+// dataTransfer on their own: which drag carries files, the copy cursor, the
+// state while a file is held over the element, the files of a drop. This is
+// that reading, once:
+//
+//   const drop = filesDrop(element, {
+//     onFiles: (files, {event, target, skipped}) => {},
+//                                      once per drop that carries files
+//     onOver: (over, target) => {},    a file is held over the element (over
+//                                      the target), or no longer
+//     disabled: () => false,           the element takes nothing now: the cursor
+//                                      says no and no files are given
+//     target: (event) => node | null,  what under the pointer takes the files
+//                                      (a folder row of a tree); null takes
+//                                      nothing there. Given back with the files.
+//     folders: 'open' | 'skip',        a dropped folder: its files, read
+//                                      through the entries (open, the default),
+//                                      or left out and named in skipped
+//     mark: true,                      data-sf-files-over on the element
+//     overlay: () => text | null,      the one drop overlay of the page over the
+//                                      element while files are held over it,
+//                                      saying the text (C308 FO-1: «Отпустите,
+//                                      чтобы загрузить в «…»» from the
+//                                      component's language pack)
+//     follow: false,                   a host around its own zone (sf-file-upload
+//                                      and its area): it only follows the drag
+//                                      -- the over state while files are held
+//                                      over it, wherever inside they are taken
+//                                      -- and takes no files
+//   });
+//   drop.stop();
+//
+// While files are held over it the element carries data-sf-files-over (a
+// host state its sheet draws the drop zone by). Only a drag that carries
+// files is taken, so text or a row dragged across the element passes on to
+// whoever takes it. A drop that carries files is the element's even while it
+// is disabled (the browser would otherwise open the file in place of the
+// page), and gives nothing.
+//
+// Zones inside zones (FO1-1): the innermost zone under the pointer takes the
+// drop; an outer one sees it taken by a zone (a mark on the event, shared by
+// every bundle's copy) and gives nothing. A handler that only cancels the
+// event (a component's own area inside the zone) takes nothing from it. A
+// file dropped beside every zone (FO1-2) does not open in the tab while a zone
+// is on the page: the document cancels a drop of files nobody took. The over
+// state counts the enters and leaves of the element (FO1-6): a leave for a
+// child is matched by the child's enter, which Safari's leave without a
+// relatedTarget cannot say. A dropped folder (FO1-5) arrives as an empty File
+// in dataTransfer.files; its entries are read instead.
+//
+// What the zone says (owner decision C223): a screen that cannot drag -- a
+// touch screen with no fine pointer at all -- is not asked to; filesDragWords()
+// answers whether the words about dragging belong on this screen, the same
+// media query the file field's sheet hides them by.
+//
+// Where files may be dropped and what the page shows (owner decision C308
+// FO-1): a whole list (a folder, a chat, attachments) takes them when its
+// owner turns it on; one drop overlay for the page stands on top of the zone
+// the files are held over, with the words of the zone's component; zones
+// inside zones, the innermost wins. A component that draws its own zone (the
+// file field's area) keeps drawing it by the over state.
+//
+// Every bundle carries its own copy of this module: the zones on a page are
+// counted on one shared global, so the document guard is one for them all.
+const FILES_OVER_ATTRIBUTE = 'data-sf-files-over';
+const NO_DRAG_QUERY = '(pointer: coarse) and (not (any-pointer: fine))';
+const ZONES = '__sfFilesDropZones'; // The zone that took a drag event, on the event (FO1-1).
+
+const TAKEN = Symbol.for('sf.filesDrop.taken');
+
+const takenByOther = (event, element) => Boolean(event[TAKEN]) && event[TAKEN] !== element;
+
+const take = (event, element) => {
+  try {
+    if (!event[TAKEN]) Object.defineProperty(event, TAKEN, {
+      value: element,
+      configurable: true
+    });
+  } catch {
+    /* a frozen event is read as not taken */
+  }
+};
+/** Whether a drag event carries files from the computer. */
+
+
+function carriesFiles(event) {
+  return [...(event?.dataTransfer?.types ?? [])].includes('Files');
+}
+/** Whether the words about dragging belong on this screen (C223): false on a touch screen with no fine pointer. */
+
+function filesDragWords(view = globalThis) {
+  try {
+    return !view?.matchMedia?.(NO_DRAG_QUERY)?.matches;
+  } catch {
+    return true;
+  }
+} // The one drop overlay of a page (C308 FO-1): an element on the body, over
+// the zone the files are held over (the part of it on screen), the words in
+// a label in its middle; it takes no pointer, so the drop reaches the zone
+// under it. Found by its attribute, so every bundle's copy draws the same one.
+
+const OVERLAY_ATTRIBUTE = 'data-sf-files-overlay';
+let overlayOwner = null;
+
+function showOverlay(element, text) {
+  const doc = element.ownerDocument;
+  const view = doc?.defaultView;
+  if (!doc?.body || !view) return;
+  let layer = doc.body.querySelector(`:scope > [${OVERLAY_ATTRIBUTE}]`);
+
+  if (!layer) {
+    layer = doc.createElement('div');
+    layer.setAttribute(OVERLAY_ATTRIBUTE, '');
+    layer.setAttribute('aria-hidden', 'true');
+    layer.style.cssText = ['position: fixed', 'z-index: 2147483000', 'pointer-events: none', 'box-sizing: border-box', 'display: flex', 'align-items: center', 'justify-content: center', 'border: var(--sf-px) dashed var(--sf-primary-outline)', 'border-radius: var(--sf-radius--surface)', 'background: var(--sf-primary-state-select)', 'padding: var(--sf-space-1)'].join(';');
+    const words = doc.createElement('span');
+    words.style.cssText = ['background: var(--sf-surface)', 'color: var(--sf-primary)', 'border-radius: var(--sf-radius--surface)', 'padding: var(--sf-space-1\\/2) var(--sf-space-1)', 'font: inherit', 'max-inline-size: 100%', 'text-align: center'].join(';');
+    layer.append(words);
+    doc.body.append(layer);
+  }
+
+  const box = element.getBoundingClientRect();
+  const top = Math.max(0, box.top);
+  const left = Math.max(0, box.left);
+  const bottom = Math.min(view.innerHeight, box.bottom);
+  const right = Math.min(view.innerWidth, box.right);
+  Object.assign(layer.style, {
+    top: `${top}px`,
+    left: `${left}px`,
+    width: `${Math.max(0, right - left)}px`,
+    height: `${Math.max(0, bottom - top)}px`
+  });
+  layer.firstElementChild.textContent = text;
+  layer.hidden = false;
+  overlayOwner = element;
+}
+
+function hideOverlay(element) {
+  const doc = element.ownerDocument;
+  if (overlayOwner !== element && overlayOwner !== null) return;
+  overlayOwner = null;
+  const layer = doc?.body?.querySelector(`:scope > [${OVERLAY_ATTRIBUTE}]`);
+  if (layer) layer.hidden = true;
+} // The document guard (FO1-2): one per document, on while a zone is on it.
+
+
+function guard(doc, change) {
+  if (!doc?.addEventListener) return;
+  const zones = globalThis[ZONES] ??= new WeakMap();
+  const held = zones.get(doc) ?? {
+    count: 0,
+    stop: null
+  };
+  held.count = Math.max(0, held.count + change);
+
+  if (held.count && !held.stop) {
+    const refuse = event => {
+      if (event.defaultPrevented || !carriesFiles(event)) return;
+      event.preventDefault();
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'none';
+    };
+
+    doc.addEventListener('dragover', refuse);
+    doc.addEventListener('drop', refuse);
+
+    held.stop = () => {
+      doc.removeEventListener('dragover', refuse);
+      doc.removeEventListener('drop', refuse);
+    };
+  } else if (!held.count && held.stop) {
+    held.stop();
+    held.stop = null;
+  }
+
+  zones.set(doc, held);
+} // A folder's files, read through its entries (FO1-5), each with its path.
+
+
+function readEntry(entry, path = '') {
+  if (!entry) return Promise.resolve([]);
+
+  if (entry.isFile) {
+    return new Promise(settle => entry.file(file => {
+      try {
+        if (path && !file.webkitRelativePath) Object.defineProperty(file, 'sfPath', {
+          value: `${path}${file.name}`
+        });
+      } catch {
+        /* a read-only File keeps its name */
+      }
+
+      settle([file]);
+    }, () => settle([])));
+  }
+
+  if (!entry.isDirectory) return Promise.resolve([]);
+  const reader = entry.createReader();
+  const all = [];
+  return new Promise(settle => {
+    // readEntries answers a batch at a time until it answers none.
+    const next = () => reader.readEntries(batch => {
+      if (!batch.length) {
+        Promise.all(all.map(one => readEntry(one, `${path}${entry.name}/`))).then(lists => settle(lists.flat()));
+        return;
+      }
+
+      all.push(...batch);
+      next();
+    }, () => settle([]));
+
+    next();
+  });
+} // What a drop gives: the files, and the folders read or skipped. The items
+// are read in the drop's own turn (they are empty after it).
+
+
+function droppedOf(event, folders) {
+  const items = [...(event.dataTransfer?.items ?? [])].filter(item => item.kind === 'file');
+  const entries = items.map(item => typeof item.webkitGetAsEntry === 'function' ? item.webkitGetAsEntry() : null);
+
+  if (!entries.some(entry => entry?.isDirectory)) {
+    return {
+      files: Promise.resolve([...(event.dataTransfer?.files ?? [])]),
+      skipped: []
+    };
+  }
+
+  const plain = [...(event.dataTransfer?.files ?? [])];
+  const skipped = [];
+  const reads = entries.map((entry, index) => {
+    if (!entry?.isDirectory) return Promise.resolve(plain[index] ? [plain[index]] : items[index]?.getAsFile() ? [items[index].getAsFile()] : []);
+
+    if (folders === 'skip') {
+      skipped.push(entry.name);
+      return Promise.resolve([]);
+    }
+
+    return readEntry(entry);
+  });
+  return {
+    files: Promise.all(reads).then(lists => lists.flat()),
+    skipped
+  };
+}
+
+function filesDrop(element, {
+  onFiles = null,
+  onOver = null,
+  disabled = null,
+  target = null,
+  folders = 'open',
+  mark = true,
+  follow = false,
+  overlay = null
+} = {}) {
+  if (!element?.addEventListener) return {
+    stop() {},
+
+    get over() {
+      return false;
+    }
+
+  };
+  let over = false;
+  let depth = 0;
+  let place = null;
+  const doc = element.ownerDocument;
+
+  const isDisabled = () => typeof disabled === 'function' ? Boolean(disabled()) : Boolean(disabled);
+
+  const targetOf = event => typeof target === 'function' ? target(event) ?? null : element;
+
+  const setOver = (next, node = null) => {
+    if (next === over && node === place) return;
+    over = next;
+    place = next ? node : null;
+    if (mark) element.toggleAttribute(FILES_OVER_ATTRIBUTE, over);
+
+    if (typeof overlay === 'function') {
+      const text = over ? overlay(place) : null;
+      if (text) showOverlay(element, String(text));else hideOverlay(element);
+    }
+
+    if (typeof onOver === 'function') onOver(over, place);
+  };
+
+  const onDragEnter = event => {
+    if (!carriesFiles(event)) return;
+    depth += 1;
+  };
+
+  const onDragOver = event => {
+    if (!carriesFiles(event)) return;
+
+    if (follow) {
+      setOver(!isDisabled(), element);
+      return;
+    } // An inner zone took it (FO1-1): it is that zone's.
+
+
+    if (takenByOther(event, element)) {
+      setOver(false);
+      return;
+    }
+
+    const node = targetOf(event);
+
+    if (!node) {
+      setOver(false);
+      return;
+    }
+
+    take(event, element);
+    event.preventDefault();
+
+    if (isDisabled()) {
+      event.dataTransfer.dropEffect = 'none';
+      setOver(false);
+      return;
+    }
+
+    event.dataTransfer.dropEffect = 'copy';
+    setOver(true, node);
+  };
+
+  const onDragLeave = event => {
+    if (!carriesFiles(event)) return;
+    depth = Math.max(0, depth - 1);
+    if (!depth) setOver(false);
+  };
+
+  const onDrop = event => {
+    depth = 0;
+    if (!carriesFiles(event) && !event.dataTransfer?.files?.length) return;
+
+    if (follow) {
+      setOver(false);
+      return;
+    }
+
+    if (takenByOther(event, element)) {
+      setOver(false);
+      return;
+    }
+
+    const node = targetOf(event);
+    setOver(false);
+    if (!node) return;
+    take(event, element);
+    event.preventDefault();
+    if (isDisabled()) return;
+    const dropped = droppedOf(event, folders);
+    dropped.files.then(files => {
+      if ((files.length || dropped.skipped.length) && typeof onFiles === 'function') onFiles(files, {
+        event,
+        target: node,
+        skipped: dropped.skipped
+      });
+    });
+  }; // The drag ended somewhere else (Escape, a drop outside): nothing is held.
+
+
+  const onDragEnd = () => {
+    depth = 0;
+    setOver(false);
+  };
+
+  element.addEventListener('dragenter', onDragEnter);
+  element.addEventListener('dragover', onDragOver);
+  element.addEventListener('dragleave', onDragLeave);
+  element.addEventListener('drop', onDrop);
+  doc?.addEventListener?.('dragend', onDragEnd, true);
+  doc?.addEventListener?.('drop', onDragEnd, true);
+  guard(doc, 1);
+  let stopped = false;
+  return {
+    stop() {
+      if (stopped) return;
+      stopped = true;
+      element.removeEventListener('dragenter', onDragEnter);
+      element.removeEventListener('dragover', onDragOver);
+      element.removeEventListener('dragleave', onDragLeave);
+      element.removeEventListener('drop', onDrop);
+      doc?.removeEventListener?.('dragend', onDragEnd, true);
+      doc?.removeEventListener?.('drop', onDragEnd, true);
+      guard(doc, -1);
+      setOver(false);
+    },
+
+    get over() {
+      return over;
+    }
+
+  };
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (filesDrop);
+
+/***/ },
+
 /***/ "e577837dd70a"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -409,9 +824,14 @@ const FILE_SIZE_UNITS = /* @__PURE__ */unitTable(_lang_file_size_index_mjs__WEBP
 /** The unit words for a locale: registered for it, its own, its language's, else English. */
 
 function fileSizeUnits(locale = 'en') {
-  const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
+  const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-'); // A registry alias takes its pack's words (zh-cn: zh-hans, pt: pt-br;
+  // core/lang/index.json aliases, kept on the shared store by core).
 
-  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+  const pack = code => globalThis.__sfPageLanguage?.packs?.aliases?.[code] ?? code;
+
+  const base = wanted.split('-')[0];
+
+  for (const code of [...new Set([wanted, pack(wanted), base, pack(base)])]) {
     const units = registeredUnits(code) ?? (Object.hasOwn(FILE_SIZE_UNITS, code) ? FILE_SIZE_UNITS[code] : null);
     if (units) return units;
   }
@@ -750,9 +1170,13 @@ function intlSpeaks(locale) {
 function packDayWord(offset, locale) {
   if (intlSpeaks(locale)) return null;
   const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-relative-day');
-  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-');
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-'); // A registry alias takes its pack's words (zh-cn: zh-hans, pt: pt-br).
 
-  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+  const pack = code => globalThis.__sfPageLanguage?.packs?.aliases?.[code] ?? code;
+
+  const base = wanted.split('-')[0];
+
+  for (const code of [...new Set([wanted, pack(wanted), base, pack(base)])]) {
     const word = words?.get?.(code)?.[DAY_KEYS[offset]];
     if (typeof word === 'string' && word.trim()) return word;
   }
@@ -981,7 +1405,14 @@ __webpack_require__.r(__webpack_exports__);
 //   Smart component holding it: a row menu of a table of size 1 is size 1);
 // - returnTo: where the focus goes when the menu closes (the row it acted
 //   on); left out, the menu gives the focus back to where it was, or to the
-//   anchor.
+//   anchor;
+// - align: 'start' (the default) lines the menu's start edge up with the
+//   anchor's, 'end' its end edge -- for a control at the end of a toolbar,
+//   whose menu would otherwise run past it towards the window's edge (view
+//   round 1, table group). Start and end follow the page's direction (in a
+//   right-to-left page 'end' is the left edge), and a menu that does not fit
+//   still flips to the other side and is shifted inside the window. At a
+//   point, 'end' puts the menu's end corner at the point.
 //
 // The menu is fetched by the Loader the first time (SF.Loader.ensure), one on
 // the page -- on the body, or in the open modal dialog the anchor is in, since
@@ -995,6 +1426,7 @@ __webpack_require__.r(__webpack_exports__);
 // calls the published one.
 
 const SHARED = 'data-sf-menu-shared';
+const ALIGNS = new Set(['start', 'end']);
 
 function installMenuOpen() {
   let pending = null;
@@ -1080,7 +1512,9 @@ function installMenuOpen() {
       label = '',
       size = '',
       returnTo = null
-    } = options || {};
+    } = options || {}; // Logical, so a right-to-left page mirrors it; anything else is start.
+
+    const align = ALIGNS.has(options?.align) ? options.align : 'start';
     const atPoint = !(anchor instanceof Element);
     if (atPoint && !(Number.isFinite(Number(x)) && Number.isFinite(Number(y)))) return null;
     const doc = globalThis.document;
@@ -1125,14 +1559,15 @@ function installMenuOpen() {
       shown = pending;
       const mine = pending;
       const opening = atPoint ? typeof menu.openAt === 'function' ? menu.openAt(Number(x), Number(y), {
-        target: returnTo ?? undefined
+        target: returnTo ?? undefined,
+        align
       }) : menu.openFor(pointAnchor(Number(x), Number(y), returnTo), {
         side: 'block-end',
-        align: 'start',
+        align,
         focus: 'first'
       }) : menu.openFor(anchor, {
         side: 'block-end',
-        align: 'start',
+        align,
         focus: 'first'
       });
       Promise.resolve(opening).then(answer => {
@@ -1410,6 +1845,436 @@ if (typeof globalThis !== 'undefined') {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ReadingPosition);
+
+/***/ },
+
+/***/ "d3f52a822348"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ROWS_VISIBILITY_FROM: () => (/* binding */ ROWS_VISIBILITY_FROM),
+/* harmony export */   ROWS_WINDOW_FROM: () => (/* binding */ ROWS_WINDOW_FROM),
+/* harmony export */   ROWS_WINDOW_INITIAL: () => (/* binding */ ROWS_WINDOW_INITIAL),
+/* harmony export */   ROWS_WINDOW_MARGIN: () => (/* binding */ ROWS_WINDOW_MARGIN),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   rowsWindow: () => (/* binding */ rowsWindow)
+/* harmony export */ });
+/* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6978f1cc153b");
+// The rows of a long list drawn by the window a person can see (standard
+// simai.smart-component §18.4, gate 17: a component with many entries draws
+// the ones in view; Framework order FO-2 of the view set study, ui-control
+// control/research/2026-11-17-view-round-1/framework-orders.md). sf-view-table
+// had the only copy (windowSlice / syncWindow); this is that copy made one
+// helper for every list -- sf-list draws by it, the set's table calls it.
+//
+// The component keeps drawing its own rows: the helper says which ones, and
+// how tall the two spacers are that stand for the rest above and below, so
+// the scroll bar, the scroll position and the page's height are those of the
+// whole list.
+//
+//   const win = rowsWindow({
+//     body: () => element,         the box the rows (and the spacers) stand in
+//     rows: () => [elements],      the entries drawn now, in order (rows, and
+//                                  the headings of a grouped list)
+//     onMove: (range) => {},       the range moved: draw again (range {first, last})
+//     key: (index) => id,          the entry's id: its measured height is kept
+//                                  by it (FO2-4), so a tall row (a picture in
+//                                  a feed) is tall in the spacers too
+//     snap: (index) => index,      where a range starting at index must start
+//                                  (a grouped list: its group's heading, FO2-1)
+//     from: 200,                   the length from which the list is windowed;
+//                                  Infinity never windows (a host's off, FO2-3)
+//     place: (element) => top,     where an entry stands in the flow, in
+//                                  viewport px (default its box's top): a
+//                                  sticky heading is read where it stuck, so
+//                                  a grouped list gives its group's top
+//   });
+//   win.slice(count)  -> null (draw every row) | {first, last, before, after}
+//   win.sync()        after a drawing: measure the entries drawn, move the
+//                     range if the entries in view came near its edge;
+//                     answers whether it moved
+//   win.reveal(index) put an entry in the range (a key that goes to it, Home, End)
+//   win.start() / win.stop()   follow scrolling and resizing (any scroll box
+//                     between the rows and the page, one listener per list)
+//                     and the rows' box growing or shrinking
+//
+// The box the rows stand in must not be a scroll anchor (overflow-anchor:
+// none): when the range moves, the browser's scroll anchoring keeps a drawn
+// row in place by moving the scroll position, which moves the range again.
+//
+// What is in view is read against the window and the nearest box that
+// scrolls the rows. Each drawn entry's height (from its top to the next
+// one's, so the gaps count) is kept by its key; an entry not drawn yet is the
+// average of those measured, and until one is measured the guess (FO2-4: the
+// average alone threw the spacers off in a feed of pictures and the scroll
+// jumped). Without a key the average stands for every entry. Nothing here
+// draws, and nothing is kept outside the controller it returns, so every
+// bundle may carry its own copy.
+//
+// The length from which a list is windowed (owner decision C308 FO-2): up to
+// 1 000 entries every row stays in the document, drawn with content-visibility
+// (the rows off screen skip their layout and paint), so the browser's find
+// and printing reach them all (DEV measured 1 000 rows 0.42 s against 0.70-
+// 0.88 s); from 1 000 the window of the rows in view. A list may set its own
+// length or turn the window off (from).
+ // A list shorter than this draws every row (C308 FO-2).
+
+const ROWS_WINDOW_FROM = 1000; // From this length a list drawn whole draws its rows with content-visibility
+// (C308 FO-2): a short list keeps its rows as they are.
+
+const ROWS_VISIBILITY_FROM = 100; // The first range, before anything is measured, and the rows kept beyond the
+// visible ones on each side, so a key or a quick scroll finds rows drawn.
+
+const ROWS_WINDOW_INITIAL = 60;
+const ROWS_WINDOW_MARGIN = 20;
+
+const clamp = ({
+  first = 0,
+  last = 0
+} = {}, count = 0) => {
+  const lastIndex = Math.max(0, count - 1);
+  const from = Math.min(Math.max(0, Math.floor(first)), lastIndex);
+  const to = Math.min(Math.max(from, Math.floor(last)), lastIndex);
+  return {
+    first: from,
+    last: to
+  };
+};
+
+function rowsWindow({
+  body,
+  rows,
+  onMove = null,
+  from = ROWS_WINDOW_FROM,
+  initial = ROWS_WINDOW_INITIAL,
+  margin = ROWS_WINDOW_MARGIN,
+  guess = 40,
+  clip = null,
+  key = null,
+  snap = null,
+  place = null
+} = {}) {
+  let windowed = false;
+  let count = 0;
+  let height = 0;
+  let range = null;
+  let frame = 0;
+  let abort = null; // The entry a key went to (reveal): the range stays around it until the page
+  // scrolls -- the focus that follows scrolls the row into view. Without it,
+  // the drawing after reveal measured the window still showing the old rows
+  // and put the range back there, and the row the key went to was gone.
+
+  let held = null; // The rows' box is watched for its size: rows that draw themselves after
+  // the list measured them (a row's own element, a late font) change the row
+  // height, and the spacers follow without waiting for a scroll.
+
+  let observer = null;
+  let observed = null; // Measured heights by entry key (FO2-4), and the sums of heights before
+  // each entry, made again when a height or the length changed.
+
+  const heights = new Map();
+  let measuredTotal = 0;
+  let sums = null;
+  let threshold = from; // An entry not measured yet: the average of every entry measured so far
+  // (it settles as more are measured), else of the rows drawn, else the guess.
+
+  const rowHeight = () => heights.size ? measuredTotal / heights.size : height || guess;
+
+  const keyOf = index => typeof key === 'function' ? key(index) : undefined;
+
+  const topOf = (element, box) => {
+    if (typeof place !== 'function') return box.top;
+    const at = Number(place(element));
+    return Number.isFinite(at) ? at : box.top;
+  };
+
+  const heightOf = index => {
+    const id = keyOf(index);
+    return id !== undefined && heights.has(id) ? heights.get(id) : rowHeight();
+  };
+
+  function offsets() {
+    if (sums && sums.length === count + 1) return sums;
+    sums = new Float64Array(count + 1);
+
+    for (let index = 0; index < count; index += 1) sums[index + 1] = sums[index] + heightOf(index);
+
+    return sums;
+  } // The first entry whose bottom is below the place (px from the body's top).
+
+
+  function indexAt(place) {
+    const at = offsets();
+    let low = 0;
+    let high = count - 1;
+
+    while (low < high) {
+      const middle = low + high >> 1;
+      if (at[middle + 1] > place) high = middle;else low = middle + 1;
+    }
+
+    return low;
+  }
+
+  const snapped = next => {
+    if (typeof snap !== 'function') return next;
+    const first = Math.max(0, Math.min(next.first, Math.floor(Number(snap(next.first)) || 0)));
+    return {
+      first,
+      last: next.last
+    };
+  };
+
+  function slice(total = 0) {
+    const length = Math.max(0, Math.floor(Number(total) || 0));
+    if (length !== count) sums = null;
+    count = length;
+
+    if (count < threshold) {
+      windowed = false;
+      range = null;
+      return null;
+    }
+
+    windowed = true;
+    range = clamp(snapped(clamp(range ?? {
+      first: 0,
+      last: initial - 1
+    }, count)), count);
+    const at = offsets();
+    return {
+      first: range.first,
+      last: range.last,
+      before: at[range.first],
+      after: Math.max(0, at[count] - at[range.last + 1])
+    };
+  } // Which rows a person can see: the body's place against the window and the
+  // box that scrolls it, in row heights. null when nothing can be read.
+
+
+  function seen() {
+    const box = body?.();
+    if (!box || !count) return null;
+    const place = box.getBoundingClientRect();
+    const view = box.ownerDocument?.defaultView ?? globalThis;
+    let top = 0;
+    let bottom = view.innerHeight || box.ownerDocument?.documentElement?.clientHeight || 0;
+    const scroller = typeof clip === 'function' ? clip() : (0,_reading_position_js__WEBPACK_IMPORTED_MODULE_0__.scrollerOf)(box);
+
+    if (scroller) {
+      const edge = scroller.getBoundingClientRect();
+      top = Math.max(top, edge.top);
+      bottom = Math.min(bottom, edge.bottom);
+    }
+
+    const first = indexAt(top - place.top);
+    const last = Math.max(first, indexAt(bottom - place.top));
+    return {
+      first,
+      last
+    };
+  }
+
+  function moved() {
+    if (typeof onMove === 'function') onMove({ ...range
+    });
+    return true;
+  }
+
+  function sync() {
+    if (!windowed) return false;
+    let changed = false;
+    const drawn = rows?.() ?? [];
+
+    if (drawn.length) {
+      const boxes = drawn.map(one => {
+        const box = one.getBoundingClientRect();
+        const top = topOf(one, box);
+        return {
+          top,
+          bottom: top + box.height,
+          height: box.height
+        };
+      });
+      const total = boxes[boxes.length - 1].bottom - boxes[0].top;
+      const measured = total / drawn.length; // With keys the entries measured stand for the rest (rowHeight), so the
+      // average of the rows drawn now moves nothing.
+
+      if (measured > 0 && Math.abs(measured - height) > 0.5) {
+        height = measured;
+
+        if (typeof key !== 'function') {
+          sums = null;
+          changed = true;
+        }
+      } // Each entry by its key (FO2-4): from its top to the next one's, the
+      // last its own height and the gap the others keep.
+
+
+      const base = range?.first ?? 0;
+
+      if (typeof key === 'function' && range && drawn.length === range.last - range.first + 1) {
+        let gaps = 0;
+
+        for (let index = 0; index < boxes.length - 1; index += 1) gaps += Math.max(0, boxes[index + 1].top - boxes[index].bottom);
+
+        const gap = boxes.length > 1 ? gaps / (boxes.length - 1) : 0;
+        boxes.forEach((box, index) => {
+          const next = boxes[index + 1];
+          const own = next ? next.top - box.top : box.height + gap;
+          const id = keyOf(base + index);
+          if (id === undefined || !(own > 0)) return;
+
+          if (Math.abs((heights.get(id) ?? -1) - own) > 0.5) {
+            measuredTotal += own - (heights.get(id) ?? 0);
+            heights.set(id, own);
+            sums = null;
+            changed = true;
+          }
+        });
+      }
+    }
+
+    const view = seen();
+    if (!view) return changed ? moved() : false;
+    if (held !== null && (held < view.first || held > view.last)) return changed ? moved() : false;
+    held = null;
+    const now = range ?? {
+      first: 0,
+      last: initial - 1
+    };
+    const low = now.first > 0 ? now.first + margin / 2 : 0;
+    const high = now.last < count - 1 ? now.last - margin / 2 : count - 1;
+
+    if (view.first < low || view.last > high) {
+      const next = clamp(snapped(clamp({
+        first: view.first - margin,
+        last: view.last + margin
+      }, count)), count);
+
+      if (next.first !== now.first || next.last !== now.last) {
+        range = next;
+        changed = true;
+      }
+    }
+
+    return changed ? moved() : false;
+  } // A row reached by a key (Home, End, the next row past the drawn ones):
+  // the range is put around it. Answers whether the range moved.
+
+
+  function reveal(index) {
+    if (!windowed) return false;
+    const at = Math.min(Math.max(0, Math.floor(Number(index) || 0)), count - 1);
+    held = at;
+    const now = range ?? {
+      first: 0,
+      last: initial - 1
+    };
+    if (at >= now.first && at <= now.last) return false;
+    const span = Math.max(initial, now.last - now.first + 1);
+    const first = Math.max(0, Math.min(at - margin, count - span));
+    range = clamp(snapped({
+      first,
+      last: first + span - 1
+    }), count);
+    return moved();
+  }
+
+  function schedule() {
+    if (!windowed || frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      sync();
+    });
+  }
+
+  function watchSize() {
+    const box = body?.();
+    if (box === observed) return;
+    observer?.disconnect();
+    observed = box ?? null;
+    const Observer = box?.ownerDocument?.defaultView?.ResizeObserver ?? globalThis.ResizeObserver;
+    if (!box || typeof Observer !== 'function') return;
+    observer ??= new Observer(schedule);
+    observer.observe(box);
+  }
+
+  function start() {
+    watchSize();
+    if (abort) return;
+    abort = new AbortController();
+    const {
+      signal
+    } = abort;
+
+    const onScroll = () => {
+      held = null;
+      schedule();
+    }; // Any scroll box between the rows and the page moves them: listened once,
+    // in the capture phase, on the document.
+
+
+    const doc = body?.()?.ownerDocument ?? globalThis.document;
+    doc?.addEventListener('scroll', onScroll, {
+      capture: true,
+      passive: true,
+      signal
+    });
+    doc?.defaultView?.addEventListener('resize', onScroll, {
+      passive: true,
+      signal
+    });
+  }
+
+  function stop() {
+    observer?.disconnect();
+    observed = null;
+    abort?.abort();
+    abort = null;
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
+  }
+
+  return {
+    slice,
+    sync,
+    reveal,
+    start,
+    stop,
+
+    get windowed() {
+      return windowed;
+    },
+
+    get count() {
+      return count;
+    },
+
+    get range() {
+      return range ? { ...range
+      } : null;
+    },
+
+    get rowHeight() {
+      return rowHeight();
+    },
+
+    // The length from which the list is windowed; Infinity turns the window
+    // off (sf-list rows-window="off", FO2-3).
+    get from() {
+      return threshold;
+    },
+
+    set from(value) {
+      const next = Number(value);
+      threshold = Number.isNaN(next) ? ROWS_WINDOW_FROM : Math.max(1, next);
+    }
+
+  };
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (rowsWindow);
 
 /***/ },
 
@@ -1814,16 +2679,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5b8371b87515");
 /* harmony import */ var _core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6978f1cc153b");
 /* harmony import */ var _core_js_menu_open_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("8d229b7c92e9");
-/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("1c69b52a2c3c");
-/* harmony import */ var _list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("50e7fd61ac57");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("2677706b5ec9");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("31dd7f648272");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_6__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_rows_window_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d3f52a822348");
+/* harmony import */ var _core_js_files_drop_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3180ca98c567");
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("1c69b52a2c3c");
+/* harmony import */ var _list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("50e7fd61ac57");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("2677706b5ec9");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("31dd7f648272");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__);
 // A list a person acts on: a person's conversations, letters, templates,
 // files, members, versions -- rows from data, each one a title and a quiet
 // second line, which one is open, a few things one can do to a row. The block
@@ -1865,6 +2732,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // core/js/element-manifest.js, its words are lang/<locale>.json, the actions
 // answer outcomes, and the events take the vocabulary's verbs (open, apply,
 // rename, load-more).
+
+
 
 
 
@@ -2013,9 +2882,9 @@ const pageArguments = (first, second) => {
   };
 };
 
-const ListElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_8__, {
+const ListElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__.files,
   source: "ru"
 });
 let listCount = 0;
@@ -2043,12 +2912,41 @@ class SfList extends ListElement {
     this._focusAfter = null;
     this._stopEdge = null;
     this._edge = null;
-    this._dayTimer = 0;
+    this._dayTimer = 0; // A long list draws the rows in view (FO-2, core/js/rows-window.js):
+    // a list of 1 000 entries or more (C308), the entries a person can see and 20
+    // on each side, two spacers standing for the rest. A grouped list is
+    // one run of «heading, its rows» (FO2-1); a range never starts inside
+    // a group without its heading. Each entry's height is kept by its id
+    // (FO2-4). rows-window="off" draws every row (FO2-3).
+
+    this._entries = [];
+    this._rowsWindow = (0,_core_js_rows_window_js__WEBPACK_IMPORTED_MODULE_5__.rowsWindow)({
+      body: () => this.querySelector(":scope > .sf-list__frame [data-sf-rows-window]"),
+      rows: () => [...this.querySelectorAll([":scope > .sf-list__frame .sf-list__rows[data-sf-rows-window] > .sf-list__row", ":scope > .sf-list__frame .sf-list__body[data-sf-rows-window] > .sf-list__group > .sf-list__heading", ":scope > .sf-list__frame .sf-list__body[data-sf-rows-window] > .sf-list__group > .sf-list__rows > .sf-list__row"].join(", "))],
+      onMove: () => this.requestComponentUpdate("window"),
+      key: index => this._entries[index]?.key,
+      snap: index => this._entries[index]?.head ?? index,
+      // A sticky heading reads where it stuck (sticky-headings): its
+      // place in the flow is the top of its group's content box.
+      place: element => {
+        if (!element.classList.contains("sf-list__heading")) return element.getBoundingClientRect().top;
+        const group = element.parentElement;
+        const style = getComputedStyle(group);
+        return group.getBoundingClientRect().top + (parseFloat(style.borderTopWidth) || 0) + (parseFloat(style.paddingTop) || 0) + (parseFloat(getComputedStyle(element).marginTop) || 0);
+      },
+      guess: 40
+    }); // The rows chosen (selection many, 1.22.0): ids, and the row a Shift
+    // range starts from.
+
+    this._chosen = new Set();
+    this._lastPicked = null;
+    this._shiftPress = false;
+    this._selectionActions = [];
     listCount += 1;
     this._uid = `sf-list-${listCount}`; // A value set as a property before the element was defined is an own
     // property that would hide the accessor; it is taken through it.
 
-    for (const name of ["items", "actions", "groups"]) {
+    for (const name of ["items", "actions", "groups", "chosen", "selectionActions"]) {
       if (!Object.prototype.hasOwnProperty.call(this, name)) continue;
       const early = this[name];
       delete this[name];
@@ -2077,7 +2975,146 @@ class SfList extends ListElement {
     const seen = new Set();
     this._items = (Array.isArray(value) ? value : []).filter(item => item && item.id != null && !seen.has(String(item.id)) && seen.add(String(item.id))).map(normalItem);
     if (this._editing && !seen.has(this._editing)) this._editing = null;
+    this.keepChosen();
     this.requestComponentUpdate("items");
+  } // ── choosing several rows (1.22.0; C167 (5), C150 (9), Larena LF-10) ────
+
+  /** The ids of the rows chosen, in the list's order (selection many). */
+
+
+  get chosen() {
+    return this._items.filter(item => this._chosen.has(item.id)).map(item => item.id);
+  }
+  /** A page may choose rows: a list of ids, or ids separated by commas or spaces. */
+
+
+  set chosen(value) {
+    const list = Array.isArray(value) ? value : String(value ?? "").split(/[\s,]+/u);
+    this._chosen = new Set(list.map(one => String(one)).filter(Boolean));
+    this._lastPicked = null;
+    this.keepChosen();
+    this.requestComponentUpdate("chosen");
+  }
+  /** The actions of the choice's bar, sf-bulk-actions' own shape: [{id, text, icon?, status?, confirm?, undo?}]. */
+
+
+  get selectionActions() {
+    return this._selectionActions.map(action => ({ ...action
+    }));
+  }
+
+  set selectionActions(value) {
+    let list = value;
+
+    if (typeof list === "string") {
+      try {
+        list = JSON.parse(list);
+      } catch {
+        list = [];
+      }
+    }
+
+    this._selectionActions = Array.isArray(list) ? list.filter(action => action && action.id && action.text).map(action => ({ ...action,
+      id: String(action.id)
+    })) : [];
+    this.requestComponentUpdate("selection-actions");
+  }
+
+  get selecting() {
+    return this.getAttribute("selection") === "many";
+  } // A chosen row that left the list is no longer chosen: the ids kept are
+  // the rows the list holds (items not yet given keep the page's choice).
+
+
+  keepChosen() {
+    if (!this._chosen.size || !this._sfDataGiven) return;
+    const ids = new Set(this._items.map(item => item.id));
+    const before = this._chosen.size;
+
+    for (const id of [...this._chosen]) if (!ids.has(id)) this._chosen.delete(id);
+
+    if (this._chosen.size !== before) this.choiceChanged();
+  } // A press, Space or the check box on a row: the row is chosen or let go;
+  // with Shift every row from the last one pressed to this one is chosen.
+  // A disabled row is never chosen.
+
+
+  toggleChosen(id, range = false) {
+    // As an action it takes {id, range} too (data-sf-action, §4.4).
+    if (id && typeof id === "object") ({
+      id,
+      range = false
+    } = id);
+    if (!this.selecting) return refused("selection");
+    const key = String(id);
+
+    const order = this._items.filter(item => item.disabled !== true).map(item => item.id);
+
+    if (!order.includes(key)) return refused("unknown");
+
+    if (range && this._lastPicked !== null && order.includes(this._lastPicked)) {
+      const [from, to] = [order.indexOf(this._lastPicked), order.indexOf(key)].sort((a, b) => a - b);
+
+      for (const one of order.slice(from, to + 1)) this._chosen.add(one);
+    } else if (this._chosen.has(key)) {
+      this._chosen.delete(key);
+    } else {
+      this._chosen.add(key);
+    }
+
+    this._lastPicked = key;
+    this.choiceChanged();
+    return applied();
+  }
+  /** Lets every row go (the bar's ×, Escape, or the page). */
+
+
+  clearSelection() {
+    if (!this._chosen.size) return refused("empty");
+
+    this._chosen.clear();
+
+    this._lastPicked = null;
+    this.choiceChanged();
+    return applied();
+  } // The choice is the host's to act on: select {chosen, count, total}.
+
+
+  choiceChanged() {
+    this.requestComponentUpdate("chosen");
+    this.sfEmit("select", {
+      chosen: this.chosen,
+      count: this._chosen.size,
+      total: this._items.length
+    });
+  } // Whether the press that is being answered held Shift (a click, or the
+  // check box's change after it), read once.
+
+
+  takeShift() {
+    const shift = this._shiftPress;
+    this._shiftPress = false;
+    return shift;
+  } // The bar's action is the list's apply over the chosen rows; a page that
+  // cancels it keeps the bar's own handling (the question, the undo).
+
+
+  onBulkAction(event) {
+    event.stopPropagation();
+    const id = String(event.detail?.id ?? "");
+    if (!id) return;
+    const delivered = this.sfEmit("apply", {
+      action: id,
+      scope: "selection",
+      ids: this.chosen
+    });
+    if (!delivered) event.preventDefault();
+  }
+
+  onBulkClear(event) {
+    event.stopPropagation();
+    this.clearSelection();
+    this.focusRow(this._lastPicked ?? this.chosen[0] ?? null);
   }
   /**
    * The row actions, in the shared menu after «Rename»: [{id, text, icon?,
@@ -2191,7 +3228,7 @@ class SfList extends ListElement {
 
     if (!this._ownMoreNoted) {
       this._ownMoreNoted = true;
-      (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_5__.noteDeprecated)({
+      (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__.noteDeprecated)({
         component: "sf-list",
         tag: "sf-list",
         kind: "attribute",
@@ -2524,11 +3561,93 @@ class SfList extends ListElement {
         shape: learned ? learned.shape : "circle"
       }
     };
-  }
+  } // The range a long list draws, or null (FO-2): a list that is not
+  // loading and has no row being renamed. An ungrouped list is its rows; a
+  // grouped one is one run of each group's heading and rows (FO2-1), and the
+  // range says, per group, the rows it draws (parts: group key -> [from,
+  // to], rows of the group). rows-window="off" draws every row (FO2-3).
+
+
+  windowOf(sections, loading) {
+    // C308 FO-2: from 1 000 entries, or the list's own rows-window-from;
+    // rows-window="off" never.
+    const own = Number.parseInt(this.getAttribute("rows-window-from") ?? "", 10);
+    this._rowsWindow.from = this.getAttribute("rows-window") === "off" ? Infinity : own > 0 ? own : _core_js_rows_window_js__WEBPACK_IMPORTED_MODULE_5__.ROWS_WINDOW_FROM;
+    const flat = sections.length === 1 && sections[0].key === "all";
+    const entries = [];
+
+    for (const group of sections) {
+      const head = entries.length;
+      if (!flat) entries.push({
+        key: `head:${group.key}`,
+        head,
+        group: group.key,
+        row: -1
+      });
+      group.items.forEach((item, row) => entries.push({
+        key: `row:${item.id}`,
+        head: flat ? entries.length : head,
+        group: group.key,
+        row
+      }));
+    }
+
+    this._entries = entries;
+
+    if (loading || this._editing) {
+      this._rowsWindow.slice(0);
+
+      return null;
+    }
+
+    const slice = this._rowsWindow.slice(entries.length);
+
+    if (!slice) return null;
+    const parts = new Map();
+
+    for (let index = slice.first; index <= slice.last; index += 1) {
+      const entry = entries[index];
+      if (!entry) continue;
+      const part = parts.get(entry.group) ?? [Infinity, -1];
+      if (entry.row >= 0) parts.set(entry.group, [Math.min(part[0], entry.row), Math.max(part[1], entry.row)]);else parts.set(entry.group, part);
+    }
+
+    return { ...slice,
+      flat,
+      parts
+    };
+  } // Home and End in a long list go to the whole list's first and last row,
+  // which may not be drawn: the range is put there first (FO-2). The
+  // arrows find the next row drawn, since the range keeps rows beyond the
+  // visible ones and moves as the focused row scrolls into view.
+
+
+  onWindowKey = event => {
+    if (!this._rowsWindow.windowed || event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    if (event.key !== "Home" && event.key !== "End") return;
+    const row = event.target?.closest?.(".sf-list-item[data-sf-list-roving]");
+    if (!row || event.target !== row || !this.contains(row)) return;
+    const sections = this.arranged();
+    const items = sections.flatMap(group => group.items);
+    const item = event.key === "Home" ? items[0] : items.at(-1);
+    if (!item) return;
+    event.preventDefault();
+    event.stopPropagation();
+
+    const at = this._entries.findIndex(entry => entry.key === `row:${item.id}`);
+
+    this._rowsWindow.reveal(event.key === "Home" ? 0 : Math.max(0, at)); // The row is drawn with the moved range and draws itself a frame or
+    // more later: it is waited for longer than a renamed row.
+
+
+    this.focusRow(item.id, 30);
+  };
 
   templateContext() {
     const loading = this.loading;
+    const sections = this.arranged();
     const empty = !loading && this._items.length === 0;
+    const range = this.windowOf(sections, loading);
     return {
       component: this,
       uid: this._uid,
@@ -2538,7 +3657,11 @@ class SfList extends ListElement {
       size: this.size,
       noWrap: this.noWrap === true,
       divided: this.divided === true,
-      sections: this.arranged(),
+      sections,
+      window: range,
+      // Drawn whole, a long list's rows skip layout and paint off
+      // screen (content-visibility, C308 FO-2); find and print reach them.
+      rowsAll: !range && !loading && this._entries.length >= _core_js_rows_window_js__WEBPACK_IMPORTED_MODULE_5__.ROWS_VISIBILITY_FROM,
       leading: this.leadingPlace(),
       avatarOf,
       countOf,
@@ -2555,6 +3678,15 @@ class SfList extends ListElement {
       }),
       grouped: this.groupBy === "day" || this.groupBy === "key",
       selected: this.selected,
+      selecting: this.selecting,
+      chosen: this.selecting ? this._chosen : new Set(),
+      pickLabel: text => this.sfWord("pick-label", {
+        vars: {
+          text
+        }
+      }),
+      rowCount: this._items.length,
+      selectionActions: this._selectionActions,
       editing: this._editing,
       loading,
       // The skeleton's rows take the shape of the rows the list has
@@ -2584,7 +3716,7 @@ class SfList extends ListElement {
   }
 
   template() {
-    return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_6__.renderListTemplate)(this.templateContext());
+    return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_8__.renderListTemplate)(this.templateContext());
   } // The rows are drawn; the list's sheets may still be on their way. The
   // width is watched from now (C47): when the sheet comes, the observer
   // measures the frame before it is painted with it, so no frame of a
@@ -2598,6 +3730,15 @@ class SfList extends ListElement {
 
   afterRender(changed) {
     super.afterRender?.(changed);
+
+    if (this._rowsWindow.windowed) {
+      this._rowsWindow.start();
+
+      this._rowsWindow.sync();
+    } else {
+      this._rowsWindow.stop();
+    }
+
     this.watchEnd();
     this.watchWidth(); // The keys a row answers, said to assistive technology on the row itself
     // (sf-list-item draws the row; an attribute it does not bind stays).
@@ -2637,26 +3778,57 @@ class SfList extends ListElement {
 
   onConnected() {
     super.onConnected?.();
-    this.watchDay(); // A long press on a row under a finger opens its menu, as its «⋯»
+    this.watchDay(); // Files from the computer on the whole list (owner decision C308
+    // FO-1): a folder, a chat, attachments, when the list's owner turns it
+    // on (accept-files); the one drop overlay of the page says where they
+    // go; a zone inside the list (a row's own) wins. The list uploads
+    // nothing itself: attach asks the host.
+
+    this._filesDrop ??= (0,_core_js_files_drop_js__WEBPACK_IMPORTED_MODULE_6__.filesDrop)(this, {
+      target: () => this.acceptFiles === true || this.hasAttribute("accept-files") ? this : null,
+      overlay: () => this.sfWord("files-drop-text", {
+        vars: {
+          target: this.label || this.sfWord("label")
+        }
+      }),
+      onFiles: (files, {
+        skipped
+      }) => {
+        if (files.length || skipped.length) this.sfEmit("attach", {
+          files,
+          skipped
+        });
+      }
+    });
+    this.addEventListener("keydown", this.onWindowKey, true); // A long press on a row under a finger opens its menu, as its «⋯»
     // does (owner decision C148 (6)); the click its release sends opens
     // nothing. No swipe.
 
     if (!this._longPress) {
-      this._longPress = (0,_list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_7__.watchLongPress)(this, {
+      this._longPress = (0,_list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_9__.watchLongPress)(this, {
+        // With selection many a long press chooses the row (C150 (9),
+        // a phone has no hover); its menu stays on its «⋯».
         accepts: event => {
           const row = event.target.closest?.(".sf-list-item[data-sf-list-roving]");
           if (!row || !this.contains(row) || event.target.closest(".sf-list__actions, .sf-list__rename")) return false;
 
           const item = this._items.find(one => one.id === this.idOf(row));
 
+          if (item && this.selecting) return item.disabled !== true;
           return Boolean(item) && this.hasMenu(item);
         },
         press: event => {
           const row = event.target.closest?.(".sf-list-item[data-sf-list-roving]");
           const id = this.idOf(row);
-          if (id != null) this.openMenu(id);
+          if (id == null) return;
+          if (this.selecting) this.toggleChosen(id);else this.openMenu(id);
         }
-      });
+      }); // Whether a press held Shift, for the row's open and the check
+      // box's change that follow it (a range, C150 (9)).
+
+      this.addEventListener("click", event => {
+        this._shiftPress = event.shiftKey === true;
+      }, true);
       this.addEventListener("click", event => {
         if (!this._longPress.swallowed()) return;
         event.preventDefault();
@@ -2691,7 +3863,13 @@ class SfList extends ListElement {
   }
 
   onDisconnected() {
+    this._filesDrop?.stop();
+    this._filesDrop = null;
     this.unwatchEnd();
+
+    this._rowsWindow.stop();
+
+    this.removeEventListener("keydown", this.onWindowKey, true);
     this._widthObserver?.disconnect();
     this._widthObserver = null;
     cancelAnimationFrame(this._fitFrame);
@@ -2964,10 +4142,20 @@ class SfList extends ListElement {
   onRowOpen(event) {
     event.stopPropagation();
     const id = String(event.detail?.id ?? "");
-    if (!id || !this._items.some(item => item.id === id)) return;
+    if (!id || !this._items.some(item => item.id === id)) return; // Once a row is chosen a press chooses (C150 (9)); Shift chooses a
+    // range from the last row pressed. Enter still opens the row.
+
+    const trigger = event.detail?.trigger ?? "pointer";
+    const shift = this.takeShift();
+
+    if (this.selecting && trigger !== "keyboard" && (this._chosen.size || shift)) {
+      this.toggleChosen(id, shift);
+      return;
+    }
+
     this.sfEmit("open", {
       id,
-      trigger: event.detail?.trigger ?? "pointer"
+      trigger
     });
   }
 
@@ -2992,8 +4180,23 @@ class SfList extends ListElement {
       return;
     }
 
-    const row = event.target.closest?.(".sf-list-item[data-sf-list-roving]");
-    if (!row || event.target !== row) return;
+    const row = event.target.closest?.(".sf-list-item[data-sf-list-roving]"); // Escape lets the choice go (C295); the key goes no further, so a
+    // panel around the list stays open.
+
+    if (event.key === "Escape" && this.selecting && this._chosen.size && !event.shiftKey) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.clearSelection();
+      return;
+    }
+
+    if (!row || event.target !== row) return; // Space chooses the row, Shift+Space a range (selection many).
+
+    if (event.key === " " && this.selecting) {
+      event.preventDefault();
+      this.toggleChosen(this.idOf(row), event.shiftKey);
+      return;
+    }
 
     if (event.key === forward && !event.shiftKey) {
       const button = row.closest(".sf-list__row")?.querySelector(":scope > .sf-list__actions");
@@ -3209,9 +4412,35 @@ const metaContent = (context, item, group) => {
                          status=${BADGE_STATUS[badge.tone]} text=${badge.text}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${count ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-list__count" line=${line} appearance="tonal" tight
                          text=${count > context.countCap ? `${context.countCap}+` : String(count)}
                          aria-label=${context.countLabel(count)}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${unreadWord ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list__unread sr-only">${context.unreadText}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`;
+}; // Choosing several rows (1.22.0, owner decision C167 (5) by the rule of
+// C150 (9), Larena LF-10): with selection="many" each row has a check box at
+// its start, shown under the pointer and on the focused row, and on every row
+// once anything is chosen. It is the class checkbox, not a Tab stop of its own
+// (the rows stay one stop; Space on a row chooses it). Its change is the
+// list's, never the page's change.
+
+
+const pick = (context, item, text) => {
+  if (!context.selecting) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const {
+    component
+  } = context;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<label class="sf-list__pick sf-checkbox sf-checkbox--size-${context.size === "1/2" ? "1/2" : "1"} flex"
+            @click=${event => event.stopPropagation()}>
+        <span class="sf-checkbox-box flex">
+            <input type="checkbox" tabindex="-1" .checked=${context.chosen.has(item.id)}
+                   ?disabled=${item.disabled === true}
+                   aria-label=${context.pickLabel(text)}
+                   @change=${event => {
+    event.stopPropagation();
+    component.toggleChosen(item.id, component.takeShift());
+  }}>
+            <span class="sf-icon" aria-hidden="true"></span>
+        </span>
+    </label>`;
 };
 
-const row = (context, item, group) => {
+const row = (context, item, group, place = null) => {
   const {
     component
   } = context;
@@ -3282,8 +4511,11 @@ const row = (context, item, group) => {
                     ?disabled=${disabled}
                     ?divided=${context.divided}
             ><span slot="trailing" class="sf-list__meta">${metaContent(context, item, group)}</span></sf-list-item>`;
+  const chosen = context.selecting && context.chosen.has(item.id);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <li class="sf-list__row ${current ? "sf-list__row--current" : ""} ${context.unreadOf(item) ? "sf-list__row--unread" : ""}" data-id=${item.id}>
+        <li class="sf-list__row ${current ? "sf-list__row--current" : ""} ${context.unreadOf(item) ? "sf-list__row--unread" : ""} ${chosen ? "sf-list__row--chosen" : ""}" data-id=${item.id}
+            aria-posinset=${place ? place.at : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} aria-setsize=${place ? place.of : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+            ${pick(context, item, text)}
             ${listItem}
             ${menu ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
                         type="button"
@@ -3296,13 +4528,37 @@ const row = (context, item, group) => {
                 ><sf-icon icon="more_horiz" aria-hidden="true"></sf-icon></button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         </li>
     `;
-};
+}; // A long list draws the rows in view (FO-2, core/js/rows-window.js): the
+// range, and two spacers standing for the rows above and below it, so the
+// scroll bar and the scroll position are the whole list's. A drawn row says
+// its place in its list (aria-posinset, aria-setsize); the spacers are not
+// read. An ungrouped list's spacers stand in its rows; a grouped list
+// (FO2-1) draws the groups the range reaches, each with its heading and the
+// rows of it in the range, between two spacers in the list's body.
 
-const rows = (context, group, labelled) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <ul class="sf-list__rows" aria-labelledby=${labelled ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing} aria-label=${labelled ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.label}>
-        ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(group.items, item => item.id, item => row(context, item, group))}
+
+const spacer = (height, edge, tag = "li") => tag === "li" ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<li class="sf-list__spacer" data-sf-rows-spacer=${edge} aria-hidden="true"
+        style=${`block-size: ${Math.max(0, Math.round(height))}px`}></li>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list__spacer" data-sf-rows-spacer=${edge} aria-hidden="true"
+        style=${`block-size: ${Math.max(0, Math.round(height))}px`}></div>`;
+
+const rows = (context, group, labelled) => {
+  const win = context.window?.flat && group.key === "all" ? context.window : null;
+  const part = context.window && !context.window.flat ? context.window.parts.get(group.key) : null;
+  const from = win ? win.first : part ? part[0] : 0;
+  const items = win ? group.items.slice(win.first, win.last + 1) : part ? part[1] < 0 ? [] : group.items.slice(part[0], part[1] + 1) : group.items;
+  const placed = Boolean(win || part);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <ul class="sf-list__rows" aria-labelledby=${labelled ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing} aria-label=${labelled ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.label}
+        data-sf-rows-window=${win ? `${win.first}-${win.last}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+        ${win ? spacer(win.before, "before") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(items, item => item.id, (item, index) => row(context, item, group, placed ? {
+    at: from + index + 1,
+    of: group.items.length
+  } : null))}
+        ${win ? spacer(win.after, "after") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </ul>
-`; // The rows on their way (owner decision C130; list and feed study LF-2): the
+`;
+}; // The rows on their way (owner decision C130; list and feed study LF-2): the
 // list's own rows, sf-list-item of the list's size, so a skeleton row is as
 // tall as the row that replaces it -- one line, or the caption row (C49: 48,
 // compact 44, 60 under a finger) -- and nothing moves when the rows arrive.
@@ -3375,7 +4631,7 @@ function renderListTemplate(context) {
     component
   } = context;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="sf-list sf-list__frame sf-list--size-${context.size}${context.leading?.wide ? " sf-list--lead-wide" : ""}${context.noWrap ? " sf-list--no-wrap" : ""} ${context.empty ? "sf-list--empty" : ""}"
+        <div class="sf-list sf-list__frame sf-list--size-${context.size}${context.leading?.wide ? " sf-list--lead-wide" : ""}${context.noWrap ? " sf-list--no-wrap" : ""} ${context.empty ? "sf-list--empty" : ""}${context.selecting ? " sf-list--selecting" : ""}${context.chosen.size ? " sf-list--choosing" : ""}"
              role=${context.grouped ? "group" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
              aria-label=${context.grouped ? context.label : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
              aria-busy=${context.loading ? "true" : "false"}>
@@ -3383,16 +4639,20 @@ function renderListTemplate(context) {
             ${context.loading ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${skeleton(context)}<p class="sr-only" role="status">${context.loadingText}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             <div class="sf-list__body"
                  data-sf-list
+                 data-sf-rows-window=${context.window && !context.window.flat ? `${context.window.first}-${context.window.last}` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                 ?data-sf-rows-all=${context.rowsAll === true}
                  ?hidden=${context.empty || context.loading}
                  @keydown=${event => component.onKey(event)}
                  @sf-list-item-open=${event => component.onRowOpen(event)}>
-                ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(context.sections, group => group.key, group => context.grouped ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+                ${context.window && !context.window.flat && context.window.before > 0 ? spacer(context.window.before, "before", "div") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(context.window && !context.window.flat ? context.sections.filter(group => context.window.parts.has(group.key)) : context.sections, group => group.key, group => context.grouped ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                         <section class="sf-list__group" data-group=${group.key}>
                             <div class=${`sf-group-heading sf-list__heading${context.size === "1" ? "" : ` sf-group-heading--size-${context.size}`}${context.stickyHeadings ? " sf-group-heading--sticky" : ""}`}
                                  role="heading" aria-level=${context.headingLevel}
                                  id=${`${context.uid}-${group.key.replace(/[^\w-]/gu, "_")}`}>${group.heading}${group.date ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)` <sf-time class="sf-group-heading-date" format="date" tooltip="none" datetime=${group.date}></sf-time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</div>
                             ${rows(context, group, `${context.uid}-${group.key.replace(/[^\w-]/gu, "_")}`)}
                         </section>` : rows(context, group, null))}
+                ${context.window && !context.window.flat && context.window.after > 0 ? spacer(context.window.after, "after", "div") : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             </div>
             ${context.emptyContent // The page's own empty state stays in the document while the
   // list has rows, hidden: a page that looks it up by id to give
@@ -3414,6 +4674,21 @@ function renderListTemplate(context) {
                 <span class="sr-only" role="status">${context.loadingMore ? context.loadingMoreText : ""}</span>
                 <span class="sf-list__end" aria-hidden="true"></span>
             </div>
+            ${context.selecting // The bar of the choice is sf-bulk-actions (C295): at the
+  // list's bottom, at its width, sticking to the bottom of the
+  // scroll; hidden while nothing is chosen. Its action is the
+  // list's apply {action, scope: selection, ids}; its × and
+  // Escape clear the choice.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-bulk-actions
+                        class="sf-list__bulk"
+                        place="dock"
+                        size=${context.size}
+                        count=${String(context.chosen.size)}
+                        page-count=${String(context.rowCount)}
+                        .actions=${context.selectionActions}
+                        @sf-bulk-actions-action=${event => component.onBulkAction(event)}
+                        @sf-bulk-actions-clear=${event => component.onBulkClear(event)}
+                ></sf-bulk-actions>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         </div>
     `;
 }
@@ -3619,14 +4894,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"B","kb":"KB","mb":"MB
 /***/ "2677706b5ec9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.21.4","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"unread":{"type":"boolean","optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"leading":{"type":"enum","values":["auto","none","icon","avatar"],"default":"auto"},"lines":{"type":"enum","values":["auto","1","2"],"default":"auto"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"time-format":{"type":"enum","values":["none","auto","relative","exact"],"default":"none"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"sticky-headings":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.25.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"unread":{"type":"boolean","optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"selection":{"type":"enum","values":["none","many"],"default":"none"},"selection-actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"status":{"type":"enum","values":["","danger"],"optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"leading":{"type":"enum","values":["auto","none","icon","avatar"],"default":"auto"},"lines":{"type":"enum","values":["auto","1","2"],"default":"auto"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"time-format":{"type":"enum","values":["none","auto","relative","exact"],"default":"none"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"sticky-headings":{"type":"boolean","default":false},"rows-window":{"type":"enum","values":["auto","off"],"default":"auto"},"rows-window-from":{"type":"number","default":1000},"accept-files":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{"chosen":{"type":"list","default":[],"of":"id"}},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry","selection"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true},"attach":{"carries":{"files":"list","skipped":"list"}},"select":{"carries":{"chosen":{"type":"list","of":"id"},"count":"number","total":"number"}}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{},"clear-selection":{},"toggle-chosen":{"with":{"id":"id","range":{"type":"boolean","optional":true}}}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "c1c5abcf20ed"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"List","runtime":{"actions-label":"Actions: {text}","count-label":{"one":"{n} unread","other":"{n} unread"},"empty-text":"Nothing here yet","label":"List","loading-more-text":"Loading…","loading-text":"Loading the list","more-text":"Show more","pinned-text":"Pinned","rename-label":"New name","rename-text":"Rename","undated-text":"No date","ungrouped-text":"Other","unread-text":"unread","untitled-text":"Untitled"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"List","runtime":{"actions-label":"Actions: {text}","count-label":{"one":"{n} unread","other":"{n} unread"},"empty-text":"Nothing here yet","files-drop-text":"Release to upload to “{target}”","label":"List","loading-more-text":"Loading…","loading-text":"Loading the list","more-text":"Show more","pick-label":"Choose {text}","pinned-text":"Pinned","rename-label":"New name","rename-text":"Rename","undated-text":"No date","ungrouped-text":"Other","unread-text":"unread","untitled-text":"Untitled"}}');
 
 /***/ }
 

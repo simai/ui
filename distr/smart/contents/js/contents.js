@@ -269,7 +269,14 @@ __webpack_require__.r(__webpack_exports__);
 //   Smart component holding it: a row menu of a table of size 1 is size 1);
 // - returnTo: where the focus goes when the menu closes (the row it acted
 //   on); left out, the menu gives the focus back to where it was, or to the
-//   anchor.
+//   anchor;
+// - align: 'start' (the default) lines the menu's start edge up with the
+//   anchor's, 'end' its end edge -- for a control at the end of a toolbar,
+//   whose menu would otherwise run past it towards the window's edge (view
+//   round 1, table group). Start and end follow the page's direction (in a
+//   right-to-left page 'end' is the left edge), and a menu that does not fit
+//   still flips to the other side and is shifted inside the window. At a
+//   point, 'end' puts the menu's end corner at the point.
 //
 // The menu is fetched by the Loader the first time (SF.Loader.ensure), one on
 // the page -- on the body, or in the open modal dialog the anchor is in, since
@@ -283,6 +290,7 @@ __webpack_require__.r(__webpack_exports__);
 // calls the published one.
 
 const SHARED = 'data-sf-menu-shared';
+const ALIGNS = new Set(['start', 'end']);
 
 function installMenuOpen() {
   let pending = null;
@@ -368,7 +376,9 @@ function installMenuOpen() {
       label = '',
       size = '',
       returnTo = null
-    } = options || {};
+    } = options || {}; // Logical, so a right-to-left page mirrors it; anything else is start.
+
+    const align = ALIGNS.has(options?.align) ? options.align : 'start';
     const atPoint = !(anchor instanceof Element);
     if (atPoint && !(Number.isFinite(Number(x)) && Number.isFinite(Number(y)))) return null;
     const doc = globalThis.document;
@@ -413,14 +423,15 @@ function installMenuOpen() {
       shown = pending;
       const mine = pending;
       const opening = atPoint ? typeof menu.openAt === 'function' ? menu.openAt(Number(x), Number(y), {
-        target: returnTo ?? undefined
+        target: returnTo ?? undefined,
+        align
       }) : menu.openFor(pointAnchor(Number(x), Number(y), returnTo), {
         side: 'block-end',
-        align: 'start',
+        align,
         focus: 'first'
       }) : menu.openFor(anchor, {
         side: 'block-end',
-        align: 'start',
+        align,
         focus: 'first'
       });
       Promise.resolve(opening).then(answer => {
@@ -1988,7 +1999,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-conte
 /***/ "98e539eba4a2"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.contents","tag":"sf-contents","version":"1.8.3","kind":"leaf","settings":{"layout":{"type":"enum","values":["auto","column","sheet","rail","bar"],"default":"auto"},"collapse":{"type":"enum","values":["sm","md","lg","xl"],"default":"lg"},"target":{"type":"string","default":""},"levels":{"type":"string","default":"2-3"},"items":{"type":"list","default":[],"of":{"id":"id","text":"string","level":{"type":"number","optional":true},"count":{"type":"number","optional":true},"status":{"type":"string","optional":true}}},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"sticky":{"type":"boolean","default":true},"line":{"type":"enum","values":["own","edge","none"],"default":"own"},"expand":{"type":"enum","values":["all","current"],"default":"all"},"overflow":{"type":"enum","values":["more","scroll"],"default":"more"},"hash":{"type":"enum","values":["choose","scroll","false"],"default":"choose"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":2}},"values":{"current":{"type":"id"}},"events":{"change":{"x-native":false,"carries":{"id":"id","previous":{"type":"id","nullable":true}}}},"actions":{"refresh":{},"toggle":{}},"host-states":{"data-open":"boolean","data-compact":"boolean","data-empty":"boolean"},"css-variables":{"--sf-contents-color":{"type":"color","state":"default"},"--sf-contents-current-color":{"type":"color","state":"current"},"--sf-contents-line-color":{"type":"color","state":"default"},"--sf-contents-background-color":{"type":"color","state":"default"},"--sf-contents-indent":{"type":"length","state":"default"},"--sf-contents-inset-inline":{"type":"length","state":"default"},"--sf-contents-gap":{"type":"length","state":"default"},"--sf-contents-inset-block-start":{"type":"length","state":"default"},"--sf-contents-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.contents","tag":"sf-contents","version":"1.8.4","kind":"leaf","settings":{"layout":{"type":"enum","values":["auto","column","sheet","rail","bar"],"default":"auto"},"collapse":{"type":"enum","values":["sm","md","lg","xl"],"default":"lg"},"target":{"type":"string","default":""},"levels":{"type":"string","default":"2-3"},"items":{"type":"list","default":[],"of":{"id":"id","text":"string","level":{"type":"number","optional":true},"count":{"type":"number","optional":true},"status":{"type":"string","optional":true}}},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"sticky":{"type":"boolean","default":true},"line":{"type":"enum","values":["own","edge","none"],"default":"own"},"expand":{"type":"enum","values":["all","current"],"default":"all"},"overflow":{"type":"enum","values":["more","scroll"],"default":"more"},"hash":{"type":"enum","values":["choose","scroll","false"],"default":"choose"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":2}},"values":{"current":{"type":"id"}},"events":{"change":{"x-native":false,"carries":{"id":"id","previous":{"type":"id","nullable":true}}}},"actions":{"refresh":{},"toggle":{}},"host-states":{"data-open":"boolean","data-compact":"boolean","data-empty":"boolean"},"css-variables":{"--sf-contents-color":{"type":"color","state":"default"},"--sf-contents-current-color":{"type":"color","state":"current"},"--sf-contents-line-color":{"type":"color","state":"default"},"--sf-contents-background-color":{"type":"color","state":"default"},"--sf-contents-indent":{"type":"length","state":"default"},"--sf-contents-inset-inline":{"type":"length","state":"default"},"--sf-contents-gap":{"type":"length","state":"default"},"--sf-contents-inset-block-start":{"type":"length","state":"default"},"--sf-contents-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

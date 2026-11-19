@@ -83,12 +83,29 @@ function syncFieldContract(root, control, {
 
   if (root.tagName === 'LABEL' && !root.hasAttribute('for')) {
     root.setAttribute('for', control.id);
+  } // A root that is not a label carries its label text as a <label> of its
+  // own (div.sf-input, 1.13.0): it points at the control too.
+
+
+  if (labelNode?.tagName === 'LABEL' && !labelNode.hasAttribute('for')) {
+    labelNode.setAttribute('for', control.id);
   } // Name the field by its visible label, not every hint or adjacent button.
   // Author-provided accessible names remain authoritative.
 
 
   if (labelNode?.textContent?.trim() && !control.hasAttribute('aria-label') && !control.hasAttribute('aria-labelledby')) {
-    if (!labelNode.id) labelNode.id = `${control.id}-label`;
+    // An id of its own: «<control>-label» may already name another element
+    // (a page that gave the field's root that id), and aria-labelledby would
+    // then read that element's whole text, the hint with it (DF-3).
+    if (!labelNode.id) {
+      const doc = labelNode.ownerDocument;
+      let id = `${control.id}-label`;
+
+      for (let n = 2; doc?.getElementById?.(id); n += 1) id = `${control.id}-label-${n}`;
+
+      labelNode.id = id;
+    }
+
     control.setAttribute('aria-labelledby', labelNode.id);
   }
 
@@ -366,6 +383,421 @@ function sizeStep(size) {
   const step = Number(top) / Number(bottom);
   return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
 }
+
+/***/ },
+
+/***/ "3180ca98c567"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILES_OVER_ATTRIBUTE: () => (/* binding */ FILES_OVER_ATTRIBUTE),
+/* harmony export */   NO_DRAG_QUERY: () => (/* binding */ NO_DRAG_QUERY),
+/* harmony export */   carriesFiles: () => (/* binding */ carriesFiles),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   filesDragWords: () => (/* binding */ filesDragWords),
+/* harmony export */   filesDrop: () => (/* binding */ filesDrop)
+/* harmony export */ });
+// Files from the computer dropped on an element (Framework order FO-1 of the
+// view set study, ui-control control/research/2026-11-17-view-round-1/
+// framework-orders.md; returns FO1-1..FO1-6 of the component study,
+// control/research/2026-11-18-framework-parts-fo). sf-file-upload,
+// sf-input-image, sf-tree, sf-input-rich and the set's sf-view each read
+// dataTransfer on their own: which drag carries files, the copy cursor, the
+// state while a file is held over the element, the files of a drop. This is
+// that reading, once:
+//
+//   const drop = filesDrop(element, {
+//     onFiles: (files, {event, target, skipped}) => {},
+//                                      once per drop that carries files
+//     onOver: (over, target) => {},    a file is held over the element (over
+//                                      the target), or no longer
+//     disabled: () => false,           the element takes nothing now: the cursor
+//                                      says no and no files are given
+//     target: (event) => node | null,  what under the pointer takes the files
+//                                      (a folder row of a tree); null takes
+//                                      nothing there. Given back with the files.
+//     folders: 'open' | 'skip',        a dropped folder: its files, read
+//                                      through the entries (open, the default),
+//                                      or left out and named in skipped
+//     mark: true,                      data-sf-files-over on the element
+//     overlay: () => text | null,      the one drop overlay of the page over the
+//                                      element while files are held over it,
+//                                      saying the text (C308 FO-1: «Отпустите,
+//                                      чтобы загрузить в «…»» from the
+//                                      component's language pack)
+//     follow: false,                   a host around its own zone (sf-file-upload
+//                                      and its area): it only follows the drag
+//                                      -- the over state while files are held
+//                                      over it, wherever inside they are taken
+//                                      -- and takes no files
+//   });
+//   drop.stop();
+//
+// While files are held over it the element carries data-sf-files-over (a
+// host state its sheet draws the drop zone by). Only a drag that carries
+// files is taken, so text or a row dragged across the element passes on to
+// whoever takes it. A drop that carries files is the element's even while it
+// is disabled (the browser would otherwise open the file in place of the
+// page), and gives nothing.
+//
+// Zones inside zones (FO1-1): the innermost zone under the pointer takes the
+// drop; an outer one sees it taken by a zone (a mark on the event, shared by
+// every bundle's copy) and gives nothing. A handler that only cancels the
+// event (a component's own area inside the zone) takes nothing from it. A
+// file dropped beside every zone (FO1-2) does not open in the tab while a zone
+// is on the page: the document cancels a drop of files nobody took. The over
+// state counts the enters and leaves of the element (FO1-6): a leave for a
+// child is matched by the child's enter, which Safari's leave without a
+// relatedTarget cannot say. A dropped folder (FO1-5) arrives as an empty File
+// in dataTransfer.files; its entries are read instead.
+//
+// What the zone says (owner decision C223): a screen that cannot drag -- a
+// touch screen with no fine pointer at all -- is not asked to; filesDragWords()
+// answers whether the words about dragging belong on this screen, the same
+// media query the file field's sheet hides them by.
+//
+// Where files may be dropped and what the page shows (owner decision C308
+// FO-1): a whole list (a folder, a chat, attachments) takes them when its
+// owner turns it on; one drop overlay for the page stands on top of the zone
+// the files are held over, with the words of the zone's component; zones
+// inside zones, the innermost wins. A component that draws its own zone (the
+// file field's area) keeps drawing it by the over state.
+//
+// Every bundle carries its own copy of this module: the zones on a page are
+// counted on one shared global, so the document guard is one for them all.
+const FILES_OVER_ATTRIBUTE = 'data-sf-files-over';
+const NO_DRAG_QUERY = '(pointer: coarse) and (not (any-pointer: fine))';
+const ZONES = '__sfFilesDropZones'; // The zone that took a drag event, on the event (FO1-1).
+
+const TAKEN = Symbol.for('sf.filesDrop.taken');
+
+const takenByOther = (event, element) => Boolean(event[TAKEN]) && event[TAKEN] !== element;
+
+const take = (event, element) => {
+  try {
+    if (!event[TAKEN]) Object.defineProperty(event, TAKEN, {
+      value: element,
+      configurable: true
+    });
+  } catch {
+    /* a frozen event is read as not taken */
+  }
+};
+/** Whether a drag event carries files from the computer. */
+
+
+function carriesFiles(event) {
+  return [...(event?.dataTransfer?.types ?? [])].includes('Files');
+}
+/** Whether the words about dragging belong on this screen (C223): false on a touch screen with no fine pointer. */
+
+function filesDragWords(view = globalThis) {
+  try {
+    return !view?.matchMedia?.(NO_DRAG_QUERY)?.matches;
+  } catch {
+    return true;
+  }
+} // The one drop overlay of a page (C308 FO-1): an element on the body, over
+// the zone the files are held over (the part of it on screen), the words in
+// a label in its middle; it takes no pointer, so the drop reaches the zone
+// under it. Found by its attribute, so every bundle's copy draws the same one.
+
+const OVERLAY_ATTRIBUTE = 'data-sf-files-overlay';
+let overlayOwner = null;
+
+function showOverlay(element, text) {
+  const doc = element.ownerDocument;
+  const view = doc?.defaultView;
+  if (!doc?.body || !view) return;
+  let layer = doc.body.querySelector(`:scope > [${OVERLAY_ATTRIBUTE}]`);
+
+  if (!layer) {
+    layer = doc.createElement('div');
+    layer.setAttribute(OVERLAY_ATTRIBUTE, '');
+    layer.setAttribute('aria-hidden', 'true');
+    layer.style.cssText = ['position: fixed', 'z-index: 2147483000', 'pointer-events: none', 'box-sizing: border-box', 'display: flex', 'align-items: center', 'justify-content: center', 'border: var(--sf-px) dashed var(--sf-primary-outline)', 'border-radius: var(--sf-radius--surface)', 'background: var(--sf-primary-state-select)', 'padding: var(--sf-space-1)'].join(';');
+    const words = doc.createElement('span');
+    words.style.cssText = ['background: var(--sf-surface)', 'color: var(--sf-primary)', 'border-radius: var(--sf-radius--surface)', 'padding: var(--sf-space-1\\/2) var(--sf-space-1)', 'font: inherit', 'max-inline-size: 100%', 'text-align: center'].join(';');
+    layer.append(words);
+    doc.body.append(layer);
+  }
+
+  const box = element.getBoundingClientRect();
+  const top = Math.max(0, box.top);
+  const left = Math.max(0, box.left);
+  const bottom = Math.min(view.innerHeight, box.bottom);
+  const right = Math.min(view.innerWidth, box.right);
+  Object.assign(layer.style, {
+    top: `${top}px`,
+    left: `${left}px`,
+    width: `${Math.max(0, right - left)}px`,
+    height: `${Math.max(0, bottom - top)}px`
+  });
+  layer.firstElementChild.textContent = text;
+  layer.hidden = false;
+  overlayOwner = element;
+}
+
+function hideOverlay(element) {
+  const doc = element.ownerDocument;
+  if (overlayOwner !== element && overlayOwner !== null) return;
+  overlayOwner = null;
+  const layer = doc?.body?.querySelector(`:scope > [${OVERLAY_ATTRIBUTE}]`);
+  if (layer) layer.hidden = true;
+} // The document guard (FO1-2): one per document, on while a zone is on it.
+
+
+function guard(doc, change) {
+  if (!doc?.addEventListener) return;
+  const zones = globalThis[ZONES] ??= new WeakMap();
+  const held = zones.get(doc) ?? {
+    count: 0,
+    stop: null
+  };
+  held.count = Math.max(0, held.count + change);
+
+  if (held.count && !held.stop) {
+    const refuse = event => {
+      if (event.defaultPrevented || !carriesFiles(event)) return;
+      event.preventDefault();
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'none';
+    };
+
+    doc.addEventListener('dragover', refuse);
+    doc.addEventListener('drop', refuse);
+
+    held.stop = () => {
+      doc.removeEventListener('dragover', refuse);
+      doc.removeEventListener('drop', refuse);
+    };
+  } else if (!held.count && held.stop) {
+    held.stop();
+    held.stop = null;
+  }
+
+  zones.set(doc, held);
+} // A folder's files, read through its entries (FO1-5), each with its path.
+
+
+function readEntry(entry, path = '') {
+  if (!entry) return Promise.resolve([]);
+
+  if (entry.isFile) {
+    return new Promise(settle => entry.file(file => {
+      try {
+        if (path && !file.webkitRelativePath) Object.defineProperty(file, 'sfPath', {
+          value: `${path}${file.name}`
+        });
+      } catch {
+        /* a read-only File keeps its name */
+      }
+
+      settle([file]);
+    }, () => settle([])));
+  }
+
+  if (!entry.isDirectory) return Promise.resolve([]);
+  const reader = entry.createReader();
+  const all = [];
+  return new Promise(settle => {
+    // readEntries answers a batch at a time until it answers none.
+    const next = () => reader.readEntries(batch => {
+      if (!batch.length) {
+        Promise.all(all.map(one => readEntry(one, `${path}${entry.name}/`))).then(lists => settle(lists.flat()));
+        return;
+      }
+
+      all.push(...batch);
+      next();
+    }, () => settle([]));
+
+    next();
+  });
+} // What a drop gives: the files, and the folders read or skipped. The items
+// are read in the drop's own turn (they are empty after it).
+
+
+function droppedOf(event, folders) {
+  const items = [...(event.dataTransfer?.items ?? [])].filter(item => item.kind === 'file');
+  const entries = items.map(item => typeof item.webkitGetAsEntry === 'function' ? item.webkitGetAsEntry() : null);
+
+  if (!entries.some(entry => entry?.isDirectory)) {
+    return {
+      files: Promise.resolve([...(event.dataTransfer?.files ?? [])]),
+      skipped: []
+    };
+  }
+
+  const plain = [...(event.dataTransfer?.files ?? [])];
+  const skipped = [];
+  const reads = entries.map((entry, index) => {
+    if (!entry?.isDirectory) return Promise.resolve(plain[index] ? [plain[index]] : items[index]?.getAsFile() ? [items[index].getAsFile()] : []);
+
+    if (folders === 'skip') {
+      skipped.push(entry.name);
+      return Promise.resolve([]);
+    }
+
+    return readEntry(entry);
+  });
+  return {
+    files: Promise.all(reads).then(lists => lists.flat()),
+    skipped
+  };
+}
+
+function filesDrop(element, {
+  onFiles = null,
+  onOver = null,
+  disabled = null,
+  target = null,
+  folders = 'open',
+  mark = true,
+  follow = false,
+  overlay = null
+} = {}) {
+  if (!element?.addEventListener) return {
+    stop() {},
+
+    get over() {
+      return false;
+    }
+
+  };
+  let over = false;
+  let depth = 0;
+  let place = null;
+  const doc = element.ownerDocument;
+
+  const isDisabled = () => typeof disabled === 'function' ? Boolean(disabled()) : Boolean(disabled);
+
+  const targetOf = event => typeof target === 'function' ? target(event) ?? null : element;
+
+  const setOver = (next, node = null) => {
+    if (next === over && node === place) return;
+    over = next;
+    place = next ? node : null;
+    if (mark) element.toggleAttribute(FILES_OVER_ATTRIBUTE, over);
+
+    if (typeof overlay === 'function') {
+      const text = over ? overlay(place) : null;
+      if (text) showOverlay(element, String(text));else hideOverlay(element);
+    }
+
+    if (typeof onOver === 'function') onOver(over, place);
+  };
+
+  const onDragEnter = event => {
+    if (!carriesFiles(event)) return;
+    depth += 1;
+  };
+
+  const onDragOver = event => {
+    if (!carriesFiles(event)) return;
+
+    if (follow) {
+      setOver(!isDisabled(), element);
+      return;
+    } // An inner zone took it (FO1-1): it is that zone's.
+
+
+    if (takenByOther(event, element)) {
+      setOver(false);
+      return;
+    }
+
+    const node = targetOf(event);
+
+    if (!node) {
+      setOver(false);
+      return;
+    }
+
+    take(event, element);
+    event.preventDefault();
+
+    if (isDisabled()) {
+      event.dataTransfer.dropEffect = 'none';
+      setOver(false);
+      return;
+    }
+
+    event.dataTransfer.dropEffect = 'copy';
+    setOver(true, node);
+  };
+
+  const onDragLeave = event => {
+    if (!carriesFiles(event)) return;
+    depth = Math.max(0, depth - 1);
+    if (!depth) setOver(false);
+  };
+
+  const onDrop = event => {
+    depth = 0;
+    if (!carriesFiles(event) && !event.dataTransfer?.files?.length) return;
+
+    if (follow) {
+      setOver(false);
+      return;
+    }
+
+    if (takenByOther(event, element)) {
+      setOver(false);
+      return;
+    }
+
+    const node = targetOf(event);
+    setOver(false);
+    if (!node) return;
+    take(event, element);
+    event.preventDefault();
+    if (isDisabled()) return;
+    const dropped = droppedOf(event, folders);
+    dropped.files.then(files => {
+      if ((files.length || dropped.skipped.length) && typeof onFiles === 'function') onFiles(files, {
+        event,
+        target: node,
+        skipped: dropped.skipped
+      });
+    });
+  }; // The drag ended somewhere else (Escape, a drop outside): nothing is held.
+
+
+  const onDragEnd = () => {
+    depth = 0;
+    setOver(false);
+  };
+
+  element.addEventListener('dragenter', onDragEnter);
+  element.addEventListener('dragover', onDragOver);
+  element.addEventListener('dragleave', onDragLeave);
+  element.addEventListener('drop', onDrop);
+  doc?.addEventListener?.('dragend', onDragEnd, true);
+  doc?.addEventListener?.('drop', onDragEnd, true);
+  guard(doc, 1);
+  let stopped = false;
+  return {
+    stop() {
+      if (stopped) return;
+      stopped = true;
+      element.removeEventListener('dragenter', onDragEnter);
+      element.removeEventListener('dragover', onDragOver);
+      element.removeEventListener('dragleave', onDragLeave);
+      element.removeEventListener('drop', onDrop);
+      doc?.removeEventListener?.('dragend', onDragEnd, true);
+      doc?.removeEventListener?.('drop', onDragEnd, true);
+      guard(doc, -1);
+      setOver(false);
+    },
+
+    get over() {
+      return over;
+    }
+
+  };
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (filesDrop);
 
 /***/ },
 
@@ -1700,19 +2132,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _helpers_char_count__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("76b2d9a8d7c6");
-/* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("2db3a835ac11");
-/* harmony import */ var _core_js_roving_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("557c99eb8f3a");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("ed57c006afc1");
-/* harmony import */ var _js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("4f56033a1eae");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d41b3b9112e6");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("77f77c47e0a8");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("2369556fe449");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_files_drop_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("3180ca98c567");
+/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _helpers_char_count__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("76b2d9a8d7c6");
+/* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2db3a835ac11");
+/* harmony import */ var _core_js_roving_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("557c99eb8f3a");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ed57c006afc1");
+/* harmony import */ var _js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("4f56033a1eae");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("d41b3b9112e6");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("77f77c47e0a8");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("2369556fe449");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_field_size__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 
@@ -1784,9 +2218,9 @@ const onPhone = doc => !doc.defaultView?.getComputedStyle(doc.documentElement).g
 // own history of cleaned states.
 
 
-const RichTextElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
+const RichTextElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__.files,
   source: 'en'
 });
 const BLOCK_TAGS = {
@@ -1996,7 +2430,7 @@ function pointAt(root, target) {
 } // ------------------------------------------------------------ the element
 
 
-class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.ShownRequired)((0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.FormField)(RichTextElement)) {
+class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.ShownRequired)((0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.FormField)(RichTextElement)) {
   static get props() {
     return { ...super.props,
       rootClass: {
@@ -2061,16 +2495,16 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
 
   get value() {
     const editor = this.editor;
-    if (editor && this._loaded) return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(editor, {
+    if (editor && this._loaded) return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_9__.sanitizeRichText)(editor, {
       mode: 'value'
     });
-    return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(this.getAttribute('value') || '', {
+    return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_9__.sanitizeRichText)(this.getAttribute('value') || '', {
       mode: 'value'
     });
   }
 
   set value(next) {
-    const clean = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(next === null || next === undefined ? '' : String(next), {
+    const clean = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_9__.sanitizeRichText)(next === null || next === undefined ? '' : String(next), {
       mode: 'value'
     });
     if (next === null || next === undefined) this.removeAttribute('value');else this.setAttribute('value', clean);
@@ -2109,7 +2543,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
     const source = this.getAttribute('value') || '';
     if (!source) return 0;
     const template = this.ownerDocument.createElement('template');
-    template.innerHTML = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(source, {
+    template.innerHTML = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_9__.sanitizeRichText)(source, {
       mode: 'value'
     });
     return template.content.textContent.length;
@@ -2118,7 +2552,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
 
 
   sfCount() {
-    return (0,_helpers_char_count__WEBPACK_IMPORTED_MODULE_4__.charCount)(this.textLength(), this.maxlength, {
+    return (0,_helpers_char_count__WEBPACK_IMPORTED_MODULE_5__.charCount)(this.textLength(), this.maxlength, {
       always: Boolean(this.counter)
     });
   }
@@ -2145,7 +2579,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
     const props = this.getPropsContext();
     const count = this.sfCount();
     this._countDrawn = count.length;
-    const said = (0,_helpers_char_count__WEBPACK_IMPORTED_MODULE_4__.countAnnouncement)(count, this._countLevel, this._countSaid, state => state.over ? this.sfTooLongMessage(state) : this.sfWord('count-text', {
+    const said = (0,_helpers_char_count__WEBPACK_IMPORTED_MODULE_5__.countAnnouncement)(count, this._countLevel, this._countSaid, state => state.over ? this.sfTooLongMessage(state) : this.sfWord('count-text', {
       vars: {
         count: state.length,
         max: state.limit
@@ -2210,7 +2644,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_7__.renderRichTextTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_8__.renderRichTextTemplate)(this.templateContext());
   }
 
   onConnected() {
@@ -2293,7 +2727,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
     });
     const {
       out
-    } = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_5__.layoutActionRow)({
+    } = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_6__.layoutActionRow)({
       row: bar,
       units,
       more,
@@ -2330,7 +2764,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
         checked: level === current,
         disabled: Boolean(state.inList) || undefined
       }));
-      return (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_5__.openRowMenu)(this, {
+      return (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_6__.openRowMenu)(this, {
         anchor: button,
         entries,
         label: this.sfWord('text-level'),
@@ -2368,7 +2802,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
       entries.push(entry);
     }
 
-    return (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_5__.openRowMenu)(this, {
+    return (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_6__.openRowMenu)(this, {
       anchor: button,
       entries,
       label: this.sfWord('more'),
@@ -2415,7 +2849,18 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
     on('dragend', () => {
       this._dragFromSelf = false;
     });
-    on('drop', event => this._onDrop(event));
+    on('drop', event => this._onDrop(event)); // Files from the computer (FO1-4): the editor takes no files, so a file
+    // dropped on it is refused through the one files-drop reading (the no
+    // cursor, and the browser does not open the file in place of the page).
+    // Text and markup dropped keep _onDrop.
+
+    const files = (0,_core_js_files_drop_js__WEBPACK_IMPORTED_MODULE_3__.filesDrop)(editor, {
+      mark: false,
+      disabled: () => true
+    });
+    signal?.addEventListener?.('abort', () => files.stop(), {
+      once: true
+    });
     on('focus', () => {
       try {
         this.ownerDocument.execCommand('defaultParagraphSeparator', false, 'p');
@@ -2430,7 +2875,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
   _load(html) {
     const editor = this.editor;
     if (!editor) return;
-    editor.innerHTML = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(String(html ?? ''), {
+    editor.innerHTML = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_9__.sanitizeRichText)(String(html ?? ''), {
       mode: 'editor'
     });
     this._loaded = true;
@@ -2620,7 +3065,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
   _clean(selection = this._saveSelection()) {
     const editor = this.editor;
     if (!editor) return;
-    const clean = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(editor, {
+    const clean = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_9__.sanitizeRichText)(editor, {
       mode: 'editor'
     });
 
@@ -2925,10 +3370,10 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
 
   _cleanTransfer(data) {
     const html = data?.getData?.('text/html') || '';
-    if (html) return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.sanitizeRichText)(html, {
+    if (html) return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_9__.sanitizeRichText)(html, {
       mode: 'value'
     });
-    return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.richTextFromPlainText)(data?.getData?.('text/plain') || '', {
+    return (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_9__.richTextFromPlainText)(data?.getData?.('text/plain') || '', {
       mode: 'value'
     });
   } // Cleaned HTML in place of the selection: the first paragraph joins the
@@ -3000,7 +3445,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
   _onDrop(event) {
     // A move inside the editor is the browser's; its result is cleaned as
     // typing is.
-    if (this._dragFromSelf) return;
+    if (this._dragFromSelf || (0,_core_js_files_drop_js__WEBPACK_IMPORTED_MODULE_3__.carriesFiles)(event)) return;
     event.preventDefault();
     if (this.effectiveDisabled || this.readonly) return;
     const doc = this.ownerDocument;
@@ -3395,7 +3840,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
   applyLinkFromPanel() {
     const raw = this._linkInputValue().trim();
 
-    const href = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_8__.richTextHref)(raw);
+    const href = (0,_js_rich_text_html_mjs__WEBPACK_IMPORTED_MODULE_9__.richTextHref)(raw);
 
     if (!href) {
       this._link = { ...this._link,
@@ -3550,7 +3995,7 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.Sho
 
     if (this._toolbarRow?.bar !== bar) {
       this._toolbarRow?.keys.destroy();
-      const keys = (0,_core_js_roving_js__WEBPACK_IMPORTED_MODULE_6__.roving)(bar, {
+      const keys = (0,_core_js_roving_js__WEBPACK_IMPORTED_MODULE_7__.roving)(bar, {
         items: 'button.sf-rich-text-tool',
         out: '.sf-rich-text-out, [hidden], [inert]',
         onMove: button => {
@@ -4888,7 +5333,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "d41b3b9112e6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-rich","tag":"sf-input-rich","version":"1.10.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"overflow":{"type":"enum","values":["more","wrap"],"default":"more"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":6},"max-rows":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"counter":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-long","custom-error"]},"css-variables":{"--sf-rich-text-background-color":{"type":"color","state":"default"},"--sf-rich-text-border-color":{"type":"color","state":"default"},"--sf-rich-text-color":{"type":"color","state":"default"},"--sf-rich-text-radius":{"type":"length","state":"default"},"--sf-rich-text-padding-inline":{"type":"length","state":"default"},"--sf-rich-text-padding-block":{"type":"length","state":"default"},"--sf-rich-text-invalid-border-color":{"type":"color","state":"invalid"},"--sf-rich-text-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-rich","tag":"sf-input-rich","version":"1.10.4","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"overflow":{"type":"enum","values":["more","wrap"],"default":"more"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":6},"max-rows":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"counter":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-long","custom-error"]},"css-variables":{"--sf-rich-text-background-color":{"type":"color","state":"default"},"--sf-rich-text-border-color":{"type":"color","state":"default"},"--sf-rich-text-color":{"type":"color","state":"default"},"--sf-rich-text-radius":{"type":"length","state":"default"},"--sf-rich-text-padding-inline":{"type":"length","state":"default"},"--sf-rich-text-padding-block":{"type":"length","state":"default"},"--sf-rich-text-invalid-border-color":{"type":"color","state":"invalid"},"--sf-rich-text-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

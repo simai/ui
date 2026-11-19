@@ -477,6 +477,47 @@
     margin-bottom: 0;
     margin-block: 0;
   }
+  /* The name in the head (the file name of data-title, C285, or the
+     language) keeps one line: a long name ends with an ellipsis and gives up
+     its room first, the wrap and copy buttons keep their size. The whole name
+     is the label's title when it is cut (the script marks it, as a cut crumb
+     of sf-breadcrumbs). A terminal's label is a row of its icon and the name,
+     so the name's own span is the one cut. */
+  .sf-highlight__head > :not(.sf-highlight__language) {
+    flex-shrink: 0;
+  }
+  .sf--highlight-head > :not(.sf-highlight__language) {
+    flex-shrink: 0;
+  }
+  .sf-highlight__head > .sf-highlight__language {
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf--highlight-head > .sf-highlight__language {
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-highlight__head > .sf-highlight__language:not(:has(> .sf-highlight__language-text)) {
+    min-width: 0;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sf--highlight-head > .sf-highlight__language:not(:has(> .sf-highlight__language-text)) {
+    min-width: 0;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sf-highlight__language-text {
+    min-width: 0;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .sf-highlight__head {
     padding: 0 var(--sf-space-1);
     margin: 0;
@@ -1026,6 +1067,113 @@
   @media (forced-colors: active) {
     .sf-code-surface {
       border-color: CanvasText;
+    }
+    /* The fill and the start bar of a marked or focused line are background
+       layers, which forced colours drop; the bar comes back as an edge in
+       the system highlight colour. A diff line keeps its + / - sign. */
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line.sf-code-line--highlight{
+      border-left: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    @supports not (border-inline-start: initial){
+    html:not([dir="rtl"]) .sf-code-line.sf-code-line--highlight{
+      border-left: calc(2 * var(--sf-px)) solid Highlight;
+      }
+    }
+    .sf-code-line.sf-code-line--highlight:where(:dir(ltr)){
+      border-left: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-code-line.sf-code-line--highlight{
+      border-right: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    @supports not (border-inline-start: initial){
+    [dir="rtl"] .sf-code-line.sf-code-line--highlight{
+      border-right: calc(2 * var(--sf-px)) solid Highlight;
+      }
+    }
+    .sf-code-line.sf-code-line--highlight:where(:dir(rtl)){
+      border-right: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    .sf-code-line.sf-code-line--highlight {
+      -webkit-border-start: calc(2 * var(--sf-px)) solid Highlight;
+              border-inline-start: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line.sf-code-line--focus{
+      border-left: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    @supports not (border-inline-start: initial){
+    html:not([dir="rtl"]) .sf-code-line.sf-code-line--focus{
+      border-left: calc(2 * var(--sf-px)) solid Highlight;
+      }
+    }
+    .sf-code-line.sf-code-line--focus:where(:dir(ltr)){
+      border-left: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-code-line.sf-code-line--focus{
+      border-right: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    @supports not (border-inline-start: initial){
+    [dir="rtl"] .sf-code-line.sf-code-line--focus{
+      border-right: calc(2 * var(--sf-px)) solid Highlight;
+      }
+    }
+    .sf-code-line.sf-code-line--focus:where(:dir(rtl)){
+      border-right: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    .sf-code-line.sf-code-line--focus {
+      -webkit-border-start: calc(2 * var(--sf-px)) solid Highlight;
+              border-inline-start: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line[data-line-mark]{
+      border-left: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    @supports not (border-inline-start: initial){
+    html:not([dir="rtl"]) .sf-code-line[data-line-mark]{
+      border-left: calc(2 * var(--sf-px)) solid Highlight;
+      }
+    }
+    .sf-code-line[data-line-mark]:where(:dir(ltr)){
+      border-left: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-code-line[data-line-mark]{
+      border-right: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    @supports not (border-inline-start: initial){
+    [dir="rtl"] .sf-code-line[data-line-mark]{
+      border-right: calc(2 * var(--sf-px)) solid Highlight;
+      }
+    }
+    .sf-code-line[data-line-mark]:where(:dir(rtl)){
+      border-right: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    .sf-code-line[data-line-mark] {
+      -webkit-border-start: calc(2 * var(--sf-px)) solid Highlight;
+              border-inline-start: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line[data-line-focus]{
+      border-left: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    @supports not (border-inline-start: initial){
+    html:not([dir="rtl"]) .sf-code-line[data-line-focus]{
+      border-left: calc(2 * var(--sf-px)) solid Highlight;
+      }
+    }
+    .sf-code-line[data-line-focus]:where(:dir(ltr)){
+      border-left: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    _:-ms-input-placeholder, [dir="rtl"] .sf-code-line[data-line-focus]{
+      border-right: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    @supports not (border-inline-start: initial){
+    [dir="rtl"] .sf-code-line[data-line-focus]{
+      border-right: calc(2 * var(--sf-px)) solid Highlight;
+      }
+    }
+    .sf-code-line[data-line-focus]:where(:dir(rtl)){
+      border-right: calc(2 * var(--sf-px)) solid Highlight;
+    }
+    .sf-code-line[data-line-focus] {
+      -webkit-border-start: calc(2 * var(--sf-px)) solid Highlight;
+              border-inline-start: calc(2 * var(--sf-px)) solid Highlight;
     }
     .hljs-ln-numbers div {
       border-color: CanvasText;

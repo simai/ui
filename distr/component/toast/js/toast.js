@@ -165,11 +165,95 @@ function pauseToastTimer(root, reason) {
 function resumeToastTimer(root, reason) {
   if (!root.__sfToastPauseReasons?.delete(reason)) return;
   startToastTimer(root);
+} // The action beside the text or under it (Larena LF-4, C115 L3a, C218).
+// The sheet puts one action in the row with the text from 24rem of the
+// toast's width; the title and the text then wrap at spaces and hyphens in
+// the column left beside it. A word -- a run of characters between spaces,
+// «a2-remove.test», a long address -- wider than that column would be broken
+// inside it to keep the action at the side. The script measures the widest
+// word of the title and the text in their own font, and when one does not fit
+// the column it marks the toast data-sf-toast-under: the sheet then draws the
+// action under the text, as actions-layout="under" does, and the text has the
+// toast's whole width. A word wider than that too still breaks (overflow-wrap
+// anywhere), only then. The mark is a state of the toast, measured again
+// whenever its width changes and when the fonts arrive.
+
+
+const TOAST_UNDER_ATTRIBUTE = 'data-sf-toast-under';
+const TOAST_FIT_TEXT = '.sf-toast-text, .sf-toast-supporting-text';
+let toastMeasure = null;
+let toastFitObserver = null;
+
+function widestWord(element) {
+  const text = String(element?.textContent || '').trim();
+  if (!text) return 0;
+  const style = getComputedStyle(element);
+  toastMeasure = toastMeasure || document.createElement('canvas').getContext('2d');
+  if (!toastMeasure) return 0;
+  toastMeasure.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+  const spacing = Number.parseFloat(style.letterSpacing) || 0;
+  let widest = 0;
+
+  for (const word of text.split(/\s+/u)) {
+    if (!word) continue;
+    widest = Math.max(widest, toastMeasure.measureText(word).width + spacing * word.length);
+  }
+
+  return widest;
+}
+
+function fitToastAction(root) {
+  if (!(root instanceof HTMLElement) || !root.isConnected) return;
+  const container = root.querySelector(':scope > .sf-toast-container');
+  const wrap = container?.querySelector(':scope > .sf-toast-wrap');
+  const bottom = container?.querySelector(':scope > .sf-toast-bottom');
+  const single = bottom && bottom.children.length === 1;
+
+  if (!wrap || !single || root.classList.contains('sf-toast--actions-under')) {
+    root.removeAttribute(TOAST_UNDER_ATTRIBUTE);
+    return;
+  } // Measured in the sheet's own layout: without the mark the action stands
+  // beside the text only where the toast is wide enough (the row).
+
+
+  const was = root.hasAttribute(TOAST_UNDER_ATTRIBUTE);
+  if (was) root.removeAttribute(TOAST_UNDER_ATTRIBUTE);
+  let under = false;
+
+  if (getComputedStyle(container).flexDirection === 'row') {
+    const column = wrap.clientWidth;
+    const words = [...wrap.querySelectorAll(TOAST_FIT_TEXT)].map(widestWord); // Half a pixel for the rounding of the column's width.
+
+    under = column > 0 && words.some(width => width > column + 0.5);
+  }
+
+  if (under) root.setAttribute(TOAST_UNDER_ATTRIBUTE, '');
+}
+
+function watchToastFit(root) {
+  if (typeof ResizeObserver === 'undefined') {
+    fitToastAction(root);
+    return;
+  }
+
+  toastFitObserver = toastFitObserver || new ResizeObserver(entries => {
+    for (const entry of entries) fitToastAction(entry.target);
+  });
+  toastFitObserver.observe(root);
+  fitToastAction(root);
+  document.fonts?.ready?.then(() => fitToastAction(root));
+}
+
+function unwatchToastFit(root) {
+  toastFitObserver?.unobserve(root);
 }
 
 function bindToast(root, removalTarget = root) {
   if (!(root instanceof HTMLElement)) return;
-  root.__sfToastRemovalTarget = removalTarget instanceof Element ? removalTarget : root;
+  root.__sfToastRemovalTarget = removalTarget instanceof Element ? removalTarget : root; // The action's place is measured again on every binding: a toast drawn
+  // anew (sf-toast's own render) may carry another title.
+
+  watchToastFit(root);
   if (root.dataset[TOAST_BOUND_FLAG] === '1') return;
 
   const handleClick = event => {
@@ -260,6 +344,7 @@ function unbindToast(root) {
   }
 
   clearToastTimer(root);
+  unwatchToastFit(root);
   delete root.__sfToastHandlers;
   delete root.__sfToastPauseReasons;
   delete root.__sfToastRemaining;
@@ -1146,6 +1231,44 @@ const PACKS = STORE.packs ??= {
   request: null
 }; // The languages built into the bundles: English, and in a rollback build Russian
 // too (src/core/lang/built-in.json, C282).
+// Which registered words came from a Framework pack and nothing has said over
+// since: name -> code -> Set of keys. A Framework pack is the Framework's own
+// words in a file, so for a component that names itself by a dated alias of
+// its record's tag (sf-message-log, the heir of sf-list-feed, both under
+// sf-list-feed's record) they are the successor's words, not its own: the
+// words that component ships win over them (ui-control evidence
+// 2026-11-18-pro-over-1ed6: «Лента» instead of «Переписка» once the ru pack
+// was fetched). A word a product registers, or a product pack, is still over
+// everything. Kept beside the words, not instead of them, so a copy of this
+// module from before it reads the registry as it did. A STORE made by an older
+// bundle has none yet: added here.
+
+const FLOOR = STORE.floor ??= new Map();
+
+const floorOf = (name, code) => {
+  if (!FLOOR.has(name)) FLOOR.set(name, new Map());
+  const byLanguage = FLOOR.get(name);
+  if (!byLanguage.has(code)) byLanguage.set(code, new Set());
+  return byLanguage.get(code);
+};
+
+const notFloor = (name, code, keys) => {
+  const marked = FLOOR.get(name)?.get(code);
+  if (!marked) return;
+
+  for (const key of keys) marked.delete(key);
+}; // Whether the word registered for `key` stands for the successor of the
+// component asking, so that its own shipped word is said instead: the asker
+// names a dated alias (its tag is not its record's), and the registered word
+// is a Framework pack's that no product has said over.
+
+
+function successorWord(owner, candidate, key) {
+  if (!owner) return false;
+  const name = normalise(owner);
+  const record = (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(name);
+  return record !== name && Boolean(FLOOR.get(record)?.get(candidate)?.has(key));
+}
 
 const isBuiltIn = code => code === 'en' || (_lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]?.built_in ?? []).includes(code);
 /**
@@ -1159,10 +1282,29 @@ const isBuiltIn = code => code === 'en' || (_lang_built_in_mjs__WEBPACK_IMPORTED
 function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
-  if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
+  if (!base || isBuiltIn(base)) return;
   const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+
+  if (typeof PACKS.request !== 'function') {
+    // Core has not run yet: a Smart bundle placed before core.js (a Docara
+    // page and its example frames load core last) draws before anyone can
+    // fetch. The ask is kept and core makes it when it starts
+    // (core/js/language-packs.js), so the family's part still comes.
+    const early = PACKS.early ??= new Map();
+    const named = aliasOf(wanted);
+
+    for (const one of new Set([base, wanted, ...(named ? [named] : [])])) {
+      if (!early.has(one)) early.set(one, new Set());
+      early.get(one).add(name ?? '');
+    }
+
+    return;
+  }
+
   PACKS.request(base, name);
   if (wanted !== base) PACKS.request(wanted, name);
+  const named = aliasOf(wanted);
+  if (named && named !== wanted && named !== base) PACKS.request(named, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -1173,8 +1315,31 @@ const wordsOf = component => REGISTERED.get((0,_tag_aliases_js__WEBPACK_IMPORTED
 
 function normalise(value) {
   return String(value ?? '').trim().toLowerCase().replace('_', '-');
+} // The pack a page language takes. Two tables, both from the localization
+// registry (C278) and both on the shared store, so a bundle carries neither:
+// core/lang/index.json `aliases` (the shipped packs: zh-cn, zh-sg and zh take
+// zh-hans, pt takes pt-br; PACKS.aliases, set by core) and the registry's
+// second names of every language (STORE.aliases, core/js/language-packs.js).
+// A word registered for the alias itself still comes first; any other code
+// is its own.
+
+
+function packOf(code) {
+  const one = PACKS?.aliases?.[code] ?? STORE?.aliases?.[code];
+  return typeof one === 'string' && one ? one : code;
 }
-/** The languages to try, most specific first, English last. */
+
+function aliasOf(code) {
+  const named = packOf(code);
+  return named !== code ? named : null;
+}
+/**
+ * The languages to try, most specific first, English last: the language, the
+ * pack it is an alias of, the language without its region and that one's
+ * pack. zh-CN: zh-cn, zh-hans, zh, en; zh-TW: zh-tw, zh, zh-hans, en; pt-PT:
+ * pt-pt, pt, pt-br, en. Until 2026-11-18 a zh-CN or pt page found no pack and
+ * spoke English.
+ */
 
 
 const chain = language => {
@@ -1182,7 +1347,7 @@ const chain = language => {
   const base = wanted.split('-')[0];
   const order = [];
 
-  for (const candidate of [wanted, base, 'en']) {
+  for (const candidate of [wanted, packOf(wanted), base, packOf(base), 'en']) {
     if (candidate && !order.includes(candidate)) order.push(candidate);
   }
 
@@ -1367,7 +1532,8 @@ function localeText(dictionary, key, locale, component) {
   needPack(order[0], component);
 
   for (const candidate of order) {
-    const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
+    let added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
+    if (added !== undefined && dictionary?.[candidate]?.[key] !== undefined && successorWord(component, candidate, key)) added = undefined;
 
     if (added !== undefined) {
       if (candidate === 'en' && added !== '') warnFallback(order, component, key);
@@ -1392,9 +1558,14 @@ function localeText(dictionary, key, locale, component) {
 // the shared global, because every bundle carries this module.
 
 function warnFallback(order, owner, key) {
-  const wanted = String(order[0] || '').split('-')[0]; // While its pack is on its way the English is a moment, not a gap.
+  const wanted = packOf(String(order[0] || '').split('-')[0]); // While its pack is on its way the English is a moment, not a gap (the
+  // registry name's pack too: zh-hans for a zh-CN page). Before core runs
+  // nothing can be on its way yet: the word is asked again when the pack core
+  // fetches arrives, and only a word still missing then is one (ui-view
+  // example frames reported sf-pagination "of-pages", which the ru pack holds,
+  // on loads where the bundle ran before core).
 
-  if (!wanted || wanted === 'en' || PACKS.pending.has(wanted)) return;
+  if (!wanted || wanted === 'en' || typeof PACKS.request !== 'function' || order.some(code => code !== 'en' && PACKS.pending.has(code))) return;
   const root = globalThis;
   if (!(root.__sfMissingWords instanceof Map)) root.__sfMissingWords = new Map();
   const seen = root.__sfMissingWords;
@@ -1474,6 +1645,7 @@ function pageWord(dictionary, key, node, {
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
     let added = registered?.[key];
+    if (added !== undefined && dictionary?.[candidate]?.[key] !== undefined && successorWord(owner, candidate, key)) added = undefined;
 
     if (added === undefined && registered) {
       const old = formerKeys.find(name => registered[name] !== undefined && registered[name] !== null);
@@ -1579,9 +1751,17 @@ const language = {
     if (!name || !code) throw new TypeError('a component and a language are required');
     if (!REGISTERED.has(name)) REGISTERED.set(name, new Map());
     const byLanguage = REGISTERED.get(name);
-    if (words === null) byLanguage.delete(code);else byLanguage.set(code, { ...(byLanguage.get(code) ?? {}),
-      ...words
-    });
+
+    if (words === null) {
+      byLanguage.delete(code);
+      FLOOR.get(name)?.delete(code);
+    } else {
+      byLanguage.set(code, { ...(byLanguage.get(code) ?? {}),
+        ...words
+      });
+      notFloor(name, code, Object.keys(words ?? {}));
+    }
+
     announce();
     return this;
   },
@@ -1616,6 +1796,15 @@ const language = {
       } : { ...now,
         ...byKey
       });
+
+      if (under) {
+        const marked = floorOf(name, code);
+
+        for (const key of Object.keys(byKey)) if (!Object.prototype.hasOwnProperty.call(now, key) || marked.has(key)) marked.add(key);
+      } else {
+        notFloor(name, code, Object.keys(byKey));
+      }
+
       words += Object.keys(byKey).length;
     }
 
@@ -1676,7 +1865,7 @@ const language = {
   missing(value) {
     const seen = globalThis.__sfMissingWords instanceof Map ? globalThis.__sfMissingWords : new Map();
     if (value === undefined) return Object.fromEntries([...seen].map(([code, words]) => [code, [...words]]));
-    return [...(seen.get(normalise(value).split('-')[0]) ?? [])];
+    return [...(seen.get(packOf(normalise(value).split('-')[0])) ?? [])];
   },
 
   /** Every component something has been registered for. */
@@ -1697,7 +1886,10 @@ const language = {
   /** Everything registered is forgotten. For tests, and for a product reset. */
   forget() {
     REGISTERED.clear();
-    PACKS.loaded.clear();
+    FLOOR.clear();
+    PACKS.loaded.clear(); // The asks kept before core ran go too: they were for the words forgotten.
+
+    PACKS.early?.clear?.();
     STORE.chosen = null;
     announce();
     return this;

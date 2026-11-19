@@ -347,9 +347,13 @@ function intlSpeaks(locale) {
 function packDayWord(offset, locale) {
   if (intlSpeaks(locale)) return null;
   const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-relative-day');
-  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-');
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-'); // A registry alias takes its pack's words (zh-cn: zh-hans, pt: pt-br).
 
-  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+  const pack = code => globalThis.__sfPageLanguage?.packs?.aliases?.[code] ?? code;
+
+  const base = wanted.split('-')[0];
+
+  for (const code of [...new Set([wanted, pack(wanted), base, pack(base)])]) {
     const word = words?.get?.(code)?.[DAY_KEYS[offset]];
     if (typeof word === 'string' && word.trim()) return word;
   }
@@ -962,8 +966,12 @@ class SfTime extends TimeElement {
     const wanted = (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_4__.formatLocale)({
       node: this
     }).toLowerCase();
-    const known = ['ru', 'en', ..._core_js_page_language_js__WEBPACK_IMPORTED_MODULE_5__.language.known('sf-time')];
-    const has = known.includes(wanted) || known.includes(wanted.split('-')[0]);
+    const known = ['ru', 'en', ..._core_js_page_language_js__WEBPACK_IMPORTED_MODULE_5__.language.known('sf-time')]; // A registry alias counts as its pack's language (zh-cn: zh-hans, pt: pt-br).
+
+    const pack = code => globalThis.__sfPageLanguage?.packs?.aliases?.[code] ?? code;
+
+    const base = wanted.split('-')[0];
+    const has = [wanted, pack(wanted), base, pack(base)].some(code => known.includes(code));
     return has ? this.sfWord('just-now') : null;
   } // A zone's own name where the component has one in the page language: the
   // zones of Russia in its files (ru, en) and in any language a pack or a
@@ -977,9 +985,13 @@ class SfTime extends TimeElement {
     const wanted = (0,_core_js_format_intl_js__WEBPACK_IMPORTED_MODULE_4__.formatLocale)({
       node: this
     }).toLowerCase().replace('_', '-');
-    const registered = globalThis.__sfPageLanguage?.registered?.get?.('sf-time');
+    const registered = globalThis.__sfPageLanguage?.registered?.get?.('sf-time'); // A registry alias takes its pack's words (zh-cn: zh-hans, pt: pt-br).
 
-    for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+    const pack = code => globalThis.__sfPageLanguage?.packs?.aliases?.[code] ?? code;
+
+    const base = wanted.split('-')[0];
+
+    for (const code of [...new Set([wanted, pack(wanted), base, pack(base)])]) {
       const own = registered?.get?.(code)?.[key] ?? _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files[code]?.runtime?.[key];
       if (typeof own === 'string' && own.trim()) return this.sfWord(key);
     }
@@ -1200,7 +1212,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "b033fb83f193"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.time","tag":"sf-time","version":"1.8.2","kind":"leaf","settings":{"datetime":{"type":"string","default":""},"format":{"type":"enum","values":["auto","time","date","datetime","relative"],"default":"auto"},"now":{"type":"string","default":""},"threshold":{"type":"string","default":"PT1H"},"time-zone":{"type":"string","default":""},"tooltip":{"type":"enum","values":["auto","none"],"default":"auto"}},"values":{},"events":{},"actions":{},"host-states":{"data-empty":"boolean","data-relative":"boolean"},"css-variables":{"--sf-time-color":{"type":"color","state":"default"},"--sf-time-focus-ring-color":{"type":"color","state":"default"},"--sf-time-radius":{"type":"length","state":"default"},"--sf-time-font-variant-numeric":{"type":"keyword","state":"default"},"--sf-time-white-space":{"type":"keyword","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.time","tag":"sf-time","version":"1.8.3","kind":"leaf","settings":{"datetime":{"type":"string","default":""},"format":{"type":"enum","values":["auto","time","date","datetime","relative"],"default":"auto"},"now":{"type":"string","default":""},"threshold":{"type":"string","default":"PT1H"},"time-zone":{"type":"string","default":""},"tooltip":{"type":"enum","values":["auto","none"],"default":"auto"}},"values":{},"events":{},"actions":{},"host-states":{"data-empty":"boolean","data-relative":"boolean"},"css-variables":{"--sf-time-color":{"type":"color","state":"default"},"--sf-time-focus-ring-color":{"type":"color","state":"default"},"--sf-time-radius":{"type":"length","state":"default"},"--sf-time-font-variant-numeric":{"type":"keyword","state":"default"},"--sf-time-white-space":{"type":"keyword","state":"default"}}}');
 
 /***/ },
 

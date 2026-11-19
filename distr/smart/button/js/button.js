@@ -899,18 +899,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_control_status__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("60a3f9a6662c");
 /* harmony import */ var _helpers_button_set__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d9c5a43b5214");
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("4a85acfb05c1");
-/* harmony import */ var _component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("151a293c8c90");
-/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("64feefebb417");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("5bb33fb22db3");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("902a6f38915d");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("16d3d315e23f");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_7__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_8__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_7__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("151a293c8c90");
+/* harmony import */ var _helpers_cycle__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("64feefebb417");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("5bb33fb22db3");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("902a6f38915d");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("16d3d315e23f");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_7__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_8__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_9__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _js_templates_default__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__, _helpers_button_set__WEBPACK_IMPORTED_MODULE_7__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_8__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_9__);
+
 
 
 
@@ -929,7 +932,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // title, settings and events stay in the language files for the Studio and the
 // docs (localization study LC-2).
 
-const COMPONENT_ATTRIBUTES = new Set(["template", "size", "height", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "full-width", "root-class", "loading", "segment", "disabled", "native-type", "form", "name", "value", "href", "target", "rel", "expanded", "pressed", "text-pressed", "cycle", "theme-cycle", "menu", "split", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // height (1.10.0, decision C27): the size's tightness steps. A value outside
+const COMPONENT_ATTRIBUTES = new Set(["template", "size", "height", "appearance", "type", "scheme", "status", "text", "icon", "icon-start", "icon-end", "icon-left", "icon-right", "icon-position", "text-position", "spacing", "tightness", "radius", "full-width", "overflow", "max-width", // title is the button's own (1.17.0): the native button's title, or, on a
+// cut label, the text of its tooltip (syncTitle).
+"title", "root-class", "loading", "segment", "disabled", "native-type", "form", "name", "value", "href", "target", "rel", "expanded", "pressed", "text-pressed", "cycle", "theme-cycle", "menu", "split", "shortcut", "shortcut-listen", "aria-label", "class", "style", "id", "slot"]); // height (1.10.0, decision C27): the size's tightness steps. A value outside
 // the list reads as default and is said once per button.
 
 const HEIGHTS = new Set(["low", "default", "high", "highest"]);
@@ -1036,6 +1041,16 @@ function sayMenuOnce(key, message) {
   root.__sfButtonMenuWarned.add(key);
 
   globalThis.console?.warn?.(`[SIMAI Framework] sf-button: ${message}`);
+} // overflow="truncate" (1.17.0, FW-LH-1, owner decision C301 (2)): the label
+// stays on one line and is cut with an ellipsis at max-width, or at the width
+// its container gives. max-width is a CSS length (22rem, 40vw, min(22rem,
+// 40vw), var(--sf-...)); a value that could close the declaration is dropped.
+
+
+function maxWidthStyle(value) {
+  const width = String(value ?? "").trim();
+  if (!width || /[;{}<>"\\]/u.test(width)) return "";
+  return `--sf-button--max-width: ${width}`;
 } // The menu element the template draws, by its current and its former tag.
 
 
@@ -1059,7 +1074,7 @@ function menuMode(host, {
     return null;
   }
 
-  if ((0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.hasCycle)(host)) {
+  if ((0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_11__.hasCycle)(host)) {
     sayMenuOnce("menu-cycle", "menu and cycle cannot share a button; the cycle is kept and the menu is left out.");
     return null;
   }
@@ -1117,11 +1132,11 @@ function applyButtonAttributes(host, button) {
 // notes the use, so a value outside a list reads as the default here.
 
 
-const ButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
+const ButtonElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_14__.files,
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_12__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_13__
 });
 
 class SfButton extends ButtonElement {
@@ -1131,7 +1146,7 @@ class SfButton extends ButtonElement {
       cycle: {
         type: Array,
         default: [],
-        parser: _helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.parseCycle
+        parser: _helpers_cycle__WEBPACK_IMPORTED_MODULE_11__.parseCycle
       },
       // The menu's entries (1.15.0, C119): JSON on the attribute, a list as
       // the property, shaped as sf-menu-context's entries.
@@ -1176,8 +1191,8 @@ class SfButton extends ButtonElement {
 
 
   cycleState() {
-    if (!(0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.hasCycle)(this)) return null;
-    return (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.cycleState)(this, {
+    if (!(0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_11__.hasCycle)(this)) return null;
+    return (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_11__.cycleState)(this, {
       base: this.getAttribute("aria-label") || "",
       words: (key, options) => this.sfWord(key, options)
     });
@@ -1187,10 +1202,11 @@ class SfButton extends ButtonElement {
   // the inner button. sf-input-image's «Заменить изображение «photo.png»» kept
   // the first file's name after a new drop (1.14.0); sf-button-icon watched it
   // since 2026-11-06. A change now draws the button again with the new name.
+  // title: a cut label's tooltip says it in place of the label (1.17.0).
 
 
   static get observedAttributes() {
-    return [...new Set([...super.observedAttributes, "aria-label"])];
+    return [...new Set([...super.observedAttributes, "aria-label", "title"])];
   }
 
   constructor() {
@@ -1293,7 +1309,7 @@ class SfButton extends ButtonElement {
 
   get pressed() {
     // A cycle is not a toggle: pressed is ignored beside it.
-    if ((0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.hasCycle)(this)) return undefined;
+    if ((0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_11__.hasCycle)(this)) return undefined;
     return this.hasAttribute("pressed") ? super.pressed : undefined;
   }
 
@@ -1306,7 +1322,7 @@ class SfButton extends ButtonElement {
     this.captureTextChildren?.();
     const props = this.getPropsContext();
     const cycle = this.cycleState();
-    if (cycle) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.warnCycleToggle)(this, ["pressed", "text-pressed"]);
+    if (cycle) (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_11__.warnCycleToggle)(this, ["pressed", "text-pressed"]);
     noteSpacing(this); // success, warning, info: no such buttons (C13, BS-1); said once per page.
 
     (0,_helpers_control_status__WEBPACK_IMPORTED_MODULE_6__.warnUnknownControlStatus)("sf-button", this.getAttribute("status")); // secondary, surface, a danger tonal or surface (C116); said once per page.
@@ -1325,7 +1341,7 @@ class SfButton extends ButtonElement {
 
     const cycleIcon = cycle?.item.icon || ""; // The icons a press can show, asked for before the press (R074).
 
-    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.preloadSwitchIcons)(this, {
+    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_11__.preloadSwitchIcons)(this, {
       icons: [this.iconStart, this.iconEnd, ...["icon", "icon-left", "icon-right"].map(name => this.getAttribute(name))]
     });
     return this.createTemplateContext({ ...props,
@@ -1385,17 +1401,82 @@ class SfButton extends ButtonElement {
       } : null,
       // The shortcut's key caps and its aria-keyshortcuts, in this platform's
       // words (component/kbd/js/shortcut.js).
-      shortcutCaps: (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.shortcutCaps)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.parseShortcut)(this.shortcut)),
+      shortcutCaps: (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_10__.shortcutCaps)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_10__.parseShortcut)(this.shortcut)),
       // Words join with + where the platform spells its modifiers (the kbd
       // sheet shows the join only where keys are plain glyphs).
-      shortcutJoin: !(0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.isApplePlatform)(),
-      ariaKeyShortcuts: (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.ariaKeyShortcuts)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.parseShortcut)(this.shortcut)),
+      shortcutJoin: !(0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_10__.isApplePlatform)(),
+      ariaKeyShortcuts: (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_10__.ariaKeyShortcuts)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_10__.parseShortcut)(this.shortcut)),
       ...(0,_core_js_control_spacing__WEBPACK_IMPORTED_MODULE_4__.resolveControlSpacing)({
         spacing: this.getAttribute('spacing')
       }),
       height: buttonHeight(this),
+      // overflow="truncate" (1.17.0, FW-LH-1): the width it is cut at, and
+      // a cut label's tooltip (the Framework's plain tooltip, as sf-tag's).
+      overflow: this.truncates() ? "truncate" : "wrap",
+      rootStyle: [this.getRootStyle(), this.truncates() ? maxWidthStyle(this.getAttribute("max-width")) : ""].filter(Boolean).join("; "),
+      cutTooltipId: this._sfCut ? (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_9__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_9__.instancePath)(this, {
+        kind: "sf-button"
+      }), "tooltip") : "",
+      cutText: this._sfCut ? this.cutText() : "",
       component: this
     });
+  } // ─── overflow="truncate" (1.17.0, FW-LH-1, owner decision C301 (2)) ───────
+
+
+  truncates() {
+    return String(this.getAttribute("overflow") || "").trim().toLowerCase() === "truncate";
+  } // What the tooltip of a cut label says: the host's title when the page wrote
+  // one, else the whole label as drawn (a cycle's or a pressed toggle's label
+  // included).
+
+
+  cutText() {
+    const title = String(this.getAttribute("title") || "").trim();
+    if (title) return title;
+    const label = this.querySelector(":scope > .sf-button > .sf-button-text-container, :scope > .sf-button-split > .sf-button > .sf-button-text-container");
+    return String(label?.textContent ?? this.text ?? "").replace(/\s+/gu, " ").trim();
+  } // Whether the drawn label is cut: read from the label, since the width the
+  // container gives, the font and the row decide it, not the text's length.
+
+
+  measureCut() {
+    const label = this.truncates() ? this.querySelector(":scope > .sf-button > .sf-button-text-container, :scope > .sf-button-split > .sf-button > .sf-button-text-container") : null;
+    const cut = Boolean(label && label.scrollWidth - label.clientWidth > 0.5);
+
+    if (cut) {
+      // The tooltip controller, fetched once a label is cut (a lazy relation).
+      globalThis.SF?.Loader?.ensurePlugin?.("tooltip");
+    }
+
+    const text = cut ? this.cutText() : "";
+    if (cut === Boolean(this._sfCut) && text === (this._sfCutText || "")) return;
+    this._sfCut = cut;
+    this._sfCutText = text;
+    this.requestComponentUpdate("cut");
+  } // The native button's title: the cycle's tooltip (the current and the next
+  // value); else the host's title, except on a cut label, whose Framework
+  // tooltip says it, so the browser draws none over it (as sf-button-icon's,
+  // C160 (1)). An empty title on the button keeps the host's (an ancestor's)
+  // from showing.
+
+
+  syncTitle() {
+    const button = this.querySelector(".sf-button");
+    if (!button) return;
+    const cycle = this.cycleState();
+    if (cycle) button.setAttribute("title", cycle.tooltip);else if (!this.hasAttribute("title")) button.removeAttribute("title");else button.setAttribute("title", this._sfCut ? "" : this.getAttribute("title"));
+  }
+
+  watchCut() {
+    const label = this.truncates() ? this.querySelector(":scope > .sf-button > .sf-button-text-container, :scope > .sf-button-split > .sf-button > .sf-button-text-container") : null;
+    if (this._sfCutLabel === label) return;
+    this._sfCutObserver?.disconnect();
+    this._sfCutObserver = null;
+    this._sfCutLabel = label;
+    if (!label || typeof ResizeObserver === "undefined") return;
+    this._sfCutObserver = new ResizeObserver(() => this.measureCut());
+
+    this._sfCutObserver.observe(label);
   }
 
   template() {
@@ -1486,7 +1567,7 @@ class SfButton extends ButtonElement {
 
     if (!this._cycleTheme) {
       // A theme cycle follows the theme wherever it was set.
-      this._cycleTheme = () => (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.themeCycleFollow)(this);
+      this._cycleTheme = () => (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_11__.themeCycleFollow)(this);
 
       globalThis.addEventListener?.("sf-theme-change", this._cycleTheme);
     }
@@ -1499,6 +1580,12 @@ class SfButton extends ButtonElement {
 
     if ((name === "shortcut" || name === "shortcut-listen") && oldValue !== newValue && this.isConnected) {
       this.syncShortcutListener();
+    } // A cut label's tooltip says the host's title (overflow="truncate").
+
+
+    if (name === "title" && oldValue !== newValue && this.isConnected) {
+      if (this.truncates()) this.measureCut();
+      this.syncTitle();
     }
   } // shortcut-listen: one keydown listener on the document while the button is
   // connected and listens. The combination presses the native button -- a
@@ -1508,7 +1595,7 @@ class SfButton extends ButtonElement {
 
 
   syncShortcutListener() {
-    const wanted = Boolean(this.shortcutListen) && Boolean((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.parseShortcut)(this.shortcut));
+    const wanted = Boolean(this.shortcutListen) && Boolean((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_10__.parseShortcut)(this.shortcut));
 
     if (wanted && !this._shortcutListener) {
       this._shortcutListener = event => this.handleShortcut(event);
@@ -1522,10 +1609,10 @@ class SfButton extends ButtonElement {
 
   handleShortcut(event) {
     if (event.defaultPrevented || event.repeat || event.isComposing) return;
-    const parsed = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.parseShortcut)(this.shortcut);
-    if (!(0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.matchesShortcut)(event, parsed)) return;
+    const parsed = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_10__.parseShortcut)(this.shortcut);
+    if (!(0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_10__.matchesShortcut)(event, parsed)) return;
     const target = event.composedPath?.()[0] ?? event.target;
-    if (!(0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.isCommandShortcut)(parsed) && (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_9__.isEditableTarget)(target)) return;
+    if (!(0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_10__.isCommandShortcut)(parsed) && (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_10__.isEditableTarget)(target)) return;
     const button = this.querySelector(".sf-button");
     if (!button || button.disabled || button.getAttribute("aria-disabled") === "true" || !button.getClientRects().length) return;
     event.preventDefault();
@@ -1549,15 +1636,17 @@ class SfButton extends ButtonElement {
 
     this.sfEmit("press", {}); // A cycle moves to its next value after the press (D11d).
 
-    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_10__.pressCycle)(this, this.cycleState());
+    (0,_helpers_cycle__WEBPACK_IMPORTED_MODULE_11__.pressCycle)(this, this.cycleState());
   }
 
   afterRender() {
     const button = this.querySelector(".sf-button");
     applyButtonAttributes(this, button); // The cycle's tooltip names the current and the next value.
 
-    const cycle = this.cycleState();
-    if (button && cycle) button.setAttribute("title", cycle.tooltip);
+    this.syncTitle(); // A cut label (overflow="truncate"): its tooltip says the whole label.
+
+    this.watchCut();
+    this.measureCut();
 
     if (!this._attributeObserver) {
       this._attributeObserver = this.observeForwardedHostAttributes(() => this.querySelector(".sf-button"), {
@@ -1600,6 +1689,8 @@ class SfButton extends ButtonElement {
       spacing: this.spacing,
       radius: this.radius,
       fullWidth: this.fullWidth,
+      overflow: this.truncates() ? "truncate" : "wrap",
+      maxWidth: this.getAttribute("max-width") || "",
       rootClass: this.rootClass,
       loading: this.loading,
       disabled: this.disabled,
@@ -1698,6 +1789,9 @@ class SfButton extends ButtonElement {
       this._cycleTheme = null;
     }
 
+    this._sfCutObserver?.disconnect();
+    this._sfCutObserver = null;
+    this._sfCutLabel = null;
     this.disconnectForwardedHostAttributes();
     this._attributeObserver = null;
     super.onDisconnected?.();
@@ -1803,7 +1897,9 @@ function renderButtonTemplate(context) {
   spacing && spacing !== 'normal' ? `spacing-${spacing}` : '', // The height (decision C27): the class of the size's tightness step;
   // default draws none, the size's own step.
   context.height && context.height !== 'default' ? `sf-button--height-${context.height}` : '', radius ? `radius-${radius}` : '', // full-width (1.12.0, owner decision C36): sf-segmented's setting.
-  context.fullWidth ? 'sf-button--full-width' : '', rootClass, loading ? 'loading sf-button-state-loading' : '', // A loading button keeps its scheme colour (owner decision C36); one
+  context.fullWidth ? 'sf-button--full-width' : '', // overflow="truncate" (1.17.0, FW-LH-1, owner decision C301 (2)): one
+  // line, cut with an ellipsis at max-width or the container's width.
+  context.overflow === 'truncate' ? 'sf-button--truncate' : '', rootClass, loading ? 'loading sf-button-state-loading' : '', // A loading button keeps its scheme colour (owner decision C36); one
   // that is disabled as well wears the disabled look, so it says so.
   loading && disabled ? 'disabled' : '', // A toggle that is on wears the pressed look (component.buttons 1.5.0,
   // rule C12): the class carries it whether or not aria-pressed is said.
@@ -1815,7 +1911,7 @@ function renderButtonTemplate(context) {
                     class="sf-button-text-container text-${textPosition} pointer-events-none${fullText ? ' flex-1' : ''}">
         ${textContent}
       </span>` : ''}
-            ${endContent}${shortcutCaps.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-shortcut pointer-events-none" aria-hidden="true"><kbd class="sf-kbd--group">${shortcutCaps.map((cap, at) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${at && context.shortcutJoin ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-kbd-join">+</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<kbd class=${cap.square ? 'sf-kbd--square' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${cap.text}</kbd>`)}</kbd></span>` : ''}
+            ${endContent}${renderCutTooltip(context)}${shortcutCaps.length ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-shortcut pointer-events-none" aria-hidden="true"><kbd class="sf-kbd--group">${shortcutCaps.map((cap, at) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${at && context.shortcutJoin ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-kbd-join">+</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}<kbd class=${cap.square ? 'sf-kbd--square' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${cap.text}</kbd>`)}</kbd></span>` : ''}
 `; // href (1.4.0): a link with the button's look. The browser's own link
   // follows it (Enter, the context menu, a new tab); a button's states that
   // a link has no words for -- native-type, expanded, pressed -- do not
@@ -1836,6 +1932,7 @@ function renderButtonTemplate(context) {
                 aria-label=${ariaLabel || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-busy=${loading ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-keyshortcuts=${context.ariaKeyShortcuts || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                data-tooltip=${context.cutTooltipId || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         >${content}</a>
     `;
   }
@@ -1856,10 +1953,20 @@ function renderButtonTemplate(context) {
                 @keydown=${context.menuMode === 'menu' ? event => component.onMenuKey(event) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-pressed=${announcesPressed ? String(Boolean(context.pressed)) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-keyshortcuts=${context.ariaKeyShortcuts || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                data-tooltip=${context.cutTooltipId || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         >${content}</button>${context.cycleView ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-button-announce sr-only" role="status" aria-live="polite" aria-atomic="true">${context.cycleView.announcement}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     `;
   if (!context.menuMode) return button;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${context.menuMode === 'split' ? renderSplit(context, button) : button}${renderMenu(context)}`;
+} // The Framework's plain tooltip (component.tooltip, class markup) of a label
+// cut with an ellipsis (overflow="truncate", FW-LH-1, C301 (2)), as sf-tag's
+// (C58): hidden until the tooltip controller shows it on hover or keyboard
+// focus. The label stays whole in the markup, so the accessible name is all of
+// it; the tooltip is for the eye and says the whole label (or the host's title).
+
+function renderCutTooltip(context) {
+  if (!context.cutTooltipId) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span id=${context.cutTooltipId} class="sf-tooltip sf-tooltip--dark sf-tooltip--size-1/3 sf-button-tooltip" aria-hidden="true" hidden><span class="sf-tooltip-content"><span class="sf-tooltip-text">${context.cutText}</span></span></span>`;
 }
 
 const stop = event => event.stopPropagation(); // The split button (1.15.0, owner decision C119): the label part is the button
@@ -2545,6 +2652,13 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "e92fd2d1a38c"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("instance-path", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("instance-path", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
 /***/ "2a080a730149"
 (module) {
 
@@ -2591,7 +2705,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "5bb33fb22db3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.16.8","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"full-width":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true},"text-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"menu":{"type":"list","default":[],"of":{"id":"string","text":"string","icon":{"type":"icon","optional":true},"caption":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"kind":{"type":"string","optional":true}}},"split":{"type":"boolean","default":false}},"values":{},"events":{"press":{"carries":{}},"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}},"select":{"carries":{"id":{"type":"string","nullable":true},"entry":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"},"--sf-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-button-pressed-color":{"type":"color","state":"pressed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button","tag":"sf-button","version":"1.17.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"text-position":{"type":"string","default":"center"},"text":{"type":"string","default":""},"segment":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","default":""},"icon-end":{"type":"icon","default":""},"icon-position":{"type":"enum","values":["start","end"],"default":"start"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"full-width":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["wrap","truncate"],"default":"wrap"},"max-width":{"type":"string","default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"form":{"type":"string","default":""},"name":{"type":"string","default":""},"value":{"type":"string","default":""},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"shortcut":{"type":"string","default":""},"shortcut-listen":{"type":"boolean","default":false},"expanded":{"type":"boolean","optional":true},"pressed":{"type":"boolean","optional":true},"text-pressed":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"menu":{"type":"list","default":[],"of":{"id":"string","text":"string","icon":{"type":"icon","optional":true},"caption":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"kind":{"type":"string","optional":true}}},"split":{"type":"boolean","default":false}},"values":{},"events":{"press":{"carries":{}},"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}},"select":{"carries":{"id":{"type":"string","nullable":true},"entry":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-button-background-color":{"type":"color","state":"default"},"--sf-button-color":{"type":"color","state":"default"},"--sf-button-border-color":{"type":"color","state":"default"},"--sf-button-border-width":{"type":"length","state":"default"},"--sf-button-radius":{"type":"length","state":"default"},"--sf-button-padding-inline":{"type":"length","state":"default"},"--sf-button-padding-block":{"type":"length","state":"default"},"--sf-button-max-width":{"type":"length","state":"default"},"--sf-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-button-pressed-color":{"type":"color","state":"pressed"}}}');
 
 /***/ },
 

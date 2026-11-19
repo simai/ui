@@ -367,9 +367,14 @@ const FILE_SIZE_UNITS = /* @__PURE__ */unitTable(_lang_file_size_index_mjs__WEBP
 /** The unit words for a locale: registered for it, its own, its language's, else English. */
 
 function fileSizeUnits(locale = 'en') {
-  const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
+  const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-'); // A registry alias takes its pack's words (zh-cn: zh-hans, pt: pt-br;
+  // core/lang/index.json aliases, kept on the shared store by core).
 
-  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+  const pack = code => globalThis.__sfPageLanguage?.packs?.aliases?.[code] ?? code;
+
+  const base = wanted.split('-')[0];
+
+  for (const code of [...new Set([wanted, pack(wanted), base, pack(base)])]) {
     const units = registeredUnits(code) ?? (Object.hasOwn(FILE_SIZE_UNITS, code) ? FILE_SIZE_UNITS[code] : null);
     if (units) return units;
   }
@@ -708,9 +713,13 @@ function intlSpeaks(locale) {
 function packDayWord(offset, locale) {
   if (intlSpeaks(locale)) return null;
   const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-relative-day');
-  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-');
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-'); // A registry alias takes its pack's words (zh-cn: zh-hans, pt: pt-br).
 
-  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+  const pack = code => globalThis.__sfPageLanguage?.packs?.aliases?.[code] ?? code;
+
+  const base = wanted.split('-')[0];
+
+  for (const code of [...new Set([wanted, pack(wanted), base, pack(base)])]) {
     const word = words?.get?.(code)?.[DAY_KEYS[offset]];
     if (typeof word === 'string' && word.trim()) return word;
   }
@@ -2045,7 +2054,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-
 /***/ "f3f4ec5c87ca"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.5.4","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"file-date":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"duration":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["row","chip","tile"],"default":"row"},"download":{"type":"boolean","default":true},"target":{"type":"string","default":""},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"stored":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","uploading","error"],"default":"ready"},"value":{"type":"number","optional":true,"min":0,"max":100},"error-text":{"type":"string","default":""},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"retry":{"carries":{"id":"string","action":"string","value":"object"}}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-preview","tag":"sf-file-preview","version":"1.5.5","kind":"leaf","settings":{"file-name":{"type":"string","default":"File"},"file-size":{"type":"string","default":""},"file-date":{"type":"string","default":""},"icon":{"type":"icon","default":"description"},"href":{"type":"string","default":""},"kind":{"type":"enum","values":["auto","icon","image"],"default":"auto"},"mime-type":{"type":"string","default":""},"image-url":{"type":"string","default":""},"duration":{"type":"string","default":""},"surface":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["row","chip","tile"],"default":"row"},"download":{"type":"boolean","default":true},"target":{"type":"string","default":""},"actions":{"type":"boolean","default":true},"download-action":{"type":"boolean","default":true},"remove-action":{"type":"boolean","default":true},"stored":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","uploading","error"],"default":"ready"},"value":{"type":"number","optional":true,"min":0,"max":100},"error-text":{"type":"string","default":""},"download-label":{"type":"string","default-from":"runtime.download-label"},"remove-label":{"type":"string","default-from":"runtime.remove-label"},"compact":{"type":"boolean","default":false}},"values":{},"events":{"download":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"detach":{"carries":{"id":"string","action":"string","value":"object"},"cancelable":true},"retry":{"carries":{"id":"string","action":"string","value":"object"}}},"actions":{},"css-variables":{"--sf-file-preview-background-color":{"type":"color","state":"default"},"--sf-file-preview-padding":{"type":"length","state":"default"},"--sf-file-preview-radius":{"type":"length","state":"default"},"--sf-file-preview-gap":{"type":"length","state":"default"},"--sf-file-preview-holder-size":{"type":"length","state":"default"},"--sf-file-preview-holder-background-color":{"type":"color","state":"default"},"--sf-file-preview-holder-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

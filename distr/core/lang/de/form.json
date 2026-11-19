@@ -1,0 +1,37 @@
+{
+  "$schema": "../../contracts/language-pack.v1.schema.json",
+  "schema": "simai.language-pack",
+  "schema_version": 1,
+  "delivery": "framework",
+  "lang": "de",
+  "name": "Deutsch",
+  "dir": "ltr",
+  "status": "draft",
+  "review": "Machine translation by the Framework dispatcher (C278, 2026-11-18): every word, CLDR plural forms, country and language names from CLDR; not yet read by a native speaker.",
+  "coverage": {
+    "words": 14,
+    "translated": 14,
+    "share": 100
+  },
+  "words": {
+    "sf-form": {
+      "required-note": "* — Pflichtfelder",
+      "submit": "Speichern",
+      "cancel": "Abbrechen",
+      "edit": "Bearbeiten",
+      "send": "Senden",
+      "answer-sending": "Wird gesendet…",
+      "answer-cancelling": "Wird abgebrochen…",
+      "answer-sent": "Gesendet",
+      "answer-expired": "Die Zeit für eine Antwort ist abgelaufen",
+      "unsaved": "Sie haben ungespeicherte Änderungen",
+      "errors-title": {
+        "one": "{n} Feld korrigieren",
+        "other": "{n} Felder korrigieren"
+      },
+      "value-missing": "Füllen Sie das Feld „{label}“ aus",
+      "help-label": "Mehr zu {label}",
+      "empty-value": "Nicht festgelegt"
+    }
+  }
+}

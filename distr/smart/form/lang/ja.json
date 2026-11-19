@@ -1,0 +1,20 @@
+{
+  "runtime": {
+    "required-note": "* — 必須項目",
+    "submit": "保存",
+    "cancel": "キャンセル",
+    "edit": "編集",
+    "unsaved": "保存されていない変更があります",
+    "errors-title": {
+      "other": "{n} 件の項目を修正してください"
+    },
+    "value-missing": "「{label}」を入力してください",
+    "help-label": "{label} の詳細",
+    "send": "送信",
+    "answer-sending": "送信中…",
+    "answer-cancelling": "キャンセル中…",
+    "answer-sent": "送信済み",
+    "answer-expired": "回答期限が過ぎました",
+    "empty-value": "未設定"
+  }
+}

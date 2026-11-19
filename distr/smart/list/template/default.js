@@ -120,7 +120,31 @@ const metaContent = (context, item, group) => {
         : nothing}`;
 };
 
-const row = (context, item, group) => {
+// Choosing several rows (1.22.0, owner decision C167 (5) by the rule of
+// C150 (9), Larena LF-10): with selection="many" each row has a check box at
+// its start, shown under the pointer and on the focused row, and on every row
+// once anything is chosen. It is the class checkbox, not a Tab stop of its own
+// (the rows stay one stop; Space on a row chooses it). Its change is the
+// list's, never the page's change.
+const pick = (context, item, text) => {
+    if (!context.selecting) return nothing;
+    const {component} = context;
+    return html`<label class="sf-list__pick sf-checkbox sf-checkbox--size-${context.size === "1/2" ? "1/2" : "1"} flex"
+            @click=${(event) => event.stopPropagation()}>
+        <span class="sf-checkbox-box flex">
+            <input type="checkbox" tabindex="-1" .checked=${context.chosen.has(item.id)}
+                   ?disabled=${item.disabled === true}
+                   aria-label=${context.pickLabel(text)}
+                   @change=${(event) => {
+                       event.stopPropagation();
+                       component.toggleChosen(item.id, component.takeShift());
+                   }}>
+            <span class="sf-icon" aria-hidden="true"></span>
+        </span>
+    </label>`;
+};
+
+const row = (context, item, group, place = null) => {
     const {component} = context;
     const text = String(item.text ?? "") || context.untitledText;
     const supporting = item.supporting ? String(item.supporting) : "";
@@ -190,8 +214,11 @@ const row = (context, item, group) => {
                     ?disabled=${disabled}
                     ?divided=${context.divided}
             ><span slot="trailing" class="sf-list__meta">${metaContent(context, item, group)}</span></sf-list-item>`;
+    const chosen = context.selecting && context.chosen.has(item.id);
     return html`
-        <li class="sf-list__row ${current ? "sf-list__row--current" : ""} ${context.unreadOf(item) ? "sf-list__row--unread" : ""}" data-id=${item.id}>
+        <li class="sf-list__row ${current ? "sf-list__row--current" : ""} ${context.unreadOf(item) ? "sf-list__row--unread" : ""} ${chosen ? "sf-list__row--chosen" : ""}" data-id=${item.id}
+            aria-posinset=${place ? place.at : nothing} aria-setsize=${place ? place.of : nothing}>
+            ${pick(context, item, text)}
             ${listItem}
             ${menu
                 ? html`<button
@@ -208,11 +235,36 @@ const row = (context, item, group) => {
     `;
 };
 
-const rows = (context, group, labelled) => html`
-    <ul class="sf-list__rows" aria-labelledby=${labelled ?? nothing} aria-label=${labelled ? nothing : context.label}>
-        ${repeat(group.items, (item) => item.id, (item) => row(context, item, group))}
+// A long list draws the rows in view (FO-2, core/js/rows-window.js): the
+// range, and two spacers standing for the rows above and below it, so the
+// scroll bar and the scroll position are the whole list's. A drawn row says
+// its place in its list (aria-posinset, aria-setsize); the spacers are not
+// read. An ungrouped list's spacers stand in its rows; a grouped list
+// (FO2-1) draws the groups the range reaches, each with its heading and the
+// rows of it in the range, between two spacers in the list's body.
+const spacer = (height, edge, tag = "li") => tag === "li"
+    ? html`<li class="sf-list__spacer" data-sf-rows-spacer=${edge} aria-hidden="true"
+        style=${`block-size: ${Math.max(0, Math.round(height))}px`}></li>`
+    : html`<div class="sf-list__spacer" data-sf-rows-spacer=${edge} aria-hidden="true"
+        style=${`block-size: ${Math.max(0, Math.round(height))}px`}></div>`;
+
+const rows = (context, group, labelled) => {
+    const win = context.window?.flat && group.key === "all" ? context.window : null;
+    const part = context.window && !context.window.flat ? context.window.parts.get(group.key) : null;
+    const from = win ? win.first : part ? part[0] : 0;
+    const items = win
+        ? group.items.slice(win.first, win.last + 1)
+        : part ? (part[1] < 0 ? [] : group.items.slice(part[0], part[1] + 1)) : group.items;
+    const placed = Boolean(win || part);
+    return html`
+    <ul class="sf-list__rows" aria-labelledby=${labelled ?? nothing} aria-label=${labelled ? nothing : context.label}
+        data-sf-rows-window=${win ? `${win.first}-${win.last}` : nothing}>
+        ${win ? spacer(win.before, "before") : nothing}
+        ${repeat(items, (item) => item.id, (item, index) => row(context, item, group, placed ? {at: from + index + 1, of: group.items.length} : null))}
+        ${win ? spacer(win.after, "after") : nothing}
     </ul>
 `;
+};
 
 // The rows on their way (owner decision C130; list and feed study LF-2): the
 // list's own rows, sf-list-item of the list's size, so a skeleton row is as
@@ -276,7 +328,7 @@ const skeleton = (context) => {
 export function renderListTemplate(context) {
     const {component} = context;
     return html`
-        <div class="sf-list sf-list__frame sf-list--size-${context.size}${context.leading?.wide ? " sf-list--lead-wide" : ""}${context.noWrap ? " sf-list--no-wrap" : ""} ${context.empty ? "sf-list--empty" : ""}"
+        <div class="sf-list sf-list__frame sf-list--size-${context.size}${context.leading?.wide ? " sf-list--lead-wide" : ""}${context.noWrap ? " sf-list--no-wrap" : ""} ${context.empty ? "sf-list--empty" : ""}${context.selecting ? " sf-list--selecting" : ""}${context.chosen.size ? " sf-list--choosing" : ""}"
              role=${context.grouped ? "group" : nothing}
              aria-label=${context.grouped ? context.label : nothing}
              aria-busy=${context.loading ? "true" : "false"}>
@@ -286,10 +338,13 @@ export function renderListTemplate(context) {
                 : nothing}
             <div class="sf-list__body"
                  data-sf-list
+                 data-sf-rows-window=${context.window && !context.window.flat ? `${context.window.first}-${context.window.last}` : nothing}
+                 ?data-sf-rows-all=${context.rowsAll === true}
                  ?hidden=${context.empty || context.loading}
                  @keydown=${(event) => component.onKey(event)}
                  @sf-list-item-open=${(event) => component.onRowOpen(event)}>
-                ${repeat(context.sections, (group) => group.key, (group) => context.grouped
+                ${context.window && !context.window.flat && context.window.before > 0 ? spacer(context.window.before, "before", "div") : nothing}
+                ${repeat(context.window && !context.window.flat ? context.sections.filter((group) => context.window.parts.has(group.key)) : context.sections, (group) => group.key, (group) => context.grouped
                     ? html`
                         <section class="sf-list__group" data-group=${group.key}>
                             <div class=${`sf-group-heading sf-list__heading${context.size === "1" ? "" : ` sf-group-heading--size-${context.size}`}${context.stickyHeadings ? " sf-group-heading--sticky" : ""}`}
@@ -300,6 +355,7 @@ export function renderListTemplate(context) {
                             ${rows(context, group, `${context.uid}-${group.key.replace(/[^\w-]/gu, "_")}`)}
                         </section>`
                     : rows(context, group, null))}
+                ${context.window && !context.window.flat && context.window.after > 0 ? spacer(context.window.after, "after", "div") : nothing}
             </div>
             ${context.emptyContent
                 // The page's own empty state stays in the document while the
@@ -325,6 +381,23 @@ export function renderListTemplate(context) {
                 <span class="sr-only" role="status">${context.loadingMore ? context.loadingMoreText : ""}</span>
                 <span class="sf-list__end" aria-hidden="true"></span>
             </div>
+            ${context.selecting
+                // The bar of the choice is sf-bulk-actions (C295): at the
+                // list's bottom, at its width, sticking to the bottom of the
+                // scroll; hidden while nothing is chosen. Its action is the
+                // list's apply {action, scope: selection, ids}; its × and
+                // Escape clear the choice.
+                ? html`<sf-bulk-actions
+                        class="sf-list__bulk"
+                        place="dock"
+                        size=${context.size}
+                        count=${String(context.chosen.size)}
+                        page-count=${String(context.rowCount)}
+                        .actions=${context.selectionActions}
+                        @sf-bulk-actions-action=${(event) => component.onBulkAction(event)}
+                        @sf-bulk-actions-clear=${(event) => component.onBulkClear(event)}
+                ></sf-bulk-actions>`
+                : nothing}
         </div>
     `;
 }

@@ -128,7 +128,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_format_file_size_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("c016c43b1452");
 /* harmony import */ var _core_js_composition_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fb0bdf7719f0");
 /* harmony import */ var _intake_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("ab7ec7cd175d");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("a5334b2b6512");
+/* harmony import */ var _core_js_files_drop_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("3180ca98c567");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("a5334b2b6512");
+
 
 
 
@@ -142,7 +144,7 @@ __webpack_require__.r(__webpack_exports__);
 // SF.language.register('sf-file-upload', code, words); a ternary on «ru» allowed two
 // and no more.
 
-const FILE_UPLOAD_ITEM_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__["default"];
+const FILE_UPLOAD_ITEM_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__["default"];
 const FILE_UPLOAD_SELECTOR = '.sf-file-upload';
 const FILE_UPLOAD_BOUND_FLAG = 'sfFileUploadBound';
 
@@ -205,9 +207,9 @@ function getFilesContainer(root) {
     }
   }
 
-  let next = root.nextElementSibling;
+  let next = root.nextElementSibling; // The field's error line (sf-file-upload 1.6.0, FO-1) stands before the list too.
 
-  while (next?.classList?.contains('sf-file-upload-message') || next?.classList?.contains('sf-file-upload-status')) next = next.nextElementSibling;
+  while (next?.classList?.contains('sf-file-upload-message') || next?.classList?.contains('sf-file-upload-status') || next?.classList?.contains('sf-file-upload-error')) next = next.nextElementSibling;
 
   if (next?.classList?.contains('sf-file-upload-files')) {
     return next;
@@ -1214,33 +1216,13 @@ function bindFileUpload(root) {
     if (!files.length) return;
     takeFiles(root, files, 'input');
     event.target.value = '';
-  };
+  }; // Files from the computer: core's files drop (FO-1, core/js/files-drop.js)
+  // reads the drag -- only one that carries files, the copy cursor, none
+  // while disabled -- and gives the files of a drop once. The area keeps its
+  // .dragover while a file is held over it.
 
-  const onDragOver = event => {
-    if (!Array.from(event.dataTransfer?.types || []).includes('Files')) return;
-    event.preventDefault();
 
-    if (isDisabledRoot(root)) {
-      event.dataTransfer.dropEffect = 'none';
-      return;
-    }
-
-    event.dataTransfer.dropEffect = 'copy';
-    root.classList.add('dragover');
-  };
-
-  const onDragLeave = event => {
-    if (!root.contains(event.relatedTarget)) {
-      root.classList.remove('dragover');
-    }
-  };
-
-  const onDrop = event => {
-    root.classList.remove('dragover');
-    const files = Array.from(event.dataTransfer?.files || []);
-    if (!files.length && !Array.from(event.dataTransfer?.types || []).includes('Files')) return;
-    event.preventDefault();
-    if (isDisabledRoot(root) || !files.length) return;
+  const onDroppedFiles = files => {
     const added = takeFiles(root, files, 'drop');
     if (!added.length) return; // A pick sends change from the native input; a drop sent none, so a form
     // listening for change never heard of a dropped file.
@@ -1282,16 +1264,17 @@ function bindFileUpload(root) {
 
   root.addEventListener('click', onRootClick);
   root.addEventListener('keydown', onKeydown);
-  root.addEventListener('dragover', onDragOver);
-  root.addEventListener('dragleave', onDragLeave);
-  root.addEventListener('drop', onDrop);
+  const drop = (0,_core_js_files_drop_js__WEBPACK_IMPORTED_MODULE_7__.filesDrop)(root, {
+    onFiles: onDroppedFiles,
+    onOver: over => root.classList.toggle('dragover', over),
+    disabled: () => isDisabledRoot(root),
+    mark: false
+  });
   input.addEventListener('change', onInputChange);
   filesContainer?.addEventListener('click', onFilesClick);
   root.__sfFileUploadOnClick = onRootClick;
   root.__sfFileUploadOnKeydown = onKeydown;
-  root.__sfFileUploadOnDragOver = onDragOver;
-  root.__sfFileUploadOnDragLeave = onDragLeave;
-  root.__sfFileUploadOnDrop = onDrop;
+  root.__sfFileUploadDrop = drop;
   root.__sfFileUploadOnChange = onInputChange;
   root.__sfFileUploadOnFilesClick = onFilesClick;
   root.__sfFileUploadBoundInput = input;
@@ -1324,17 +1307,7 @@ function unbindFileUpload(root) {
     root.removeEventListener('keydown', root.__sfFileUploadOnKeydown);
   }
 
-  if (root.__sfFileUploadOnDragOver) {
-    root.removeEventListener('dragover', root.__sfFileUploadOnDragOver);
-  }
-
-  if (root.__sfFileUploadOnDragLeave) {
-    root.removeEventListener('dragleave', root.__sfFileUploadOnDragLeave);
-  }
-
-  if (root.__sfFileUploadOnDrop) {
-    root.removeEventListener('drop', root.__sfFileUploadOnDrop);
-  }
+  root.__sfFileUploadDrop?.stop();
 
   if (input && root.__sfFileUploadOnChange) {
     input.removeEventListener('change', root.__sfFileUploadOnChange);
@@ -1348,9 +1321,7 @@ function unbindFileUpload(root) {
 
   delete root.__sfFileUploadOnClick;
   delete root.__sfFileUploadOnKeydown;
-  delete root.__sfFileUploadOnDragOver;
-  delete root.__sfFileUploadOnDragLeave;
-  delete root.__sfFileUploadOnDrop;
+  delete root.__sfFileUploadDrop;
   delete root.__sfFileUploadOnChange;
   delete root.__sfFileUploadOnFilesClick;
   delete root.__sfFileUploadBoundInput;
@@ -2085,6 +2056,421 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "3180ca98c567"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILES_OVER_ATTRIBUTE: () => (/* binding */ FILES_OVER_ATTRIBUTE),
+/* harmony export */   NO_DRAG_QUERY: () => (/* binding */ NO_DRAG_QUERY),
+/* harmony export */   carriesFiles: () => (/* binding */ carriesFiles),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   filesDragWords: () => (/* binding */ filesDragWords),
+/* harmony export */   filesDrop: () => (/* binding */ filesDrop)
+/* harmony export */ });
+// Files from the computer dropped on an element (Framework order FO-1 of the
+// view set study, ui-control control/research/2026-11-17-view-round-1/
+// framework-orders.md; returns FO1-1..FO1-6 of the component study,
+// control/research/2026-11-18-framework-parts-fo). sf-file-upload,
+// sf-input-image, sf-tree, sf-input-rich and the set's sf-view each read
+// dataTransfer on their own: which drag carries files, the copy cursor, the
+// state while a file is held over the element, the files of a drop. This is
+// that reading, once:
+//
+//   const drop = filesDrop(element, {
+//     onFiles: (files, {event, target, skipped}) => {},
+//                                      once per drop that carries files
+//     onOver: (over, target) => {},    a file is held over the element (over
+//                                      the target), or no longer
+//     disabled: () => false,           the element takes nothing now: the cursor
+//                                      says no and no files are given
+//     target: (event) => node | null,  what under the pointer takes the files
+//                                      (a folder row of a tree); null takes
+//                                      nothing there. Given back with the files.
+//     folders: 'open' | 'skip',        a dropped folder: its files, read
+//                                      through the entries (open, the default),
+//                                      or left out and named in skipped
+//     mark: true,                      data-sf-files-over on the element
+//     overlay: () => text | null,      the one drop overlay of the page over the
+//                                      element while files are held over it,
+//                                      saying the text (C308 FO-1: «Отпустите,
+//                                      чтобы загрузить в «…»» from the
+//                                      component's language pack)
+//     follow: false,                   a host around its own zone (sf-file-upload
+//                                      and its area): it only follows the drag
+//                                      -- the over state while files are held
+//                                      over it, wherever inside they are taken
+//                                      -- and takes no files
+//   });
+//   drop.stop();
+//
+// While files are held over it the element carries data-sf-files-over (a
+// host state its sheet draws the drop zone by). Only a drag that carries
+// files is taken, so text or a row dragged across the element passes on to
+// whoever takes it. A drop that carries files is the element's even while it
+// is disabled (the browser would otherwise open the file in place of the
+// page), and gives nothing.
+//
+// Zones inside zones (FO1-1): the innermost zone under the pointer takes the
+// drop; an outer one sees it taken by a zone (a mark on the event, shared by
+// every bundle's copy) and gives nothing. A handler that only cancels the
+// event (a component's own area inside the zone) takes nothing from it. A
+// file dropped beside every zone (FO1-2) does not open in the tab while a zone
+// is on the page: the document cancels a drop of files nobody took. The over
+// state counts the enters and leaves of the element (FO1-6): a leave for a
+// child is matched by the child's enter, which Safari's leave without a
+// relatedTarget cannot say. A dropped folder (FO1-5) arrives as an empty File
+// in dataTransfer.files; its entries are read instead.
+//
+// What the zone says (owner decision C223): a screen that cannot drag -- a
+// touch screen with no fine pointer at all -- is not asked to; filesDragWords()
+// answers whether the words about dragging belong on this screen, the same
+// media query the file field's sheet hides them by.
+//
+// Where files may be dropped and what the page shows (owner decision C308
+// FO-1): a whole list (a folder, a chat, attachments) takes them when its
+// owner turns it on; one drop overlay for the page stands on top of the zone
+// the files are held over, with the words of the zone's component; zones
+// inside zones, the innermost wins. A component that draws its own zone (the
+// file field's area) keeps drawing it by the over state.
+//
+// Every bundle carries its own copy of this module: the zones on a page are
+// counted on one shared global, so the document guard is one for them all.
+const FILES_OVER_ATTRIBUTE = 'data-sf-files-over';
+const NO_DRAG_QUERY = '(pointer: coarse) and (not (any-pointer: fine))';
+const ZONES = '__sfFilesDropZones'; // The zone that took a drag event, on the event (FO1-1).
+
+const TAKEN = Symbol.for('sf.filesDrop.taken');
+
+const takenByOther = (event, element) => Boolean(event[TAKEN]) && event[TAKEN] !== element;
+
+const take = (event, element) => {
+  try {
+    if (!event[TAKEN]) Object.defineProperty(event, TAKEN, {
+      value: element,
+      configurable: true
+    });
+  } catch {
+    /* a frozen event is read as not taken */
+  }
+};
+/** Whether a drag event carries files from the computer. */
+
+
+function carriesFiles(event) {
+  return [...(event?.dataTransfer?.types ?? [])].includes('Files');
+}
+/** Whether the words about dragging belong on this screen (C223): false on a touch screen with no fine pointer. */
+
+function filesDragWords(view = globalThis) {
+  try {
+    return !view?.matchMedia?.(NO_DRAG_QUERY)?.matches;
+  } catch {
+    return true;
+  }
+} // The one drop overlay of a page (C308 FO-1): an element on the body, over
+// the zone the files are held over (the part of it on screen), the words in
+// a label in its middle; it takes no pointer, so the drop reaches the zone
+// under it. Found by its attribute, so every bundle's copy draws the same one.
+
+const OVERLAY_ATTRIBUTE = 'data-sf-files-overlay';
+let overlayOwner = null;
+
+function showOverlay(element, text) {
+  const doc = element.ownerDocument;
+  const view = doc?.defaultView;
+  if (!doc?.body || !view) return;
+  let layer = doc.body.querySelector(`:scope > [${OVERLAY_ATTRIBUTE}]`);
+
+  if (!layer) {
+    layer = doc.createElement('div');
+    layer.setAttribute(OVERLAY_ATTRIBUTE, '');
+    layer.setAttribute('aria-hidden', 'true');
+    layer.style.cssText = ['position: fixed', 'z-index: 2147483000', 'pointer-events: none', 'box-sizing: border-box', 'display: flex', 'align-items: center', 'justify-content: center', 'border: var(--sf-px) dashed var(--sf-primary-outline)', 'border-radius: var(--sf-radius--surface)', 'background: var(--sf-primary-state-select)', 'padding: var(--sf-space-1)'].join(';');
+    const words = doc.createElement('span');
+    words.style.cssText = ['background: var(--sf-surface)', 'color: var(--sf-primary)', 'border-radius: var(--sf-radius--surface)', 'padding: var(--sf-space-1\\/2) var(--sf-space-1)', 'font: inherit', 'max-inline-size: 100%', 'text-align: center'].join(';');
+    layer.append(words);
+    doc.body.append(layer);
+  }
+
+  const box = element.getBoundingClientRect();
+  const top = Math.max(0, box.top);
+  const left = Math.max(0, box.left);
+  const bottom = Math.min(view.innerHeight, box.bottom);
+  const right = Math.min(view.innerWidth, box.right);
+  Object.assign(layer.style, {
+    top: `${top}px`,
+    left: `${left}px`,
+    width: `${Math.max(0, right - left)}px`,
+    height: `${Math.max(0, bottom - top)}px`
+  });
+  layer.firstElementChild.textContent = text;
+  layer.hidden = false;
+  overlayOwner = element;
+}
+
+function hideOverlay(element) {
+  const doc = element.ownerDocument;
+  if (overlayOwner !== element && overlayOwner !== null) return;
+  overlayOwner = null;
+  const layer = doc?.body?.querySelector(`:scope > [${OVERLAY_ATTRIBUTE}]`);
+  if (layer) layer.hidden = true;
+} // The document guard (FO1-2): one per document, on while a zone is on it.
+
+
+function guard(doc, change) {
+  if (!doc?.addEventListener) return;
+  const zones = globalThis[ZONES] ??= new WeakMap();
+  const held = zones.get(doc) ?? {
+    count: 0,
+    stop: null
+  };
+  held.count = Math.max(0, held.count + change);
+
+  if (held.count && !held.stop) {
+    const refuse = event => {
+      if (event.defaultPrevented || !carriesFiles(event)) return;
+      event.preventDefault();
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'none';
+    };
+
+    doc.addEventListener('dragover', refuse);
+    doc.addEventListener('drop', refuse);
+
+    held.stop = () => {
+      doc.removeEventListener('dragover', refuse);
+      doc.removeEventListener('drop', refuse);
+    };
+  } else if (!held.count && held.stop) {
+    held.stop();
+    held.stop = null;
+  }
+
+  zones.set(doc, held);
+} // A folder's files, read through its entries (FO1-5), each with its path.
+
+
+function readEntry(entry, path = '') {
+  if (!entry) return Promise.resolve([]);
+
+  if (entry.isFile) {
+    return new Promise(settle => entry.file(file => {
+      try {
+        if (path && !file.webkitRelativePath) Object.defineProperty(file, 'sfPath', {
+          value: `${path}${file.name}`
+        });
+      } catch {
+        /* a read-only File keeps its name */
+      }
+
+      settle([file]);
+    }, () => settle([])));
+  }
+
+  if (!entry.isDirectory) return Promise.resolve([]);
+  const reader = entry.createReader();
+  const all = [];
+  return new Promise(settle => {
+    // readEntries answers a batch at a time until it answers none.
+    const next = () => reader.readEntries(batch => {
+      if (!batch.length) {
+        Promise.all(all.map(one => readEntry(one, `${path}${entry.name}/`))).then(lists => settle(lists.flat()));
+        return;
+      }
+
+      all.push(...batch);
+      next();
+    }, () => settle([]));
+
+    next();
+  });
+} // What a drop gives: the files, and the folders read or skipped. The items
+// are read in the drop's own turn (they are empty after it).
+
+
+function droppedOf(event, folders) {
+  const items = [...(event.dataTransfer?.items ?? [])].filter(item => item.kind === 'file');
+  const entries = items.map(item => typeof item.webkitGetAsEntry === 'function' ? item.webkitGetAsEntry() : null);
+
+  if (!entries.some(entry => entry?.isDirectory)) {
+    return {
+      files: Promise.resolve([...(event.dataTransfer?.files ?? [])]),
+      skipped: []
+    };
+  }
+
+  const plain = [...(event.dataTransfer?.files ?? [])];
+  const skipped = [];
+  const reads = entries.map((entry, index) => {
+    if (!entry?.isDirectory) return Promise.resolve(plain[index] ? [plain[index]] : items[index]?.getAsFile() ? [items[index].getAsFile()] : []);
+
+    if (folders === 'skip') {
+      skipped.push(entry.name);
+      return Promise.resolve([]);
+    }
+
+    return readEntry(entry);
+  });
+  return {
+    files: Promise.all(reads).then(lists => lists.flat()),
+    skipped
+  };
+}
+
+function filesDrop(element, {
+  onFiles = null,
+  onOver = null,
+  disabled = null,
+  target = null,
+  folders = 'open',
+  mark = true,
+  follow = false,
+  overlay = null
+} = {}) {
+  if (!element?.addEventListener) return {
+    stop() {},
+
+    get over() {
+      return false;
+    }
+
+  };
+  let over = false;
+  let depth = 0;
+  let place = null;
+  const doc = element.ownerDocument;
+
+  const isDisabled = () => typeof disabled === 'function' ? Boolean(disabled()) : Boolean(disabled);
+
+  const targetOf = event => typeof target === 'function' ? target(event) ?? null : element;
+
+  const setOver = (next, node = null) => {
+    if (next === over && node === place) return;
+    over = next;
+    place = next ? node : null;
+    if (mark) element.toggleAttribute(FILES_OVER_ATTRIBUTE, over);
+
+    if (typeof overlay === 'function') {
+      const text = over ? overlay(place) : null;
+      if (text) showOverlay(element, String(text));else hideOverlay(element);
+    }
+
+    if (typeof onOver === 'function') onOver(over, place);
+  };
+
+  const onDragEnter = event => {
+    if (!carriesFiles(event)) return;
+    depth += 1;
+  };
+
+  const onDragOver = event => {
+    if (!carriesFiles(event)) return;
+
+    if (follow) {
+      setOver(!isDisabled(), element);
+      return;
+    } // An inner zone took it (FO1-1): it is that zone's.
+
+
+    if (takenByOther(event, element)) {
+      setOver(false);
+      return;
+    }
+
+    const node = targetOf(event);
+
+    if (!node) {
+      setOver(false);
+      return;
+    }
+
+    take(event, element);
+    event.preventDefault();
+
+    if (isDisabled()) {
+      event.dataTransfer.dropEffect = 'none';
+      setOver(false);
+      return;
+    }
+
+    event.dataTransfer.dropEffect = 'copy';
+    setOver(true, node);
+  };
+
+  const onDragLeave = event => {
+    if (!carriesFiles(event)) return;
+    depth = Math.max(0, depth - 1);
+    if (!depth) setOver(false);
+  };
+
+  const onDrop = event => {
+    depth = 0;
+    if (!carriesFiles(event) && !event.dataTransfer?.files?.length) return;
+
+    if (follow) {
+      setOver(false);
+      return;
+    }
+
+    if (takenByOther(event, element)) {
+      setOver(false);
+      return;
+    }
+
+    const node = targetOf(event);
+    setOver(false);
+    if (!node) return;
+    take(event, element);
+    event.preventDefault();
+    if (isDisabled()) return;
+    const dropped = droppedOf(event, folders);
+    dropped.files.then(files => {
+      if ((files.length || dropped.skipped.length) && typeof onFiles === 'function') onFiles(files, {
+        event,
+        target: node,
+        skipped: dropped.skipped
+      });
+    });
+  }; // The drag ended somewhere else (Escape, a drop outside): nothing is held.
+
+
+  const onDragEnd = () => {
+    depth = 0;
+    setOver(false);
+  };
+
+  element.addEventListener('dragenter', onDragEnter);
+  element.addEventListener('dragover', onDragOver);
+  element.addEventListener('dragleave', onDragLeave);
+  element.addEventListener('drop', onDrop);
+  doc?.addEventListener?.('dragend', onDragEnd, true);
+  doc?.addEventListener?.('drop', onDragEnd, true);
+  guard(doc, 1);
+  let stopped = false;
+  return {
+    stop() {
+      if (stopped) return;
+      stopped = true;
+      element.removeEventListener('dragenter', onDragEnter);
+      element.removeEventListener('dragover', onDragOver);
+      element.removeEventListener('dragleave', onDragLeave);
+      element.removeEventListener('drop', onDrop);
+      doc?.removeEventListener?.('dragend', onDragEnd, true);
+      doc?.removeEventListener?.('drop', onDragEnd, true);
+      guard(doc, -1);
+      setOver(false);
+    },
+
+    get over() {
+      return over;
+    }
+
+  };
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (filesDrop);
+
+/***/ },
+
 /***/ "e577837dd70a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -2335,9 +2721,14 @@ const FILE_SIZE_UNITS = /* @__PURE__ */unitTable(_lang_file_size_index_mjs__WEBP
 /** The unit words for a locale: registered for it, its own, its language's, else English. */
 
 function fileSizeUnits(locale = 'en') {
-  const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-');
+  const wanted = String(locale || 'en').trim().toLowerCase().replace('_', '-'); // A registry alias takes its pack's words (zh-cn: zh-hans, pt: pt-br;
+  // core/lang/index.json aliases, kept on the shared store by core).
 
-  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+  const pack = code => globalThis.__sfPageLanguage?.packs?.aliases?.[code] ?? code;
+
+  const base = wanted.split('-')[0];
+
+  for (const code of [...new Set([wanted, pack(wanted), base, pack(base)])]) {
     const units = registeredUnits(code) ?? (Object.hasOwn(FILE_SIZE_UNITS, code) ? FILE_SIZE_UNITS[code] : null);
     if (units) return units;
   }
@@ -2658,9 +3049,13 @@ function intlSpeaks(locale) {
 function packDayWord(offset, locale) {
   if (intlSpeaks(locale)) return null;
   const words = globalThis.__sfPageLanguage?.registered?.get?.('sf-relative-day');
-  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-');
+  const wanted = String(locale || '').trim().toLowerCase().replace('_', '-'); // A registry alias takes its pack's words (zh-cn: zh-hans, pt: pt-br).
 
-  for (const code of [...new Set([wanted, wanted.split('-')[0]])]) {
+  const pack = code => globalThis.__sfPageLanguage?.packs?.aliases?.[code] ?? code;
+
+  const base = wanted.split('-')[0];
+
+  for (const code of [...new Set([wanted, pack(wanted), base, pack(base)])]) {
     const word = words?.get?.(code)?.[DAY_KEYS[offset]];
     if (typeof word === 'string' && word.trim()) return word;
   }
@@ -2937,6 +3332,44 @@ const PACKS = STORE.packs ??= {
   request: null
 }; // The languages built into the bundles: English, and in a rollback build Russian
 // too (src/core/lang/built-in.json, C282).
+// Which registered words came from a Framework pack and nothing has said over
+// since: name -> code -> Set of keys. A Framework pack is the Framework's own
+// words in a file, so for a component that names itself by a dated alias of
+// its record's tag (sf-message-log, the heir of sf-list-feed, both under
+// sf-list-feed's record) they are the successor's words, not its own: the
+// words that component ships win over them (ui-control evidence
+// 2026-11-18-pro-over-1ed6: «Лента» instead of «Переписка» once the ru pack
+// was fetched). A word a product registers, or a product pack, is still over
+// everything. Kept beside the words, not instead of them, so a copy of this
+// module from before it reads the registry as it did. A STORE made by an older
+// bundle has none yet: added here.
+
+const FLOOR = STORE.floor ??= new Map();
+
+const floorOf = (name, code) => {
+  if (!FLOOR.has(name)) FLOOR.set(name, new Map());
+  const byLanguage = FLOOR.get(name);
+  if (!byLanguage.has(code)) byLanguage.set(code, new Set());
+  return byLanguage.get(code);
+};
+
+const notFloor = (name, code, keys) => {
+  const marked = FLOOR.get(name)?.get(code);
+  if (!marked) return;
+
+  for (const key of keys) marked.delete(key);
+}; // Whether the word registered for `key` stands for the successor of the
+// component asking, so that its own shipped word is said instead: the asker
+// names a dated alias (its tag is not its record's), and the registered word
+// is a Framework pack's that no product has said over.
+
+
+function successorWord(owner, candidate, key) {
+  if (!owner) return false;
+  const name = normalise(owner);
+  const record = (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(name);
+  return record !== name && Boolean(FLOOR.get(record)?.get(candidate)?.has(key));
+}
 
 const isBuiltIn = code => code === 'en' || (_lang_built_in_mjs__WEBPACK_IMPORTED_MODULE_1__["default"]?.built_in ?? []).includes(code);
 /**
@@ -2950,10 +3383,29 @@ const isBuiltIn = code => code === 'en' || (_lang_built_in_mjs__WEBPACK_IMPORTED
 function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
-  if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
+  if (!base || isBuiltIn(base)) return;
   const name = component ? (0,_tag_aliases_js__WEBPACK_IMPORTED_MODULE_0__.canonicalTag)(component) : undefined;
+
+  if (typeof PACKS.request !== 'function') {
+    // Core has not run yet: a Smart bundle placed before core.js (a Docara
+    // page and its example frames load core last) draws before anyone can
+    // fetch. The ask is kept and core makes it when it starts
+    // (core/js/language-packs.js), so the family's part still comes.
+    const early = PACKS.early ??= new Map();
+    const named = aliasOf(wanted);
+
+    for (const one of new Set([base, wanted, ...(named ? [named] : [])])) {
+      if (!early.has(one)) early.set(one, new Set());
+      early.get(one).add(name ?? '');
+    }
+
+    return;
+  }
+
   PACKS.request(base, name);
   if (wanted !== base) PACKS.request(wanted, name);
+  const named = aliasOf(wanted);
+  if (named && named !== wanted && named !== base) PACKS.request(named, name);
 } // Words are kept under a component's current tag: a product that registered
 // them for a renamed tag (sf-datepicker, now sf-input-date) keeps its words
 // while the old tag is a dated alias, whichever name the element was written
@@ -2964,8 +3416,31 @@ const wordsOf = component => REGISTERED.get((0,_tag_aliases_js__WEBPACK_IMPORTED
 
 function normalise(value) {
   return String(value ?? '').trim().toLowerCase().replace('_', '-');
+} // The pack a page language takes. Two tables, both from the localization
+// registry (C278) and both on the shared store, so a bundle carries neither:
+// core/lang/index.json `aliases` (the shipped packs: zh-cn, zh-sg and zh take
+// zh-hans, pt takes pt-br; PACKS.aliases, set by core) and the registry's
+// second names of every language (STORE.aliases, core/js/language-packs.js).
+// A word registered for the alias itself still comes first; any other code
+// is its own.
+
+
+function packOf(code) {
+  const one = PACKS?.aliases?.[code] ?? STORE?.aliases?.[code];
+  return typeof one === 'string' && one ? one : code;
 }
-/** The languages to try, most specific first, English last. */
+
+function aliasOf(code) {
+  const named = packOf(code);
+  return named !== code ? named : null;
+}
+/**
+ * The languages to try, most specific first, English last: the language, the
+ * pack it is an alias of, the language without its region and that one's
+ * pack. zh-CN: zh-cn, zh-hans, zh, en; zh-TW: zh-tw, zh, zh-hans, en; pt-PT:
+ * pt-pt, pt, pt-br, en. Until 2026-11-18 a zh-CN or pt page found no pack and
+ * spoke English.
+ */
 
 
 const chain = language => {
@@ -2973,7 +3448,7 @@ const chain = language => {
   const base = wanted.split('-')[0];
   const order = [];
 
-  for (const candidate of [wanted, base, 'en']) {
+  for (const candidate of [wanted, packOf(wanted), base, packOf(base), 'en']) {
     if (candidate && !order.includes(candidate)) order.push(candidate);
   }
 
@@ -3158,7 +3633,8 @@ function localeText(dictionary, key, locale, component) {
   needPack(order[0], component);
 
   for (const candidate of order) {
-    const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
+    let added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
+    if (added !== undefined && dictionary?.[candidate]?.[key] !== undefined && successorWord(component, candidate, key)) added = undefined;
 
     if (added !== undefined) {
       if (candidate === 'en' && added !== '') warnFallback(order, component, key);
@@ -3183,9 +3659,14 @@ function localeText(dictionary, key, locale, component) {
 // the shared global, because every bundle carries this module.
 
 function warnFallback(order, owner, key) {
-  const wanted = String(order[0] || '').split('-')[0]; // While its pack is on its way the English is a moment, not a gap.
+  const wanted = packOf(String(order[0] || '').split('-')[0]); // While its pack is on its way the English is a moment, not a gap (the
+  // registry name's pack too: zh-hans for a zh-CN page). Before core runs
+  // nothing can be on its way yet: the word is asked again when the pack core
+  // fetches arrives, and only a word still missing then is one (ui-view
+  // example frames reported sf-pagination "of-pages", which the ru pack holds,
+  // on loads where the bundle ran before core).
 
-  if (!wanted || wanted === 'en' || PACKS.pending.has(wanted)) return;
+  if (!wanted || wanted === 'en' || typeof PACKS.request !== 'function' || order.some(code => code !== 'en' && PACKS.pending.has(code))) return;
   const root = globalThis;
   if (!(root.__sfMissingWords instanceof Map)) root.__sfMissingWords = new Map();
   const seen = root.__sfMissingWords;
@@ -3265,6 +3746,7 @@ function pageWord(dictionary, key, node, {
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
     let added = registered?.[key];
+    if (added !== undefined && dictionary?.[candidate]?.[key] !== undefined && successorWord(owner, candidate, key)) added = undefined;
 
     if (added === undefined && registered) {
       const old = formerKeys.find(name => registered[name] !== undefined && registered[name] !== null);
@@ -3370,9 +3852,17 @@ const language = {
     if (!name || !code) throw new TypeError('a component and a language are required');
     if (!REGISTERED.has(name)) REGISTERED.set(name, new Map());
     const byLanguage = REGISTERED.get(name);
-    if (words === null) byLanguage.delete(code);else byLanguage.set(code, { ...(byLanguage.get(code) ?? {}),
-      ...words
-    });
+
+    if (words === null) {
+      byLanguage.delete(code);
+      FLOOR.get(name)?.delete(code);
+    } else {
+      byLanguage.set(code, { ...(byLanguage.get(code) ?? {}),
+        ...words
+      });
+      notFloor(name, code, Object.keys(words ?? {}));
+    }
+
     announce();
     return this;
   },
@@ -3407,6 +3897,15 @@ const language = {
       } : { ...now,
         ...byKey
       });
+
+      if (under) {
+        const marked = floorOf(name, code);
+
+        for (const key of Object.keys(byKey)) if (!Object.prototype.hasOwnProperty.call(now, key) || marked.has(key)) marked.add(key);
+      } else {
+        notFloor(name, code, Object.keys(byKey));
+      }
+
       words += Object.keys(byKey).length;
     }
 
@@ -3467,7 +3966,7 @@ const language = {
   missing(value) {
     const seen = globalThis.__sfMissingWords instanceof Map ? globalThis.__sfMissingWords : new Map();
     if (value === undefined) return Object.fromEntries([...seen].map(([code, words]) => [code, [...words]]));
-    return [...(seen.get(normalise(value).split('-')[0]) ?? [])];
+    return [...(seen.get(packOf(normalise(value).split('-')[0])) ?? [])];
   },
 
   /** Every component something has been registered for. */
@@ -3488,7 +3987,10 @@ const language = {
   /** Everything registered is forgotten. For tests, and for a product reset. */
   forget() {
     REGISTERED.clear();
-    PACKS.loaded.clear();
+    FLOOR.clear();
+    PACKS.loaded.clear(); // The asks kept before core ran go too: they were for the words forgotten.
+
+    PACKS.early?.clear?.();
     STORE.chosen = null;
     announce();
     return this;

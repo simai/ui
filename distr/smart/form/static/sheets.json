@@ -48,7 +48,9 @@
     "utility/resize/default/css/default.min.css",
     "utility/sr-only/default/css/default.min.css",
     "utility/text-align/default/css/default.min.css",
-    "utility/transition-property/default/css/default.min.css"
+    "utility/text-overflow/default/css/default.min.css",
+    "utility/transition-property/default/css/default.min.css",
+    "utility/visibility/default/css/default.min.css"
   ],
   "examples": {
     "answer": [
@@ -80,7 +82,9 @@
       "utility/resize/default/css/default.min.css",
       "utility/sr-only/default/css/default.min.css",
       "utility/text-align/default/css/default.min.css",
-      "utility/transition-property/default/css/default.min.css"
+      "utility/text-overflow/default/css/default.min.css",
+      "utility/transition-property/default/css/default.min.css",
+      "utility/visibility/default/css/default.min.css"
     ],
     "answer-sent": [
       "component/badges/css/badges.min.css",
@@ -104,7 +108,9 @@
       "utility/pointer-events/default/css/default.min.css",
       "utility/position/default/css/default.min.css",
       "utility/sr-only/default/css/default.min.css",
-      "utility/text-align/default/css/default.min.css"
+      "utility/text-align/default/css/default.min.css",
+      "utility/text-overflow/default/css/default.min.css",
+      "utility/visibility/default/css/default.min.css"
     ],
     "instant": [
       "component/avatars/css/avatars.min.css",
@@ -145,7 +151,9 @@
       "utility/position/default/css/default.min.css",
       "utility/sr-only/default/css/default.min.css",
       "utility/text-align/default/css/default.min.css",
-      "utility/transition-property/default/css/default.min.css"
+      "utility/text-overflow/default/css/default.min.css",
+      "utility/transition-property/default/css/default.min.css",
+      "utility/visibility/default/css/default.min.css"
     ],
     "labels-start": [
       "component/avatars/css/avatars.min.css",
@@ -160,6 +168,7 @@
       "component/inputs/css/inputs.min.css",
       "component/kbd/css/kbd.min.css",
       "component/radio/css/radio.min.css",
+      "component/switch/css/switch.min.css",
       "component/tags/css/tags.min.css",
       "core/css/core.css",
       "smart/button-close/css/button-close.min.css",
@@ -170,6 +179,7 @@
       "smart/help-mark/css/help-mark.min.css",
       "smart/input-choice/css/input-choice.min.css",
       "smart/input/css/input.min.css",
+      "smart/switch/css/switch.min.css",
       "utility/align-items/default/css/default.min.css",
       "utility/background-color/default/css/default.min.css",
       "utility/background-size/default/css/default.min.css",
@@ -185,7 +195,9 @@
       "utility/position/default/css/default.min.css",
       "utility/sr-only/default/css/default.min.css",
       "utility/text-align/default/css/default.min.css",
-      "utility/transition-property/default/css/default.min.css"
+      "utility/text-overflow/default/css/default.min.css",
+      "utility/transition-property/default/css/default.min.css",
+      "utility/visibility/default/css/default.min.css"
     ],
     "reference": [
       "component/avatars/css/avatars.min.css",
@@ -200,6 +212,7 @@
       "component/inputs/css/inputs.min.css",
       "component/kbd/css/kbd.min.css",
       "component/radio/css/radio.min.css",
+      "component/switch/css/switch.min.css",
       "component/tags/css/tags.min.css",
       "component/textarea/css/textarea.min.css",
       "core/css/core.css",
@@ -212,6 +225,7 @@
       "smart/input-choice/css/input-choice.min.css",
       "smart/input-textarea/css/input-textarea.min.css",
       "smart/input/css/input.min.css",
+      "smart/switch/css/switch.min.css",
       "utility/align-items/default/css/default.min.css",
       "utility/background-color/default/css/default.min.css",
       "utility/background-size/default/css/default.min.css",
@@ -228,7 +242,9 @@
       "utility/resize/default/css/default.min.css",
       "utility/sr-only/default/css/default.min.css",
       "utility/text-align/default/css/default.min.css",
-      "utility/transition-property/default/css/default.min.css"
+      "utility/text-overflow/default/css/default.min.css",
+      "utility/transition-property/default/css/default.min.css",
+      "utility/visibility/default/css/default.min.css"
     ],
     "sticky": [
       "component/avatars/css/avatars.min.css",
@@ -243,6 +259,7 @@
       "component/inputs/css/inputs.min.css",
       "component/kbd/css/kbd.min.css",
       "component/radio/css/radio.min.css",
+      "component/switch/css/switch.min.css",
       "component/tags/css/tags.min.css",
       "component/textarea/css/textarea.min.css",
       "core/css/core.css",
@@ -255,6 +272,7 @@
       "smart/input-choice/css/input-choice.min.css",
       "smart/input-textarea/css/input-textarea.min.css",
       "smart/input/css/input.min.css",
+      "smart/switch/css/switch.min.css",
       "utility/align-items/default/css/default.min.css",
       "utility/background-color/default/css/default.min.css",
       "utility/background-size/default/css/default.min.css",
@@ -271,7 +289,9 @@
       "utility/resize/default/css/default.min.css",
       "utility/sr-only/default/css/default.min.css",
       "utility/text-align/default/css/default.min.css",
-      "utility/transition-property/default/css/default.min.css"
+      "utility/text-overflow/default/css/default.min.css",
+      "utility/transition-property/default/css/default.min.css",
+      "utility/visibility/default/css/default.min.css"
     ],
     "view": [
       "component/badges/css/badges.min.css",
@@ -297,7 +317,9 @@
       "utility/pointer-events/default/css/default.min.css",
       "utility/position/default/css/default.min.css",
       "utility/sr-only/default/css/default.min.css",
-      "utility/text-align/default/css/default.min.css"
+      "utility/text-align/default/css/default.min.css",
+      "utility/text-overflow/default/css/default.min.css",
+      "utility/visibility/default/css/default.min.css"
     ]
   }
 }

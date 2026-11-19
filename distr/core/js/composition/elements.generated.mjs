@@ -111,7 +111,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.badge",
-    "version": "1.6.3"
+    "version": "1.6.4"
   },
   "sf-button": {
     "inputs": {
@@ -185,6 +185,10 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": false,
           "type": "boolean"
         },
+        "max-width": {
+          "default": "",
+          "type": "string"
+        },
         "name": {
           "default": "",
           "type": "string"
@@ -195,6 +199,14 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
             "button",
             "submit",
             "reset"
+          ],
+          "type": "string"
+        },
+        "overflow": {
+          "default": "wrap",
+          "enum": [
+            "wrap",
+            "truncate"
           ],
           "type": "string"
         },
@@ -311,7 +323,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.16.8"
+    "version": "1.17.2"
   },
   "sf-button-icon": {
     "inputs": {
@@ -491,7 +503,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.13.8"
+    "version": "1.13.10"
   },
   "sf-checkbox": {
     "inputs": {
@@ -516,6 +528,10 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
         "disabled": {
           "default": false,
           "type": "boolean"
+        },
+        "error-message": {
+          "default": "",
+          "type": "string"
         },
         "help": {
           "default": "",
@@ -563,7 +579,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.checkbox",
-    "version": "1.5.5"
+    "version": "1.6.0"
   },
   "sf-divider": {
     "component": "component.content-divider",
@@ -635,6 +651,14 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
           ],
           "type": "string"
         },
+        "list-width": {
+          "default": "field",
+          "enum": [
+            "field",
+            "list"
+          ],
+          "type": "string"
+        },
         "mode": {
           "default": "select",
           "enum": [
@@ -696,7 +720,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.20.4"
+    "version": "1.22.0"
   },
   "sf-icon": {
     "inputs": {
@@ -788,7 +812,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.4.2"
+    "version": "1.4.3"
   },
   "sf-input": {
     "inputs": {
@@ -997,7 +1021,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.15.2"
+    "version": "1.15.3"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -1173,7 +1197,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.13.2"
+    "version": "1.13.3"
   },
   "sf-switch": {
     "inputs": {
@@ -1195,6 +1219,10 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": false,
           "type": "boolean"
         },
+        "error-message": {
+          "default": "",
+          "type": "string"
+        },
         "help": {
           "default": "",
           "type": "string"
@@ -1214,6 +1242,10 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
         "inherited-value": {
           "default": "",
           "type": "string"
+        },
+        "invalid": {
+          "default": false,
+          "type": "boolean"
         },
         "label": {
           "default": "",
@@ -1257,6 +1289,6 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.switch",
-    "version": "1.9.3"
+    "version": "1.10.0"
   }
 });

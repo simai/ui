@@ -1,0 +1,21 @@
+{
+  "runtime": {
+    "required-note": "* — Pflichtfelder",
+    "submit": "Speichern",
+    "cancel": "Abbrechen",
+    "edit": "Bearbeiten",
+    "unsaved": "Sie haben ungespeicherte Änderungen",
+    "errors-title": {
+      "one": "{n} Feld korrigieren",
+      "other": "{n} Felder korrigieren"
+    },
+    "value-missing": "Füllen Sie das Feld „{label}“ aus",
+    "help-label": "Mehr zu {label}",
+    "send": "Senden",
+    "answer-sending": "Wird gesendet…",
+    "answer-cancelling": "Wird abgebrochen…",
+    "answer-sent": "Gesendet",
+    "answer-expired": "Die Zeit für eine Antwort ist abgelaufen",
+    "empty-value": "Nicht festgelegt"
+  }
+}

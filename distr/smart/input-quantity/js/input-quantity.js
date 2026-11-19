@@ -83,12 +83,29 @@ function syncFieldContract(root, control, {
 
   if (root.tagName === 'LABEL' && !root.hasAttribute('for')) {
     root.setAttribute('for', control.id);
+  } // A root that is not a label carries its label text as a <label> of its
+  // own (div.sf-input, 1.13.0): it points at the control too.
+
+
+  if (labelNode?.tagName === 'LABEL' && !labelNode.hasAttribute('for')) {
+    labelNode.setAttribute('for', control.id);
   } // Name the field by its visible label, not every hint or adjacent button.
   // Author-provided accessible names remain authoritative.
 
 
   if (labelNode?.textContent?.trim() && !control.hasAttribute('aria-label') && !control.hasAttribute('aria-labelledby')) {
-    if (!labelNode.id) labelNode.id = `${control.id}-label`;
+    // An id of its own: «<control>-label» may already name another element
+    // (a page that gave the field's root that id), and aria-labelledby would
+    // then read that element's whole text, the hint with it (DF-3).
+    if (!labelNode.id) {
+      const doc = labelNode.ownerDocument;
+      let id = `${control.id}-label`;
+
+      for (let n = 2; doc?.getElementById?.(id); n += 1) id = `${control.id}-label-${n}`;
+
+      labelNode.id = id;
+    }
+
     control.setAttribute('aria-labelledby', labelNode.id);
   }
 
@@ -2914,7 +2931,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "bd1940663dd9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.12.2","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"steppers":{"type":"enum","values":["sides","none"],"default":"sides"},"unit":{"type":"string","default":""},"digits":{"type":"number","integer":true,"min":1,"max":20,"nullable":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"},"removable":{"type":"boolean","default":false},"remove-label":{"type":"string","default-from":"runtime.remove"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}},"remove":{"carries":{"value":{"type":"number"},"name":"string","source":{"type":"enum","values":["button","typing"]}},"cancelable":true,"own-verb":true}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.12.3","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"steppers":{"type":"enum","values":["sides","none"],"default":"sides"},"unit":{"type":"string","default":""},"digits":{"type":"number","integer":true,"min":1,"max":20,"nullable":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"},"removable":{"type":"boolean","default":false},"remove-label":{"type":"string","default-from":"runtime.remove"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}},"remove":{"carries":{"value":{"type":"number"},"name":"string","source":{"type":"enum","values":["button","typing"]}},"cancelable":true,"own-verb":true}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

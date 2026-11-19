@@ -48,12 +48,20 @@
   "cl-breadcrumbs": [
     "display/default"
   ],
+  "cl-bulk-actions": [
+    "display/default",
+    "sr-only/default",
+    "text-max-width/default",
+    "user-select/default",
+    "visibility/default"
+  ],
   "cl-button": [
     "align-items/default",
     "display/default",
     "flex/default",
     "pointer-events/default",
-    "sr-only/default"
+    "sr-only/default",
+    "text-overflow/default"
   ],
   "cl-button-close": [
     "align-items/default",
@@ -136,7 +144,8 @@
   ],
   "cl-form": [
     "display/default",
-    "position/default"
+    "position/default",
+    "visibility/default"
   ],
   "cl-gallery": [
     "display/default"

@@ -3,7 +3,7 @@
   "schema_version": 1,
   "id": "module.smart-helpers",
   "kind": "module",
-  "version": "1.15.1",
+  "version": "1.19.0",
   "owner": "simai/ui-source",
   "summary": "The helpers the Smart components import (src/smart/helpers); not a component itself.",
   "includes": [
@@ -21,16 +21,18 @@
     "src/smart/helpers/cycle.js",
     "src/smart/helpers/dom.js",
     "src/smart/helpers/draggable.js",
+    "src/smart/helpers/field-appearance.js",
     "src/smart/helpers/field-help.js",
     "src/smart/helpers/form-field.js",
     "src/smart/helpers/inherited-value.css",
     "src/smart/helpers/inherited-value.js",
+    "src/smart/helpers/late-children.js",
     "src/smart/helpers/loaderDragState.js",
     "src/smart/helpers/option-badge.js",
     "src/smart/helpers/refs.js",
     "src/smart/helpers/text.js"
   ],
-  "content_sha256": "ffbe9fffef99a205cca22b3769e893dde939d161115e2eb24dc3ff998e9f1045",
+  "content_sha256": "a456fe47887393451176a0ee10addc5706af285f5069034a315e9978e89d8549",
   "dependencies": [
     {
       "id": "component.badges",

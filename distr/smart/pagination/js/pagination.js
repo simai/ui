@@ -342,6 +342,41 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "d26573af0eef"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   isDestructiveAction: () => (/* binding */ isDestructiveAction),
+/* harmony export */   orderActions: () => (/* binding */ orderActions)
+/* harmony export */ });
+// The one danger rule of the group actions (owner decision C295, defect BA-1:
+// sf-pagination, sf-view, sf-view-table and sf-gallery each had a rule of
+// their own, or none). An action is dangerous when it says so -- status
+// "danger" (C13), or the danger flag of sf-pagination's markup -- or when its
+// id deletes: delete, remove, destroy, trash, as a word at the start
+// ("remove-all"), never inside another one ("deleted-view").
+//
+// A dangerous action is red, stands last after a line in the more menu and is
+// asked about first (C39) unless it says confirm: false. sf-pagination
+// re-exports this file, so a host that imported isDestructiveAction from it
+// keeps the same answer.
+const DELETING = /^(delete|remove|destroy|trash)\b/iu;
+/** Whether an action deletes or cannot be undone. */
+
+function isDestructiveAction(item) {
+  if (!item || typeof item !== 'object') return false;
+  if (item.status === 'danger' || item.status === 'error' || item.danger === true) return true;
+  return DELETING.test(String(item.id ?? item.value ?? ''));
+}
+/** The actions as listed: as written, the dangerous ones last. */
+
+function orderActions(actions = []) {
+  return [...actions].sort((a, b) => Number(isDestructiveAction(a)) - Number(isDestructiveAction(b)));
+}
+
+/***/ },
+
 /***/ "403726af3b51"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -357,9 +392,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("1373e294ec38");
 /* harmony import */ var _core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("6978f1cc153b");
 /* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("a57d260bd333");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("344edfee8242");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("90fab10c70dd");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("97c2f8ebc346");
+/* harmony import */ var _js_actions_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("0b6c983d0722");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("344edfee8242");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("90fab10c70dd");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("97c2f8ebc346");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -373,12 +409,13 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // Only the words on screen ship in the bundle, English only (owner decision
 // C282): Russian and every other language come from a language file. The
 // title, settings and events stay in the language files for the Studio and the
 // docs (localization study LC-2).
 
-const en = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files.en; // sf-pagination from its component.json (standard simai.smart-component 1.3.8
+const en = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files.en; // sf-pagination from its component.json (standard simai.smart-component 1.3.8
 // §3, §4, §8, §11): its settings are attributes and properties made by
 // core/js/element-manifest.js, every word it says is lang/<locale>.json (an
 // English page used to read «Всего:» under a list that had switched, owner
@@ -458,11 +495,11 @@ function pageWindow(current, count, slots) {
   places.push(count);
   return places;
 }
-const PaginationElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
+const PaginationElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__,
   formerWords: {
     since: "2026-10-27",
     remove_after: "2026-12-01",
@@ -517,7 +554,7 @@ function parseActions(value, fallback = []) {
 } // The boolean settings that are on by default (component.json).
 
 
-const DEFAULT_ON = new Set(Object.entries(_component_json__WEBPACK_IMPORTED_MODULE_6__.settings).filter(([, spec]) => spec.type === "boolean" && spec.default === true).map(([name]) => name)); // «[3] из 12»: the field stands where the word says {page} («{page} из
+const DEFAULT_ON = new Set(Object.entries(_component_json__WEBPACK_IMPORTED_MODULE_7__.settings).filter(([, spec]) => spec.type === "boolean" && spec.default === true).map(([name]) => name)); // «[3] из 12»: the field stands where the word says {page} («{page} из
 // {count}»), so a language may put the count first. The text around the
 // field, trimmed: {before, after}. A word without {page} (a product's word
 // from before 1.7.x) is all after the field, as it was.
@@ -761,10 +798,15 @@ class SfPagination extends PaginationElement {
         default: false
       }
     };
-  }
+  } // Show more of the compatible footer (until 2027-01-01) only where an
+  // author wrote top: «Показать ещё» is an appearance of its own (C97 (1),
+  // C167 (1)), and a footer written without appearance drew it above its
+  // page row by default -- at 390 a list showed «Показать ещё» and «из 3»
+  // at once (Larena LF-11). Written, top keeps it, noted in SF.deprecations.
+
 
   get top() {
-    return this.getBooleanAttr("top", true);
+    return this.hasAttribute("top") && this.getBooleanAttr("top", true);
   }
 
   get middle() {
@@ -1326,6 +1368,7 @@ class SfPagination extends PaginationElement {
       rootClass: this.getRootClass(),
       appearance: this.appearance,
       footer: this.footer,
+      top: this.top,
       topClass: this.topClass,
       mainClass: this.mainClass,
       bottomClass: this.bottomClass,
@@ -1378,6 +1421,9 @@ class SfPagination extends PaginationElement {
       pageCount: this.knownPageCount,
       hasPrev: this.current > 1,
       hasNext: this.hasNext,
+      // Everything fits one page (C97, C167 (1), Larena LF-11): no page to
+      // go to either way, so the page navigation is not drawn.
+      singlePage: this.current <= 1 && !this.hasNext,
       countKnown: this.countKnown,
       totalExact: this.totalExact,
       shownTotal: this.shownTotal,
@@ -1408,7 +1454,10 @@ class SfPagination extends PaginationElement {
       actionsLabel: this.actionsLabel,
       actionChooseLabel: this.actionChooseLabel,
       actionsRegionLabel: this.actionsRegionLabel,
-      clearSelectionLabel: this.clearSelectionLabel
+      clearSelectionLabel: this.clearSelectionLabel,
+      bulkActions: this.bulkActions,
+      bulkPageCount: this.bulkPageCount,
+      bulkCountText: this.bulkCountText
     });
   }
 
@@ -1934,6 +1983,76 @@ class SfPagination extends PaginationElement {
     }
 
     return this;
+  } // The band is sf-bulk-actions (C295, 1.9.0): the actions in its shape. The
+  // danger is the bar's one rule (BA-1); the band asked no question before,
+  // and a host that asks its own keeps doing so, so the band's actions say
+  // confirm false.
+
+
+  get bulkActions() {
+    return this.actions.map(item => ({
+      id: item.value,
+      text: item.text,
+      disabled: Boolean(item.disabled),
+      status: (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_6__.isDestructiveAction)(item) ? "danger" : "",
+      confirm: false
+    }));
+  } // A host's own count word (selected-label) stays its line; otherwise the
+  // bar's words: «Выбрано N», «Выбраны все N».
+
+
+  get bulkCountText() {
+    return this.hasAttribute("selected-label") ? `${this.selectedLabel} ${this.selectedCount}`.trim() : "";
+  } // The rows on the page, for the bar's «Выбрать все N»: the page size, or
+  // what is left on the last page when the count is exact.
+
+
+  get bulkPageCount() {
+    if (!this.exactCount) return this.pageSize;
+    const left = this.total - (this.current - 1) * this.pageSize;
+    return Math.max(0, Math.min(this.pageSize, left));
+  } // The bar's action: the band's chosen action and its scope, then Apply, so
+  // the host hears sf-pagination-action-change, -action-for-all-change and
+  // -apply as before.
+
+
+  applyBulkAction(event) {
+    const detail = event?.detail ?? {};
+    if (!detail.id) return this;
+    this.setAction(detail.id);
+    this.setActionForAll(detail.scope === "all");
+    return this.applyAction();
+  } // BA-3: «for all» lasts while the selection does. A changed count takes it
+  // back, so a second action after a change no longer goes to all N.
+
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    super.attributeChangedCallback?.(name, oldValue, newValue);
+
+    if (name === "selected-count" && this.isConnected && oldValue !== null && oldValue !== newValue && this.actionForAll) {
+      this.setActionForAll(false);
+    }
+
+    if (name === "selected-count" || name === "show-action-for-all") {
+      queueMicrotask(() => this.askCountForAll());
+    }
+  } // The bar offers «Выбрать все N» once the whole page is selected, and N is
+  // the number the action would go to: without an exact count the old «для
+  // всех» box asked for it when marked. The bar has no box, so the count is
+  // asked for when the whole page is selected (reason action-for-all, as
+  // before) and the offer appears with the answer.
+
+
+  askCountForAll() {
+    if (!this.isConnected || !this.showActionForAll || this.exactCount || !this.canCount || this.counting) {
+      return this;
+    }
+
+    if (this.selectedCount > 0 && this.selectedCount >= this.bulkPageCount) {
+      this.requestCount("action-for-all");
+    }
+
+    return this;
   }
 
   applyAction() {
@@ -2089,20 +2208,16 @@ __webpack_async_result__();
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   isDestructiveAction: () => (/* binding */ isDestructiveAction),
-/* harmony export */   orderActions: () => (/* binding */ orderActions)
+/* harmony export */   isDestructiveAction: () => (/* reexport safe */ _bulk_actions_js_danger_js__WEBPACK_IMPORTED_MODULE_0__.isDestructiveAction),
+/* harmony export */   orderActions: () => (/* reexport safe */ _bulk_actions_js_danger_js__WEBPACK_IMPORTED_MODULE_0__.orderActions)
 /* harmony export */ });
-// C116: an action that deletes is the dangerous one of the band -- Apply over
-// it is the outlined danger button, and it is listed last. It says so with the
-// danger flag ("delete:Delete::danger", {danger: true}) or by a value that
-// deletes (delete, remove, destroy, trash), the same rule sf-view's band reads.
-function isDestructiveAction(item) {
-  return Boolean(item) && (item.danger === true || /^(delete|remove|destroy|trash)\b/iu.test(String(item.value ?? item.id ?? "")));
-} // The order the band lists the actions in: as written, the dangerous ones last.
+/* harmony import */ var _bulk_actions_js_danger_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d26573af0eef");
+// C116 and BA-1 (owner decision C295): the danger rule of the group actions
+// is one, sf-bulk-actions' (an action that deletes says so with status
+// "danger" or the danger flag -- "delete:Delete::danger", {danger: true} -- or
+// by a value that deletes: delete, remove, destroy, trash). sf-pagination
+// re-exports it for the hosts that imported it from here.
 
-function orderActions(actions = []) {
-  return [...actions].sort((a, b) => Number(isDestructiveAction(a)) - Number(isDestructiveAction(b)));
-}
 
 /***/ },
 
@@ -2115,14 +2230,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderPaginationTemplate: () => (/* binding */ renderPaginationTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("9d9903b87148");
-/* harmony import */ var _actions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("0b6c983d0722");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__);
-
-
  // sf-pagination's markup (decision C97, 2026-11-12). The element is page
 // navigation, in five appearances, each a named <nav> holding only the way
 // between pages:
@@ -2515,82 +2626,34 @@ function renderPageSize(context, component) {
     </div>
   `;
 } // The band of bulk controls, kept for a pagination that carries it until
-// 2027-01-01 (C97 point 5: it belongs to sf-view, which draws it itself).
+// 2027-01-01 (C97 point 5: it belongs to the list). Since 1.9.0 it is the
+// group actions bar, sf-bulk-actions (owner decision C295): «Выбрано N», the
+// actions as buttons (up to three, the rest in «⋯», the dangerous one last in
+// it, BA-1), «Выбрать все N» once the page is selected and ×. The pagination
+// passes its settings to the bar and turns the bar's events into its own
+// (setAction, setActionForAll, applyAction, clearSelection), so a host that
+// listens for sf-pagination-apply and -selection-clear is served as before.
 
 
 function renderBand(context, component) {
-  // C116: Apply is a regular button in a band of controls (outline
-  // on-surface), never the filled main one; over an action that deletes it is
-  // the outlined danger, and that action is listed last. A Smart button draws
-  // its look once, so a look that changes is a new button in the same place
-  // (keyed), bound once by the template: one press, one apply.
-  const danger = (0,_actions_js__WEBPACK_IMPORTED_MODULE_2__.isDestructiveAction)(context.actions.find(item => item.value === context.action));
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <div
-      class=${joinClasses("sf-pagination-actions", "flex", "items-cross-center", context.bottomClass)}
-      role="region"
-      aria-label=${context.actionsRegionLabel}
-    >
-      <span class="sf-pagination-actions-count">
-        ${context.selectedLabel} ${context.selectedCount}
-      </span>
-      <span class="sf-pagination-actions-separator" aria-hidden="true"></span>
-      <sf-dropdown
-        size=${context.size}
-        appearance="bordered"
-        search="false"
-        mode="select"
-        value=${context.action}
-        placeholder=${context.actionChooseLabel}
-        aria-label=${context.actionsLabel}
-        .options=${[// The list opens on a choice that is not an action: Apply is not
-  // pressable before anyone has chosen anything.
-  {
-    type: "text",
-    size: context.size,
-    text: context.actionChooseLabel,
-    value: "",
-    selected: !context.action
-  }, ...(0,_actions_js__WEBPACK_IMPORTED_MODULE_2__.orderActions)(context.actions).map(action => ({
-    type: "text",
-    size: context.size,
-    text: action.text,
-    value: action.value,
-    selected: action.value === context.action,
-    disabled: Boolean(action.disabled)
-  }))]}
-        @change=${event => component.setAction(event.detail.value)}
-      ></sf-dropdown>
-      ${(0,lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__.keyed)(danger, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button
-        data-sf-bulk="apply"
-        size=${context.size}
-        appearance="outline"
-        scheme="on-surface"
-        status=${danger ? "danger" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-        text=${context.actionApplyText}
-        ?disabled=${!context.action}
-        @click=${() => component.applyAction()}
-      ></sf-button>`)}
-      ${context.showActionForAll ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-            <span class="sf-pagination-actions-separator" aria-hidden="true"></span>
-            <sf-checkbox
-              size=${context.size}
-              label=${context.countKnown ? `${context.actionForAllLabel} (${context.shownTotal})` : context.actionForAllLabel}
-              ?checked=${Boolean(context.actionForAll)}
-              @change=${event => component.setActionForAll(Boolean(event.target?.checked))}
-            ></sf-checkbox>
-          ` : ""}
-      <sf-button-icon
-        class="sf-pagination-actions-clear"
-        size=${context.size}
-        appearance="ghost"
-        scheme="on-surface"
-        icon="close"
-        title=${context.clearSelectionLabel}
-        aria-label=${context.clearSelectionLabel}
-        @click=${() => component.clearSelection()}
-      ></sf-button-icon>
-    </div>
+    <sf-bulk-actions
+      class=${joinClasses("sf-pagination-bulk", context.bottomClass)}
+      data-sf-bulk="bar"
+      place="dock"
+      size=${context.size}
+      count=${String(context.selectedCount)}
+      page-count=${String(context.bulkPageCount)}
+      total=${context.showActionForAll && context.countKnown ? String(context.total) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ?all-selected=${Boolean(context.showActionForAll && context.actionForAll)}
+      label=${context.actionsRegionLabel}
+      count-text=${context.bulkCountText || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      .actions=${context.bulkActions}
+      @sf-bulk-actions-action=${event => component.applyBulkAction(event)}
+      @sf-bulk-actions-select-all=${() => component.setActionForAll(true)}
+      @sf-bulk-actions-select-page=${() => component.setActionForAll(false)}
+      @sf-bulk-actions-clear=${() => component.clearSelection()}
+    ></sf-bulk-actions>
   `;
 } // The compatible footer (no appearance written): one row «41–60 из 240 · По 20
 // ▾ · ‹ [3] из 12 ›» -- the sf-view admin footer of C97 point 5 -- with Show
@@ -2599,8 +2662,10 @@ function renderBand(context, component) {
 
 
 function renderFooter(context, component) {
-  const mainClasses = joinClasses("sf-pagination-main", "flex", "items-cross-center", "content-main-between", context.mainClass);
-  const hasPages = !context.countKnown || context.total > 0;
+  const mainClasses = joinClasses("sf-pagination-main", "flex", "items-cross-center", "content-main-between", context.mainClass); // One page: the range and the page size stay, the field does not
+  // (Larena LF-11).
+
+  const hasPages = (!context.countKnown || context.total > 0) && !context.singlePage;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     ${context.top && context.hasNext ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
           <div class=${joinClasses("sf-pagination-top", "flex", "content-main-center", context.topClass)}>
@@ -2636,15 +2701,20 @@ function renderPaginationTemplate(context) {
   const {
     component
   } = context;
-  const appearance = context.footer ? "footer" : VIEWS[context.appearance] ? context.appearance : "field";
+  const appearance = context.footer ? "footer" : VIEWS[context.appearance] ? context.appearance : "field"; // Everything on one page: no page navigation (Larena LF-11). The more
+  // appearance keeps its «Показано 12 из 12» line; the others draw nothing
+  // and the nav is hidden, so it takes no room and is not announced.
+
+  const empty = !context.footer && appearance !== "more" && context.singlePage;
   const rootClasses = joinClasses("sf-pagination", `sf-pagination--size-${stepOf(context)}`, `sf-pagination--${appearance}`, "flex", context.footer ? "flex-col" : "items-cross-center", context.rootClass);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <nav
       class=${rootClasses}
       style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-label=${context.ariaLabel}
+      ?hidden=${empty}
     >
-      ${context.footer ? renderFooter(context, component) : VIEWS[appearance](context, component)}
+      ${empty ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.footer ? renderFooter(context, component) : VIEWS[appearance](context, component)}
     </nav>
   `;
 }
@@ -2664,13 +2734,6 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("element-manifest", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("element-manifest", 1).then(resolve, reject), { once: true })));
-
-/***/ },
-
-/***/ "9d9903b87148"
-(module) {
-
-module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit/directives/keyed.js", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit/directives/keyed.js", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 
@@ -2720,7 +2783,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-pagin
 /***/ "344edfee8242"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pagination","tag":"sf-pagination","version":"1.8.9","kind":"leaf","settings":{"appearance":{"type":"enum","values":["field","numbers","arrows","cursor","more"],"default":"field"},"top":{"type":"boolean","default":true},"middle":{"type":"boolean","default":true},"bottom":{"type":"boolean","default":true},"top-class":{"type":"string","default":""},"main-class":{"type":"string","default":""},"bottom-class":{"type":"string","default":""},"pages-label":{"type":"string","default-from":"runtime.pages-label"},"page-label":{"type":"string","default-from":"runtime.page-label"},"previous-label":{"type":"string","default-from":"runtime.previous-label"},"next-label":{"type":"string","default-from":"runtime.next-label"},"last-label":{"type":"string","default-from":"runtime.last-label"},"total-label":{"type":"string","default-from":"runtime.total-label"},"selected-label":{"type":"string","default-from":"runtime.selected-label"},"selected-count":{"type":"number","integer":true,"min":0,"default":0},"show-more-text":{"type":"string","default-from":"runtime.show-more-text"},"total":{"type":"number","integer":true,"min":0,"default":10},"page-size":{"type":"number","integer":true,"min":1,"default":10},"page-sizes":{"type":"string","default":"10,20,30,40"},"show-page-size":{"type":"boolean","default":true},"page-size-label":{"type":"string","default-from":"runtime.page-size-label"},"show-actions":{"type":"boolean","default":true},"actions":{"type":"string","default":""},"action":{"type":"string","default":""},"action-apply-text":{"type":"string","default-from":"runtime.action-apply-text"},"show-action-for-all":{"type":"boolean","default":false},"action-for-all":{"type":"boolean","default":false},"action-for-all-label":{"type":"string","default-from":"runtime.action-for-all-label"},"actions-label":{"type":"string","default-from":"runtime.actions-label"},"action-choose-label":{"type":"string","default-from":"runtime.action-choose-label"},"actions-region-label":{"type":"string","default-from":"runtime.actions-region-label"},"clear-selection-label":{"type":"string","default-from":"runtime.clear-selection-label"},"count-known":{"type":"boolean","default":true},"total-exact":{"type":"boolean","default":true},"can-count":{"type":"boolean","default":false},"counting":{"type":"boolean","default":false},"has-next":{"type":"boolean","default":false},"show-count-label":{"type":"string","default-from":"runtime.show-count-label"},"counting-label":{"type":"string","default-from":"runtime.counting-label"},"first-label":{"type":"string","default-from":"runtime.first-label"},"page-field-label":{"type":"string","default-from":"runtime.page-field-label"},"show-more-busy":{"type":"boolean","default":false},"shown-label":{"type":"string","default-from":"runtime.shown"},"load":{"type":"enum","values":["button","auto"],"default":"button"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"href":{"type":"string","default":""},"page-param":{"type":"string","default":""},"page-in-title":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":1,"default":1}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true},"page-size":"number"}},"size-change":{"carries":{"previous":"number","page-size":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true}}},"count":{"carries":{"reason":{"type":"enum","values":["total","last-page","action-for-all"]},"current":"number","page-size":"number"}},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true},"has-next":"boolean"}},"selection-clear":{"carries":{"selected-count":"number","total":"number"},"own-verb":true},"action-change":{"carries":{"previous":"string","action":"string"}},"action-for-all-change":{"carries":{"previous":"boolean","action-for-all":"boolean"}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["selection","filter"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true}}}},"actions":{"go-to-page":{"with":{"page":"number"}},"show-more":{}},"css-variables":{"--sf-pagination-background-color":{"type":"color","state":"default"},"--sf-pagination-color":{"type":"color","state":"default"},"--sf-pagination-gap":{"type":"length","state":"default"},"--sf-pagination-divider-color":{"type":"color","state":"default"},"--sf-pagination-page-background-color":{"type":"color","state":"default"},"--sf-pagination-page-color":{"type":"color","state":"default"},"--sf-pagination-page-radius":{"type":"length","state":"default"},"--sf-pagination-current-background-color":{"type":"color","state":"current"},"--sf-pagination-current-color":{"type":"color","state":"current"},"--sf-pagination-block-size-1/2":{"type":"length","state":"default","x-published":"root"},"--sf-pagination-block-size-1":{"type":"length","state":"default","x-published":"root"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.pagination","tag":"sf-pagination","version":"1.10.0","kind":"leaf","settings":{"appearance":{"type":"enum","values":["field","numbers","arrows","cursor","more"],"default":"field"},"top":{"type":"boolean","default":true},"middle":{"type":"boolean","default":true},"bottom":{"type":"boolean","default":true},"top-class":{"type":"string","default":""},"main-class":{"type":"string","default":""},"bottom-class":{"type":"string","default":""},"pages-label":{"type":"string","default-from":"runtime.pages-label"},"page-label":{"type":"string","default-from":"runtime.page-label"},"previous-label":{"type":"string","default-from":"runtime.previous-label"},"next-label":{"type":"string","default-from":"runtime.next-label"},"last-label":{"type":"string","default-from":"runtime.last-label"},"total-label":{"type":"string","default-from":"runtime.total-label"},"selected-label":{"type":"string","default-from":"runtime.selected-label"},"selected-count":{"type":"number","integer":true,"min":0,"default":0},"show-more-text":{"type":"string","default-from":"runtime.show-more-text"},"total":{"type":"number","integer":true,"min":0,"default":10},"page-size":{"type":"number","integer":true,"min":1,"default":10},"page-sizes":{"type":"string","default":"10,20,30,40"},"show-page-size":{"type":"boolean","default":true},"page-size-label":{"type":"string","default-from":"runtime.page-size-label"},"show-actions":{"type":"boolean","default":true},"actions":{"type":"string","default":""},"action":{"type":"string","default":""},"action-apply-text":{"type":"string","default-from":"runtime.action-apply-text"},"show-action-for-all":{"type":"boolean","default":false},"action-for-all":{"type":"boolean","default":false},"action-for-all-label":{"type":"string","default-from":"runtime.action-for-all-label"},"actions-label":{"type":"string","default-from":"runtime.actions-label"},"action-choose-label":{"type":"string","default-from":"runtime.action-choose-label"},"actions-region-label":{"type":"string","default-from":"runtime.actions-region-label"},"clear-selection-label":{"type":"string","default-from":"runtime.clear-selection-label"},"count-known":{"type":"boolean","default":true},"total-exact":{"type":"boolean","default":true},"can-count":{"type":"boolean","default":false},"counting":{"type":"boolean","default":false},"has-next":{"type":"boolean","default":false},"show-count-label":{"type":"string","default-from":"runtime.show-count-label"},"counting-label":{"type":"string","default-from":"runtime.counting-label"},"first-label":{"type":"string","default-from":"runtime.first-label"},"page-field-label":{"type":"string","default-from":"runtime.page-field-label"},"show-more-busy":{"type":"boolean","default":false},"shown-label":{"type":"string","default-from":"runtime.shown"},"load":{"type":"enum","values":["button","auto"],"default":"button"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"href":{"type":"string","default":""},"page-param":{"type":"string","default":""},"page-in-title":{"type":"boolean","default":false}},"values":{"current":{"type":"number","integer":true,"min":1,"default":1}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true},"page-size":"number"}},"size-change":{"carries":{"previous":"number","page-size":"number","current":"number","total":"number","page-count":{"type":"number","nullable":true}}},"count":{"carries":{"reason":{"type":"enum","values":["total","last-page","action-for-all"]},"current":"number","page-size":"number"}},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true},"has-next":"boolean"}},"selection-clear":{"carries":{"selected-count":"number","total":"number"},"own-verb":true},"action-change":{"carries":{"previous":"string","action":"string"}},"action-for-all-change":{"carries":{"previous":"boolean","action-for-all":"boolean"}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["selection","filter"]},"current":"number","total":"number","page-size":"number","page-count":{"type":"number","nullable":true}}}},"actions":{"go-to-page":{"with":{"page":"number"}},"show-more":{}},"css-variables":{"--sf-pagination-background-color":{"type":"color","state":"default"},"--sf-pagination-color":{"type":"color","state":"default"},"--sf-pagination-gap":{"type":"length","state":"default"},"--sf-pagination-divider-color":{"type":"color","state":"default"},"--sf-pagination-page-background-color":{"type":"color","state":"default"},"--sf-pagination-page-color":{"type":"color","state":"default"},"--sf-pagination-page-radius":{"type":"length","state":"default"},"--sf-pagination-current-background-color":{"type":"color","state":"current"},"--sf-pagination-current-color":{"type":"color","state":"current"},"--sf-pagination-block-size-1/2":{"type":"length","state":"default","x-published":"root"},"--sf-pagination-block-size-1":{"type":"length","state":"default","x-published":"root"}}}');
 
 /***/ },
 

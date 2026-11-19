@@ -985,11 +985,19 @@ function stepTime(step, now = Date.now()) {
   if (end) return Math.max(0, end.getTime() - start.getTime());
   return step.state === 'running' ? Math.max(0, now - start.getTime()) : null;
 }
-/** Milliseconds as m:ss, or h:mm:ss over an hour. */
+/**
+ * Milliseconds as m:ss, or h:mm:ss over an hour. A time that counts up is
+ * floored (a clock); a time something took (`took`: a finished step, the
+ * run's «заняло») is rounded to the second, and any time above zero reads at
+ * least 0:01 -- a step of 800 ms said «0:00», as if it took no time (Larena
+ * LF-8, 2026-11-18; the unit was right).
+ */
 
-function formatTime(ms) {
+function formatTime(ms, {
+  took = false
+} = {}) {
   if (ms === null || ms === undefined || !Number.isFinite(ms)) return '';
-  const total = Math.floor(ms / 1000);
+  const total = took && ms > 0 ? Math.max(1, Math.round(ms / 1000)) : Math.floor(ms / 1000);
   const hours = Math.floor(total / 3600);
   const minutes = Math.floor(total % 3600 / 60);
   const seconds = String(total % 60).padStart(2, '0');
@@ -1607,7 +1615,9 @@ class SfProgressRun extends ProgressRunElement {
     if (ended) {
       time = elapsed !== null ? word('took', {
         vars: {
-          time: formatTime(elapsed)
+          time: formatTime(elapsed, {
+            took: true
+          })
         }
       }) : '';
     } else if (state === 'running' && total !== null) {
@@ -1653,7 +1663,9 @@ class SfProgressRun extends ProgressRunElement {
       steps: list.map(step => {
         const log = `${step.log}${this._logs.get(step.id) ?? ''}`;
         return { ...step,
-          time: formatTime(stepTime(step, now)),
+          time: formatTime(stepTime(step, now), {
+            took: step.state !== 'running'
+          }),
           stateWord: word(`state-${step.state}`),
           figures: step.value !== null || step.total !== null ? this.figures(step.value, step.total && step.total > 0 ? step.total : null, step.unit) : '',
           log,
@@ -2326,7 +2338,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "d092c5059e25"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-run","tag":"sf-progress-run","version":"1.5.4","kind":"leaf","settings":{"look":{"type":"enum","values":["full","row","notice"],"default":"full"},"label":{"type":"string","default":""},"heading-level":{"type":"enum","values":["1","2","3","4","5","6"],"default":"3"},"caption":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0},"total":{"type":"number","optional":true,"min":0},"unit":{"type":"string","default":""},"remaining":{"type":"number","optional":true,"min":0},"started-at":{"type":"string","default":""},"finished-at":{"type":"string","default":""},"steps":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"state":{"type":"string","enum":["waiting","running","done","failed","skipped"]},"text":{"type":"string"},"started":{"type":"string"},"finished":{"type":"string"},"duration":{"type":"number"},"value":{"type":"number"},"total":{"type":"number"},"unit":{"type":"string"},"log":{"type":"string"}},"required":["id","title"]}},"default":[]},"run-state":{"type":"enum","values":["auto","running","paused","done","partial","failed","cancelled"],"default":"auto"},"result-text":{"type":"string","default":""},"counters":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"number"},"status":{"type":"string","enum":["","error"]},"zero":{"type":"string"}},"required":["id","label"]}},"default":[]},"errors":{"type":"list","schema":{"items":{"type":"object","properties":{"where":{"type":"string"},"key":{"type":"string"},"text":{"type":"string"}},"required":["text"]}},"default":[]},"errors-total":{"type":"number","optional":true,"min":0},"output":{"type":"string","default":""},"output-label":{"type":"string","default-from":"runtime.output-label"},"file-name":{"type":"string","default":"output.txt"},"cancelable":{"type":"boolean","default":false},"pausable":{"type":"boolean","default":false},"retryable":{"type":"boolean","default":false},"hideable":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{"output-open":{"type":"boolean","default":false}},"events":{"cancel":{"carries":{},"cancelable":true},"retry":{"carries":{"scope":{"type":"enum","values":["all","failed"]},"from":{"type":"string","optional":true}}},"close":{"carries":{"reason":{"type":"enum","values":["close"]}},"cancelable":true},"download":{"carries":{"file-name":"string"},"cancelable":true},"toggle":{"carries":{"open":"boolean"}},"pause":{"carries":{}},"resume":{"carries":{}},"minimize":{"carries":{}},"expand":{"carries":{}},"report":{"carries":{},"cancelable":true}},"actions":{"chunk":{"with":{"text":"string","step":{"type":"string","optional":true}}},"clear":{"with":{}},"step":{"with":{"id":"string","state":"string","text":"string","value":"number","total":"number","started":"string","finished":"string","duration":"number"}}},"presentation":{"skeleton":{"late":["steps","counters"]}},"host-states":{"data-state":"string"},"css-variables":{"--sf-progress-run-background-color":{"type":"color","state":"default"},"--sf-progress-run-divider-color":{"type":"color","state":"default"},"--sf-progress-run-output-background-color":{"type":"color","state":"default"},"--sf-progress-run-output-color":{"type":"color","state":"default"},"--sf-progress-run-output-max-height":{"type":"length","state":"default"},"--sf-progress-run-padding-inline":{"type":"length","state":"default"},"--sf-progress-run-gap":{"type":"length","state":"default"},"--sf-progress-run-gap-tight":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-run","tag":"sf-progress-run","version":"1.5.5","kind":"leaf","settings":{"look":{"type":"enum","values":["full","row","notice"],"default":"full"},"label":{"type":"string","default":""},"heading-level":{"type":"enum","values":["1","2","3","4","5","6"],"default":"3"},"caption":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0},"total":{"type":"number","optional":true,"min":0},"unit":{"type":"string","default":""},"remaining":{"type":"number","optional":true,"min":0},"started-at":{"type":"string","default":""},"finished-at":{"type":"string","default":""},"steps":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"state":{"type":"string","enum":["waiting","running","done","failed","skipped"]},"text":{"type":"string"},"started":{"type":"string"},"finished":{"type":"string"},"duration":{"type":"number"},"value":{"type":"number"},"total":{"type":"number"},"unit":{"type":"string"},"log":{"type":"string"}},"required":["id","title"]}},"default":[]},"run-state":{"type":"enum","values":["auto","running","paused","done","partial","failed","cancelled"],"default":"auto"},"result-text":{"type":"string","default":""},"counters":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"number"},"status":{"type":"string","enum":["","error"]},"zero":{"type":"string"}},"required":["id","label"]}},"default":[]},"errors":{"type":"list","schema":{"items":{"type":"object","properties":{"where":{"type":"string"},"key":{"type":"string"},"text":{"type":"string"}},"required":["text"]}},"default":[]},"errors-total":{"type":"number","optional":true,"min":0},"output":{"type":"string","default":""},"output-label":{"type":"string","default-from":"runtime.output-label"},"file-name":{"type":"string","default":"output.txt"},"cancelable":{"type":"boolean","default":false},"pausable":{"type":"boolean","default":false},"retryable":{"type":"boolean","default":false},"hideable":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{"output-open":{"type":"boolean","default":false}},"events":{"cancel":{"carries":{},"cancelable":true},"retry":{"carries":{"scope":{"type":"enum","values":["all","failed"]},"from":{"type":"string","optional":true}}},"close":{"carries":{"reason":{"type":"enum","values":["close"]}},"cancelable":true},"download":{"carries":{"file-name":"string"},"cancelable":true},"toggle":{"carries":{"open":"boolean"}},"pause":{"carries":{}},"resume":{"carries":{}},"minimize":{"carries":{}},"expand":{"carries":{}},"report":{"carries":{},"cancelable":true}},"actions":{"chunk":{"with":{"text":"string","step":{"type":"string","optional":true}}},"clear":{"with":{}},"step":{"with":{"id":"string","state":"string","text":"string","value":"number","total":"number","started":"string","finished":"string","duration":"number"}}},"presentation":{"skeleton":{"late":["steps","counters"]}},"host-states":{"data-state":"string"},"css-variables":{"--sf-progress-run-background-color":{"type":"color","state":"default"},"--sf-progress-run-divider-color":{"type":"color","state":"default"},"--sf-progress-run-output-background-color":{"type":"color","state":"default"},"--sf-progress-run-output-color":{"type":"color","state":"default"},"--sf-progress-run-output-max-height":{"type":"length","state":"default"},"--sf-progress-run-padding-inline":{"type":"length","state":"default"},"--sf-progress-run-gap":{"type":"length","state":"default"},"--sf-progress-run-gap-tight":{"type":"length","state":"default"}}}');
 
 /***/ },
 

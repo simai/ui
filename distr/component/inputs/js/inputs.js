@@ -78,12 +78,29 @@ function syncFieldContract(root, control, {
 
   if (root.tagName === 'LABEL' && !root.hasAttribute('for')) {
     root.setAttribute('for', control.id);
+  } // A root that is not a label carries its label text as a <label> of its
+  // own (div.sf-input, 1.13.0): it points at the control too.
+
+
+  if (labelNode?.tagName === 'LABEL' && !labelNode.hasAttribute('for')) {
+    labelNode.setAttribute('for', control.id);
   } // Name the field by its visible label, not every hint or adjacent button.
   // Author-provided accessible names remain authoritative.
 
 
   if (labelNode?.textContent?.trim() && !control.hasAttribute('aria-label') && !control.hasAttribute('aria-labelledby')) {
-    if (!labelNode.id) labelNode.id = `${control.id}-label`;
+    // An id of its own: «<control>-label» may already name another element
+    // (a page that gave the field's root that id), and aria-labelledby would
+    // then read that element's whole text, the hint with it (DF-3).
+    if (!labelNode.id) {
+      const doc = labelNode.ownerDocument;
+      let id = `${control.id}-label`;
+
+      for (let n = 2; doc?.getElementById?.(id); n += 1) id = `${control.id}-label-${n}`;
+
+      labelNode.id = id;
+    }
+
     control.setAttribute('aria-labelledby', labelNode.id);
   }
 
@@ -314,8 +331,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+ // Two roots (1.13.0, DF-3). The wrapping label.sf-input names the input by
+// everything inside it, the hint and a help mark too, until this script points
+// aria-labelledby at the label text. div.sf-input keeps the hint out of the
+// name in the markup itself: the label text is a <label for> of its own
+// (label.sf-input-text), the hint a sibling the input points at with
+// aria-describedby.
 
-const INPUT_SELECTOR = 'label.sf-input';
+const INPUT_SELECTOR = '.sf-input:is(label, div)'; // What a press on the box hands to the input in a div root, where no wrapping
+// label does it: anything but a control of its own (an action, a link).
+
+const BOX_CONTROLS = 'input, button, a, select, textarea, label, [tabindex], sf-help-mark, sf-button, sf-button-icon';
 const INPUT_BOUND_FLAG = 'sfInputBound';
 const INPUT_TYPES = new Set(['text', 'email', 'password', 'search', 'tel', 'url']);
 const INPUT_MODES = new Set(['', 'none', 'text', 'tel', 'url', 'email', 'numeric', 'decimal', 'search']);
@@ -461,7 +487,23 @@ function bindInput(root) {
   input.addEventListener('blur', blurHandler);
   root.__sfInputNoopHandler = noopHandler;
   root.__sfInputPointerFocusHandler = pointerFocusHandler;
-  root.__sfInputBlurHandler = blurHandler;
+  root.__sfInputBlurHandler = blurHandler; // A div root: a press on the box (its padding, an icon, the text before or
+  // after the value) focuses the input, as the wrapping label does.
+
+  if (root.tagName !== 'LABEL') {
+    const boxHandler = event => {
+      if (event.button !== 0 || input.disabled) return;
+      const target = event.target;
+      if (!(target instanceof Element) || !target.closest('.sf-input-field')) return;
+      if (target.closest(BOX_CONTROLS)) return;
+      event.preventDefault();
+      input.focus();
+    };
+
+    root.addEventListener('pointerdown', boxHandler);
+    root.__sfInputBoxHandler = boxHandler;
+  }
+
   root.dataset[INPUT_BOUND_FLAG] = '1';
   const message = messageState(root);
   (0,_field_contract__WEBPACK_IMPORTED_MODULE_3__.syncFieldContract)(root, input, {
@@ -493,6 +535,9 @@ function unbindInput(root) {
   if (input && root.__sfInputBlurHandler) {
     input.removeEventListener('blur', root.__sfInputBlurHandler);
   }
+
+  if (root.__sfInputBoxHandler) root.removeEventListener('pointerdown', root.__sfInputBoxHandler);
+  delete root.__sfInputBoxHandler;
 
   if (root.__sfInputMask) {
     window.SF?.Mask?.destroy?.(root.__sfInputMask);
@@ -609,8 +654,10 @@ class Inputs extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
     } = this.params || {};
     const className = this.attrs.class || this.attrs.className;
     const normalizedSize = (0,_field_size__WEBPACK_IMPORTED_MODULE_4__.inputSize)(size);
-    const normalizedVariant = boundedValue(type, INPUT_VARIANTS, 'bordered');
-    this.template = document.createElement('label');
+    const normalizedVariant = boundedValue(type, INPUT_VARIANTS, 'bordered'); // The div root (1.13.0, DF-3): the label text is the <label>, so the
+    // hint under the field is a description, never part of the name.
+
+    this.template = document.createElement('div');
     if (this.id) this.template.id = this.id;
     this.template.classList.add('sf-input', `sf-input--size-${normalizedSize}`, `sf-input--${normalizedVariant}`);
     this.template.classList.toggle('error', toBoolean(invalid || error, false));
@@ -626,7 +673,7 @@ class Inputs extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Com
 
     const labelWrap = document.createElement('span');
     labelWrap.classList.add('sf-input-label');
-    const labelText = document.createElement('span');
+    const labelText = document.createElement('label');
     labelText.classList.add('sf-input-text');
     labelText.textContent = label;
     labelWrap.append(labelText);

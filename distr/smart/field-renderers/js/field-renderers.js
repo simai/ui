@@ -95,6 +95,153 @@ function normalizeBadgeContract({
 
 /***/ },
 
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
+//
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+  }
+
+  return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
+}
+
+/***/ },
+
 /***/ "e577837dd70a"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -527,6 +674,222 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "db080b4bfc2b"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CONDITION_NODES: () => (/* binding */ CONDITION_NODES),
+/* harmony export */   CONDITION_OPS: () => (/* binding */ CONDITION_OPS),
+/* harmony export */   CONDITION_PARTS: () => (/* binding */ CONDITION_PARTS),
+/* harmony export */   conditionFields: () => (/* binding */ conditionFields),
+/* harmony export */   evaluateCondition: () => (/* binding */ evaluateCondition),
+/* harmony export */   fieldConditions: () => (/* binding */ fieldConditions),
+/* harmony export */   fieldEditable: () => (/* binding */ fieldEditable)
+/* harmony export */ });
+// A field's conditions (Framework order FO-3 of the view set study, ui-control
+// control/research/2026-11-17-view-round-1/framework-orders.md): when the
+// field is shown, required and enabled, each a condition over the other
+// fields' values as they stand on screen -- what the record holds, or what
+// the person has changed it to and not saved yet. It is a part of the
+// Framework field descriptor:
+//
+//   {key, label, propertyType, required?, readonly?,
+//    when?: {visible?: <condition>, required?: <condition>, enabled?: <condition>}}
+//
+// The grammar is small on purpose (the data view port's, Larena's settings
+// SettingConditions):
+//
+//   {field, op, value}   op: eq, ne, in, not_in (value a list), empty, not_empty,
+//                        gt, gte, lt, lte (an order as the server keeps it:
+//                        decimals exactly, ISO dates as text; Larena
+//                        msg-75b451e2eec6413aa2eb)
+//   {all: [...]}         every condition holds
+//   {any: [...]}         at least one holds
+//   {not: {...}}         the condition does not hold
+//
+// A value is compared by what it is, not by how it is shown ({value, label}
+// by its value), as text on both sides (5 and "5" are one value). A multiple
+// field is equal when any of its items is. A condition that cannot be read --
+// an unknown op, an empty all or any, in without a list -- leaves the field as
+// it is declared: a field lost to a typo is a value nobody can see or change.
+// A field that is not enabled is drawn read-only, as a field declared readonly.
+//
+// Plain functions, no rendering: sf-form evaluates them on every drawing, so a
+// field appears the moment the value it waits for is chosen, and the contract
+// test runs them without a DOM. sf-view-properties' js/conditions.js was the
+// copy this replaces; SF.fieldRenderers.conditions publishes it for a host.
+const CONDITION_OPS = Object.freeze(['eq', 'ne', 'in', 'not_in', 'empty', 'not_empty', 'gt', 'gte', 'lt', 'lte']);
+const COMPARE_OPS = new Set(['gt', 'gte', 'lt', 'lte']); // An order as the server keeps it (Larena when-cases, simai.settings.when-
+// cases 1): decimals compare exactly, by their digits, never as floats (a
+// big integer stays exact); ISO dates compare as text; a text is not ordered
+// against a decimal, and a list or nothing has no order. -1, 0, 1, or null
+// where there is no order.
+
+const DECIMAL = /^[-+]?\d+(\.\d+)?$/u;
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}([T ][\d:.]+(Z|[-+]\d{2}:?\d{2})?)?$/u;
+
+function compareDecimal(a, b) {
+  const sign = text => text.startsWith('-') ? -1 : 1;
+
+  const parts = text => {
+    const [whole, fraction = ''] = text.replace(/^[-+]/u, '').split('.');
+    return [whole.replace(/^0+(?=\d)/u, ''), fraction.replace(/0+$/u, '')];
+  };
+
+  const [aw, af] = parts(a);
+  const [bw, bf] = parts(b);
+
+  const zero = (w, f) => /^0*$/u.test(w) && f === '';
+
+  const sa = zero(aw, af) ? 0 : sign(a);
+  const sb = zero(bw, bf) ? 0 : sign(b);
+  if (sa !== sb) return sa < sb ? -1 : 1;
+  if (sa === 0) return 0;
+  let order = aw.length !== bw.length ? aw.length < bw.length ? -1 : 1 : aw < bw ? -1 : aw > bw ? 1 : 0;
+
+  if (order === 0) {
+    const width = Math.max(af.length, bf.length);
+    const fa = af.padEnd(width, '0');
+    const fb = bf.padEnd(width, '0');
+    order = fa < fb ? -1 : fa > fb ? 1 : 0;
+  }
+
+  return sa < 0 ? -order : order;
+}
+
+function orderOf(held, bound) {
+  const a = String(held).trim();
+  const b = String(bound).trim();
+  if (DECIMAL.test(a) && DECIMAL.test(b)) return compareDecimal(a, b);
+  if (ISO_DATE.test(a) && ISO_DATE.test(b)) return a < b ? -1 : a > b ? 1 : 0;
+  return null;
+}
+
+const CONDITION_NODES = Object.freeze(['all', 'any', 'not']);
+const CONDITION_PARTS = Object.freeze(['visible', 'required', 'enabled']);
+
+const scalar = value => value && typeof value === 'object' && !Array.isArray(value) && 'value' in value ? value.value : value; // What a field holds, as a list of texts: a multiple field is a list already,
+// a single one a list of one, and nothing (null, '', []) a list of none.
+
+
+const itemsOf = value => (Array.isArray(value) ? value : [value]).map(scalar).filter(item => item !== null && item !== undefined && item !== '').map(item => String(item)); // The values on screen, read by key: a Map, or a plain object.
+
+
+const reader = values => {
+  if (values instanceof Map) return key => values.get(key);
+  if (values && typeof values === 'object') return key => values[key];
+  return () => undefined;
+};
+/** True or false, or null for a condition that cannot be read. values: a Map or an object of the fields' values by key. */
+
+
+function evaluateCondition(condition, values) {
+  const read = typeof values === 'function' ? values : reader(values);
+  if (!condition || typeof condition !== 'object' || Array.isArray(condition)) return null;
+
+  for (const node of ['all', 'any']) {
+    if (!(node in condition)) continue;
+    const list = condition[node];
+    if (!Array.isArray(list) || !list.length) return null;
+    const results = list.map(item => evaluateCondition(item, read));
+    if (results.includes(null)) return null;
+    return node === 'all' ? results.every(Boolean) : results.some(Boolean);
+  }
+
+  if ('not' in condition) {
+    const inner = evaluateCondition(condition.not, read);
+    return inner === null ? null : !inner;
+  }
+
+  if (typeof condition.field !== 'string' || !CONDITION_OPS.includes(condition.op)) return null;
+  const held = itemsOf(read(condition.field));
+  if (condition.op === 'empty') return held.length === 0;
+  if (condition.op === 'not_empty') return held.length > 0;
+
+  if (COMPARE_OPS.has(condition.op)) {
+    // An order (gt, gte, lt, lte), as the server decides it: a list or
+    // nothing has no order, and no order holds.
+    const raw = read(condition.field);
+    const bound = scalar(condition.value);
+    if (Array.isArray(raw) || held.length !== 1 || bound === null || bound === undefined || typeof bound === 'object') return false;
+    const order = orderOf(held[0], bound);
+    if (order === null) return false;
+    return condition.op === 'gt' ? order > 0 : condition.op === 'gte' ? order >= 0 : condition.op === 'lt' ? order < 0 : order <= 0;
+  }
+
+  if (condition.op === 'eq' || condition.op === 'ne') {
+    const hit = held.includes(String(scalar(condition.value)));
+    return condition.op === 'eq' ? hit : !hit;
+  }
+
+  if (!Array.isArray(condition.value)) return null;
+  const wanted = condition.value.map(item => String(scalar(item)));
+  const hit = held.some(item => wanted.includes(item));
+  return condition.op === 'in' ? hit : !hit;
+}
+/**
+ * What a field's `when` decides, given the values on screen: {visible,
+ * required, enabled}. A part the field does not condition, or conditions
+ * unreadably, is what the field declares: shown, required as `required`
+ * says, enabled (`readonly` stays the field's own and is read beside it).
+ */
+
+function fieldConditions(field, values) {
+  const when = field?.when && typeof field.when === 'object' && !Array.isArray(field.when) ? field.when : null;
+
+  const decide = key => when && key in when ? evaluateCondition(when[key], values) : null;
+
+  const visible = decide('visible');
+  const required = decide('required');
+  const enabled = decide('enabled');
+  return {
+    visible: visible ?? true,
+    required: required ?? field?.required === true,
+    enabled: enabled ?? true
+  };
+}
+/**
+ * Whether a single-field edit may open (FO3-4): a table cell's edit, a
+ * card's quick edit. The field is shown, enabled by its conditions over the
+ * record's values and not declared readonly; otherwise the edit does not
+ * open and the value stays as text. The record's other fields are the values.
+ */
+
+function fieldEditable(field, values) {
+  if (!field || field.readonly === true) return false;
+  const {
+    visible,
+    enabled
+  } = fieldConditions(field, values);
+  return visible && enabled;
+}
+/** The keys of the fields a field's `when` reads, each once. */
+
+function conditionFields(field) {
+  const keys = new Set();
+
+  const walk = condition => {
+    if (!condition || typeof condition !== 'object') return;
+
+    if (Array.isArray(condition)) {
+      condition.forEach(walk);
+      return;
+    }
+
+    if (typeof condition.field === 'string') keys.add(condition.field);
+    walk(condition.all);
+    walk(condition.any);
+    walk(condition.not);
+  };
+
+  const when = field?.when;
+  if (when && typeof when === 'object') for (const part of CONDITION_PARTS) walk(when[part]);
+  return [...keys];
+}
+
+/***/ },
+
 /***/ "c11c730f061a"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -555,6 +918,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _input_date_js_locale_calendar_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("c4779e51fee1");
 /* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("354525e80715");
+/* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("fc654eb7fab0");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__]);
 ([_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__);
@@ -577,6 +941,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 //   a period    overlaps, within, starts, ends   value: a period's name or two days
 //               contains                      value: "yyyy-mm-dd"
 //   both        empty, not-empty              value: true
+//   a time      eq, lt, gt                    value: "hh:mm" (catalogue step 4)
+//               between                       value: ["hh:mm", "hh:mm"], both ends in
+//               empty, not-empty              value: true
 //
 // The request carries the context the server resolves the periods in,
 // {timeZone, weekStart} (weekStart 0 Sunday .. 6 Saturday, as Date#getDay
@@ -590,6 +957,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 //
 // No DOM here and no Lit: the table, a record view and a server-side test read
 // the same rules.
+
 
 
 
@@ -613,7 +981,7 @@ const LEGACY_DATE_OPERATORS_UNTIL = '2027-01-01'; // What a condition needs: non
 const DAY_OPERATORS = ['eq', 'lt', 'gt', 'gte', 'lte'];
 const PERIOD_FIELD_OPERATORS = ['overlaps', 'within', 'starts', 'ends'];
 
-function condition(operator, need, group, period = '') {
+function condition(operator, need, group, period = '', extra = {}) {
   return Object.freeze({
     key: period ? `period:${period}` : operator,
     operator,
@@ -621,7 +989,8 @@ function condition(operator, need, group, period = '') {
     group,
     ...(period ? {
       period
-    } : {})
+    } : {}),
+    ...extra
   });
 }
 
@@ -631,13 +1000,33 @@ function singleConditions(future) {
 
 function periodFieldConditions() {
   return [...PERIOD_FIELD_OPERATORS.map(operator => condition(operator, 'when', 'range')), condition('contains', 'day', 'range'), condition('empty', 'none', 'filled'), condition('not-empty', 'none', 'filled')];
+} // A time of day (catalogue step 4; it was searched as text): one time, two
+// (both ends in), earlier, later, empty, not empty. A time has no zone and no
+// week: the request's context does not change it.
+
+
+const TIME_NEEDS = {
+  eq: 'time',
+  between: 'times',
+  lt: 'time',
+  gt: 'time',
+  empty: 'none',
+  'not-empty': 'none'
+};
+
+function timeConditions() {
+  return _registry_js__WEBPACK_IMPORTED_MODULE_4__.TIME_FILTER_OPERATORS.map(operator => condition(operator, TIME_NEEDS[operator], TIME_NEEDS[operator] === 'none' ? 'filled' : 'time', '', {
+    time: true
+  }));
 } // A field is a period when it says so: its property type or control is
-// `period`, or its filter's kind is. Every other date field holds one date.
+// `period`, or its filter's kind is; a time of day when its type or control
+// is `time`. Every other date field holds one date.
 
 
 function dateFilterKind(field = {}) {
   const asked = [field.filter?.kind, field.filter?.control, field.propertyType, field.type];
-  return asked.includes('period') ? 'period' : 'date';
+  if (asked.includes('period')) return 'period';
+  return [field.filter?.kind, field.filter?.control, field.propertyType || field.type].includes('time') ? 'time' : 'date';
 }
 
 function isDueField(field = {}) {
@@ -649,7 +1038,8 @@ function isDueField(field = {}) {
 
 
 function dateFilterConditions(field = {}) {
-  const all = dateFilterKind(field) === 'period' ? periodFieldConditions() : singleConditions(isDueField(field));
+  const kind = dateFilterKind(field);
+  const all = kind === 'period' ? periodFieldConditions() : kind === 'time' ? timeConditions() : singleConditions(isDueField(field));
   const asked = field.filter?.operators;
   if (!Array.isArray(asked) || !asked.length) return all;
   const names = new Set();
@@ -676,6 +1066,18 @@ function dayOf(value) {
   if (typeof value !== 'string') return '';
   const day = value.slice(0, 10);
   return isDay(day) ? day : '';
+}
+
+const TIME_TEXT_RE = /^([01]\d|2[0-3]):[0-5]\d$/u;
+
+function timeOf(value) {
+  if (typeof value !== 'string') return '';
+  const time = value.trim().slice(0, 5);
+  return TIME_TEXT_RE.test(time) ? time : '';
+}
+
+function isTwoTimes(value) {
+  return Array.isArray(value) && value.length === 2 && Boolean(timeOf(value[0])) && Boolean(timeOf(value[1]));
 }
 
 function isTwoDays(value) {
@@ -780,6 +1182,12 @@ function dateConditionValue(next, previous = {}) {
 
     case 'when':
       return isPeriodName(before) || isTwoDays(before) ? before : 'this-week';
+
+    case 'time':
+      return timeOf(before) || (Array.isArray(before) ? timeOf(before[0]) || null : null);
+
+    case 'times':
+      return isTwoTimes(before) ? before.map(timeOf) : timeOf(before) ? [timeOf(before), ''] : ['', ''];
 
     default:
       return null;
@@ -907,6 +1315,7 @@ function word(node, key, vars, count) {
 function dateConditionLabel(node, item) {
   if (!item) return '';
   if (item.period) return word(node, `datePeriod_${camel(item.period)}`);
+  if (item.time && item.operator === 'eq') return word(node, 'timeCondition_eq');
   return word(node, `dateCondition_${camel(item.operator)}`);
 }
 function dateGroupLabel(node, group) {
@@ -975,13 +1384,58 @@ function spanText(node, from, to, timeZone) {
 
 function periodPhrase(node, name) {
   return word(node, `datePeriodIn_${camel(name)}`);
+} // A time as the chip says it, in the page's language: «10:30», «10:30 AM».
+
+
+function timeText(node, value) {
+  const time = timeOf(value);
+  if (!time) return '…';
+  const [h, m] = time.split(':').map(Number);
+
+  try {
+    return new Intl.DateTimeFormat((0,_core_js_page_language_js__WEBPACK_IMPORTED_MODULE_0__.pageLocale)(node), {
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZone: 'UTC'
+    }).format(new Date(Date.UTC(2000, 0, 1, h, m)));
+  } catch {
+    return time;
+  }
+}
+
+function timePhrase(node, {
+  operator,
+  value
+}) {
+  switch (operator) {
+    case 'eq':
+      return timeText(node, value);
+
+    case 'between':
+      return Array.isArray(value) ? `${timeText(node, value[0])}\u2013${timeText(node, value[1])}` : '…';
+
+    case 'lt':
+    case 'gt':
+      return word(node, `dateChip_${operator}`, {
+        date: timeText(node, value)
+      });
+
+    case 'empty':
+    case 'not-empty':
+      return word(node, `dateChip_${camel(operator)}`);
+
+    default:
+      return '';
+  }
 } // What a condition says after the field's name on its chip: «в прошлом
-// месяце», «не позже 17 ноября», «идёт на этой неделе», «пусто» (DF-4).
+// месяце», «не позже 17 ноября», «идёт на этой неделе», «пусто» (DF-4); for
+// a time «10:00–18:00», «раньше 10:30».
 
 
 function dateConditionPhrase(field, entry, node = null, {
   timeZone
 } = {}) {
+  if (dateFilterKind(field) === 'time') return timePhrase(node, entry || {});
   const one = normalizeFilterEntry(entry || {});
   const zone = timeZone || filterRequestContext(node).timeZone;
   const {
@@ -1762,6 +2216,522 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "16fc79105455"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   LIST_CONDITIONS: () => (/* binding */ LIST_CONDITIONS),
+/* harmony export */   MULTI_CONDITIONS: () => (/* binding */ MULTI_CONDITIONS),
+/* harmony export */   NUMBER_CONDITIONS: () => (/* binding */ NUMBER_CONDITIONS),
+/* harmony export */   STRING_CONDITIONS: () => (/* binding */ STRING_CONDITIONS),
+/* harmony export */   VALUELESS_CONDITIONS: () => (/* binding */ VALUELESS_CONDITIONS),
+/* harmony export */   filterActive: () => (/* binding */ filterActive),
+/* harmony export */   filterCondition: () => (/* binding */ filterCondition),
+/* harmony export */   filterConditions: () => (/* binding */ filterConditions),
+/* harmony export */   filterCount: () => (/* binding */ filterCount),
+/* harmony export */   filterKindOf: () => (/* binding */ filterKindOf),
+/* harmony export */   filterSummary: () => (/* binding */ filterSummary),
+/* harmony export */   filterTypeOf: () => (/* binding */ filterTypeOf),
+/* harmony export */   filterValueless: () => (/* binding */ filterValueless),
+/* harmony export */   filterWidth: () => (/* binding */ filterWidth)
+/* harmony export */ });
+// The conditions of a filter field's window, per property type (owner
+// decision C310, 2026-11-18; study ui-control control/research/2026-11-18-
+// filter-field-choice, the per-property table): which conditions a type has,
+// which of them need a value, what the field button shows after applying,
+// and how wide the window is. The window's composition (where the condition
+// stands, the footer of a single choice) is the shell's and waits for the
+// owner's answer on the window without repeats; these are its data.
+//
+//   choice, user, lookup, record   любой из · ни один из · не задано · задано
+//   choices                        любой из · все из · ни один из · не задано · задано
+//   boolean                        Да / Нет / Не задано, one choice, no condition line
+//   string, text                   содержит · начинается с · не задано · задано
+//   number, integer, money         от – до · равно · больше · меньше (money in its currency, C294)
+//   date, datetime                 the type's own control (C293's list is the date template's)
+//
+// A field's filter.conditions, when given, is the list the window offers.
+// The stored value stays {operator, value?, values?}: in, all, not_in carry
+// values; empty and not_empty carry none.
+const LIST_CONDITIONS = Object.freeze(['in', 'not_in', 'empty', 'not_empty']);
+const MULTI_CONDITIONS = Object.freeze(['in', 'all', 'not_in', 'empty', 'not_empty']);
+const STRING_CONDITIONS = Object.freeze(['contains', 'startsWith', 'empty', 'not_empty']);
+const NUMBER_CONDITIONS = Object.freeze(['between', 'eq', 'gt', 'lt']);
+const VALUELESS_CONDITIONS = Object.freeze(['empty', 'not_empty']);
+const LIST_OPERATORS = new Set(['in', 'all', 'not_in']);
+const LIST_TYPES = new Set(['choice', 'user', 'lookup', 'record', 'relation', 'single-select', 'multi-select', 'entity-multi-select', 'entity-single-select', 'file', 'color']);
+const WIDE_TYPES = new Set(['user', 'lookup', 'record', 'relation', 'entity-multi-select', 'entity-single-select']);
+const STRING_TYPES = new Set(['string', 'text', 'html']);
+const NUMBER_TYPES = new Set(['number', 'integer', 'money', 'percent']);
+/** The property type a filter is drawn for. */
+
+function filterTypeOf(field = {}) {
+  return String(field.filter?.control || field.propertyType || field.type || field.dataType || 'text');
+}
+/** What kind of window a type has: list, multi (choices), boolean, string, number or own. */
+
+function filterKindOf(field = {}) {
+  const type = filterTypeOf(field);
+  if (type === 'choices') return 'multi';
+  if (type === 'boolean') return 'boolean';
+  if (LIST_TYPES.has(type)) return 'list';
+  if (STRING_TYPES.has(type)) return 'string';
+  if (NUMBER_TYPES.has(type)) return 'number';
+  return 'own';
+}
+/** The conditions the window offers for a field, the field's own list first. */
+
+function filterConditions(field = {}) {
+  const own = field.filter?.conditions;
+  if (Array.isArray(own) && own.length) return own.map(String);
+
+  switch (filterKindOf(field)) {
+    case 'multi':
+      return [...MULTI_CONDITIONS];
+
+    case 'list':
+      return [...LIST_CONDITIONS];
+
+    case 'string':
+      return [...STRING_CONDITIONS];
+
+    case 'number':
+      return [...NUMBER_CONDITIONS];
+
+    default:
+      return [];
+  }
+}
+/** The condition a value holds, or the field's first. */
+
+function filterCondition(field = {}, value = {}) {
+  const conditions = filterConditions(field);
+  const asked = value?.operator || field.filter?.defaultCondition || field.filter?.defaultOperator;
+  if (asked && (!conditions.length || conditions.includes(asked))) return asked;
+  return conditions[0] || asked || '';
+}
+/** Whether a condition is answered without a value (не задано / задано). */
+
+function filterValueless(operator) {
+  return VALUELESS_CONDITIONS.includes(operator);
+}
+
+const filled = one => one !== undefined && one !== null && String(one).trim() !== '';
+/** Whether the value sets a condition at all (the field button takes its colour). */
+
+
+function filterActive(field = {}, value = {}) {
+  if (!value || typeof value !== 'object') return false;
+  const operator = filterCondition(field, value);
+  if (filterValueless(operator)) return true;
+  if (Array.isArray(value.values)) return value.values.length > 0;
+  if (Array.isArray(value.value)) return value.value.some(filled);
+  return filled(value.value);
+}
+/** The number on the field button and in «Применить (N)»: chosen values of a list condition only (C310). */
+
+function filterCount(field = {}, value = {}) {
+  const kind = filterKindOf(field);
+  if (kind !== 'list' && kind !== 'multi') return 0;
+  const operator = filterCondition(field, value);
+  if (!LIST_OPERATORS.has(operator)) return 0;
+  return Array.isArray(value?.values) ? value.values.length : 0;
+}
+/** How wide the window is: panel (20rem) or wide (24rem, people and records with a caption). */
+
+function filterWidth(field = {}) {
+  const own = field.filter?.width;
+  if (own === 'panel' || own === 'wide') return own;
+  if (WIDE_TYPES.has(filterTypeOf(field))) return 'wide';
+  const options = Array.isArray(field.filter?.options) ? field.filter.options : [];
+  return options.some(option => option && option.caption) ? 'wide' : 'panel';
+}
+/**
+ * What the field button says after applying (C300, C310): {active, count,
+ * words}. count is shown only for list conditions; any other active
+ * condition is the colour alone, its words in the tooltip.
+ * label(operator) gives a condition's words; name(value) an option's name.
+ */
+
+function filterSummary(field = {}, value = {}, {
+  label = one => one,
+  name = one => one,
+  yes = 'Да',
+  no = 'Нет'
+} = {}) {
+  const active = filterActive(field, value);
+  if (!active) return {
+    active: false,
+    count: 0,
+    words: ''
+  };
+  const operator = filterCondition(field, value);
+  const count = filterCount(field, value);
+  if (filterValueless(operator)) return {
+    active,
+    count: 0,
+    words: label(operator)
+  };
+  const kind = filterKindOf(field);
+
+  if (kind === 'boolean') {
+    const one = Array.isArray(value.values) ? value.values[0] : value.value;
+    return {
+      active,
+      count: 0,
+      words: String(one) === 'true' || one === true ? yes : no
+    };
+  }
+
+  if (kind === 'list' || kind === 'multi') {
+    const names = (value.values || []).map(one => name(String(one))).join(', ');
+    return {
+      active,
+      count,
+      words: `${label(operator)}: ${names}`
+    };
+  }
+
+  const shown = Array.isArray(value.value) ? value.value.filter(filled).join(' – ') : String(value.value);
+  return {
+    active,
+    count: 0,
+    words: `${label(operator)} ${shown}`.trim()
+  };
+}
+
+/***/ },
+
+/***/ "5e0f4b4ddd3f"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   filterOperatorLabel: () => (/* binding */ filterOperatorLabel),
+/* harmony export */   filterWindowOpen: () => (/* binding */ filterWindowOpen)
+/* harmony export */ });
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _core_js_density_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("1412c5875b4d");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("354525e80715");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__);
+// A filter field's window (Framework order FO-5 of the view set study,
+// ui-control control/research/2026-11-17-view-round-1/framework-orders.md):
+// the field renderers' filter control of one field in sf-popover, with
+// «Применить» and «Сбросить» under it, opened from any control -- a chip, a
+// column's heading, a button -- with no table around it. The set's table drew
+// this window itself (its chip window), and a page that wanted it without a
+// table kept a hidden table only to open it.
+//
+//   const answer = await SF.fieldRenderers.filterWindow.open({
+//     anchor,                  the control it opens from (required)
+//     field,                   the Framework field descriptor with its filter
+//     value,                   the filter's value now: {value?, values?, operator?}
+//     size,                    the step of the controls ('1' or '1/2'), the list's own
+//     placement,               sf-popover's (bottom-start)
+//   });
+//   answer: {action: 'apply', value} -- the value the person set
+//           {action: 'reset', value: null} -- the filter taken off
+//           null -- closed without either (Escape, a press outside, the anchor again)
+//
+// The footer is the order of every panel (owner decision C157 (3), C159 (4)):
+// the main action first at the start, «Применить», then «Сбросить». The
+// window is a non-modal dialog (sf-popover's dialog surface), named by the
+// field's label; it takes the focus when it opens and gives it back to the
+// anchor when it closes. One window per anchor: opening it again from the
+// same anchor while it is open closes it. It holds no state after it closes.
+//
+// Returns of the component study (ui-control control/research/2026-11-18-
+// framework-parts-fo): «Применить (N)» (FO5-1); a bottom sheet on a phone
+// (FO5-2); on the body like SF.menu.open, not beside the anchor (FO5-3); the
+// reopen guard by the anchor's press, no timer (FO5-4). The check of a value
+// row stands at the end of the row (owner decision C308 FO-5, design d03,
+// C106 (2)): sf-input-choice's list rows with control-position="end".
+
+
+
+
+const SET_NAME = 'sf-field-renderers';
+const SET_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_3__["default"]; // The anchor a window was closed from by a press on it: that press's click
+// must not open it again (holdReopen).
+
+const CLOSED_BY_ANCHOR = new WeakMap();
+const OPEN = new WeakMap();
+const OPERATOR_WORDS = {
+  eq: 'operatorEq',
+  gt: 'operatorGt',
+  gte: 'operatorGte',
+  lt: 'operatorLt',
+  lte: 'operatorLte',
+  between: 'operatorBetween',
+  contains: 'operatorContains',
+  startsWith: 'operatorStartsWith',
+  any: 'operatorAny',
+  today: 'operatorToday',
+  week: 'operatorWeek',
+  month: 'operatorMonth',
+  // The conditions of a list property (owner decision C310, FF-8): любой из,
+  // все из, ни один из; and of every type, не задано / задано (C310 replaces
+  // C293's «Пусто» / «Не пусто»). operatorIn («В списке») stays in the packs
+  // for a host that names it.
+  in: 'operatorAnyOf',
+  all: 'operatorAllOf',
+  not_in: 'operatorNoneOf',
+  empty: 'operatorEmpty',
+  not_empty: 'operatorFilled'
+}; // The window's condition words of a string and a number (C310): содержит,
+// начинается с; от – до, равно, больше, меньше -- one lower-case line with
+// любой из and не задано. The former capitalised words stay for a table's
+// operator field (OPERATOR_WORDS).
+
+const CONDITION_WORDS = {
+  string: {
+    contains: 'operatorContainsWord',
+    startsWith: 'operatorStartsWithWord'
+  },
+  number: {
+    between: 'operatorFromTo',
+    eq: 'operatorEqualWord',
+    gt: 'operatorMoreWord',
+    gte: 'operatorMoreOrEqualWord',
+    lt: 'operatorLessWord',
+    lte: 'operatorLessOrEqualWord'
+  }
+};
+
+const word = (key, node) => (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_1__.pageText)(SET_TEXT, key, node ?? null, SET_NAME);
+/** The words of an operator in the page's language; kind (string, number) picks the window's condition words. An operator nobody has a word for is shown as it is stored. */
+
+
+function filterOperatorLabel(operator, node = null, kind = '') {
+  const key = CONDITION_WORDS[kind]?.[operator] ?? OPERATOR_WORDS[operator];
+  return key ? word(key, node) : String(operator ?? '');
+}
+
+const clone = value => {
+  if (!value || typeof value !== 'object') return {};
+
+  try {
+    return structuredClone(value);
+  } catch {
+    return { ...value
+    };
+  }
+}; // The phone (FO5-2): no md breakpoint token on the root, the same reading as
+// sf-input-rich's link panel and the other phone sheets (under 600 px).
+
+
+const onPhone = doc => !doc.defaultView?.getComputedStyle(doc.documentElement).getPropertyValue('--sf-breakpoint-md').trim(); // The window stands where the menu does (FO5-3, as SF.menu.open): on the body,
+// or in the open modal dialog the anchor is in (a modal dialog makes the rest
+// of the page inert), never inside whatever holds the anchor (a list, a table
+// row, a row of buttons). It takes the anchor's density, theme and language.
+
+
+function mount(surface, anchor) {
+  const doc = anchor.ownerDocument;
+  (0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_2__.followDensity)(surface, anchor);
+  const themed = anchor.closest?.('.theme-dark, .theme-light');
+
+  if (themed && themed !== doc.documentElement && themed !== doc.body) {
+    surface.classList.add(themed.classList.contains('theme-dark') ? 'theme-dark' : 'theme-light');
+  }
+
+  const lang = anchor.closest?.('[lang]')?.getAttribute('lang');
+  if (lang) surface.setAttribute('lang', lang);
+  (anchor.closest?.('dialog[open]') || doc.body).append(surface);
+} // The reopen guard (FO5-4): a press on the anchor closed its window, and the
+// click that follows that press -- or an open its handler asks for later,
+// after a fetch -- must not open it again. Held until the next press or key
+// (the document hears them first, before the anchor's own handlers); no timer.
+
+
+function holdReopen(anchor) {
+  const doc = anchor.ownerDocument;
+  CLOSED_BY_ANCHOR.set(anchor, true);
+
+  const clear = () => {
+    CLOSED_BY_ANCHOR.delete(anchor);
+    doc.removeEventListener('pointerdown', clear, true);
+    doc.removeEventListener('keydown', clear, true);
+  };
+
+  doc.addEventListener('pointerdown', clear, true);
+  doc.addEventListener('keydown', clear, true);
+}
+
+function filterWindowOpen({
+  anchor,
+  field = {},
+  value = {},
+  size = '1',
+  placement = 'bottom-start',
+  width = 'panel',
+  count,
+  kind = '',
+  renderControl
+} = {}) {
+  if (!anchor?.isConnected || !field?.key) return Promise.resolve(null);
+  const open = OPEN.get(anchor);
+
+  if (open) {
+    open.close();
+    return Promise.resolve(null);
+  } // The press on the anchor that closed its window is followed by its click.
+
+
+  if (CLOSED_BY_ANCHOR.get(anchor)) return Promise.resolve(null);
+  const doc = anchor.ownerDocument;
+  const sheet = onPhone(doc);
+  return new Promise(resolve => {
+    let temp = clone(value);
+    let answer = null;
+    const label = field.label || field.key;
+    let frame;
+    let body;
+    let foot;
+
+    if (sheet) {
+      // On a phone (FO5-2, C157 (5)): the same content in a bottom sheet, the
+      // field's label its title, the buttons in its pinned footer.
+      frame = doc.createElement('sf-drawer');
+      frame.setAttribute('placement', 'bottom');
+      frame.setAttribute('heading', label);
+      frame.setAttribute('data-sf-filter-window', field.key);
+      body = doc.createElement('div');
+      body.className = 'sf-filter-window flex flex-col gap-1/2';
+      foot = doc.createElement('div');
+      foot.setAttribute('slot', 'footer');
+      frame.append(body, foot);
+    } else {
+      frame = doc.createElement('sf-popover');
+      frame.setAttribute('surface-role', 'dialog');
+      frame.setAttribute('placement', placement);
+      frame.setAttribute('label', label);
+      frame.setAttribute('data-sf-filter-window', field.key);
+      const surface = doc.createElement('div');
+      surface.setAttribute('slot', 'content');
+      surface.className = 'sf-filter-window flex flex-col gap-1/2 p-1/2'; // The window's width (C157, C310): the panel's step, 20rem; 24rem for
+      // people and records with a caption.
+
+      surface.setAttribute('data-sf-filter-width', width === 'wide' ? 'wide' : 'panel');
+      surface.style.inlineSize = width === 'wide' ? 'var(--sf-popup-form-wide-width)' : 'var(--sf-popup-panel-width)';
+      surface.style.maxInlineSize = '100%';
+      body = doc.createElement('div');
+      body.className = 'sf-filter-window-control flex flex-col';
+      foot = doc.createElement('div');
+      surface.append(body, foot);
+      frame.append(surface);
+    }
+
+    const host = {
+      size,
+      // The single-field window (C308 FO-5): the rows' checks stand at the end.
+      filterWindow: true,
+      getFieldText: key => word(key, anchor),
+      getFilterControlValue: () => temp,
+      patchTempFilterValue: (key, patch) => {
+        temp = { ...temp,
+          ...patch
+        };
+        draw();
+      },
+      getFilterOperatorLabel: operator => filterOperatorLabel(operator, anchor, kind),
+      getVisibleFilterOptions: one => Array.isArray(one?.filter?.options) ? one.filter.options : [],
+      getFilterOptionsProvider: one => one?.filter?.provider ?? null
+    };
+
+    const finish = action => {
+      answer = action === 'apply' ? {
+        action,
+        value: clone(temp)
+      } : {
+        action,
+        value: null
+      };
+      close();
+    }; // «Применить (N)» (FO5-1, C157 (3)): the number of values chosen when the
+    // condition is a list; plain «Применить» otherwise or with none chosen.
+
+
+    const applyText = () => {
+      const number = typeof count === 'function' ? count(temp) : Array.isArray(temp?.values) ? temp.values.length : 0;
+      return number ? `${word('filterApply', anchor)} (${number})` : word('filterApply', anchor);
+    };
+
+    function draw() {
+      (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${renderControl(field, host)}`, body);
+      (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-filter-window-footer flex gap-1/3 items-cross-center">
+          <sf-button size=${size} scheme="primary" text=${applyText()}
+                     data-action="apply" @click=${() => finish('apply')}></sf-button>
+          <sf-button size=${size} appearance="outline" scheme="on-surface" text=${word('filterReset', anchor)}
+                     data-action="reset" @click=${() => finish('reset')}></sf-button>
+        </div>`, foot);
+    }
+
+    const close = () => sheet ? frame.close?.({
+      reason: 'api'
+    }) : frame.close({
+      reason: 'api'
+    });
+
+    OPEN.set(anchor, {
+      close
+    });
+
+    const closed = () => {
+      OPEN.delete(anchor); // The sheet gives the focus back to the anchor, as the popover does
+      // (the anchor does not name the drawer, so the drawer does not know it).
+
+      if (sheet && anchor.isConnected) {
+        const target = anchor.matches?.('button, a[href], input, select, textarea, [tabindex]') ? anchor : anchor.querySelector?.('button, a[href], input, select, textarea, [tabindex]') ?? anchor;
+        target.focus?.({
+          preventScroll: true
+        });
+      } // The focus is back on the anchor (sf-popover returnFocus, sf-drawer's
+      // opener); the window leaves the page after it.
+
+
+      queueMicrotask(() => frame.remove());
+      resolve(answer);
+    };
+
+    if (sheet) {
+      frame.addEventListener('sf-drawer-closed', closed, {
+        once: true
+      });
+    } else {
+      frame.addEventListener('sf-popover-close', event => {
+        if (event.detail?.reason === 'close') holdReopen(anchor);
+      });
+      frame.addEventListener('sf-popover-closed', closed, {
+        once: true
+      });
+    }
+
+    draw();
+    mount(frame, anchor); // The tag is fetched by the Loader when it meets it; the anchor is given
+    // once the element is defined (a property set before would hide its
+    // accessor), and the window opens on the next frame.
+
+    customElements.whenDefined(sheet ? 'sf-drawer' : 'sf-popover').then(() => {
+      if (!sheet) frame.anchor = anchor;
+      requestAnimationFrame(() => {
+        if (!frame.isConnected) return;
+        if (sheet) frame.open?.();else frame.show();
+      });
+    });
+  });
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "01ae054f01b4"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1812,26 +2782,42 @@ function htmlText(value) {
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   DATE_FUTURE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_FUTURE_PERIODS),
-/* harmony export */   DATE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_PERIODS),
+/* harmony export */   CONDITION_OPS: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_14__.CONDITION_OPS),
+/* harmony export */   DATE_FUTURE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_FUTURE_PERIODS),
+/* harmony export */   DATE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_PERIODS),
 /* harmony export */   FILTER_RENDERERS: () => (/* binding */ FILTER_RENDERERS),
-/* harmony export */   NUMBER_FILTER_OPERATORS: () => (/* binding */ NUMBER_FILTER_OPERATORS),
+/* harmony export */   NUMBER_FILTER_OPERATORS: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_5__.NUMBER_FILTER_OPERATORS),
+/* harmony export */   OWN_ERROR_CONTROLS: () => (/* binding */ OWN_ERROR_CONTROLS),
 /* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES),
-/* harmony export */   buildFilterRequest: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.buildFilterRequest),
-/* harmony export */   dateFilterChipText: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateFilterChipText),
-/* harmony export */   dateFilterConditions: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateFilterConditions),
+/* harmony export */   buildFilterRequest: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.buildFilterRequest),
+/* harmony export */   conditionFields: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_14__.conditionFields),
+/* harmony export */   dateFilterChipText: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateFilterChipText),
+/* harmony export */   dateFilterConditions: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateFilterConditions),
 /* harmony export */   dateTimeAttribute: () => (/* binding */ dateTimeAttribute),
-/* harmony export */   filterRequestContext: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.filterRequestContext),
-/* harmony export */   isEmptyFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.isEmptyFilterEntry),
+/* harmony export */   evaluateCondition: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_14__.evaluateCondition),
+/* harmony export */   fieldConditions: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_14__.fieldConditions),
+/* harmony export */   fieldEditable: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_14__.fieldEditable),
+/* harmony export */   fieldTemplate: () => (/* binding */ fieldTemplate),
+/* harmony export */   filterActive: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterActive),
+/* harmony export */   filterConditions: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditions),
+/* harmony export */   filterCount: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCount),
+/* harmony export */   filterFieldSummary: () => (/* binding */ filterFieldSummary),
+/* harmony export */   filterOperatorLabel: () => (/* reexport safe */ _filter_window_js__WEBPACK_IMPORTED_MODULE_15__.filterOperatorLabel),
+/* harmony export */   filterRequestContext: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.filterRequestContext),
+/* harmony export */   filterWidth: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterWidth),
+/* harmony export */   isEmptyFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.isEmptyFilterEntry),
 /* harmony export */   isNumericType: () => (/* binding */ isNumericType),
-/* harmony export */   normalizeFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.normalizeFilterEntry),
+/* harmony export */   meterStatus: () => (/* binding */ meterStatus),
+/* harmony export */   normalizeFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.normalizeFilterEntry),
+/* harmony export */   openFilterWindow: () => (/* binding */ openFilterWindow),
 /* harmony export */   propertyModes: () => (/* binding */ propertyModes),
 /* harmony export */   renderCellField: () => (/* binding */ renderCellField),
 /* harmony export */   renderEditField: () => (/* binding */ renderEditField),
 /* harmony export */   renderFilterField: () => (/* binding */ renderFilterField),
+/* harmony export */   renderFilterWindowField: () => (/* binding */ renderFilterWindowField),
 /* harmony export */   renderTotalField: () => (/* binding */ renderTotalField),
 /* harmony export */   renderViewField: () => (/* binding */ renderViewField),
-/* harmony export */   resolveDatePeriod: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.resolveDatePeriod)
+/* harmony export */   resolveDatePeriod: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.resolveDatePeriod)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("073f05ff1a81");
@@ -1839,20 +2825,30 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("43090d1c8307");
 /* harmony import */ var _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e577837dd70a");
 /* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fc654eb7fab0");
-/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("9ce1a42b2a85");
-/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("dd6973f77245");
-/* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("01ae054f01b4");
-/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _decimal_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ab3947ea3647");
-/* harmony import */ var _phone_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("25be1c2df717");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("354525e80715");
-/* harmony import */ var _date_filter_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("c11c730f061a");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__, _decimal_js__WEBPACK_IMPORTED_MODULE_10__, _date_filter_js__WEBPACK_IMPORTED_MODULE_13__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__, _decimal_js__WEBPACK_IMPORTED_MODULE_10__, _date_filter_js__WEBPACK_IMPORTED_MODULE_13__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _text_types_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("f8901823ea4f");
+/* harmony import */ var _templates_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("22825a8607d0");
+/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("9ce1a42b2a85");
+/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("dd6973f77245");
+/* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("01ae054f01b4");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _decimal_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("ab3947ea3647");
+/* harmony import */ var _phone_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("25be1c2df717");
+/* harmony import */ var _conditions_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("db080b4bfc2b");
+/* harmony import */ var _filter_window_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("5e0f4b4ddd3f");
+/* harmony import */ var _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("16fc79105455");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("354525e80715");
+/* harmony import */ var _date_filter_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("c11c730f061a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _templates_js__WEBPACK_IMPORTED_MODULE_7__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_11__, _decimal_js__WEBPACK_IMPORTED_MODULE_12__, _filter_window_js__WEBPACK_IMPORTED_MODULE_15__, _date_filter_js__WEBPACK_IMPORTED_MODULE_18__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _templates_js__WEBPACK_IMPORTED_MODULE_7__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_11__, _decimal_js__WEBPACK_IMPORTED_MODULE_12__, _filter_window_js__WEBPACK_IMPORTED_MODULE_15__, _date_filter_js__WEBPACK_IMPORTED_MODULE_18__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_11__);
+
+
+
+
+
 
 
 
@@ -1924,6 +2920,40 @@ function renderTextFilterControl(field, host) {
   }}
         ></sf-input>
     `;
+} // A phone is searched by what is stored (field orders FO-3): the request gets
+// the number as E.164, or the digits of a part of one, however it was typed,
+// and the box shows what went -- one form in the view, the row, the edit and
+// the filter. The condition is the text filter's (contains by default).
+// A full number is sent as E.164 and shown the way view, cell and edit show it;
+// a part of a number is sent and shown as its digits.
+
+
+function phoneFilterShown(sent) {
+  return String(sent || '').startsWith('+') ? (0,_phone_js__WEBPACK_IMPORTED_MODULE_13__.formatPhone)(sent) : String(sent || '');
+}
+
+function renderPhoneFilterControl(field, host) {
+  const value = host.getFilterControlValue(field.key);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input
+                size=${filterSize(host)}
+                appearance="filled"
+                placeholder="${setText(host, 'containsText')}"
+                value="${phoneFilterShown(value.value)}"
+                name="sf_filter_${field.key || 'phone'}"
+                inputmode="tel"
+                @change=${event => {
+    const input = event.currentTarget ?? event.target;
+    const sent = (0,_phone_js__WEBPACK_IMPORTED_MODULE_13__.phoneSearchText)(input?.value ?? '');
+    const shown = phoneFilterShown(sent);
+    if (input && input.value !== shown) input.value = shown;
+    host.patchTempFilterValue(field.key, {
+      value: sent,
+      operator: value.operator || field.filter?.defaultOperator || 'contains'
+    });
+  }}
+        ></sf-input>
+    `;
 }
 
 function renderRangeFilterControl(field, host) {
@@ -1989,33 +3019,34 @@ function renderRangeFilterControl(field, host) {
 // whose currency lives in the value adds a currency choice (q-mp-mix): the
 // request carries `currency` and compares amounts within it. A new condition
 // of another shape drops the old value.
+// The list is the registry's (number, money and percent `conditions`).
 
 
-const NUMBER_FILTER_OPERATORS = Object.freeze(['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'between', 'empty', 'not-empty']);
+
 const NUMBER_NO_VALUE_OPERATORS = new Set(['empty', 'not-empty']);
 
 const operatorShape = operator => NUMBER_NO_VALUE_OPERATORS.has(operator) ? 'none' : operator === 'between' ? 'two' : 'one';
 
 function numberOperatorLabel(host, operator) {
-  return NUMBER_FILTER_OPERATORS.includes(operator) ? setText(host, `numberOperator_${operator}`) : host.getFilterOperatorLabel(operator);
+  return _registry_js__WEBPACK_IMPORTED_MODULE_5__.NUMBER_FILTER_OPERATORS.includes(operator) ? setText(host, `numberOperator_${operator}`) : host.getFilterOperatorLabel(operator);
 }
 
 function renderNumberFilterControl(field, host, look = {}) {
   const control = host.getFilterControlValue(field.key) || {};
   const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
-  const operators = field.filter?.operators || NUMBER_FILTER_OPERATORS;
+  const operators = field.filter?.operators || _registry_js__WEBPACK_IMPORTED_MODULE_5__.NUMBER_FILTER_OPERATORS;
   const selectedOperator = control.operator || field.filter?.defaultOperator || operators[0];
   const shape = operatorShape(selectedOperator);
   const rawValue = control.value;
   const rangeValue = Array.isArray(rawValue) ? rawValue : [rawValue ?? '', ''];
   const currencies = look.currencies || null;
   const currency = currencies ? currencies.includes(control.currency) ? control.currency : currencies[0] : look.currency || null;
-  const sign = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(currency, locale, (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyDisplayOf)(field)) : null;
-  const textStart = sign?.before ? sign.sign : '';
-  const textEnd = look.percent ? '%' : sign && !sign.before ? sign.sign : '';
-  const minDigits = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(currency, locale).minor : 0;
+  const sign = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(currency, locale, (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyDisplayOf)(field)) : null;
+  const textStart = isolatedSign(sign?.before ? sign.sign : '', locale);
+  const textEnd = look.percent ? '%' : isolatedSign(sign && !sign.before ? sign.sign : '', locale) || (look.money ? '' : fieldUnit(field));
+  const minDigits = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(currency, locale).minor : 0;
 
-  const shown = value => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.restingDecimal)(value, locale, value === '' || value === null || value === undefined ? 0 : minDigits);
+  const shown = value => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.restingDecimal)(value, locale, value === '' || value === null || value === undefined ? 0 : minDigits);
 
   const withCurrency = patch => currencies ? { ...patch,
     currency
@@ -2029,7 +3060,7 @@ function renderNumberFilterControl(field, host, look = {}) {
   const typed = (index, event) => {
     const input = event.currentTarget ?? event.target;
     const text = String(input?.value ?? '');
-    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(text, {
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(text, {
       locale,
       currency
     });
@@ -2063,7 +3094,7 @@ function renderNumberFilterControl(field, host, look = {}) {
                 root-class="flex-1 min-w-0"
                 label=${label}
                 value=${shown(value)}
-                inputmode=${look.integer ? 'numeric' : 'decimal'}
+                inputmode=${look.integer || (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).decimals === 0 ? 'numeric' : 'decimal'}
                 text-start=${textStart || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 text-end=${textEnd || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 name="sf_filter_${field.key || 'number'}${index ? '_second' : ''}"
@@ -2186,7 +3217,7 @@ function dateFilterPresets(field) {
   const presets = field.filter?.presets;
 
   if (presets === undefined || presets === null) {
-    return [..._date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_FUTURE_PERIODS : [])].join(',');
+    return [..._date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_FUTURE_PERIODS : [])].join(',');
   }
 
   return Array.isArray(presets) ? presets : String(presets);
@@ -2196,9 +3227,9 @@ function defaultDateCondition(field, list) {
   const asked = field.filter?.defaultOperator;
 
   if (asked) {
-    const one = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateConditionOf)(field, {
+    const one = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateConditionOf)(field, {
       operator: asked,
-      value: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.LEGACY_DATE_OPERATORS[asked] || asked
+      value: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.LEGACY_DATE_OPERATORS[asked] || asked
     });
     const named = list.find(item => item.key === asked);
     if (named || one) return named || one;
@@ -2206,19 +3237,19 @@ function defaultDateCondition(field, list) {
   // field: «Идёт в».
 
 
-  return list.find(item => item.operator === ((0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateFilterKind)(field) === 'period' ? 'overlaps' : 'between')) ?? list[0];
+  return list.find(item => item.operator === ((0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateFilterKind)(field) === 'period' ? 'overlaps' : 'between')) ?? list[0];
 }
 
 function dateFilterContext(host) {
-  return (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.filterRequestContext)(host ?? null, host?.getFilterContext?.() || {});
+  return (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.filterRequestContext)(host ?? null, host?.getFilterContext?.() || {});
 }
 
 function renderDateFilterControl(field, host) {
   const control = host.getFilterControlValue(field.key) || {};
-  const list = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateFilterConditions)(field);
-  const asked = control.operator ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateConditionOf)(field, control) : null;
+  const list = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateFilterConditions)(field);
+  const asked = control.operator ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateConditionOf)(field, control) : null;
   const current = asked ?? defaultDateCondition(field, list);
-  const value = asked ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.normalizeFilterEntry)(control).value : control.value;
+  const value = asked ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.normalizeFilterEntry)(control).value : control.value;
   const size = filterSize(host);
 
   const patch = next => host.patchTempFilterValue(field.key, next);
@@ -2245,7 +3276,7 @@ function renderDateFilterControl(field, host) {
     if (!next || asked && next.key === current.key) return;
     patch({
       operator: next.operator,
-      value: (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateConditionValue)(next, {
+      value: (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateConditionValue)(next, {
         value
       })
     });
@@ -2255,8 +3286,8 @@ function renderDateFilterControl(field, host) {
                     <sf-list-item
                             kind="text"
                             size=${size}
-                            group=${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateGroupLabel)(host, item.group)}
-                            text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateConditionLabel)(host, item)}"
+                            group=${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateGroupLabel)(host, item.group)}
+                            text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateConditionLabel)(host, item)}"
                             value="${item.key}"
                             ?selected=${item.key === current.key}
                     ></sf-list-item>
@@ -2310,10 +3341,11 @@ function renderDateConditionValue(field, host, current, value, patch) {
             ></sf-input-date>`;
   }
 
-  if (current.need === 'days') return renderDateRangeValue(field, host, current, value, patch); // «when» (a period field): a period by name, or two days of one's own.
+  if (current.need === 'days') return renderDateRangeValue(field, host, current, value, patch);
+  if (current.need === 'time' || current.need === 'times') return renderTimeConditionValue(field, host, current, value, patch); // «when» (a period field): a period by name, or two days of one's own.
 
   const own = Array.isArray(value);
-  const periods = [..._date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_FUTURE_PERIODS : [])];
+  const periods = [..._date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_FUTURE_PERIODS : [])];
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-dropdown
                 size=${size}
@@ -2342,7 +3374,7 @@ function renderDateConditionValue(field, host, current, value, patch) {
   }}
         >
             ${periods.map(period => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                <sf-list-item kind="text" size=${size} text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateConditionLabel)(host, {
+                <sf-list-item kind="text" size=${size} text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateConditionLabel)(host, {
     period
   })}" value="${period}"
                         ?selected=${!own && value === period}></sf-list-item>
@@ -2350,6 +3382,54 @@ function renderDateConditionValue(field, host, current, value, patch) {
             <sf-list-item kind="text" size=${size} text="${setText(host, 'dateOwnDays')}" value="own" ?selected=${own}></sf-list-item>
         </sf-dropdown>
         ${own ? renderDateRangeValue(field, host, current, value, patch) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`;
+} // A time of day's condition (catalogue step 4): one time, or two side by side
+// for «Между» (from, to; both ends in), typed as the edit types one -- the
+// time row of sf-input-date. A half-typed time writes nothing.
+
+
+function renderTimeConditionValue(field, host, current, value, patch) {
+  const size = filterSize(host);
+  const name = `sf_filter_${field.key || 'time'}`;
+  const two = current.need === 'times';
+  const times = two ? Array.isArray(value) ? [String(value[0] ?? ''), String(value[1] ?? '')] : ['', ''] : [typeof value === 'string' ? value : ''];
+
+  const control = (index, label) => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-date
+                mode="time"
+                size=${size}
+                root-class=${two ? 'flex-1 min-w-0' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                label="${label}"
+                .value=${(0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitTime)(times[index]).time}
+                minute-step=${minuteStepOf(field) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                name="${name}${index ? '_second' : ''}"
+                @change=${event => {
+    if (event.target !== event.currentTarget) return;
+    const time = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.normalizeTime)(String(event.detail?.value ?? ''));
+    if (time === null) return;
+
+    if (!two) {
+      patch({
+        operator: current.operator,
+        value: time || null
+      });
+      return;
+    }
+
+    const next = [...times];
+    next[index] = time;
+    patch({
+      operator: current.operator,
+      value: next
+    });
+  }}
+        ></sf-input-date>`;
+
+  if (!two) return control(0, setText(host, 'timeValue'));
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <div class="sf-filter-operator-inputs flex gap-1/3 items-cross-start">
+            ${control(0, setText(host, 'rangeFrom'))}
+            ${control(1, setText(host, 'rangeTo'))}
+        </div>`;
 } // Two days on a range calendar. Its quick ranges are the whole periods: one
 // pressed is the period by name -- in «Между» the condition becomes that
 // period (C293 (4)), in a period field's «when» the value is its name.
@@ -2369,7 +3449,7 @@ function renderDateRangeValue(field, host, current, value, patch) {
     if (event.target !== event.currentTarget) return;
     const preset = event.detail?.preset?.id;
 
-    if (preset && (_date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_PERIODS.includes(preset) || _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_FUTURE_PERIODS.includes(preset))) {
+    if (preset && (_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_PERIODS.includes(preset) || _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_FUTURE_PERIODS.includes(preset))) {
       patch(current.operator === 'between' ? {
         operator: 'period',
         value: preset
@@ -2387,9 +3467,118 @@ function renderDateRangeValue(field, host, current, value, patch) {
     });
   }}
         ></sf-input-date>`;
+} // An option of a filter as sf-input-choice draws it (FO-4): its picture
+// (avatar, or the former imageUrl and avatarText), its icon and its colour
+// (color, or the former scheme) are the option's data and drawn wherever it
+// is (FO4-1); how the colour is drawn is the field template's parameter
+// (optionLookOf). filter.optionRenderer is the former way of saying it, read
+// until 2027-01-01 (FO4-2): avatar-checkbox the picture from the initials of
+// the name when none is given, swatch a circle, badge a badge.
+
+
+function choiceOption(field, option = {}) {
+  const value = option.value ?? option.id ?? option.key ?? option.label ?? option.title;
+  const label = option.label || option.title || String(value ?? '');
+  const look = field.filter?.optionRenderer;
+  const item = {
+    value: String(value ?? ''),
+    label,
+    caption: option.caption || '',
+    disabled: option.disabled === true
+  };
+  const avatar = typeof option.avatar === 'string' ? {
+    image: option.avatar
+  } : option.avatar;
+  const image = avatar?.image || avatar?.src || option.imageUrl || '';
+  const initials = avatar?.text || option.avatarText || '';
+  if (image || initials || look === 'avatar-checkbox') item.avatar = {
+    image,
+    text: initials || label
+  };
+  if (option.icon) item.icon = String(option.icon);
+  const color = option.color ?? option.scheme ?? '';
+  if (color) item.color = String(color);
+  return item;
+} // How a choice field's option colours are drawn (FO4-2; C302: the look is the
+// template's parameter): templateParams.badge true a badge, false a circle;
+// else the former filter.optionRenderer (swatch a circle, badge a badge);
+// else '' -- sf-input-choice's own default, the tonal label (owner decision
+// C308 FO-4).
+
+
+function optionLookOf(field) {
+  const badge = field.templateParams?.badge ?? field.template?.params?.badge;
+  if (badge === true) return 'badge';
+  if (badge === false) return 'dot';
+  const look = field.filter?.optionRenderer;
+  if (look === 'swatch') return 'dot';
+  if (look === 'badge') return 'badge';
+  return '';
+} // A filter of a list of options is the Framework's choice field (FO-4):
+// sf-input-choice, appearance list, the checks of several values, with the
+// options' visuals, its own search (filter.searchable) and the host's pages
+// (filter.provider, or host.getFilterOptionsProvider(field): async (query,
+// {cursor, limit, signal}) answering {items, nextCursor?}). A host that still
+// draws its own option rows (renderFilterOption) gets the 1.13 controls.
+
+
+function renderChoiceFilterControl(field, host) {
+  const value = host.getFilterControlValue(field.key) || {};
+  const options = (Array.isArray(field.filter?.options) ? field.filter.options : host.getVisibleFilterOptions?.(field) ?? []).map(option => choiceOption(field, option));
+  const given = field.filter?.provider ?? host.getFilterOptionsProvider?.(field);
+  const provider = typeof given === 'function' ? (query, request) => Promise.resolve(given(query, request)).then(answer => ({ ...answer,
+    items: (Array.isArray(answer?.items) ? answer.items : []).map(option => choiceOption(field, option))
+  })) : null; // One wrapper per provider, so the field asks again only when the host's
+  // provider changes.
+
+  const pages = provider ? choiceProvider(given, provider) : null;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input-choice
+                appearance="list"
+                flow="column"
+                multiple
+                aria-label=${field.label || field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ?searchable=${choiceSearchable(field, host, options, pages)}
+                option-look=${optionLookOf(field) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                control-position=${host.filterWindow === true ? 'end' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                .items=${options}
+                .provider=${pages}
+                .value=${Array.isArray(value.values) ? value.values.map(String) : []}
+                @change=${event => {
+    host.patchTempFilterValue(field.key, {
+      values: Array.isArray(event.detail?.values) ? [...event.detail.values] : [],
+      operator: value.operator || field.filter?.defaultOperator || 'in'
+    });
+  }}
+        ></sf-input-choice>
+    `;
+} // Whether the choice filter shows its search: when the field asks for it;
+// in the single-field filter window also from ten options or with the host's
+// pages, which search on the server (filter field study, decided: «search
+// from 10»), unless the field says searchable false.
+// filter.search (C310): 'off' none; 'local' over the options; 'server' the
+// host's pages search; 'auto' (the default in the window) from ten options,
+// or with the host's pages.
+
+
+function choiceSearchable(field, host, options, pages) {
+  const asked = field.filter?.searchable;
+  const mode = field.filter?.search;
+  if (mode === 'off' || asked === false) return false;
+  if (asked === true || mode === 'local' || mode === 'server') return true;
+  if (host.filterWindow !== true) return false;
+  return Boolean(pages) || options.length >= 10;
+}
+
+const CHOICE_PROVIDERS = new WeakMap();
+
+function choiceProvider(given, wrapped) {
+  if (!CHOICE_PROVIDERS.has(given)) CHOICE_PROVIDERS.set(given, wrapped);
+  return CHOICE_PROVIDERS.get(given);
 }
 
 function renderMultiSelectFilterControl(field, host) {
+  if (typeof host?.renderFilterOption !== 'function') return renderChoiceFilterControl(field, host);
   const endpointPage = host.getEndpointFilterPage(field);
   const options = host.getVisibleFilterOptions(field);
   const value = host.getFilterControlValue(field.key);
@@ -2495,6 +3684,9 @@ const FILTER_RENDERERS = {
   integer: renderIntegerFilterControl,
   date: renderDateFilterControl,
   datetime: renderDateFilterControl,
+  // A time of day has its own conditions (catalogue step 4), drawn by the
+  // date filter: equals, between, earlier, later, empty, not empty.
+  time: renderDateFilterControl,
   range: renderRangeFilterControl,
   'date-range': renderDateFilterControl,
   // A period field (a start and an end, C293): its own conditions -- overlaps,
@@ -2505,6 +3697,15 @@ const FILTER_RENDERERS = {
   choice: renderMultiSelectFilterControl,
   choices: renderMultiSelectFilterControl,
   boolean: renderMultiSelectFilterControl,
+  // phone: its stored form, E.164 or the digits of a part (C302, FO-3);
+  // password: set or not set.
+  phone: renderPhoneFilterControl,
+  password: renderPasswordFilterControl,
+  // url, link (its text and its address) and ru.inn are searched as text
+  // (catalogue step 3).
+  url: renderTextFilterControl,
+  link: renderTextFilterControl,
+  'ru.inn': renderTextFilterControl,
   user: renderMultiSelectFilterControl,
   'entity-multi-select': renderEntityMultiSelectFilterControl,
   'entity-single-select': renderEntityMultiSelectFilterControl,
@@ -2526,7 +3727,7 @@ const FILTER_RENDERERS = {
 
 
 function renderFilterField(field = {}, host) {
-  const asked = field.filter?.control || field.propertyType || field.type || field.dataType || 'text';
+  const asked = field.filter?.control || (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).type || 'text';
   const renderer = FILTER_RENDERERS[asked] || FILTER_RENDERERS.text;
   return renderer(field, host);
 } // The cell template. A cell is text unless the Framework has a component that
@@ -2568,12 +3769,23 @@ const CELL_LINE = '1/2'; // A choice badge in a cell is tonal (sf-badge's defaul
 // C140 (2)) and its own text colour, so the tint survives the appearance
 // untouched. Both are measured on the built bytes.
 
-const CELL_BADGE_APPEARANCE = 'tonal'; // A file cell is a reference link with an icon chosen from the mime type: the
+const CELL_BADGE_APPEARANCE = 'tonal'; // The template parameter badge (C302; badgeAppearance before it): tonal or
+// outline. main is the attention count's alone (C140 (4)): sf-badge draws it
+// tonal on any colour but error, so a value badge reads main as tonal here
+// and never asks the badge for it (FW-1).
+
+const VALUE_BADGE_APPEARANCES = new Set(['tonal', 'outline']);
+
+function badgeAppearanceOf(field) {
+  const asked = String((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'badge') ?? '');
+  return VALUE_BADGE_APPEARANCES.has(asked) ? asked : CELL_BADGE_APPEARANCE;
+} // A file cell is a reference link with an icon chosen from the mime type: the
 // consumer asked for an icon and the label and nothing else -- no size as text
 // and no download button, which the record view will carry -- and the component
 // that owns that shape already exists. sf-file-preview detects only image/*, so
 // this small map lives here until a second caller needs it, which is the session
 // that owns that component's own judgement.
+
 
 const FILE_ICONS = [[/^image\//u, 'image'], [/^video\//u, 'movie'], [/^audio\//u, 'audiotrack'], [/^text\/(csv|tab-separated-values)$/u, 'table'], [/^text\//u, 'description'], [/pdf$/u, 'picture_as_pdf'], [/(zip|compressed|tar|rar|7z)/u, 'folder_zip'], [/(sheet|excel|spreadsheet)/u, 'table'], [/(word|document)$/u, 'description'], [/(presentation|powerpoint)/u, 'slideshow']];
 
@@ -2636,7 +3848,7 @@ function renderColorEdit(field, value, host) {
                 name=${fieldName(field)}
                 value=${hex ? String(hex) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 inherited-value=${inherited ? String(inherited) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                swatches=${field.swatches ? String(field.swatches) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                swatches=${(0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'swatches') ? String((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'swatches')) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 ?clearable=${Boolean(inherited) || field.required !== true}
                 ?readonly=${field.readonly === true}
                 aria-label=${field.label || field.key || ''}
@@ -2704,7 +3916,7 @@ function renderFilePreviewCell(value) {
 
 function renderChoicesCell(field, value) {
   if (!Array.isArray(value) || !value.length) return null;
-  if (String(field.variant ?? '') === 'badges') return renderChoicesBadgesCell(field, value);
+  if (templateOf(field) === 'badges') return renderChoicesBadgesCell(field, value);
   const options = field.options || field.filter?.options || field.constraints?.options;
 
   const label = item => {
@@ -2741,7 +3953,7 @@ function renderChoicesBadgesCell(field, value) {
         props: {
           line: CELL_LINE,
           text,
-          appearance: field.badgeAppearance ?? CELL_BADGE_APPEARANCE,
+          appearance: badgeAppearanceOf(field),
           ...(badge?.scheme ? {
             scheme: badge.scheme
           } : {}),
@@ -2758,6 +3970,11 @@ const CELL_RENDERERS = {
   // A string is its own text in a row -- except a password, which is never
   // shown anywhere: a row says whether one is set.
   string: renderStringCell,
+  phone: renderPhoneCell,
+  password: renderPasswordCell,
+  url: renderUrlCell,
+  link: renderLinkCell,
+  'ru.inn': renderInnCell,
   // A date in a row used to be whatever the host had stored, printed --
   // «2026-09-25T07:12:00+03:00» beside the same value reading «25 сентября
   // 2026» in the record panel, with no way for a consumer to change the
@@ -2772,7 +3989,6 @@ const CELL_RENDERERS = {
   color: renderColorCell,
   include: renderIncludeCell,
   choice: renderChoiceCell,
-  integer: renderNumericCell,
   number: renderNumericCell,
   user: renderUserCell,
   record: renderReferenceCell,
@@ -2793,8 +4009,8 @@ const CELL_RENDERERS = {
 
 function booleanWords(field, host) {
   return {
-    yes: field.trueText ?? field.labels?.true ?? setText(host, 'yes'),
-    no: field.falseText ?? field.labels?.false ?? setText(host, 'no')
+    yes: (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'trueText') ?? field.labels?.true ?? setText(host, 'yes'),
+    no: (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'falseText') ?? field.labels?.false ?? setText(host, 'no')
   };
 }
 
@@ -2816,7 +4032,7 @@ function renderChoiceCell(field, value) {
       props: {
         line: CELL_LINE,
         text: option.label ?? option.text ?? String(value),
-        appearance: field.badgeAppearance ?? CELL_BADGE_APPEARANCE,
+        appearance: badgeAppearanceOf(field),
         ...(badge?.scheme ? {
           scheme: badge.scheme
         } : {}),
@@ -2857,14 +4073,16 @@ function renderHostFormattedCell(field, value, host) {
 function renderMoneyCell(field, value, host) {
   const formatted = renderHostFormattedCell(field, value, host);
   if (formatted !== null) return formatted;
-  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
   return text || null;
 }
 
 function renderPercentCell(field, value, host) {
+  const level = levelCell(field, value);
+  if (level) return level;
   const formatted = renderHostFormattedCell(field, value, host);
   if (formatted !== null) return formatted;
-  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
   return text || null;
 }
 
@@ -2889,31 +4107,96 @@ function renderDateCell(field, value, host) {
 // number 0..100 is the inline sf-progress-bar meter -- a 64 track, the number
 // «72 %» before it -- named by the field's label. The scale stays for levels
 // («4 из 5», C185 (5)). Out of range it is left as text, as the scale is.
+//
+// Its thresholds are the HTML meter's (dispatcher decision msg-bc1702eb, the
+// variant name meter): low and high split 0..100 into three regions and
+// optimum says which one is good (unset, the middle of the range, as <meter>).
+// The value in the optimum's region draws no status, in the region next to it
+// warning, two regions away error -- so a disk share with low 80 and high 95
+// is warning from above 80 and error above 95, and a fill rate with optimum
+// 100 is error below low. Without low and high the meter draws no status.
 
+
+function meterLimit(raw, fallback, from, to) {
+  const number = raw === null || raw === undefined || raw === '' ? NaN : Number(raw);
+  return Number.isFinite(number) ? Math.min(to, Math.max(from, number)) : fallback;
+}
+
+function meterStatus(field, number) {
+  if (!field || !Number.isFinite(number)) return '';
+  const {
+    low: lowSet,
+    high: highSet,
+    optimum: optimumSet
+  } = field;
+
+  const given = value => value !== undefined && value !== null && value !== '';
+
+  if (!given(lowSet) && !given(highSet)) return '';
+  const low = meterLimit(lowSet, 0, 0, 100);
+  const high = meterLimit(highSet, 100, low, 100);
+  const optimum = meterLimit(optimumSet, 50, 0, 100);
+
+  const region = point => point < low ? 0 : point > high ? 2 : 1; // The optimum on a boundary or between them makes the middle the good region.
+
+
+  const best = optimum < low ? 0 : optimum > high ? 2 : 1;
+  const away = Math.abs(region(number) - best);
+  return away === 0 ? '' : away === 1 ? 'warning' : 'error';
+}
 
 function meterProps(field, number) {
   const name = typeof field.label === 'string' ? field.label : field.key || '';
+  const status = meterStatus(field, number);
   return {
     inline: true,
     meter: true,
     value: String(number),
     ...(name ? {
       label: name
+    } : {}),
+    ...(status ? {
+      status
     } : {})
+  };
+} // A percent drawn as a scale or a meter (step 5): the number's own drawings,
+// for a percent 0..100; any other percent is its text.
+
+
+function levelCell(field, value) {
+  const variant = templateOf(field);
+  if (variant !== 'scale' && variant !== 'meter') return null;
+  const number = Number(scalarValue(value));
+  if (scalarValue(value) === null || scalarValue(value) === '' || !Number.isFinite(number) || number < 0 || number > 100) return null;
+  if (variant === 'meter') return {
+    component: {
+      type: 'progress-bar',
+      props: meterProps(field, number)
+    }
+  };
+  return {
+    component: {
+      type: 'progress-scale',
+      props: {
+        line: CELL_LINE,
+        value: String(number)
+      }
+    }
   };
 }
 
 function renderNumericCell(field, value, host) {
-  const variant = field.variant || field.filter?.variant;
+  const variant = templateOf(field);
   const number = Number(scalarValue(value));
 
   if (variant !== 'scale' && variant !== 'meter' || !Number.isFinite(number)) {
     // The host's text first; else the number in the page's language, as
-    // the view prints it («12,5»), where the table printed «12.5».
+    // the view prints it («12,5»), where the table printed «12.5». The
+    // field's unit follows it as it does in the view (cards study CV-7:
+    // a card's stock read a bare «13» where the record said «13 шт»).
     const formatted = renderHostFormattedCell(field, value, host);
-    if (formatted !== null) return formatted;
-    if (carriesText(value)) return value.text || null;
-    return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || null;
+    const text = formatted !== null ? formatted : carriesText(value) ? value.text || null : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || null;
+    return text && field.unit ? `${text} ${field.unit}` : text;
   }
 
   if (number < 0 || number > 100) return null;
@@ -2989,7 +4272,7 @@ function renderLookupCell(field, value) {
 
 
 function renderHtmlCell(field, value) {
-  return (0,_html_js__WEBPACK_IMPORTED_MODULE_8__.htmlText)(value) || null;
+  return (0,_html_js__WEBPACK_IMPORTED_MODULE_10__.htmlText)(value) || null;
 } // What a cell should hold for a field, in the same shape a host would pass: a
 // string, an object with a component, or a list of those. Null means the value
 // is better off as itself. Returning the host's own shape is deliberate -- the
@@ -2998,7 +4281,7 @@ function renderHtmlCell(field, value) {
 
 
 function renderCellField(field = {}, value, host) {
-  const asked = field.propertyType || field.type || field.dataType;
+  const asked = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).type;
   const renderer = CELL_RENDERERS[asked];
   if (!renderer) return null; // `host` is for one thing, as in the view: formatFieldValue, where a
   // consumer's own formatting of a number or a date belongs. A cell had no way
@@ -3038,9 +4321,13 @@ const EDIT_RENDERERS = {
   user: renderRecordLookup,
   lookup: renderLookupEdit,
   string: renderTextEdit,
+  phone: renderPhoneEdit,
+  password: renderPasswordEdit,
+  url: renderUrlEdit,
+  link: renderLinkEdit,
+  'ru.inn': renderInnEdit,
   text: renderTextAreaEdit,
   html: renderHtmlEdit,
-  integer: renderNumberEdit,
   number: renderNumberEdit,
   date: renderDateEdit,
   datetime: renderDateTimeEdit,
@@ -3057,10 +4344,11 @@ const EDIT_RENDERERS = {
 
 function fieldName(field) {
   return `sf_field_${field.key || 'value'}`;
-} // A telephone is a string with a shape, not a type of its own: the Framework
-// already has a control that knows country codes, dial prefixes and masks, so a
-// `string` whose variant is `phone` gets it and everything else about a string
-// stays true. Counted on a running Larena site, which declares one.
+} // A telephone is a type of its own (owner decision C302 (1), 2026-11-17): it
+// stores E.164 and is checked as a number, where a string is any text. It was
+// a `string` whose variant was `phone`, which is still read as this type until
+// 2027-01-01 (templates.js). The control is sf-input-country, which knows
+// country codes, dial prefixes and masks.
 //
 // What it writes is E.164, `+79161234567` (FL-1): the control's own form value,
 // whatever the box shows -- `+7 916 123-45-67` written back changed a stored
@@ -3079,7 +4367,7 @@ function renderPhoneEdit(field, value, host) {
   const {
     number: stored,
     extension
-  } = (0,_phone_js__WEBPACK_IMPORTED_MODULE_11__.splitPhone)(scalarValue(value) ?? '');
+  } = (0,_phone_js__WEBPACK_IMPORTED_MODULE_13__.splitPhone)(scalarValue(value) ?? '');
   const preferred = String(field.defaultCountry ?? '').trim().toUpperCase();
   const iso2 = /^[A-Z]{2}$/u.test(preferred) && !String(stored).trim() ? preferred : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -3102,12 +4390,8 @@ function renderPhoneEdit(field, value, host) {
 
 function phoneWritten(event, extension = '') {
   const control = event.currentTarget;
-  const number = typeof control?.sfFormValue === 'function' ? control.sfFormValue() ?? '' : (0,_phone_js__WEBPACK_IMPORTED_MODULE_11__.phoneE164)(event.detail?.value ?? event.target?.value ?? '');
+  const number = typeof control?.sfFormValue === 'function' ? control.sfFormValue() ?? '' : (0,_phone_js__WEBPACK_IMPORTED_MODULE_13__.phoneE164)(event.detail?.value ?? event.target?.value ?? '');
   return number && extension ? `${number};ext=${extension}` : number;
-}
-
-function isPhoneField(field) {
-  return String(field.variant ?? '') === 'phone';
 } // A phone shown: the host's text first (formatFieldValue, or {value, text}),
 // as for any string; else the number
 // laid out by its country, left to right on a right-to-left page too (an
@@ -3118,10 +4402,11 @@ function phoneText(field, value, host) {
   const formatted = host?.formatFieldValue?.(field, value);
   if (typeof formatted === 'string') return formatted;
   if (carriesText(value)) return value.text;
-  return (0,_phone_js__WEBPACK_IMPORTED_MODULE_11__.formatPhone)(scalarValue(value), setText(host, 'phoneExtension'));
-} // A password is a string the set never shows (owner, 2026-10-19; Larena's
-// storage settings). The host never sends one: the value of a `password`
-// variant is {set: true} or {set: false}, and null or an absent value reads as
+  return (0,_phone_js__WEBPACK_IMPORTED_MODULE_13__.formatPhone)(scalarValue(value), setText(host, 'phoneExtension'));
+} // A password is a type the set never shows (owner, 2026-10-19; a type of its
+// own since C302 (1), a string with variant `password` before, read as it
+// until 2027-01-01). The host never sends one: the value of a `password`
+// field is {set: true} or {set: false}, and null or an absent value reads as
 // not set. View, cell and a read-only field say «задан» or «не задан» in the
 // page's language and nothing else. A host that sends a string by mistake gets
 // «задан» for it, and the string is still not drawn.
@@ -3138,10 +4423,6 @@ function phoneText(field, value, host) {
 // press); the set drew a second one beside the field until the text inputs
 // study (TI-7), so a record card showed two.
 
-
-function isPasswordField(field) {
-  return String(field.variant ?? '') === 'password';
-}
 
 function passwordIsSet(value) {
   if (value && typeof value === 'object' && !Array.isArray(value)) return value.set === true;
@@ -3181,35 +4462,349 @@ function renderPasswordEdit(field, value, host) {
             ></sf-input>
         </span>
     `;
+} // url, link, ru.inn (catalogue step 3; text-types.js holds the rules).
+//
+// A text checked on the way in, as a masked string is (port 1.16.0): what is
+// not a value yet is said through setFieldError, which holds a save, and
+// under the field once the person leaves it; a host that does not hear
+// errors hears undefined. Empty writes null.
+
+
+function checkedTextEdit(field, value, host, {
+  check,
+  complete = null,
+  inputType = '',
+  inputmode = '',
+  maxlength = '',
+  autocomplete = ''
+}) {
+  const write = (event, left) => {
+    const input = event.currentTarget ?? event.target;
+    const typed = String(input?.value ?? '').trim(); // What the text stands for (a url's bare domain, FO-5): checked and
+    // written while typing, and shown in the field once the person leaves it.
+
+    const text = typed && complete ? complete(typed) : typed;
+    if (left && input && text !== typed && !check(text)) input.value = text;
+    const reason = text ? check(text) : null;
+
+    if (reason) {
+      const message = setText(host, reason);
+
+      if (left && input) {
+        input.setAttribute('error-message', message);
+        input.toggleAttribute('invalid', true);
+      }
+
+      if (typeof host.setFieldError === 'function') {
+        host.setFieldError(field, message);
+        host.setFieldValue(field, text);
+      } else {
+        host.setFieldValue(field, undefined);
+      }
+
+      return;
+    }
+
+    if (input?.hasAttribute?.('invalid')) {
+      input.toggleAttribute('invalid', false);
+      input.removeAttribute('error-message');
+    }
+
+    host.setFieldError?.(field, null);
+    host.setFieldValue(field, text || null);
+  };
+
+  const shown = scalarValue(value);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-input
+                size=${EDIT_SIZE}
+                appearance="bordered"
+                name=${fieldName(field)}
+                value=${shown === null || shown === undefined ? '' : String(shown)}
+                placeholder=${field.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                input-type=${inputType || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                inputmode=${inputmode || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                maxlength=${maxlength || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                autocomplete=${autocomplete || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ?required=${Boolean(field.required)}
+                aria-label=${field.label || field.key || ''}
+                @input=${event => write(event, false)}
+                @change=${event => write(event, true)}
+        ></sf-input>
+    `;
+} // A web address (url@1): the edit is sf-input of type url, checked as an
+// absolute http(s) address; the view a link that opens in a new tab; a row
+// the host and the start of the path. An address that is not one is shown as
+// text, never as a link.
+
+
+function renderUrlEdit(field, value, host) {
+  return checkedTextEdit(field, value, host, {
+    check: text => (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isWebAddress)(text) ? null : 'urlInvalid',
+    // «simai.io» is https://simai.io (dispatcher decision FO-5); a text
+    // with a scheme of its own keeps it and is refused unless http(s).
+    complete: _text_types_js__WEBPACK_IMPORTED_MODULE_6__.completeWebAddress,
+    inputType: 'url',
+    inputmode: 'url',
+    autocomplete: 'url'
+  });
 }
 
-function renderStringCell(field, value, host) {
-  if (isPhoneField(field)) {
-    const text = phoneText(field, value, host);
-    return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<bdi dir="ltr">${text}</bdi>` : null;
-  }
+function addressLink(href, text) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class="sf-link" href=${href} target="_blank" rel="noopener noreferrer"><bdi dir="ltr">${text}</bdi></a>`;
+}
 
-  return isPasswordField(field) ? passwordState(host, value) : null;
+function renderUrlView(field, value, host) {
+  const text = viewText(field, value, host);
+  if (!text) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const href = scalarValue(value);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${(0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isWebAddress)(href) ? addressLink(href, text) : text}</span>`;
+}
+
+function renderUrlCell(field, value, host) {
+  const formatted = host?.formatFieldValue?.(field, value);
+  const href = scalarValue(value);
+  if (!(0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isWebAddress)(href)) return typeof formatted === 'string' ? formatted : null;
+  return addressLink(href, typeof formatted === 'string' ? formatted : (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.shortAddress)(href));
+} // A link with its text (link@1): {href, text?}. The view and the row are the
+// text as a link (the address where there is no text); a site path or an
+// anchor opens in place, an http(s) address in a new tab; an address that is
+// not one is the text alone. The edit is two fields, the address and the text.
+// A link's own `text` is its words, not a host's formatted text: an object
+// with an href is the link itself.
+
+
+function linkValue(value) {
+  return value && typeof value === 'object' && !Array.isArray(value) && typeof value.href === 'string' ? value : scalarValue(value);
+}
+
+function linkParts(value) {
+  const link = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.readLink)(linkValue(value));
+  if (!link) return null;
+  const words = link.text || link.href;
+  return { ...link,
+    words,
+    safe: (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isLinkAddress)(link.href)
+  };
+}
+
+function linkAnchor(link) {
+  if (!link.safe) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${link.words}`;
+  const away = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isWebAddress)(link.href);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class="sf-link" href=${link.href} target=${away ? '_blank' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} rel=${away ? 'noopener noreferrer' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${link.text ? link.text : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<bdi dir="ltr">${link.href}</bdi>`}</a>`;
+}
+
+function renderLinkView(field, value, host) {
+  const formatted = host?.formatFieldValue?.(field, value);
+  if (typeof formatted === 'string') return formatted ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${formatted}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const link = linkParts(value);
+  return link ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${linkAnchor(link)}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+}
+
+function renderLinkCell(field, value, host) {
+  const formatted = host?.formatFieldValue?.(field, value);
+  if (typeof formatted === 'string') return formatted || null;
+  const link = linkParts(value);
+  return link ? linkAnchor(link) : null;
+} // Each change reads both fields as they stand, so the text typed before the
+// address is kept while the address is still empty.
+// The address box is text with the address keyboard, not input-type url: a
+// link's href may be a path from the site's root or an #anchor (link@1), which
+// the browser's url check calls wrong, and a form that reads the control's
+// validity refused a stored «/about» (sf-form 1.7.0 probe). composeLink is the
+// check.
+
+
+function renderLinkEdit(field, value, host) {
+  const stored = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.readLink)(linkValue(value)) ?? {
+    href: '',
+    text: ''
+  };
+
+  const write = (part, event, left) => {
+    const input = event.currentTarget ?? event.target;
+    const box = input?.closest?.('.sf-field-link');
+    const hrefInput = box?.querySelector?.('[data-sf-link-part="href"]');
+    const textInput = box?.querySelector?.('[data-sf-link-part="text"]');
+
+    const read = (one, own) => String(one ? one.value ?? '' : own);
+
+    const next = {
+      href: read(hrefInput, stored.href),
+      text: read(textInput, stored.text)
+    };
+    const result = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.composeLink)(next.href, next.text);
+
+    if (result.error) {
+      const message = setText(host, result.error);
+      const at = result.error === 'linkTextLong' ? textInput : hrefInput;
+
+      if (left && at) {
+        at.setAttribute('error-message', message);
+        at.toggleAttribute('invalid', true);
+      }
+
+      if (typeof host.setFieldError === 'function') {
+        host.setFieldError(field, message);
+        host.setFieldValue(field, {
+          href: next.href.trim(),
+          ...(next.text.trim() ? {
+            text: next.text.trim()
+          } : {})
+        });
+      } else {
+        host.setFieldValue(field, undefined);
+      }
+
+      return;
+    }
+
+    for (const one of [hrefInput, textInput]) {
+      if (one?.hasAttribute?.('invalid')) {
+        one.toggleAttribute('invalid', false);
+        one.removeAttribute('error-message');
+      }
+    }
+
+    host.setFieldError?.(field, null);
+    host.setFieldValue(field, result.value);
+  };
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <span class="sf-field-link flex flex-col gap-1/3 min-w-0">
+            <sf-input
+                    size=${EDIT_SIZE}
+                    appearance="bordered"
+                    data-sf-link-part="href"
+                    name="${fieldName(field)}_href"
+                    label=${setText(host, 'linkAddress')}
+                    value=${stored.href}
+                    inputmode="url"
+                    ?required=${Boolean(field.required)}
+                    aria-label=${`${field.label || field.key || ''} ${setText(host, 'linkAddress')}`.trim()}
+                    @input=${event => write('href', event, false)}
+                    @change=${event => write('href', event, true)}
+            ></sf-input>
+            <sf-input
+                    size=${EDIT_SIZE}
+                    appearance="bordered"
+                    data-sf-link-part="text"
+                    name="${fieldName(field)}_text"
+                    label=${setText(host, 'linkText')}
+                    value=${stored.text}
+                    maxlength="255"
+                    aria-label=${`${field.label || field.key || ''} ${setText(host, 'linkText')}`.trim()}
+                    @input=${event => write('text', event, false)}
+                    @change=${event => write('text', event, true)}
+            ></sf-input>
+        </span>
+    `;
+} // A Russian taxpayer number (ru.inn@1): digits, typed with the digit
+// keyboard, checked by its length for the field's `holder` and by the check
+// digits; shown and listed as its digits, left to right. No maxlength: it
+// drew sf-input's «10 / 12» counter under a complete number, and the length
+// is the check's to say.
+
+
+function renderInnEdit(field, value, host) {
+  const holder = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.innHolder)(field);
+  return checkedTextEdit(field, value, host, {
+    check: text => (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.innError)(text, holder),
+    inputmode: 'numeric',
+    autocomplete: 'off'
+  });
+}
+
+function innText(field, value, host) {
+  return viewText(field, value, host);
+}
+
+function renderInnView(field, value, host) {
+  const text = innText(field, value, host);
+  return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view num-tabular"><bdi dir="ltr">${text}</bdi></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+}
+
+function renderInnCell(field, value, host) {
+  const text = innText(field, value, host);
+  return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<bdi dir="ltr">${text}</bdi>` : null;
+} // A string in a row is its own text: the table prints the value.
+
+
+function renderStringCell() {
+  return null;
 }
 
 function renderStringView(field, value, host) {
-  if (isPasswordField(field)) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${passwordState(host, value)}</span>`;
-
-  if (isPhoneField(field)) {
-    const text = phoneText(field, value, host);
-    return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view"><bdi dir="ltr">${text}</bdi></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  }
-
   return renderTextView(field, value, host);
-} // A file shown as what it is. The site keeps logos, so a file whose variant says
-// image is drawn as the image rather than as a row with a paperclip -- the same
-// stored file, told apart by the host rather than guessed from a file name.
+}
+
+function renderPhoneCell(field, value, host) {
+  const text = phoneText(field, value, host);
+  return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<bdi dir="ltr">${text}</bdi>` : null;
+}
+
+function renderPhoneView(field, value, host) {
+  const text = phoneText(field, value, host);
+  return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view"><bdi dir="ltr">${text}</bdi></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+} // A password is never shown anywhere: a row and a record say whether one is set.
 
 
-const IMAGE_VARIANTS = new Set(['image', 'image-card', 'image-list']);
+function renderPasswordCell(field, value, host) {
+  return passwordState(host, value);
+}
+
+function renderPasswordView(field, value, host) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${passwordState(host, value)}</span>`;
+} // A password is filtered by whether it is set: «Задан» is the condition
+// not-empty, «Не задан» empty, each with the value true, as the number
+// filter writes the two (C294).
+
+
+function renderPasswordFilterControl(field, host) {
+  const control = host.getFilterControlValue(field.key) || {};
+  const chosen = control.operator === 'empty' ? 'unset' : control.operator === 'not-empty' ? 'set' : '';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+        <sf-dropdown
+                size=${filterSize(host)}
+                appearance="bordered"
+                mode="select"
+                search="false"
+                label=${setText(host, 'condition')}
+                placeholder=${setText(host, 'condition')}
+                name="sf_filter_${field.key || 'password'}"
+                .options=${[['set', 'passwordSet'], ['unset', 'passwordUnset']].map(([value, word]) => ({
+    type: 'text',
+    size: filterSize(host),
+    value,
+    text: setText(host, word),
+    selected: value === chosen
+  }))}
+                @change=${event => {
+    if (event.target !== event.currentTarget) return;
+    const next = event.detail?.values?.[0] || event.detail?.value;
+    if (!next) return;
+    host.patchTempFilterValue(field.key, {
+      operator: next === 'set' ? 'not-empty' : 'empty',
+      value: true
+    });
+  }}
+        ></sf-dropdown>
+    `;
+} // A file shown as what it is. The site keeps logos, so a file whose template
+// is image, image_card or image_list is drawn as the image rather than as a
+// row with a paperclip -- the same stored file, told apart by the host rather
+// than guessed from a file name.
+
+
+const IMAGE_TEMPLATES = new Set(['image', 'image_card', 'image_list']); // The template a field is drawn with (C302): templates.js resolveField, which
+// reads the former variant and says a fallback once.
+
+function templateOf(field) {
+  return (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).template;
+}
 
 function isImageField(field) {
-  return IMAGE_VARIANTS.has(String(field.variant ?? ''));
+  return IMAGE_TEMPLATES.has(templateOf(field));
 } // A block of text or code the host keeps in a file: six of them on a running
 // Larena site -- scripts in the head, an included area. It is a property like any
 // other, so it is shown and edited here rather than behind a separate screen.
@@ -3228,7 +4823,7 @@ function renderIncludeView(field, value) {
   const text = scalarValue(value);
   if (!text) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <pre class="sf-field-include" data-language=${field.language ? String(field.language) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}><code>${String(text)}</code></pre>
+        <pre class="sf-field-include" data-language=${(0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'language') ? String((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'language')) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}><code>${String(text)}</code></pre>
     `;
 } // The include editor is code (C141 (8)): sf-input-textarea's text="code" --
 // the code font, spelling off, no wrapping -- at a fixed eight rows.
@@ -3242,7 +4837,7 @@ function renderIncludeEdit(field, value, host) {
                 class="sf-field-include-edit"
                 name=${fieldName(field)}
                 value=${scalarValue(value) ?? ''}
-                rows="8"
+                rows=${rowsOf(field, 8)}
                 text="code"
                 ?required=${Boolean(field.required)}
                 aria-label=${field.label || field.key || ''}
@@ -3251,6 +4846,12 @@ function renderIncludeEdit(field, value, host) {
                 @input=${event => host.setFieldValue(field, event.target?.value ?? '')}
         ></sf-input-textarea>
     `;
+} // The rows a text or a code area shows (template parameter rows, 1..50).
+
+
+function rowsOf(field, fallback) {
+  const asked = Number((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'rows'));
+  return Number.isInteger(asked) && asked >= 1 && asked <= 50 ? String(asked) : fallback ? String(fallback) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 }
 
 function renderIncludeCell(field, value) {
@@ -3263,9 +4864,7 @@ function renderIncludeCell(field, value) {
 }
 
 function renderTextEdit(field, value, host) {
-  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_7__.maskPattern)(field);
-  if (String(field.variant ?? '') === 'phone') return renderPhoneEdit(field, value, host);
-  if (isPasswordField(field)) return renderPasswordEdit(field, value, host);
+  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_9__.maskPattern)(field);
   if (mask) return renderMaskedEdit(field, value, host, mask);
   value = scalarValue(value);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -3317,7 +4916,7 @@ function renderMaskedEdit(field, value, host, mask) {
   const write = (event, left) => {
     const input = event.currentTarget;
     const text = String(input?.value ?? '');
-    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_7__.maskState)(text, mask);
+    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_9__.maskState)(text, mask);
 
     if (state === 'incomplete') {
       const message = setText(host, 'maskIncomplete');
@@ -3372,6 +4971,7 @@ function renderTextAreaEdit(field, value, host) {
                 appearance="bordered"
                 name=${fieldName(field)}
                 value=${value ?? ''}
+                rows=${rowsOf(field)}
                 placeholder=${field.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 ?required=${Boolean(field.required)}
                 aria-label=${field.label || field.key || ''}
@@ -3412,30 +5012,42 @@ function renderHtmlEdit(field, value, host) {
 // own keys, read by this variant alone: a renderer still does not enforce a
 // constraint, the stepper only stops at it and the host validates the record.
 //
-// An integer has no digits after the point, whatever the field says. A number
-// takes `precision`, else the digits its `step` implies, else two: a number
-// field whose stepper could not take a decimal mark would be an integer field.
+// A number's digits are its `decimals` (C303 (2); `precision` before it, an
+// integer's 0), else the digits its `step` implies, else two: a number field
+// whose stepper could not take a decimal mark would be a whole one.
 // The value goes out as the stepper's number, or null when the field is
 // emptied; the panel prints the label, so the control takes it as its
 // accessible name only.
 
 
 function isStepperField(field) {
-  return String(field.variant ?? '') === 'stepper';
+  return templateOf(field) === 'stepper';
 }
 
 function stepperNumber(raw) {
   if (raw === null || raw === undefined || raw === '') return '';
   const number = Number(raw);
   return Number.isFinite(number) ? String(number) : '';
-}
+} // A percent's stepper (step 5) writes the decimal string a percent is
+// («12.5», never a float) and carries «%» after the number.
 
-function renderStepperEdit(field, value, host) {
-  const decimal = (field.propertyType || field.type) === 'number';
+
+function renderStepperEdit(field, value, host, {
+  percent = false
+} = {}) {
+  const {
+    decimals
+  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field);
   const step = stepperNumber(field.step);
-  const precision = decimal ? stepperNumber(field.precision) || (step ? '' : '2') : '0';
+  const precision = decimals !== null ? String(decimals) : step ? '' : '2';
 
-  const write = event => host.setFieldValue(field, event.detail?.value ?? null);
+  const written = raw => {
+    if (!percent || raw === null || raw === undefined || raw === '') return raw ?? null;
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readDecimal)(String(raw));
+    return read.ok ? read.value : null;
+  };
+
+  const write = event => host.setFieldValue(field, written(event.detail?.value ?? null));
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input-quantity
@@ -3446,6 +5058,7 @@ function renderStepperEdit(field, value, host) {
                 max=${stepperNumber(field.max) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 step=${step || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 precision=${precision || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                unit=${percent ? '%' : fieldUnit(field) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-label=${field.label || field.key || ''}
                 ?required=${Boolean(field.required)}
                 ?disabled=${field.readonly === true}
@@ -3455,57 +5068,53 @@ function renderStepperEdit(field, value, host) {
     `;
 } // A number is a decimal (property-view port 1.18.0: «never a float on the
 // wire»). What is typed is read with a comma or a point and spaces between
-// groups. A number field whose value arrives as a string, or that declares
-// `precision`, is a decimal-string field: it writes the canonical decimal
-// string («1500.50»), never a float, and refuses more digits after the point
-// than `precision` allows. Any other number field writes a number, as before;
-// an integer field is unchanged. Text that is not a number is reported as a
+// groups. A number is one type (C303 (2)): `decimals`, fixed when the field
+// is created, is how many digits it keeps after the point, 0 for a whole
+// number (an integer field reads as decimals 0); more is a field error,
+// never rounded, and a whole number has the digit keyboard. A number field
+// whose value arrives as a string, or that declares its decimals, is a
+// decimal-string field: it writes the canonical decimal string («1500.50»),
+// never a float. Any other number field -- an integer field among them --
+// writes a number, as before. Text that is not a number is reported as a
 // masked string's incomplete entry is: through setFieldError, which holds the
 // save, and under the field once the person leaves it.
 
 
+function declaresDecimals(field) {
+  return Number.isInteger(field.decimals) || Number.isInteger(field.precision);
+}
+
 function isDecimalStringField(field, value) {
-  return (field.propertyType || field.type) === 'number' && (typeof value === 'string' || Number.isInteger(field.precision));
+  return typeof value === 'string' || declaresDecimals(field);
+} // A number's unit (`unit`, «шт», «кг») in every place the field is drawn
+// (C302 (2): the template knows every place; cards study CV-7): after the
+// number in the view and the compact place, inside the box after the value
+// when it is edited or filtered -- in the hint's ink, not part of the value.
+// It was only the view's: the edit box and the filter box showed a bare
+// «13» where the record said «13 шт». A field with no unit draws none.
+
+
+function fieldUnit(field) {
+  return typeof field?.unit === 'string' ? field.unit.trim() : '';
 }
 
 function renderNumberEdit(field, value, host) {
   if (isStepperField(field)) return renderStepperEdit(field, value, host);
-  const decimal = (field.propertyType || field.type) === 'number';
+  const {
+    decimals
+  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field);
   value = scalarValue(value);
-
-  if (!decimal) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-            <sf-input
-                    size=${EDIT_SIZE}
-                    appearance="bordered"
-                    name=${fieldName(field)}
-                    value=${value ?? ''}
-                    inputmode="numeric"
-                    ?required=${Boolean(field.required)}
-                    aria-label=${field.label || field.key || ''}
-                    @input=${event => {
-      const next = event.target?.value ?? '';
-      host.setFieldValue(field, next === '' ? null : Number(next));
-    }}
-                    @change=${event => {
-      const next = event.target?.value ?? '';
-      host.setFieldValue(field, next === '' ? null : Number(next));
-    }}
-            ></sf-input>
-        `;
-  }
-
   const asString = isDecimalStringField(field, value);
 
   const write = (event, left) => {
     const input = event.currentTarget ?? event.target;
     const text = String(input?.value ?? '');
-    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readDecimal)(text);
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readDecimal)(text);
     let message = null;
-    if (!read.ok) message = setText(host, 'notNumber');else if (read.value !== null && Number.isInteger(field.precision) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.fractionDigits)(read.value) > field.precision) {
-      message = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, 'precisionMax', host ?? null, {
+    if (!read.ok) message = setText(host, 'notNumber');else if (read.value !== null && decimals !== null && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.fractionDigits)(read.value) > decimals) {
+      message = decimals === 0 ? setText(host, 'wholeNumber') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, 'precisionMax', host ?? null, {
         component: SET_NAME,
-        count: field.precision
+        count: decimals
       });
     }
 
@@ -3540,7 +5149,9 @@ function renderNumberEdit(field, value, host) {
                 appearance="bordered"
                 name=${fieldName(field)}
                 value=${value ?? ''}
-                inputmode="decimal"
+                inputmode=${decimals === 0 ? 'numeric' : 'decimal'}
+                root-class=${EDIT_ALIGN_END ? 'text-end num-tabular' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                text-end=${fieldUnit(field) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 ?required=${Boolean(field.required)}
                 aria-label=${field.label || field.key || ''}
                 @input=${event => write(event, false)}
@@ -3580,7 +5191,7 @@ const OFFERED_CURRENCIES = ['RUB', 'USD', 'EUR', 'CNY', 'KZT', 'BYN', 'AED', 'TR
 function fieldCurrencies(field) {
   const asked = Array.isArray(field?.currencies) ? field.currencies : typeof field?.currencies === 'string' ? field.currencies.split(',') : [];
   const codes = asked.map(code => String(code).trim().toUpperCase()).filter(code => /^[A-Z]{3}$/u.test(code));
-  return codes.length ? [...new Set(codes)] : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyCodes)(OFFERED_CURRENCIES);
+  return codes.length ? [...new Set(codes)] : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyCodes)(OFFERED_CURRENCIES);
 } // What a person is typing, per host and field: the value written is
 // canonical («12.5»), and drawn back as such it would move the caret under
 // «12,50» or swallow the comma of «12,». The typed text is shown while it
@@ -3613,7 +5224,7 @@ function decimalShown(host, key, value, {
 } = {}) {
   if (value === null || value === undefined || value === '') return '';
   const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
-  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(value, {
+  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(value, {
     locale: 'en',
     currency
   });
@@ -3621,17 +5232,17 @@ function decimalShown(host, key, value, {
   const draft = draftOf(host, key);
 
   if (typeof draft === 'string') {
-    const typed = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(draft, {
+    const typed = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(draft, {
       locale,
       currency
     });
     if (typed.ok && typed.value === read.value) return draft;
   }
 
-  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.restingDecimal)(read.value, locale, minDigits);
+  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.restingDecimal)(read.value, locale, minDigits);
 }
 
-const hasBound = bound => bound !== null && bound !== undefined && bound !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readDecimal)(bound).ok; // What is wrong with a typed decimal, or '': not a number, more digits after
+const hasBound = bound => bound !== null && bound !== undefined && bound !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readDecimal)(bound).ok; // What is wrong with a typed decimal, or '': not a number, more digits after
 // the point than `digits` (never rounded away: «1500,555» is an error, while
 // «1500,500» is 1500.5), outside min..max.
 
@@ -3642,27 +5253,27 @@ function decimalError(host, text, {
   max = null,
   currency = null
 } = {}) {
-  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(text, {
+  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(text, {
     locale: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null),
     currency
   });
   if (!read.ok) return setText(host, 'notNumber');
   if (read.value === null) return '';
 
-  if (Number.isInteger(digits) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.fractionDigits)(read.value) > digits) {
+  if (Number.isInteger(digits) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.fractionDigits)(read.value) > digits) {
     return digits === 0 ? setText(host, 'fractionNone') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, 'precisionMax', host ?? null, {
       component: SET_NAME,
       count: digits
     });
   }
 
-  const low = hasBound(min) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.compareDecimal)(read.value, min) === -1;
-  const high = hasBound(max) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.compareDecimal)(read.value, max) === 1;
+  const low = hasBound(min) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.compareDecimal)(read.value, min) === -1;
+  const high = hasBound(max) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.compareDecimal)(read.value, max) === 1;
   if (!low && !high) return '';
   const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
   const vars = {
-    min: hasBound(min) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatDecimal)(min, locale) : '',
-    max: hasBound(max) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatDecimal)(max, locale) : ''
+    min: hasBound(min) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatDecimal)(min, locale) : '',
+    max: hasBound(max) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatDecimal)(max, locale) : ''
   };
   if (hasBound(min) && hasBound(max)) return setWord(host, 'boundBetween', vars);
   return low ? setWord(host, 'boundAtLeast', vars) : setWord(host, 'boundAtMost', vars);
@@ -3715,13 +5326,14 @@ function decimalInput(field, value, host, {
       }
     }
 
-    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(text, {
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(text, {
       locale,
       currency
     });
     write(read.ok ? read.value : text, message);
   };
 
+  const rootClasses = [rootClass, EDIT_ALIGN_END ? 'text-end num-tabular' : ''].filter(Boolean).join(' ');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input
                 size=${EDIT_SIZE}
@@ -3732,10 +5344,10 @@ function decimalInput(field, value, host, {
     minDigits
   })}
                 inputmode="decimal"
-                text-start=${textStart || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                text-end=${textEnd || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                text-start=${isolatedSign(textStart, locale) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                text-end=${isolatedSign(textEnd, locale) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 placeholder=${field.placeholder || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                root-class=${rootClass || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                root-class=${rootClasses || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 ?required=${Boolean(field.required)}
                 ?invalid=${Boolean(own)}
                 error-message=${own || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -3744,6 +5356,15 @@ function decimalInput(field, value, host, {
                 @change=${event => typed(event, true)}
         ></sf-input>
     `;
+} // A currency sign inside the field on a right-to-left page (C294 follow-up):
+// «US$» or «CA$» ends in a neutral mark, and the browser drew «$US» in the
+// field's affix while the display text, isolated by decimal.js, read right.
+// The sign is isolated left to right (U+2066 .. U+2069) there too.
+
+
+function isolatedSign(sign, locale) {
+  if (!sign || !(0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.isRtlLocale)(locale) || !/[A-Za-z]/u.test(sign)) return sign;
+  return `\u2066${sign}\u2069`;
 }
 
 function fixedCurrency(field) {
@@ -3753,15 +5374,21 @@ function fixedCurrency(field) {
 
 
 function percentDigits(field) {
-  if (Number.isInteger(field.precision)) return field.precision;
-  const step = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readDecimal)(field.step);
-  return step.ok && step.value !== null && Number(step.value) > 0 ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.fractionDigits)(step.value) : null;
+  const {
+    decimals
+  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field);
+  if (decimals !== null) return decimals;
+  const step = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readDecimal)(field.step);
+  return step.ok && step.value !== null && Number(step.value) > 0 ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.fractionDigits)(step.value) : null;
 } // A percent is the percent itself, «12.5» is 12,5 % (C294); it is bounded
 // only by the field's min and max -- a growth of 150 % or a change of −5 % is
 // a percent too (MP-11: the View set bounded it 0..100 without saying why).
 
 
 function renderPercentEdit(field, value, host) {
+  if (isStepperField(field)) return renderStepperEdit(field, value, host, {
+    percent: true
+  });
   const key = String(field.key ?? '');
   const min = hasBound(field.min) ? field.min : null;
   const max = hasBound(field.max) ? field.max : null;
@@ -3782,8 +5409,8 @@ function renderMoneyEdit(field, value, host) {
   const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
   const key = String(field.key ?? '');
   const fixed = fixedCurrency(field);
-  const display = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyDisplayOf)(field);
-  const parts = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.moneyParts)(scalarValue(value), fixed); // A currency chosen before an amount is typed waits here: a value is an
+  const display = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyDisplayOf)(field);
+  const parts = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.moneyParts)(scalarValue(value), fixed); // A currency chosen before an amount is typed waits here: a value is an
   // amount and its currency, never a currency alone.
 
   const currencyKey = `${key}#currency`;
@@ -3793,13 +5420,13 @@ function renderMoneyEdit(field, value, host) {
 
   const check = (text, code) => {
     const message = decimalError(host, text, {
-      digits: code ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(code, locale).minor : null,
+      digits: code ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(code, locale).minor : null,
       min,
       max,
       currency: code
     });
     if (message) return message;
-    return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(text, {
+    return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(text, {
       locale,
       currency: code
     }).value !== null && !code ? setText(host, 'chooseCurrency') : '';
@@ -3810,11 +5437,11 @@ function renderMoneyEdit(field, value, host) {
     currency: code ?? null
   }, message);
 
-  const sign = fixed ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(fixed, locale, display) : null;
+  const sign = fixed ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(fixed, locale, display) : null;
   const amount = decimalInput(field, parts.amount, host, {
     key,
     currency,
-    minDigits: currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(currency, locale).minor : 0,
+    minDigits: currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(currency, locale).minor : 0,
     textStart: sign?.before ? sign.sign : '',
     textEnd: sign && !sign.before ? sign.sign : '',
     rootClass: fixed ? '' : 'flex-1 min-w-0',
@@ -3827,6 +5454,21 @@ function renderMoneyEdit(field, value, host) {
   const listed = fieldCurrencies(field);
   const offered = [...new Set([...(currency ? [currency] : []), ...listed])];
   const name = setText(host, 'currency');
+
+  const optionText = code => {
+    const {
+      sign: mark
+    } = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(code, locale, display);
+    return mark === code ? code : `${code} ${mark}`;
+  }; // C294 (b): the choice is a third of the row but never narrower than its
+  // longest option and the field's own chrome -- the chevron's square (the
+  // control height of the size) and the insets (space-1). A third of a narrow
+  // row cut «USD US$» on an ar page and «USD $» in a form column at 390.
+
+
+  const longest = Math.max(3, ...offered.map(code => [...optionText(code)].length));
+  const sizeName = String(EDIT_SIZE).replace('/', '\\/');
+  const currencyMin = `min-inline-size: calc(${longest + 1}ch + var(--sf-ui-${sizeName}--control-height) + var(--sf-space-1))`;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <div class="flex gap-1/3 items-cross-start min-w-0 w-full">
             ${amount}
@@ -3835,23 +5477,19 @@ function renderMoneyEdit(field, value, host) {
                     appearance="bordered"
                     mode="select"
                     search=${offered.length > 12 ? 'true' : 'false'}
-                    root-class="basis-1/3 min-w-0"
+                    root-class="basis-1/3"
+                    root-style=${currencyMin}
                     name=${`${fieldName(field)}_currency`}
                     value=${currency ?? ''}
                     placeholder=${name}
                     aria-label=${name}
-                    .options=${offered.map(code => {
-    const {
-      sign: mark
-    } = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(code, locale, display);
-    return {
-      type: 'text',
-      size: '1',
-      value: code,
-      text: mark === code ? code : `${code} ${mark}`,
-      selected: code === currency
-    };
-  })}
+                    .options=${offered.map(code => ({
+    type: 'text',
+    size: '1',
+    value: code,
+    text: optionText(code),
+    selected: code === currency
+  }))}
                     @change=${event => {
     const code = event.detail?.values?.[0] || event.detail?.value || null;
     keepDraft(host, currencyKey, code ?? undefined);
@@ -3859,7 +5497,7 @@ function renderMoneyEdit(field, value, host) {
     // only with an amount.
     // The stored amount is checked as the page would show it.
 
-    if (typed !== null && typed !== undefined && typed !== '') write(typed, check((0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.restingDecimal)(typed, locale), code), code);
+    if (typed !== null && typed !== undefined && typed !== '') write(typed, check((0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.restingDecimal)(typed, locale), code), code);
   }}
             ></sf-dropdown>
         </div>
@@ -3867,14 +5505,16 @@ function renderMoneyEdit(field, value, host) {
 }
 
 function renderPercentView(field, value, host) {
+  const level = levelView(field, value);
+  if (level) return level;
   const formatted = host?.formatFieldValue?.(field, value);
-  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || viewText(field, value, null);
+  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || viewText(field, value, null);
   return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 }
 
 function renderMoneyView(field, value, host) {
   const formatted = host?.formatFieldValue?.(field, value);
-  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
   return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // A date control has no clock. `sf-input-date` declares a format and a date,
 // and its parser is anchored (`^\d{4}-\d{2}-\d{2}$`), so a datetime value
@@ -3969,7 +5609,7 @@ function minuteStepOf(field) {
 }
 
 function renderDateTimeEdit(field, value, host) {
-  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime)(value);
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitDateTime)(value);
   const shown = stored.date ? `${stored.date}${stored.time ? `T${stored.time}` : ''}` : '';
   const min = typeof field.min === 'string' ? field.min : '';
   const max = typeof field.max === 'string' ? field.max : '';
@@ -3992,7 +5632,7 @@ function renderDateTimeEdit(field, value, host) {
     // The picker's own change, not a native one from its field.
     if (event.target !== event.currentTarget) return;
     const [date = '', time = ''] = String(event.detail?.value ?? '').split('T');
-    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeDateTime)(stored, {
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.composeDateTime)(stored, {
       date,
       time
     });
@@ -4009,7 +5649,7 @@ function renderDateTimeEdit(field, value, host) {
 
 
 function renderTimeEdit(field, value, host) {
-  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitTime)(value);
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitTime)(value);
   const min = typeof field.min === 'string' ? field.min : '';
   const max = typeof field.max === 'string' ? field.max : '';
   const step = minuteStepOf(field);
@@ -4029,48 +5669,50 @@ function renderTimeEdit(field, value, host) {
                 error-message=${EDIT_ERROR || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 @change=${event => {
     if (event.target !== event.currentTarget) return;
-    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeTime)(stored, String(event.detail?.value ?? ''));
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.composeTime)(stored, String(event.detail?.value ?? ''));
     if (result.error) return;
     const same = result.value === null ? stored.known && !stored.time : result.value === stored.raw;
     host.setFieldValue(field, same ? undefined : result.value);
   }}
         ></sf-input-date>
     `;
-} // A required boolean has two states and nothing else. In a form saved with a
-// button it is a checkbox, and a switch only where the change acts at once
-// (owner decision C165 (4), form study FM-6): a switch says «on now», which a
-// form that has not been saved has not done. The host says it acts at once with
-// renderEditField(…, {apply: 'instant'}). The checkbox carries no `required`:
-// a required yes/no is one with a value, and an unticked box is «Нет», not an
-// empty answer. An optional one is a pair of buttons with nothing chosen while
-// the value is absent -- the consumer owner's decision of 2026-10-06, and the
-// reason is that neither a switch nor a checkbox can say «не задано»: rendering
-// one over an absent value would write false on the first save, a value nobody
-// chose.
+} // A yes/no is drawn by its template (owner decision C303 (4), 2026-11-17): the
+// switch is the default for every field; the checkbox and the buttons «Да» |
+// «Нет» are templates the administrator picks -- the buttons where «not set»
+// differs from «no», since neither a switch nor a checkbox can say «не
+// задано». The Framework no longer picks the control from `required` and the
+// apply mode (the rule of C165 (4) and of 2026-10-06 goes; FW-4): a field
+// draws the template it names. A switch or a checkbox over an absent value
+// writes nothing until it is pressed. Neither carries `required`: a yes/no
+// with a value is answered, and an unticked box is «Нет».
 
 
 function renderBooleanEdit(field, value, host) {
-  const optional = field.required !== true;
+  const template = templateOf(field);
 
-  if (!optional && EDIT_APPLY === 'instant') {
+  if (template === 'switch') {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <sf-switch
                     size=${EDIT_SIZE}
                     name=${fieldName(field)}
                     ?checked=${value === true}
                     aria-label=${field.label || field.key || ''}
+                    ?invalid=${Boolean(EDIT_ERROR)}
+                    error-message=${EDIT_ERROR || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     @change=${event => host.setFieldValue(field, Boolean(event.target?.checked))}
             ></sf-switch>
         `;
   }
 
-  if (!optional) {
+  if (template === 'checkbox') {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
             <sf-checkbox
                     size=${EDIT_SIZE}
                     name=${fieldName(field)}
                     ?checked=${value === true}
                     aria-label=${field.label || field.key || ''}
+                    ?invalid=${Boolean(EDIT_ERROR)}
+                    error-message=${EDIT_ERROR || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     @change=${event => host.setFieldValue(field, Boolean(event.target?.checked ?? event.detail?.checked))}
             ></sf-checkbox>
         `;
@@ -4091,24 +5733,56 @@ function renderBooleanEdit(field, value, host) {
                 items=${items}
                 value=${value === true ? 'yes' : value === false ? 'no' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 aria-label=${field.label || field.key || ''}
+                ?invalid=${Boolean(EDIT_ERROR)}
+                error-message=${EDIT_ERROR || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 @change=${event => {
     const next = event.detail?.value;
     host.setFieldValue(field, next === 'yes' ? true : next === 'no' ? false : null);
   }}
         ></sf-segmented>
     `;
+} // An option's colour by its one data word (C302): color; scheme and swatch
+// are its former names (FO4-2).
+
+
+function optionColorOf(option = {}) {
+  const raw = option?.color ?? option?.scheme ?? option?.swatch;
+  return typeof raw === 'string' ? raw.trim() : '';
 }
 
 function editOptions(field, value, multiple) {
   const options = field.options || field.filter?.options || field.constraints?.options || [];
-  const chosen = multiple ? new Set((Array.isArray(value) ? value : []).map(item => String(item))) : new Set([String(value ?? '')]);
-  return options.map(option => ({
-    type: 'text',
-    size: '1',
-    text: option.label ?? option.text ?? String(option.value),
-    value: String(option.value),
-    selected: chosen.has(String(option.value))
-  }));
+  const chosen = multiple ? new Set((Array.isArray(value) ? value : []).map(item => String(item))) : new Set([String(value ?? '')]); // An option's picture or icon is drawn in the dropdown too (FO4-1, FO4-3):
+  // sf-dropdown's avatar and icon rows. Its colour (C308 FO-4) is the
+  // name as a tonal badge in that colour, the dropdown's color word.
+
+  return options.map(option => {
+    const text = option.label ?? option.text ?? String(option.value);
+    const avatar = typeof option.avatar === 'string' ? {
+      image: option.avatar
+    } : option.avatar;
+    const picture = avatar?.image || avatar?.src || option.imageUrl || '';
+    const initials = avatar?.text || option.avatarText || '';
+    const visual = picture || initials ? {
+      type: 'avatar',
+      avatarImageUrl: picture,
+      avatarTitle: text
+    } : option.icon ? {
+      type: 'icon',
+      icon: String(option.icon)
+    } : {
+      type: 'text'
+    };
+    return { ...visual,
+      size: '1',
+      text,
+      ...(optionColorOf(option) ? {
+        color: optionColorOf(option)
+      } : {}),
+      value: String(option.value),
+      selected: chosen.has(String(option.value))
+    };
+  });
 } // A choice as buttons (simai.property-view-port 1.16.0, variant `buttons`;
 // consumer simai.main, agreed contract q-b0de123841): one segmented
 // sf-button-group, a button per option, for a short list a person reads at a
@@ -4142,7 +5816,7 @@ const CHOICE_BUTTON_SIZES = new Set(['1/2', '1', '2']);
 const CHOOSING_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', ' ', 'Enter']);
 
 function isChoiceButtons(field) {
-  return String(field.variant ?? '') === 'buttons';
+  return templateOf(field) === 'buttons';
 }
 
 function renderChoiceButtons(field, value, host) {
@@ -4154,11 +5828,15 @@ function renderChoiceButtons(field, value, host) {
     ...(option.icon ? {
       icon: String(option.icon)
     } : {}),
+    // One data word for colour (C302, C308 FO-4): the segment's name a tonal badge.
+    ...(optionColorOf(option) ? {
+      color: optionColorOf(option)
+    } : {}),
     ...(option.disabled ? {
       disabled: true
     } : {})
   }));
-  const asked = String(field.size ?? '');
+  const asked = String((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'size') ?? '');
   const size = CHOICE_BUTTON_SIZES.has(asked) ? asked : EDIT_SIZE;
   const disabled = EDIT_DISABLED;
   const locked = !disabled && field.readonly === true;
@@ -4271,10 +5949,16 @@ function renderChoicesChecklist(field, value, host) {
 }
 
 function renderChoicesEdit(field, value, host) {
-  const options = field.options || field.filter?.options || field.constraints?.options || [];
-  const variant = String(field.variant ?? '');
+  const options = field.options || field.filter?.options || field.constraints?.options || []; // The dropdown is the default; from 13 options it is a checklist, unless
+  // the field asked for the dropdown by its former name select, which kept
+  // it at any length (until 2027-01-01).
 
-  if (variant === 'checklist' || variant !== 'select' && options.length >= CHECKLIST_FROM) {
+  const {
+    template,
+    former
+  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field);
+
+  if (template === 'checklist' || former !== 'select' && options.length >= CHECKLIST_FROM) {
     return renderChoicesChecklist(field, value, host);
   }
 
@@ -4325,7 +6009,7 @@ function renderChoicesEdit(field, value, host) {
 // keeps exactly what was published.
 
 
-const SET_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__["default"]; // The host's word wins, as it always did; the set's own fallback now follows
+const SET_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_17__["default"]; // The host's word wins, as it always did; the set's own fallback now follows
 // the page's language instead of being Russian whatever the page is. `host` is
 // the component that called the set, which is the node the rule reads from.
 // The set is not an element, so it is named here rather than taken from the
@@ -4364,7 +6048,7 @@ let EDIT_PICKER = '';
 
 function dropdownPicker() {
   if (EDIT_PICKER !== 'dropdown') return false;
-  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_9__.noteDeprecated)({
+  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_11__.noteDeprecated)({
     component: 'sf-field-renderers',
     kind: 'value',
     attribute: 'picker',
@@ -4815,7 +6499,7 @@ function storedFiles(value) {
 
 
 function isSingleImageField(field, value) {
-  return String(field.variant ?? '') === 'image' && field.multiple !== true && storedFiles(value).length <= 1;
+  return templateOf(field) === 'image' && field.multiple !== true && storedFiles(value).length <= 1;
 }
 
 function renderImageEdit(field, value, host) {
@@ -4831,6 +6515,8 @@ function renderImageEdit(field, value, host) {
                 aria-label=${field.label || field.key || ''}
                 ?required=${Boolean(field.required)}
                 ?readonly=${field.readonly === true}
+                ?invalid=${Boolean(EDIT_ERROR)}
+                error-message=${EDIT_ERROR || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 @change=${event => {
     const next = event.detail?.value ?? null;
     host.setFieldValue(field, asList ? next ? [next] : [] : next);
@@ -4907,6 +6593,8 @@ function renderFileEdit(field, value, host) {
                                 ?multiple=${multiple}
                                 ?disabled=${field.readonly === true}
                                 aria-label=${field.label || field.key || ''}
+                                ?invalid=${Boolean(EDIT_ERROR)}
+                                error-message=${EDIT_ERROR || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                                 .items=${items}
                                 @sf-file-upload:select=${event => {
     const picked = event.detail?.files;
@@ -4934,12 +6622,17 @@ const sizeOption = options => options?.size === '1/2' ? '1/2' : '1'; // `options
 
 const DENSITIES = new Set(['compact', 'normal']);
 
-const densityOption = options => DENSITIES.has(options?.density) ? options.density : ''; // `options.apply`: 'instant' when a change acts at once (a settings panel, the
-// parameters of a block), anything else for a form saved with a button. Read by
-// the yes/no field only: a switch at once, a checkbox in a form (C165 (4)).
+const densityOption = options => DENSITIES.has(options?.density) ? options.density : ''; // `options.apply` ('instant' when a change acts at once) chose the yes/no
+// control until C303 (4); the field's template chooses it now, and the option
+// is accepted and not read.
+//
+// `options.align`: 'end' for a number edited where numbers stand at the end of
+// the line -- a table cell edited in place (C294: a form starts the digits, a
+// table ends them). A number, a money amount and a percent are then typed at
+// the end of the field with figures of one width, as the column shows them.
 
 
-let EDIT_APPLY = ''; // A control that stays a control when it may not be changed: a choice as
+let EDIT_ALIGN_END = false; // A control that stays a control when it may not be changed: a choice as
 // buttons shows which button is chosen, which is what it is for, where the
 // view's badge would show a different thing (port 1.16.0).
 
@@ -4951,15 +6644,35 @@ const keepsControlWhenLocked = (asked, field) => asked === 'choice' && isChoiceB
 
 let EDIT_DISABLED = false; // `options.error`: what is wrong with the field now, a sentence, or empty (PD-1,
 // property type study «Дата»). A control that says its own error (sf-input-date
-// for a date, a datetime and a time) is drawn invalid with the sentence under
-// it, the error-message of the field family, so a host that is not sf-form --
+// for a date, a datetime and a time; since 1.22.0 the yes/no -- sf-switch,
+// sf-checkbox, the «Да» | «Нет» sf-segmented -- and the file's sf-file-upload
+// and sf-input-image, field orders FO-1) is drawn invalid with the sentence
+// under it, the error-message of the field family, so a host that is not sf-form --
 // a record card -- marks the field itself instead of writing a line under a
 // field with a normal border. sf-form keeps setting invalid on the controls it
 // draws, as before.
 
-let EDIT_ERROR = '';
+let EDIT_ERROR = ''; // The controls the set draws that say `options.error` themselves, invalid and
+// the sentence under them (read by sf-form, which gives them its errors and
+// draws no line of its own under them): the field family's, and since 1.22.0
+// the yes/no and file ones (FO-1).
+
+const OWN_ERROR_CONTROLS = Object.freeze(['sf-input-date', 'sf-input-image', 'sf-switch', 'sf-checkbox', 'sf-segmented', 'sf-file-upload']);
 function renderEditField(field = {}, value, host, options = {}) {
-  const asked = field.propertyType || field.type || field.dataType;
+  // A single-field edit (a table cell, a card's quick edit) gives the
+  // record's values (options.values): the field's conditions decide it
+  // there as in a form (FO3-4) -- hidden, nothing is drawn; not enabled,
+  // its value as text; required as they say.
+  if (field?.when && options?.values && typeof options.values === "object") {
+    const decided = (0,_conditions_js__WEBPACK_IMPORTED_MODULE_14__.fieldConditions)(field, options.values);
+    if (!decided.visible) return null;
+    field = { ...field,
+      required: decided.required,
+      readonly: field.readonly === true || !decided.enabled
+    };
+  }
+
+  const asked = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).type;
   const disabled = options?.disabled === true; // A field the person may not change is shown, not offered as a control that
   // refuses: the same rule for every type, so `readonly` means one thing
   // wherever the registry lists it.
@@ -4973,7 +6686,7 @@ function renderEditField(field = {}, value, host, options = {}) {
   const outer = EDIT_SIZE;
   const outerDisabled = EDIT_DISABLED;
   const outerPicker = EDIT_PICKER;
-  const outerApply = EDIT_APPLY;
+  const outerAlign = EDIT_ALIGN_END;
   const outerError = EDIT_ERROR;
   EDIT_SIZE = sizeOption(options);
   EDIT_ERROR = typeof options?.error === 'string' ? options.error.trim() : '';
@@ -4981,7 +6694,7 @@ function renderEditField(field = {}, value, host, options = {}) {
   // fields drawn as before C139, a searchable sf-dropdown (until 2027-01-01).
 
   EDIT_PICKER = options?.picker === 'dropdown' ? 'dropdown' : '';
-  EDIT_APPLY = options?.apply === 'instant' ? 'instant' : '';
+  EDIT_ALIGN_END = options?.align === 'end';
 
   try {
     return inDensity(renderer(field, value, host), densityOption(options));
@@ -4989,7 +6702,7 @@ function renderEditField(field = {}, value, host, options = {}) {
     EDIT_SIZE = outer;
     EDIT_DISABLED = outerDisabled;
     EDIT_PICKER = outerPicker;
-    EDIT_APPLY = outerApply;
+    EDIT_ALIGN_END = outerAlign;
     EDIT_ERROR = outerError;
   }
 } // A density asked for one field is a region around it that draws no box of its
@@ -5054,7 +6767,7 @@ function renderTextView(field, value, host) {
 
 
 function renderHtmlView(field, value) {
-  const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_8__.cleanHtml)(value);
+  const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_10__.cleanHtml)(value);
   return clean ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-field-view sf-field-html">${(0,lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__.unsafeHTML)(clean)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // A number in the page's language (set boundary study, 2026-11-17): «12,5 кг»
 // on a Russian page, «12.5 kg» on an English one, through Intl with every
@@ -5067,7 +6780,21 @@ function numberText(field, value, host) {
   const formatted = host?.formatFieldValue?.(field, value);
   if (typeof formatted === 'string') return formatted;
   if (carriesText(value)) return value.text;
-  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || viewText(field, value, null);
+  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || viewText(field, value, null);
+} // A percent as the number's scale or meter (step 5), 0..100; else null.
+
+
+function levelView(field, value) {
+  const variant = templateOf(field);
+  if (variant !== 'scale' && variant !== 'meter') return null;
+  const raw = scalarValue(value);
+  const number = Number(raw);
+  if (raw === null || raw === undefined || raw === '' || !Number.isFinite(number) || number < 0 || number > 100) return null;
+  if (variant === 'scale') return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-scale size="1" value=${String(number)}></sf-progress-scale>`;
+  const {
+    label
+  } = meterProps(field, number);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-bar inline meter value=${String(number)} label=${label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-progress-bar>`;
 } // A number carries its unit when the field declares one, and nothing when it
 // does not -- the set does not guess at a unit, and «42» with an invented «шт»
 // beside it is a worse answer than «42».
@@ -5075,7 +6802,7 @@ function numberText(field, value, host) {
 
 function renderNumberView(field, value, host) {
   if (value === null || typeof value === 'undefined' || value === '') return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const variant = field.variant || field.filter?.variant; // The scale needs the number, not the host's text for it.
+  const variant = templateOf(field); // The scale needs the number, not the host's text for it.
 
   const number = Number(scalarValue(value));
 
@@ -5085,9 +6812,10 @@ function renderNumberView(field, value, host) {
 
   if (variant === 'meter' && Number.isFinite(number) && number >= 0 && number <= 100) {
     const {
-      label
+      label,
+      status
     } = meterProps(field, number);
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-bar inline meter value=${String(number)} label=${label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-progress-bar>`;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-bar inline meter value=${String(number)} label=${label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} status=${status || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-progress-bar>`;
   }
 
   const text = numberText(field, value, host);
@@ -5122,7 +6850,7 @@ function dateFormatOf(field) {
 
 function defaultDateText(field, value, host) {
   if (carriesText(value)) return null;
-  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime)(value);
+  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitDateTime)(value);
   if (!parts.known || !parts.date) return null;
   const [year, month, day] = parts.date.split('-').map(Number);
   const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
@@ -5167,7 +6895,7 @@ function dateText(field, value, host) {
 
 
 function dateTimeAttribute(field, value) {
-  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime)(value);
+  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitDateTime)(value);
   if (!parts.known || !parts.date) return '';
   const type = field?.propertyType || field?.type || field?.dataType;
   return type === 'datetime' && parts.time ? `${parts.date}T${parts.time}` : parts.date;
@@ -5197,7 +6925,7 @@ function renderChoiceView(field, value) {
         <sf-badge
                 line=${VIEW_LINE}
                 tight
-                appearance=${field.badgeAppearance ?? CELL_BADGE_APPEARANCE}
+                appearance=${badgeAppearanceOf(field)}
                 scheme=${badge.scheme}
                 style=${badge.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 text=${String(option.label ?? option.text ?? value)}
@@ -5210,20 +6938,33 @@ function renderChoiceView(field, value) {
 // No disclosure for a long list here: a record's
 // field in view is the button that opens its group, and a control inside a
 // button is not one.
+// Tags and badges of one value stand 4 apart (C105 H5 tags, --sf-space-1/4;
+// FW-3: they stood 8, the buttons' gap). The badges template draws each value
+// as its option's badge, in the option's colour, as the cell does.
 
 
 function renderChoicesView(field, value) {
   if (!Array.isArray(value) || !value.length) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const options = field.options || field.filter?.options || field.constraints?.options;
 
+  const optionOf = item => Array.isArray(options) ? options.find(candidate => String(candidate?.value) === String(item && typeof item === 'object' ? item.value : item)) : null;
+
   const label = item => {
-    const option = Array.isArray(options) ? options.find(candidate => String(candidate?.value) === String(item)) : null;
-    return String(option?.label ?? option?.text ?? item);
+    const option = optionOf(item);
+    if (item && typeof item === 'object' && item.text !== undefined) return String(item.text);
+    return String(option?.label ?? option?.text ?? (item && typeof item === 'object' ? item.value : item));
   };
 
+  const badges = templateOf(field) === 'badges';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <span class="sf-field-view flex flex-wrap items-cross-center gap-1/3 min-w-0">
-            ${value.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" line=${VIEW_LINE} kind="default" text=${label(item)}></sf-tag>`)}
+        <span class="sf-field-view flex flex-wrap items-cross-center gap-1/4 min-w-0">
+            ${value.map(item => {
+    if (!badges) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" line=${VIEW_LINE} kind="default" text=${label(item)}></sf-tag>`;
+    const option = optionOf(item);
+    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option) : null;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge line=${VIEW_LINE} tight appearance=${badgeAppearanceOf(field)}
+                        scheme=${badge?.scheme || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} style=${badge?.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${label(item)}></sf-badge>`;
+  })}
         </span>
     `;
 } // A person, as in a cell: the name links to the person when the host gives
@@ -5285,7 +7026,7 @@ function renderFileView(field, value) {
   // for every stored file whose name does not end in a familiar three letters.
 
   const asImage = isImageField(field);
-  const card = String(field.variant ?? '') === 'image-card';
+  const card = templateOf(field) === 'image_card';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <span class="sf-field-view flex ${card ? 'flex-row' : 'flex-col'} gap-1/3">
             ${files.map(file => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -5307,9 +7048,13 @@ function renderFileView(field, value) {
 
 const VIEW_RENDERERS = {
   string: renderStringView,
+  phone: renderPhoneView,
+  password: renderPasswordView,
+  url: renderUrlView,
+  link: renderLinkView,
+  'ru.inn': renderInnView,
   text: renderTextView,
   html: renderHtmlView,
-  integer: renderNumberView,
   number: renderNumberView,
   date: renderDateView,
   datetime: renderDateView,
@@ -5337,37 +7082,227 @@ const VIEW_RENDERERS = {
 // not a number is left out.
 
 function renderTotalField(field = {}, values = [], host) {
-  const type = field.propertyType || field.type || field.dataType;
+  const type = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).type;
   const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
   const list = (Array.isArray(values) ? values : []).map(value => scalarValue(value));
 
   if (type === 'money') {
-    const totals = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.moneyTotals)(list, field, locale);
+    const totals = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.moneyTotals)(list, field, locale);
     return totals.length ? totals.map(total => total.text) : null;
   }
 
-  if (type !== 'number' && type !== 'integer') return null;
-  const numbers = list.filter(value => value !== null && value !== undefined && value !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(value).ok);
+  if (type !== 'number') return null;
+  const numbers = list.filter(value => value !== null && value !== undefined && value !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(value).ok);
   if (!numbers.length) return null;
-  const sum = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.addDecimal)(numbers);
-  return sum === null ? null : [(0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatDecimal)(sum, locale)];
+  const sum = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.addDecimal)(numbers);
+  if (sum === null) return null; // The total keeps the field's unit as the cells print it («13 шт»): a
+  // number keeps its unit in every place (cards study CV-7; DEV, group build
+  // 12 acceptance: the table footer printed a bare «26»).
+
+  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatDecimal)(sum, locale);
+  const unit = fieldUnit(field);
+  return [unit ? `${text} ${unit}` : text];
 } // Whether a type is a number a table aligns to the end of the line with
 // figures of one width (the registry's `numeric`, C294 MP-12).
 
 function isNumericType(type) {
-  return Boolean(_registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES.find(entry => entry.type === type)?.numeric);
-}
+  return Boolean((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.typeEntry)(type)?.numeric);
+} // A former type name (integer, compound) has the modes of the type it reads as.
+
 function propertyModes(type) {
-  return (0,_registry_js__WEBPACK_IMPORTED_MODULE_5__.modesOf)(type, {
+  const own = _registry_js__WEBPACK_IMPORTED_MODULE_5__.TYPE_ALIASES[type]?.type ?? type;
+  return (0,_registry_js__WEBPACK_IMPORTED_MODULE_5__.modesOf)(own, {
     view: VIEW_RENDERERS,
     edit: EDIT_RENDERERS,
     cell: CELL_RENDERERS,
     filter: FILTER_RENDERERS
   });
+} // What a field is drawn with (C302): {type, template, params} -- the type
+// after its former names, the template the field names when the type has it
+// and the field fits it (else the default), and the templateParams. A host
+// that offers a template switch reads it to show the template drawn.
+
+function fieldTemplate(field = {}) {
+  const {
+    type,
+    template,
+    params
+  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field);
+  return {
+    type,
+    template,
+    params
+  };
+}
+
+ // The window's content per property type (owner decision C310): the
+// condition first (C293), then only what the condition needs -- the list of
+// a list property, one field of a string, one or two of a number; nothing
+// for не задано / задано. A boolean is three rows, one choice, no condition
+// line. A type with a window of its own (a date) keeps its filter control.
+// Where the condition stands and how quiet it is wait for the owner's answer
+// on the window without repeats (study §11); here it is the set's operator
+// field, as every filter control's.
+
+function renderConditionControl(field, host, conditions, selected) {
+  if (conditions.length < 2) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-dropdown class="sf-filter-window-condition" size=${filterSize(host)} appearance="bordered" mode="select"
+            search="false" list-width="list" aria-label=${setText(host, 'filterCondition')}
+            .options=${conditions.map(operator => ({
+    value: operator,
+    text: host.getFilterOperatorLabel(operator),
+    label: host.getFilterOperatorLabel(operator)
+  }))}
+            value=${selected}
+            @change=${event => {
+    const operator = event.detail?.values?.[0] || event.detail?.value || selected;
+    if (operator !== selected) host.patchTempFilterValue(field.key, {
+      operator
+    });
+  }}></sf-dropdown>`;
+}
+
+function currencySign(field, host) {
+  const code = typeof field.currency === 'string' ? field.currency : field.currency?.code;
+  if (!code) return '';
+
+  try {
+    return new Intl.NumberFormat((0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null) || 'ru-RU', {
+      style: 'currency',
+      currency: code
+    }).formatToParts(0).find(part => part.type === 'currency')?.value || code;
+  } catch {
+    return code;
+  }
+}
+
+function renderStringWindow(field, host, value, operator) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input size=${filterSize(host)} appearance="bordered" aria-label=${host.getFilterOperatorLabel(operator)}
+            value=${typeof value.value === 'string' ? value.value : ''} name="sf_filter_${field.key || 'text'}"
+            @change=${event => host.patchTempFilterValue(field.key, {
+    operator,
+    value: event.target?.value || ''
+  })}></sf-input>`;
+} // A number or an amount (C294: an amount is compared inside its currency,
+// whose sign the fields carry): от – до, or one field.
+
+
+function renderNumberWindow(field, host, value, operator) {
+  const sign = currencySign(field, host);
+
+  const named = text => sign ? `${text}, ${sign}` : text;
+
+  if (operator !== 'between') {
+    const one = Array.isArray(value.value) ? value.value[0] : value.value;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input size=${filterSize(host)} appearance="bordered"
+                aria-label=${named(host.getFilterOperatorLabel(operator))} placeholder=${sign || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                value=${one ?? ''} name="sf_filter_${field.key || 'number'}"
+                @change=${event => host.patchTempFilterValue(field.key, {
+      operator,
+      value: event.target?.value || ''
+    })}></sf-input>`;
+  }
+
+  const range = Array.isArray(value.value) ? value.value : [value.value ?? '', ''];
+
+  const patch = (index, next) => {
+    const both = [range[0] ?? '', range[1] ?? ''];
+    both[index] = next || '';
+    host.patchTempFilterValue(field.key, {
+      operator,
+      value: both
+    });
+  };
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-filter-window-range flex gap-1/3 items-cross-end">
+        <sf-input size=${filterSize(host)} appearance="bordered" root-class="flex-1 min-w-0" label=${named(setText(host, 'rangeFrom'))}
+                  value=${range[0] ?? ''} name="sf_filter_${field.key || 'number'}" @change=${event => patch(0, event.target?.value)}></sf-input>
+        <sf-input size=${filterSize(host)} appearance="bordered" root-class="flex-1 min-w-0" label=${named(setText(host, 'rangeTo'))}
+                  value=${range[1] ?? ''} name="sf_filter_${field.key || 'number'}_second" @change=${event => patch(1, event.target?.value)}></sf-input>
+    </div>`;
+} // A boolean (C310): Да / Нет / Не задано, one choice, no condition line and
+// no search. «Не задано» is the empty condition.
+
+
+function renderBooleanWindow(field, host, value) {
+  const words = {
+    yes: field.trueText ?? field.labels?.true ?? setText(host, 'yes'),
+    no: field.falseText ?? field.labels?.false ?? setText(host, 'no')
+  };
+  const operator = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCondition)(field, value);
+  const one = Array.isArray(value.values) ? value.values[0] : value.value;
+  const chosen = operator === 'empty' ? 'empty' : one === true || String(one) === 'true' ? 'true' : one === false || String(one) === 'false' ? 'false' : '';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input-choice appearance="list" flow="column" aria-label=${field.label || field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            control-position="end"
+            .items=${[{
+    value: 'true',
+    label: words.yes
+  }, {
+    value: 'false',
+    label: words.no
+  }, {
+    value: 'empty',
+    label: setText(host, 'filterNotSet')
+  }]}
+            .value=${chosen}
+            @change=${event => {
+    const next = event.detail?.value ?? event.detail?.values?.[0] ?? '';
+    host.patchTempFilterValue(field.key, next === 'empty' ? {
+      operator: 'empty',
+      value: undefined,
+      values: undefined
+    } : {
+      operator: 'eq',
+      value: next === 'true',
+      values: undefined
+    });
+  }}></sf-input-choice>`;
+}
+/** A filter field's window content (C310): the condition, then what it needs. */
+
+
+function renderFilterWindowField(field = {}, host) {
+  const kind = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterKindOf)(field);
+  if (kind === 'own') return renderFilterField(field, host);
+  const value = host.getFilterControlValue(field.key) || {};
+  if (kind === 'boolean') return renderBooleanWindow(field, host, value);
+  const conditions = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditions)(field);
+  const operator = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCondition)(field, value);
+  const control = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterValueless)(operator) ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : kind === 'string' ? renderStringWindow(field, host, value, operator) : kind === 'number' ? renderNumberWindow(field, host, value, operator) : renderChoiceFilterControl(field, host);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-filter-window-fields flex flex-col gap-1/2">${renderConditionControl(field, host, conditions, operator)}${control}</div>`;
+}
+/** A filter field's window opened from any control (FO-5, filter-window.js): settles {action: 'apply' | 'reset', value} or null. */
+
+function openFilterWindow(options = {}) {
+  const field = options.field || {};
+  return (0,_filter_window_js__WEBPACK_IMPORTED_MODULE_15__.filterWindowOpen)({
+    width: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterWidth)(field),
+    kind: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterKindOf)(field),
+    ...options,
+    renderControl: renderFilterWindowField,
+    // «Применить (N)»: the chosen values of a list condition only (C310).
+    count: value => (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterKindOf)(field) === 'own' ? Array.isArray(value?.values) ? value.values.length : 0 : (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCount)(field, value)
+  });
+}
+/**
+ * What a filter field button shows after applying (C300, C310), for the
+ * list head that draws it: {active, count, words} -- the colour while
+ * active, the number only for a list condition, the words for its tooltip.
+ */
+
+function filterFieldSummary(field = {}, value = {}, node = null) {
+  const options = Array.isArray(field.filter?.options) ? field.filter.options : [];
+  const names = new Map(options.map(option => [String(option.value ?? option.id ?? option.key ?? option.label), option.label || option.title || String(option.value ?? '')]));
+  return (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterSummary)(field, value, {
+    label: operator => (0,_filter_window_js__WEBPACK_IMPORTED_MODULE_15__.filterOperatorLabel)(operator, node, (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterKindOf)(field)),
+    name: one => names.get(one) ?? one,
+    yes: field.trueText ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SET_TEXT, 'yes', node, SET_NAME),
+    no: field.falseText ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SET_TEXT, 'no', node, SET_NAME)
+  });
 }
 
 function renderViewField(field = {}, value, host, options = {}) {
-  const asked = field.propertyType || field.type || field.dataType;
+  const asked = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).type;
   const renderer = VIEW_RENDERERS[asked];
   if (!renderer) return null;
   const outer = VIEW_LINE;
@@ -5399,7 +7334,7 @@ if (typeof window !== 'undefined') {
     renderTotalField,
     FILTER_RENDERERS,
     // The nine number conditions in the filter's order (C294).
-    NUMBER_FILTER_OPERATORS,
+    NUMBER_FILTER_OPERATORS: _registry_js__WEBPACK_IMPORTED_MODULE_5__.NUMBER_FILTER_OPERATORS,
     isNumericType,
     // Decimal strings as the set reads and shows them (C294): the View
     // set's items, compound and ru.requisites call these instead of
@@ -5409,47 +7344,85 @@ if (typeof window !== 'undefined') {
     // compare(a, b) work by the digits; totals(values, field) sums money
     // per currency; currency(code, locale, display) is {sign, before, minor}.
     decimal: {
-      format: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatDecimal)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
-      money: (value, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatMoney)(value, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
-      percent: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.formatPercent)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
-      read: (text, options = {}) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.readTypedDecimal)(text, {
+      format: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatDecimal)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
+      money: (value, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatMoney)(value, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
+      percent: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatPercent)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
+      read: (text, options = {}) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(text, {
         locale: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null),
         ...options
       }),
-      add: _decimal_js__WEBPACK_IMPORTED_MODULE_10__.addDecimal,
-      compare: _decimal_js__WEBPACK_IMPORTED_MODULE_10__.compareDecimal,
-      totals: (values, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.moneyTotals)(values, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
-      currency: (code, locale, display) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_10__.currencyOf)(code, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null), display)
+      add: _decimal_js__WEBPACK_IMPORTED_MODULE_12__.addDecimal,
+      compare: _decimal_js__WEBPACK_IMPORTED_MODULE_12__.compareDecimal,
+      totals: (values, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.moneyTotals)(values, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
+      currency: (code, locale, display) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(code, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null), display)
     },
     // The date filter's rules (C293): the chip's words, when an entry is
     // empty, the request with its context, a period's days.
     dateFilter: {
-      conditions: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateFilterConditions,
-      chipText: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.dateFilterChipText,
-      isEmptyEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.isEmptyFilterEntry,
-      normalizeEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.normalizeFilterEntry,
-      requestContext: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.filterRequestContext,
-      buildRequest: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.buildFilterRequest,
-      resolvePeriod: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.resolveDatePeriod,
-      periods: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_PERIODS,
-      futurePeriods: _date_filter_js__WEBPACK_IMPORTED_MODULE_13__.DATE_FUTURE_PERIODS
+      conditions: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateFilterConditions,
+      chipText: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateFilterChipText,
+      isEmptyEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.isEmptyFilterEntry,
+      normalizeEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.normalizeFilterEntry,
+      requestContext: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.filterRequestContext,
+      buildRequest: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.buildFilterRequest,
+      resolvePeriod: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.resolveDatePeriod,
+      periods: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_PERIODS,
+      futurePeriods: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_FUTURE_PERIODS
     },
     // A datetime's value read and written back, for a host that draws its
     // own control: split(value), compose(stored, {date, time}),
     // normalizeTime(text); and a time of day's: splitTime(value),
     // composeTime(stored, text).
     dateTime: {
-      split: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitDateTime,
-      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeDateTime,
-      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.normalizeTime,
-      splitTime: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.splitTime,
-      composeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_6__.composeTime
+      split: _datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitDateTime,
+      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_8__.composeDateTime,
+      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_8__.normalizeTime,
+      splitTime: _datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitTime,
+      composeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_8__.composeTime
     },
-    // The universal properties, each with the modes the set draws for it.
+    // A field's when (FO-3): fieldConditions(field, values) answers
+    // {visible, required, enabled} over the values on screen;
+    // editable(field, values) whether a single-field edit opens (FO3-4).
+    conditions: {
+      evaluate: _conditions_js__WEBPACK_IMPORTED_MODULE_14__.evaluateCondition,
+      field: _conditions_js__WEBPACK_IMPORTED_MODULE_14__.fieldConditions,
+      fields: _conditions_js__WEBPACK_IMPORTED_MODULE_14__.conditionFields,
+      ops: _conditions_js__WEBPACK_IMPORTED_MODULE_14__.CONDITION_OPS,
+      editable: _conditions_js__WEBPACK_IMPORTED_MODULE_14__.fieldEditable
+    },
+    // A filter field's window from any control (FO-5): open({anchor,
+    // field, value, size, placement}) settles {action, value} or null.
+    // summary(field, value) {active, count, words} is what the filter
+    // field button shows (C300, C310); conditions(field) what a window offers.
+    filterWindow: {
+      open: openFilterWindow,
+      operatorLabel: _filter_window_js__WEBPACK_IMPORTED_MODULE_15__.filterOperatorLabel,
+      summary: filterFieldSummary,
+      conditions: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditions,
+      count: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCount
+    },
+    // The universal properties, each with the modes the set draws for it
+    // and its templates, the default first (C302).
     registry: _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES.map(entry => ({ ...entry,
       modes: propertyModes(entry.type)
-    }))
-  }; // SF.whenFieldRenderers() settles on this, whichever bundle published the set.
+    })),
+    // C302, C303: the four places a template draws in; the former type and
+    // template names read until 2027-01-01; what a field is drawn with.
+    places: _registry_js__WEBPACK_IMPORTED_MODULE_5__.PLACES,
+    aliases: {
+      types: _registry_js__WEBPACK_IMPORTED_MODULE_5__.TYPE_ALIASES,
+      templates: _registry_js__WEBPACK_IMPORTED_MODULE_5__.TEMPLATE_ALIASES
+    },
+    fieldTemplate
+  }; // The set's words in the page's language are asked for now, not at the
+  // first word a host draws (field orders FO-4): the set is a module, not an
+  // element, so nothing drew a filter again when its words arrived, and a
+  // Russian page that lets core fetch its language (no core/lang/ru.js)
+  // showed «Contains…», «From», «To» until the host redrew by chance.
+  // SF.whenFieldRenderers() waits for them (core.runtime, at most
+  // SF_BOOT_CONFIG.languageWait ms).
+
+  (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SET_TEXT, 'containsText', null, SET_NAME); // SF.whenFieldRenderers() settles on this, whichever bundle published the set.
 
   globalThis.document?.dispatchEvent?.(new CustomEvent('sf-field-renderers-ready'));
 }
@@ -5587,6 +7560,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   formatPhone: () => (/* binding */ formatPhone),
 /* harmony export */   phoneDialCode: () => (/* binding */ phoneDialCode),
 /* harmony export */   phoneE164: () => (/* binding */ phoneE164),
+/* harmony export */   phoneSearchText: () => (/* binding */ phoneSearchText),
 /* harmony export */   splitPhone: () => (/* binding */ splitPhone)
 /* harmony export */ });
 // A telephone number, stored and shown (FL-1, FL-7 of the property page study,
@@ -5656,6 +7630,20 @@ function phoneE164(value) {
   const e164 = numberE164(number);
   return extension && e164.startsWith('+') ? `${e164};ext=${extension}` : extension ? String(value ?? '').trim() : e164;
 }
+/**
+ * What a phone filter searches for (field orders FO-3): the stored form, so a
+ * number typed however it is laid out finds the E.164 it is kept as -- a full
+ * number is its E.164 (`+7 (916) 123-45-67` is `+79161234567`), a part of
+ * one its digits (`916 123-45` is `91612345`). Empty for no digits.
+ */
+
+function phoneSearchText(value) {
+  const {
+    number
+  } = splitPhone(value);
+  const e164 = numberE164(number);
+  return e164.startsWith('+') ? e164 : digitsOf(number);
+}
 /** The dial code (digits) an E.164 number starts with: the longest one known. */
 
 function phoneDialCode(e164) {
@@ -5711,7 +7699,16 @@ function formatNumber(value) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ALIASES_UNTIL: () => (/* binding */ ALIASES_UNTIL),
+/* harmony export */   DATE_FILTER_OPERATORS: () => (/* binding */ DATE_FILTER_OPERATORS),
+/* harmony export */   DATE_FUTURE_OPERATORS: () => (/* binding */ DATE_FUTURE_OPERATORS),
+/* harmony export */   NUMBER_FILTER_OPERATORS: () => (/* binding */ NUMBER_FILTER_OPERATORS),
+/* harmony export */   PLACES: () => (/* binding */ PLACES),
 /* harmony export */   PROPERTY_TYPES: () => (/* binding */ PROPERTY_TYPES),
+/* harmony export */   STRING_VARIANT_TYPES: () => (/* binding */ STRING_VARIANT_TYPES),
+/* harmony export */   TEMPLATE_ALIASES: () => (/* binding */ TEMPLATE_ALIASES),
+/* harmony export */   TIME_FILTER_OPERATORS: () => (/* binding */ TIME_FILTER_OPERATORS),
+/* harmony export */   TYPE_ALIASES: () => (/* binding */ TYPE_ALIASES),
 /* harmony export */   modesOf: () => (/* binding */ modesOf)
 /* harmony export */ });
 /* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("354525e80715");
@@ -5747,119 +7744,259 @@ const typeLabel = key => Object.freeze(Object.defineProperties({}, {
     enumerable: true,
     value: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].en[key]
   }
+})); // Owner decisions C302 and C303 (2026-11-17; catalogue: ui-control research
+// 2026-11-17-type-template-catalogue): a type stores and checks the value, a
+// template only draws it and never changes the data. Each type lists the
+// templates the Framework draws, the default first; a template says which of
+// the four places it changes -- view (Показ), compact (Кратко, the table cell
+// and the cards), edit (Правка), filter (Фильтр) -- and the template
+// parameters (`templateParams`) it reads. A field names one template with
+// `template`; without it, or with one the type does not have, the default
+// draws (templates.js resolveField). `variants` is the former list of the
+// non-default templates under their former ids, kept for hosts that read it
+// until 2027-01-01.
+//
+// C303: a type of its own only where storage, checking or filter conditions
+// differ; a setting fixed when the field is created is part of the type
+// (`decimals` of a number, 0 for a whole one; `multiple`). integer is read as
+// number with decimals 0, compound as complex, a string with variant phone or
+// password as the phone or password type, until 2027-01-01 (TYPE_ALIASES).
+
+
+const PLACES = Object.freeze(['view', 'compact', 'edit', 'filter']);
+const ALL_PLACES = PLACES; // The filter place's conditions (step 4 of the catalogue): a type whose
+// filter is a condition first and then what the condition needs lists the
+// operators in the list's order and the one shown before any is chosen.
+// What travels is {operator, value}. A type without `conditions` is filtered
+// by its options (a choice, a user) or searched as text.
+//
+//   date, datetime   owner decision C293 (date-filter.js): a day, two days,
+//                    a period by name, a number of days, empty / not empty;
+//                    a deadline field (filter.future: true) adds `future`
+//   time             a time of day «hh:mm», two of them (both ends in),
+//                    earlier, later, empty / not empty
+//   number, money, percent   owner decision C294: the nine number conditions
+//   password         set (not-empty) or not set (empty), value true
+
+const DATE_FILTER_OPERATORS = Object.freeze(['eq', 'between', 'lt', 'gt', 'gte', 'lte', 'period', 'last-days', 'empty', 'not-empty']);
+const DATE_FUTURE_OPERATORS = Object.freeze(['next-days']);
+const TIME_FILTER_OPERATORS = Object.freeze(['eq', 'between', 'lt', 'gt', 'empty', 'not-empty']);
+const NUMBER_FILTER_OPERATORS = Object.freeze(['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'between', 'empty', 'not-empty']);
+
+const conditions = (operators, byDefault, extra = {}) => Object.freeze({
+  operators,
+  default: byDefault,
+  ...extra
+});
+
+const DATE_CONDITIONS = conditions(DATE_FILTER_OPERATORS, 'between', {
+  future: DATE_FUTURE_OPERATORS
+});
+const NUMBER_CONDITIONS = conditions(NUMBER_FILTER_OPERATORS, 'eq');
+
+const template = (type, id, {
+  places = ALL_PLACES,
+  params = [],
+  fits = '',
+  legacy = null,
+  isDefault = false
+} = {}) => Object.freeze({
+  id,
+  label: typeLabel(`template-${type}-${id}`),
+  default: isDefault,
+  places: Object.freeze([...places]),
+  params: Object.freeze([...params]),
+  ...(fits ? {
+    fits
+  } : {}),
+  ...(legacy ? {
+    legacy
+  } : {})
+});
+
+const byDefault = (type, id, options = {}) => template(type, id, { ...options,
+  isDefault: true
+}); // The former variant list: the non-default templates under the id a host sent
+// as `variant` (image-card for image_card), until 2027-01-01.
+
+
+const variantsOf = (type, templates) => templates.filter(one => !one.default).map(one => Object.freeze({
+  id: one.legacy ?? one.id,
+  label: typeLabel(`variant-${type}-${one.legacy ?? one.id}`)
 }));
 
-const PROPERTY_TYPES = Object.freeze([{
+const entry = spec => {
+  const templates = Object.freeze(spec.templates);
+  return Object.freeze({ ...spec,
+    templates,
+    variants: Object.freeze(spec.variants ?? variantsOf(spec.type, templates))
+  });
+};
+
+const PROPERTY_TYPES = Object.freeze([// mask (property-view port 1.16.0): the Framework mask grammar of
+// sf-input's mask-pattern; the value is the text as shown, fixed parts
+// included, and an incomplete one is reported, not written as a value.
+// nullable: false makes a cleared masked field write "" instead of null.
+entry({
   type: 'string',
   label: typeLabel('type-string'),
-  // password: write-only. The host never sends the password; the value it
-  // sends is {set: true} or {set: false} (null reads as not set), and the
-  // set shows only «задан»/«не задан». An edit writes the typed text through
-  // setFieldValue and writes nothing for a field nobody typed in.
-  variants: [{
-    id: 'phone',
-    label: typeLabel('variant-string-phone')
-  }, {
-    id: 'password',
-    label: typeLabel('variant-string-password'),
-    writeOnly: true
-  }],
-  // mask (property-view port 1.16.0): the Framework mask grammar of
-  // sf-input's mask-pattern; the value is the text as shown, fixed parts
-  // included, and an incomplete one is reported, not written as a value.
-  // nullable: false makes a cleared masked field write "" instead of null.
-  // Read by the plain string alone: phone and password keep their controls.
-  // defaultCountry (FL-7): the phone variant's country while it is empty,
-  // ISO 3166 alpha-2; without it, the page's.
-  params: ['placeholder', 'mask', 'nullable', 'defaultCountry', 'required', 'readonly']
-}, {
+  templates: [byDefault('string', 'input')],
+  params: ['placeholder', 'mask', 'nullable', 'required', 'readonly']
+}), // phone (C302 (1)): the number in E.164, «+79161234567», an extension
+// after «;ext=». defaultCountry (FL-7): the country an empty field starts
+// on, ISO 3166 alpha-2; without it, the page's.
+entry({
+  type: 'phone',
+  label: typeLabel('type-phone'),
+  templates: [byDefault('phone', 'phone_input')],
+  params: ['defaultCountry', 'required', 'readonly']
+}), // password (C302 (1)): write-only. The host never sends the password; the
+// value it sends is {set: true} or {set: false} (null reads as not set),
+// and the set shows only «задан»/«не задан». An edit writes the typed text
+// through setFieldValue and writes nothing for a field nobody typed in.
+entry({
+  type: 'password',
+  label: typeLabel('type-password'),
+  writeOnly: true,
+  templates: [byDefault('password', 'input')],
+  conditions: conditions(Object.freeze(['not-empty', 'empty']), 'not-empty'),
+  params: ['placeholder', 'required', 'readonly']
+}), // url, link and ru.inn (catalogue step 3): types Larena stores and checks
+// (url@1, link@1, ru.inn@1) that the Framework drew as strings. url is an
+// absolute http(s) address, at most 2048 bytes, without a login in it;
+// link is {href, text?}, href an http(s) address, a path from the site's
+// root or an #anchor; ru.inn is 10 digits (an organisation) or 12 (a
+// person) with the tax service's check digits, `holder` (any,
+// organization, person) fixed when the field is created. The rules are
+// text-types.js; each is searched as text in the filter.
+entry({
+  type: 'url',
+  label: typeLabel('type-url'),
+  templates: [byDefault('url', 'input')],
+  params: ['placeholder', 'required', 'readonly']
+}), entry({
+  type: 'link',
+  label: typeLabel('type-link'),
+  templates: [byDefault('link', 'link')],
+  params: ['required', 'readonly']
+}), entry({
+  type: 'ru.inn',
+  label: typeLabel('type-ru.inn'),
+  templates: [byDefault('ru.inn', 'input')],
+  params: ['holder', 'placeholder', 'required', 'readonly']
+}), entry({
   type: 'text',
   label: typeLabel('type-text'),
-  variants: [],
+  templates: [byDefault('text', 'textarea', {
+    params: ['rows']
+  })],
   params: ['placeholder', 'required', 'readonly']
-}, // html (property-view port 1.17.0): formatted text, an HTML string of
+}), // html (property-view port 1.17.0): formatted text, an HTML string of
 // sf-input-rich's subset. Edited with sf-input-rich, shown cleaned by that
 // component's own rule, a cell its text on one line, filtered as text.
-{
+entry({
   type: 'html',
   label: typeLabel('type-html'),
-  variants: [],
+  templates: [byDefault('html', 'editor')],
   params: ['placeholder', 'required', 'readonly']
-}, // stepper: edited with sf-quantity, «−» and «+» and the arrow keys; min,
-// max and step (and a number's precision) are read by that variant alone.
+}), // number (C303 (2)): one type; `decimals` is fixed when the field is
+// created, 0 for a whole number (integer reads as number with decimals 0).
+// stepper: sf-input-quantity, «−» and «+» and the arrow keys; min, max and
+// step are read by it. scale and meter: a value 0..100, the level scale
+// and the share of a limit (C203 (5)); they fit a field whose bounds, when
+// it declares them, are 0 and 100.
 // numeric (C294, MP-12): a number a table aligns to the end of the line
-// with figures of one width -- integer, number, money and percent -- read
-// from here by any table instead of each keeping its own list.
-{
-  type: 'integer',
-  label: typeLabel('type-integer'),
-  numeric: true,
-  variants: [{
-    id: 'stepper',
-    label: typeLabel('variant-integer-stepper')
-  }],
-  params: ['unit', 'min', 'max', 'step', 'required', 'readonly']
-}, {
+// with figures of one width -- number, money and percent.
+entry({
   type: 'number',
   label: typeLabel('type-number'),
   numeric: true,
-  variants: [{
-    id: 'scale',
-    label: typeLabel('variant-number-scale')
-  }, // meter (owner decision C203 (5)): a share of a limit, 0..100, as
-  // the inline sf-progress-bar meter; the scale stays for levels.
-  {
-    id: 'meter',
-    label: typeLabel('variant-number-meter')
-  }, {
-    id: 'stepper',
-    label: typeLabel('variant-number-stepper')
-  }],
-  params: ['unit', 'min', 'max', 'step', 'precision', 'required', 'readonly']
-}, // date (PD-2, PD-3): min and max bound the day, an ISO date (the day of a
+  templates: [byDefault('number', 'input'), template('number', 'stepper', {
+    places: ['edit']
+  }), template('number', 'scale', {
+    places: ['view', 'compact'],
+    fits: 'bounds-0-100'
+  }), template('number', 'meter', {
+    places: ['view', 'compact'],
+    fits: 'bounds-0-100'
+  })],
+  conditions: NUMBER_CONDITIONS,
+  // The meter's thresholds low, high and optimum are the HTML meter's
+  // (msg-bc1702eb), read by that template alone.
+  params: ['decimals', 'unit', 'min', 'max', 'step', 'precision', 'low', 'high', 'optimum', 'required', 'readonly']
+}), // date (PD-2, PD-3): min and max bound the day, an ISO date (the day of a
 // date and time is read); format is the length the view and the cell print
 // the date in, Intl's dateStyle: short, medium (the default), long, full.
-{
+entry({
   type: 'date',
   label: typeLabel('type-date'),
-  variants: [],
+  templates: [byDefault('date', 'datepicker')],
+  conditions: DATE_CONDITIONS,
   params: ['min', 'max', 'format', 'required', 'readonly']
-}, // datetime and time: sf-input-date in mode datetime and time (1.4.0). min
+}), // datetime and time: sf-input-date in mode datetime and time (1.4.0). min
 // and max bound the value -- an ISO date or date and time for a datetime,
 // hh:mm for a time -- and step is the minute step, 1 to 60. A datetime's
 // format is its date's length, as a date's; the clock stays short.
-{
+entry({
   type: 'datetime',
   label: typeLabel('type-datetime'),
-  variants: [],
+  templates: [byDefault('datetime', 'datepicker')],
+  conditions: DATE_CONDITIONS,
   params: ['min', 'max', 'step', 'format', 'required', 'readonly']
-}, {
+}), // time (step 4): its own conditions, not a text search -- «Равно»,
+// «Между» (both ends in), «Раньше», «Позже», «Пусто», «Не пусто».
+entry({
   type: 'time',
   label: typeLabel('type-time'),
-  variants: [],
+  templates: [byDefault('time', 'timepicker')],
+  conditions: conditions(TIME_FILTER_OPERATORS, 'between'),
   params: ['min', 'max', 'step', 'required', 'readonly']
-}, {
+}), // boolean (C303 (4)): the switch is the default; the checkbox, and the
+// buttons «Да» | «Нет» where «not set» differs from «no», are templates
+// the administrator picks. trueText and falseText are the words of every
+// template's view, cell and buttons.
+entry({
   type: 'boolean',
   label: typeLabel('type-boolean'),
+  templates: [byDefault('boolean', 'switch', {
+    params: ['trueText', 'falseText']
+  }), template('boolean', 'checkbox', {
+    places: ['edit']
+  }), template('boolean', 'buttons', {
+    places: ['edit']
+  })],
   variants: [],
   params: ['trueText', 'falseText', 'required', 'readonly']
-}, // buttons (property-view port 1.16.0): one segmented button group, a
+}), // buttons (property-view port 1.16.0): one segmented button group, a
 // button per option, sized by `size` on the ladder ("1/2", "1", "2"; absent,
-// the field's); pressing the chosen one again clears a field that is not
-// required. The dropdown stays the default.
-{
+// the field's); it wraps when the buttons do not fit; pressing the chosen
+// one again clears a field that is not required. badge: the look of the
+// value's badge, tonal (default) or outline.
+entry({
   type: 'choice',
   label: typeLabel('type-choice'),
-  variants: [{
-    id: 'buttons',
-    label: typeLabel('variant-choice-buttons')
-  }],
-  params: ['options', 'badgeAppearance', 'size', 'required', 'readonly']
-}, {
+  templates: [byDefault('choice', 'dropdown', {
+    params: ['badge']
+  }), template('choice', 'buttons', {
+    places: ['edit'],
+    params: ['size']
+  })],
+  params: ['options', 'required', 'readonly']
+}), // choices: the dropdown is the default, and a list of 13 options or more
+// is a checklist under it; checklist asks for the checklist at any length;
+// badges draws the values as badges in their options' colours.
+entry({
   type: 'choices',
   label: typeLabel('type-choices'),
-  // badges: the view; checklist and select: the edit control (a list of
-  // 13 or more is a checklist unless select is asked for).
+  templates: [byDefault('choices', 'dropdown', {
+    params: ['badge'],
+    legacy: 'select'
+  }), template('choices', 'checklist', {
+    places: ['edit']
+  }), template('choices', 'badges', {
+    places: ['view', 'compact'],
+    params: ['badge']
+  })],
   variants: [{
     id: 'badges',
     label: typeLabel('variant-choices-badges')
@@ -5870,60 +8007,67 @@ const PROPERTY_TYPES = Object.freeze([{
     id: 'select',
     label: typeLabel('variant-choices-select')
   }],
-  params: ['options', 'badgeAppearance', 'required', 'readonly']
-}, {
+  params: ['options', 'required', 'readonly']
+}), entry({
   type: 'user',
   label: typeLabel('type-user'),
-  variants: [],
+  templates: [byDefault('user', 'reference_picker')],
   params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
-}, {
+}), entry({
   type: 'record',
   label: typeLabel('type-record'),
-  variants: [],
+  templates: [byDefault('record', 'reference_picker')],
   params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
-}, {
+}), entry({
   type: 'relation',
   label: typeLabel('type-relation'),
-  variants: [],
+  templates: [byDefault('relation', 'reference_picker')],
   params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
-}, // lookup: a value chosen from a reference list the host keeps -- a country,
+}), // lookup: a value chosen from a reference list the host keeps -- a country,
 // a status, a contract type (Larena, 2026-10-23). It is not a record: the
 // value is {value, label} and nothing opens from it. Small lists arrive as
 // `options` and are chosen from in place; anything larger is paged and
 // searched by the host, from the source the field names (`source`, which the
 // host reads and no renderer does).
-{
+entry({
   type: 'lookup',
   label: typeLabel('type-lookup'),
-  variants: [],
+  templates: [byDefault('lookup', 'source_picker')],
   params: ['options', 'multiple', 'placeholder', 'searchPlaceholder', 'required', 'readonly']
-}, {
+}), // file: image, image_card and image_list are the same stored file drawn as
+// a picture (image-card and image-list are their former ids until
+// 2027-01-01). required: read by the image template alone, whose control
+// is sf-input-image -- a required, empty one keeps its form from submitting.
+entry({
   type: 'file',
   label: typeLabel('type-file'),
-  variants: [{
-    id: 'image',
-    label: typeLabel('variant-file-image')
-  }, {
-    id: 'image-card',
-    label: typeLabel('variant-file-image-card')
-  }, {
-    id: 'image-list',
-    label: typeLabel('variant-file-image-list')
-  }],
-  // required: read by the image variant alone, whose control is
-  // sf-image-field -- a required, empty one keeps its form from submitting.
+  templates: [byDefault('file', 'upload'), template('file', 'image', {
+    places: ['view', 'compact', 'edit']
+  }), template('file', 'image_card', {
+    places: ['view', 'compact'],
+    legacy: 'image-card'
+  }), template('file', 'image_list', {
+    places: ['view', 'compact'],
+    legacy: 'image-list'
+  })],
   params: ['accept', 'multiple', 'formats', 'uploadText', 'uploadSupportingText', 'uploadHint', 'required', 'readonly']
-}, {
+}), entry({
   type: 'color',
   label: typeLabel('type-color'),
-  variants: [],
-  params: ['swatches', 'required', 'readonly']
-}, {
+  templates: [byDefault('color', 'color_picker', {
+    params: ['swatches']
+  })],
+  params: ['required', 'readonly']
+}), // include: code the host keeps in a file; `script` is the default (the
+// catalogue's decision), language and rows its template parameters.
+entry({
   type: 'include',
   label: typeLabel('type-include'),
-  variants: [],
-  params: ['language', 'required', 'readonly']
-}, // money and percent (owner decisions C291 (2) and C294, 2026-11-17): the
+  templates: [byDefault('include', 'script', {
+    params: ['language', 'rows']
+  })],
+  params: ['required', 'readonly']
+}), // money and percent (owner decisions C291 (2) and C294, 2026-11-17): the
 // Framework's in every mode -- view, cell, edit and filter. Every number
 // is a decimal string, never a float. money is {amount, currency}:
 // `currency` fixes an ISO 4217 code (a bare amount is then read in it, and
@@ -5933,44 +8077,82 @@ const PROPERTY_TYPES = Object.freeze([{
 // name; the digits after the point are at most the currency's minor units
 // (more is a field error, never rounded); min and max bound the amount.
 // percent is the percent ("12.5" is 12,5 %), bounded only by min and max;
-// its digits after the point are `precision`, else those of `step`.
-{
+// its digits after the point are `decimals` (`precision`, its former
+// name), else those of `step`.
+entry({
   type: 'money',
   label: typeLabel('type-money'),
   numeric: true,
-  variants: [],
+  templates: [byDefault('money', 'money_input')],
+  conditions: NUMBER_CONDITIONS,
   params: ['currency', 'currencies', 'currencyDisplay', 'min', 'max', 'placeholder', 'required', 'readonly']
-}, {
+}), // percent (step 5): the number's templates -- stepper, scale and meter,
+// the last two for a percent 0..100 (a growth of 150 % keeps the input).
+// It had no former variants.
+entry({
   type: 'percent',
   label: typeLabel('type-percent'),
   numeric: true,
+  templates: [byDefault('percent', 'input'), template('percent', 'stepper', {
+    places: ['edit']
+  }), template('percent', 'scale', {
+    places: ['view', 'compact'],
+    fits: 'bounds-0-100'
+  }), template('percent', 'meter', {
+    places: ['view', 'compact'],
+    fits: 'bounds-0-100'
+  })],
   variants: [],
-  params: ['min', 'max', 'step', 'precision', 'placeholder', 'required', 'readonly']
-}, // The types a component set draws (property-view port 1.18.0; Larena
+  conditions: NUMBER_CONDITIONS,
+  params: ['decimals', 'min', 'max', 'step', 'precision', 'placeholder', 'required', 'readonly']
+}), // The types a component set draws (property-view port 1.18.0; Larena
 // property types standard, notes of 2026-11-03): `set` names the set whose
 // components show and edit them -- the View set's sf-view-properties -- and
 // the Framework draws their table cells and filters (items by its number
 // of rows). `params` are the keys the type reads, in the set's renderers
-// and in these.
-{
+// and in these. complex is the former compound (the Bitrix name, C302
+// catalogue), read under that name until 2027-01-01.
+entry({
   type: 'items',
   label: typeLabel('type-items'),
   set: 'view',
-  variants: [],
+  templates: [byDefault('items', 'rows')],
   params: ['columns', 'minRows', 'maxRows', 'required', 'readonly']
-}, {
-  type: 'compound',
-  label: typeLabel('type-compound'),
+}), entry({
+  type: 'complex',
+  label: typeLabel('type-complex'),
   set: 'view',
-  variants: [],
+  templates: [byDefault('complex', 'parts')],
   params: ['parts', 'required', 'readonly']
-}, {
+}), entry({
   type: 'ru.requisites',
   label: typeLabel('type-ru.requisites'),
   set: 'view',
-  variants: [],
+  templates: [byDefault('ru.requisites', 'requisites')],
   params: ['parts', 'required', 'readonly']
-}]); // The modes a type has, read from the renderer maps: view and edit (a record),
+})]); // Former names, read until 2027-01-01 with one console warning each (C302
+// (3), C303 (2)). A type alias may carry the settings it stands for.
+
+const ALIASES_UNTIL = '2027-01-01';
+const TYPE_ALIASES = Object.freeze({
+  integer: Object.freeze({
+    type: 'number',
+    settings: Object.freeze({
+      decimals: 0
+    })
+  }),
+  compound: Object.freeze({
+    type: 'complex',
+    settings: Object.freeze({})
+  })
+}); // A string with one of these variants is that type.
+
+const STRING_VARIANT_TYPES = Object.freeze({
+  phone: 'phone',
+  password: 'password'
+}); // Former template ids per type: the variant names hosts sent.
+
+const TEMPLATE_ALIASES = Object.freeze(Object.fromEntries(PROPERTY_TYPES.map(one => [one.type, Object.fromEntries(one.templates.filter(item => item.legacy).map(item => [item.legacy, item.id]))]).filter(([, map]) => Object.keys(map).length))); // The modes a type has, read from the renderer maps: view and edit (a record),
 // cell (a table) and filter -- `own` when the set has a filter control for the
 // type, `text` when a filter falls back to a text search.
 
@@ -5985,6 +8167,421 @@ function modesOf(type, maps) {
 
 /***/ },
 
+/***/ "22825a8607d0"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   askedType: () => (/* binding */ askedType),
+/* harmony export */   resolveField: () => (/* binding */ resolveField),
+/* harmony export */   templateParam: () => (/* binding */ templateParam),
+/* harmony export */   typeEntry: () => (/* binding */ typeEntry)
+/* harmony export */ });
+/* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("fc654eb7fab0");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__);
+// A field's type and template as the renderers draw them (owner decisions C302
+// and C303, 2026-11-17). The field description names a type (`propertyType`,
+// or `type`, `dataType`) and one template (`template`) with its parameters
+// (`templateParams`); this reads the former names on the way and settles what
+// a renderer draws:
+//
+//   variant              read as `template` until 2027-01-01
+//   string + variant phone / password      the phone / password type
+//   integer              number with decimals 0
+//   compound             complex
+//   select, image-card, image-list         dropdown, image_card, image_list
+//
+// Each former name is said once per page in the console and noted in
+// SF.deprecations (sf-field-renderers). A template the type does not have, or
+// one that does not fit the field, draws as the type's default and is said
+// once per type and template: `template_fallback:<type>.<template>` (C302 (2);
+// the common property types standard §3). Larena decides which templates fit
+// a field; the Framework checks only what it can read off the field.
+//
+// Nothing here changes the field: the host keeps the object it passed, and
+// setFieldValue and getFieldValue are called with it.
+
+
+const SET_NAME = 'sf-field-renderers';
+const BY_TYPE = new Map(_registry_js__WEBPACK_IMPORTED_MODULE_0__.PROPERTY_TYPES.map(entry => [entry.type, entry])); // Every bundle carries its own copy of this module; the page hears each
+// warning once whichever copy draws (memory: bundles each carry their own
+// module copy), so the said keys live on one shared global.
+
+function saidOnce(key) {
+  const root = globalThis.SF = globalThis.SF || {};
+
+  if (!(root.__fieldTemplateNotes instanceof Set)) {
+    Object.defineProperty(root, '__fieldTemplateNotes', {
+      value: new Set(),
+      configurable: true
+    });
+  }
+
+  if (root.__fieldTemplateNotes.has(key)) return false;
+
+  root.__fieldTemplateNotes.add(key);
+
+  return true;
+}
+
+function sayFormer(key, from, to, message) {
+  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_1__.noteDeprecated)({
+    component: SET_NAME,
+    kind: 'value',
+    attribute: key,
+    from,
+    to,
+    since: '2026-11-17',
+    remove_after: _registry_js__WEBPACK_IMPORTED_MODULE_0__.ALIASES_UNTIL
+  });
+
+  if (saidOnce(`former|${key}|${from}`)) {
+    globalThis.console?.warn?.(`[SIMAI Framework] sf-field-renderers: ${message} until ${_registry_js__WEBPACK_IMPORTED_MODULE_0__.ALIASES_UNTIL}.`);
+  }
+}
+
+function sayFallback(type, asked, fallback, why) {
+  if (!saidOnce(`fallback|${type}|${asked}`)) return;
+  globalThis.console?.warn?.(`[SIMAI Framework] template_fallback:${type}.${asked} -- ${why}; drawn as ${type}.${fallback}.`);
+}
+/** The type a field asks for, as written: propertyType, type, dataType. */
+
+
+function askedType(field = {}) {
+  return field?.propertyType || field?.type || field?.dataType;
+}
+
+const text = value => value === null || value === undefined ? '' : String(value).trim(); // What a template needs of a field that the Framework can read (the rest of
+// a fit rule is Larena's): a scale or a meter draws a value 0..100, so it
+// fits a field that does not bound itself otherwise.
+
+
+const FITS = {
+  'bounds-0-100': field => {
+    const bound = value => value === null || value === undefined || value === '' ? null : Number(value);
+
+    const min = bound(field.min);
+    const max = bound(field.max);
+    return (min === null || min === 0) && (max === null || max === 100);
+  }
+};
+/**
+ * The type, the template and the template parameters a field is drawn with.
+ * `type` is the registered type (or the asked one when it is not registered:
+ * a filter control, a host's own); `template` is a template of that type,
+ * never empty for a registered type; `decimals` is a number's digits after
+ * the point when the field fixes them (an integer: 0); `former` names the
+ * former spelling it came in (for a choices `select`, which keeps the
+ * dropdown at any length).
+ */
+
+function resolveField(field = {}, {
+  quiet = false
+} = {}) {
+  field = field || {};
+  const asked = askedType(field);
+  let type = asked;
+  let decimals = null;
+  let former = '';
+  const variant = text(field.variant ?? field.filter?.variant);
+  let wanted = text(field.template);
+
+  if (_registry_js__WEBPACK_IMPORTED_MODULE_0__.TYPE_ALIASES[type]) {
+    const alias = _registry_js__WEBPACK_IMPORTED_MODULE_0__.TYPE_ALIASES[type];
+    if (!quiet) sayFormer('type', type, alias.type, `type "${type}" is read as ${alias.type}${type === 'integer' ? ' with decimals 0' : ''}; write propertyType "${alias.type}"${type === 'integer' ? ' and decimals: 0' : ''}`);
+    if (Number.isInteger(alias.settings.decimals)) decimals = alias.settings.decimals;
+    type = alias.type;
+  }
+
+  if (type === 'string' && _registry_js__WEBPACK_IMPORTED_MODULE_0__.STRING_VARIANT_TYPES[variant] && !wanted) {
+    if (!quiet) sayFormer('type', `string.${variant}`, _registry_js__WEBPACK_IMPORTED_MODULE_0__.STRING_VARIANT_TYPES[variant], `a string with variant "${variant}" is read as the ${_registry_js__WEBPACK_IMPORTED_MODULE_0__.STRING_VARIANT_TYPES[variant]} type; write propertyType "${_registry_js__WEBPACK_IMPORTED_MODULE_0__.STRING_VARIANT_TYPES[variant]}"`);
+    return {
+      type: _registry_js__WEBPACK_IMPORTED_MODULE_0__.STRING_VARIANT_TYPES[variant],
+      template: BY_TYPE.get(_registry_js__WEBPACK_IMPORTED_MODULE_0__.STRING_VARIANT_TYPES[variant]).templates[0].id,
+      params: paramsOf(field),
+      decimals: null,
+      former: variant,
+      asked
+    };
+  }
+
+  if (!wanted && variant) {
+    if (!quiet) sayFormer('field', 'variant', 'template', 'the field key "variant" is read as "template"; write template and templateParams');
+    wanted = variant;
+    former = variant;
+  }
+
+  const aliases = _registry_js__WEBPACK_IMPORTED_MODULE_0__.TEMPLATE_ALIASES[type];
+
+  if (wanted && aliases?.[wanted]) {
+    if (!quiet) sayFormer('template', `${type}.${wanted}`, `${type}.${aliases[wanted]}`, `template "${wanted}" of ${type} is read as "${aliases[wanted]}"`);
+    former = former || wanted;
+    wanted = aliases[wanted];
+  }
+
+  if (type === 'number' || type === 'percent') {
+    const own = Number.isInteger(field.decimals) ? field.decimals : Number.isInteger(field.precision) ? field.precision : null;
+    if (own !== null) decimals = own;
+  }
+
+  const entry = BY_TYPE.get(type);
+  if (!entry) return {
+    type,
+    template: wanted,
+    params: paramsOf(field),
+    decimals,
+    former,
+    asked
+  };
+  const fallback = entry.templates[0].id;
+  let template = fallback;
+
+  if (wanted) {
+    const known = entry.templates.find(one => one.id === wanted);
+
+    if (!known) {
+      if (!quiet) sayFallback(type, wanted, fallback, `${type} has no template "${wanted}" in SIMAI Framework`);
+    } else if (known.fits && FITS[known.fits] && !FITS[known.fits](field)) {
+      if (!quiet) sayFallback(type, wanted, fallback, `the field does not fit "${wanted}" (${known.fits})`);
+    } else {
+      template = known.id;
+    }
+  }
+
+  return {
+    type,
+    template,
+    params: paramsOf(field),
+    decimals,
+    former,
+    asked
+  };
+} // templateParams, with the former field keys a template parameter had:
+// badgeAppearance is badge; trueText, falseText, size, language, swatches
+// stood on the field itself.
+
+const FORMER_PARAMS = {
+  badge: 'badgeAppearance',
+  trueText: 'trueText',
+  falseText: 'falseText',
+  size: 'size',
+  language: 'language',
+  swatches: 'swatches',
+  rows: 'rows'
+};
+
+function paramsOf(field) {
+  const own = field.templateParams && typeof field.templateParams === 'object' && !Array.isArray(field.templateParams) ? field.templateParams : {};
+  return own;
+}
+/** A template parameter: templateParams first, then the field key it was before. */
+
+
+function templateParam(field, name) {
+  const own = paramsOf(field || {});
+  if (own[name] !== undefined && own[name] !== null) return own[name];
+  const former = FORMER_PARAMS[name];
+  return former ? field?.[former] : undefined;
+}
+/** The registered entry of a type (after its aliases), or null. */
+
+function typeEntry(type) {
+  const alias = _registry_js__WEBPACK_IMPORTED_MODULE_0__.TYPE_ALIASES[type];
+  return BY_TYPE.get(alias ? alias.type : type) ?? null;
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
+/***/ "f8901823ea4f"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   INN_HOLDERS: () => (/* binding */ INN_HOLDERS),
+/* harmony export */   LINK_TEXT_MOST: () => (/* binding */ LINK_TEXT_MOST),
+/* harmony export */   URL_MOST_BYTES: () => (/* binding */ URL_MOST_BYTES),
+/* harmony export */   completeWebAddress: () => (/* binding */ completeWebAddress),
+/* harmony export */   composeLink: () => (/* binding */ composeLink),
+/* harmony export */   innError: () => (/* binding */ innError),
+/* harmony export */   innHolder: () => (/* binding */ innHolder),
+/* harmony export */   isLinkAddress: () => (/* binding */ isLinkAddress),
+/* harmony export */   isWebAddress: () => (/* binding */ isWebAddress),
+/* harmony export */   readLink: () => (/* binding */ readLink),
+/* harmony export */   shortAddress: () => (/* binding */ shortAddress)
+/* harmony export */ });
+// The text types Larena stores and the Framework drew as plain strings until
+// step 3 of the type-template catalogue (owner decisions C302, C303,
+// 2026-11-17; ui-control research 2026-11-17-type-template-catalogue): a web
+// address (`url`), a link with its text (`link`) and a Russian taxpayer number
+// (`ru.inn`). Each checks its value; the renderers in index.js draw them.
+//
+// No DOM and no Lit: a host's server test reads the same rules.
+// url: an absolute http or https address, at most 2048 bytes, without a login
+// or a password in it (Larena url@1).
+const URL_MOST_BYTES = 2048;
+
+function byteLength(text) {
+  try {
+    return new TextEncoder().encode(text).length;
+  } catch {
+    return text.length;
+  }
+}
+
+function parsedUrl(text) {
+  try {
+    return new URL(text);
+  } catch {
+    return null;
+  }
+}
+/** Whether a text is a web address this type stores. */
+
+
+function isWebAddress(value) {
+  if (typeof value !== 'string') return false;
+  const text = value.trim();
+  if (!text || text !== value || /\s/u.test(text) || byteLength(text) > URL_MOST_BYTES) return false;
+  if (!/^https?:\/\//iu.test(text)) return false;
+  const url = parsedUrl(text);
+  return Boolean(url && (url.protocol === 'http:' || url.protocol === 'https:') && url.hostname && !url.username && !url.password);
+} // A bare domain is an address (dispatcher decision, field orders FO-5,
+// 2026-11-18): «simai.io» or «simai.io/docs» typed without a scheme is read as
+// https://simai.io/…, and the field shows and writes that. Only a text with no
+// scheme at all is completed -- «javascript:…», «mailto:…», «ftp://…» keep
+// theirs and are refused -- and only when it starts with a host name that has
+// a dot («localhost» or «/path» are not addresses of this type). A port after
+// the host («simai.io:8080») is not a scheme.
+
+const SCHEME = /^[a-z][a-z0-9+.-]*:(?!\d)/iu;
+const BARE_HOST = /^(?:[\p{L}\p{N}](?:[\p{L}\p{N}-]*[\p{L}\p{N}])?\.)+[\p{L}\p{N}-]{2,}(?::\d{1,5})?(?:[/?#]|$)/u;
+/**
+ * The address a typed text stands for: the text itself when it has a scheme
+ * or is not a bare domain, else https:// before it. Trimmed; isWebAddress()
+ * still decides whether the result is one.
+ */
+
+function completeWebAddress(value) {
+  if (typeof value !== 'string') return value;
+  const text = value.trim();
+  if (!text || SCHEME.test(text) || text.startsWith('/') || !BARE_HOST.test(text)) return text;
+  return `https://${text}`;
+}
+/**
+ * An address as a row shows it: the host and the start of the path, without
+ * the scheme, a trailing slash or «www.», cut with «…» past `most` characters.
+ */
+
+function shortAddress(value, most = 40) {
+  const url = isWebAddress(value) ? parsedUrl(value) : null;
+  if (!url) return typeof value === 'string' ? value : '';
+  const host = url.hostname.replace(/^www\./u, '');
+  const rest = `${url.pathname === '/' ? '' : url.pathname}${url.search}${url.hash}`;
+  const text = `${host}${url.port ? `:${url.port}` : ''}${rest}`;
+  return text.length > most ? `${text.slice(0, most - 1)}…` : text;
+} // link: {href, text?}. href is an http(s) address, a path from the site's
+// root («/about», never «//host») or an anchor («#prices»); text is at most
+// 255 characters (Larena link@1).
+
+const LINK_TEXT_MOST = 255;
+function isLinkAddress(value) {
+  if (typeof value !== 'string' || !value || value !== value.trim() || /\s/u.test(value)) return false;
+  if (value.startsWith('#')) return value.length > 1;
+  if (value.startsWith('/')) return !value.startsWith('//') && !value.startsWith('/\\');
+  return isWebAddress(value);
+}
+/** A stored link read: {href, text}, or null for none; a bare string is its href. */
+
+function readLink(value) {
+  if (value === null || value === undefined || value === '') return null;
+  if (typeof value === 'string') return {
+    href: value,
+    text: ''
+  };
+  if (typeof value !== 'object' || Array.isArray(value)) return null;
+  const href = typeof value.href === 'string' ? value.href : '';
+  const text = typeof value.text === 'string' ? value.text : '';
+  return href || text ? {
+    href,
+    text
+  } : null;
+}
+/**
+ * What an edit of the two parts writes: {value} -- {href, text} without an
+ * empty text, null when both are empty -- or {error}: linkNeedsAddress,
+ * linkInvalid, linkTextLong (the set's words).
+ */
+
+function composeLink(href, text) {
+  const address = String(href ?? '').trim();
+  const words = String(text ?? '').trim();
+  if (!address && !words) return {
+    value: null
+  };
+  if (!address) return {
+    error: 'linkNeedsAddress'
+  };
+  if (!isLinkAddress(address)) return {
+    error: 'linkInvalid'
+  };
+  if ([...words].length > LINK_TEXT_MOST) return {
+    error: 'linkTextLong'
+  };
+  return {
+    value: words ? {
+      href: address,
+      text: words
+    } : {
+      href: address
+    }
+  };
+} // ru.inn: 10 digits for an organisation, 12 for a person, with the check
+// digits of the Federal Tax Service. `holder` -- any (default),
+// organization, person -- is fixed when the field is created.
+
+const INN_WEIGHTS_10 = [2, 4, 10, 3, 5, 9, 4, 6, 8];
+const INN_WEIGHTS_11 = [7, 2, 4, 10, 3, 5, 9, 4, 6, 8];
+const INN_WEIGHTS_12 = [3, 7, 2, 4, 10, 3, 5, 9, 4, 6, 8];
+const INN_HOLDERS = Object.freeze(['any', 'organization', 'person']);
+
+function checkDigit(digits, weights) {
+  const sum = weights.reduce((total, weight, index) => total + weight * Number(digits[index]), 0);
+  return sum % 11 % 10;
+}
+
+function innHolder(field = {}) {
+  const asked = String(field?.holder ?? '').trim();
+  return INN_HOLDERS.includes(asked) ? asked : 'any';
+}
+/**
+ * Why a text is not an INN of the field, or null when it is one (an empty
+ * text is null too: no value). The reasons are the set's words: innDigits,
+ * innOrganization, innPerson, innChecksum.
+ */
+
+function innError(value, holder = 'any') {
+  const text = String(value ?? '').trim();
+  if (!text) return null;
+
+  if (!/^\d+$/u.test(text) || text.length !== 10 && text.length !== 12) {
+    return holder === 'organization' ? 'innOrganization' : holder === 'person' ? 'innPerson' : 'innDigits';
+  }
+
+  if (holder === 'organization' && text.length !== 10) return 'innOrganization';
+  if (holder === 'person' && text.length !== 12) return 'innPerson';
+  if (text.length === 10) return checkDigit(text, INN_WEIGHTS_10) === Number(text[9]) ? null : 'innChecksum';
+  return checkDigit(text, INN_WEIGHTS_11) === Number(text[10]) && checkDigit(text, INN_WEIGHTS_12) === Number(text[11]) ? null : 'innChecksum';
+}
+
+/***/ },
+
 /***/ "b30ec5bc0edb"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -5993,7 +8590,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   OPTION_BADGE_HUES: () => (/* binding */ OPTION_BADGE_HUES),
 /* harmony export */   OPTION_BADGE_PALETTE: () => (/* binding */ OPTION_BADGE_PALETTE),
 /* harmony export */   nearestPaletteHue: () => (/* binding */ nearestPaletteHue),
-/* harmony export */   optionBadgeProps: () => (/* binding */ optionBadgeProps)
+/* harmony export */   optionBadgeProps: () => (/* binding */ optionBadgeProps),
+/* harmony export */   optionDotColor: () => (/* binding */ optionDotColor)
 /* harmony export */ });
 /* harmony import */ var _component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a2a9d3c2841e");
 
@@ -6110,6 +8708,24 @@ function optionBadgeProps(option = {}) {
     scheme: "neutral",
     rootStyle: ""
   };
+} // The colour of an option drawn as a circle (FO4-1, FO4-2: option-look dot):
+// a scheme its role colour, a hue of the static palette its tone 50, a hex or
+// a CSS colour itself (the circle is a sample of the colour, not text on it);
+// neutral the outline colour. '' when nothing is given.
+
+const SCHEME_INK = Object.freeze({
+  neutral: "--sf-outline",
+  "on-surface": "--sf-on-surface-variant"
+});
+function optionDotColor(option = {}) {
+  const raw = option?.color ?? option?.scheme ?? option?.swatch;
+  const color = typeof raw === "string" ? raw.trim() : "";
+  if (!color) return "";
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return `var(${SCHEME_INK[scheme] ?? `--sf-${scheme}`})`;
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return `var(--sf-${name}-50)`;
+  return color;
 }
 
 /***/ },
@@ -7265,7 +9881,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "f050502c25f8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","condition":"Condition","numberOperator_eq":"Equals","numberOperator_neq":"Not equal","numberOperator_gt":"Greater than","numberOperator_gte":"At least","numberOperator_lt":"Less than","numberOperator_lte":"At most","numberOperator_between":"Between","numberOperator_empty":"Empty","numberOperator_not-empty":"Not empty","filterNumber":"Number","filterAmount":"Amount","filterPercent":"Percent","dateCondition":"Condition","dateByDayIn":"Compared by day, time zone {zone}","dateGroup_date":"Date","dateGroup_period":"Period","dateGroup_filled":"Filled","dateGroup_range":"The record\'s period","dateCondition_eq":"Exact date","dateCondition_between":"Between","dateCondition_lt":"Before","dateCondition_gt":"After","dateCondition_gte":"On or after","dateCondition_lte":"On or before","dateCondition_lastDays":"Last N days","dateCondition_nextDays":"Next N days","dateCondition_empty":"Empty","dateCondition_notEmpty":"Not empty","dateCondition_overlaps":"Runs in","dateCondition_within":"Entirely in","dateCondition_starts":"Starts in","dateCondition_ends":"Ends in","dateCondition_contains":"Runs on the day","datePeriod_today":"Today","datePeriod_yesterday":"Yesterday","datePeriod_thisWeek":"This week","datePeriod_lastWeek":"Last week","datePeriod_last7Days":"Last 7 days","datePeriod_thisMonth":"This month","datePeriod_lastMonth":"Last month","datePeriod_thisYear":"This year","datePeriod_tomorrow":"Tomorrow","datePeriod_nextWeek":"Next week","datePeriod_nextMonth":"Next month","datePeriodIn_today":"today","datePeriodIn_yesterday":"yesterday","datePeriodIn_thisWeek":"this week","datePeriodIn_lastWeek":"last week","datePeriodIn_last7Days":"in the last 7 days","datePeriodIn_thisMonth":"this month","datePeriodIn_lastMonth":"last month","datePeriodIn_thisYear":"this year","datePeriodIn_tomorrow":"tomorrow","datePeriodIn_nextWeek":"next week","datePeriodIn_nextMonth":"next month","dateChip":"{field}: {condition}","dateChip_lt":"before {date}","dateChip_gt":"after {date}","dateChip_gte":"on or after {date}","dateChip_lte":"on or before {date}","dateChip_lastDays":{"one":"in the last day","other":"in the last {n} days"},"dateChip_nextDays":{"one":"in the next day","other":"in the next {n} days"},"dateChip_empty":"empty","dateChip_notEmpty":"not empty","dateChip_overlaps":"runs {when}","dateChip_within":"entirely {when}","dateChip_withinDays":"entirely within {when}","dateChip_starts":"starts {when}","dateChip_ends":"ends {when}","dateChip_contains":"runs on {date}","dateCountLast":"Days, today included","dateCountNext":"Days ahead, today included","dateCountUnit":"days","dateValueDate":"Date","dateValueDay":"Day","dateValuePeriod":"Period","dateWhen":"When","dateOwnDays":"Own dates","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","phoneExtension":"ext.","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":{"one":"At most {n} digit after the point","other":"At most {n} digits after the point"},"fractionNone":"A whole amount, no digits after the point","boundBetween":"From {min} to {max}","boundAtLeast":"At least {min}","boundAtMost":"At most {max}","currency":"Currency","chooseCurrency":"Choose a currency","rowCount":{"one":"{n} row","other":"{n} rows"},"type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-meter":"Share of a limit","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","condition":"Condition","numberOperator_eq":"Equals","numberOperator_neq":"Not equal","numberOperator_gt":"Greater than","numberOperator_gte":"At least","numberOperator_lt":"Less than","numberOperator_lte":"At most","numberOperator_between":"Between","numberOperator_empty":"Empty","numberOperator_not-empty":"Not empty","filterNumber":"Number","filterAmount":"Amount","filterPercent":"Percent","dateCondition":"Condition","dateByDayIn":"Compared by day, time zone {zone}","dateGroup_date":"Date","dateGroup_period":"Period","dateGroup_filled":"Filled","dateGroup_range":"The record\'s period","dateCondition_eq":"Exact date","dateCondition_between":"Between","dateCondition_lt":"Before","dateCondition_gt":"After","dateCondition_gte":"On or after","dateCondition_lte":"On or before","dateCondition_lastDays":"Last N days","dateCondition_nextDays":"Next N days","dateCondition_empty":"Empty","dateCondition_notEmpty":"Not empty","dateCondition_overlaps":"Runs in","dateCondition_within":"Entirely in","dateCondition_starts":"Starts in","dateCondition_ends":"Ends in","dateCondition_contains":"Runs on the day","datePeriod_today":"Today","datePeriod_yesterday":"Yesterday","datePeriod_thisWeek":"This week","datePeriod_lastWeek":"Last week","datePeriod_last7Days":"Last 7 days","datePeriod_thisMonth":"This month","datePeriod_lastMonth":"Last month","datePeriod_thisYear":"This year","datePeriod_tomorrow":"Tomorrow","datePeriod_nextWeek":"Next week","datePeriod_nextMonth":"Next month","datePeriodIn_today":"today","datePeriodIn_yesterday":"yesterday","datePeriodIn_thisWeek":"this week","datePeriodIn_lastWeek":"last week","datePeriodIn_last7Days":"in the last 7 days","datePeriodIn_thisMonth":"this month","datePeriodIn_lastMonth":"last month","datePeriodIn_thisYear":"this year","datePeriodIn_tomorrow":"tomorrow","datePeriodIn_nextWeek":"next week","datePeriodIn_nextMonth":"next month","dateChip":"{field}: {condition}","dateChip_lt":"before {date}","dateChip_gt":"after {date}","dateChip_gte":"on or after {date}","dateChip_lte":"on or before {date}","dateChip_lastDays":{"one":"in the last day","other":"in the last {n} days"},"dateChip_nextDays":{"one":"in the next day","other":"in the next {n} days"},"dateChip_empty":"empty","dateChip_notEmpty":"not empty","dateChip_overlaps":"runs {when}","dateChip_within":"entirely {when}","dateChip_withinDays":"entirely within {when}","dateChip_starts":"starts {when}","dateChip_ends":"ends {when}","dateChip_contains":"runs on {date}","dateCountLast":"Days, today included","dateCountNext":"Days ahead, today included","dateCountUnit":"days","dateValueDate":"Date","dateValueDay":"Day","dateValuePeriod":"Period","dateWhen":"When","dateOwnDays":"Own dates","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","phoneExtension":"ext.","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":{"one":"At most {n} digit after the point","other":"At most {n} digits after the point"},"fractionNone":"A whole amount, no digits after the point","boundBetween":"From {min} to {max}","boundAtLeast":"At least {min}","boundAtMost":"At most {max}","currency":"Currency","chooseCurrency":"Choose a currency","rowCount":{"one":"{n} row","other":"{n} rows"},"filterApply":"Apply","filterReset":"Reset","operatorAny":"Any date","operatorBetween":"Range","operatorContains":"Contains","operatorEq":"Exactly","operatorGt":"Greater than","operatorGte":"Greater or equal","operatorIn":"In the list","operatorLt":"Less than","operatorLte":"Less or equal","operatorMonth":"This month","operatorStartsWith":"Starts with","operatorToday":"Today","operatorWeek":"This week","type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-meter":"Share of a limit","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)","type-phone":"Phone","type-password":"Password","type-complex":"Compound","wholeNumber":"A whole number, no digits after the point","template-string-input":"Input","template-phone-phone_input":"Phone with country code","template-password-input":"Hidden input","template-text-textarea":"Multiline input","template-html-editor":"Editor","template-number-input":"Number input","template-number-stepper":"«−» and «+» buttons","template-number-scale":"Level scale","template-number-meter":"Share of a limit","template-date-datepicker":"Date with a calendar","template-datetime-datepicker":"Date and time","template-time-timepicker":"Time","template-boolean-switch":"Switch","template-boolean-checkbox":"Checkbox","template-boolean-buttons":"«Yes / No» buttons","template-choice-dropdown":"Dropdown","template-choice-buttons":"Buttons","template-choices-dropdown":"Dropdown","template-choices-checklist":"Checklist","template-choices-badges":"Badges","template-user-reference_picker":"User picker","template-record-reference_picker":"Record picker","template-relation-reference_picker":"Record picker","template-lookup-source_picker":"Reference list picker","template-file-upload":"File upload","template-file-image":"Image","template-file-image_card":"Image card","template-file-image_list":"Image list","template-color-color_picker":"Colour picker","template-include-script":"Code","template-money-money_input":"Amount with currency","template-percent-input":"Number input","template-items-rows":"Rows table","template-complex-parts":"Parts","template-ru.requisites-requisites":"Requisites block","type-url":"Web address","type-link":"Link with text","type-ru.inn":"INN (Russian taxpayer number)","template-url-input":"Address input","template-link-link":"Link","template-ru.inn-input":"Digits input","template-percent-stepper":"«−» and «+» buttons","template-percent-scale":"Level scale","template-percent-meter":"Share of a limit","urlInvalid":"Enter a full address: https://…","linkAddress":"Address","linkText":"Link text","linkNeedsAddress":"Enter the address","linkInvalid":"An address is https://…, a site path /… or #anchor","linkTextLong":"No more than 255 characters","innDigits":"An INN is 10 digits (an organisation) or 12 (a person)","innOrganization":"An organisation’s INN is 10 digits","innPerson":"A person’s INN is 12 digits","innChecksum":"The INN check digit does not match","dateGroup_time":"Time","timeCondition_eq":"Equals","timeValue":"Time","operatorAnyOf":"any of","operatorAllOf":"all of","operatorNoneOf":"none of","operatorEmpty":"not set","operatorFilled":"set","filterNotSet":"Not set","filterCondition":"Condition","operatorContainsWord":"contains","operatorStartsWithWord":"starts with","operatorEqualWord":"equals","operatorMoreWord":"more than","operatorLessWord":"less than","operatorFromTo":"from – to","operatorMoreOrEqualWord":"at least","operatorLessOrEqualWord":"at most"}}');
 
 /***/ }
 

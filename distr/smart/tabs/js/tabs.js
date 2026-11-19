@@ -269,7 +269,14 @@ __webpack_require__.r(__webpack_exports__);
 //   Smart component holding it: a row menu of a table of size 1 is size 1);
 // - returnTo: where the focus goes when the menu closes (the row it acted
 //   on); left out, the menu gives the focus back to where it was, or to the
-//   anchor.
+//   anchor;
+// - align: 'start' (the default) lines the menu's start edge up with the
+//   anchor's, 'end' its end edge -- for a control at the end of a toolbar,
+//   whose menu would otherwise run past it towards the window's edge (view
+//   round 1, table group). Start and end follow the page's direction (in a
+//   right-to-left page 'end' is the left edge), and a menu that does not fit
+//   still flips to the other side and is shifted inside the window. At a
+//   point, 'end' puts the menu's end corner at the point.
 //
 // The menu is fetched by the Loader the first time (SF.Loader.ensure), one on
 // the page -- on the body, or in the open modal dialog the anchor is in, since
@@ -283,6 +290,7 @@ __webpack_require__.r(__webpack_exports__);
 // calls the published one.
 
 const SHARED = 'data-sf-menu-shared';
+const ALIGNS = new Set(['start', 'end']);
 
 function installMenuOpen() {
   let pending = null;
@@ -368,7 +376,9 @@ function installMenuOpen() {
       label = '',
       size = '',
       returnTo = null
-    } = options || {};
+    } = options || {}; // Logical, so a right-to-left page mirrors it; anything else is start.
+
+    const align = ALIGNS.has(options?.align) ? options.align : 'start';
     const atPoint = !(anchor instanceof Element);
     if (atPoint && !(Number.isFinite(Number(x)) && Number.isFinite(Number(y)))) return null;
     const doc = globalThis.document;
@@ -413,14 +423,15 @@ function installMenuOpen() {
       shown = pending;
       const mine = pending;
       const opening = atPoint ? typeof menu.openAt === 'function' ? menu.openAt(Number(x), Number(y), {
-        target: returnTo ?? undefined
+        target: returnTo ?? undefined,
+        align
       }) : menu.openFor(pointAnchor(Number(x), Number(y), returnTo), {
         side: 'block-end',
-        align: 'start',
+        align,
         focus: 'first'
       }) : menu.openFor(anchor, {
         side: 'block-end',
-        align: 'start',
+        align,
         focus: 'first'
       });
       Promise.resolve(opening).then(answer => {
@@ -1368,6 +1379,15 @@ function panelHasContent(panel) {
   }
 
   return false;
+} // A box's content width: its border box less its padding and border.
+
+
+function contentWidth(box) {
+  const width = box.getBoundingClientRect().width;
+  if (!width) return 0;
+  const style = globalThis.getComputedStyle?.(box);
+  const sides = ['paddingInlineStart', 'paddingInlineEnd', 'borderInlineStartWidth', 'borderInlineEndWidth'].reduce((sum, side) => sum + (Number.parseFloat(style?.[side]) || 0), 0);
+  return Math.max(0, width - sides);
 }
 
 function tabIndexOf(element) {
@@ -1809,6 +1829,7 @@ class SfTabs extends TabsElement {
     this._narrowMedia = null;
     this._placeObserver?.disconnect();
     this._watchedPlace = null;
+    this._watchedRoot = null;
 
     if (this._addressListener) {
       globalThis.removeEventListener?.('hashchange', this._addressListener);
@@ -2189,19 +2210,45 @@ class SfTabs extends TabsElement {
 
   set selected(value) {
     if (value === null || value === undefined || value === '') this.removeAttribute('selected');else this.setAttribute('selected', String(value));
-  } // The width the vertical look folds on (C181 (2)): the tabs' own block,
-  // which is as wide as their place in either look (sf-tabs itself is
-  // display: contents); before the first drawing, the parent's content box.
+  } // The width the vertical look folds on (C181 (2)): the box that holds the
+  // tabs and their content (VP-26, C96 (5), C289 (5)); before the first
+  // drawing, the parent's content box.
 
 
   placeWidth() {
-    const root = this.querySelector(':scope > .sf-tabs');
-    if (root) return root.getBoundingClientRect().width;
+    const place = this.placeBox();
+    if (place) return contentWidth(place);
     const parent = this.parentElement;
     if (!parent) return 0;
-    const style = globalThis.getComputedStyle?.(parent);
-    const inset = (Number.parseFloat(style?.paddingInlineStart) || 0) + (Number.parseFloat(style?.paddingInlineEnd) || 0);
-    return Math.max(0, parent.getBoundingClientRect().width - inset);
+    return contentWidth(parent);
+  } // With the panels inside, the tabs' own block holds the tabs and the
+  // content (sf-tabs itself is display: contents). A tab list alone -- the
+  // host draws the content beside it, as sf-view-properties' section column
+  // does -- stands in a column of its own, always below the step: its own
+  // block folded the column into the line with «Ещё (n)» even full screen at
+  // 1440 (VP-26). Its place is then the first box around it wider than that
+  // column: the wrapper of the column and the content. A column's own
+  // wrappers (as wide as it) are passed over; with none wider, its own block.
+
+
+  placeBox() {
+    const root = this.querySelector(':scope > .sf-tabs');
+    if (!root) return null;
+    if (this.holdsContent()) return root;
+    const own = root.getBoundingClientRect().width;
+    const top = this.ownerDocument?.documentElement;
+
+    for (let box = this.parentElement; box && box !== top; box = box.parentElement) {
+      if (contentWidth(box) > own + 0.5) return box;
+    }
+
+    return root;
+  } // The content stands inside the tabs: a panel given (a page panel, a slot,
+  // a part or a text) or one the page filled.
+
+
+  holdsContent() {
+    return this.computedItems.some(item => this.pagePanelFor(item, item.index) || this.hasSlotContent?.(item.slotName) || item.panel?.component || typeof item.panel?.text !== 'undefined') || this.drawnPanels().some(panelHasContent);
   }
 
   readNarrow() {
@@ -2226,14 +2273,20 @@ class SfTabs extends TabsElement {
 
 
   watchPlace() {
-    if (!this._placeObserver) return;
-    const place = this.getAttribute('type') === 'vertical' ? this.querySelector(':scope > .sf-tabs') || this.parentElement : null;
-    if (place === this._watchedPlace) return;
+    if (!this._placeObserver) return; // The tabs' own block and the box they fold by (placeBox): a column that
+    // changes width can change which box that is.
+
+    const vertical = this.getAttribute('type') === 'vertical';
+    const root = vertical ? this.querySelector(':scope > .sf-tabs') : null;
+    const place = vertical ? this.placeBox() || this.parentElement : null;
+    if (place === this._watchedPlace && root === this._watchedRoot) return;
 
     this._placeObserver.disconnect();
 
     this._watchedPlace = place;
+    this._watchedRoot = root;
     if (place) this._placeObserver.observe(place);
+    if (root && root !== place) this._placeObserver.observe(root);
   } // The look drawn (C96 item 1): line unless pills or vertical; vertical on a
   // narrow place is the line with «Ещё» (item 5). type="full" is the line with fit
   // always; no type and the scheme fills draw the line.
@@ -2375,7 +2428,12 @@ class SfTabs extends TabsElement {
 
   syncPanelFocus() {
     const links = this.links;
-    const panels = this.drawnPanels();
+    const panels = this.drawnPanels(); // A panel row drawn hidden because no panel had content (the template's
+    // data-sf-panels-empty) shows while a drawn panel holds something the
+    // host wrote into it, and hides again when it is empty.
+
+    const row = this.querySelector?.(':scope > .sf-tabs > .sf-tabs-main-container[data-sf-panels-empty]');
+    if (row && !links) row.hidden = !panels.some(panelHasContent);
 
     for (const panel of panels) {
       if (this._authoredPanelFocus.has(panel)) continue;
@@ -3455,6 +3513,12 @@ function renderLinkRow(context) {
           ${renderTabs(context)}
         </nav>`;
 } // A strip of links draws its panel row only when a panel has content.
+// Tabs keep their panels (each tab's aria-controls names one) in a hidden
+// row marked data-sf-panels-empty when none has, so a tab row used
+// as a switcher (a board's lanes on a phone, a settings head) takes no room
+// under it: the row's padding was 24 px of nothing (view round 2 board,
+// 2026-11-18). Words or parts a host writes into a drawn panel later show
+// the row again (index.js syncPanelFocus).
 
 
 function hasPanelContent(context) {
@@ -3466,6 +3530,7 @@ function renderTabsTemplate(context) {
   // (vertical); a custom template still reads context.type.
   const look = context.look ?? context.type;
   const vertical = look === 'vertical';
+  const panels = hasPanelContent(context);
   const sizeClass = `sf-tabs--size-${String(context.size || '1').replace('/', '-')}`;
   const rootClasses = joinClasses('sf-tabs', sizeClass, context.overflow && context.overflow !== 'scroll' ? `sf-tabs--overflow-${context.overflow}` : '', look ? `sf-tabs--${look}` : '', vertical ? 'sf-tabs--vertical flex' : 'flex flex-col', context.links ? 'sf-tabs--links' : '', context.sticky ? 'sf-tabs--sticky' : '', context.rootClass);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -3493,7 +3558,7 @@ function renderTabsTemplate(context) {
                                  aria-haspopup="dialog"></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       </div>
 
-      ${context.links && !hasPanelContent(context) ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-tabs-main-container">
+      ${context.links && !hasPanelContent(context) ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-tabs-main-container" ?hidden=${!panels} ?data-sf-panels-empty=${!panels}>
         ${context.items.map(item => renderPanel(item, context))}
       </div>`}
     </div>
@@ -3585,7 +3650,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs 
 /***/ "84d032c55810"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.4.3","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.4.6","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

@@ -64,6 +64,43 @@ const PACKS = (STORE.packs ??= {
 });
 // The languages built into the bundles: English, and in a rollback build Russian
 // too (src/core/lang/built-in.json, C282).
+// Which registered words came from a Framework pack and nothing has said over
+// since: name -> code -> Set of keys. A Framework pack is the Framework's own
+// words in a file, so for a component that names itself by a dated alias of
+// its record's tag (sf-message-log, the heir of sf-list-feed, both under
+// sf-list-feed's record) they are the successor's words, not its own: the
+// words that component ships win over them (ui-control evidence
+// 2026-11-18-pro-over-1ed6: «Лента» instead of «Переписка» once the ru pack
+// was fetched). A word a product registers, or a product pack, is still over
+// everything. Kept beside the words, not instead of them, so a copy of this
+// module from before it reads the registry as it did. A STORE made by an older
+// bundle has none yet: added here.
+const FLOOR = (STORE.floor ??= (
+  new Map()
+));
+const floorOf = (name, code) => {
+  if (!FLOOR.has(name)) FLOOR.set(name, new Map());
+  const byLanguage = FLOOR.get(name);
+  if (!byLanguage.has(code)) byLanguage.set(code, new Set());
+  return byLanguage.get(code);
+};
+const notFloor = (name, code, keys) => {
+  const marked = FLOOR.get(name)?.get(code);
+  if (!marked) return;
+  for (const key of keys) marked.delete(key);
+};
+
+// Whether the word registered for `key` stands for the successor of the
+// component asking, so that its own shipped word is said instead: the asker
+// names a dated alias (its tag is not its record's), and the registered word
+// is a Framework pack's that no product has said over.
+function successorWord(owner, candidate, key) {
+  if (!owner) return false;
+  const name = normalise(owner);
+  const record = canonicalTag(name);
+  return record !== name && Boolean(FLOOR.get(record)?.get(candidate)?.has(key));
+}
+
 const isBuiltIn = (code) => code === 'en' || (BUILT_IN_LANGUAGES?.built_in ?? []).includes(code);
 
 /**
@@ -75,10 +112,25 @@ const isBuiltIn = (code) => code === 'en' || (BUILT_IN_LANGUAGES?.built_in ?? []
 function needPack(code, component) {
   const wanted = normalise(code);
   const base = wanted.split('-')[0];
-  if (!base || isBuiltIn(base) || typeof PACKS.request !== 'function') return;
+  if (!base || isBuiltIn(base)) return;
   const name = component ? canonicalTag(component) : undefined;
+  if (typeof PACKS.request !== 'function') {
+    // Core has not run yet: a Smart bundle placed before core.js (a Docara
+    // page and its example frames load core last) draws before anyone can
+    // fetch. The ask is kept and core makes it when it starts
+    // (core/js/language-packs.js), so the family's part still comes.
+    const early = (PACKS.early ??= new Map());
+    const named = aliasOf(wanted);
+    for (const one of new Set([base, wanted, ...(named ? [named] : [])])) {
+      if (!early.has(one)) early.set(one, new Set());
+      early.get(one).add(name ?? '');
+    }
+    return;
+  }
   PACKS.request(base, name);
   if (wanted !== base) PACKS.request(wanted, name);
+  const named = aliasOf(wanted);
+  if (named && named !== wanted && named !== base) PACKS.request(named, name);
 }
 
 // Words are kept under a component's current tag: a product that registered
@@ -91,12 +143,35 @@ function normalise(value) {
   return String(value ?? '').trim().toLowerCase().replace('_', '-');
 }
 
-/** The languages to try, most specific first, English last. */
+// The pack a page language takes. Two tables, both from the localization
+// registry (C278) and both on the shared store, so a bundle carries neither:
+// core/lang/index.json `aliases` (the shipped packs: zh-cn, zh-sg and zh take
+// zh-hans, pt takes pt-br; PACKS.aliases, set by core) and the registry's
+// second names of every language (STORE.aliases, core/js/language-packs.js).
+// A word registered for the alias itself still comes first; any other code
+// is its own.
+function packOf(code) {
+  const one = PACKS?.aliases?.[code] ?? STORE?.aliases?.[code];
+  return typeof one === 'string' && one ? one : code;
+}
+
+function aliasOf(code) {
+  const named = packOf(code);
+  return named !== code ? named : null;
+}
+
+/**
+ * The languages to try, most specific first, English last: the language, the
+ * pack it is an alias of, the language without its region and that one's
+ * pack. zh-CN: zh-cn, zh-hans, zh, en; zh-TW: zh-tw, zh, zh-hans, en; pt-PT:
+ * pt-pt, pt, pt-br, en. Until 2026-11-18 a zh-CN or pt page found no pack and
+ * spoke English.
+ */
 const chain = (language) => {
   const wanted = normalise(language);
   const base = wanted.split('-')[0];
   const order = [];
-  for (const candidate of [wanted, base, 'en']) {
+  for (const candidate of [wanted, packOf(wanted), base, packOf(base), 'en']) {
     if (candidate && !order.includes(candidate)) order.push(candidate);
   }
   return order;
@@ -265,7 +340,8 @@ export function localeText(dictionary, key, locale, component) {
   const order = chain(locale || 'en');
   needPack(order[0], component);
   for (const candidate of order) {
-    const added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
+    let added = component ? wordsOf(component)?.get(candidate)?.[key] : undefined;
+    if (added !== undefined && dictionary?.[candidate]?.[key] !== undefined && successorWord(component, candidate, key)) added = undefined;
     if (added !== undefined) {
       if (candidate === 'en' && added !== '') warnFallback(order, component, key);
       return added;
@@ -287,9 +363,14 @@ export function localeText(dictionary, key, locale, component) {
 // and the language files' coverage is scripts/language-coverage.mjs. Kept on
 // the shared global, because every bundle carries this module.
 function warnFallback(order, owner, key) {
-  const wanted = String(order[0] || '').split('-')[0];
-  // While its pack is on its way the English is a moment, not a gap.
-  if (!wanted || wanted === 'en' || PACKS.pending.has(wanted)) return;
+  const wanted = packOf(String(order[0] || '').split('-')[0]);
+  // While its pack is on its way the English is a moment, not a gap (the
+  // registry name's pack too: zh-hans for a zh-CN page). Before core runs
+  // nothing can be on its way yet: the word is asked again when the pack core
+  // fetches arrives, and only a word still missing then is one (ui-view
+  // example frames reported sf-pagination "of-pages", which the ru pack holds,
+  // on loads where the bundle ran before core).
+  if (!wanted || wanted === 'en' || typeof PACKS.request !== 'function' || order.some((code) => code !== 'en' && PACKS.pending.has(code))) return;
   const root = globalThis;
   if (!(root.__sfMissingWords instanceof Map)) root.__sfMissingWords = new Map();
   const seen = root.__sfMissingWords;
@@ -355,6 +436,7 @@ export function pageWord(dictionary, key, node, {component, source = '', count, 
   for (const candidate of order) {
     const registered = owner ? wordsOf(owner)?.get(candidate) : undefined;
     let added = registered?.[key];
+    if (added !== undefined && dictionary?.[candidate]?.[key] !== undefined && successorWord(owner, candidate, key)) added = undefined;
     if (added === undefined && registered) {
       const old = formerKeys.find((name) => registered[name] !== undefined && registered[name] !== null);
       if (old !== undefined) {
@@ -449,8 +531,13 @@ export const language = {
     if (!name || !code) throw new TypeError('a component and a language are required');
     if (!REGISTERED.has(name)) REGISTERED.set(name, new Map());
     const byLanguage = REGISTERED.get(name);
-    if (words === null) byLanguage.delete(code);
-    else byLanguage.set(code, { ...(byLanguage.get(code) ?? {}), ...words });
+    if (words === null) {
+      byLanguage.delete(code);
+      FLOOR.get(name)?.delete(code);
+    } else {
+      byLanguage.set(code, { ...(byLanguage.get(code) ?? {}), ...words });
+      notFloor(name, code, Object.keys(words ?? {}));
+    }
     announce();
     return this;
   },
@@ -478,6 +565,12 @@ export const language = {
       const byLanguage = REGISTERED.get(name);
       const now = byLanguage.get(code) ?? {};
       byLanguage.set(code, under ? { ...byKey, ...now } : { ...now, ...byKey });
+      if (under) {
+        const marked = floorOf(name, code);
+        for (const key of Object.keys(byKey)) if (!Object.prototype.hasOwnProperty.call(now, key) || marked.has(key)) marked.add(key);
+      } else {
+        notFloor(name, code, Object.keys(byKey));
+      }
       words += Object.keys(byKey).length;
     }
     const info = { lang: code, delivery: pack.delivery ?? 'framework', status: pack.status ?? null, coverage: pack.coverage ?? null, words, url };
@@ -528,7 +621,7 @@ export const language = {
   missing(value) {
     const seen = globalThis.__sfMissingWords instanceof Map ? globalThis.__sfMissingWords : new Map();
     if (value === undefined) return Object.fromEntries([...seen].map(([code, words]) => [code, [...words]]));
-    return [...(seen.get(normalise(value).split('-')[0]) ?? [])];
+    return [...(seen.get(packOf(normalise(value).split('-')[0])) ?? [])];
   },
 
   /** Every component something has been registered for. */
@@ -549,7 +642,10 @@ export const language = {
   /** Everything registered is forgotten. For tests, and for a product reset. */
   forget() {
     REGISTERED.clear();
+    FLOOR.clear();
     PACKS.loaded.clear();
+    // The asks kept before core ran go too: they were for the words forgotten.
+    PACKS.early?.clear?.();
     STORE.chosen = null;
     announce();
     return this;

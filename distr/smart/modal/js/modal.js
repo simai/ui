@@ -693,6 +693,153 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
+//
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+  }
+
+  return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
+}
+
+/***/ },
+
 /***/ "42f1649d1a1b"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -916,6 +1063,50 @@ function swipeToClose(surface, {
 
 /***/ },
 
+/***/ "769e1a2f7462"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   isLateContent: () => (/* binding */ isLateContent),
+/* harmony export */   watchLateChildren: () => (/* binding */ watchLateChildren)
+/* harmony export */ });
+// Children a page writes into a panel's host after the panel connected
+// (Larena LF-3, 2026-11-18): sf-modal and sf-drawer took their content once,
+// when they connected, so a body fetched and written while the panel was
+// open stayed in the host -- out of the panel, and on the page itself, as the
+// host draws no box of its own. The panel watches its host instead: what the
+// page writes there later is handed to `take`, in the order written, once per
+// batch of changes (one task's writes arrive together).
+//
+// Not content: static markup (a picture of the element, §5.4), a settings
+// island, a comment and white space.
+function isLateContent(node) {
+  if (node.nodeType === 3) return node.textContent.trim() !== '';
+  if (node.nodeType !== 1) return false;
+  if (node.hasAttribute('data-sf-static')) return false;
+  return !(node.localName === 'script' && node.hasAttribute('data-sf-settings'));
+}
+function watchLateChildren(host, take) {
+  const observer = new MutationObserver(records => {
+    const added = [];
+
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        if (node.parentNode === host && !added.includes(node) && isLateContent(node)) added.push(node);
+      }
+    }
+
+    if (added.length) take(added);
+  });
+  observer.observe(host, {
+    childList: true
+  });
+  return observer;
+}
+
+/***/ },
+
 /***/ "f98b7a216869"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -927,26 +1118,30 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e92fd2d1a38c");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e45eac6c719d");
-/* harmony import */ var _component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("c8d66dd2c299");
-/* harmony import */ var _component_modal_js_closing__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("3f3a6e2680d5");
-/* harmony import */ var _component_modal_js_motion__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("201fd0b17b8b");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("afc57055d2cc");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("85cdf307b188");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("95d01a7df79b");
-/* harmony import */ var _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("93025a68d8ab");
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("18003344cff0");
-/* harmony import */ var _core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("42f1649d1a1b");
-/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("1373e294ec38");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_6__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_density_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("1412c5875b4d");
+/* harmony import */ var _helpers_late_children_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("769e1a2f7462");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e45eac6c719d");
+/* harmony import */ var _component_modal_js_focus__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("c8d66dd2c299");
+/* harmony import */ var _component_modal_js_closing__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("3f3a6e2680d5");
+/* harmony import */ var _component_modal_js_motion__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("201fd0b17b8b");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("afc57055d2cc");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("85cdf307b188");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("95d01a7df79b");
+/* harmony import */ var _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("93025a68d8ab");
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("18003344cff0");
+/* harmony import */ var _core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("42f1649d1a1b");
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("1373e294ec38");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__);
+
+
 
 
 
@@ -998,15 +1193,15 @@ const EDGE_POSITIONS_UNTIL = "2027-01-01";
 // page's language), and the old names -- title, blur, hide, unclose, the
 // modal:* events, hide() and show() -- are dated aliases in aliases.json.
 
-const ModalElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
+const ModalElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_2___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_14__.files,
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_13__
 }); // The public variables the manifest declares; a window drawn at the end of the
 // body carries their values from where its host stands (§19.1).
 
-const MODAL_VARIABLES = Object.keys(_component_json__WEBPACK_IMPORTED_MODULE_10__["css-variables"] || {}); // What retires without a new name (aliases.json rows with `to: null`): kept
+const MODAL_VARIABLES = Object.keys(_component_json__WEBPACK_IMPORTED_MODULE_12__["css-variables"] || {}); // What retires without a new name (aliases.json rows with `to: null`): kept
 // until the date, and each use is noted with it.
 
 function noteRetired(kind, from) {
@@ -1016,8 +1211,8 @@ function noteRetired(kind, from) {
     kind,
     from,
     to: null,
-    since: _aliases_json__WEBPACK_IMPORTED_MODULE_11__.since,
-    remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_11__.remove_after
+    since: _aliases_json__WEBPACK_IMPORTED_MODULE_13__.since,
+    remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_13__.remove_after
   });
 } // A lifecycle copy (modal:ready, modal:update) is still sent until its date; a
 // listener that reads it is a use (§4.1, §16.13).
@@ -1082,17 +1277,17 @@ class SfModal extends ModalElement {
   static defaultTrueAttributes = new Set(["overlay", "show-close", "show-footer", "close-on-esc", "close-on-overlay", "preserve-scroll-gap", "preload", "dismissible"]);
 
   static getTopModal() {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.getTopModalLayer)();
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.getTopModalLayer)();
   } // Whether this modal is the top layer of the document: a drawer or a list
   // opened from it stands above it and takes the keys while it does.
 
 
   static isTopModal(modal) {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.isTopModalLayer)(modal);
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.isTopModalLayer)(modal);
   }
 
   static getStackIndex(modal) {
-    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.getModalLayerIndex)(modal);
+    return (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.getModalLayerIndex)(modal);
   }
 
   static addToStack(modal) {
@@ -1106,7 +1301,7 @@ class SfModal extends ModalElement {
     // and the document scroll lock.
 
     if (!modal.hiddenState) {
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.addModalLayer)(modal);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.addModalLayer)(modal);
     }
   }
 
@@ -1117,7 +1312,7 @@ class SfModal extends ModalElement {
 
     SfModal.stack = SfModal.stack.filter(item => item !== modal);
     SfModal.openCount = SfModal.stack.length;
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.removeModalLayer)(modal);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.removeModalLayer)(modal);
   }
 
   static bringToFront(modal) {
@@ -1127,11 +1322,11 @@ class SfModal extends ModalElement {
 
     SfModal.stack = SfModal.stack.filter(item => item !== modal);
     SfModal.stack.push(modal);
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.raiseModalLayer)(modal);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.raiseModalLayer)(modal);
   }
 
   static updateStackStyles() {
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.updateModalLayers)();
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.updateModalLayers)();
   } // The manifest's settings, and the base's own template name.
 
 
@@ -1191,13 +1386,63 @@ class SfModal extends ModalElement {
     this.watchPhone();
     super.connectedCallback();
     SfModal.registry.set(this.modalId, this);
-    SfModal.bindGlobalEvents();
+    SfModal.bindGlobalEvents(); // What the page writes into the host from now on is the window's (Larena
+    // LF-3): the slots were taken once, when it connected.
+
+    if (this.isConnected && !this._lateChildren) {
+      this._lateChildren = (0,_helpers_late_children_js__WEBPACK_IMPORTED_MODULE_7__.watchLateChildren)(this, nodes => this.takeLateChildren(nodes));
+    }
+  } // Children the page wrote into the host after the window connected -- a
+  // body fetched while the window is open, a footer that appears with an
+  // answer (Larena LF-3, 2026-11-18). They are what their slot shows now: a
+  // child named for a slot replaces that slot's content, a loose one replaces
+  // the content, as at the start (a plain <div slot> gives its children, a
+  // <template slot> its copy). To add to what the window shows, the page adds
+  // into a node it already placed (a holder: <div slot="content" id="...">).
+
+
+  takeLateChildren(nodes) {
+    const bySlot = new Map();
+
+    for (const node of nodes) {
+      // An inline window draws in the host itself: its own drawing is not news.
+      if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains("sf-modal")) continue;
+      const slot = node.nodeType === Node.ELEMENT_NODE && node.getAttribute("slot") || "content";
+      if (!bySlot.has(slot)) bySlot.set(slot, []);
+      bySlot.get(slot).push(node);
+    }
+
+    if (!bySlot.size) return;
+
+    for (const [slot, written] of bySlot) {
+      const given = [];
+
+      for (const node of written) {
+        if (node.nodeType === Node.ELEMENT_NODE && node.localName === "template") {
+          given.push(...Array.from(node.content?.childNodes || []).map(one => one.cloneNode(true)));
+          node.remove();
+          continue;
+        }
+
+        given.push(...(node.nodeType === Node.ELEMENT_NODE && node.hasAttribute("slot") ? this.slotNodesOf(node) : [node])); // Left where the page wrote it until the drawing places it, as at the start.
+
+        this.holdSlotNode(node);
+      }
+
+      (0,_core_js_density_js__WEBPACK_IMPORTED_MODULE_6__.noteAuthored)(given);
+
+      this._liveSlotNodes.set(slot, given);
+
+      this._slotTemplates.delete(slot);
+    }
+
+    this.requestComponentUpdate("content");
   } // A question window follows the screen: a centred window on a wide one, a
   // bottom sheet below sm. One listener per window, while it is in the page.
 
 
   watchPhone() {
-    const query = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_16__.breakpointMedia)("sm", {
+    const query = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_18__.breakpointMedia)("sm", {
       below: true
     });
     if (!query || this._phoneQuery) return;
@@ -1251,7 +1496,7 @@ class SfModal extends ModalElement {
 
   contentFields() {
     const body = this._root()?.querySelector("[data-sf-modal-body-scroll]");
-    if (body) return (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.windowFields)(body); // Before the first drawing: the page's content nodes, each under a
+    if (body) return (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_9__.windowFields)(body); // Before the first drawing: the page's content nodes, each under a
     // detached holder of its own so the node itself counts too.
 
     const fields = [];
@@ -1261,7 +1506,7 @@ class SfModal extends ModalElement {
       const holder = {
         querySelectorAll: () => [node, ...node.querySelectorAll("*")]
       };
-      fields.push(...(0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.windowFields)(holder));
+      fields.push(...(0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_9__.windowFields)(holder));
     }
 
     return fields;
@@ -1320,7 +1565,8 @@ class SfModal extends ModalElement {
     if (!target?.querySelectorAll) return;
 
     for (const question of target.querySelectorAll('sf-confirm[appearance="window"]')) {
-      if (question.shownState === "open" && !question.getProp?.("disabled")) question.cancel?.();
+      // disabled holds the acceptance only: a way out is the decline (LF-5).
+      if (question.shownState === "open") question.cancel?.();
       question.clearRequire?.();
     }
   } // The old modal:* names keep their old detail (§16.20 split rows): the new
@@ -1361,6 +1607,9 @@ class SfModal extends ModalElement {
   }
 
   disconnectedCallback() {
+    // The page's nodes go back into the host now (returnSlotNodes): not news.
+    this._lateChildren?.disconnect();
+    this._lateChildren = null;
     this._phoneQuery?.removeEventListener?.("change", this._onPhoneChange);
     this._phoneQuery = null;
     this.teardownModal();
@@ -1394,8 +1643,8 @@ class SfModal extends ModalElement {
         attribute: "unclose",
         from: "unclose",
         to: "dismissible",
-        since: _aliases_json__WEBPACK_IMPORTED_MODULE_11__.since,
-        remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_11__.remove_after
+        since: _aliases_json__WEBPACK_IMPORTED_MODULE_13__.since,
+        remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_13__.remove_after
       });
       return false;
     }
@@ -1528,7 +1777,7 @@ class SfModal extends ModalElement {
       return "";
     }
 
-    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__.layerZIndexAt)(this._stackIndex);
+    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__.layerZIndexAt)(this._stackIndex);
   }
 
   get remoteContent() {
@@ -1718,7 +1967,7 @@ class SfModal extends ModalElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderModalTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_8__.renderModalTemplate)(this.templateContext());
   }
 
   async renderComponent(changedAttributes = []) {
@@ -1810,7 +2059,7 @@ class SfModal extends ModalElement {
     // block's retuned roles and its parts' public variables reach the window
     // and its content, but none of the window's own --sf-modal-* names.
 
-    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__.carryLayerOrigin)(this._portalRoot, this, {
+    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__.carryLayerOrigin)(this._portalRoot, this, {
       variables: MODAL_VARIABLES,
       area: true,
       except: ["--sf-modal-"]
@@ -1868,7 +2117,7 @@ class SfModal extends ModalElement {
     const keydown = event => {
       if (event.key !== "Enter" || event.defaultPrevented || event.isComposing || event.shiftKey || event.ctrlKey || event.altKey || event.metaKey || !this._isOpen) return;
       const field = event.composedPath?.()[0] || event.target;
-      if (!(0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.isOneLineField)(field) || !inBody(field) || field.getAttribute("aria-expanded") === "true") return;
+      if (!(0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_9__.isOneLineField)(field) || !inBody(field) || field.getAttribute("aria-expanded") === "true") return;
       if (!this.hasFields) return;
       const main = this.mainAnswer();
       if (!main) return;
@@ -1912,7 +2161,7 @@ class SfModal extends ModalElement {
     const root = this._root();
 
     if (saving) {
-      this._releaseSaving = (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.holdFieldsReadOnly)(this.contentFields());
+      this._releaseSaving = (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_9__.holdFieldsReadOnly)(this.contentFields());
       root?.setAttribute("aria-busy", "true");
     } else {
       this._releaseSaving?.();
@@ -2115,7 +2364,7 @@ class SfModal extends ModalElement {
 
     if (!wasClosing) {
       this._lastActive = document.activeElement;
-      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.captureModalFocusAncestors)(this._lastActive);
+      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.captureModalFocusAncestors)(this._lastActive);
     }
 
     if (wasClosing) {
@@ -2142,7 +2391,7 @@ class SfModal extends ModalElement {
     }
 
     this.requestComponentUpdate("open");
-    (0,_component_modal_js_motion__WEBPACK_IMPORTED_MODULE_9__.scheduleModalFrame)(() => {
+    (0,_component_modal_js_motion__WEBPACK_IMPORTED_MODULE_11__.scheduleModalFrame)(() => {
       if (!this._isOpen || this._modalState === "closing") {
         return;
       }
@@ -2266,8 +2515,8 @@ class SfModal extends ModalElement {
     this.declineQuestions();
     this.requestComponentUpdate("close");
     const panel = this._root()?.querySelector("[data-sf-modal-panel]");
-    this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_8__.freezeModalContent)(panel, SfModal.isTopModal(this));
-    this._closeTransitionAbort = (0,_component_modal_js_motion__WEBPACK_IMPORTED_MODULE_9__.scheduleModalClose)(() => this._root(), () => this.finishClose());
+    this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_10__.freezeModalContent)(panel, SfModal.isTopModal(this));
+    this._closeTransitionAbort = (0,_component_modal_js_motion__WEBPACK_IMPORTED_MODULE_11__.scheduleModalClose)(() => this._root(), () => this.finishClose());
     return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_3__.applied)();
   } // The person accepts: the window closes and an assembly's ask answers
   // {accepted: true, reason: "close", value} (§19.4). A page button reaches it
@@ -2338,9 +2587,9 @@ class SfModal extends ModalElement {
 
     if (this.hiddenState) {
       const wasTop = SfModal.isTopModal(this);
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.removeModalLayer)(this);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.removeModalLayer)(this);
       this.applyStackPosition();
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
 
       if (root) {
         root.inert = true;
@@ -2352,7 +2601,7 @@ class SfModal extends ModalElement {
         root.setAttribute("aria-hidden", "false");
       }
 
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.addModalLayer)(this);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.addModalLayer)(this);
       SfModal.bringToFront(this);
       requestAnimationFrame(() => this.focusFirst());
     }
@@ -2391,7 +2640,7 @@ class SfModal extends ModalElement {
     }
 
     if (this.display !== "inline") {
-      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+      (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
     }
 
     this._edited = false;
@@ -2449,7 +2698,7 @@ class SfModal extends ModalElement {
 
     if (this._modalState === "closing") {
       this._releaseClosingContent?.();
-      this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_8__.freezeModalContent)(this._root()?.querySelector("[data-sf-modal-panel]"), SfModal.isTopModal(this));
+      this._releaseClosingContent = (0,_component_modal_js_closing__WEBPACK_IMPORTED_MODULE_10__.freezeModalContent)(this._root()?.querySelector("[data-sf-modal-panel]"), SfModal.isTopModal(this));
     }
 
     this._readyDetail = {
@@ -2475,7 +2724,7 @@ class SfModal extends ModalElement {
       // page's own markup has no opener.
       const active = document.activeElement;
       this._lastActive = active instanceof HTMLElement && active !== document.body && active !== document.documentElement && !this.contains(active) && !this._root()?.contains(active) ? active : null;
-      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.captureModalFocusAncestors)(this._lastActive);
+      this._focusReturnAncestors = (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.captureModalFocusAncestors)(this._lastActive);
       this._isOpen = true;
       this._modalState = "open";
 
@@ -2490,14 +2739,14 @@ class SfModal extends ModalElement {
     this.applyStackPosition();
     if (this.display !== "inline") this.watchBodyEdges(); // Projection can replace the panel while an existing layer remains open.
 
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.updateModalLayers)(); // A closed window's content starts after the page's first paint, unseen:
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.updateModalLayers)(); // A closed window's content starts after the page's first paint, unseen:
     // the Loader leaves it until the window opens (its root is inert), and a
     // page that waited for a tag in it before opening the window waited for
     // ever (layer-stack.js startClosedLayerContent).
 
     if (this.display !== "inline" && !this.openState && !this._closedContentStarted) {
       this._closedContentStarted = true;
-      (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__.startClosedLayerContent)(() => this._root());
+      (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__.startClosedLayerContent)(() => this._root());
     }
 
     if (this.autoload && !this.openState && !this._hasAutoloaded) {
@@ -2551,9 +2800,9 @@ class SfModal extends ModalElement {
 
     const surface = root?.querySelector("[data-sf-modal-surface]");
     const panel = root?.querySelector("[data-sf-modal-panel]");
-    if (!surface || !panel || !surface.contains(event.target) || (0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_15__.startsOnControl)(event.target)) return;
-    if (!(0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_15__.inHandleRow)(event, surface)) return;
-    (0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_15__.trackSwipe)(event, {
+    if (!surface || !panel || !surface.contains(event.target) || (0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_17__.startsOnControl)(event.target)) return;
+    if (!(0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_17__.inHandleRow)(event, surface)) return;
+    (0,_core_js_sheet_swipe__WEBPACK_IMPORTED_MODULE_17__.trackSwipe)(event, {
       surface: panel,
       direction: "down",
       variable: "--sf-sheet--drag",
@@ -2656,7 +2905,7 @@ class SfModal extends ModalElement {
     }
 
     const panel = this._root()?.querySelector("[data-sf-modal-panel]");
-    (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.trapModalFocus)(panel, event);
+    (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_9__.trapModalFocus)(panel, event);
   }
 
   focusFirst() {
@@ -2678,7 +2927,7 @@ class SfModal extends ModalElement {
     const panel = this._root()?.querySelector("[data-sf-modal-panel]");
 
     if (panel) {
-      (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_7__.focusModalInitial)(panel, this.initialFocus);
+      (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_9__.focusModalInitial)(panel, this.initialFocus);
     }
   }
 
@@ -2877,7 +3126,7 @@ class SfModal extends ModalElement {
     if (this.display !== "inline") this.returnSlotNodes();
     this._releaseClosingContent?.();
     this._releaseClosingContent = null;
-    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_13__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
+    (0,_component_modal_js_stack__WEBPACK_IMPORTED_MODULE_15__.restoreModalLayerFocus)(wasTop, this._lastActive, this._focusReturnAncestors);
   }
 
   clearPortal() {
@@ -3015,7 +3264,7 @@ class SfModal extends ModalElement {
 
 
   static lockPage(preserveScrollGap = true) {
-    if (!SfModal.lockState) SfModal.lockState = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_14__.lockPageScroll)({
+    if (!SfModal.lockState) SfModal.lockState = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_16__.lockPageScroll)({
       preserveScrollGap
     });
   }
@@ -3275,7 +3524,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-modal
 /***/ "afc57055d2cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.10.6","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"initial-focus":{"type":"enum","values":["auto","safe","first","panel"],"default":"auto"},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"size":{"type":"enum","values":["form","question","wide","full","auto"],"default":"form","x-scale":"width"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"},"--sf-modal-question-width":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.modal","tag":"sf-modal","version":"1.11.0","kind":"leaf","settings":{"modal-id":{"type":"id","default":""},"heading":{"type":"string","default-from":"runtime.title"},"text":{"type":"string","default":""},"autoload":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"hide-modifier":{"type":"string","default":""},"overlay":{"type":"boolean","default":true},"show-header":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"show-footer":{"type":"boolean","default":true},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"initial-focus":{"type":"enum","values":["auto","safe","first","panel"],"default":"auto"},"preserve-scroll-gap":{"type":"boolean","default":true},"position":{"type":"enum","values":["center","left","right","inline-start","inline-end","top","bottom"],"default":"center"},"size":{"type":"enum","values":["form","question","wide","full","auto"],"default":"form","x-scale":"width"},"mode":{"type":"enum","values":["inline","ajax","iframe"],"default":"inline"},"display":{"type":"enum","values":["modal","inline"],"default":"modal"},"src":{"type":"string","default":""},"preload":{"type":"boolean","default":true},"fullscreen":{"type":"boolean","default":false},"width":{"type":"string","default":""},"height":{"type":"string","default":""},"backdrop-blur":{"type":"string","default":""},"blur-type":{"type":"enum","values":["none","small","medium","large"],"default":"medium"},"overlay-preset":{"type":"enum","values":["default","focus"],"default":"default"},"overlay-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"surface-class":{"type":"string","default":""},"surface-padding":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"content-class":{"type":"string","default":""},"footer-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false,"reflect":true},"minimized":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"opened":{"carries":{"modal-id":"string","phase":"string"}},"close":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"modal-id":"string","phase":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"accepted":"boolean"}},"minimize":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"minimized":{"carries":{"modal-id":"string","phase":"string"}},"expand":{"carries":{"modal-id":"string","phase":"string"},"cancelable":true},"expanded":{"carries":{"modal-id":"string","phase":"string"}},"content-upload":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true},"content-uploaded":{"carries":{"modal-id":"string","src":"string","remote":"object"},"own-verb":true}},"actions":{"open":{"with":{"animate":{"type":"boolean","optional":true}},"emits":"open","x-answer":"asked by an assembly (ask, §19.4) it answers when the window closes, with value {accepted, reason, value}"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"minimize":{"emits":"minimize"},"expand":{"emits":"expand"},"toggle":{},"reload-content":{},"confirm":{"with":{"value":{"type":"object","optional":true}}}},"layer":{"kind":"modal","locks-page":true,"traps-focus":true},"css-variables":{"--sf-modal-background-color":{"type":"color","state":"default"},"--sf-modal-border-color":{"type":"color","state":"default"},"--sf-modal-border-width":{"type":"length","state":"default"},"--sf-modal-radius":{"type":"length","state":"default"},"--sf-modal-padding-inline":{"type":"length","state":"default"},"--sf-modal-padding-block":{"type":"length","state":"default"},"--sf-modal-gap":{"type":"length","state":"default"},"--sf-modal-footer-gap":{"type":"length","state":"default"},"--sf-modal-question-width":{"type":"length","state":"default"}}}');
 
 /***/ },
 

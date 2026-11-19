@@ -1702,8 +1702,8 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
   // translation of says so under its name (C142 (6)). A search
   // keeps the rows whose words -- the label, the native name, the English
   // name, the name in the page's language and the code -- a query's words
-  // begin (research LG-8: a query matched inside words, «ру» found
-  // белорусский and грузинский).
+  // begin (research LG-8: a query matched inside words, «ит» found
+  // литовский).
 
 
   menuEntries(list, current, query = '') {
@@ -1839,10 +1839,16 @@ SfLanguage.menuEntry = function menuEntry({
   // language file registered for sf-language (C282).
 
   const code = String(pageCode).toLowerCase().replace('_', '-');
-  const registered = globalThis.__sfPageLanguage?.registered?.get?.('sf-language');
+  const registered = globalThis.__sfPageLanguage?.registered?.get?.('sf-language'); // A registry alias takes its pack's words (zh-cn: zh-hans, pt: pt-br;
+  // core/lang/index.json aliases, kept on the shared store by core).
+
+  const pack = one => globalThis.__sfPageLanguage?.packs?.aliases?.[one] ?? one;
+
+  const base = code.split('-')[0];
   const words = { ...en.runtime,
-    ...(registered?.get?.(code.split('-')[0]) ?? {}),
-    ...(registered?.get?.(code) ?? {})
+    ...[...new Set([base, pack(base), pack(code), code])].reduce((all, one) => ({ ...all,
+      ...(registered?.get?.(one) ?? {})
+    }), {})
   };
   const current = (value && (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, value)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, pageCode) ?? list[0] ?? null;
   const entry = {
@@ -2017,8 +2023,8 @@ function displayName(code, inLanguage) {
   }
 } // A name begins with a capital in a list, as a person writes it in a menu
 // («Русский», «Español»); the capital is the language's own.
-// Georgian has no capitals in running text: its upper case (Mtavruli) is a
-// display style, so «ქართული» stays as it is.
+// A script whose upper case is a display style, not the capital of running
+// text (U+10D0-U+10FF), keeps the name as it is written.
 
 
 const UNCASED = /^[\u10D0-\u10FF]/u;
@@ -2270,8 +2276,8 @@ function searchWords(...texts) {
 }
 /**
  * Whether a query finds a language by its words (searchWords): each word of
- * the query begins one of them. «ру» finds Русский and румынский, not
- * белорусский or грузинский, where «ру» is inside the word (research LG-8).
+ * the query begins one of them. «ит» finds итальянский, not литовский,
+ * where «ит» is inside the word (research LG-8).
  */
 
 function matchesQuery(words, query) {
@@ -2420,7 +2426,7 @@ function renderInline(context) {
 // capital (简体) -- sizes the cell to its widest code instead.
 
 
-const NARROW_CODE = /^[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}\p{Script=Armenian}\p{Script=Georgian}]{1,2}$/u;
+const NARROW_CODE = /^[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}]{1,2}$/u;
 
 function renderCode(context) {
   const shown = context.current?.short ?? '';
@@ -2584,14 +2590,14 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "11b7e7a66992"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.5.3","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.6.1","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
 
 /***/ },
 
 /***/ "9937e6b314d1"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Names of the languages sf-language supports, from CLDR 48 (ICU 78 as Node.js ships it): each language in itself (native) and in English (en). Since owner decision C282 their names in Russian are the ru language file\'s words (src/core/js/lang/language-names, name-<code>, registered for sf-language), as any other language\'s names may be. The browser\'s Intl.DisplayNames carries fewer languages (headless Chromium names be, hy, ka, tt, ky and tg only in English and ba, sah not at all; research 2026-11-14-language LG-7), so these names come first and Intl names every other language and page language. Spelled as CLDR writes them; the element gives a name its capital in a list. Data, not code: add a language here with both names, and its Russian name to the language file.","names":{"ru":{"native":"русский","en":"Russian"},"en":{"native":"English","en":"English"},"de":{"native":"Deutsch","en":"German"},"fr":{"native":"français","en":"French"},"es":{"native":"español","en":"Spanish"},"it":{"native":"italiano","en":"Italian"},"pt":{"native":"português","en":"Portuguese"},"pt-BR":{"native":"português (Brasil)","en":"Brazilian Portuguese"},"pt-PT":{"native":"português europeu","en":"European Portuguese"},"tr":{"native":"Türkçe","en":"Turkish"},"pl":{"native":"polski","en":"Polish"},"uk":{"native":"українська","en":"Ukrainian"},"be":{"native":"беларуская","en":"Belarusian"},"uz":{"native":"o‘zbek","en":"Uzbek"},"az":{"native":"azərbaycan","en":"Azerbaijani"},"hy":{"native":"հայերեն","en":"Armenian"},"ka":{"native":"ქართული","en":"Georgian"},"he":{"native":"עברית","en":"Hebrew"},"ar":{"native":"العربية","en":"Arabic"},"fa":{"native":"فارسی","en":"Persian"},"hi":{"native":"हिन्दी","en":"Hindi"},"bn":{"native":"বাংলা","en":"Bangla"},"ja":{"native":"日本語","en":"Japanese"},"ko":{"native":"한국어","en":"Korean"},"zh":{"native":"中文","en":"Chinese"},"zh-Hans":{"native":"简体中文","en":"Simplified Chinese"},"zh-Hant":{"native":"繁體中文","en":"Traditional Chinese"},"zh-TW":{"native":"中文（台灣）","en":"Chinese (Taiwan)"},"vi":{"native":"Tiếng Việt","en":"Vietnamese"},"th":{"native":"ไทย","en":"Thai"},"id":{"native":"Indonesia","en":"Indonesian"},"ms":{"native":"Melayu","en":"Malay"},"nl":{"native":"Nederlands","en":"Dutch"},"sv":{"native":"svenska","en":"Swedish"},"no":{"native":"norsk","en":"Norwegian"},"nb":{"native":"norsk bokmål","en":"Norwegian Bokmål"},"da":{"native":"dansk","en":"Danish"},"fi":{"native":"suomi","en":"Finnish"},"cs":{"native":"čeština","en":"Czech"},"sk":{"native":"slovenčina","en":"Slovak"},"hu":{"native":"magyar","en":"Hungarian"},"ro":{"native":"română","en":"Romanian"},"bg":{"native":"български","en":"Bulgarian"},"el":{"native":"Ελληνικά","en":"Greek"},"tt":{"native":"татар","en":"Tatar"},"ky":{"native":"кыргызча","en":"Kyrgyz"},"tg":{"native":"тоҷикӣ","en":"Tajik"},"ba":{"native":"башҡорт","en":"Bashkir"},"sah":{"native":"саха тыла","en":"Yakut"},"tk":{"native":"türkmen dili","en":"Turkmen"},"mn":{"native":"монгол","en":"Mongolian"},"cv":{"native":"чӑваш чӗлхи","en":"Chuvash"},"ce":{"native":"нохчийн","en":"Chechen"},"os":{"native":"ирон","en":"Ossetic"},"lv":{"native":"latviešu","en":"Latvian"},"lt":{"native":"lietuvių","en":"Lithuanian"},"et":{"native":"eesti","en":"Estonian"},"sr":{"native":"српски","en":"Serbian"},"hr":{"native":"hrvatski","en":"Croatian"},"sl":{"native":"slovenščina","en":"Slovenian"},"mk":{"native":"македонски","en":"Macedonian"},"sq":{"native":"shqip","en":"Albanian"},"bs":{"native":"bosanski","en":"Bosnian"},"ug":{"native":"ئۇيغۇرچە","en":"Uyghur"},"ur":{"native":"اردو","en":"Urdu"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Names of the languages sf-language supports, from CLDR 48 (ICU 78 as Node.js ships it): each language in itself (native) and in English (en). Since owner decision C282 their names in Russian are the ru language file\'s words (src/core/js/lang/language-names, name-<code>, registered for sf-language), as any other language\'s names may be. The browser\'s Intl.DisplayNames carries fewer languages (headless Chromium names tt only in English and ba, sah not at all; research 2026-11-14-language LG-7), so these names come first and Intl names every other language and page language. Spelled as CLDR writes them; the element gives a name its capital in a list. Data, not code: add a language here with both names, and its Russian name to the language file. Owner decision C278 (2026-11-17): languages of CIS countries other than Russian are not named here (uk, be, uz, az, hy, ka, ky, tg and tk left on 2026-11-18, kk before; tt and ba, languages of regions of Russia, stay); the browser names such a code if a product lists one.","names":{"ru":{"native":"русский","en":"Russian"},"en":{"native":"English","en":"English"},"de":{"native":"Deutsch","en":"German"},"fr":{"native":"français","en":"French"},"es":{"native":"español","en":"Spanish"},"it":{"native":"italiano","en":"Italian"},"pt":{"native":"português","en":"Portuguese"},"pt-BR":{"native":"português (Brasil)","en":"Brazilian Portuguese"},"pt-PT":{"native":"português europeu","en":"European Portuguese"},"tr":{"native":"Türkçe","en":"Turkish"},"pl":{"native":"polski","en":"Polish"},"he":{"native":"עברית","en":"Hebrew"},"ar":{"native":"العربية","en":"Arabic"},"fa":{"native":"فارسی","en":"Persian"},"hi":{"native":"हिन्दी","en":"Hindi"},"bn":{"native":"বাংলা","en":"Bangla"},"ja":{"native":"日本語","en":"Japanese"},"ko":{"native":"한국어","en":"Korean"},"zh":{"native":"中文","en":"Chinese"},"zh-Hans":{"native":"简体中文","en":"Simplified Chinese"},"zh-Hant":{"native":"繁體中文","en":"Traditional Chinese"},"zh-TW":{"native":"中文（台灣）","en":"Chinese (Taiwan)"},"vi":{"native":"Tiếng Việt","en":"Vietnamese"},"th":{"native":"ไทย","en":"Thai"},"id":{"native":"Indonesia","en":"Indonesian"},"ms":{"native":"Melayu","en":"Malay"},"nl":{"native":"Nederlands","en":"Dutch"},"sv":{"native":"svenska","en":"Swedish"},"no":{"native":"norsk","en":"Norwegian"},"nb":{"native":"norsk bokmål","en":"Norwegian Bokmål"},"da":{"native":"dansk","en":"Danish"},"fi":{"native":"suomi","en":"Finnish"},"cs":{"native":"čeština","en":"Czech"},"sk":{"native":"slovenčina","en":"Slovak"},"hu":{"native":"magyar","en":"Hungarian"},"ro":{"native":"română","en":"Romanian"},"bg":{"native":"български","en":"Bulgarian"},"el":{"native":"Ελληνικά","en":"Greek"},"tt":{"native":"татар","en":"Tatar"},"ba":{"native":"башҡорт","en":"Bashkir"},"sah":{"native":"саха тыла","en":"Yakut"},"mn":{"native":"монгол","en":"Mongolian"},"cv":{"native":"чӑваш чӗлхи","en":"Chuvash"},"ce":{"native":"нохчийн","en":"Chechen"},"os":{"native":"ирон","en":"Ossetic"},"lv":{"native":"latviešu","en":"Latvian"},"lt":{"native":"lietuvių","en":"Lithuanian"},"et":{"native":"eesti","en":"Estonian"},"sr":{"native":"српски","en":"Serbian"},"hr":{"native":"hrvatski","en":"Croatian"},"sl":{"native":"slovenščina","en":"Slovenian"},"mk":{"native":"македонски","en":"Macedonian"},"sq":{"native":"shqip","en":"Albanian"},"bs":{"native":"bosanski","en":"Bosnian"},"ug":{"native":"ئۇيغۇرچە","en":"Uyghur"},"ur":{"native":"اردو","en":"Urdu"}}}');
 
 /***/ },
 

@@ -7,6 +7,8 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CLOSING_ATTRIBUTE: () => (/* binding */ CLOSING_ATTRIBUTE),
+/* harmony export */   markClosing: () => (/* binding */ markClosing),
 /* harmony export */   moveSection: () => (/* binding */ moveSection),
 /* harmony export */   sectionClock: () => (/* binding */ sectionClock),
 /* harmony export */   sectionHeight: () => (/* binding */ sectionHeight),
@@ -20,7 +22,31 @@ __webpack_require__.r(__webpack_exports__);
 // changes --sf-accordion--duration or asks for reduced motion (the sheet
 // sets it to none) changes the motion here too. Shared by the class runtime
 // and sf-accordion; stateless, so each bundle may carry its own copy.
-const running = new WeakMap();
+const running = new WeakMap(); // The mark of a section that shrinks to its header: its closed panel stays
+// drawn (the class sheet), so the text leaves with the motion.
+
+const CLOSING_ATTRIBUTE = 'data-sf-accordion-closing'; // Panels made inert here, so only those are given back.
+
+const madeInert = new WeakSet(); // Marks a section closing or not. A closing panel is drawn but closed: from
+// the start of the close nothing in it takes focus, Tab or a click (inert),
+// as after the motion, when the sheet no longer draws it; it is given back
+// when the motion ends or the section opens again.
+
+function markClosing(section, closing) {
+  if (!section) return;
+  if (closing) section.setAttribute(CLOSING_ATTRIBUTE, '');else section.removeAttribute(CLOSING_ATTRIBUTE);
+  const panel = Array.from(section.children ?? []).find(child => child.classList?.contains('sf-accordion-content'));
+  if (!panel) return;
+
+  if (closing) {
+    if (panel.hasAttribute('inert')) return;
+    panel.setAttribute('inert', '');
+    madeInert.add(panel);
+  } else if (madeInert.has(panel)) {
+    madeInert.delete(panel);
+    panel.removeAttribute('inert');
+  }
+}
 
 function seconds(value) {
   const first = String(value || '').split(',')[0].trim();
@@ -151,11 +177,10 @@ const AccordionElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1
 });
 const HEADING_LEVELS = ['2', '3', '4', '5', '6']; // open('main') and open({id: 'main'}) both name a section (§4.4).
 
-const sectionArgument = value => value && typeof value === 'object' ? value.id : value; // A closing section's panel stays drawn while it shrinks (the class sheet's
-// mark, component/accordion/js/_accordion.js).
+const sectionArgument = value => value && typeof value === 'object' ? value.id : value; // A closing section's panel stays drawn while it shrinks, inert (markClosing,
+// component/accordion/js/motion.js).
+// The section the address names (C154 (5)): the fragment, without its #.
 
-
-const CLOSING_ATTRIBUTE = 'data-sf-accordion-closing'; // The section the address names (C154 (5)): the fragment, without its #.
 
 function addressId() {
   const hash = globalThis.location?.hash || '';
@@ -464,9 +489,9 @@ class SfSmartAccordion extends AccordionElement {
       const article = this.sectionElement(id);
       if (!article) return;
       (0,_component_accordion_js_motion_js__WEBPACK_IMPORTED_MODULE_4__.stopSectionMotion)(article);
-      article.removeAttribute(CLOSING_ATTRIBUTE);
-      const moved = (0,_component_accordion_js_motion_js__WEBPACK_IMPORTED_MODULE_4__.moveSection)(article, from, () => article.removeAttribute(CLOSING_ATTRIBUTE));
-      if (moved && !this.isOpen(id)) article.setAttribute(CLOSING_ATTRIBUTE, '');
+      (0,_component_accordion_js_motion_js__WEBPACK_IMPORTED_MODULE_4__.markClosing)(article, false);
+      const moved = (0,_component_accordion_js_motion_js__WEBPACK_IMPORTED_MODULE_4__.moveSection)(article, from, () => (0,_component_accordion_js_motion_js__WEBPACK_IMPORTED_MODULE_4__.markClosing)(article, false));
+      if (moved && !this.isOpen(id)) (0,_component_accordion_js_motion_js__WEBPACK_IMPORTED_MODULE_4__.markClosing)(article, true);
     });
     return result;
   }
@@ -949,7 +974,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-accor
 /***/ "f733ebfdf5a9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.accordion","tag":"sf-accordion","version":"1.2.4","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","title":"string","content":{"type":"string","optional":true},"slot":{"type":"string","optional":true},"open":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true}}},"single":{"type":"boolean","default":false},"size":{"type":"enum","values":["","1/3","1/2","1","2","3"],"default":""},"appearance":{"type":"enum","values":["default","outline","flush"],"default":"flush"},"marker":{"type":"enum","values":["chevron","plus-minus"],"default":"chevron"},"single-section":{"type":"enum","values":["static","toggle"],"default":"static"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"link":{"type":"boolean","default":false},"expand-all":{"type":"boolean","default":false}},"values":{"expanded":{"type":"list"}},"events":{"toggle":{"carries":{"id":"id","open":"boolean","source":{"type":"enum","values":["user","method"]},"section":"object"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}}},"css-variables":{"--sf-accordion-background-color":{"type":"color","state":"default"},"--sf-accordion-border-color":{"type":"color","state":"default"},"--sf-accordion-border-width":{"type":"length","state":"default"},"--sf-accordion-radius":{"type":"length","state":"default"},"--sf-accordion-title-color":{"type":"color","state":"default"},"--sf-accordion-content-color":{"type":"color","state":"default"},"--sf-accordion-icon-color":{"type":"color","state":"default"},"--sf-accordion-divider-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.accordion","tag":"sf-accordion","version":"1.2.5","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","title":"string","content":{"type":"string","optional":true},"slot":{"type":"string","optional":true},"open":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true}}},"single":{"type":"boolean","default":false},"size":{"type":"enum","values":["","1/3","1/2","1","2","3"],"default":""},"appearance":{"type":"enum","values":["default","outline","flush"],"default":"flush"},"marker":{"type":"enum","values":["chevron","plus-minus"],"default":"chevron"},"single-section":{"type":"enum","values":["static","toggle"],"default":"static"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"link":{"type":"boolean","default":false},"expand-all":{"type":"boolean","default":false}},"values":{"expanded":{"type":"list"}},"events":{"toggle":{"carries":{"id":"id","open":"boolean","source":{"type":"enum","values":["user","method"]},"section":"object"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}}},"css-variables":{"--sf-accordion-background-color":{"type":"color","state":"default"},"--sf-accordion-border-color":{"type":"color","state":"default"},"--sf-accordion-border-width":{"type":"length","state":"default"},"--sf-accordion-radius":{"type":"length","state":"default"},"--sf-accordion-title-color":{"type":"color","state":"default"},"--sf-accordion-content-color":{"type":"color","state":"default"},"--sf-accordion-icon-color":{"type":"color","state":"default"},"--sf-accordion-divider-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 

@@ -952,6 +952,13 @@ const PopoverElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__
 // closes something -- a drawer, a modal, a panel -- stands back. The mark is a
 // protocol shared with every other surface that owns Escape, so it is held
 // through core (`core/js/open-surface-mark`) rather than written here.
+// The anchors given to popovers are told apart by a number of their own
+// (data-sf-popover-anchor), kept on a shared global: every bundle may carry
+// this module.
+
+const POPOVER_ANCHORS = globalThis[Symbol.for('sf.popover.anchors')] || (globalThis[Symbol.for('sf.popover.anchors')] = {
+  count: 0
+});
 
 class SfPopover extends PopoverElement {
   // Its DOM updates are all it draws: the first one counts as its render
@@ -1079,6 +1086,17 @@ class SfPopover extends PopoverElement {
     const next = typeof given === 'boolean' ? given : !this.open;
     if (next === this.open) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
     return next ? this.show() : this.close();
+  } // The element the surface stands beside (1.8.0, FO-5): the anchor
+  // property when a page gives one, else the host and the trigger in it. An
+  // anchor lets a surface open from any control -- a chip, a column's
+  // heading, a cell -- with no trigger of its own: the focus goes back to
+  // it, and a press on it while the surface is open closes the surface
+  // (reason close), as a press on a trigger does.
+
+
+  get _reference() {
+    const anchor = this.anchor;
+    return anchor && anchor.nodeType === 1 && anchor.isConnected ? anchor : this;
   }
 
   show() {
@@ -1086,7 +1104,7 @@ class SfPopover extends PopoverElement {
     if (!this.sfEmit('open', {}, {
       cancelable: true
     })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('prevented');
-    this._opener = this.querySelector('[slot="trigger"]') ?? null;
+    this._opener = this.querySelector('[slot="trigger"]') ?? (this._reference !== this ? this._reference : null);
     this.toggleAttribute('open', true);
     this.requestComponentUpdate('open');
 
@@ -1142,8 +1160,8 @@ class SfPopover extends PopoverElement {
 
 
   returnFocus() {
-    const trigger = this._opener?.isConnected ? this._opener : this.querySelector('[slot="trigger"]');
-    const focusable = trigger?.matches?.('button, a[href], [tabindex]') ? trigger : trigger?.querySelector?.('button, a[href], [tabindex]');
+    const trigger = this._opener?.isConnected ? this._opener : this.querySelector('[slot="trigger"]') ?? (this._reference !== this ? this._reference : null);
+    const focusable = trigger?.matches?.('button, a[href], input, select, textarea, [tabindex]') ? trigger : trigger?.querySelector?.('button, a[href], input, select, textarea, [tabindex]');
     focusable?.focus?.();
     return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
   }
@@ -1162,10 +1180,20 @@ class SfPopover extends PopoverElement {
 
     this._onDocumentPointerDown = event => {
       const path = event.composedPath?.() ?? [];
-      if (path.includes(this)) return; // An outside press is the top layer's (standard 1.3.8 §19.3): a
+      if (path.includes(this)) return; // A press on the anchor closes it as a press on a trigger does.
+
+      const reference = this._reference;
+
+      if (reference !== this && path.includes(reference)) {
+        this.close({
+          reason: 'close'
+        });
+        return;
+      } // An outside press is the top layer's (standard 1.3.8 §19.3): a
       // press inside a drawer or a window opened from this popover is
       // theirs, and the popover under them stays. A list opened from it
       // closes with it, as before.
+
 
       if ((0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.hasLayerAbove)(this)) return;
       this.close({
@@ -1214,12 +1242,15 @@ class SfPopover extends PopoverElement {
   resolveUpdateMode() {
     return 'dom';
   } // What it owns is said in attributes the stylesheet reads: where the surface
-  // sits, whether it is shown, how wide it is, and what it is to a reader.
+  // sits, how wide it is, and what it is to a reader. Whether it is shown is
+  // the open value's own attribute (open); the host's data-open is the
+  // page's (1.8.0, DEV order msg-d56fa72b: it was written as "true" or
+  // "false" on every drawing, over a page's own data-open, and repeated the
+  // value in an undeclared state; journal behaviour-popover-data-open-retired).
 
 
   updateDom() {
     this.dataset.placement = this.placement;
-    this.dataset.open = this.open ? 'true' : 'false';
 
     this._adoptLegacyRole(); // The control that opens it says that it does and whether it has.
 
@@ -1320,7 +1351,14 @@ class SfPopover extends PopoverElement {
 
     if (live && !this._under) this._lift(surface);else this._lower();
     const sheet = surface?.hasAttribute?.('data-sf-sheet');
-    const want = live && !sheet ? `${this.placement}|${this._offset()}|${this.arrow}|${Boolean(this._under)}` : null;
+    const reference = this._reference;
+
+    if (reference !== this && !reference.dataset.sfPopoverAnchor) {
+      POPOVER_ANCHORS.count += 1;
+      reference.dataset.sfPopoverAnchor = String(POPOVER_ANCHORS.count);
+    }
+
+    const want = live && !sheet ? `${this.placement}|${this._offset()}|${this.arrow}|${Boolean(this._under)}|${reference === this ? '' : reference.dataset.sfPopoverAnchor}` : null;
     if (this._anchor && (this._anchorSurface !== surface || this._anchorKey !== want)) this._releaseAnchor();
     if (!want || this._anchor) return;
     const {
@@ -1329,7 +1367,7 @@ class SfPopover extends PopoverElement {
     } = ANCHOR_PLACEMENTS[this.placement] || ANCHOR_PLACEMENTS['bottom-end']; // The floating-surface engine (core/js/float-anchor.js, internal):
     // CSS anchor positioning in the top layer, SF.Position elsewhere.
 
-    this._anchor = (0,_core_js_float_anchor_js__WEBPACK_IMPORTED_MODULE_7__.anchorFloating)(this, surface, {
+    this._anchor = (0,_core_js_float_anchor_js__WEBPACK_IMPORTED_MODULE_7__.anchorFloating)(reference, surface, {
       side,
       align,
       offset: this._offset() || 0,
@@ -1511,7 +1549,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-popov
 /***/ "fcb18992f3bb"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.popover","tag":"sf-popover","version":"1.7.3","kind":"leaf","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end","bottom","top","start","start-start","start-end","end","end-start","end-end"],"default":"bottom-end"},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"offset":{"type":"string","default":""},"arrow":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}}},"show":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"return-focus":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.popover","tag":"sf-popover","version":"1.10.2","kind":"leaf","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end","bottom","top","start","start-start","start-end","end","end-start","end-end"],"default":"bottom-end"},"anchor":{"type":"object","default":null},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"offset":{"type":"string","default":""},"arrow":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}}},"show":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"return-focus":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}}}');
 
 /***/ },
 

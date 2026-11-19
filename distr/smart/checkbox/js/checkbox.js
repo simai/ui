@@ -736,13 +736,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_checkableReset__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("078aa87e580e");
 /* harmony import */ var _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("61d50f69160a");
 /* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("47e9950fb20b");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("0f14f861d828");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("38f4a3b01f2c");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_checkbox_js_checkbox__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_checkbox_js_checkbox__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _helpers_checkable_row__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("496db683b2c5");
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("47e9950fb20b");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("0f14f861d828");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("38f4a3b01f2c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_checkbox_js_checkbox__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__, _helpers_checkable_row__WEBPACK_IMPORTED_MODULE_7__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_8__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _component_checkbox_js_checkbox__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__, _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__, _helpers_checkable_row__WEBPACK_IMPORTED_MODULE_7__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_8__);
+
+
 
 
 
@@ -764,11 +769,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // one, as a native checkbox does (§17.1 item 2), and the inner checkbox
 // carries no name.
 
-const CheckboxElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_7__, {
+const CheckboxElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_9__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__.files,
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_8__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_10__
 });
 
 class SfCheckbox extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.FormField)(CheckboxElement) {
@@ -924,6 +929,10 @@ class SfCheckbox extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
       // (§17.1 item 6).
       name: (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.innerControlName)(this, context.name),
       stateIcon: this.stateIcon,
+      // The error line's id (error-message, FO-1): the input is described by it.
+      messageId: (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_8__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_8__.instancePath)(this, {
+        kind: 'sf-checkbox'
+      }), 'error'),
       ariaLabel: this.ariaLabel,
       // The help button is named by its subject («Подробнее: Сохранять черновики»).
       helpLabel: context.help && context.label ? this.sfWord('help', {
@@ -942,6 +951,7 @@ class SfCheckbox extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.For
     // description are linked here the same way.
 
     (0,_component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__.linkCheckableText)(this.querySelector('.sf-checkbox'), _component_checkable_text_helper__WEBPACK_IMPORTED_MODULE_5__.CHECKBOX_TEXT_PARTS);
+    (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_7__.linkCheckableMessage)(this, input);
     this._releaseReset?.();
     this._releaseReset = (0,_helpers_checkableReset__WEBPACK_IMPORTED_MODULE_4__.bindCheckableReset)(this, input);
 
@@ -1217,7 +1227,7 @@ function renderCheckboxTemplate(context) {
             ${!isStart ? input : ''}
         </label>
     `;
-  return (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__.renderCheckableRow)(size, control, helpContent);
+  return (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__.renderCheckableRow)(size, control, helpContent, (0,_helpers_checkable_row__WEBPACK_IMPORTED_MODULE_2__.renderCheckableMessage)(context));
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1232,7 +1242,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CHECKABLE_HELP_SIZE: () => (/* binding */ CHECKABLE_HELP_SIZE),
 /* harmony export */   checkableClasses: () => (/* binding */ checkableClasses),
+/* harmony export */   linkCheckableMessage: () => (/* binding */ linkCheckableMessage),
 /* harmony export */   renderCheckableHelp: () => (/* binding */ renderCheckableHelp),
+/* harmony export */   renderCheckableMessage: () => (/* binding */ renderCheckableMessage),
 /* harmony export */   renderCheckableRow: () => (/* binding */ renderCheckableRow),
 /* harmony export */   renderCheckableText: () => (/* binding */ renderCheckableText)
 /* harmony export */ });
@@ -1299,11 +1311,34 @@ function checkableClasses(size, hasText) {
 // the control -- the label and its input never become :active, the box is not
 // painted pressed and the value does not change.
 
-function renderCheckableRow(size, control, help) {
-  if (!help) return control; // The help sits in a box of its own: sf-help-mark's host draws no box
+function renderCheckableRow(size, control, help, message = '') {
+  // The help sits in a box of its own: sf-help-mark's host draws no box
   // (display: contents), so the row places this one.
+  const row = help ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-checkable-row sf-checkable--size-${size} flex flex-nowrap items-cross-start`}>${control}<span class="sf-checkable-help">${help}</span></span>` : control;
+  if (!message) return row;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-checkable-field sf-checkable--size-${size} flex flex-col`}>${row}${message}</span>`;
+} // The error line of a checkbox or a switch while it is invalid (field orders
+// 2026-11-18, FO-1): what is wrong, under the control in the error role, as
+// every field of the family says it (sf-input, sf-input-choice), so a host
+// sets invalid and error-message on the control instead of writing a line of
+// its own under it. Nothing without both. Its id joins the native input's
+// aria-describedby (linkCheckableMessage).
 
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${`sf-checkable-row sf-checkable--size-${size} flex flex-nowrap items-cross-start`}>${control}<span class="sf-checkable-help">${help}</span></span>`;
+function renderCheckableMessage(context) {
+  if (!context.invalid || !context.errorMessage) return '';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-checkable-message" id=${context.messageId || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-field-message="error">${context.errorMessage}</span>`;
+} // The message's id on the input's aria-describedby, and off it once the line
+// is gone; ids put there by the author or the text link are kept.
+
+function linkCheckableMessage(host, input) {
+  if (!host || !input) return;
+  const line = host.querySelector('.sf-checkable-message');
+  const before = String(input.getAttribute('aria-describedby') || '').split(/\s+/u).filter(Boolean);
+  const kept = before.filter(id => id !== host.__sfCheckableMessageId);
+  const next = line?.id ? [...kept, line.id] : kept;
+  host.__sfCheckableMessageId = line?.id || '';
+  if (next.join(' ') === before.join(' ')) return;
+  if (next.length) input.setAttribute('aria-describedby', next.join(' '));else input.removeAttribute('aria-describedby');
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1959,7 +1994,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-check
 /***/ "47e9950fb20b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.5.5","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"controls":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.6.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"controls":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

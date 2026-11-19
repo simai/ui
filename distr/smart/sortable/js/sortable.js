@@ -149,6 +149,229 @@ function sizeStep(size) {
 
 /***/ },
 
+/***/ "8d229b7c92e9"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   menuOpen: () => (/* binding */ menuOpen),
+/* harmony export */   publishMenu: () => (/* binding */ publishMenu)
+/* harmony export */ });
+/* harmony import */ var _density_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1412c5875b4d");
+// SF.menu.open: the page's one menu of actions (owner decision C184 (4),
+// 2026-11-14; the public name is the owner's; study control/research/
+// 2026-11-14-toolbar-menu-open.md, K-03).
+//
+// A row's «⋯», a toolbar's «Ещё», the right button and the menu key on a row
+// all open the standard menu -- sf-menu-context -- and every component used to
+// place its own and wait for it (nine in SIMAI Pro, more in the Framework).
+// Now one call opens the one menu of the page:
+//
+//   const choice = await SF.menu.open({anchor, entries, label});
+//   const choice = await SF.menu.open({x, y, entries, label, returnTo: row});
+//   // choice: {id, entry} of the row chosen, or null (closed without one)
+//
+// - anchor: the control the menu hangs from (a press on the same control
+//   while its menu is open closes it, as a toggle); or x, y: a point in the
+//   window -- where a right-click was, or a row's corner for Shift+F10 -- the
+//   menu's corner exactly there;
+// - entries: the rows, as sf-menu-context takes them;
+// - label: the menu's name, read by a screen reader;
+// - size: the menu's size step, as sf-menu-context's size attribute; left
+//   out, the step of what opens it (the anchor's, its component's or the
+//   Smart component holding it: a row menu of a table of size 1 is size 1);
+// - returnTo: where the focus goes when the menu closes (the row it acted
+//   on); left out, the menu gives the focus back to where it was, or to the
+//   anchor;
+// - align: 'start' (the default) lines the menu's start edge up with the
+//   anchor's, 'end' its end edge -- for a control at the end of a toolbar,
+//   whose menu would otherwise run past it towards the window's edge (view
+//   round 1, table group). Start and end follow the page's direction (in a
+//   right-to-left page 'end' is the left edge), and a menu that does not fit
+//   still flips to the other side and is shifted inside the window. At a
+//   point, 'end' puts the menu's end corner at the point.
+//
+// The menu is fetched by the Loader the first time (SF.Loader.ensure), one on
+// the page -- on the body, or in the open modal dialog the anchor is in, since
+// a modal dialog makes the rest of the page inert. A second opening while one
+// is open closes the first, which answers null. The answer never rejects:
+// without a menu (no Loader, no sf-menu-context) it is null.
+//
+// Every bundle may carry a copy of this module (bundles each carry their own
+// module copy), so the one menu and its pending answer live behind the shared
+// global: the first copy to run publishes SF.menu.open and every other copy
+// calls the published one.
+
+const SHARED = 'data-sf-menu-shared';
+const ALIGNS = new Set(['start', 'end']);
+
+function installMenuOpen() {
+  let pending = null;
+  let point = null; // The opening the menu belongs to now, kept past its answer: a choice
+  // answers before the menu closes, and the focus goes back on closing.
+
+  let shown = null;
+
+  const settle = value => {
+    const waiting = pending;
+    pending = null;
+    waiting?.resolve(value);
+    return waiting;
+  };
+
+  function sharedMenu(anchor) {
+    const doc = globalThis.document;
+    let menu = doc.querySelector(`[${SHARED}]`);
+
+    if (!menu) {
+      menu = doc.createElement('sf-menu-context');
+      menu.setAttribute('popup', '');
+      menu.setAttribute(SHARED, '');
+      menu.addEventListener('sf-menu-context-select', event => {
+        if (event.target !== menu) return;
+        settle({
+          id: event.detail?.id ?? null,
+          entry: event.detail?.entry ?? null
+        });
+      });
+      menu.addEventListener('sf-menu-context-closed', event => {
+        if (event.target !== menu) return;
+        settle(null);
+        const opening = shown;
+        shown = null;
+        const back = opening?.returnTo;
+        if (!back?.isConnected) return; // After the menu's own return: the row the person acted on, when the
+        // focus fell to the page, stayed in the closed menu or went back to
+        // the «⋯» that opened it (a pointer's control, not a Tab stop).
+
+        const anchor = opening.anchor;
+        setTimeout(() => {
+          const active = doc.activeElement;
+
+          if (!active || active === doc.body || active === doc.documentElement || menu.contains(active) || anchor && (active === anchor || anchor.contains?.(active))) {
+            back.focus?.({
+              preventScroll: true
+            });
+          }
+        }, 0);
+      });
+    } // In the open modal dialog the opener is in, or on the body.
+
+
+    const home = anchor?.closest?.('dialog[open]') || doc.body;
+    if (menu.parentNode !== home && !menu.isOpen) home.append(menu);
+    return menu;
+  } // A point in the window as an anchor of no size: sf-menu-context hangs its
+  // corner exactly there and reads the page under it (density, focus back).
+
+
+  function pointAnchor(x, y, near) {
+    const doc = globalThis.document;
+
+    if (!point?.isConnected) {
+      point = doc.createElement('span');
+      point.setAttribute('aria-hidden', 'true');
+      point.setAttribute('data-sf-menu-point', '');
+    }
+
+    const home = near?.closest?.('dialog[open]') || doc.body;
+    if (point.parentNode !== home) home.append(point);
+    point.style.cssText = `position:fixed;left:${x}px;top:${y}px;inline-size:0;block-size:0;pointer-events:none;overflow:hidden`;
+    return point;
+  }
+
+  return async function open(options = {}) {
+    const {
+      anchor = null,
+      x,
+      y,
+      entries = [],
+      label = '',
+      size = '',
+      returnTo = null
+    } = options || {}; // Logical, so a right-to-left page mirrors it; anything else is start.
+
+    const align = ALIGNS.has(options?.align) ? options.align : 'start';
+    const atPoint = !(anchor instanceof Element);
+    if (atPoint && !(Number.isFinite(Number(x)) && Number.isFinite(Number(y)))) return null;
+    const doc = globalThis.document;
+    if (!doc) return null;
+    await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+    if (!globalThis.customElements?.get('sf-menu-context')) return null;
+    const menu = sharedMenu(atPoint ? returnTo : anchor); // The same control again: its open menu closes (a toggle).
+
+    if (!atPoint && menu.isOpen && pending?.anchor === anchor) {
+      menu.close({
+        reason: 'api'
+      });
+      return null;
+    }
+
+    if (menu.isOpen) {
+      settle(null);
+      shown = null;
+      menu.close({
+        restoreFocus: false,
+        reason: 'api',
+        ask: false
+      });
+    }
+
+    if (label) menu.setAttribute('aria-label', label);else menu.removeAttribute('aria-label');
+    if (size) menu.setAttribute('size', String(size));else {
+      menu.removeAttribute('size');
+      menu.removeAttribute(_density_js__WEBPACK_IMPORTED_MODULE_0__.RELATIVE);
+    } // In the density of the control or the row it opens from (C22, C79), not
+    // of the body it stands on.
+
+    (0,_density_js__WEBPACK_IMPORTED_MODULE_0__.followDensity)(menu, atPoint ? returnTo : anchor);
+    menu.search = null;
+    menu.entries = Array.isArray(entries) ? entries : [];
+    return new Promise(resolve => {
+      pending = {
+        resolve,
+        anchor,
+        returnTo: returnTo instanceof Element ? returnTo : null
+      };
+      shown = pending;
+      const mine = pending;
+      const opening = atPoint ? typeof menu.openAt === 'function' ? menu.openAt(Number(x), Number(y), {
+        target: returnTo ?? undefined,
+        align
+      }) : menu.openFor(pointAnchor(Number(x), Number(y), returnTo), {
+        side: 'block-end',
+        align,
+        focus: 'first'
+      }) : menu.openFor(anchor, {
+        side: 'block-end',
+        align,
+        focus: 'first'
+      });
+      Promise.resolve(opening).then(answer => {
+        // Refused (a listener kept it closed) or no surface: nothing chosen.
+        if (pending === mine && answer && answer !== true && answer.outcome !== 'applied') settle(null);
+      }, () => {
+        if (pending === mine) settle(null);
+      });
+    });
+  };
+} // The published one, or this copy published.
+
+
+function publishMenu() {
+  const SF = globalThis.SF = globalThis.SF || {};
+  SF.menu = SF.menu || {};
+  if (typeof SF.menu.open !== 'function') SF.menu.open = installMenuOpen();
+  return SF.menu;
+}
+function menuOpen(options) {
+  return publishMenu().open(options);
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (menuOpen);
+
+/***/ },
+
 /***/ "2db3a835ac11"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -626,7 +849,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
     aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_4__
   })
 });
-globalThis.SF = globalThis.SF || {}; // attach: sf-sortable's pointer behaviour on any container (the column mode).
+globalThis.SF = globalThis.SF || {}; // attach: sf-sortable's behaviour on any container -- the column mode, and the
+// row mode (orientation: 'vertical') with its keys and the handle's menu.
 
 globalThis.SF.Sortable = Object.freeze({
   SORTABLE_INSERT_EVENT: _core_js_composition_sortable_inserter_mjs__WEBPACK_IMPORTED_MODULE_1__.SORTABLE_INSERT_EVENT,
@@ -634,8 +858,8 @@ globalThis.SF.Sortable = Object.freeze({
   SORTABLE_MOVE_EVENT: _core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__.SORTABLE_MOVE_EVENT,
   SORTABLE_STATE_EVENT: _core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__.SORTABLE_STATE_EVENT,
   activeSortableSession: _core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__.activeSortableSession,
-  attach: _core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__.attachSortable,
-  attachSortable: _core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__.attachSortable,
+  attach: _core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_7__.attachSortableWithMenu,
+  attachSortable: _core_js_composition_sortable_move_menu_mjs__WEBPACK_IMPORTED_MODULE_7__.attachSortableWithMenu,
   registerSortableDropTarget: _core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__.registerSortableDropTarget,
   sortableIndexAt: _core_js_composition_sortable_mjs__WEBPACK_IMPORTED_MODULE_0__.sortableIndexAt
 });
@@ -711,6 +935,15 @@ function manifestHost(manifest, options = {}) {
 
   class PlainHost extends Html {
     connectedCallback() {
+      // An element placed inside another element's printed first paint (a
+      // list in a board's picture: the board drew the cards into it) is part
+      // of that picture, as a Smart element is (smart-base renderComponent):
+      // the children there are what the element around it drew, not this
+      // element's own static markup. It leaves them, and the element around
+      // it replaces the picture when its code comes. Clearing them took a
+      // board's cards away whenever sf-sortable's code came first (view
+      // round 2 board, 2026-11-18).
+      if (this.sfInPicture()) return;
       // Static markup printed for the first paint (standard 1.3.8 §5.4) goes
       // as the element connects: these elements draw in the same task.
       if (!this.__sfFirstPaintEnded) {
@@ -732,6 +965,13 @@ function manifestHost(manifest, options = {}) {
     }
 
     disconnectedCallback() {}
+
+    // True while the element stands in a printed first paint: it, or a node
+    // around it, is static markup (data-sf-static). A page's own host is
+    // never marked, so an element the page wrote ends its first paint.
+    sfInPicture() {
+      return Boolean(this.closest?.('[data-sf-static]'));
+    }
 
     // The generated actions read the instance's scope (§7.7); a plain host's
     // ends when the page removes it.
@@ -1312,16 +1552,19 @@ __webpack_async_result__();
 __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   attachSortableWithMenu: () => (/* binding */ attachSortableWithMenu),
 /* harmony export */   createSortableMoveMenu: () => (/* binding */ createSortableMoveMenu),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   moveMenuEntries: () => (/* binding */ moveMenuEntries),
 /* harmony export */   moveMenuRegistry: () => (/* binding */ moveMenuRegistry),
 /* harmony export */   moveMenuTarget: () => (/* binding */ moveMenuTarget),
+/* harmony export */   moveMenuTransfer: () => (/* binding */ moveMenuTransfer),
 /* harmony export */   withSortableMoveMenu: () => (/* binding */ withSortableMoveMenu)
 /* harmony export */ });
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
 /* harmony import */ var _sortable_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("7c1f9c2b36da");
-/* harmony import */ var _overflow_row_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("2db3a835ac11");
+/* harmony import */ var _menu_open_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8d229b7c92e9");
+/* harmony import */ var _overflow_row_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2db3a835ac11");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__, _sortable_mjs__WEBPACK_IMPORTED_MODULE_1__]);
 ([_page_language_js__WEBPACK_IMPORTED_MODULE_0__, _sortable_mjs__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 // The handle's menu of sf-sortable (owner C171 (1), 2026-11-14): a press on a
@@ -1341,6 +1584,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_pag
 
 
 
+
 const ITEM = '[data-sf-sortable-item]';
 const HANDLE = '[data-sf-sortable-handle]';
 
@@ -1351,6 +1595,7 @@ const MESSAGES = {
     'move-down': 'Down',
     'move-first': 'To the top',
     'move-last': 'To the bottom',
+    'move-to': 'Move to',
   },
 };
 
@@ -1361,12 +1606,8 @@ function items(list) {
   return [...list.querySelectorAll(ITEM)].filter((item) => item.closest('sf-sortable') === list);
 }
 
-function itemLabel(item) {
-  if (item.getAttribute('aria-label')) return item.getAttribute('aria-label');
-  const clone = item.cloneNode(true);
-  for (const hidden of clone.querySelectorAll('[aria-hidden="true"], .sf-sortable-live')) hidden.remove();
-  return clone.textContent.replace(/\s+/gu, ' ').trim();
-}
+// The item's name, read as sortable.mjs reads it (blocks joined by commas).
+const itemLabel = (item) => (0,_sortable_mjs__WEBPACK_IMPORTED_MODULE_1__.sortableItemLabel)(item);
 
 // The control a handle is: itself when it is a button, else the button inside
 // it (sf-button-icon draws one), else the handle element.
@@ -1375,16 +1616,42 @@ function controlOf(handle) {
   return handle.querySelector('button') || handle;
 }
 
-/** The places a move menu offers for the item at `index` of `count`. */
-function moveMenuEntries(index, count) {
+/**
+ * The places a move menu offers for the item at `index` of `count`, and, when
+ * the item can go to other lists (BV-7), «Move to» with a submenu of the
+ * lists of its group: `targets` [{label, current, reason}] in the page's
+ * order; the list it is in is checked and disabled, a list the host refused
+ * is disabled with the host's reason as its caption (the menu reads it, C164
+ * (4)). A row of the submenu is `to:<n>`, n the target's place in `targets`.
+ */
+function moveMenuEntries(index, count, targets = []) {
   const last = count - 1;
-  return [
+  const entries = [
     { id: 'up', text: text('move-up'), icon: 'arrow_upward', disabled: index <= 0 },
     { id: 'down', text: text('move-down'), icon: 'arrow_downward', disabled: index >= last },
     { type: 'separator' },
     { id: 'first', text: text('move-first'), icon: 'vertical_align_top', disabled: index <= 0 },
     { id: 'last', text: text('move-last'), icon: 'vertical_align_bottom', disabled: index >= last },
   ];
+  if (targets.some((target) => !target.current)) {
+    entries.push({ type: 'separator' }, {
+      id: 'to', text: text('move-to'), icon: 'arrow_forward',
+      submenu: targets.map((target, at) => ({
+        id: `to:${at}`, text: target.label,
+        ...(target.current ? { checked: true } : {}),
+        disabled: Boolean(target.current || target.reason),
+        ...(!target.current && target.reason ? { caption: target.reason } : {}),
+      })),
+    });
+  }
+  return entries;
+}
+
+/** The target a `to:<n>` row stands for, or null. */
+function moveMenuTransfer(id, targets) {
+  const match = /^to:(\d+)$/u.exec(String(id || ''));
+  const target = match ? targets[Number(match[1])] : null;
+  return target && !target.current && !target.reason ? target : null;
 }
 
 /** The place an entry moves the item at `index` of `count` to. */
@@ -1410,33 +1677,36 @@ function createSortableMoveMenu(list) {
   // The standard menu, placed by core's one helper (overflow-row.js
   // standardMenu, defect TL-8), held on the list.
   async function standardMenu() {
-    menu = await (0,_overflow_row_js__WEBPACK_IMPORTED_MODULE_2__.standardMenu)(list, '_sfMoveMenu', null, {
+    menu = await (0,_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.standardMenu)(list, '_sfMoveMenu', null, {
       setup(surface) {
         surface.addEventListener('sf-menu-context-select', onSelect);
         surface.addEventListener('sf-menu-context-closed', () => {
-          if (current?.control) current.control.setAttribute('aria-expanded', 'false');
+          if (current?.control && current.control !== current.item) current.control.setAttribute('aria-expanded', 'false');
         });
       },
     });
     return menu;
   }
 
-  async function open(item, handle) {
+  // control: the handle's control a press opened the menu from, or the item
+  // itself for the menu key (Shift+F10, ContextMenu).
+  async function open(item, control) {
     if ((0,_sortable_mjs__WEBPACK_IMPORTED_MODULE_1__.activeSortableSession)()) return false;
     const all = items(list);
     const index = all.indexOf(item);
     if (index < 0) return false;
-    const control = controlOf(handle);
     const surface = await standardMenu();
     if (!surface) return false;
     if (surface.isOpen && current?.item === item) {
       surface.close();
       return false;
     }
-    current = { item, control, id: item.getAttribute('data-sf-sortable-item') };
+    const targets = (0,_sortable_mjs__WEBPACK_IMPORTED_MODULE_1__.sortableMoveTargets)(list, item);
+    current = { item, control, targets, id: item.getAttribute('data-sf-sortable-item') };
     surface.setAttribute('aria-label', format(text('move-menu'), { item: itemLabel(item) }));
-    surface.entries = moveMenuEntries(index, all.length);
-    control.setAttribute('aria-expanded', 'true');
+    surface.entries = moveMenuEntries(index, all.length, targets);
+    // The item itself (the menu key) says nothing of a popup: it is not a button.
+    if (control !== item) control.setAttribute('aria-expanded', 'true');
     await surface.openFor(control, { side: 'block-end', align: 'start', focus: 'first' });
     return true;
   }
@@ -1450,11 +1720,17 @@ function createSortableMoveMenu(list) {
     if (!chosen || !id) return;
     const all = items(list);
     const index = all.indexOf(chosen.item);
-    if (index >= 0) (0,_sortable_mjs__WEBPACK_IMPORTED_MODULE_1__.requestSortableMove)(list, chosen.item, moveMenuTarget(id, index, all.length));
+    const transfer = moveMenuTransfer(id, chosen.targets || []);
+    if (transfer) (0,_sortable_mjs__WEBPACK_IMPORTED_MODULE_1__.requestSortableTransfer)(list, chosen.item, transfer.list);
+    // «Move to» itself, or a target that is not a choice, opens or does nothing.
+    else if (id === 'to' || /^to:/u.test(String(id))) return;
+    else if (index >= 0) (0,_sortable_mjs__WEBPACK_IMPORTED_MODULE_1__.requestSortableMove)(list, chosen.item, moveMenuTarget(id, index, all.length));
     menu.close({ restoreFocus: false });
     const back = () => {
       const escape = globalThis.CSS?.escape ? globalThis.CSS.escape(chosen.id) : chosen.id;
-      const row = list.querySelector(`[data-sf-sortable-item="${escape}"]`);
+      const selector = `[data-sf-sortable-item="${escape}"]`;
+      // Sent to another list, the row is found there.
+      const row = list.querySelector(selector) || (transfer ? globalThis.document.querySelector(selector) : null);
       const handle = row?.querySelector(HANDLE);
       const control = handle ? controlOf(handle) : null;
       // A handle that is a picture (a glyph, no control) gives focus to its row.
@@ -1472,7 +1748,19 @@ function createSortableMoveMenu(list) {
     const item = handle?.closest(ITEM);
     if (!handle || !item || item.closest('sf-sortable') !== list) return;
     event.preventDefault();
-    open(item, handle);
+    open(item, controlOf(handle));
+  }
+
+  // The menu key on an item (Shift+F10, ContextMenu) opens the same menu, at
+  // its handle when it has one: the way to «Move to» without a pointer.
+  function onKeyDown(event) {
+    if (event.defaultPrevented || (0,_sortable_mjs__WEBPACK_IMPORTED_MODULE_1__.activeSortableSession)()) return;
+    if (!(event.key === 'ContextMenu' || (event.key === 'F10' && event.shiftKey))) return;
+    const item = event.target.closest?.(ITEM);
+    if (!item || item.closest('sf-sortable') !== list || event.target !== item) return;
+    event.preventDefault();
+    const handle = item.querySelector(HANDLE);
+    open(item, handle ? controlOf(handle) : item);
   }
 
   return {
@@ -1480,6 +1768,7 @@ function createSortableMoveMenu(list) {
       if (wiring) return;
       wiring = new globalThis.AbortController();
       list.addEventListener('click', onClick, { signal: wiring.signal });
+      list.addEventListener('keydown', onKeyDown, { signal: wiring.signal });
       prepare();
     },
     disconnect() {
@@ -1492,6 +1781,66 @@ function createSortableMoveMenu(list) {
     prepare,
     open,
   };
+}
+
+/**
+ * The row mode of SF.Sortable.attach with the handle's menu (C171 (1)): a
+ * press on a row's handle that did not become a drag opens the page's one menu
+ * (SF.menu.open) with «Выше · Ниже · В начало · В конец», and a choice asks
+ * the move through the controller -- the same intent and words a drag ends
+ * with; focus comes back to the moved row's handle. The column mode, or rows
+ * without a handle selector, are the controller alone.
+ */
+function attachSortableWithMenu(container, options = {}) {
+  const detach = (0,_sortable_mjs__WEBPACK_IMPORTED_MODULE_1__.attachSortable)(container, options);
+  if (options.orientation !== 'vertical' || !detach.handle || options.moveMenu === false) return detach;
+  const wiring = new globalThis.AbortController();
+  const handleFor = (target) => {
+    const handle = target.closest?.(detach.handle);
+    const item = handle?.closest(options.items);
+    return handle && item && container.contains(item) ? { handle, item } : null;
+  };
+  // Handles say they open a menu, those the host draws later as well.
+  const prepare = () => {
+    for (const handle of container.querySelectorAll(detach.handle)) {
+      const control = controlOf(handle);
+      if (!control.hasAttribute('aria-haspopup')) control.setAttribute('aria-haspopup', 'menu');
+      if (!control.hasAttribute('aria-expanded')) control.setAttribute('aria-expanded', 'false');
+    }
+  };
+  prepare();
+  const observer = new globalThis.MutationObserver(prepare);
+  observer.observe(container, { childList: true, subtree: true });
+  container.addEventListener('click', async (event) => {
+    const found = handleFor(event.target);
+    if (!found || (0,_sortable_mjs__WEBPACK_IMPORTED_MODULE_1__.activeSortableSession)()) return;
+    event.preventDefault();
+    const peers = detach.members(found.item);
+    const index = peers.indexOf(found.item);
+    if (index < 0 || peers.length < 2) return;
+    const control = controlOf(found.handle);
+    control.setAttribute('aria-expanded', 'true');
+    const choice = await (0,_menu_open_js__WEBPACK_IMPORTED_MODULE_2__.menuOpen)({
+      anchor: control,
+      entries: moveMenuEntries(index, peers.length),
+      label: format(text('move-menu'), { item: detach.labelOf(found.item) }),
+    });
+    if (control.isConnected) control.setAttribute('aria-expanded', 'false');
+    const id = choice?.id;
+    if (!id) return;
+    // Asked of the item where it stands now: the list may have changed while
+    // the menu was open.
+    const now = detach.members(found.item);
+    const from = now.indexOf(found.item);
+    if (from >= 0) detach.move(found.item, moveMenuTarget(id, from, now.length));
+  }, { signal: wiring.signal });
+  const detachAll = () => {
+    wiring.abort();
+    observer.disconnect();
+    detach();
+  };
+  detachAll.move = detach.move;
+  return detachAll;
 }
 
 /** sf-sortable with the handle's move menu: the drag element, extended. */
@@ -1525,7 +1874,7 @@ function moveMenuRegistry(registry = globalThis.customElements) {
   };
 }
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ createSortableMoveMenu, moveMenuEntries, moveMenuRegistry, moveMenuTarget, withSortableMoveMenu });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ attachSortableWithMenu, createSortableMoveMenu, moveMenuEntries, moveMenuRegistry, moveMenuTarget, moveMenuTransfer, withSortableMoveMenu });
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1538,6 +1887,7 @@ __webpack_async_result__();
 __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SORTABLE_CHECK_EVENT: () => (/* binding */ SORTABLE_CHECK_EVENT),
 /* harmony export */   SORTABLE_DROP_LINE: () => (/* binding */ SORTABLE_DROP_LINE),
 /* harmony export */   SORTABLE_INTENT_EVENT: () => (/* binding */ SORTABLE_INTENT_EVENT),
 /* harmony export */   SORTABLE_MOVE_EVENT: () => (/* binding */ SORTABLE_MOVE_EVENT),
@@ -1548,7 +1898,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   defineSortable: () => (/* binding */ defineSortable),
 /* harmony export */   registerSortableDropTarget: () => (/* binding */ registerSortableDropTarget),
 /* harmony export */   requestSortableMove: () => (/* binding */ requestSortableMove),
-/* harmony export */   sortableIndexAt: () => (/* binding */ sortableIndexAt)
+/* harmony export */   requestSortableTransfer: () => (/* binding */ requestSortableTransfer),
+/* harmony export */   sortableIndexAt: () => (/* binding */ sortableIndexAt),
+/* harmony export */   sortableItemLabel: () => (/* binding */ sortableItemLabel),
+/* harmony export */   sortableKeyAction: () => (/* binding */ sortableKeyAction),
+/* harmony export */   sortableMoveTargets: () => (/* binding */ sortableMoveTargets),
+/* harmony export */   sortableReadableText: () => (/* binding */ sortableReadableText),
+/* harmony export */   sortableRefusal: () => (/* binding */ sortableRefusal),
+/* harmony export */   sortableRovingStep: () => (/* binding */ sortableRovingStep),
+/* harmony export */   sortableSelectable: () => (/* binding */ sortableSelectable)
 /* harmony export */ });
 /* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("43090d1c8307");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_page_language_js__WEBPACK_IMPORTED_MODULE_0__]);
@@ -1566,11 +1924,26 @@ _page_language_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_re
 const SORTABLE_MOVE_EVENT = 'sf-sortable-move';
 const SORTABLE_INTENT_EVENT = 'sf-sortable-intent';
 const SORTABLE_STATE_EVENT = 'sf-sortable-state';
+// The host's word on a target list before an item goes there by the handle's
+// menu, a drag or the keys (BV-7): cancelable; a host that refuses calls
+// preventDefault() and may say why in detail.reason, which the menu shows on
+// the disabled row.
+const SORTABLE_CHECK_EVENT = 'sf-sortable-check';
 
 const ITEM = '[data-sf-sortable-item]';
 const HANDLE = '[data-sf-sortable-handle]';
 const INTERACTIVE = 'a[href],button,input,select,textarea,summary,[contenteditable]:not([contenteditable="false"])';
 const NAME = /^[a-z][a-z0-9-]{0,31}$/u;
+// The controls inside an item, which leave the Tab order (BV-6), and the ones
+// that keep their own arrows (a text field, a radio group, a list box).
+const CONTROL = `${INTERACTIVE},[tabindex]`;
+const OWN_ARROWS = 'input:not([type="checkbox"]):not([type="button"]):not([type="submit"]):not([type="reset"]),select,textarea,[contenteditable]:not([contenteditable="false"]),[role="slider"],[role="spinbutton"],[role="listbox"],[role="radiogroup"]';
+// An sf-list-item row keeps its list's one Tab stop and its arrows itself.
+const OWN_ROVING = '[data-sf-list-roving]';
+// What makes an item selectable (C146 (8)): a selection mark inside it, or a
+// host-kept aria-selected. On such an item Space selects and Enter picks up (BV-8).
+const SELECT_MARK = 'input[type="checkbox"],[role="checkbox"]';
+const TAMED = 'data-sf-sortable-tabindex';
 // The id of a list's instructions, which its items name in aria-describedby:
 // a page-wide count, kept on a shared global because every bundle that
 // carries this module has its own module scope. It used to be random base 36,
@@ -1603,7 +1976,9 @@ const HALF = SORTABLE_DROP_LINE / 2;
 
 const MESSAGES = {
   en: {
-    instructions: 'Space or Enter to pick up, arrows to move, Space or Enter to drop, Escape to cancel.',
+    instructions: 'Enter or Space to pick up, arrows to move, Enter or Space to drop, Escape to cancel.',
+    'instructions-select': 'Space to select, Enter to pick up, arrows to move, Enter to drop, Escape to cancel.',
+    refused: 'Not here',
     picked: 'Picked up {item}. Position {index} of {total} in “{list}”.',
     moved: 'Position {index} of {total} in “{list}”.',
     dropped: 'Dropped {item} at position {index} in “{list}”.',
@@ -1640,13 +2015,84 @@ function registerSortableDropTarget(target) {
   return () => externalTargets.delete(target);
 }
 
-// Visible text of an item without decorative (aria-hidden) parts.
-function itemLabel(item) {
-  if (item.getAttribute('aria-label')) return item.getAttribute('aria-label');
-  const clone = item.cloneNode(true);
-  for (const hidden of clone.querySelectorAll('[aria-hidden="true"]')) hidden.remove();
-  return clone.textContent.replace(/\s+/gu, ' ').trim();
+// What an item is called in the move menu and the live announcements.
+//
+// An item's text read as one run glued its parts: a board card said «Заказ
+// № 1002 Кафе «Лето»5 070,00 ₽» (board study, 2026-11-17), the client and the
+// amount being two blocks with nothing between them. Now, in order: the
+// item's aria-label; the text of what aria-labelledby names; the part marked
+// data-sf-sortable-label or slot="title" (the card's title); else its visible
+// text with a comma between its blocks («Заказ № 1002, Кафе «Лето», 5 070,00
+// ₽»). Text inside one line (a <b> in a word) stays together. Decorative
+// parts (aria-hidden, hidden, tooltips, the list's live region, `skip`) are
+// not read.
+const LABEL_SKIP = '[aria-hidden="true"], [hidden], [role="tooltip"], .sf-sortable-live, template, script, style';
+const INLINE_TAGS = new Set(['a', 'abbr', 'b', 'bdi', 'bdo', 'cite', 'code', 'data', 'dfn', 'em', 'i', 'kbd', 'label', 'mark', 'q', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'time', 'u', 'var', 'wbr']);
+const FLOW_PARENTS = new Set(['flex', 'inline-flex', 'grid', 'inline-grid']);
+
+function displayOf(element) {
+  const view = element.ownerDocument?.defaultView;
+  if (typeof view?.getComputedStyle === 'function') {
+    try {
+      return view.getComputedStyle(element).display || 'inline';
+    } catch {
+      // A node outside a document: by its tag below.
+    }
+  }
+  return INLINE_TAGS.has(String(element.localName ?? '').toLowerCase()) ? 'inline' : 'block';
 }
+
+const tidy = (text) => String(text ?? '').replace(/\s+/gu, ' ').trim();
+
+/** The text of `node` read as a person sees it: its blocks, joined by commas. */
+function sortableReadableText(node, { skip = '' } = {}) {
+  const skipping = skip ? `${LABEL_SKIP}, ${skip}` : LABEL_SKIP;
+  const runs = [''];
+  const walk = (current, parentDisplay) => {
+    for (const child of current.childNodes ?? []) {
+      if (child.nodeType === 3) {
+        runs[runs.length - 1] += child.nodeValue ?? '';
+        continue;
+      }
+      if (child.nodeType !== 1) continue;
+      if (typeof child.matches === 'function' && child.matches(skipping)) continue;
+      const display = displayOf(child);
+      if (display === 'none') continue;
+      // A flex or grid item is a block of its own whatever its tag.
+      // A box of its own (a block, an inline-block chip, a flex or grid
+      // item whatever its tag) is a part; an inline element is in the line;
+      // display: contents passes its parent's layout on to its children.
+      const contents = display === 'contents';
+      const apart = !contents && (display !== 'inline' || FLOW_PARENTS.has(parentDisplay));
+      if (apart) runs.push('');
+      walk(child, contents ? parentDisplay : display);
+      if (apart) runs.push('');
+    }
+  };
+  walk(node, node.nodeType === 1 ? displayOf(node) : 'block');
+  return runs.map(tidy).filter(Boolean).join(', ');
+}
+
+/** What an item is called (see above); `skip` names more parts not to read. */
+function sortableItemLabel(item, { skip = '' } = {}) {
+  const own = tidy(item.getAttribute?.('aria-label'));
+  if (own) return own;
+  const ids = tidy(item.getAttribute?.('aria-labelledby')).split(' ').filter(Boolean);
+  const root = item.getRootNode?.();
+  const named = ids.map((id) => root?.getElementById?.(id) ?? item.ownerDocument?.getElementById?.(id)).filter(Boolean);
+  if (named.length) {
+    const text = named.map((node) => tidy(node.getAttribute?.('aria-label')) || sortableReadableText(node, { skip })).filter(Boolean).join(', ');
+    if (text) return text;
+  }
+  const title = item.querySelector?.('[data-sf-sortable-label], [slot="title"]');
+  if (title) {
+    const text = tidy(title.getAttribute?.('aria-label')) || sortableReadableText(title, { skip });
+    if (text) return text;
+  }
+  return sortableReadableText(item, { skip });
+}
+
+const itemLabel = (item) => sortableItemLabel(item);
 
 function listName(list) {
   return list.getAttribute('label') || list.getAttribute('aria-label') || list.getAttribute('group') || '';
@@ -1661,6 +2107,127 @@ function accepts(list, group) {
   const own = list.getAttribute('group');
   const extra = (list.getAttribute('accepts') || '').split(/\s+/u).filter(Boolean);
   return group === own || extra.includes(group);
+}
+
+/** The target list's name in a move request: its id, else its group. */
+function nameOf(list) {
+  return list.getAttribute('id') || list.group || list.getAttribute('group') || '';
+}
+
+/**
+ * Asks the host whether `item` may go from `from` to `target` (BV-7): ''
+ * when it may, else the reason (the host's detail.reason, or a plain «not
+ * here»). A list never asks about itself.
+ */
+function sortableRefusal(target, from, item) {
+  if (!target || target === from) return '';
+  const detail = { item: item?.getAttribute?.('data-sf-sortable-item') || '', from: from ? nameOf(from) : '', to: nameOf(target), reason: '' };
+  const event = new globalThis.CustomEvent(SORTABLE_CHECK_EVENT, { bubbles: true, composed: true, cancelable: true, detail });
+  if (target.dispatchEvent(event)) return '';
+  return String(detail.reason || '').trim() || messages().refused;
+}
+
+/**
+ * The lists an item of `list` can be sent to by the handle's menu (BV-7):
+ * every list of the page that takes the list's group, the list itself among
+ * them (current), in the page's order, each with the host's refusal if any.
+ * A copy list or a list without a group sends nowhere.
+ */
+function sortableMoveTargets(list, item) {
+  const group = list?.group;
+  if (!group || list.mode === 'copy') return [];
+  return [...globalThis.document.querySelectorAll('sf-sortable')]
+    .filter((other) => other === list || accepts(other, group))
+    .map((other) => ({ list: other, label: listName(other) || nameOf(other), current: other === list, reason: other === list ? '' : sortableRefusal(other, list, item) }));
+}
+
+/**
+ * A move to another list asked without dragging (the handle's «Move to»): the
+ * request a drag between lists ends with -- to the end of the target -- and
+ * its «dropped» words. False when the host refuses the target.
+ */
+function requestSortableTransfer(list, item, target) {
+  const id = item?.getAttribute?.('data-sf-sortable-item');
+  if (!id || !target || target === list || !accepts(target, list.group) || sortableRefusal(target, list, item)) return false;
+  const index = items(target).length;
+  emitIntent(target, { item: id, from: nameOf(list), to: nameOf(target), index, mode: 'move' });
+  list.announce?.(format(messages().dropped, { item: itemLabel(item), index: index + 1, list: listName(target) || nameOf(target) }));
+  return true;
+}
+
+/** Whether an item is selectable: Space selects it rather than picking it up (BV-8). */
+function sortableSelectable(item) {
+  return Boolean(item?.hasAttribute?.('aria-selected') || selectMarkOf(item));
+}
+
+function selectMarkOf(item) {
+  if (!item?.querySelectorAll) return null;
+  return [...item.querySelectorAll(SELECT_MARK)].find((mark) => mark.closest(ITEM) === item
+    && !mark.disabled && mark.getAttribute('aria-disabled') !== 'true') || null;
+}
+
+/**
+ * What a key does on a list's item outside a move (BV-6, the APG layout grid,
+ * as a table's rows, C146 (8)): 'prev', 'next', 'first', 'last' go to another
+ * item; 'in' to the item's next control, 'out' back towards the item. The
+ * list's axis moves between items; the other axis, toward its end, goes into
+ * the item. Logical: in a right-to-left page the arrows of the inline axis swap.
+ */
+function sortableRovingStep(key, { orientation = 'vertical', rtl = false } = {}) {
+  const forward = rtl ? 'ArrowLeft' : 'ArrowRight';
+  const back = rtl ? 'ArrowRight' : 'ArrowLeft';
+  if (key === 'Home') return 'first';
+  if (key === 'End') return 'last';
+  if (orientation === 'horizontal') {
+    return { [back]: 'prev', [forward]: 'next', ArrowDown: 'in', ArrowUp: 'out' }[key] || null;
+  }
+  return { ArrowUp: 'prev', ArrowDown: 'next', [forward]: 'in', [back]: 'out' }[key] || null;
+}
+
+/**
+ * What Space and Enter do on an item outside a move (BV-8, dispatcher's
+ * decision 2026-11-17): Enter picks it up; Space selects a selectable item
+ * (C146 (8): Space marks a record in every layout) and picks up only an item
+ * that is not selectable. Anything else: null.
+ */
+function sortableKeyAction(key, selectable) {
+  if (key === 'Enter') return 'pick';
+  if (key === ' ') return selectable ? 'select' : 'pick';
+  return null;
+}
+
+// The controls of an item: every one leaves the Tab order (BV-6) -- its own
+// tabindex kept in data-sf-sortable-tabindex, given back when the list goes --
+// and the ones a person can reach are the arrows' stops, inner ones only (an
+// sf-button-icon host around its own button is the button).
+function controlsOf(item) {
+  return [...item.querySelectorAll(CONTROL)].filter((control) => control.closest(ITEM) === item && !control.closest('.sf-sortable-live'));
+}
+
+function tame(control) {
+  if (!control.hasAttribute(TAMED)) control.setAttribute(TAMED, control.getAttribute('tabindex') ?? '');
+  if (control.getAttribute('tabindex') !== '-1') control.setAttribute('tabindex', '-1');
+}
+
+function untame(control) {
+  const own = control.getAttribute(TAMED);
+  control.removeAttribute(TAMED);
+  if (own === null) return;
+  if (own === '') control.removeAttribute('tabindex');
+  else control.setAttribute('tabindex', own);
+}
+
+function reachable(control) {
+  if (control.disabled || control.getAttribute('aria-disabled') === 'true' || control.closest('[hidden], [inert]')) return false;
+  const own = control.getAttribute(TAMED);
+  const natively = control.matches(INTERACTIVE);
+  if (!natively && !(own !== null && own !== '' && Number(own) >= 0)) return false;
+  return control.getClientRects().length > 0;
+}
+
+function stopsOf(item) {
+  const all = controlsOf(item).filter(reachable);
+  return all.filter((control) => !all.some((other) => other !== control && control.contains(other)));
 }
 
 function scrollContainer(element) {
@@ -1930,6 +2497,16 @@ function restoreFocusAfterDrop(ended) {
   globalThis.requestAnimationFrame(() => globalThis.requestAnimationFrame(place));
 }
 
+// A target list the host refused for the item being moved (BV-7), asked once
+// per list in a drag or a keyboard move.
+function refusedInSession(list) {
+  const session = shared.session;
+  if (!session || list === session.fromList) return '';
+  session.refusals ??= new Map();
+  if (!session.refusals.has(list)) session.refusals.set(list, sortableRefusal(list, session.fromList, session.source));
+  return session.refusals.get(list);
+}
+
 function finish(list, reason) {
   if (!shared.session) return;
   const ended = shared.session;
@@ -1960,10 +2537,16 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
       this.connection = null;
       this.live = null;
       this.instructions = null;
+      this.currentItem = null;
     }
 
     connectedCallback() {
       super.connectedCallback?.();
+      // Inside another element's printed first paint the list is a picture:
+      // the element around it draws the live list (manifest-host.mjs
+      // sfInPicture). It adds no live region beside the printed one and
+      // takes no keys until then.
+      if (this.sfInPicture?.()) return;
       if (this.connection) return;
       this.connection = new AbortController();
       const options = { signal: this.connection.signal };
@@ -1977,14 +2560,23 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
         this.instructions.className = 'sf-sortable-live';
         this.instructions.id = nextHelpId();
       }
-      this.instructions.textContent = messages().instructions;
       this.append(this.live, this.instructions);
+      this.writeInstructions();
       this.addEventListener('pointerdown', (event) => this.onPointerDown(event), options);
       this.addEventListener('keydown', (event) => this.onKeyDown(event), options);
-      this.addEventListener('focusin', (event) => this.prepareItem(event.target.closest?.(ITEM)), options);
+      this.addEventListener('focusin', (event) => {
+        const item = event.target.closest?.(ITEM);
+        this.prepareItem(item);
+        // The item a person was on is the list's Tab stop (BV-6).
+        if (item && item.closest('sf-sortable') === this && !item.matches(OWN_ROVING) && this.currentItem !== item) {
+          this.currentItem = item;
+          this.syncRoving();
+        }
+      }, options);
       for (const item of items(this)) this.prepareItem(item);
+      this.syncRoving();
       // Items the host adds later become focusable and draggable as well.
-      this.observer = new globalThis.MutationObserver(() => { this.ensureAccessibilityNodes(); for (const item of items(this)) this.prepareItem(item); });
+      this.observer = new globalThis.MutationObserver(() => { this.ensureAccessibilityNodes(); for (const item of items(this)) this.prepareItem(item); this.syncRoving(); });
       this.observer.observe(this, { childList: true, subtree: true });
       this.setAttribute('data-sf-sortable', 'connected');
     }
@@ -1995,13 +2587,22 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
       this.observer = null;
       this.connection?.abort();
       this.connection = null;
+      for (const control of this.querySelectorAll(`[${TAMED}]`)) untame(control);
       if (shared.session?.fromList === this || shared.session?.list === this) finish(this, 'cancelled');
       this.setAttribute('data-sf-sortable', 'disposed');
     }
 
     prepareItem(item) {
       if (!item || item.closest('sf-sortable') !== this) return;
-      if (!item.hasAttribute('tabindex') && !item.matches(INTERACTIVE)) item.tabIndex = 0;
+      // An sf-list-item row takes its own place in the list's one Tab stop.
+      if (item.matches(OWN_ROVING)) {
+        if (!item.hasAttribute('tabindex') && !item.matches(INTERACTIVE)) item.tabIndex = 0;
+      } else {
+        // The list is one Tab stop (BV-6): the arrows go between its items, and
+        // the controls inside an item are reached from it with the arrows.
+        if (!item.hasAttribute('tabindex')) item.tabIndex = -1;
+        for (const control of controlsOf(item)) tame(control);
+      }
       const described = (item.getAttribute('aria-describedby') || '').split(/\s+/u);
       if (this.instructions && !described.includes(this.instructions.id)) item.setAttribute('aria-describedby', [...described.filter(Boolean), this.instructions.id].join(' '));
       describeItem(item);
@@ -2009,6 +2610,82 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
       // press, so the page keeps scrolling over it (SO-3: touch-action none on
       // the whole row stopped that).
       item.toggleAttribute('data-sf-sortable-whole', !item.querySelector(HANDLE));
+    }
+
+    // The one item of the list that takes Tab (BV-6): the one a person was on
+    // last, else the selected one, else the first. Every other item and every
+    // control inside an item is -1.
+    syncRoving() {
+      const all = items(this).filter((item) => !item.matches(OWN_ROVING));
+      if (!all.includes(this.currentItem)) {
+        this.currentItem = all.find((item) => item.getAttribute('aria-selected') === 'true') || all[0] || null;
+      }
+      for (const item of all) {
+        const want = item === this.currentItem ? '0' : '-1';
+        if (item.getAttribute('tabindex') !== want) item.setAttribute('tabindex', want);
+      }
+      this.writeInstructions();
+    }
+
+    // On a list of selectable items the instructions say Space selects (BV-8).
+    // An extension of the element may add its own hint after these words
+    // through updateInstructions(); they are kept when they already lead.
+    writeInstructions() {
+      if (!this.instructions) return;
+      const words = messages();
+      const text = items(this).some(sortableSelectable) ? words['instructions-select'] : words.instructions;
+      const current = this.instructions.textContent;
+      if (current === text || current.startsWith(`${text} `)) return;
+      this.instructions.textContent = text;
+      this.updateInstructions?.();
+    }
+
+    focusItem(item) {
+      if (!item) return;
+      this.currentItem = item;
+      this.syncRoving();
+      item.focus({ preventScroll: false });
+    }
+
+    // Keys outside a move on an item or a control in it (BV-6): the list's
+    // axis goes between items, the other one in and out of the item's
+    // controls; Escape on a control goes back to its item. A control with
+    // arrows of its own (a field) keeps them.
+    onRovingKey(event, item) {
+      if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return false;
+      if (item.matches(OWN_ROVING)) return false;
+      const onItem = event.target === item;
+      if (!onItem && (event.target.matches(OWN_ARROWS) || event.target.closest?.(ITEM) !== item)) return false;
+      if (!onItem && event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        this.focusItem(item);
+        return true;
+      }
+      const step = sortableRovingStep(event.key, { orientation: this.getAttribute('orientation') === 'horizontal' ? 'horizontal' : 'vertical', rtl: globalThis.getComputedStyle(this).direction === 'rtl' });
+      if (!step) return false;
+      event.preventDefault();
+      event.stopPropagation();
+      const stops = stopsOf(item);
+      const at = stops.indexOf(event.target);
+      if (step === 'in') {
+        const next = onItem ? stops[0] : stops[Math.min(stops.length - 1, at + 1)];
+        next?.focus({ preventScroll: false });
+        return true;
+      }
+      if (step === 'out') {
+        if (!onItem) (at > 0 ? stops[at - 1] : item).focus({ preventScroll: false });
+        return true;
+      }
+      if (!onItem) {
+        this.focusItem(item);
+        return true;
+      }
+      const all = items(this).filter((entry) => !entry.matches(OWN_ROVING));
+      const index = all.indexOf(item);
+      const target = { prev: all[index - 1], next: all[index + 1], first: all[0], last: all.at(-1) }[step];
+      if (target && target !== item) this.focusItem(target);
+      return true;
     }
 
     // The list keeps its live region and its instructions among its own
@@ -2020,8 +2697,8 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
     ensureAccessibilityNodes() {
       if (!this.live || !this.instructions) return;
       if (this.live.parentNode === this && this.instructions.parentNode === this) return;
-      this.instructions.textContent = messages().instructions;
       this.append(this.live, this.instructions);
+      this.writeInstructions();
     }
 
     announce(text) {
@@ -2158,6 +2835,12 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
         }
       }
       shared.session.external = null;
+      if (list && accepts(list, shared.session.group) && refusedInSession(list)) {
+        shared.session.placeholder?.remove();
+        shared.session.list = null;
+        showIndicator(null);
+        return;
+      }
       if (list && accepts(list, shared.session.group)
           && shared.session.silhouette && silhouetteFor(list)) {
         shared.session.list = list;
@@ -2231,7 +2914,7 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
 
     // Keyboard path --------------------------------------------------------
     keyboardTargets() {
-      return [...globalThis.document.querySelectorAll('sf-sortable')].filter((list) => list === shared.session?.fromList ? shared.session.mode === 'move' : accepts(list, shared.session?.group));
+      return [...globalThis.document.querySelectorAll('sf-sortable')].filter((list) => list === shared.session?.fromList ? shared.session.mode === 'move' : accepts(list, shared.session?.group) && !refusedInSession(list));
     }
 
     describeKeyboard(announce = true) {
@@ -2253,8 +2936,20 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
     onKeyDown(event) {
       const item = event.target.closest?.(ITEM);
       if (!shared.session) {
-        if (!item || item.closest('sf-sortable') !== this || event.target !== item) return;
-        if (event.key !== ' ' && event.key !== 'Enter') return;
+        if (!item || item.closest('sf-sortable') !== this) return;
+        if (this.onRovingKey(event, item) || event.target !== item) return;
+        // Enter picks up; Space selects a selectable item and picks up any
+        // other (BV-8). The host that keeps aria-selected answers Space itself.
+        const action = event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ? null : sortableKeyAction(event.key, sortableSelectable(item));
+        if (!action) return;
+        if (action === 'select') {
+          const mark = selectMarkOf(item);
+          if (mark) {
+            event.preventDefault();
+            mark.click();
+          }
+          return;
+        }
         event.preventDefault();
         if (!this.begin(item, 'keyboard')) return;
         // An abandoned keyboard move is cancelled when focus or a click leaves the list.
@@ -2342,45 +3037,98 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
 }
 
 /**
- * sf-sortable's pointer behaviour on any container, without the element: a
- * table's head row cannot hold a custom element around its cells, and its
- * columns move with every cell under them (owner, 2026-10-13). The container
- * keeps its markup; the controller listens on it.
+ * sf-sortable's behaviour on any container, without the element: a table's
+ * head row cannot hold a custom element around its cells, and its columns move
+ * with every cell under them (owner, 2026-10-13); a table's body cannot hold
+ * one around its rows either. The container keeps its markup; the controller
+ * listens on it.
  *
  * options:
  *   items        selector of the movable children (required)
+ *   orientation  'horizontal' (default: the column mode, columns of a head
+ *                row) | 'vertical' (the row mode, rows of a list or a table
+ *                body, view round 1 D1)
+ *   handle       selector of an item's handle (row mode): when the item has
+ *                one, a drag begins there only, and a press on it that does
+ *                not become a drag opens the move menu (C171 (1)); without
+ *                one the whole row is taken -- a mouse after 4 px, a finger
+ *                after a long press, so a swipe still scrolls (C171 (2))
+ *   keyboard     row mode: Space or Enter on a focused item picks it up,
+ *                arrows move it, Space or Enter drops, Escape or Tab cancels,
+ *                each step said in the live region -- sf-sortable's keys.
+ *                Default true; false for rows whose keys are the host's (the
+ *                handle's menu stays the keyboard path then)
+ *   keyOf        (item) => string -- the item's id in the intent; default its
+ *                data-sf-sortable-item, else data-key, else data-row-id
  *   canStart     (event, item) => boolean -- a press that may begin a drag
  *   groupOf      (item) => string -- an item moves among items of its group
- *   preview      'column' (default) | 'line'
- *   extent       the element a column spans (a table); default the container
- *   cellsOf      (item) => elements to mark as the moving column (its cells)
+ *   preview      'column' | 'line'; the column mode draws 'column' (an outline
+ *                the size of the column), the row mode 'line' (the one 2 px
+ *                drop line, C171 (4)) unless told otherwise
+ *   extent       the element a column or a line spans (a table); default the
+ *                container
+ *   cellsOf      (item) => elements to mark as the moving item (its cells)
  *   label        the list's name for the announcement
+ *   labelOf      (item) => string -- what the item is called in the
+ *                announcements and the move menu; default its aria-label, a
+ *                table row its cells' text joined by commas, anything else its
+ *                visible text, the handle and hidden parts left out
  *   onIntent     ({item, from, index, group}) -- index among the group's items
  *                without the dragged one, the place it is to take
- * Returns detach().
+ * Returns detach(); detach.move(item, index) asks a move without dragging,
+ * with the same intent and the same words (as requestSortableMove does for a
+ * list).
  *
- * Keyboard reordering stays where a list is: a table's column settings are an
- * sf-sortable list with every key path. A click that ends a drag is swallowed,
- * so a heading that sorts on click does not sort on a drop.
+ * In the column mode keyboard reordering stays where a list is: a table's
+ * column settings are an sf-sortable list with every key path. A click that
+ * ends a drag is swallowed, so a heading that sorts on click does not sort on
+ * a drop, and a handle does not open its menu.
  */
 function attachSortable(container, options = {}) {
   if (!(container instanceof globalThis.Element) || typeof options.items !== 'string') {
     throw new TypeError('attachSortable needs a container and an items selector');
   }
   const doc = globalThis.document;
-  const preview = options.preview === 'line' ? 'line' : 'column';
+  const vertical = options.orientation === 'vertical';
+  const preview = options.preview === 'line' || options.preview === 'column' ? options.preview : (vertical ? 'line' : 'column');
   const groupOf = typeof options.groupOf === 'function' ? options.groupOf : () => '';
   const canStart = typeof options.canStart === 'function' ? options.canStart : () => true;
   const cellsOf = typeof options.cellsOf === 'function' ? options.cellsOf : (item) => [item];
+  const keyOf = typeof options.keyOf === 'function'
+    ? options.keyOf
+    : (item) => item.getAttribute('data-sf-sortable-item') || item.dataset.key || item.dataset.rowId || '';
+  const handleSelector = vertical && typeof options.handle === 'string' && options.handle ? options.handle : '';
+  // A row read as one run of text said «ПереместитьЗадача вторая11.11.2026»:
+  // the handle's own name (its tooltip, drawn in the cell on hover) and every
+  // cell glued together.
+  const labelOf = typeof options.labelOf === 'function' ? options.labelOf : (item) => {
+    if (item.getAttribute('aria-label')) return item.getAttribute('aria-label');
+    const skip = handleSelector;
+    if (item.tagName === 'TR') return [...item.cells].map((cell) => sortableReadableText(cell, { skip })).filter(Boolean).join(', ');
+    return sortableItemLabel(item, { skip });
+  };
+  const keyboard = vertical && options.keyboard !== false;
   const extentOf = () => options.extent?.isConnected ? options.extent : container;
   const live = doc.createElement('div');
   live.className = 'sf-sortable-live';
   live.setAttribute('aria-live', 'polite');
   doc.body.append(live);
+  // The row mode's keys are said once, in a node the items name in
+  // aria-describedby, as a list's are.
+  let help = null;
+  if (keyboard) {
+    help = doc.createElement('div');
+    help.className = 'sf-sortable-live';
+    help.id = nextHelpId();
+    help.textContent = messages().instructions;
+    doc.body.append(help);
+  }
   const abort = new AbortController();
   let session = null;
 
   const members = (group) => [...container.querySelectorAll(options.items)].filter((item) => groupOf(item) === group);
+  const handleOf = (item) => (handleSelector ? item.querySelector(handleSelector) : null);
+  const say = (text) => { live.textContent = text; };
   const outline = () => {
     if (session.outline) return session.outline;
     const box = doc.createElement('div');
@@ -2391,43 +3139,89 @@ function attachSortable(container, options = {}) {
     return box;
   };
 
-  const place = (x) => {
-    const peers = members(session.group).filter((item) => item !== session.item);
-    const boxes = peers.map((item) => item.getBoundingClientRect());
-    let index = boxes.length;
-    for (let at = 0; at < boxes.length; at += 1) {
-      if (x < boxes[at].left + boxes[at].width / 2) { index = at; break; }
-    }
-    session.index = index;
+  // Where the outline or the line stands for a place among the peers (the
+  // items of the group without the moving one): along the row for columns,
+  // down the extent for rows.
+  const draw = (boxes, index) => {
     const extent = extentOf().getBoundingClientRect();
-    const width = session.width;
     const before = boxes[index];
     const after = boxes[index - 1];
-    let left;
+    const startOf = (box) => (vertical ? box.top : box.left);
+    const endOf = (box) => (vertical ? box.bottom : box.right);
+    const origin = vertical ? extent.top : extent.left;
+    let at;
     if (preview === 'column') {
-      // The outline stands where the column will be. Moving towards the start
-      // it takes the place of the column it goes before (that one moves on);
-      // moving towards the end it ends where the column it goes after ends.
-      if (index > session.originalIndex && after) left = after.right - width;
-      else left = before ? before.left : (after ? after.right - width : extent.left);
+      // The outline stands where the item will be. Moving towards the start
+      // it takes the place of the item it goes before (that one moves on);
+      // moving towards the end it ends where the item it goes after ends.
+      const size = session.size;
+      if (index > session.originalIndex && after) at = endOf(after) - size;
+      else at = before ? startOf(before) : (after ? endOf(after) - size : origin);
     } else {
-      left = (before ? before.left : after ? after.right : extent.left) - HALF;
+      at = (before ? startOf(before) : after ? endOf(after) : origin) - HALF;
     }
-    Object.assign(outline().style, {
-      left: `${left}px`, top: `${extent.top}px`,
-      width: preview === 'column' ? `${width}px` : `${LINE}px`, height: `${extent.height}px`,
-    });
+    const length = preview === 'column' ? session.size : LINE;
+    Object.assign(outline().style, vertical
+      ? {left: `${extent.left}px`, top: `${at}px`, width: `${extent.width}px`, height: `${length}px`}
+      : {left: `${at}px`, top: `${extent.top}px`, width: `${length}px`, height: `${extent.height}px`});
   };
 
-  const autoScroll = (x) => {
-    for (let node = container.parentElement; node; node = node.parentElement) {
-      const style = globalThis.getComputedStyle(node);
-      if (!/(auto|scroll)/u.test(style.overflowX) || node.scrollWidth <= node.clientWidth) continue;
-      const box = node.getBoundingClientRect();
-      if (x < box.left + EDGE) node.scrollBy({left: -Math.ceil((box.left + EDGE - x) / 4), behavior: 'instant'});
-      else if (x > box.right - EDGE) node.scrollBy({left: Math.ceil((x - box.right + EDGE) / 4), behavior: 'instant'});
+  const peerBoxes = () => members(session.group).filter((item) => item !== session.item).map((item) => item.getBoundingClientRect());
+
+  const place = (x, y) => {
+    const boxes = peerBoxes();
+    const coordinate = vertical ? y : x;
+    let index = boxes.length;
+    for (let at = 0; at < boxes.length; at += 1) {
+      const box = boxes[at];
+      const middle = vertical ? box.top + box.height / 2 : box.left + box.width / 2;
+      if (coordinate < middle) { index = at; break; }
+    }
+    session.index = index;
+    draw(boxes, index);
+  };
+
+  const autoScroll = (x, y) => {
+    if (!vertical) {
+      for (let node = container.parentElement; node; node = node.parentElement) {
+        const style = globalThis.getComputedStyle(node);
+        if (!/(auto|scroll)/u.test(style.overflowX) || node.scrollWidth <= node.clientWidth) continue;
+        const box = node.getBoundingClientRect();
+        if (x < box.left + EDGE) node.scrollBy({left: -Math.ceil((box.left + EDGE - x) / 4), behavior: 'instant'});
+        else if (x > box.right - EDGE) node.scrollBy({left: Math.ceil((x - box.right + EDGE) / 4), behavior: 'instant'});
+        return;
+      }
       return;
     }
+    const node = scrollContainer(container);
+    if (!node) return;
+    const box = node === doc.scrollingElement ? {top: 0, bottom: globalThis.innerHeight} : node.getBoundingClientRect();
+    if (y < box.top + EDGE) node.scrollBy({top: -Math.ceil((box.top + EDGE - y) / 4), behavior: 'instant'});
+    else if (y > box.bottom - EDGE) node.scrollBy({top: Math.ceil((y - box.bottom + EDGE) / 4), behavior: 'instant'});
+  };
+
+  // The intent and its words: one path for a drop, a keyboard drop and the
+  // handle's menu.
+  const request = (item, index, group = groupOf(item)) => {
+    const id = keyOf(item);
+    say(format(messages().dropped, {item: labelOf(item), index: index + 1, list: options.label || ''}));
+    options.onIntent?.({item: id, from: group, index, group});
+  };
+
+  // After a keyboard move or a menu choice the person's focus is back on the
+  // item they moved (or its handle), once the host has redrawn.
+  const refocus = (id, toHandle) => {
+    const back = () => {
+      const active = doc.activeElement;
+      if (active && active !== doc.body && doc.contains(active) && !(toHandle && container.contains(active))) return;
+      const item = [...container.querySelectorAll(options.items)].find((candidate) => keyOf(candidate) === id);
+      if (!item) return;
+      const handle = toHandle ? handleOf(item) : null;
+      const control = handle ? (handle.matches('button') ? handle : handle.querySelector('button') || handle) : null;
+      (control && (control.matches('button') || control.tabIndex >= 0) ? control : item).focus?.({preventScroll: false});
+    };
+    if (typeof globalThis.requestAnimationFrame !== 'function') back();
+    else globalThis.requestAnimationFrame(() => globalThis.requestAnimationFrame(back));
   };
 
   const end = (dropped) => {
@@ -2435,56 +3229,126 @@ function attachSortable(container, options = {}) {
     session = null;
     if (!ended) return;
     ended.pending.abort();
+    globalThis.clearTimeout(ended.timer);
     ended.ghost?.remove();
     ended.outline?.remove();
     for (const cell of ended.cells) cell.removeAttribute('data-sf-sortable-column-source');
     doc.documentElement.removeAttribute('data-sf-sortable-active');
     if (!ended.started) return;
-    // The click a drop ends with is not a click on the heading. It comes in the
-    // same task as the pointerup, so the guard is gone by the next one and a
-    // later click is a click again.
-    const swallow = (event) => { event.preventDefault(); event.stopImmediatePropagation(); };
-    container.addEventListener('click', swallow, {capture: true, once: true});
-    globalThis.setTimeout(() => container.removeEventListener('click', swallow, {capture: true}), 0);
+    // The row mode says when a drag begins and ends, as a list does; the
+    // column mode stays quiet, as it always was.
+    if (vertical) container.dispatchEvent(new globalThis.CustomEvent(SORTABLE_STATE_EVENT, {bubbles: true, composed: true, detail: Object.freeze({state: dropped && ended.index !== ended.originalIndex ? 'dropped' : 'cancelled', item: keyOf(ended.item)})}));
+    if (ended.input !== 'keyboard') {
+      // The click a drop ends with is not a click on the heading (or the
+      // handle). It comes in the same task as the pointerup, so the guard is
+      // gone by the next one and a later click is a click again.
+      const swallow = (event) => { event.preventDefault(); event.stopImmediatePropagation(); };
+      container.addEventListener('click', swallow, {capture: true, once: true});
+      globalThis.setTimeout(() => container.removeEventListener('click', swallow, {capture: true}), 0);
+    }
     if (!dropped) {
-      live.textContent = messages().cancelled;
+      say(messages().cancelled);
       return;
     }
-    if (ended.index === undefined || ended.index === ended.originalIndex) return;
-    const id = ended.item.getAttribute('data-sf-sortable-item') || ended.item.dataset.key || '';
-    live.textContent = format(messages().dropped, {item: itemLabel(ended.item), index: ended.index + 1, list: options.label || ''});
-    options.onIntent?.({item: id, from: ended.group, index: ended.index, group: ended.group});
+    if (ended.index === undefined || ended.index === ended.originalIndex) {
+      if (ended.input === 'keyboard') say(messages().cancelled);
+      return;
+    }
+    request(ended.item, ended.index, ended.group);
+    if (ended.input === 'keyboard') refocus(keyOf(ended.item), false);
+  };
+
+  // A row is copied into a table of its own, cell widths kept: a bare row
+  // outside its table loses its columns.
+  const ghostFor = (item, box) => {
+    if (item.tagName !== 'TR') return ghostOf(item, box);
+    const ghost = ghostOf(item, box);
+    const copy = ghost.firstElementChild;
+    const table = doc.createElement('table');
+    const body = doc.createElement('tbody');
+    table.className = item.closest('table')?.className || '';
+    Object.assign(table.style, {inlineSize: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', margin: '0'});
+    [...copy.children].forEach((cell, at) => {
+      const width = item.children[at]?.getBoundingClientRect().width;
+      if (width) cell.style.inlineSize = `${width}px`;
+    });
+    copy.style.inlineSize = '';
+    body.append(copy);
+    table.append(body);
+    ghost.append(table);
+    return ghost;
+  };
+
+  const lift = (item, at, input) => {
+    session.started = true;
+    session.input = input;
+    doc.documentElement.setAttribute('data-sf-sortable-active', '');
+    session.cells = cellsOf(item).filter(Boolean);
+    for (const cell of session.cells) cell.setAttribute('data-sf-sortable-column-source', '');
+    if (vertical) container.dispatchEvent(new globalThis.CustomEvent(SORTABLE_STATE_EVENT, {bubbles: true, composed: true, detail: Object.freeze({state: 'picked', item: keyOf(item)})}));
+    if (input === 'keyboard') return;
+    const ghost = ghostFor(item, session.box);
+    ghost.style.height = `${session.box.height}px`;
+    session.ghost = ghost;
+    session.offset = {x: at.x - session.box.left, y: at.y - session.box.top};
+  };
+
+  const follow = (x, y) => {
+    Object.assign(session.ghost.style, {left: `${x - session.offset.x}px`, top: `${y - session.offset.y}px`});
+    autoScroll(x, y);
+    place(x, y);
+  };
+
+  const open = (item, extra = {}) => {
+    const group = groupOf(item);
+    const peers = members(group);
+    if (peers.length < 2) return null;
+    const box = item.getBoundingClientRect();
+    session = {item, group, pending: new AbortController(), started: false, cells: [], box,
+      size: vertical ? box.height : box.width, originalIndex: peers.indexOf(item), timer: 0, ...extra};
+    return session;
   };
 
   container.addEventListener('pointerdown', (event) => {
     if (event.button !== 0 || session || shared.session) return;
     const item = event.target.closest?.(options.items);
     if (!item || !container.contains(item) || !canStart(event, item)) return;
-    const group = groupOf(item);
-    const peers = members(group);
-    if (peers.length < 2) return;
+    const handle = handleOf(item);
+    if (handle && !handle.contains(event.target)) return;
+    if (vertical && !handle) {
+      const control = event.target.closest(INTERACTIVE);
+      if (control && control !== item && item.contains(control)) return;
+    }
+    if (!open(item)) return;
     const start = {x: event.clientX, y: event.clientY};
-    const pending = new AbortController();
-    const box = item.getBoundingClientRect();
-    session = {item, group, pending, started: false, cells: [], width: box.width, originalIndex: peers.indexOf(item)};
+    const {pending} = session;
+    // A finger on a row without a handle: the drag waits for a long press, and
+    // a move before it is the page's scroll (C171 (2)).
+    const longPress = vertical && !handle && event.pointerType === 'touch';
     const move = (moveEvent) => {
       if (moveEvent.pointerId !== event.pointerId || !session) return;
       if (!session.started) {
-        if (Math.hypot(moveEvent.clientX - start.x, moveEvent.clientY - start.y) < DRAG_THRESHOLD) return;
-        session.started = true;
-        doc.documentElement.setAttribute('data-sf-sortable-active', '');
-        const ghost = ghostOf(item, box);
-        ghost.style.height = `${box.height}px`;
-        session.ghost = ghost;
-        session.offset = {x: start.x - box.left, y: start.y - box.top};
-        session.cells = cellsOf(item).filter(Boolean);
-        for (const cell of session.cells) cell.setAttribute('data-sf-sortable-column-source', '');
+        const distance = Math.hypot(moveEvent.clientX - start.x, moveEvent.clientY - start.y);
+        if (longPress) {
+          if (distance > LONG_PRESS_SLOP) end(false);
+          return;
+        }
+        if (distance < DRAG_THRESHOLD) return;
+        lift(item, start, moveEvent.pointerType || 'mouse');
       }
       moveEvent.preventDefault();
-      Object.assign(session.ghost.style, {left: `${moveEvent.clientX - session.offset.x}px`, top: `${moveEvent.clientY - session.offset.y}px`});
-      autoScroll(moveEvent.clientX);
-      place(moveEvent.clientX);
+      follow(moveEvent.clientX, moveEvent.clientY);
     };
+    if (longPress) {
+      session.timer = globalThis.setTimeout(() => {
+        if (!session || session.item !== item || session.started) return;
+        lift(item, start, 'touch');
+        follow(start.x, start.y);
+        const hold = (touchEvent) => { if (touchEvent.cancelable) touchEvent.preventDefault(); };
+        globalThis.addEventListener('touchmove', hold, {signal: pending.signal, passive: false});
+        globalThis.addEventListener('contextmenu', hold, {signal: pending.signal, capture: true});
+      }, LONG_PRESS);
+    }
     globalThis.addEventListener('pointermove', move, {signal: pending.signal, passive: false});
     globalThis.addEventListener('pointerup', (upEvent) => { if (upEvent.pointerId === event.pointerId) end(true); }, {signal: pending.signal});
     globalThis.addEventListener('pointercancel', () => end(false), {signal: pending.signal});
@@ -2493,14 +3357,89 @@ function attachSortable(container, options = {}) {
     }, {signal: pending.signal, capture: true});
   }, {signal: abort.signal});
 
-  return () => {
+  if (keyboard) {
+    // Items name the keys when they take the focus (rows the host draws later
+    // as well).
+    container.addEventListener('focusin', (event) => {
+      const item = event.target.closest?.(options.items);
+      if (!item || !container.contains(item) || !help) return;
+      const described = (item.getAttribute('aria-describedby') || '').split(/\s+/u).filter(Boolean);
+      if (!described.includes(help.id)) item.setAttribute('aria-describedby', [...described, help.id].join(' '));
+    }, {signal: abort.signal});
+    container.addEventListener('keydown', (event) => {
+      if (!session) {
+        const item = event.target.closest?.(options.items);
+        if (!item || event.target !== item || !container.contains(item) || shared.session) return;
+        // Enter picks up; Space picks up only a row that is not selectable --
+        // on a selectable row (a selection mark, aria-selected) Space is the
+        // selection's, left to the host (BV-8).
+        if (event.defaultPrevented || sortableKeyAction(event.key, sortableSelectable(item)) !== 'pick') return;
+        if (!open(item)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        session.index = session.originalIndex;
+        lift(item, null, 'keyboard');
+        const total = members(session.group).length;
+        draw(peerBoxes(), session.index);
+        say(format(messages().picked, {item: labelOf(item), index: session.index + 1, total, list: options.label || ''}));
+        // Focus or a press leaving the list abandons the move.
+        const {signal} = session.pending;
+        container.addEventListener('focusout', (focusEvent) => {
+          if (focusEvent.relatedTarget && container.contains(focusEvent.relatedTarget)) return;
+          globalThis.setTimeout(() => { if (session?.input === 'keyboard' && !container.contains(doc.activeElement)) end(false); }, 0);
+        }, {signal});
+        doc.addEventListener('pointerdown', (pointerEvent) => { if (!container.contains(pointerEvent.target)) end(false); }, {signal, capture: true});
+        return;
+      }
+      if (session.input !== 'keyboard') return;
+      if (event.key === 'Escape' || event.key === 'Tab') {
+        if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); }
+        end(false);
+        return;
+      }
+      if (event.key === ' ' || event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        end(true);
+        return;
+      }
+      const step = {ArrowUp: -1, ArrowDown: 1}[event.key];
+      if (step === undefined) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const total = members(session.group).length;
+      const next = session.index + step;
+      if (next < 0 || next > total - 1) return;
+      session.index = next;
+      draw(peerBoxes(), next);
+      say(format(messages().moved, {index: next + 1, total, list: options.label || ''}));
+    }, {signal: abort.signal});
+  }
+
+  const detach = () => {
     end(false);
     abort.abort();
     live.remove();
+    help?.remove();
   };
+  // A move asked without dragging (the handle's menu): the same intent and
+  // words; the focus comes back to the moved item's handle.
+  detach.move = (item, index) => {
+    if (!item || !container.contains(item)) return false;
+    const peers = members(groupOf(item));
+    const from = peers.indexOf(item);
+    if (from < 0 || index < 0 || index >= peers.length || index === from) return false;
+    request(item, index);
+    refocus(keyOf(item), true);
+    return true;
+  };
+  detach.members = (item) => members(groupOf(item));
+  detach.handle = handleSelector;
+  detach.labelOf = labelOf;
+  return detach;
 }
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ SORTABLE_DROP_LINE, SORTABLE_MOVE_EVENT, activeSortableSession, attachSortable, defineSortable, registerSortableDropTarget, requestSortableMove, sortableIndexAt });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({ SORTABLE_CHECK_EVENT, SORTABLE_DROP_LINE, SORTABLE_MOVE_EVENT, activeSortableSession, attachSortable, defineSortable, registerSortableDropTarget, requestSortableMove, requestSortableTransfer, sortableIndexAt, sortableKeyAction, sortableMoveTargets, sortableRefusal, sortableRovingStep, sortableSelectable });
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -2539,14 +3478,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-sorta
 /***/ "34bb89f847b9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.5.2","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.sortable","tag":"sf-sortable","version":"1.7.3","kind":"leaf","settings":{"group":{"type":"string","default":""},"accepts":{"type":"string","default":""},"mode":{"type":"enum","values":["move","copy"],"default":"move"},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"label":{"type":"string","default":""},"preview":{"type":"enum","values":["silhouette","line"],"default":"silhouette"},"inserter-items":{"type":"string","default":""}},"values":{},"events":{"move":{"carries":{"item":"string","from":"string","to":"string","index":"number","mode":{"type":"enum","values":["move","copy"]}}},"state":{"carries":{"state":{"type":"enum","values":["picked","dropped","cancelled"]},"item":"string"},"own-verb":true},"insert":{"carries":{"index":{"type":"number","integer":true,"schema":{"minimum":0}},"item":"string","to":"string"},"cancelable":true,"own-verb":true},"check":{"carries":{"item":"string","from":"string","to":"string","reason":"string"},"cancelable":true,"own-verb":true}},"actions":{},"css-variables":{"--sf-sortable-dragging-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-opacity":{"type":"number","state":"dragging"},"--sf-sortable-ghost-z-index":{"type":"number","state":"dragging"},"--sf-sortable-indicator-color":{"type":"color","state":"dragging"},"--sf-sortable-placeholder-border-color":{"type":"color","state":"dragging"}}}');
 
 /***/ },
 
 /***/ "fca41e9837f0"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Drag and drop","runtime":{"cancelled":"Move cancelled.","dropped":"Dropped {item} at position {index} in “{list}”.","empty":"Nothing found","hint":"Plus to insert after.","inserted":"Inserted {item} at position {index} in “{list}”.","instructions":"Space or Enter to pick up, arrows to move, Space or Enter to drop, Escape to cancel.","menu":"Insert","move-down":"Down","move-first":"To the top","move-last":"To the bottom","move-menu":"Move “{item}”","move-up":"Up","moved":"Position {index} of {total} in “{list}”.","picked":"Picked up {item}. Position {index} of {total} in “{list}”.","point":"Insert: position {index} of {total}","roledescription":"draggable","search":"Find","target":"Target: {target}."},"events":{"state":{"label":"Drag step"},"insert":{"label":"Insert"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Drag and drop","runtime":{"cancelled":"Move cancelled.","dropped":"Dropped {item} at position {index} in “{list}”.","empty":"Nothing found","hint":"Plus to insert after.","inserted":"Inserted {item} at position {index} in “{list}”.","instructions":"Enter or Space to pick up, arrows to move, Enter or Space to drop, Escape to cancel.","instructions-select":"Space to select, Enter to pick up, arrows to move, Enter to drop, Escape to cancel.","menu":"Insert","move-down":"Down","move-first":"To the top","move-last":"To the bottom","move-menu":"Move “{item}”","move-to":"Move to","move-up":"Up","moved":"Position {index} of {total} in “{list}”.","picked":"Picked up {item}. Position {index} of {total} in “{list}”.","point":"Insert: position {index} of {total}","refused":"Not here","roledescription":"draggable","search":"Find","target":"Target: {target}."},"events":{"state":{"label":"Drag step"},"insert":{"label":"Insert"},"check":{"label":"Target check"}}}');
 
 /***/ }
 

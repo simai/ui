@@ -384,12 +384,16 @@
      16, the border inside them). The author's switch (owner 2026-11-13,
      #q-layout-override): the modifier .sf-toast--actions-under (sf-toast
      actions-layout="under") keeps the action under the text at every width,
-     with the same gap and the even bottom. */
+     with the same gap and the even bottom. The toast's script puts it there
+     too (data-sf-toast-under, Larena LF-4) when a word of the title or the
+     text -- a run of characters between spaces, «a2-remove.test» -- is wider
+     than the text's column beside the action: the text then never breaks
+     inside a word to keep the action at its side. */
   .sf-toast:has(> .sf-toast-container > .sf-toast-bottom) {
     container: sf-toast/inline-size;
   }
   @container sf-toast (min-width: 22rem) {
-    .sf-toast:not(.sf-toast--actions-under):not(:has(.sf-toast-bottom > :nth-child(2))) .sf-toast-container:has(> .sf-toast-bottom) {
+    .sf-toast:not(.sf-toast--actions-under):not([data-sf-toast-under]):not(:has(.sf-toast-bottom > :nth-child(2))) .sf-toast-container:has(> .sf-toast-bottom) {
       flex-direction: row;
       align-items: center;
       -webkit-column-gap: var(--sf-gap--groups);
@@ -399,12 +403,12 @@
       -webkit-padding-after: 0;
               padding-block-end: 0;
     }
-    .sf-toast:not(.sf-toast--actions-under):not(:has(.sf-toast-bottom > :nth-child(2))) .sf-toast-wrap {
+    .sf-toast:not(.sf-toast--actions-under):not([data-sf-toast-under]):not(:has(.sf-toast-bottom > :nth-child(2))) .sf-toast-wrap {
       flex: 1 1 0;
       min-width: var(--sf-0);
       min-inline-size: var(--sf-0);
     }
-    .sf-toast:not(.sf-toast--actions-under):not(:has(.sf-toast-bottom > :nth-child(2))) .sf-toast-bottom {
+    .sf-toast:not(.sf-toast--actions-under):not([data-sf-toast-under]):not(:has(.sf-toast-bottom > :nth-child(2))) .sf-toast-bottom {
       flex: none;
       flex-wrap: nowrap;
       margin-top: calc(-1 * var(--sf-ui-1--space-y-tightness-low));
@@ -654,7 +658,7 @@
     --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-85));
     --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
     --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
     --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
@@ -685,7 +689,7 @@
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-toast {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-80));
+    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-85));
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-toast {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
@@ -722,6 +726,7 @@
     --sf-place--fill-placeholder: initial;
     --sf-place--control-hover: initial;
     --sf-place--control-active: initial;
+    --sf-place--tonal-edge: initial;
   }
   :where(.sf-surface-media) .sf-toast {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
@@ -753,6 +758,8 @@
     --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
     --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
     --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
+    --sf-place--control-hover: initial;
+    --sf-place--control-active: initial;
   }
   :where(.bg-surface-4) .sf-toast {
     --sf-primary: var(--sf-place--found-primary);

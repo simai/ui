@@ -83,12 +83,29 @@ function syncFieldContract(root, control, {
 
   if (root.tagName === 'LABEL' && !root.hasAttribute('for')) {
     root.setAttribute('for', control.id);
+  } // A root that is not a label carries its label text as a <label> of its
+  // own (div.sf-input, 1.13.0): it points at the control too.
+
+
+  if (labelNode?.tagName === 'LABEL' && !labelNode.hasAttribute('for')) {
+    labelNode.setAttribute('for', control.id);
   } // Name the field by its visible label, not every hint or adjacent button.
   // Author-provided accessible names remain authoritative.
 
 
   if (labelNode?.textContent?.trim() && !control.hasAttribute('aria-label') && !control.hasAttribute('aria-labelledby')) {
-    if (!labelNode.id) labelNode.id = `${control.id}-label`;
+    // An id of its own: «<control>-label» may already name another element
+    // (a page that gave the field's root that id), and aria-labelledby would
+    // then read that element's whole text, the hint with it (DF-3).
+    if (!labelNode.id) {
+      const doc = labelNode.ownerDocument;
+      let id = `${control.id}-label`;
+
+      for (let n = 2; doc?.getElementById?.(id); n += 1) id = `${control.id}-label-${n}`;
+
+      labelNode.id = id;
+    }
+
     control.setAttribute('aria-labelledby', labelNode.id);
   }
 
@@ -2073,7 +2090,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "a4a487df7872"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-code","tag":"sf-input-code","version":"1.9.3","kind":"leaf","settings":{"length":{"type":"number","default":6},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"mode":{"type":"enum","values":["numeric","alphanumeric"],"default":"numeric"},"charset":{"type":"string","default":""},"uppercase":{"type":"boolean","default":false},"groups":{"type":"number","default":0},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"},"completed":{"carries":{"value":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","custom-error"]},"css-variables":{"--sf-verification-background-color":{"type":"color","state":"default"},"--sf-verification-border-color":{"type":"color","state":"default"},"--sf-verification-border-width":{"type":"length","state":"default"},"--sf-verification-radius":{"type":"length","state":"default"},"--sf-verification-color":{"type":"color","state":"default"},"--sf-verification-cell-size":{"type":"length","state":"default"},"--sf-verification-gap":{"type":"length","state":"default"},"--sf-verification-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-code","tag":"sf-input-code","version":"1.9.4","kind":"leaf","settings":{"length":{"type":"number","default":6},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"mode":{"type":"enum","values":["numeric","alphanumeric"],"default":"numeric"},"charset":{"type":"string","default":""},"uppercase":{"type":"boolean","default":false},"groups":{"type":"number","default":0},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"},"completed":{"carries":{"value":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-short","custom-error"]},"css-variables":{"--sf-verification-background-color":{"type":"color","state":"default"},"--sf-verification-border-color":{"type":"color","state":"default"},"--sf-verification-border-width":{"type":"length","state":"default"},"--sf-verification-radius":{"type":"length","state":"default"},"--sf-verification-color":{"type":"color","state":"default"},"--sf-verification-cell-size":{"type":"length","state":"default"},"--sf-verification-gap":{"type":"length","state":"default"},"--sf-verification-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

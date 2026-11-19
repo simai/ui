@@ -1,0 +1,17 @@
+{
+  "runtime": {
+    "search": "Suchen",
+    "empty": "Nicht ausgewählt",
+    "value-missing": "Wählen Sie eine Option",
+    "help": "Mehr zu: {label}",
+    "nothing-found": "Nichts gefunden"
+  },
+  "x-trait-words": {
+    "trait": "field-inherit@1",
+    "words": {
+      "inherited": "geerbt",
+      "reset": "Auf geerbten Wert zurücksetzen",
+      "described": "Geerbt: {value}"
+    }
+  }
+}

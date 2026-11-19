@@ -1,0 +1,23 @@
+{
+  "runtime": {
+    "actions-label": "Aktionen: {text}",
+    "count-label": {
+      "one": "{n} ungelesen",
+      "other": "{n} ungelesen"
+    },
+    "empty-text": "Noch nichts vorhanden",
+    "label": "Liste",
+    "loading-more-text": "Wird geladen…",
+    "loading-text": "Liste wird geladen",
+    "more-text": "Mehr anzeigen",
+    "pinned-text": "Angeheftet",
+    "rename-label": "Neuer Name",
+    "rename-text": "Umbenennen",
+    "undated-text": "Ohne Datum",
+    "ungrouped-text": "Sonstige",
+    "unread-text": "ungelesen",
+    "untitled-text": "Ohne Titel",
+    "files-drop-text": "Loslassen, um in „{target}“ hochzuladen",
+    "pick-label": "{text} auswählen"
+  }
+}

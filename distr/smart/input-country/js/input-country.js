@@ -2332,12 +2332,29 @@ function syncFieldContract(root, control, {
 
   if (root.tagName === 'LABEL' && !root.hasAttribute('for')) {
     root.setAttribute('for', control.id);
+  } // A root that is not a label carries its label text as a <label> of its
+  // own (div.sf-input, 1.13.0): it points at the control too.
+
+
+  if (labelNode?.tagName === 'LABEL' && !labelNode.hasAttribute('for')) {
+    labelNode.setAttribute('for', control.id);
   } // Name the field by its visible label, not every hint or adjacent button.
   // Author-provided accessible names remain authoritative.
 
 
   if (labelNode?.textContent?.trim() && !control.hasAttribute('aria-label') && !control.hasAttribute('aria-labelledby')) {
-    if (!labelNode.id) labelNode.id = `${control.id}-label`;
+    // An id of its own: «<control>-label» may already name another element
+    // (a page that gave the field's root that id), and aria-labelledby would
+    // then read that element's whole text, the hint with it (DF-3).
+    if (!labelNode.id) {
+      const doc = labelNode.ownerDocument;
+      let id = `${control.id}-label`;
+
+      for (let n = 2; doc?.getElementById?.(id); n += 1) id = `${control.id}-label-${n}`;
+
+      labelNode.id = id;
+    }
+
     control.setAttribute('aria-labelledby', labelNode.id);
   }
 
@@ -4402,7 +4419,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "1870676d0d14"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-country","tag":"sf-input-country","version":"1.10.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"disabled":{"type":"boolean","default":false},"locale":{"type":"string","default":""},"use-mask":{"type":"boolean","default":false},"use-country-masks":{"type":"boolean","default":true},"fixed-mask":{"type":"boolean","default":false},"show-code":{"type":"boolean","default":true},"hide-code":{"type":"boolean","default":false},"mask-style":{"type":"string","default":"native"},"multi-country":{"type":"boolean","default":true},"fixed-country":{"type":"boolean","default":false},"iso2":{"type":"string","default":""},"dial-code":{"type":"string","default":""},"mask-pattern":{"type":"string","default":""},"flag-base":{"type":"string","default":""},"lazy-flags":{"type":"boolean","default":true},"eager-flags":{"type":"boolean","default":false},"show-mask-placeholder":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"max-items":{"type":"number","default":0},"preferred":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"},"input":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-country-code-background-color":{"type":"color","state":"rest"},"--sf-country-code-border-color":{"type":"color","state":"rest"},"--sf-country-code-radius":{"type":"length"},"--sf-country-code-color":{"type":"color","state":"rest"},"--sf-country-code-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-country","tag":"sf-input-country","version":"1.10.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"disabled":{"type":"boolean","default":false},"locale":{"type":"string","default":""},"use-mask":{"type":"boolean","default":false},"use-country-masks":{"type":"boolean","default":true},"fixed-mask":{"type":"boolean","default":false},"show-code":{"type":"boolean","default":true},"hide-code":{"type":"boolean","default":false},"mask-style":{"type":"string","default":"native"},"multi-country":{"type":"boolean","default":true},"fixed-country":{"type":"boolean","default":false},"iso2":{"type":"string","default":""},"dial-code":{"type":"string","default":""},"mask-pattern":{"type":"string","default":""},"flag-base":{"type":"string","default":""},"lazy-flags":{"type":"boolean","default":true},"eager-flags":{"type":"boolean","default":false},"show-mask-placeholder":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"max-items":{"type":"number","default":0},"preferred":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"},"input":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-country-code-background-color":{"type":"color","state":"rest"},"--sf-country-code-border-color":{"type":"color","state":"rest"},"--sf-country-code-radius":{"type":"length"},"--sf-country-code-color":{"type":"color","state":"rest"},"--sf-country-code-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 
