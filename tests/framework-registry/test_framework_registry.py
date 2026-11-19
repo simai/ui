@@ -115,10 +115,10 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 # 78 with sf-tile-metric, sf-list-attention and sf-progress-run;
                 # 81 with sf-input-choice, sf-list-description and sf-list-timeline;
                 # 83 with sf-time and sf-change; 86 with sf-display-settings,
-                # sf-form and sf-tag-group.
-                "smart-component": 86,
+                # sf-form and sf-tag-group; 87 with sf-bulk-actions.
+                "smart-component": 87,
                 "recipe": 1,
-                "total": 383,
+                "total": 384,
             },
         )
         # The id names the runtimes it was built from; that is the claim, not
