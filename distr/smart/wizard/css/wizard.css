@@ -93,7 +93,6 @@
   /* In a window or a side panel the frame is its surface: no edge, no fill and
      no inset of its own (the window's padding is the inset). */
   .sf-wizard.sf-wizard--window {
-    padding: 0;
     padding: var(--sf-wizard-padding, 0);
     border: 0;
     border-color: revert-layer;
@@ -139,56 +138,13 @@
   /* «Продолжить позже» keeps the line's end, also when it wraps under a long
      heading on a narrow wizard. sf-button's host draws as its children:
      the native control is the flex item. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-wizard-later > button{
+  .sf-wizard-later > :is(button, a):where(:dir(ltr)){
     margin-left: auto;
   }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-wizard-later > button{
-    margin-left: auto;
-    }
-  }
-  .sf-wizard-later > button:where(:dir(ltr)){
-    margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-wizard-later > button{
+  .sf-wizard-later > :is(button, a):where(:dir(rtl)){
     margin-right: auto;
   }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-wizard-later > button{
-    margin-right: auto;
-    }
-  }
-  .sf-wizard-later > button:where(:dir(rtl)){
-    margin-right: auto;
-  }
-  .sf-wizard-later > button {
-    flex: none;
-    -webkit-margin-start: auto;
-            margin-inline-start: auto;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-wizard-later > a{
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-wizard-later > a{
-    margin-left: auto;
-    }
-  }
-  .sf-wizard-later > a:where(:dir(ltr)){
-    margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-wizard-later > a{
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-wizard-later > a{
-    margin-right: auto;
-    }
-  }
-  .sf-wizard-later > a:where(:dir(rtl)){
-    margin-right: auto;
-  }
-  .sf-wizard-later > a {
+  .sf-wizard-later > :is(button, a) {
     flex: none;
     -webkit-margin-start: auto;
             margin-inline-start: auto;
@@ -269,24 +225,8 @@
     padding: 0;
     list-style: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-wizard-list-step{
-    text-align: left;
-  }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-wizard-list-step{
-    text-align: left;
-    }
-  }
   .sf-wizard-list-step:where(:dir(ltr)){
     text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-wizard-list-step{
-    text-align: right;
-  }
-  @supports not (text-align: start){
-  [dir="rtl"] .sf-wizard-list-step{
-    text-align: right;
-    }
   }
   .sf-wizard-list-step:where(:dir(rtl)){
     text-align: right;
@@ -308,7 +248,6 @@
     padding-inline: var(--sf-wizard--row-inset);
     border: 0;
     border-color: revert-layer;
-    border-radius: var(--sf-radius-1);
     border-radius: var(--sf-radius--ui, var(--sf-radius-1));
     font: inherit;
     text-align: start;
@@ -438,13 +377,7 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  .sf-wizard-live > sf-wizard-step > p {
-    margin: 0;
-  }
-  .sf-wizard-live > sf-wizard-step > ul {
-    margin: 0;
-  }
-  .sf-wizard-live > sf-wizard-step > ol {
+  .sf-wizard-live > sf-wizard-step > :is(p, ul, ol) {
     margin: 0;
   }
   /* The plan of changes of a review step: one line per change, what and to
@@ -500,24 +433,8 @@
     border-top-style: solid;
     border-block-start-style: solid;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-wizard-footer-end{
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-wizard-footer-end{
-    margin-left: auto;
-    }
-  }
   .sf-wizard-footer-end:where(:dir(ltr)){
     margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-wizard-footer-end{
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-wizard-footer-end{
-    margin-right: auto;
-    }
   }
   .sf-wizard-footer-end:where(:dir(rtl)){
     margin-right: auto;
@@ -600,26 +517,12 @@
       flex: 1 1 0;
       flex-wrap: nowrap;
     }
-    .sf-wizard .sf-wizard-footer > .sf-wizard-back > button {
+    .sf-wizard .sf-wizard-footer > .sf-wizard-back,
+    .sf-wizard .sf-wizard-footer > .sf-wizard-back > :is(button, a) {
       flex: 1 1 0;
     }
-    .sf-wizard .sf-wizard-footer > .sf-wizard-back > a {
-      flex: 1 1 0;
-    }
-    .sf-wizard .sf-wizard-footer > .sf-wizard-back {
-      flex: 1 1 0;
-    }
-    .sf-wizard .sf-wizard-footer-end > sf-button > button {
-      flex: 1 1 0;
-      min-width: 0;
-      min-inline-size: 0;
-    }
-    .sf-wizard .sf-wizard-footer-end > sf-button > a {
-      flex: 1 1 0;
-      min-width: 0;
-      min-inline-size: 0;
-    }
-    .sf-wizard .sf-wizard-footer-end > sf-button {
+    .sf-wizard .sf-wizard-footer-end > sf-button,
+    .sf-wizard .sf-wizard-footer-end > sf-button > :is(button, a) {
       flex: 1 1 0;
       min-width: 0;
       min-inline-size: 0;
@@ -637,46 +540,14 @@
        (owner decision C210; it was the retired standard mode) and, as that
        mode had, no edge fade; the wizard keeps the current step in view in it
        (afterRender), keyboard focus does the same natively. */
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-wizard--progress-column .sf-wizard-column{
-      border-right-width: var(--sf-px);
-    }
-    @supports not (border-inline-end-width: initial){
-    html:not([dir="rtl"]) .sf-wizard--progress-column .sf-wizard-column{
-      border-right-width: var(--sf-px);
-      }
-    }
     .sf-wizard--progress-column .sf-wizard-column:where(:dir(ltr)){
       border-right-width: var(--sf-px);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-wizard--progress-column .sf-wizard-column{
-      border-left-width: var(--sf-px);
-    }
-    @supports not (border-inline-end-width: initial){
-    [dir="rtl"] .sf-wizard--progress-column .sf-wizard-column{
-      border-left-width: var(--sf-px);
-      }
     }
     .sf-wizard--progress-column .sf-wizard-column:where(:dir(rtl)){
       border-left-width: var(--sf-px);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-wizard--progress-column .sf-wizard-column{
-      border-right-style: solid;
-    }
-    @supports not (border-inline-end-style: initial){
-    html:not([dir="rtl"]) .sf-wizard--progress-column .sf-wizard-column{
-      border-right-style: solid;
-      }
-    }
     .sf-wizard--progress-column .sf-wizard-column:where(:dir(ltr)){
       border-right-style: solid;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-wizard--progress-column .sf-wizard-column{
-      border-left-style: solid;
-    }
-    @supports not (border-inline-end-style: initial){
-    [dir="rtl"] .sf-wizard--progress-column .sf-wizard-column{
-      border-left-style: solid;
-      }
     }
     .sf-wizard--progress-column .sf-wizard-column:where(:dir(rtl)){
       border-left-style: solid;
@@ -693,24 +564,8 @@
       border-inline-end-width: var(--sf-px);
       border-inline-end-style: solid;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-wizard--progress-column .sf-wizard-column-scroll{
-      padding-right: var(--sf-wizard--gap);
-    }
-    @supports not (padding-inline-end: initial){
-    html:not([dir="rtl"]) .sf-wizard--progress-column .sf-wizard-column-scroll{
-      padding-right: var(--sf-wizard--gap);
-      }
-    }
     .sf-wizard--progress-column .sf-wizard-column-scroll:where(:dir(ltr)){
       padding-right: var(--sf-wizard--gap);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-wizard--progress-column .sf-wizard-column-scroll{
-      padding-left: var(--sf-wizard--gap);
-    }
-    @supports not (padding-inline-end: initial){
-    [dir="rtl"] .sf-wizard--progress-column .sf-wizard-column-scroll{
-      padding-left: var(--sf-wizard--gap);
-      }
     }
     .sf-wizard--progress-column .sf-wizard-column-scroll:where(:dir(rtl)){
       padding-left: var(--sf-wizard--gap);
@@ -835,29 +690,12 @@
       background-color: var(--sf-wizard--background);
     }
     .sf-wizard--window .sf-wizard-footer {
-      background-color: var(--sf-surface-popup);
       background-color: var(--sf-modal-surface-bg, var(--sf-surface-popup));
     }
   }
   @container sf-wizard (min-width: 40rem) {
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-wizard--progress-column .sf-wizard-column{
-      border-right-color: var(--sf-wizard--border-color);
-    }
-    @supports not (border-inline-end-color: initial){
-    html:not([dir="rtl"]) .sf-wizard--progress-column .sf-wizard-column{
-      border-right-color: var(--sf-wizard--border-color);
-      }
-    }
     .sf-wizard--progress-column .sf-wizard-column:where(:dir(ltr)){
       border-right-color: var(--sf-wizard--border-color);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-wizard--progress-column .sf-wizard-column{
-      border-left-color: var(--sf-wizard--border-color);
-    }
-    @supports not (border-inline-end-color: initial){
-    [dir="rtl"] .sf-wizard--progress-column .sf-wizard-column{
-      border-left-color: var(--sf-wizard--border-color);
-      }
     }
     .sf-wizard--progress-column .sf-wizard-column:where(:dir(rtl)){
       border-left-color: var(--sf-wizard--border-color);

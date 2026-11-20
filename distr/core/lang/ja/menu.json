@@ -9,14 +9,15 @@
   "status": "draft",
   "review": "Machine translation by the Framework dispatcher (C278, 2026-11-18): every word, CLDR plural forms, country and language names from CLDR; not yet read by a native speaker.",
   "coverage": {
-    "words": 17,
-    "translated": 17,
+    "words": 18,
+    "translated": 18,
     "share": 100
   },
   "words": {
     "sf-menu": {
       "toggle-label": "メニュー",
       "more-label": "その他",
+      "holds-current": "現在のページを含む",
       "status-success": "正常",
       "status-warning": "要対応",
       "status-error": "エラー",

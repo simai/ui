@@ -138,11 +138,7 @@
   /* The surface button made opaque through its internal fill, not its public
      variable (those are the page's); its hover and pressed states (layer
      sf.states) still write the same internal fill over it. */
-  .sf-list-feed__jump > sf-button-icon > .sf-icon-button {
-    --sf-icon-button--background-color: var(--sf-surface-popup);
-    box-shadow: var(--sf-shadow-overlay);
-  }
-  .sf-list-feed__jump > sf-icon-button > .sf-icon-button {
+  .sf-list-feed__jump > :is(sf-button-icon, sf-icon-button) > .sf-icon-button {
     --sf-icon-button--background-color: var(--sf-surface-popup);
     box-shadow: var(--sf-shadow-overlay);
   }

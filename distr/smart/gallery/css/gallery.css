@@ -10,7 +10,6 @@
   /* The rendered root is the grid or flex item (the custom host is
      display:contents): it may shrink to the room it gets. */
   .sf-gallery {
-    min-width: 0;
     min-width: var(--sf-gallery-min-inline-size, 0);
   }
   .sf-gallery[hidden] {
@@ -40,13 +39,7 @@
       -webkit-margin-after: var(--sf-figure-grid--gap);
               margin-block-end: var(--sf-figure-grid--gap);
     }
-    .sf-gallery--masonry[data-sf-static] :is(.sf-figure-media > img) {
-      visibility: hidden;
-    }
-    .sf-gallery--masonry[data-sf-static] :is(.sf-figure-media > picture) {
-      visibility: hidden;
-    }
-    .sf-gallery--masonry[data-sf-static] .sf-figure-caption:not(does-not-exist) {
+    .sf-gallery--masonry[data-sf-static] :is(.sf-figure-media > :is(img, picture), .sf-figure-caption) {
       visibility: hidden;
     }
   }
@@ -60,14 +53,11 @@
     margin: var(--sf-0);
   }
   .sf-gallery-main > .sf-figure-media {
-    aspect-ratio: 4/3;
     aspect-ratio: var(--sf-gallery--ratio, 4/3);
   }
   .sf-gallery-main > .sf-figure-media > img {
     height: 100%;
     block-size: 100%;
-    -o-object-fit: contain;
-       object-fit: contain;
     -o-object-fit: var(--sf-gallery-object-fit, contain);
        object-fit: var(--sf-gallery-object-fit, contain);
   }
@@ -138,24 +128,8 @@
   .sf-gallery-bar[hidden] {
     display: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-gallery-bar-count{
-    padding-left: var(--sf-space-1\/4);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-gallery-bar-count{
-    padding-left: var(--sf-space-1\/4);
-    }
-  }
   .sf-gallery-bar-count:where(:dir(ltr)){
     padding-left: var(--sf-space-1\/4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-gallery-bar-count{
-    padding-right: var(--sf-space-1\/4);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-gallery-bar-count{
-    padding-right: var(--sf-space-1\/4);
-    }
   }
   .sf-gallery-bar-count:where(:dir(rtl)){
     padding-right: var(--sf-space-1\/4);
@@ -275,9 +249,6 @@
     block-size: 100%;
     min-width: 0;
     min-inline-size: 0;
-    min-height: 0;
-    min-block-size: 0;
-    min-height: 0;
     min-height: var(--sf-gallery-slide-min-height, 0);
     min-block-size: var(--sf-gallery-slide-min-height, 0);
   }
@@ -285,21 +256,14 @@
     display: block;
     max-width: 100%;
     max-inline-size: 100%;
-    max-height: 100%;
-    max-block-size: 100%;
-    max-height: 100%;
     max-height: var(--sf-gallery-media-max-height, 100%);
     max-block-size: var(--sf-gallery-media-max-height, 100%);
     -o-object-fit: contain;
        object-fit: contain;
     cursor: -webkit-zoom-in;
     cursor: zoom-in;
-    -webkit-transform: translate(0, calc(0px + 0px)) scale(1);
-            transform: translate(0, calc(0px + 0px)) scale(1);
     -webkit-transform: translate(var(--sf-gallery-viewer--x, 0), calc(var(--sf-gallery-viewer--y, 0px) + var(--sf-gallery-viewer--drag, 0px))) scale(var(--sf-gallery-viewer--scale, 1));
             transform: translate(var(--sf-gallery-viewer--x, 0), calc(var(--sf-gallery-viewer--y, 0px) + var(--sf-gallery-viewer--drag, 0px))) scale(var(--sf-gallery-viewer--scale, 1));
-    transition: -webkit-transform var(--sf-duration-fast) var(--sf-animation);
-    transition: transform var(--sf-duration-fast) var(--sf-animation);
     transition: transform var(--sf-duration-fast) var(--sf-animation), -webkit-transform var(--sf-duration-fast) var(--sf-animation);
     -webkit-user-select: none;
        -moz-user-select: none;
@@ -337,24 +301,8 @@
     -webkit-transform: translateY(-50%);
             transform: translateY(-50%);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-gallery-viewer-side--previous{
-    left: var(--sf-space-1);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-gallery-viewer-side--previous{
-    left: var(--sf-space-1);
-    }
-  }
   .sf-gallery-viewer-side--previous:where(:dir(ltr)){
     left: var(--sf-space-1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-gallery-viewer-side--previous{
-    right: var(--sf-space-1);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-gallery-viewer-side--previous{
-    right: var(--sf-space-1);
-    }
   }
   .sf-gallery-viewer-side--previous:where(:dir(rtl)){
     right: var(--sf-space-1);
@@ -362,24 +310,8 @@
   .sf-gallery-viewer-side--previous {
     inset-inline-start: var(--sf-space-1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-gallery-viewer-side--next{
-    right: var(--sf-space-1);
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-gallery-viewer-side--next{
-    right: var(--sf-space-1);
-    }
-  }
   .sf-gallery-viewer-side--next:where(:dir(ltr)){
     right: var(--sf-space-1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-gallery-viewer-side--next{
-    left: var(--sf-space-1);
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-gallery-viewer-side--next{
-    left: var(--sf-space-1);
-    }
   }
   .sf-gallery-viewer-side--next:where(:dir(rtl)){
     left: var(--sf-space-1);
@@ -387,10 +319,9 @@
   .sf-gallery-viewer-side--next {
     inset-inline-end: var(--sf-space-1);
   }
-  .sf-gallery-viewer-side :where(.sf-icon):dir(rtl) {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
-  }
+  /* The sides' chevrons are directional glyphs: the icons sheet turns them
+     in a right-to-left page (C151 point 3); a turn here as well turned them
+     back (RTL icons, 2026-11-19). */
   .sf-gallery-viewer-caption {
     min-height: calc(var(--sf-text-height-1\/2) + var(--sf-space-1\/2) + var(--sf-space-1));
     min-block-size: calc(var(--sf-text-height-1\/2) + var(--sf-space-1\/2) + var(--sf-space-1));
@@ -445,7 +376,6 @@
     background-color: var(--sf-white);
   }
   .sf-gallery-viewer-caption {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-gallery-caption-color, var(--sf-on-surface-variant));
   }
 }

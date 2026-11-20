@@ -1,31 +1,9 @@
 @layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
-  .table-stripe > :not(caption) > tr.table-active > :nth-child(n) {
-    --sf-table-accent-bg: var(--sf-table-active-bg);
-    color: var(--sf-table-active-color);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-table-accent-bg);
-  }
-  .table-stripe-col > :not(caption) > tr.table-active > :nth-child(n) {
-    --sf-table-accent-bg: var(--sf-table-active-bg);
-    color: var(--sf-table-active-color);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-table-accent-bg);
-  }
-  .table-stripe > :not(caption) > tr > .table-active:nth-child(n) {
-    --sf-table-accent-bg: var(--sf-table-active-bg);
-    color: var(--sf-table-active-color);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-table-accent-bg);
-  }
-  .table-stripe-col > :not(caption) > tr > .table-active:nth-child(n) {
-    --sf-table-accent-bg: var(--sf-table-active-bg);
-    color: var(--sf-table-active-color);
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-table-accent-bg);
-  }
   .table-active,
-  .table-active > :nth-child(n) {
+  .table-active > :nth-child(n),
+  :is(.table-stripe, .table-stripe-col) > :not(caption) > tr.table-active > :nth-child(n),
+  :is(.table-stripe, .table-stripe-col) > :not(caption) > tr > .table-active:nth-child(n) {
     --sf-table-accent-bg: var(--sf-table-active-bg);
     color: var(--sf-table-active-color);
     --sf-surface-underlay: var(--sf-surface-place-solid);

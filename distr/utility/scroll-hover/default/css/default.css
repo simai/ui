@@ -3,19 +3,10 @@
   .scroll-hover {
     --sf-scroll-bg-thumb: var(--sf-transparent);
   }
-  .scroll-hover:hover {
+  .scroll-hover:is(:hover,[focus-within]) {
     --sf-scroll-bg-thumb: var(--sf-outline);
   }
-  .scroll-hover[focus-within] {
-    --sf-scroll-bg-thumb: var(--sf-outline);
-  }
-  .scroll-hover:hover {
-    --sf-scroll-bg-thumb: var(--sf-outline);
-  }
-  .scroll-hover[focus-within] {
-    --sf-scroll-bg-thumb: var(--sf-outline);
-  }
-  .scroll-hover:focus-within {
+  .scroll-hover:is(:hover, :focus-within) {
     --sf-scroll-bg-thumb: var(--sf-outline);
   }
 }

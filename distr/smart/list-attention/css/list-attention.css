@@ -196,41 +196,9 @@
   }
   /* The head: the heading, the summary badges; in group mode the time of the
      checks at the end. A bar of the rung's height H. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-head{
-    padding-left: var(--sf-list-attention--padding-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-attention-head{
-    padding-left: var(--sf-list-attention--padding-start);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-head{
-    padding-right: var(--sf-list-attention--padding-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-list-attention-head{
-    padding-right: var(--sf-list-attention--padding-end);
-    }
-  }
   .sf-list-attention-head:where(:dir(ltr)){
     padding-left: var(--sf-list-attention--padding-start);
     padding-right: var(--sf-list-attention--padding-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-head{
-    padding-right: var(--sf-list-attention--padding-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-list-attention-head{
-    padding-right: var(--sf-list-attention--padding-start);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-head{
-    padding-left: var(--sf-list-attention--padding-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-list-attention-head{
-    padding-left: var(--sf-list-attention--padding-end);
-    }
   }
   .sf-list-attention-head:where(:dir(rtl)){
     padding-right: var(--sf-list-attention--padding-start);
@@ -256,10 +224,6 @@
   .sf-list-attention--frame-none .sf-list-attention-head {
     min-height: var(--sf-list-attention--title-line);
     min-block-size: var(--sf-list-attention--title-line);
-    margin-bottom: var(--sf-list-attention--gap);
-    -webkit-margin-after: var(--sf-list-attention--gap);
-            margin-block-end: var(--sf-list-attention--gap);
-    margin-bottom: var(--sf-list-attention--gap);
     margin-bottom: var(--sf-list-attention-gap, var(--sf-list-attention--gap));
     -webkit-margin-after: var(--sf-list-attention-gap, var(--sf-list-attention--gap));
             margin-block-end: var(--sf-list-attention-gap, var(--sf-list-attention--gap));
@@ -322,41 +286,9 @@
   .sf-list-attention-groups .sf-list-attention-list[hidden] {
     display: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-item{
-    padding-left: var(--sf-list-attention--padding-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-attention-item{
-    padding-left: var(--sf-list-attention--padding-start);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-item{
-    padding-right: var(--sf-list-attention--padding-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-list-attention-item{
-    padding-right: var(--sf-list-attention--padding-end);
-    }
-  }
   .sf-list-attention-item:where(:dir(ltr)){
     padding-left: var(--sf-list-attention--padding-start);
     padding-right: var(--sf-list-attention--padding-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-item{
-    padding-right: var(--sf-list-attention--padding-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-list-attention-item{
-    padding-right: var(--sf-list-attention--padding-start);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-item{
-    padding-left: var(--sf-list-attention--padding-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-list-attention-item{
-    padding-left: var(--sf-list-attention--padding-end);
-    }
   }
   .sf-list-attention-item:where(:dir(rtl)){
     padding-right: var(--sf-list-attention--padding-start);
@@ -395,24 +327,8 @@
     -webkit-padding-before: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line)) / 2 - var(--sf-px));
             padding-block-start: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line)) / 2 - var(--sf-px));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention .sf-list-attention-icon{
-    margin-right: var(--sf-list-attention--gap);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-list-attention .sf-list-attention-icon{
-    margin-right: var(--sf-list-attention--gap);
-    }
-  }
   .sf-list-attention .sf-list-attention-icon:where(:dir(ltr)){
     margin-right: var(--sf-list-attention--gap);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention .sf-list-attention-icon{
-    margin-left: var(--sf-list-attention--gap);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-list-attention .sf-list-attention-icon{
-    margin-left: var(--sf-list-attention--gap);
-    }
   }
   .sf-list-attention .sf-list-attention-icon:where(:dir(rtl)){
     margin-left: var(--sf-list-attention--gap);
@@ -477,29 +393,9 @@
   /* The controls: size 1/2, centred on the row; the overhang over the title's
      line is taken back, so a one-line row stays H. sf-button's host is
      display: contents: the native control is the box. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-affected,html:not([dir="rtl"])
-  .sf-list-attention-affected > *{
-    margin-left: var(--sf-list-attention--gap);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-attention-affected,html:not([dir="rtl"])
-  .sf-list-attention-affected > *{
-    margin-left: var(--sf-list-attention--gap);
-    }
-  }
   .sf-list-attention-affected:where(:dir(ltr)),
   .sf-list-attention-affected > *:where(:dir(ltr)){
     margin-left: var(--sf-list-attention--gap);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-affected,[dir="rtl"]
-  .sf-list-attention-affected > *{
-    margin-right: var(--sf-list-attention--gap);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-list-attention-affected,[dir="rtl"]
-  .sf-list-attention-affected > *{
-    margin-right: var(--sf-list-attention--gap);
-    }
   }
   .sf-list-attention-affected:where(:dir(rtl)),
   .sf-list-attention-affected > *:where(:dir(rtl)){
@@ -513,62 +409,13 @@
     -webkit-margin-start: var(--sf-list-attention--gap);
             margin-inline-start: var(--sf-list-attention--gap);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-action > a{
+  .sf-list-attention-action > :is(a, button):where(:dir(ltr)){
     margin-left: var(--sf-list-attention--gap);
   }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-attention-action > a{
-    margin-left: var(--sf-list-attention--gap);
-    }
-  }
-  .sf-list-attention-action > a:where(:dir(ltr)){
-    margin-left: var(--sf-list-attention--gap);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-action > a{
+  .sf-list-attention-action > :is(a, button):where(:dir(rtl)){
     margin-right: var(--sf-list-attention--gap);
   }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-list-attention-action > a{
-    margin-right: var(--sf-list-attention--gap);
-    }
-  }
-  .sf-list-attention-action > a:where(:dir(rtl)){
-    margin-right: var(--sf-list-attention--gap);
-  }
-  .sf-list-attention-action > a {
-    grid-column: 4;
-    grid-row: 1;
-    justify-self: end;
-    margin-top: calc((var(--sf-list-attention--line) - var(--sf-list-attention--control)) / 2);
-    margin-bottom: calc((var(--sf-list-attention--line) - var(--sf-list-attention--control)) / 2);
-    margin-block: calc((var(--sf-list-attention--line) - var(--sf-list-attention--control)) / 2);
-    -webkit-margin-start: var(--sf-list-attention--gap);
-            margin-inline-start: var(--sf-list-attention--gap);
-    white-space: nowrap;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-action > button{
-    margin-left: var(--sf-list-attention--gap);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-attention-action > button{
-    margin-left: var(--sf-list-attention--gap);
-    }
-  }
-  .sf-list-attention-action > button:where(:dir(ltr)){
-    margin-left: var(--sf-list-attention--gap);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-action > button{
-    margin-right: var(--sf-list-attention--gap);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-list-attention-action > button{
-    margin-right: var(--sf-list-attention--gap);
-    }
-  }
-  .sf-list-attention-action > button:where(:dir(rtl)){
-    margin-right: var(--sf-list-attention--gap);
-  }
-  .sf-list-attention-action > button {
+  .sf-list-attention-action > :is(a, button) {
     grid-column: 4;
     grid-row: 1;
     justify-self: end;
@@ -580,10 +427,7 @@
     white-space: nowrap;
   }
   /* The page's column of actions: one width, the label at the start. */
-  .sf-list-attention--group .sf-list-attention-action > a {
-    justify-self: stretch;
-  }
-  .sf-list-attention--group .sf-list-attention-action > button {
+  .sf-list-attention--group .sf-list-attention-action > :is(a, button) {
     justify-self: stretch;
   }
   .sf-list-attention-more,
@@ -592,29 +436,9 @@
     grid-row: 1;
     justify-self: end;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-more > button,html:not([dir="rtl"])
-  .sf-list-attention-more > .sf-button-icon{
-    margin-left: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-attention-more > button,html:not([dir="rtl"])
-  .sf-list-attention-more > .sf-button-icon{
-    margin-left: var(--sf-space-1\/4);
-    }
-  }
   .sf-list-attention-more > button:where(:dir(ltr)),
   .sf-list-attention-more > .sf-button-icon:where(:dir(ltr)){
     margin-left: var(--sf-space-1\/4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-more > button,[dir="rtl"]
-  .sf-list-attention-more > .sf-button-icon{
-    margin-right: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-list-attention-more > button,[dir="rtl"]
-  .sf-list-attention-more > .sf-button-icon{
-    margin-right: var(--sf-space-1\/4);
-    }
   }
   .sf-list-attention-more > button:where(:dir(rtl)),
   .sf-list-attention-more > .sf-button-icon:where(:dir(rtl)){
@@ -632,41 +456,9 @@
     display: inline-flex;
   }
   /* The foot: «Проверено …» and the recheck, «Все проблемы (N)» at the end. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-foot{
-    padding-left: var(--sf-list-attention--padding-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-attention-foot{
-    padding-left: var(--sf-list-attention--padding-start);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-foot{
-    padding-right: var(--sf-list-attention--padding-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-list-attention-foot{
-    padding-right: var(--sf-list-attention--padding-end);
-    }
-  }
   .sf-list-attention-foot:where(:dir(ltr)){
     padding-left: var(--sf-list-attention--padding-start);
     padding-right: var(--sf-list-attention--padding-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-foot{
-    padding-right: var(--sf-list-attention--padding-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-list-attention-foot{
-    padding-right: var(--sf-list-attention--padding-start);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-foot{
-    padding-left: var(--sf-list-attention--padding-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-list-attention-foot{
-    padding-left: var(--sf-list-attention--padding-end);
-    }
   }
   .sf-list-attention-foot:where(:dir(rtl)){
     padding-right: var(--sf-list-attention--padding-start);
@@ -703,64 +495,16 @@
     display: inline-flex;
   }
   /* Group mode: a disclosure header per severity, the rows under it. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-group-toggle{
-    padding-left: var(--sf-list-attention--padding-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-attention-group-toggle{
-    padding-left: var(--sf-list-attention--padding-start);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-group-toggle{
-    padding-right: var(--sf-list-attention--padding-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-list-attention-group-toggle{
-    padding-right: var(--sf-list-attention--padding-end);
-    }
-  }
   .sf-list-attention-group-toggle:where(:dir(ltr)){
     padding-left: var(--sf-list-attention--padding-start);
     padding-right: var(--sf-list-attention--padding-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-group-toggle{
-    padding-right: var(--sf-list-attention--padding-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-list-attention-group-toggle{
-    padding-right: var(--sf-list-attention--padding-start);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-group-toggle{
-    padding-left: var(--sf-list-attention--padding-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-list-attention-group-toggle{
-    padding-left: var(--sf-list-attention--padding-end);
-    }
   }
   .sf-list-attention-group-toggle:where(:dir(rtl)){
     padding-right: var(--sf-list-attention--padding-start);
     padding-left: var(--sf-list-attention--padding-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-group-toggle{
-    text-align: left;
-  }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-list-attention-group-toggle{
-    text-align: left;
-    }
-  }
   .sf-list-attention-group-toggle:where(:dir(ltr)){
     text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-group-toggle{
-    text-align: right;
-  }
-  @supports not (text-align: start){
-  [dir="rtl"] .sf-list-attention-group-toggle{
-    text-align: right;
-    }
   }
   .sf-list-attention-group-toggle:where(:dir(rtl)){
     text-align: right;
@@ -812,8 +556,6 @@
     --sf-icon--font-size: var(--sf-list-attention--icon);
     --sf-icon--width: var(--sf-list-attention--icon);
     --sf-icon--height: var(--sf-list-attention--icon);
-    transition: -webkit-transform var(--sf-transition--duration) var(--sf-animation);
-    transition: transform var(--sf-transition--duration) var(--sf-animation);
     transition: transform var(--sf-transition--duration) var(--sf-animation), -webkit-transform var(--sf-transition--duration) var(--sf-animation);
   }
   .sf-list-attention-group-toggle[aria-expanded=false] .sf-list-attention-chevron {
@@ -830,41 +572,9 @@
     border-block-start-style: solid;
   }
   /* With no items and empty line: one quiet line of the row's height. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-quiet{
-    padding-left: var(--sf-list-attention--padding-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-attention-quiet{
-    padding-left: var(--sf-list-attention--padding-start);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-quiet{
-    padding-right: var(--sf-list-attention--padding-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-list-attention-quiet{
-    padding-right: var(--sf-list-attention--padding-end);
-    }
-  }
   .sf-list-attention-quiet:where(:dir(ltr)){
     padding-left: var(--sf-list-attention--padding-start);
     padding-right: var(--sf-list-attention--padding-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-quiet{
-    padding-right: var(--sf-list-attention--padding-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-list-attention-quiet{
-    padding-right: var(--sf-list-attention--padding-start);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-quiet{
-    padding-left: var(--sf-list-attention--padding-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-list-attention-quiet{
-    padding-left: var(--sf-list-attention--padding-end);
-    }
   }
   .sf-list-attention-quiet:where(:dir(rtl)){
     padding-right: var(--sf-list-attention--padding-start);
@@ -887,11 +597,7 @@
     align-self: center;
     margin: 0;
   }
-  .sf-list-attention-recheck-text > a {
-    flex: none;
-    white-space: nowrap;
-  }
-  .sf-list-attention-recheck-text > button {
+  .sf-list-attention-recheck-text > :is(a, button) {
     flex: none;
     white-space: nowrap;
   }
@@ -928,61 +634,13 @@
       padding-bottom: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line)) / 2);
       padding-block: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line)) / 2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-action > a{
+    .sf-list-attention-action > :is(a, button):where(:dir(ltr)){
       margin-left: 0;
     }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-list-attention-action > a{
-      margin-left: 0;
-      }
-    }
-    .sf-list-attention-action > a:where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-action > a{
+    .sf-list-attention-action > :is(a, button):where(:dir(rtl)){
       margin-right: 0;
     }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-list-attention-action > a{
-      margin-right: 0;
-      }
-    }
-    .sf-list-attention-action > a:where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-list-attention-action > a {
-      grid-column: 2;
-      grid-row: 2;
-      justify-self: start;
-      margin-top: 0;
-      margin-bottom: 0;
-      margin-block: 0;
-      -webkit-margin-start: 0;
-              margin-inline-start: 0;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-action > button{
-      margin-left: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-list-attention-action > button{
-      margin-left: 0;
-      }
-    }
-    .sf-list-attention-action > button:where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-action > button{
-      margin-right: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-list-attention-action > button{
-      margin-right: 0;
-      }
-    }
-    .sf-list-attention-action > button:where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-list-attention-action > button {
+    .sf-list-attention-action > :is(a, button) {
       grid-column: 2;
       grid-row: 2;
       justify-self: start;
@@ -1014,7 +672,6 @@
       grid-gap: 0 var(--sf-list-attention--gap);
       gap: 0 var(--sf-list-attention--gap);
       padding-top: calc((var(--sf-list-attention--row) - var(--sf-list-attention--title-line) - var(--sf-list-attention--meta-line)) / 2);
-      padding-bottom: calc((var(--sf-list-attention--row) - var(--sf-list-attention--title-line) - var(--sf-list-attention--meta-line)) / 2);
       padding-block: calc((var(--sf-list-attention--row) - var(--sf-list-attention--title-line) - var(--sf-list-attention--meta-line)) / 2);
       padding-bottom: calc((var(--sf-list-attention--row) - var(--sf-list-attention--title-line) - var(--sf-list-attention--meta-line)) / 2 - var(--sf-px));
       -webkit-padding-after: calc((var(--sf-list-attention--row) - var(--sf-list-attention--title-line) - var(--sf-list-attention--meta-line)) / 2 - var(--sf-px));
@@ -1081,76 +738,18 @@
     .sf-list-attention-foot .sf-list-attention-spacer {
       display: none;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-all > a{
+    .sf-list-attention-all > :is(a, button):where(:dir(ltr)){
       margin-left: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
     }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-list-attention-all > a{
-      margin-left: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
-      }
-    }
-    .sf-list-attention-all > a:where(:dir(ltr)){
-      margin-left: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-all > a{
+    .sf-list-attention-all > :is(a, button):where(:dir(rtl)){
       margin-right: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
     }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-list-attention-all > a{
-      margin-right: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
-      }
-    }
-    .sf-list-attention-all > a:where(:dir(rtl)){
-      margin-right: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
-    }
-    .sf-list-attention-all > a {
+    .sf-list-attention-all > :is(a, button) {
       -webkit-margin-start: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
               margin-inline-start: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-all > button{
-      margin-left: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-list-attention-all > button{
-      margin-left: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
-      }
-    }
-    .sf-list-attention-all > button:where(:dir(ltr)){
-      margin-left: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-all > button{
-      margin-right: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-list-attention-all > button{
-      margin-right: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
-      }
-    }
-    .sf-list-attention-all > button:where(:dir(rtl)){
-      margin-right: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
-    }
-    .sf-list-attention-all > button {
-      -webkit-margin-start: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
-              margin-inline-start: calc(-1 * (var(--sf-button--padding-inline-start) - var(--sf-button--border-inline-start-width)));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention-all .sf-button-text-container{
-      margin-left: calc(-1 * var(--sf-button-text-container--padding-inline-start));
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-list-attention-all .sf-button-text-container{
-      margin-left: calc(-1 * var(--sf-button-text-container--padding-inline-start));
-      }
     }
     .sf-list-attention-all .sf-button-text-container:where(:dir(ltr)){
       margin-left: calc(-1 * var(--sf-button-text-container--padding-inline-start));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention-all .sf-button-text-container{
-      margin-right: calc(-1 * var(--sf-button-text-container--padding-inline-start));
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-list-attention-all .sf-button-text-container{
-      margin-right: calc(-1 * var(--sf-button-text-container--padding-inline-start));
-      }
     }
     .sf-list-attention-all .sf-button-text-container:where(:dir(rtl)){
       margin-right: calc(-1 * var(--sf-button-text-container--padding-inline-start));
@@ -1186,61 +785,13 @@
       padding-bottom: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2);
       padding-block: calc((var(--sf-list-attention--row) - var(--sf-list-attention--line) - var(--sf-list-attention--meta-line)) / 2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention--group .sf-list-attention-action > a{
+    .sf-list-attention--group .sf-list-attention-action > :is(a, button):where(:dir(ltr)){
       margin-left: 0;
     }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-list-attention--group .sf-list-attention-action > a{
-      margin-left: 0;
-      }
-    }
-    .sf-list-attention--group .sf-list-attention-action > a:where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention--group .sf-list-attention-action > a{
+    .sf-list-attention--group .sf-list-attention-action > :is(a, button):where(:dir(rtl)){
       margin-right: 0;
     }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-list-attention--group .sf-list-attention-action > a{
-      margin-right: 0;
-      }
-    }
-    .sf-list-attention--group .sf-list-attention-action > a:where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-list-attention--group .sf-list-attention-action > a {
-      grid-column: 2;
-      grid-row: 2;
-      justify-self: start;
-      margin-top: 0;
-      margin-bottom: 0;
-      margin-block: 0;
-      -webkit-margin-start: 0;
-              margin-inline-start: 0;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-attention--group .sf-list-attention-action > button{
-      margin-left: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-list-attention--group .sf-list-attention-action > button{
-      margin-left: 0;
-      }
-    }
-    .sf-list-attention--group .sf-list-attention-action > button:where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-list-attention--group .sf-list-attention-action > button{
-      margin-right: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-list-attention--group .sf-list-attention-action > button{
-      margin-right: 0;
-      }
-    }
-    .sf-list-attention--group .sf-list-attention-action > button:where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-list-attention--group .sf-list-attention-action > button {
+    .sf-list-attention--group .sf-list-attention-action > :is(a, button) {
       grid-column: 2;
       grid-row: 2;
       justify-self: start;
@@ -1259,13 +810,11 @@
 @layer sf.paint {
   .sf-list-attention {
     border-color: var(--sf-list-attention--divider);
-    background: var(--sf-surface-card);
     background: var(--sf-list-attention-background-color, var(--sf-list-attention-background, var(--sf-surface-card)));
     color: var(--sf-on-surface);
   }
   .sf-list-attention.sf-list-attention--frame-none {
     border: 0;
-    background: transparent;
     background: var(--sf-list-attention-background-color, var(--sf-list-attention-background, transparent));
   }
   .sf-list-attention-head {
@@ -1278,7 +827,6 @@
             border-block-end: 0;
   }
   .sf-list-attention-heading {
-    color: var(--sf-on-surface);
     color: var(--sf-list-attention-heading-color, var(--sf-on-surface));
   }
   .sf-list-attention-item + .sf-list-attention-item {

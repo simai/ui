@@ -84,7 +84,7 @@
         {
           "name": "--sf-badge-gap",
           "role": "gap",
-          "summary": "Space between the icon and the text.",
+          "summary": "Space between the icon and the text; on a badge with a name and a value, the space on each side of the divider, --sf-space-1/3 there (owner decision C317).",
           "default": "var(--sf-space-1/4)",
           "since": "2026-10-13"
         },
@@ -94,6 +94,18 @@
           "summary": "The ring that separates a badge anchored on an avatar, an icon or an icon button from its anchor: the colour of the surface the anchor sits on. Framework surfaces (menus, lists, drawers, modals, toasts) say their own; set it where a page paints a surface of its own.",
           "default": "var(--sf-surface-place)",
           "since": "2026-10-21"
+        },
+        {
+          "name": "--sf-badge-divider-color",
+          "role": "indicator-color",
+          "summary": "The one-pixel divider between a name and a value in one badge («sf-wizard | 1.5.3», owner decision C317): the badge's border colour on an outline badge, --sf-outline on a fill.",
+          "default": "var(--sf-outline)",
+          "since": "2026-11-18",
+          "varies_with": [
+            "appearance",
+            "scheme",
+            "status"
+          ]
         }
       ]
     },
@@ -1717,7 +1729,7 @@
           "name": "--sf-color-swatches-gap",
           "role": "gap",
           "summary": "The space between presets.",
-          "default": "var(--sf-space-1\\/2)",
+          "default": "var(--sf-space-1\\/3)",
           "since": "2026-10-27"
         },
         {
@@ -1941,7 +1953,7 @@
         },
         {
           "name": "--sf-steps-separator-color",
-          "role": "color",
+          "role": "background",
           "summary": "The line between two steps after the current one (sf-steps 1.4.0; it was the separator glyph).",
           "default": "var(--sf-outline-variant)",
           "since": "2026-10-27"
@@ -1969,14 +1981,14 @@
         },
         {
           "name": "--sf-steps-current-border-color",
-          "role": "border-color",
+          "role": "outline-color",
           "summary": "The ring of the current step's marker (2 px through a 2 px gap, C73).",
           "default": "var(--sf-steps-completed-icon-color, var(--sf-primary))",
           "since": "2026-10-27"
         },
         {
           "name": "--sf-steps-completed-icon-color",
-          "role": "color",
+          "role": "background",
           "summary": "The progress colour: the done and current markers and the line behind the current step (sf-steps 1.4.0; it was the green check).",
           "default": "var(--sf-primary)",
           "since": "2026-10-27"
@@ -2423,7 +2435,7 @@
         },
         {
           "name": "--sf-progress-bar-track-size",
-          "role": "size",
+          "role": "inline-size",
           "summary": "The track's own width in the inline look (owner decision C203): 64 unless this is set; the number stands beside it, not in it.",
           "default": "var(--sf-d6)",
           "varies_with": [

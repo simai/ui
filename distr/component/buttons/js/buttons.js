@@ -69,6 +69,11 @@ class Buttons extends _core_js_ComponentObserver__WEBPACK_IMPORTED_MODULE_0__.Co
 
     if (look === 'ghost') {
       this.button.classList.add('sf-button--link');
+    } // plain (1.22.0) is a ghost that never takes a plate: both classes.
+
+
+    if (look === 'plain') {
+      this.button.classList.add('sf-button--ghost');
     } // The readable names for the same steps: compact, comfortable, spacious.
     // `normal` is the default and needs no class. When both options are given,
     // `spacing` wins, as it does on the Smart element (control-spacing.js), so
@@ -337,10 +342,28 @@ function nameOf(element) {
   const label = element.getAttribute('aria-label') || element.querySelector('.sf-button-text-container')?.textContent?.trim() || element.textContent?.trim() || '';
   const classes = [...element.classList].filter(name => /^sf-(icon-)?button--/u.test(name)).join(' ');
   return `<${element.localName}${element.id ? `#${element.id}` : ''} class="${classes}">${label ? ` «${label.slice(0, 40)}»` : ''}`;
+} // The words a button is named by from its content: its text outside the
+// glyphs (an icon's ligature is its name in the font, not words), the spinner
+// and anything aria-hidden. A label kept out of view (sr-only, sf-segmented's
+// sf-button-group-label--hidden on an icon-only segment) still names it: the
+// theme switch of sf-header-site was told it needed aria-label, though each
+// segment is named «Как в системе», «Светлая», «Тёмная» (DF-4).
+
+
+const NOT_WORDS = '.sf-icon, sf-icon, .sf-button-spinner, [aria-hidden="true"]';
+
+function contentName(element) {
+  let words = '';
+
+  for (const node of element.childNodes) {
+    if (node.nodeType === 3) words += node.nodeValue;else if (node.nodeType === 1 && !matches(node, NOT_WORDS)) words += contentName(node);
+  }
+
+  return words;
 }
 
 function hasName(element) {
-  return Boolean(element.getAttribute('aria-label')?.trim() || element.getAttribute('aria-labelledby')?.trim() || element.getAttribute('title')?.trim());
+  return Boolean(element.getAttribute('aria-label')?.trim() || element.getAttribute('aria-labelledby')?.trim() || element.getAttribute('title')?.trim() || contentName(element).trim());
 }
 
 function matches(element, selector) {

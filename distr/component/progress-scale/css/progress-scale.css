@@ -14,9 +14,7 @@
        C131 (1), which replaces the docs precheck PB-01 grey; C185 MR-1).
        neutral is the grey below. The text stays the quiet ink of the place. */
     --sf-progress-scale--fill-color: var(--sf-progress-scale-fill-color, var(--sf-primary));
-    font-family: var(--sf-text--family);
     font-family: var(--sf-progress-scale--font-family, var(--sf-text--family));
-    font-weight: var(--sf-font-weight-regular);
     font-weight: var(--sf-progress-scale--font-weight, var(--sf-font-weight-regular));
     font-size: var(--sf-progress-scale--font-size);
     gap: var(--sf-progress-scale--gap);
@@ -48,13 +46,11 @@
        their grid-col-10 utility as well. */
     grid-auto-flow: column;
     grid-auto-columns: minmax(0, 1fr);
-    gap: var(--sf-a2);
     gap: var(--sf-progress-scale-segment-gap, var(--sf-a2));
     height: var(--sf-progress-scale-container--height);
     width: 100%;
   }
   .sf-progress-scale .sf-progress-scale-block {
-    border-radius: var(--sf-radius-1\/3);
     border-radius: var(--sf-progress-scale-radius, var(--sf-radius-1\/3));
   }
   .sf-progress-scale .sf-progress-scale-text {
@@ -121,16 +117,13 @@
 }
 @layer sf.paint {
   .sf-progress-scale {
-    background-color: transparent;
     background-color: var(--sf-progress-scale--background-color, transparent);
-    color: var(--sf-on-surface-variant);
     color: var(--sf-progress-scale--color, var(--sf-progress-scale-color, var(--sf-on-surface-variant)));
   }
   .sf-progress-scale .sf-progress-scale-container {
     background-color: transparent;
   }
   .sf-progress-scale .sf-progress-scale-block {
-    background-color: var(--sf-surface-container);
     background-color: var(--sf-progress-scale-track-color, var(--sf-surface-container));
   }
   .sf-progress-scale--10 .sf-progress-scale-block:nth-child(-n+1),

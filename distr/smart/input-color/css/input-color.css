@@ -27,38 +27,14 @@
   }
   /* The marker reads as a note about the value, not as the value: the
      placeholder's ink, one text step down, and never broken across lines. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-field-inherited{
-    padding-right: 0px;
-    padding-right: var(--sf-field-inherited-slot--inset, 0px);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-field-inherited{
-    padding-right: 0px;
-    padding-right: var(--sf-field-inherited-slot--inset, 0px);
-    }
-  }
   .sf-field-inherited:where(:dir(ltr)){
-    padding-right: 0px;
     padding-right: var(--sf-field-inherited-slot--inset, 0px);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-field-inherited{
-    padding-left: 0px;
-    padding-left: var(--sf-field-inherited-slot--inset, 0px);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-field-inherited{
-    padding-left: 0px;
-    padding-left: var(--sf-field-inherited-slot--inset, 0px);
-    }
   }
   .sf-field-inherited:where(:dir(rtl)){
-    padding-left: 0px;
     padding-left: var(--sf-field-inherited-slot--inset, 0px);
   }
   .sf-field-inherited {
     white-space: nowrap;
-    -webkit-padding-end: 0px;
-            padding-inline-end: 0px;
     -webkit-padding-end: var(--sf-field-inherited-slot--inset, 0px);
             padding-inline-end: var(--sf-field-inherited-slot--inset, 0px);
   }
@@ -102,72 +78,24 @@
      While it holds the marker it takes the field's end padding back and the
      marker keeps that padding as its own, so its words end where the field's
      text would. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input-field > .sf-field-inherited-slot{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-input-field--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-input-field > .sf-field-inherited-slot{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-input-field--padding-inline-end, 0px));
-    }
-  }
   .sf-input-field > .sf-field-inherited-slot:where(:dir(ltr)){
-    margin-right: calc(-1 * 0px);
     margin-right: calc(-1 * var(--sf-input-field--padding-inline-end, 0px));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input-field > .sf-field-inherited-slot{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-input-field--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-input-field > .sf-field-inherited-slot{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-input-field--padding-inline-end, 0px));
-    }
   }
   .sf-input-field > .sf-field-inherited-slot:where(:dir(rtl)){
-    margin-left: calc(-1 * 0px);
     margin-left: calc(-1 * var(--sf-input-field--padding-inline-end, 0px));
   }
   .sf-input-field > .sf-field-inherited-slot {
     align-self: center;
-    -webkit-margin-end: calc(-1 * 0px);
-            margin-inline-end: calc(-1 * 0px);
     -webkit-margin-end: calc(-1 * var(--sf-input-field--padding-inline-end, 0px));
             margin-inline-end: calc(-1 * var(--sf-input-field--padding-inline-end, 0px));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input-field > .sf-field-inherited-slot > .sf-field-inherited{
-    padding-right: 0px;
-    padding-right: var(--sf-input-field--padding-inline-end, 0px);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-input-field > .sf-field-inherited-slot > .sf-field-inherited{
-    padding-right: 0px;
-    padding-right: var(--sf-input-field--padding-inline-end, 0px);
-    }
-  }
   .sf-input-field > .sf-field-inherited-slot > .sf-field-inherited:where(:dir(ltr)){
-    padding-right: 0px;
     padding-right: var(--sf-input-field--padding-inline-end, 0px);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input-field > .sf-field-inherited-slot > .sf-field-inherited{
-    padding-left: 0px;
-    padding-left: var(--sf-input-field--padding-inline-end, 0px);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-input-field > .sf-field-inherited-slot > .sf-field-inherited{
-    padding-left: 0px;
-    padding-left: var(--sf-input-field--padding-inline-end, 0px);
-    }
   }
   .sf-input-field > .sf-field-inherited-slot > .sf-field-inherited:where(:dir(rtl)){
-    padding-left: 0px;
     padding-left: var(--sf-input-field--padding-inline-end, 0px);
   }
   .sf-input-field > .sf-field-inherited-slot > .sf-field-inherited {
-    -webkit-padding-end: 0px;
-            padding-inline-end: 0px;
     -webkit-padding-end: var(--sf-input-field--padding-inline-end, 0px);
             padding-inline-end: var(--sf-input-field--padding-inline-end, 0px);
   }
@@ -176,24 +104,8 @@
      own before the quarter the hit area stands out past the glyph: half an
      inset in all. The field-action rules give the last glyph's quarter back,
      so it ends on the inset. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input-field > .sf-field-inherited-slot:has(> .sf-field-action:not([hidden])){
-    margin-right: 0;
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-input-field > .sf-field-inherited-slot:has(> .sf-field-action:not([hidden])){
-    margin-right: 0;
-    }
-  }
   .sf-input-field > .sf-field-inherited-slot:has(> .sf-field-action:not([hidden])):where(:dir(ltr)){
     margin-right: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input-field > .sf-field-inherited-slot:has(> .sf-field-action:not([hidden])){
-    margin-left: 0;
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-input-field > .sf-field-inherited-slot:has(> .sf-field-action:not([hidden])){
-    margin-left: 0;
-    }
   }
   .sf-input-field > .sf-field-inherited-slot:has(> .sf-field-action:not([hidden])):where(:dir(rtl)){
     margin-left: 0;
@@ -203,34 +115,10 @@
     -webkit-margin-end: 0;
             margin-inline-end: 0;
   }
-  .sf-input.sf-input--size-1\/3 .sf-input-field:has(> .sf-field-inherited-slot > .sf-field-action:not([hidden])) {
+  .sf-input:is(.sf-input--size-1\/3, .sf-input--size-1\/2, .sf-input--size-1, .sf-input--size-2, .sf-input--size-3) .sf-input-field:has(> .sf-field-inherited-slot > .sf-field-action:not([hidden])) {
     --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
   }
-  .sf-input.sf-input--size-1\/2 .sf-input-field:has(> .sf-field-inherited-slot > .sf-field-action:not([hidden])) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1 .sf-input-field:has(> .sf-field-inherited-slot > .sf-field-action:not([hidden])) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-2 .sf-input-field:has(> .sf-field-inherited-slot > .sf-field-action:not([hidden])) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-3 .sf-input-field:has(> .sf-field-inherited-slot > .sf-field-action:not([hidden])) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/3 .sf-input-field > input:has(+ .sf-field-inherited-slot > .sf-field-action:not([hidden])) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field > input:has(+ .sf-field-inherited-slot > .sf-field-action:not([hidden])) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-1 .sf-input-field > input:has(+ .sf-field-inherited-slot > .sf-field-action:not([hidden])) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-2 .sf-input-field > input:has(+ .sf-field-inherited-slot > .sf-field-action:not([hidden])) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-3 .sf-input-field > input:has(+ .sf-field-inherited-slot > .sf-field-action:not([hidden])) {
+  .sf-input:is(.sf-input--size-1\/3, .sf-input--size-1\/2, .sf-input--size-1, .sf-input--size-2, .sf-input--size-3) .sf-input-field > input:has(+ .sf-field-inherited-slot > .sf-field-action:not([hidden])) {
     --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
   }
   /* sf-dropdown: the chevron is laid over the field's end, in room the text
@@ -246,68 +134,23 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button{
-    margin-right: calc(-1 * 0px);
-    margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-    }
-  }
   .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button:where(:dir(ltr)){
-    margin-right: calc(-1 * 0px);
     margin-right: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button{
-    margin-left: calc(-1 * 0px);
-    margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
-    }
   }
   .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button:where(:dir(rtl)){
-    margin-left: calc(-1 * 0px);
     margin-left: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
   }
   .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button {
     position: static;
     flex: none;
-    margin-top: calc(-1 * 0px);
-    margin-bottom: calc(-1 * 0px);
-    margin-block: calc(-1 * 0px) calc(-1 * 0px);
-    margin-top: calc(-1 * 0px);
     margin-top: calc(-1 * var(--sf-dropdown-field--padding-top, 0px));
-    margin-bottom: calc(-1 * 0px);
     margin-bottom: calc(-1 * var(--sf-dropdown-field--padding-bottom, 0px));
     margin-block: calc(-1 * var(--sf-dropdown-field--padding-top, 0px)) calc(-1 * var(--sf-dropdown-field--padding-bottom, 0px));
-    -webkit-margin-end: calc(-1 * 0px);
-            margin-inline-end: calc(-1 * 0px);
     -webkit-margin-end: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
             margin-inline-end: calc(-1 * var(--sf-icon-button--padding-inline-end, 0px));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button.sf-field-action:last-child{
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button.sf-field-action:last-child{
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
-  }
   .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button.sf-field-action:last-child:where(:dir(ltr)){
     margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button.sf-field-action:last-child{
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button.sf-field-action:last-child{
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
   }
   .sf-dropdown .sf-dropdown-field:has(> .sf-field-inherited-slot) > button.sf-field-action:last-child:where(:dir(rtl)){
     margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
@@ -317,33 +160,12 @@
             margin-inline-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
   }
   .sf-dropdown .sf-dropdown-field > .sf-field-inherited-slot {
-    margin-top: calc(-1 * 0px);
-    margin-bottom: calc(-1 * 0px);
-    margin-block: calc(-1 * 0px) calc(-1 * 0px);
-    margin-top: calc(-1 * 0px);
     margin-top: calc(-1 * var(--sf-dropdown-field--padding-top, 0px));
-    margin-bottom: calc(-1 * 0px);
     margin-bottom: calc(-1 * var(--sf-dropdown-field--padding-bottom, 0px));
     margin-block: calc(-1 * var(--sf-dropdown-field--padding-top, 0px)) calc(-1 * var(--sf-dropdown-field--padding-bottom, 0px));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field > .sf-field-inherited-slot > .sf-field-inherited{
-    padding-right: var(--sf-space-1\/4);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field > .sf-field-inherited-slot > .sf-field-inherited{
-    padding-right: var(--sf-space-1\/4);
-    }
-  }
   .sf-dropdown .sf-dropdown-field > .sf-field-inherited-slot > .sf-field-inherited:where(:dir(ltr)){
     padding-right: var(--sf-space-1\/4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field > .sf-field-inherited-slot > .sf-field-inherited{
-    padding-left: var(--sf-space-1\/4);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field > .sf-field-inherited-slot > .sf-field-inherited{
-    padding-left: var(--sf-space-1\/4);
-    }
   }
   .sf-dropdown .sf-dropdown-field > .sf-field-inherited-slot > .sf-field-inherited:where(:dir(rtl)){
     padding-left: var(--sf-space-1\/4);
@@ -390,89 +212,34 @@
   .sf-quantity-inherited {
     --sf-field-action--inset: var(--sf-space-1);
   }
-  .sf-switch-inherited.sf-field-inherited-slot--size-1\/3 {
-    --sf-field-action--inset: max(var(--sf-space-1\/2), var(--sf-b2));
-  }
-  .sf-switch-inherited.sf-field-inherited-slot--size-1\/2 {
-    --sf-field-action--inset: max(var(--sf-space-1\/2), var(--sf-b2));
-  }
-  .sf-quantity-inherited.sf-field-inherited-slot--size-1\/3 {
-    --sf-field-action--inset: max(var(--sf-space-1\/2), var(--sf-b2));
-  }
-  .sf-quantity-inherited.sf-field-inherited-slot--size-1\/2 {
+  :is(.sf-switch-inherited, .sf-quantity-inherited):is(.sf-field-inherited-slot--size-1\/3, .sf-field-inherited-slot--size-1\/2) {
     --sf-field-action--inset: max(var(--sf-space-1\/2), var(--sf-b2));
   }
   @media (min-width: 60rem) {
-    .sf-switch-inherited.sf-field-inherited-slot--size-2 {
+    :is(.sf-switch-inherited, .sf-quantity-inherited).sf-field-inherited-slot--size-2 {
       --sf-field-action--inset: var(--sf-space-2);
     }
-    .sf-quantity-inherited.sf-field-inherited-slot--size-2 {
-      --sf-field-action--inset: var(--sf-space-2);
-    }
-    .sf-switch-inherited.sf-field-inherited-slot--size-3 {
-      --sf-field-action--inset: var(--sf-space-3);
-    }
-    .sf-quantity-inherited.sf-field-inherited-slot--size-3 {
+    :is(.sf-switch-inherited, .sf-quantity-inherited).sf-field-inherited-slot--size-3 {
       --sf-field-action--inset: var(--sf-space-3);
     }
   }
-  .sf-textarea-inherited.sf-field-inherited-slot--size-1\/3 {
+  :is(.sf-textarea-inherited, .sf-switch-inherited, .sf-quantity-inherited).sf-field-inherited-slot--size-1\/3 {
     --sf-field-action--glyph: var(--sf-text-height-1\/3);
     --sf-field-action--height: var(--sf-ui-1\/3--control-height);
   }
-  .sf-switch-inherited.sf-field-inherited-slot--size-1\/3 {
-    --sf-field-action--glyph: var(--sf-text-height-1\/3);
-    --sf-field-action--height: var(--sf-ui-1\/3--control-height);
-  }
-  .sf-quantity-inherited.sf-field-inherited-slot--size-1\/3 {
-    --sf-field-action--glyph: var(--sf-text-height-1\/3);
-    --sf-field-action--height: var(--sf-ui-1\/3--control-height);
-  }
-  .sf-textarea-inherited.sf-field-inherited-slot--size-1\/2 {
+  :is(.sf-textarea-inherited, .sf-switch-inherited, .sf-quantity-inherited).sf-field-inherited-slot--size-1\/2 {
     --sf-field-action--glyph: var(--sf-text-height-1\/2);
     --sf-field-action--height: var(--sf-ui-1\/2--control-height);
   }
-  .sf-switch-inherited.sf-field-inherited-slot--size-1\/2 {
-    --sf-field-action--glyph: var(--sf-text-height-1\/2);
-    --sf-field-action--height: var(--sf-ui-1\/2--control-height);
-  }
-  .sf-quantity-inherited.sf-field-inherited-slot--size-1\/2 {
-    --sf-field-action--glyph: var(--sf-text-height-1\/2);
-    --sf-field-action--height: var(--sf-ui-1\/2--control-height);
-  }
-  .sf-textarea-inherited.sf-field-inherited-slot--size-1 {
+  :is(.sf-textarea-inherited, .sf-switch-inherited, .sf-quantity-inherited).sf-field-inherited-slot--size-1 {
     --sf-field-action--glyph: var(--sf-text-height-1);
     --sf-field-action--height: var(--sf-ui-1--control-height);
   }
-  .sf-switch-inherited.sf-field-inherited-slot--size-1 {
-    --sf-field-action--glyph: var(--sf-text-height-1);
-    --sf-field-action--height: var(--sf-ui-1--control-height);
-  }
-  .sf-quantity-inherited.sf-field-inherited-slot--size-1 {
-    --sf-field-action--glyph: var(--sf-text-height-1);
-    --sf-field-action--height: var(--sf-ui-1--control-height);
-  }
-  .sf-textarea-inherited.sf-field-inherited-slot--size-2 {
+  :is(.sf-textarea-inherited, .sf-switch-inherited, .sf-quantity-inherited).sf-field-inherited-slot--size-2 {
     --sf-field-action--glyph: var(--sf-text-height-2);
     --sf-field-action--height: var(--sf-ui-2--control-height);
   }
-  .sf-switch-inherited.sf-field-inherited-slot--size-2 {
-    --sf-field-action--glyph: var(--sf-text-height-2);
-    --sf-field-action--height: var(--sf-ui-2--control-height);
-  }
-  .sf-quantity-inherited.sf-field-inherited-slot--size-2 {
-    --sf-field-action--glyph: var(--sf-text-height-2);
-    --sf-field-action--height: var(--sf-ui-2--control-height);
-  }
-  .sf-textarea-inherited.sf-field-inherited-slot--size-3 {
-    --sf-field-action--glyph: var(--sf-text-height-3);
-    --sf-field-action--height: var(--sf-ui-3--control-height);
-  }
-  .sf-switch-inherited.sf-field-inherited-slot--size-3 {
-    --sf-field-action--glyph: var(--sf-text-height-3);
-    --sf-field-action--height: var(--sf-ui-3--control-height);
-  }
-  .sf-quantity-inherited.sf-field-inherited-slot--size-3 {
+  :is(.sf-textarea-inherited, .sf-switch-inherited, .sf-quantity-inherited).sf-field-inherited-slot--size-3 {
     --sf-field-action--glyph: var(--sf-text-height-3);
     --sf-field-action--height: var(--sf-ui-3--control-height);
   }
@@ -489,24 +256,8 @@
     --sf-icon--height: var(--sf-field-action--glyph-size);
     --sf-icon--width: var(--sf-field-action--glyph-size);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-textarea-inherited > .sf-field-action{
-    margin-right: calc(var(--sf-field-action--inset) - (var(--sf-field-action--hit-inline) - var(--sf-field-action--glyph-size)) / 2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-textarea-inherited > .sf-field-action{
-    margin-right: calc(var(--sf-field-action--inset) - (var(--sf-field-action--hit-inline) - var(--sf-field-action--glyph-size)) / 2);
-    }
-  }
   .sf-textarea-inherited > .sf-field-action:where(:dir(ltr)){
     margin-right: calc(var(--sf-field-action--inset) - (var(--sf-field-action--hit-inline) - var(--sf-field-action--glyph-size)) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-textarea-inherited > .sf-field-action{
-    margin-left: calc(var(--sf-field-action--inset) - (var(--sf-field-action--hit-inline) - var(--sf-field-action--glyph-size)) / 2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-textarea-inherited > .sf-field-action{
-    margin-left: calc(var(--sf-field-action--inset) - (var(--sf-field-action--hit-inline) - var(--sf-field-action--glyph-size)) / 2);
-    }
   }
   .sf-textarea-inherited > .sf-field-action:where(:dir(rtl)){
     margin-left: calc(var(--sf-field-action--inset) - (var(--sf-field-action--hit-inline) - var(--sf-field-action--glyph-size)) / 2);
@@ -549,34 +300,19 @@
     sf-input[data-inherited] .sf-input .sf-input-field input::placeholder {
       --sf-input-placeholder--color: CanvasText;
     }
-    sf-input-textarea[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
+    :is(sf-input-textarea, sf-textarea)[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
     }
-    sf-input-textarea[data-inherited] .sf-textarea textarea::-moz-placeholder {
+    :is(sf-input-textarea, sf-textarea)[data-inherited] .sf-textarea textarea::-moz-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
     }
-    sf-input-textarea[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
+    :is(sf-input-textarea, sf-textarea)[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
     }
-    sf-input-textarea[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
+    :is(sf-input-textarea, sf-textarea)[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
       --sf-textarea-placeholder--color: CanvasText;
     }
-    sf-input-textarea[data-inherited] .sf-textarea textarea::placeholder {
-      --sf-textarea-placeholder--color: CanvasText;
-    }
-    sf-textarea[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
-      --sf-textarea-placeholder--color: CanvasText;
-    }
-    sf-textarea[data-inherited] .sf-textarea textarea::-moz-placeholder {
-      --sf-textarea-placeholder--color: CanvasText;
-    }
-    sf-textarea[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
-      --sf-textarea-placeholder--color: CanvasText;
-    }
-    sf-textarea[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
-      --sf-textarea-placeholder--color: CanvasText;
-    }
-    sf-textarea[data-inherited] .sf-textarea textarea::placeholder {
+    :is(sf-input-textarea, sf-textarea)[data-inherited] .sf-textarea textarea::placeholder {
       --sf-textarea-placeholder--color: CanvasText;
     }
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-webkit-input-placeholder {
@@ -594,34 +330,19 @@
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::placeholder {
       --sf-dropdown-placeholder--color: CanvasText;
     }
-    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
+    :is(sf-input-quantity, sf-quantity)[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
     }
-    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
+    :is(sf-input-quantity, sf-quantity)[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
     }
-    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
+    :is(sf-input-quantity, sf-quantity)[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
     }
-    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
+    :is(sf-input-quantity, sf-quantity)[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
       --sf-quantity-placeholder--color: CanvasText;
     }
-    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
-      --sf-quantity-placeholder--color: CanvasText;
-    }
-    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
-      --sf-quantity-placeholder--color: CanvasText;
-    }
-    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
-      --sf-quantity-placeholder--color: CanvasText;
-    }
-    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
-      --sf-quantity-placeholder--color: CanvasText;
-    }
-    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
-      --sf-quantity-placeholder--color: CanvasText;
-    }
-    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
+    :is(sf-input-quantity, sf-quantity)[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
       --sf-quantity-placeholder--color: CanvasText;
     }
   }
@@ -649,34 +370,19 @@
     sf-input[data-inherited] .sf-input .sf-input-field input::placeholder {
       color: CanvasText;
     }
-    sf-input-textarea[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
+    :is(sf-input-textarea, sf-textarea)[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
       color: CanvasText;
     }
-    sf-input-textarea[data-inherited] .sf-textarea textarea::-moz-placeholder {
+    :is(sf-input-textarea, sf-textarea)[data-inherited] .sf-textarea textarea::-moz-placeholder {
       color: CanvasText;
     }
-    sf-input-textarea[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
+    :is(sf-input-textarea, sf-textarea)[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
       color: CanvasText;
     }
-    sf-input-textarea[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
+    :is(sf-input-textarea, sf-textarea)[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
       color: CanvasText;
     }
-    sf-input-textarea[data-inherited] .sf-textarea textarea::placeholder {
-      color: CanvasText;
-    }
-    sf-textarea[data-inherited] .sf-textarea textarea::-webkit-input-placeholder {
-      color: CanvasText;
-    }
-    sf-textarea[data-inherited] .sf-textarea textarea::-moz-placeholder {
-      color: CanvasText;
-    }
-    sf-textarea[data-inherited] .sf-textarea textarea:-ms-input-placeholder {
-      color: CanvasText;
-    }
-    sf-textarea[data-inherited] .sf-textarea textarea::-ms-input-placeholder {
-      color: CanvasText;
-    }
-    sf-textarea[data-inherited] .sf-textarea textarea::placeholder {
+    :is(sf-input-textarea, sf-textarea)[data-inherited] .sf-textarea textarea::placeholder {
       color: CanvasText;
     }
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::-webkit-input-placeholder {
@@ -694,34 +400,19 @@
     sf-dropdown[data-inherited] .sf-dropdown .sf-dropdown-field input::placeholder {
       color: CanvasText;
     }
-    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
+    :is(sf-input-quantity, sf-quantity)[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
       color: CanvasText;
     }
-    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
+    :is(sf-input-quantity, sf-quantity)[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
       color: CanvasText;
     }
-    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
+    :is(sf-input-quantity, sf-quantity)[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
       color: CanvasText;
     }
-    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
+    :is(sf-input-quantity, sf-quantity)[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
       color: CanvasText;
     }
-    sf-input-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
-      color: CanvasText;
-    }
-    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-webkit-input-placeholder {
-      color: CanvasText;
-    }
-    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-moz-placeholder {
-      color: CanvasText;
-    }
-    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input:-ms-input-placeholder {
-      color: CanvasText;
-    }
-    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::-ms-input-placeholder {
-      color: CanvasText;
-    }
-    sf-quantity[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
+    :is(sf-input-quantity, sf-quantity)[data-inherited] .sf-quantity .sf-quantity-wrap input::placeholder {
       color: CanvasText;
     }
   }
@@ -733,10 +424,7 @@
      colour is a system value (C18); the only literal colours are the colour
      space itself -- the hue strip and the shade area -- which no palette can
      draw (colour policy rule input-color-colour-space). */
-  sf-input-color {
-    display: block;
-  }
-  sf-color {
+  :is(sf-input-color, sf-color) {
     display: block;
   }
   /* The field and its label: the label of sf-input (FB-10) -- regular weight,
@@ -803,7 +491,6 @@
   .sf-color {
     display: flex;
     align-items: center;
-    gap: var(--sf-space-1);
     gap: var(--sf-color-gap, var(--sf-space-1));
     min-width: 0;
     min-inline-size: 0;
@@ -869,24 +556,8 @@
   /* The trigger is the swatch and the value: the button a keyboard reaches.
      The frame takes every press, so the chevron and the room around the text
      open the window too. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-trigger{
-    text-align: left;
-  }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-color-trigger{
-    text-align: left;
-    }
-  }
   .sf-color-trigger:where(:dir(ltr)){
     text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-trigger{
-    text-align: right;
-  }
-  @supports not (text-align: start){
-  [dir="rtl"] .sf-color-trigger{
-    text-align: right;
-    }
   }
   .sf-color-trigger:where(:dir(rtl)){
     text-align: right;
@@ -954,19 +625,11 @@
     --sf-icon--height: var(--sf-color--icon-size, var(--sf-color--text-height));
     --sf-icon--width: var(--sf-color--icon-size, var(--sf-color--text-height));
     flex: none;
-    font-size: var(--sf-color--text-height);
     font-size: var(--sf-color--icon-size, var(--sf-color--text-height));
-    width: var(--sf-color--text-height);
-    inline-size: var(--sf-color--text-height);
-    width: var(--sf-color--text-height);
     width: var(--sf-color--icon-size, var(--sf-color--text-height));
     inline-size: var(--sf-color--icon-size, var(--sf-color--text-height));
-    height: var(--sf-color--text-height);
-    block-size: var(--sf-color--text-height);
-    height: var(--sf-color--text-height);
     height: var(--sf-color--icon-size, var(--sf-color--text-height));
     block-size: var(--sf-color--icon-size, var(--sf-color--text-height));
-    line-height: var(--sf-color--text-height);
     line-height: var(--sf-color--icon-size, var(--sf-color--text-height));
   }
   /* ------------------------------------------------------------ the swatch */
@@ -977,19 +640,12 @@
   .sf-color-chip {
     box-sizing: border-box;
     flex: none;
-    width: var(--sf-text-height-1);
-    inline-size: var(--sf-text-height-1);
-    width: var(--sf-text-height-1);
     width: var(--sf-color--icon-size, var(--sf-color--text-height, var(--sf-text-height-1)));
     inline-size: var(--sf-color--icon-size, var(--sf-color--text-height, var(--sf-text-height-1)));
-    height: var(--sf-text-height-1);
-    block-size: var(--sf-text-height-1);
-    height: var(--sf-text-height-1);
     height: var(--sf-color--icon-size, var(--sf-color--text-height, var(--sf-text-height-1)));
     block-size: var(--sf-color--icon-size, var(--sf-color--text-height, var(--sf-text-height-1)));
     border-width: var(--sf-px);
     border-style: solid;
-    border-radius: var(--sf-radius-1\/2);
     border-radius: var(--sf-color-chip-radius, var(--sf-radius-1\/2));
     background-clip: padding-box;
   }
@@ -1008,13 +664,7 @@
      2026-11-12): the left half the same colour without alpha, the right half
      the colour as it is over the checkerboard, so a faint colour still shows
      its hue. */
-  .sf-color-chip[data-alpha] {
-    background-clip: padding-box;
-  }
-  .sf-color-option[data-alpha] {
-    background-clip: padding-box;
-  }
-  .sf-color-thumb[data-alpha] {
+  :is(.sf-color-chip, .sf-color-option, .sf-color-thumb)[data-alpha] {
     background-clip: padding-box;
   }
   /* --------------------------------------------- variant brand (C84) */
@@ -1057,11 +707,7 @@
   /* Only a circle of the current colour, as a site header holds it: the
      button is the icon button's square of the size, the circle the size's
      text square. */
-  sf-input-color:has(> .sf-color--theme) {
-    display: inline-block;
-    vertical-align: middle;
-  }
-  sf-color:has(> .sf-color--theme) {
+  :is(sf-input-color, sf-color):has(> .sf-color--theme) {
     display: inline-block;
     vertical-align: middle;
   }
@@ -1109,24 +755,8 @@
   /* 304 on a desktop: eight swatches of the 1/3 rung, 8 apart, 12 inside
      (R149). Absolute until core's positioning anchors it and lifts it into the
      top layer, so it never pushes the page while it opens. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-window{
-    left: 0;
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-color-window{
-    left: 0;
-    }
-  }
   .sf-color-window:where(:dir(ltr)){
     left: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-window{
-    right: 0;
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-color-window{
-    right: 0;
-    }
   }
   .sf-color-window:where(:dir(rtl)){
     right: 0;
@@ -1161,46 +791,14 @@
      sf-menu-context and the link editor of sf-input-rich): the screen's width
      up to 44rem, centred, the modal shadow over the shared scrim, clear of the
      safe area; eight columns of swatches share the width. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-window[data-sf-sheet]{
-    border-bottom-right-radius: 0;
-  }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-color-window[data-sf-sheet]{
-    border-bottom-right-radius: 0;
-    }
-  }
   .sf-color-window[data-sf-sheet]:where(:dir(ltr)){
     border-bottom-right-radius: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-window[data-sf-sheet]{
-    border-bottom-left-radius: 0;
-  }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-color-window[data-sf-sheet]{
-    border-bottom-left-radius: 0;
-    }
   }
   .sf-color-window[data-sf-sheet]:where(:dir(rtl)){
     border-bottom-left-radius: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-window[data-sf-sheet]{
-    border-bottom-left-radius: 0;
-  }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-color-window[data-sf-sheet]{
-    border-bottom-left-radius: 0;
-    }
-  }
   .sf-color-window[data-sf-sheet]:where(:dir(ltr)){
     border-bottom-left-radius: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-window[data-sf-sheet]{
-    border-bottom-right-radius: 0;
-  }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-color-window[data-sf-sheet]{
-    border-bottom-right-radius: 0;
-    }
   }
   .sf-color-window[data-sf-sheet]:where(:dir(rtl)){
     border-bottom-right-radius: 0;
@@ -1222,7 +820,6 @@
     padding: var(--sf-space-1) var(--sf-space-1) calc(var(--sf-space-1) + env(safe-area-inset-bottom, var(--sf-a0)));
     border-end-end-radius: 0;
     border-end-start-radius: 0;
-    box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
     box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
   }
   .sf-color-window[data-sf-sheet] .sf-color-options {
@@ -1265,9 +862,6 @@
   .sf-color-options {
     display: grid;
     grid-template-columns: repeat(8, var(--sf-color--swatch));
-    grid-gap: var(--sf-color--swatch-gap);
-    gap: var(--sf-color--swatch-gap);
-    grid-gap: var(--sf-color--swatch-gap);
     grid-gap: var(--sf-color-swatches-gap, var(--sf-color--swatch-gap));
     gap: var(--sf-color-swatches-gap, var(--sf-color--swatch-gap));
   }
@@ -1284,7 +878,6 @@
     padding: 0;
     border-width: var(--sf-px);
     border-style: solid;
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-color-chip-radius, var(--sf-radius--ui));
     background-clip: padding-box;
     cursor: pointer;
@@ -1325,24 +918,8 @@
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--offset);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-thumb{
-    margin-left: calc(var(--sf-b6) / -2);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-color-thumb{
-    margin-left: calc(var(--sf-b6) / -2);
-    }
-  }
   .sf-color-thumb:where(:dir(ltr)){
     margin-left: calc(var(--sf-b6) / -2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-thumb{
-    margin-right: calc(var(--sf-b6) / -2);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-color-thumb{
-    margin-right: calc(var(--sf-b6) / -2);
-    }
   }
   .sf-color-thumb:where(:dir(rtl)){
     margin-right: calc(var(--sf-b6) / -2);
@@ -1440,24 +1017,8 @@
     border-style: solid;
     border-radius: var(--sf-radius--ui);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-code-row:has(> .sf-color-copy:last-child){
-    padding-right: var(--sf-field-action--inset);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-color-code-row:has(> .sf-color-copy:last-child){
-    padding-right: var(--sf-field-action--inset);
-    }
-  }
   .sf-color-code-row:has(> .sf-color-copy:last-child):where(:dir(ltr)){
     padding-right: var(--sf-field-action--inset);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-code-row:has(> .sf-color-copy:last-child){
-    padding-left: var(--sf-field-action--inset);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-color-code-row:has(> .sf-color-copy:last-child){
-    padding-left: var(--sf-field-action--inset);
-    }
   }
   .sf-color-code-row:has(> .sf-color-copy:last-child):where(:dir(rtl)){
     padding-left: var(--sf-field-action--inset);
@@ -1482,41 +1043,9 @@
     font-family: var(--sf-code--font-family);
     outline: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-code{
-    padding-left: var(--sf-field-action--inset);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-color-code{
-    padding-left: var(--sf-field-action--inset);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-code{
-    padding-right: 0;
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-color-code{
-    padding-right: 0;
-    }
-  }
   .sf-color-code:where(:dir(ltr)){
     padding-left: var(--sf-field-action--inset);
     padding-right: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-code{
-    padding-right: var(--sf-field-action--inset);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-color-code{
-    padding-right: var(--sf-field-action--inset);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-code{
-    padding-left: 0;
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-color-code{
-    padding-left: 0;
-    }
   }
   .sf-color-code:where(:dir(rtl)){
     padding-right: var(--sf-field-action--inset);
@@ -1527,86 +1056,22 @@
     align-self: stretch;
     padding-inline: var(--sf-field-action--inset) 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-percent{
-    padding-left: var(--sf-space-1\/3);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-color-percent{
-    padding-left: var(--sf-space-1\/3);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-percent{
-    padding-right: var(--sf-space-1\/2);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-color-percent{
-    padding-right: var(--sf-space-1\/2);
-    }
-  }
   .sf-color-percent:where(:dir(ltr)){
     padding-left: var(--sf-space-1\/3);
     padding-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-percent{
-    padding-right: var(--sf-space-1\/3);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-color-percent{
-    padding-right: var(--sf-space-1\/3);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-percent{
-    padding-left: var(--sf-space-1\/2);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-color-percent{
-    padding-left: var(--sf-space-1\/2);
-    }
   }
   .sf-color-percent:where(:dir(rtl)){
     padding-right: var(--sf-space-1\/3);
     padding-left: var(--sf-space-1\/2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-percent{
-    border-left-width: var(--sf-px);
-  }
-  @supports not (border-inline-start-width: initial){
-  html:not([dir="rtl"]) .sf-color-percent{
-    border-left-width: var(--sf-px);
-    }
-  }
   .sf-color-percent:where(:dir(ltr)){
     border-left-width: var(--sf-px);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-percent{
-    border-right-width: var(--sf-px);
-  }
-  @supports not (border-inline-start-width: initial){
-  [dir="rtl"] .sf-color-percent{
-    border-right-width: var(--sf-px);
-    }
   }
   .sf-color-percent:where(:dir(rtl)){
     border-right-width: var(--sf-px);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-percent{
-    border-left-style: solid;
-  }
-  @supports not (border-inline-start-style: initial){
-  html:not([dir="rtl"]) .sf-color-percent{
-    border-left-style: solid;
-    }
-  }
   .sf-color-percent:where(:dir(ltr)){
     border-left-style: solid;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-percent{
-    border-right-style: solid;
-  }
-  @supports not (border-inline-start-style: initial){
-  [dir="rtl"] .sf-color-percent{
-    border-right-style: solid;
-    }
   }
   .sf-color-percent:where(:dir(rtl)){
     border-right-style: solid;
@@ -1622,64 +1087,16 @@
     border-inline-start-width: var(--sf-px);
     border-inline-start-style: solid;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-alpha-input{
-    padding-left: 0;
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-color-alpha-input{
-    padding-left: 0;
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-alpha-input{
-    padding-right: var(--sf-a2);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-color-alpha-input{
-    padding-right: var(--sf-a2);
-    }
-  }
   .sf-color-alpha-input:where(:dir(ltr)){
     padding-left: 0;
     padding-right: var(--sf-a2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-alpha-input{
-    padding-right: 0;
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-color-alpha-input{
-    padding-right: 0;
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-alpha-input{
-    padding-left: var(--sf-a2);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-color-alpha-input{
-    padding-left: var(--sf-a2);
-    }
   }
   .sf-color-alpha-input:where(:dir(rtl)){
     padding-right: 0;
     padding-left: var(--sf-a2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-alpha-input{
-    text-align: right;
-  }
-  @supports not (text-align: end){
-  html:not([dir="rtl"]) .sf-color-alpha-input{
-    text-align: right;
-    }
-  }
   .sf-color-alpha-input:where(:dir(ltr)){
     text-align: right;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-alpha-input{
-    text-align: left;
-  }
-  @supports not (text-align: end){
-  [dir="rtl"] .sf-color-alpha-input{
-    text-align: left;
-    }
   }
   .sf-color-alpha-input:where(:dir(rtl)){
     text-align: left;
@@ -1734,16 +1151,13 @@
     color: inherit;
   }
   .sf-color-empty {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-color-inherited-color, var(--sf-on-surface-variant));
   }
   .sf-color-chevron {
     color: var(--sf-on-surface-variant);
   }
   .sf-color-chip {
-    border-color: var(--sf-outline-variant);
     border-color: var(--sf-color-chip-border-color, var(--sf-outline-variant));
-    background-color: transparent;
     background-color: var(--sf-color-fill, transparent);
   }
   /* How the swatch is bounded (CO-06: the three looks drew the same, because
@@ -1753,16 +1167,7 @@
   .sf-color--outlined .sf-color-chip {
     border-color: var(--sf-outline);
   }
-  .sf-color-chip[data-alpha] {
-    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0,transparent 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
-    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0 50%, var(--sf-outline-variant) 0 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
-  }
-  .sf-color-option[data-alpha] {
-    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0,transparent 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
-    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0 50%, var(--sf-outline-variant) 0 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
-  }
-  .sf-color-thumb[data-alpha] {
-    background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0,transparent 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
+  :is(.sf-color-chip, .sf-color-option, .sf-color-thumb)[data-alpha] {
     background: linear-gradient(90deg, var(--sf-color-solid) 50%, transparent 50%), linear-gradient(var(--sf-color-fill), var(--sf-color-fill)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0 50%, var(--sf-outline-variant) 0 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
   }
   .sf-color-check {
@@ -1799,11 +1204,8 @@
     border-block-start-color: var(--sf-outline-variant);
   }
   .sf-color-option {
-    border-color: var(--sf-outline-variant);
     border-color: var(--sf-color-chip-border-color, var(--sf-outline-variant));
-    background-color: transparent;
     background-color: var(--sf-color-fill, transparent);
-    color: var(--sf-on-surface);
     color: var(--sf-color-ink, var(--sf-on-surface));
   }
   .sf-color-option:hover:not(:disabled) {
@@ -1813,24 +1215,19 @@
     border-color: var(--sf-on-surface);
   }
   .sf-color-check {
-    color: var(--sf-on-surface);
     color: var(--sf-color-ink, var(--sf-on-surface));
   }
   .sf-color-area {
-    background: linear-gradient(to top, var(--sf-black), transparent), linear-gradient(to right, var(--sf-white), hsl(0, 100%, 50%));
-    background: linear-gradient(to top, var(--sf-black), transparent), linear-gradient(to right, var(--sf-white), hsl(0, 100%, 50%));
     background: linear-gradient(to top, var(--sf-black), transparent), linear-gradient(to right, var(--sf-white), hsl(var(--sf-color-hue, 0) 100% 50%));
   }
   .sf-color-thumb {
     border-color: var(--sf-white);
-    background-color: transparent;
     background-color: var(--sf-color-fill, transparent);
   }
   .sf-color-strip--hue {
     background: linear-gradient(to right, hsl(0, 100%, 50%), hsl(60, 100%, 50%), hsl(120, 100%, 50%), hsl(180, 100%, 50%), hsl(240, 100%, 50%), hsl(300, 100%, 50%), hsl(0, 100%, 50%));
   }
   .sf-color-strip--alpha {
-    background: linear-gradient(to right, transparent, var(--sf-color-solid)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0,transparent 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
     background: linear-gradient(to right, transparent, var(--sf-color-solid)), conic-gradient(var(--sf-outline-variant) 25%, transparent 0 50%, var(--sf-outline-variant) 0 75%, transparent 0) 0 0/var(--sf-a8) var(--sf-a8), var(--sf-surface-card);
   }
   .sf-color-code-row {
@@ -1849,24 +1246,8 @@
     background: transparent;
     color: var(--sf-on-surface);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-percent{
-    border-left-color: var(--sf-outline-variant);
-  }
-  @supports not (border-inline-start-color: initial){
-  html:not([dir="rtl"]) .sf-color-percent{
-    border-left-color: var(--sf-outline-variant);
-    }
-  }
   .sf-color-percent:where(:dir(ltr)){
     border-left-color: var(--sf-outline-variant);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-percent{
-    border-right-color: var(--sf-outline-variant);
-  }
-  @supports not (border-inline-start-color: initial){
-  [dir="rtl"] .sf-color-percent{
-    border-right-color: var(--sf-outline-variant);
-    }
   }
   .sf-color-percent:where(:dir(rtl)){
     border-right-color: var(--sf-outline-variant);

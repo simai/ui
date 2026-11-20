@@ -9,24 +9,8 @@
 *
 */
 @layer sf.components {
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-download-file{
-    text-align: left;
-  }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-download-file{
-    text-align: left;
-    }
-  }
   .sf-download-file:where(:dir(ltr)){
     text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-download-file{
-    text-align: right;
-  }
-  @supports not (text-align: start){
-  [dir="rtl"] .sf-download-file{
-    text-align: right;
-    }
   }
   .sf-download-file:where(:dir(rtl)){
     text-align: right;
@@ -85,11 +69,9 @@
     min-inline-size: var(--sf-0);
     max-width: 100%;
     max-inline-size: 100%;
-    padding: calc(var(--sf-download-file--padding-block) - var(--sf-download-file--border-width)) calc(var(--sf-download-file--padding-inline) - var(--sf-download-file--border-width));
     padding: var(--sf-file-download-padding, var(--sf-download-file-padding, calc(var(--sf-download-file--padding-block) - var(--sf-download-file--border-width)) calc(var(--sf-download-file--padding-inline) - var(--sf-download-file--border-width))));
     border-width: var(--sf-px);
     border-style: solid;
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-file-download-radius, var(--sf-download-file-radius, var(--sf-radius--ui)));
     font-family: var(--sf-text--family);
     font-size: var(--sf-download-file--text-size);
@@ -114,13 +96,7 @@
     transition-duration: var(--sf-duration-normal);
     transition-timing-function: var(--sf-ease-move);
   }
-  .sf-download-file.sf-download-file--ready:disabled {
-    cursor: default;
-  }
-  .sf-download-file.sf-download-file--ready.disabled {
-    cursor: default;
-  }
-  .sf-download-file.sf-download-file--ready[aria-disabled=true] {
+  .sf-download-file.sf-download-file--ready:is(:disabled, .disabled, [aria-disabled=true]) {
     cursor: default;
   }
   /* Reduced motion: the plate changes at once. */
@@ -185,9 +161,7 @@
     display: block;
     margin: var(--sf-0);
     font-family: var(--sf-text--family);
-    font-size: var(--sf-text-size-1\/2);
     font-size: var(--sf-download-file--note-size, var(--sf-text-size-1\/2));
-    line-height: var(--sf-text-height-1\/2);
     line-height: var(--sf-download-file--note-height, var(--sf-text-height-1\/2));
     word-wrap: break-word;
   }
@@ -195,7 +169,6 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: var(--sf-download-file--gap);
     gap: var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap)));
     min-width: var(--sf-0);
     min-inline-size: var(--sf-0);
@@ -204,7 +177,6 @@
     display: flex;
     flex: 0 1 auto;
     align-items: center;
-    gap: var(--sf-download-file--gap);
     gap: var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap)));
     min-width: var(--sf-0);
     min-inline-size: var(--sf-0);
@@ -220,7 +192,6 @@
     flex-wrap: wrap;
     row-gap: var(--sf-0);
     align-items: baseline;
-    gap: var(--sf-download-file--gap);
     gap: var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap)));
     min-width: var(--sf-0);
     min-inline-size: var(--sf-0);
@@ -273,24 +244,8 @@
     min-inline-size: var(--sf-0);
     white-space: normal;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-download-file :where(.sf-download-file__type + .sf-download-file__size:not(:empty))::before{
-    margin-right: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-download-file :where(.sf-download-file__type + .sf-download-file__size:not(:empty))::before{
-    margin-right: var(--sf-space-1\/4);
-    }
-  }
   .sf-download-file :where(.sf-download-file__type + .sf-download-file__size:not(:empty))::before:where(:dir(ltr)){
     margin-right: var(--sf-space-1\/4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-download-file :where(.sf-download-file__type + .sf-download-file__size:not(:empty))::before{
-    margin-left: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-download-file :where(.sf-download-file__type + .sf-download-file__size:not(:empty))::before{
-    margin-left: var(--sf-space-1\/4);
-    }
   }
   .sf-download-file :where(.sf-download-file__type + .sf-download-file__size:not(:empty))::before:where(:dir(rtl)){
     margin-left: var(--sf-space-1\/4);
@@ -333,25 +288,12 @@
     --sf-loader-svg-height: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     display: inline-flex;
     flex: none;
-    width: var(--sf-download-file--icon-size);
-    inline-size: var(--sf-download-file--icon-size);
-    width: var(--sf-download-file--icon-size);
     width: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     inline-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
-    height: var(--sf-download-file--icon-size);
-    block-size: var(--sf-download-file--icon-size);
-    height: var(--sf-download-file--icon-size);
     height: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     block-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
   }
-  .sf-download-file :where(.sf-download-file__spinner) .sf-loader--loading-indicator {
-    display: block;
-    width: 100%;
-    inline-size: 100%;
-    height: 100%;
-    block-size: 100%;
-  }
-  .sf-download-file :where(.sf-download-file__spinner) .sf-loader-svg {
+  .sf-download-file :where(.sf-download-file__spinner) :is(.sf-loader--loading-indicator, .sf-loader-svg) {
     display: block;
     width: 100%;
     inline-size: 100%;
@@ -367,14 +309,8 @@
     align-items: center;
     justify-items: center;
     place-items: center;
-    width: var(--sf-download-file--icon-size);
-    inline-size: var(--sf-download-file--icon-size);
-    width: var(--sf-download-file--icon-size);
     width: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     inline-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
-    height: var(--sf-download-file--icon-size);
-    block-size: var(--sf-download-file--icon-size);
-    height: var(--sf-download-file--icon-size);
     height: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     block-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
   }
@@ -393,24 +329,8 @@
   }
   /* A button inside the row (Повторить, decision C51): at the row's end,
      reaching into the padding so the row keeps its height. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-download-file :where(.sf-download-file__end){
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-download-file :where(.sf-download-file__end){
-    margin-left: auto;
-    }
-  }
   .sf-download-file :where(.sf-download-file__end):where(:dir(ltr)){
     margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-download-file :where(.sf-download-file__end){
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-download-file :where(.sf-download-file__end){
-    margin-right: auto;
-    }
   }
   .sf-download-file :where(.sf-download-file__end):where(:dir(rtl)){
     margin-right: auto;
@@ -444,18 +364,12 @@
      flex line: the padding was 9 above and 23 beside at size 3, the sign
      floated mid-row and the reason stood outside the frame. */
   .sf-download-file.sf-download-file--error {
-    padding: calc(var(--sf-download-file--error-padding) - var(--sf-download-file--border-width));
     padding: var(--sf-file-download-padding, var(--sf-download-file-padding, calc(var(--sf-download-file--error-padding) - var(--sf-download-file--border-width))));
   }
   .sf-download-file.sf-download-file--error :where(.sf-download-file__body) {
     display: grid;
     grid-template-columns: auto minmax(var(--sf-0), 1fr) auto;
     align-items: start;
-    grid-column-gap: var(--sf-download-file--error-gap);
-    -webkit-column-gap: var(--sf-download-file--error-gap);
-       -moz-column-gap: var(--sf-download-file--error-gap);
-            column-gap: var(--sf-download-file--error-gap);
-    grid-column-gap: var(--sf-download-file--error-gap);
     grid-column-gap: var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--error-gap)));
     -webkit-column-gap: var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--error-gap)));
        -moz-column-gap: var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--error-gap)));
@@ -496,24 +410,8 @@
     white-space: normal;
     word-wrap: break-word;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-download-file.sf-download-file--error :where(.sf-download-file__end){
-    margin-left: var(--sf-0);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-download-file.sf-download-file--error :where(.sf-download-file__end){
-    margin-left: var(--sf-0);
-    }
-  }
   .sf-download-file.sf-download-file--error :where(.sf-download-file__end):where(:dir(ltr)){
     margin-left: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-download-file.sf-download-file--error :where(.sf-download-file__end){
-    margin-right: var(--sf-0);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-download-file.sf-download-file--error :where(.sf-download-file__end){
-    margin-right: var(--sf-0);
-    }
   }
   .sf-download-file.sf-download-file--error :where(.sf-download-file__end):where(:dir(rtl)){
     margin-right: var(--sf-0);
@@ -532,24 +430,8 @@
   .sf-download-file.sf-download-file--error.sf-download-file--narrow :where(.sf-download-file__body) {
     grid-template-columns: auto minmax(var(--sf-0), 1fr);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-download-file.sf-download-file--error.sf-download-file--narrow :where(.sf-download-file__end){
-    margin-left: calc(-1 * (var(--sf-download-file--padding-inline) + var(--sf-download-file--end-inset) - var(--sf-download-file--padding-block)));
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-download-file.sf-download-file--error.sf-download-file--narrow :where(.sf-download-file__end){
-    margin-left: calc(-1 * (var(--sf-download-file--padding-inline) + var(--sf-download-file--end-inset) - var(--sf-download-file--padding-block)));
-    }
-  }
   .sf-download-file.sf-download-file--error.sf-download-file--narrow :where(.sf-download-file__end):where(:dir(ltr)){
     margin-left: calc(-1 * (var(--sf-download-file--padding-inline) + var(--sf-download-file--end-inset) - var(--sf-download-file--padding-block)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-download-file.sf-download-file--error.sf-download-file--narrow :where(.sf-download-file__end){
-    margin-right: calc(-1 * (var(--sf-download-file--padding-inline) + var(--sf-download-file--end-inset) - var(--sf-download-file--padding-block)));
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-download-file.sf-download-file--error.sf-download-file--narrow :where(.sf-download-file__end){
-    margin-right: calc(-1 * (var(--sf-download-file--padding-inline) + var(--sf-download-file--end-inset) - var(--sf-download-file--padding-block)));
-    }
   }
   .sf-download-file.sf-download-file--error.sf-download-file--narrow :where(.sf-download-file__end):where(:dir(rtl)){
     margin-right: calc(-1 * (var(--sf-download-file--padding-inline) + var(--sf-download-file--end-inset) - var(--sf-download-file--padding-block)));
@@ -564,24 +446,8 @@
     -webkit-margin-start: calc(-1 * (var(--sf-download-file--padding-inline) + var(--sf-download-file--end-inset) - var(--sf-download-file--padding-block)));
             margin-inline-start: calc(-1 * (var(--sf-download-file--padding-inline) + var(--sf-download-file--end-inset) - var(--sf-download-file--padding-block)));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-download-file.sf-download-file--error.sf-download-file--narrow.sf-download-file--retry-icon :where(.sf-download-file__end){
-    margin-left: calc(-1 * var(--sf-download-file--end-inset));
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-download-file.sf-download-file--error.sf-download-file--narrow.sf-download-file--retry-icon :where(.sf-download-file__end){
-    margin-left: calc(-1 * var(--sf-download-file--end-inset));
-    }
-  }
   .sf-download-file.sf-download-file--error.sf-download-file--narrow.sf-download-file--retry-icon :where(.sf-download-file__end):where(:dir(ltr)){
     margin-left: calc(-1 * var(--sf-download-file--end-inset));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-download-file.sf-download-file--error.sf-download-file--narrow.sf-download-file--retry-icon :where(.sf-download-file__end){
-    margin-right: calc(-1 * var(--sf-download-file--end-inset));
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-download-file.sf-download-file--error.sf-download-file--narrow.sf-download-file--retry-icon :where(.sf-download-file__end){
-    margin-right: calc(-1 * var(--sf-download-file--end-inset));
-    }
   }
   .sf-download-file.sf-download-file--error.sf-download-file--narrow.sf-download-file--retry-icon :where(.sf-download-file__end):where(:dir(rtl)){
     margin-right: calc(-1 * var(--sf-download-file--end-inset));
@@ -602,17 +468,10 @@
   }
   .sf-download-file :where(.sf-download-file__icon, .sf-icon) {
     flex: none;
-    height: var(--sf-download-file--icon-size);
-    block-size: var(--sf-download-file--icon-size);
-    height: var(--sf-download-file--icon-size);
     height: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     block-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
-    width: var(--sf-download-file--icon-size);
-    inline-size: var(--sf-download-file--icon-size);
-    width: var(--sf-download-file--icon-size);
     width: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     inline-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
-    font-size: var(--sf-download-file--icon-size);
     font-size: var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size)));
     /* The glyph's own sheet is unlayered and sizes .sf-icon from these, so the
        size reaches it (as in reference-link). */
@@ -697,59 +556,19 @@
       align-items: flex-start;
       gap: var(--sf-0);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
-      margin-left: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
-      margin-left: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
-      margin-left: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
-      margin-left: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
-      }
-    }
     .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size):where(:dir(ltr)){
-      margin-left: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
       margin-left: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
-      margin-right: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
-      margin-right: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
-      margin-right: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
-      margin-right: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
-      }
     }
     .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size):where(:dir(rtl)){
-      margin-right: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
       margin-right: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
-      margin-left: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
-      margin-left: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
-      }
     }
     .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size):where(:dir(ltr)){
       margin-left: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
-      margin-right: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size){
-      margin-right: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
-      }
     }
     .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size):where(:dir(rtl)){
       margin-right: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
     }
     .sf-download-file :where(.sf-download-file-wrap > .sf-download-file-file-size) {
-      -webkit-margin-start: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
-              margin-inline-start: calc(var(--sf-download-file--icon-size) + var(--sf-download-file--gap));
       -webkit-margin-start: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
               margin-inline-start: calc(var(--sf-file-download-icon-size, var(--sf-download-file-icon-size, var(--sf-download-file--icon-size))) + var(--sf-file-download-gap, var(--sf-download-file-gap, var(--sf-download-file--gap))));
       font-size: var(--sf-text-size-1\/2);
@@ -779,7 +598,6 @@
     color: var(--sf-on-surface-variant);
   }
   .sf-download-file :where(.sf-download-file__spinner) {
-    color: var(--sf-download-file--accent);
     color: var(--sf-file-download-icon-color, var(--sf-download-file-icon-color, var(--sf-download-file--accent)));
   }
   .sf-download-file.sf-download-file--error :where(.sf-download-file__icon, .sf-download-file__meta) {
@@ -788,14 +606,10 @@
   .sf-download-file.sf-download-file--offer :where(.sf-download-file__icon) {
     color: var(--sf-success);
   }
-  .sf-download-file.sf-download-file--error :where(.sf-download-file__main, .sf-download-file__name) {
-    color: var(--sf-on-surface);
-  }
-  .sf-download-file.sf-download-file--offer :where(.sf-download-file__main, .sf-download-file__name) {
+  .sf-download-file:is(.sf-download-file--error, .sf-download-file--offer) :where(.sf-download-file__main, .sf-download-file__name) {
     color: var(--sf-on-surface);
   }
   .sf-download-file :where(.sf-download-file__icon, .sf-icon) {
-    color: var(--sf-download-file--accent);
     color: var(--sf-file-download-icon-color, var(--sf-download-file-icon-color, var(--sf-download-file--accent)));
   }
 }
@@ -842,28 +656,12 @@
   .sf-download-file[aria-busy=true] {
     cursor: progress;
   }
-  .sf-download-file:disabled {
+  .sf-download-file:is(:disabled, .disabled, [aria-disabled=true]) {
     --sf-download-file--border-color: var(--sf-outline-disabled);
     color: var(--sf-on-surface-disabled);
     cursor: default;
   }
-  .sf-download-file.disabled {
-    --sf-download-file--border-color: var(--sf-outline-disabled);
-    color: var(--sf-on-surface-disabled);
-    cursor: default;
-  }
-  .sf-download-file[aria-disabled=true] {
-    --sf-download-file--border-color: var(--sf-outline-disabled);
-    color: var(--sf-on-surface-disabled);
-    cursor: default;
-  }
-  .sf-download-file:disabled :where(.sf-download-file__main, .sf-download-file-container, .sf-download-file__size, .sf-download-file-file-size, .sf-icon) {
-    color: var(--sf-on-surface-disabled);
-  }
-  .sf-download-file.disabled :where(.sf-download-file__main, .sf-download-file-container, .sf-download-file__size, .sf-download-file-file-size, .sf-icon) {
-    color: var(--sf-on-surface-disabled);
-  }
-  .sf-download-file[aria-disabled=true] :where(.sf-download-file__main, .sf-download-file-container, .sf-download-file__size, .sf-download-file-file-size, .sf-icon) {
+  .sf-download-file:is(:disabled, .disabled, [aria-disabled=true]) :where(.sf-download-file__main, .sf-download-file-container, .sf-download-file__size, .sf-download-file-file-size, .sf-icon) {
     color: var(--sf-on-surface-disabled);
   }
   @media (forced-colors: active) {

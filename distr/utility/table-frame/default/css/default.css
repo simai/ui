@@ -1,334 +1,7 @@
 @layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) {
-    /* The public variables of .table-frame; the head fill,
-       --sf-table-frame-head-background, defaults on the head cells to
-       the frame's own background: no fill of its own. */
-    --sf-table-frame-border-color: var(--sf-outline-variant);
-    --sf-table-frame-radius: var(--sf-radius--surface);
-    --sf-table-frame-background: var(--sf-surface-place);
-    --sf-table-frame-head-color: var(--sf-on-surface-variant);
-    --sf-table-frame-head-padding-block: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1) - var(--sf-px)) / 2);
-    --sf-table-frame-cell-padding-block: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1) - var(--sf-px)) / 2);
-    --sf-table-frame-cell-padding-inline: var(--sf-space-1);
-    --sf-table-frame-cell-min-inline-size: var(--sf-e0);
-    width: 100%;
-    inline-size: 100%;
-    overflow: auto;
-    scroll-padding: var(--sf-focus-room);
-    border-width: var(--sf-px);
-    border-style: solid;
-    border-color: var(--sf-table-frame-border-color);
-    border-radius: var(--sf-table-frame-radius);
-    background-color: var(--sf-table-frame-background);
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table {
-    width: 100%;
-    inline-size: 100%;
-    margin: 0;
-    border: 0;
-    border-color: revert-layer;
-    border: 0;
-    border-radius: 0;
-    border-collapse: separate;
-    border-spacing: 0;
-    word-break: normal;
-    word-wrap: normal;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-right-width: var(--sf-px);
-  }
-  @supports not (border-inline-end-width: initial) {
-  html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-right-width: var(--sf-px);
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(ltr)) {
-    border-right-width: var(--sf-px);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-left-width: var(--sf-px);
-  }
-  @supports not (border-inline-end-width: initial) {
-  [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-left-width: var(--sf-px);
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(rtl)) {
-    border-left-width: var(--sf-px);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-right-style: solid;
-  }
-  @supports not (border-inline-end-style: initial) {
-  html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-right-style: solid;
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(ltr)) {
-    border-right-style: solid;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-left-style: solid;
-  }
-  @supports not (border-inline-end-style: initial) {
-  [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-left-style: solid;
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(rtl)) {
-    border-left-style: solid;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-right-color: var(--sf-table-frame-border-color);
-  }
-  @supports not (border-inline-end-color: initial) {
-  html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-right-color: var(--sf-table-frame-border-color);
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(ltr)) {
-    border-right-color: var(--sf-table-frame-border-color);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-left-color: var(--sf-table-frame-border-color);
-  }
-  @supports not (border-inline-end-color: initial) {
-  [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    border-left-color: var(--sf-table-frame-border-color);
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(rtl)) {
-    border-left-color: var(--sf-table-frame-border-color);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    text-align: left;
-  }
-  @supports not (text-align: start) {
-  html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    text-align: left;
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(ltr)) {
-    text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    text-align: right;
-  }
-  @supports not (text-align: start) {
-  [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    text-align: right;
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:where(:dir(rtl)) {
-    text-align: right;
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > * {
-    min-width: var(--sf-table-frame-cell-min-inline-size);
-    min-inline-size: var(--sf-table-frame-cell-min-inline-size);
-    padding-top: var(--sf-table-frame-cell-padding-block);
-    padding-bottom: var(--sf-table-frame-cell-padding-block);
-    padding-block: var(--sf-table-frame-cell-padding-block);
-    padding-left: var(--sf-table-frame-cell-padding-inline);
-    padding-right: var(--sf-table-frame-cell-padding-inline);
-    padding-inline: var(--sf-table-frame-cell-padding-inline);
-    border-width: var(--sf-0);
-    border-inline-end-width: var(--sf-px);
-    border-inline-end-style: solid;
-    border-inline-end-color: var(--sf-table-frame-border-color);
-    border-bottom-width: var(--sf-px);
-    border-block-end-width: var(--sf-px);
-    border-bottom-style: solid;
-    border-block-end-style: solid;
-    border-bottom-color: var(--sf-table-frame-border-color);
-    border-block-end-color: var(--sf-table-frame-border-color);
-    text-align: start;
-    vertical-align: top;
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :has(> sf-checkbox:only-child, > sf-button-icon:only-child, > sf-icon-button:only-child, > input[type=checkbox]:only-child),
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :has(> .sr-only:only-child) {
-    min-width: var(--sf-0);
-    min-inline-size: var(--sf-0);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :first-child {
-    padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :first-child {
-    padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :first-child:where(:dir(ltr)) {
-    padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :first-child {
-    padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :first-child {
-    padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :first-child:where(:dir(rtl)) {
-    padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :first-child {
-    -webkit-padding-start: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-            padding-inline-start: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :last-child {
-    padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :last-child {
-    padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :last-child:where(:dir(ltr)) {
-    padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :last-child {
-    padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :last-child {
-    padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :last-child:where(:dir(rtl)) {
-    padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > :last-child {
-    -webkit-padding-end: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-            padding-inline-end: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .text-center {
-    text-align: center;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .text-end {
-    text-align: right;
-  }
-  @supports not (text-align: end) {
-  html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .text-end {
-    text-align: right;
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .text-end:where(:dir(ltr)) {
-    text-align: right;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .text-end {
-    text-align: left;
-  }
-  @supports not (text-align: end) {
-  [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .text-end {
-    text-align: left;
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .text-end:where(:dir(rtl)) {
-    text-align: left;
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .text-end {
-    text-align: end;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .table-numeric {
-    text-align: right;
-  }
-  @supports not (text-align: end) {
-  html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .table-numeric {
-    text-align: right;
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .table-numeric:where(:dir(ltr)) {
-    text-align: right;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .table-numeric {
-    text-align: left;
-  }
-  @supports not (text-align: end) {
-  [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .table-numeric {
-    text-align: left;
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .table-numeric:where(:dir(rtl)) {
-    text-align: left;
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > .table-numeric {
-    text-align: end;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > tr > :first-child {
-    left: 0;
-  }
-  @supports not (inset-inline-start: initial) {
-  html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > tr > :first-child {
-    left: 0;
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > tr > :first-child:where(:dir(ltr)) {
-    left: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > tr > :first-child {
-    right: 0;
-  }
-  @supports not (inset-inline-start: initial) {
-  [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > tr > :first-child {
-    right: 0;
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > tr > :first-child:where(:dir(rtl)) {
-    right: 0;
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > tr > :first-child {
-    position: sticky;
-    inset-inline-start: 0;
-    z-index: 1;
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > tbody > tr > :first-child {
-    background-color: var(--sf-table-frame-background);
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > tfoot > tr > :first-child {
-    background-color: var(--sf-table-frame-background);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:last-child {
-    border-right-width: var(--sf-0);
-  }
-  @supports not (border-inline-end-width: initial) {
-  html:not([dir="rtl"]) .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:last-child {
-    border-right-width: var(--sf-0);
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:last-child:where(:dir(ltr)) {
-    border-right-width: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:last-child {
-    border-left-width: var(--sf-0);
-  }
-  @supports not (border-inline-end-width: initial) {
-  [dir="rtl"] .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:last-child {
-    border-left-width: var(--sf-0);
-    }
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:last-child:where(:dir(rtl)) {
-    border-left-width: var(--sf-0);
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :not(caption) > * > *:last-child {
-    border-inline-end-width: var(--sf-0);
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > :last-child > tr:last-child > * {
-    border-bottom-color: transparent;
-    border-block-end-color: transparent;
-  }
-  .table-frame:not(:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key))) > .table > thead > tr > * {
-    padding-top: var(--sf-table-frame-head-padding-block);
-    padding-bottom: var(--sf-table-frame-head-padding-block);
-    padding-block: var(--sf-table-frame-head-padding-block);
-    background-color: var(--sf-table-frame-background);
-    background-color: var(--sf-table-frame-head-background, var(--sf-table-frame-background));
-    color: var(--sf-table-frame-head-color);
-    font-weight: var(--sf-weight--medium);
-    vertical-align: bottom;
-  }
   @media (min-width: 44rem) {
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) {
+    .table-frame {
       /* The public variables of .table-frame; the head fill,
          --sf-table-frame-head-background, defaults on the head cells to
          the frame's own background: no fill of its own. */
@@ -350,7 +23,7 @@
       border-radius: var(--sf-table-frame-radius);
       background-color: var(--sf-table-frame-background);
     }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table {
+    .table-frame > .table {
       width: 100%;
       inline-size: 100%;
       margin: 0;
@@ -363,95 +36,31 @@
       word-break: normal;
       word-wrap: normal;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+    .table-frame > .table > :not(caption) > * > *:where(:dir(ltr)) {
       border-right-width: var(--sf-px);
     }
-    @supports not (border-inline-end-width: initial) {
-    html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
-      border-right-width: var(--sf-px);
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(ltr)) {
-      border-right-width: var(--sf-px);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+    .table-frame > .table > :not(caption) > * > *:where(:dir(rtl)) {
       border-left-width: var(--sf-px);
     }
-    @supports not (border-inline-end-width: initial) {
-    [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
-      border-left-width: var(--sf-px);
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(rtl)) {
-      border-left-width: var(--sf-px);
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+    .table-frame > .table > :not(caption) > * > *:where(:dir(ltr)) {
       border-right-style: solid;
     }
-    @supports not (border-inline-end-style: initial) {
-    html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
-      border-right-style: solid;
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(ltr)) {
-      border-right-style: solid;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+    .table-frame > .table > :not(caption) > * > *:where(:dir(rtl)) {
       border-left-style: solid;
     }
-    @supports not (border-inline-end-style: initial) {
-    [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
-      border-left-style: solid;
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(rtl)) {
-      border-left-style: solid;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+    .table-frame > .table > :not(caption) > * > *:where(:dir(ltr)) {
       border-right-color: var(--sf-table-frame-border-color);
     }
-    @supports not (border-inline-end-color: initial) {
-    html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
-      border-right-color: var(--sf-table-frame-border-color);
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(ltr)) {
-      border-right-color: var(--sf-table-frame-border-color);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+    .table-frame > .table > :not(caption) > * > *:where(:dir(rtl)) {
       border-left-color: var(--sf-table-frame-border-color);
     }
-    @supports not (border-inline-end-color: initial) {
-    [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
-      border-left-color: var(--sf-table-frame-border-color);
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(rtl)) {
-      border-left-color: var(--sf-table-frame-border-color);
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+    .table-frame > .table > :not(caption) > * > *:where(:dir(ltr)) {
       text-align: left;
     }
-    @supports not (text-align: start) {
-    html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
-      text-align: left;
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(ltr)) {
-      text-align: left;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+    .table-frame > .table > :not(caption) > * > *:where(:dir(rtl)) {
       text-align: right;
     }
-    @supports not (text-align: start) {
-    [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
-      text-align: right;
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:where(:dir(rtl)) {
-      text-align: right;
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > * {
+    .table-frame > .table > :not(caption) > * > * {
       min-width: var(--sf-table-frame-cell-min-inline-size);
       min-inline-size: var(--sf-table-frame-cell-min-inline-size);
       padding-top: var(--sf-table-frame-cell-padding-block);
@@ -473,183 +82,248 @@
       text-align: start;
       vertical-align: top;
     }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :has(> sf-checkbox:only-child, > sf-button-icon:only-child, > sf-icon-button:only-child, > input[type=checkbox]:only-child),
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :has(> .sr-only:only-child) {
+    .table-frame > .table > :not(caption) > * > :has(> sf-checkbox:only-child, > sf-button-icon:only-child, > sf-icon-button:only-child, > input[type=checkbox]:only-child),
+    .table-frame > .table > :not(caption) > * > :has(> .sr-only:only-child) {
       min-width: var(--sf-0);
       min-inline-size: var(--sf-0);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :first-child {
+    .table-frame > .table > :not(caption) > * > :first-child:where(:dir(ltr)) {
       padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
     }
-    @supports not (padding-inline-start: initial) {
-    html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :first-child {
-      padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :first-child:where(:dir(ltr)) {
-      padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :first-child {
+    .table-frame > .table > :not(caption) > * > :first-child:where(:dir(rtl)) {
       padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
     }
-    @supports not (padding-inline-start: initial) {
-    [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :first-child {
-      padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :first-child:where(:dir(rtl)) {
-      padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :first-child {
+    .table-frame > .table > :not(caption) > * > :first-child {
       -webkit-padding-start: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
               padding-inline-start: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :last-child {
+    .table-frame > .table > :not(caption) > * > :last-child:where(:dir(ltr)) {
       padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
     }
-    @supports not (padding-inline-end: initial) {
-    html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :last-child {
-      padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :last-child:where(:dir(ltr)) {
-      padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :last-child {
+    .table-frame > .table > :not(caption) > * > :last-child:where(:dir(rtl)) {
       padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
     }
-    @supports not (padding-inline-end: initial) {
-    [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :last-child {
-      padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :last-child:where(:dir(rtl)) {
-      padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > :last-child {
+    .table-frame > .table > :not(caption) > * > :last-child {
       -webkit-padding-end: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
               padding-inline-end: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
     }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .text-center {
+    .table-frame > .table > :not(caption) > * > .text-center {
       text-align: center;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .text-end {
+    .table-frame > .table > :not(caption) > * > .text-end:where(:dir(ltr)) {
       text-align: right;
     }
-    @supports not (text-align: end) {
-    html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .text-end {
-      text-align: right;
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .text-end:where(:dir(ltr)) {
-      text-align: right;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .text-end {
+    .table-frame > .table > :not(caption) > * > .text-end:where(:dir(rtl)) {
       text-align: left;
     }
-    @supports not (text-align: end) {
-    [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .text-end {
-      text-align: left;
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .text-end:where(:dir(rtl)) {
-      text-align: left;
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .text-end {
+    .table-frame > .table > :not(caption) > * > .text-end {
       text-align: end;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .table-numeric {
+    .table-frame > .table > :not(caption) > * > .table-numeric:where(:dir(ltr)) {
       text-align: right;
     }
-    @supports not (text-align: end) {
-    html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .table-numeric {
-      text-align: right;
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .table-numeric:where(:dir(ltr)) {
-      text-align: right;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .table-numeric {
+    .table-frame > .table > :not(caption) > * > .table-numeric:where(:dir(rtl)) {
       text-align: left;
     }
-    @supports not (text-align: end) {
-    [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .table-numeric {
-      text-align: left;
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .table-numeric:where(:dir(rtl)) {
-      text-align: left;
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > .table-numeric {
+    .table-frame > .table > :not(caption) > * > .table-numeric {
       text-align: end;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > tr > :first-child {
+    .table-frame > .table > :not(caption) > tr > :first-child:where(:dir(ltr)) {
       left: 0;
     }
-    @supports not (inset-inline-start: initial) {
-    html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > tr > :first-child {
-      left: 0;
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > tr > :first-child:where(:dir(ltr)) {
-      left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > tr > :first-child {
+    .table-frame > .table > :not(caption) > tr > :first-child:where(:dir(rtl)) {
       right: 0;
     }
-    @supports not (inset-inline-start: initial) {
-    [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > tr > :first-child {
-      right: 0;
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > tr > :first-child:where(:dir(rtl)) {
-      right: 0;
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > tr > :first-child {
+    .table-frame > .table > :not(caption) > tr > :first-child {
       position: sticky;
       inset-inline-start: 0;
       z-index: 1;
     }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > tbody > tr > :first-child {
+    .table-frame > .table > :is(tbody, tfoot) > tr > :first-child {
       background-color: var(--sf-table-frame-background);
     }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > tfoot > tr > :first-child {
-      background-color: var(--sf-table-frame-background);
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:last-child {
+    .table-frame > .table > :not(caption) > * > *:last-child:where(:dir(ltr)) {
       border-right-width: var(--sf-0);
     }
-    @supports not (border-inline-end-width: initial) {
-    html:not([dir="rtl"]) .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:last-child {
-      border-right-width: var(--sf-0);
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:last-child:where(:dir(ltr)) {
-      border-right-width: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:last-child {
+    .table-frame > .table > :not(caption) > * > *:last-child:where(:dir(rtl)) {
       border-left-width: var(--sf-0);
     }
-    @supports not (border-inline-end-width: initial) {
-    [dir="rtl"] .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:last-child {
-      border-left-width: var(--sf-0);
-      }
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:last-child:where(:dir(rtl)) {
-      border-left-width: var(--sf-0);
-    }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :not(caption) > * > *:last-child {
+    .table-frame > .table > :not(caption) > * > *:last-child {
       border-inline-end-width: var(--sf-0);
     }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > :last-child > tr:last-child > * {
+    .table-frame > .table > :last-child > tr:last-child > * {
       border-bottom-color: transparent;
       border-block-end-color: transparent;
     }
-    .table-frame:where(:has(> .table > tbody > tr > * > sf-button-icon[icon=menu]:only-child, > .table > tbody > tr > * > sf-icon-button[icon=menu]:only-child):has(> .table > :not(caption) > tr > .table-key)) > .table > thead > tr > * {
+    .table-frame > .table > thead > tr > * {
       padding-top: var(--sf-table-frame-head-padding-block);
       padding-bottom: var(--sf-table-frame-head-padding-block);
       padding-block: var(--sf-table-frame-head-padding-block);
+      background-color: var(--sf-table-frame-head-background, var(--sf-table-frame-background));
+      color: var(--sf-table-frame-head-color);
+      font-weight: var(--sf-weight--medium);
+      vertical-align: bottom;
+    }
+  }
+  @media not all and (min-width: 44rem) {
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) {
+      /* The public variables of .table-frame; the head fill,
+         --sf-table-frame-head-background, defaults on the head cells to
+         the frame's own background: no fill of its own. */
+      --sf-table-frame-border-color: var(--sf-outline-variant);
+      --sf-table-frame-radius: var(--sf-radius--surface);
+      --sf-table-frame-background: var(--sf-surface-place);
+      --sf-table-frame-head-color: var(--sf-on-surface-variant);
+      --sf-table-frame-head-padding-block: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1) - var(--sf-px)) / 2);
+      --sf-table-frame-cell-padding-block: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1) - var(--sf-px)) / 2);
+      --sf-table-frame-cell-padding-inline: var(--sf-space-1);
+      --sf-table-frame-cell-min-inline-size: var(--sf-e0);
+      width: 100%;
+      inline-size: 100%;
+      overflow: auto;
+      scroll-padding: var(--sf-focus-room);
+      border-width: var(--sf-px);
+      border-style: solid;
+      border-color: var(--sf-table-frame-border-color);
+      border-radius: var(--sf-table-frame-radius);
       background-color: var(--sf-table-frame-background);
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table {
+      width: 100%;
+      inline-size: 100%;
+      margin: 0;
+      border: 0;
+      border-color: revert-layer;
+      border: 0;
+      border-radius: 0;
+      border-collapse: separate;
+      border-spacing: 0;
+      word-break: normal;
+      word-wrap: normal;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > *:where(:dir(ltr)) {
+      border-right-width: var(--sf-px);
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > *:where(:dir(rtl)) {
+      border-left-width: var(--sf-px);
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > *:where(:dir(ltr)) {
+      border-right-style: solid;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > *:where(:dir(rtl)) {
+      border-left-style: solid;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > *:where(:dir(ltr)) {
+      border-right-color: var(--sf-table-frame-border-color);
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > *:where(:dir(rtl)) {
+      border-left-color: var(--sf-table-frame-border-color);
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > *:where(:dir(ltr)) {
+      text-align: left;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > *:where(:dir(rtl)) {
+      text-align: right;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > * {
+      min-width: var(--sf-table-frame-cell-min-inline-size);
+      min-inline-size: var(--sf-table-frame-cell-min-inline-size);
+      padding-top: var(--sf-table-frame-cell-padding-block);
+      padding-bottom: var(--sf-table-frame-cell-padding-block);
+      padding-block: var(--sf-table-frame-cell-padding-block);
+      padding-left: var(--sf-table-frame-cell-padding-inline);
+      padding-right: var(--sf-table-frame-cell-padding-inline);
+      padding-inline: var(--sf-table-frame-cell-padding-inline);
+      border-width: var(--sf-0);
+      border-inline-end-width: var(--sf-px);
+      border-inline-end-style: solid;
+      border-inline-end-color: var(--sf-table-frame-border-color);
+      border-bottom-width: var(--sf-px);
+      border-block-end-width: var(--sf-px);
+      border-bottom-style: solid;
+      border-block-end-style: solid;
+      border-bottom-color: var(--sf-table-frame-border-color);
+      border-block-end-color: var(--sf-table-frame-border-color);
+      text-align: start;
+      vertical-align: top;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > :has(> sf-checkbox:only-child, > sf-button-icon:only-child, > sf-icon-button:only-child, > input[type=checkbox]:only-child),
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > :has(> .sr-only:only-child) {
+      min-width: var(--sf-0);
+      min-inline-size: var(--sf-0);
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > :first-child:where(:dir(ltr)) {
+      padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > :first-child:where(:dir(rtl)) {
+      padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > :first-child {
+      -webkit-padding-start: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+              padding-inline-start: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > :last-child:where(:dir(ltr)) {
+      padding-right: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > :last-child:where(:dir(rtl)) {
+      padding-left: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > :last-child {
+      -webkit-padding-end: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+              padding-inline-end: calc(var(--sf-table-frame-cell-padding-inline) - var(--sf-px));
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > .text-center {
+      text-align: center;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > .text-end:where(:dir(ltr)) {
+      text-align: right;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > .text-end:where(:dir(rtl)) {
+      text-align: left;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > .text-end {
+      text-align: end;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > .table-numeric:where(:dir(ltr)) {
+      text-align: right;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > .table-numeric:where(:dir(rtl)) {
+      text-align: left;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > .table-numeric {
+      text-align: end;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > tr > :first-child:where(:dir(ltr)) {
+      left: 0;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > tr > :first-child:where(:dir(rtl)) {
+      right: 0;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > tr > :first-child {
+      position: sticky;
+      inset-inline-start: 0;
+      z-index: 1;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :is(tbody, tfoot) > tr > :first-child {
+      background-color: var(--sf-table-frame-background);
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > *:last-child:where(:dir(ltr)) {
+      border-right-width: var(--sf-0);
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > *:last-child:where(:dir(rtl)) {
+      border-left-width: var(--sf-0);
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :not(caption) > * > *:last-child {
+      border-inline-end-width: var(--sf-0);
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > :last-child > tr:last-child > * {
+      border-bottom-color: transparent;
+      border-block-end-color: transparent;
+    }
+    .table-frame:not(:where(:has(> .table > tbody > tr > * sf-button-icon[icon=menu]:only-child:where(tr > * > *), > .table > tbody > tr > * sf-icon-button[icon=menu]:only-child:where(tr > * > *)):has(> .table > :not(caption) > tr .table-key:where(tr > *)))) > .table > thead > tr > * {
+      padding-top: var(--sf-table-frame-head-padding-block);
+      padding-bottom: var(--sf-table-frame-head-padding-block);
+      padding-block: var(--sf-table-frame-head-padding-block);
       background-color: var(--sf-table-frame-head-background, var(--sf-table-frame-background));
       color: var(--sf-table-frame-head-color);
       font-weight: var(--sf-weight--medium);

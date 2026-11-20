@@ -21,20 +21,12 @@
     --sf-placeholder--gap: var(--sf-empty-state-gap, var(--sf-space-1));
     --sf-placeholder-content--gap: var(--sf-empty-state-gap, var(--sf-space-1));
     --sf-placeholder-actions--gap: var(--sf-empty-state-actions-gap, var(--sf-gap--actions));
-    max-width: none;
-    max-inline-size: none;
-    max-width: none;
     max-width: var(--sf-empty-state-max-inline-size, none);
     max-inline-size: var(--sf-empty-state-max-inline-size, none);
     margin-left: auto;
     margin-right: auto;
     margin-inline: auto;
-    padding-top: 0;
-    padding-bottom: 0;
-    padding-block: 0;
-    padding-top: 0;
     padding-top: var(--sf-empty-state-padding-block, 0);
-    padding-bottom: 0;
     padding-bottom: var(--sf-empty-state-padding-block, 0);
     padding-block: var(--sf-empty-state-padding-block, 0);
   }
@@ -94,7 +86,7 @@
   /* The circle reaches half the icon box above the icon, so a state that
      draws it keeps the room it had above and below (24, --sf-space-2) -- only
      while it is drawn: the switch multiplies the room as it does the image. */
-  .sf-empty-state.sf-empty-state--size-2.sf-empty-state--no-data:not(.sf-empty-state--inline) {
+  .sf-empty-state.sf-empty-state--size-2:is(.sf-empty-state--no-data, .sf-empty-state--nothing-found):not(.sf-empty-state--inline) {
     --sf-empty-state--icon-box: var(--sf-ui-3--control-height);
     --sf-empty-state--room: var(--sf-empty-state-padding-block, calc(var(--sf-space-2) * var(--sf-style--expressive, 0)));
     --sf-empty-state--spot-y: calc(var(--sf-empty-state--room) + var(--sf-empty-state--icon-box) / 2);
@@ -103,19 +95,6 @@
     padding-block: var(--sf-empty-state--room);
     background-image: radial-gradient(circle var(--sf-empty-state--icon-box) at 50% var(--sf-empty-state--spot-y) in oklab, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-20)) 0%, transparent 100%);
     background-repeat: no-repeat;
-    background-size: calc(100% * 0) calc(100% * 0);
-    background-size: calc(100% * var(--sf-style--expressive, 0)) calc(100% * var(--sf-style--expressive, 0));
-  }
-  .sf-empty-state.sf-empty-state--size-2.sf-empty-state--nothing-found:not(.sf-empty-state--inline) {
-    --sf-empty-state--icon-box: var(--sf-ui-3--control-height);
-    --sf-empty-state--room: var(--sf-empty-state-padding-block, calc(var(--sf-space-2) * var(--sf-style--expressive, 0)));
-    --sf-empty-state--spot-y: calc(var(--sf-empty-state--room) + var(--sf-empty-state--icon-box) / 2);
-    padding-top: var(--sf-empty-state--room);
-    padding-bottom: var(--sf-empty-state--room);
-    padding-block: var(--sf-empty-state--room);
-    background-image: radial-gradient(circle var(--sf-empty-state--icon-box) at 50% var(--sf-empty-state--spot-y) in oklab, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-20)) 0%, transparent 100%);
-    background-repeat: no-repeat;
-    background-size: calc(100% * 0) calc(100% * 0);
     background-size: calc(100% * var(--sf-style--expressive, 0)) calc(100% * var(--sf-style--expressive, 0));
   }
   @media (forced-colors: active) {
@@ -153,76 +132,16 @@
   /* The inline form: one line at a list row's height and inset, so it sits in
      a menu, a dropdown or a search without a frame of its own. The icon is the
      text's size, in the muted icon role; the words are muted ink. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-empty-state.sf-empty-state--inline {
-    padding-left: var(--sf-a8);
-    padding-left: var(--sf-context-menu--inset-start, var(--sf-a8));
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-empty-state.sf-empty-state--inline {
-    padding-left: var(--sf-a8);
-    padding-left: var(--sf-context-menu--inset-start, var(--sf-a8));
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-empty-state.sf-empty-state--inline {
-    padding-right: var(--sf-a8);
-    padding-right: var(--sf-context-menu--inset-end, var(--sf-a8));
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-empty-state.sf-empty-state--inline {
-    padding-right: var(--sf-a8);
-    padding-right: var(--sf-context-menu--inset-end, var(--sf-a8));
-    }
-  }
   .sf-empty-state.sf-empty-state--inline:where(:dir(ltr)) {
-    padding-left: var(--sf-a8);
     padding-left: var(--sf-context-menu--inset-start, var(--sf-a8));
-    padding-right: var(--sf-a8);
     padding-right: var(--sf-context-menu--inset-end, var(--sf-a8));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-empty-state.sf-empty-state--inline {
-    padding-right: var(--sf-a8);
-    padding-right: var(--sf-context-menu--inset-start, var(--sf-a8));
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-empty-state.sf-empty-state--inline {
-    padding-right: var(--sf-a8);
-    padding-right: var(--sf-context-menu--inset-start, var(--sf-a8));
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-empty-state.sf-empty-state--inline {
-    padding-left: var(--sf-a8);
-    padding-left: var(--sf-context-menu--inset-end, var(--sf-a8));
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .sf-empty-state.sf-empty-state--inline {
-    padding-left: var(--sf-a8);
-    padding-left: var(--sf-context-menu--inset-end, var(--sf-a8));
-    }
   }
   .sf-empty-state.sf-empty-state--inline:where(:dir(rtl)) {
-    padding-right: var(--sf-a8);
     padding-right: var(--sf-context-menu--inset-start, var(--sf-a8));
-    padding-left: var(--sf-a8);
     padding-left: var(--sf-context-menu--inset-end, var(--sf-a8));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-empty-state.sf-empty-state--inline {
-    text-align: left;
-  }
-  @supports not (text-align: start) {
-  html:not([dir="rtl"]) .sf-empty-state.sf-empty-state--inline {
-    text-align: left;
-    }
   }
   .sf-empty-state.sf-empty-state--inline:where(:dir(ltr)) {
     text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-empty-state.sf-empty-state--inline {
-    text-align: right;
-  }
-  @supports not (text-align: start) {
-  [dir="rtl"] .sf-empty-state.sf-empty-state--inline {
-    text-align: right;
-    }
   }
   .sf-empty-state.sf-empty-state--inline:where(:dir(rtl)) {
     text-align: right;
@@ -245,7 +164,6 @@
     padding-block: 0;
     padding-left: var(--sf-a8);
     padding-right: var(--sf-a8);
-    padding-inline: var(--sf-a8) var(--sf-a8);
     padding-inline: var(--sf-context-menu--inset-start, var(--sf-a8)) var(--sf-context-menu--inset-end, var(--sf-a8));
     text-align: start;
     font-size: var(--sf-text-small--size);
@@ -259,24 +177,8 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-empty-state--inline .sf-empty-state-link {
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-empty-state--inline .sf-empty-state-link {
-    margin-left: auto;
-    }
-  }
   .sf-empty-state--inline .sf-empty-state-link:where(:dir(ltr)) {
     margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-empty-state--inline .sf-empty-state-link {
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial) {
-  [dir="rtl"] .sf-empty-state--inline .sf-empty-state-link {
-    margin-right: auto;
-    }
   }
   .sf-empty-state--inline .sf-empty-state-link:where(:dir(rtl)) {
     margin-right: auto;
@@ -300,7 +202,6 @@
     color: var(--sf-featured-icon--foreground-color);
   }
   .sf-empty-state-icon--ring .sf-progress-ring {
-    color: var(--sf-featured-icon--foreground-color);
     color: var(--sf-progress-ring-color, var(--sf-featured-icon--foreground-color));
   }
   .sf-empty-state.sf-empty-state--inline {

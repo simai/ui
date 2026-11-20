@@ -3709,18 +3709,30 @@ function noteAlias(note) {
       expired: true
     } : {})
   });
-}
+} // The page's effects settings. Their place is the set's declaration,
+// SF_BOOT_CONFIG.packages.effects = {base, version, foreign, about, ...}: a
+// key there wins. SF_BOOT_CONFIG.effects, its former place, is still read for
+// the keys the declaration leaves out until remove_after, and each read is
+// noted (journal option-sf-boot-config-effects-to-package). A declaration
+// that is only a switch, a version or a base (true, '1.0.0', '.../smart')
+// holds no settings.
 
-function effectsConfig() {
-  const config = globalThis.SF_BOOT_CONFIG?.effects;
-  if (config === undefined) return {};
+
+function effectsConfig(boot = globalThis.SF_BOOT_CONFIG) {
+  const declared = boot?.packages?.effects;
+  const set = declared && typeof declared === 'object' && !Array.isArray(declared) ? declared : null;
+  const config = boot?.effects;
+  if (config === undefined || config === null) return set ?? {};
   noteAlias({
     kind: 'option',
     from: 'SF_BOOT_CONFIG.effects',
     to: 'SF_BOOT_CONFIG.packages.effects'
   });
-  return config ?? {};
-} // SF_BOOT_CONFIG.effects.foreign: 'sandbox' (the default) or 'refuse'. Any
+  return set ? { ...config,
+    ...set
+  } : config;
+} // SF_BOOT_CONFIG.packages.effects.foreign (formerly SF_BOOT_CONFIG.effects.foreign):
+// 'sandbox' (the default) or 'refuse'. Any
 // other value refuses: a switch mistyped fails closed.
 
 
@@ -4329,7 +4341,8 @@ const ABOUT_WORDS = Object.freeze({
   })
 });
 
-const aboutWord = (key, node, vars = {}) => (0,_page_language_js__WEBPACK_IMPORTED_MODULE_2__.pageText)(ABOUT_WORDS, key, node, 'sf-effect-about').replace(/\{(\w+)\}/gu, (whole, name) => Object.hasOwn(vars, name) ? String(vars[name]) : whole); // SF_BOOT_CONFIG.effects.about: on unless it is false.
+const aboutWord = (key, node, vars = {}) => (0,_page_language_js__WEBPACK_IMPORTED_MODULE_2__.pageText)(ABOUT_WORDS, key, node, 'sf-effect-about').replace(/\{(\w+)\}/gu, (whole, name) => Object.hasOwn(vars, name) ? String(vars[name]) : whole); // SF_BOOT_CONFIG.packages.effects.about (formerly SF_BOOT_CONFIG.effects.about):
+// on unless it is false.
 
 
 function aboutEnabled(value = effectsConfig().about) {
@@ -6706,14 +6719,20 @@ function textWidth(el) {
 function namesUrl() {
   const base = String(globalThis.sfPath || '').replace(/\/+$/u, '');
   return base ? `${base}/core/contracts/icon-names.v1.json` : '';
-}
+} // The list answers null when it cannot be read: no sfPath, a server that
+// refuses it, or a sandboxed example frame (origin null) whose server sends
+// no Access-Control-Allow-Origin for JSON (DF-8). Unknown is not "no such
+// icon": an empty list made every glyph checked before its face arrived a
+// misspelling for good -- said in the console and never read again -- so
+// arrows in the docs' example frames stayed empty boxes.
+
 
 function loadNames() {
   const state = shared();
 
   if (!state.names) {
     const url = namesUrl();
-    state.names = url && typeof fetch === 'function' ? fetch(url).then(response => response.ok ? response.json() : null).then(data => Array.isArray(data?.names) ? data.names : []).catch(() => []) : Promise.resolve([]);
+    state.names = url && typeof fetch === 'function' ? fetch(url).then(response => response.ok ? response.json() : null).then(data => Array.isArray(data?.names) ? data.names : null).catch(() => null) : Promise.resolve(null);
   }
 
   return state.names;
@@ -6765,9 +6784,16 @@ function warnMissing(name) {
   if (state.warned.has(name)) return;
   state.warned.add(name);
   loadNames().then(names => {
-    if (names.includes(name)) {
+    // A name the list holds, or any name when the list cannot be read: a
+    // face on its way, read again when one arrives; only a name the list
+    // lacks is said.
+    if (!names || names.includes(name)) {
       state.warned.delete(name);
-      watchFaces();
+      watchFaces(); // The face may have come in while the list was on its way: no event
+      // is left to read the glyph again, and it stayed an empty box for good
+      // (AM-21, one cold load in twelve). It is read again now.
+
+      recheckSoon();
       return;
     }
 
@@ -6783,18 +6809,32 @@ function recheckMissing() {
   doc?.querySelectorAll?.('.sf-icon[data-sf-icon-missing]').forEach(el => checkIconGlyph(el));
 }
 
+function recheckSoon() {
+  const raf = globalThis.requestAnimationFrame;
+  if (typeof raf === 'function') raf(recheckMissing);else setTimeout(recheckMissing, 16);
+} // Watched from the first glyph marked missing, not from the answer of the
+// names list: a face that loaded between the two was never seen (AM-21).
+// Besides a face loading and a subset answer, the page's subset-pending mark
+// lifting changes the family every glyph draws in without loading anything
+// (a face already in the cache), and the fonts settling ends a wait.
+
+
 function watchFaces() {
   const state = shared();
   if (state.watching) return;
   state.watching = true;
+  const doc = globalThis.document;
+  doc?.fonts?.addEventListener?.('loadingdone', recheckSoon);
+  globalThis.addEventListener?.('sf-icons-subset:ready', recheckSoon);
+  Promise.resolve(doc?.fonts?.ready).then(recheckSoon, () => {});
+  const Watch = globalThis.MutationObserver;
 
-  const later = () => {
-    const raf = globalThis.requestAnimationFrame;
-    if (typeof raf === 'function') raf(recheckMissing);else setTimeout(recheckMissing, 16);
-  };
-
-  globalThis.document?.fonts?.addEventListener?.('loadingdone', later);
-  globalThis.addEventListener?.('sf-icons-subset:ready', later);
+  if (typeof Watch === 'function' && doc?.documentElement) {
+    new Watch(recheckSoon).observe(doc.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-sf-icons']
+    });
+  }
 } // A glyph is judged only once the face that draws it is in: marked loaded,
 // its family can still be on its way (font-display: block draws the name
 // unseen at the fallback's width, as wide as letters). Until then the check
@@ -6872,6 +6912,7 @@ function checkIconGlyph(el) {
         }
 
         if (!glyph.hasAttribute('data-sf-icon-missing')) glyph.setAttribute('data-sf-icon-missing', '');
+        watchFaces();
         if (name) warnMissing(name);
       } else if (glyph.hasAttribute('data-sf-icon-missing')) {
         glyph.removeAttribute('data-sf-icon-missing');
@@ -6897,9 +6938,15 @@ if (typeof globalThis !== 'undefined') {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ICON_AXIS_BOUNDS: () => (/* binding */ ICON_AXIS_BOUNDS),
+/* harmony export */   ICON_AXIS_PAGE_RANGE: () => (/* binding */ ICON_AXIS_PAGE_RANGE),
+/* harmony export */   ICON_AXIS_PARAMS: () => (/* binding */ ICON_AXIS_PARAMS),
 /* harmony export */   ICON_SUBSET_DEFAULT_HOST: () => (/* binding */ ICON_SUBSET_DEFAULT_HOST),
 /* harmony export */   ICON_SUBSET_STORAGE_KEY: () => (/* binding */ ICON_SUBSET_STORAGE_KEY),
 /* harmony export */   applyRememberedIconSubset: () => (/* binding */ applyRememberedIconSubset),
+/* harmony export */   clampIconAxisValue: () => (/* binding */ clampIconAxisValue),
+/* harmony export */   iconAxisNumbers: () => (/* binding */ iconAxisNumbers),
+/* harmony export */   iconAxisRequestRange: () => (/* binding */ iconAxisRequestRange),
 /* harmony export */   iconManifestFontFamily: () => (/* binding */ iconManifestFontFamily),
 /* harmony export */   iconManifestType: () => (/* binding */ iconManifestType),
 /* harmony export */   iconSubsetCssFromManifest: () => (/* binding */ iconSubsetCssFromManifest),
@@ -6952,6 +6999,46 @@ function normalizeIconType(type = '') {
   if (normalized === 'shape') return 'sharp';
   if (normalized === 'rounded' || normalized === 'sharp') return normalized;
   return 'outlined';
+} // The grade and optical-size axes of the subset request (icons study,
+// ui-control evidence 2026-11-19-icons-axes). The service's parameters are
+// `grad` and `opsz`; the runtime sent `grade` and `optical_size`, which it never
+// read, so an author's grade and every optical size reached it as nothing. A
+// page asks for a range, kept as a variable axis in the subset: grade -25..0
+// holds the light and the dark theme (C151 point 4), optical size 20..48 every
+// icon size. Each icon picks its own point with font-variation-settings, so an
+// author's grade on one icon widens the range and restyles no other icon. A
+// value past the font's design space is clamped to it.
+
+const ICON_AXIS_PARAMS = Object.freeze({
+  GRAD: 'grad',
+  opsz: 'opsz'
+});
+const ICON_AXIS_BOUNDS = Object.freeze({
+  GRAD: Object.freeze([-25, 200]),
+  opsz: Object.freeze([20, 48])
+});
+const ICON_AXIS_PAGE_RANGE = Object.freeze({
+  GRAD: Object.freeze([-25, 0]),
+  opsz: Object.freeze([20, 48])
+}); // The numbers a value names: one number, a list ("-25,0"), a range ("20..48"),
+// or a Set or an array of those.
+
+function iconAxisNumbers(value) {
+  const items = value instanceof Set || Array.isArray(value) ? [...value] : [value];
+  return items.flatMap(item => String(item ?? '').split(/,|\.\./u)).map(item => item.trim()).filter(item => item !== '').map(Number).filter(item => Number.isFinite(item));
+}
+function clampIconAxisValue(axis, value) {
+  const bounds = ICON_AXIS_BOUNDS[axis];
+  if (!bounds) return value;
+  return Math.min(bounds[1], Math.max(bounds[0], value));
+} // The range a page asks for on an axis: the page range, widened to the values
+// its icons set (clamped to the font's design space), as "min..max".
+
+function iconAxisRequestRange(axis, values = []) {
+  const range = ICON_AXIS_PAGE_RANGE[axis];
+  if (!range) return '';
+  const points = [...range, ...iconAxisNumbers(values).map(value => clampIconAxisValue(axis, value))];
+  return `${Math.min(...points)}..${Math.max(...points)}`;
 } // A variable font's weight range loads as one weight in every browser.
 
 function normalizeIconFontLoadWeight(value = '400') {
@@ -15260,7 +15347,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.62.0';
+const CORE_RUNTIME = '1.64.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -24784,13 +24871,20 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
         "tight": {
           "default": false,
           "type": "boolean"
+        },
+        "value": {
+          "default": "",
+          "type": "string"
+        },
+        "value-label": {
+          "type": "string"
         }
       },
       "type": "object"
     },
     "kind": "custom-element",
     "manifest": "smart.badge",
-    "version": "1.6.4"
+    "version": "1.7.0"
   },
   "sf-button": {
     "inputs": {
@@ -24802,7 +24896,8 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
             "default",
             "tonal",
             "outline",
-            "ghost"
+            "ghost",
+            "plain"
           ],
           "type": "string"
         },
@@ -24934,6 +25029,14 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": false,
           "type": "boolean"
         },
+        "shrink": {
+          "default": "none",
+          "enum": [
+            "none",
+            "icon"
+          ],
+          "type": "string"
+        },
         "size": {
           "default": "1",
           "enum": [
@@ -25002,7 +25105,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button",
-    "version": "1.17.2"
+    "version": "1.18.1"
   },
   "sf-button-icon": {
     "inputs": {
@@ -25182,7 +25285,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.13.10"
+    "version": "1.13.11"
   },
   "sf-checkbox": {
     "inputs": {
@@ -25334,7 +25437,8 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "field",
           "enum": [
             "field",
-            "list"
+            "list",
+            "trigger"
           ],
           "type": "string"
         },
@@ -25399,7 +25503,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.22.0"
+    "version": "1.23.0"
   },
   "sf-icon": {
     "inputs": {
@@ -25491,7 +25595,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.4.3"
+    "version": "1.4.4"
   },
   "sf-input": {
     "inputs": {
@@ -25502,7 +25606,8 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
           "enum": [
             "bordered",
             "filled",
-            "hidden"
+            "hidden",
+            "plain"
           ],
           "type": "string"
         },
@@ -25700,7 +25805,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.15.3"
+    "version": "1.16.1"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -32115,7 +32220,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-built-in","s
 (module) {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-pack-index","schema_version":1,"delivery":"framework","languages":["ar","de","es","fr","it","ja","ko","pt-br","ru","zh-hans"],"aliases":{"pt":"pt-br","zh":"zh-hans","zh-cn":"zh-hans","zh-sg":"zh-hans"},"parts":{"ar":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"de":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"es":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"fr":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"it":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ja":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ko":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"pt-br":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ru":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"zh-hans":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]}},"coverage":{"ar":{"words":2258,"translated":2258,"share":100},"de":{"words":2258,"translated":2258,"share":100},"es":{"words":2258,"translated":2258,"share":100},"fr":{"words":2258,"translated":2258,"share":100},"it":{"words":2258,"translated":2258,"share":100},"ja":{"words":2258,"translated":2258,"share":100},"ko":{"words":2258,"translated":2258,"share":100},"pt-br":{"words":2258,"translated":2258,"share":100},"ru":{"words":2258,"translated":2258,"share":100},"zh-hans":{"words":2258,"translated":2258,"share":100}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-pack-index","schema_version":1,"delivery":"framework","languages":["ar","de","es","fr","it","ja","ko","pt-br","ru","zh-hans"],"aliases":{"pt":"pt-br","zh":"zh-hans","zh-cn":"zh-hans","zh-sg":"zh-hans"},"parts":{"ar":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"de":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"es":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"fr":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"it":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ja":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ko":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"pt-br":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ru":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"zh-hans":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]}},"coverage":{"ar":{"words":2269,"translated":2269,"share":100},"de":{"words":2269,"translated":2269,"share":100},"es":{"words":2269,"translated":2269,"share":100},"fr":{"words":2269,"translated":2269,"share":100},"it":{"words":2269,"translated":2269,"share":100},"ja":{"words":2269,"translated":2269,"share":100},"ko":{"words":2269,"translated":2269,"share":100},"pt-br":{"words":2269,"translated":2269,"share":100},"ru":{"words":2269,"translated":2269,"share":100},"zh-hans":{"words":2269,"translated":2269,"share":100}}}');
 
 /***/ }
 

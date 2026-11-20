@@ -385,16 +385,13 @@
     --sf-gradient--to: var(--sf-gradient--p-50, var(--sf-tertiary-50));
   }
   .gradient-glow {
-    background-image: radial-gradient(ellipse 55% 90% at 20% 0% in oklab, light-dark(color-mix(in oklab, var(--sf-gradient--from) calc((16 + 8) * 1%), transparent), color-mix(in oklab, var(--sf-gradient--from) calc((min(32, 16 + 16)) * 1%), transparent)) 0%, light-dark(color-mix(in oklab, var(--sf-gradient--from) calc((max(4, 16 - 4)) * 1%), transparent), color-mix(in oklab, var(--sf-gradient--from) calc((16 + 4) * 1%), transparent)) 40%, transparent 100%), radial-gradient(ellipse 45% 80% at 85% 10% in oklab, light-dark(color-mix(in oklab, var(--sf-gradient--to) calc((16 + 8) * 1%), transparent), color-mix(in oklab, var(--sf-gradient--to) calc((min(32, 16 + 16)) * 1%), transparent)) 0%, light-dark(color-mix(in oklab, var(--sf-gradient--to) calc((max(4, 16 - 4)) * 1%), transparent), color-mix(in oklab, var(--sf-gradient--to) calc((16 + 4) * 1%), transparent)) 40%, transparent 100%);
     background-image: radial-gradient(ellipse 55% 90% at 20% 0% in oklab, light-dark(color-mix(in oklab, var(--sf-gradient--from) calc((var(--sf-gradient--strength, 16) + 8) * 1%), transparent), color-mix(in oklab, var(--sf-gradient--from) calc((min(32, var(--sf-gradient--strength, 16) + 16)) * 1%), transparent)) 0%, light-dark(color-mix(in oklab, var(--sf-gradient--from) calc((max(4, var(--sf-gradient--strength, 16) - 4)) * 1%), transparent), color-mix(in oklab, var(--sf-gradient--from) calc((var(--sf-gradient--strength, 16) + 4) * 1%), transparent)) 40%, transparent 100%), radial-gradient(ellipse 45% 80% at 85% 10% in oklab, light-dark(color-mix(in oklab, var(--sf-gradient--to) calc((var(--sf-gradient--strength, 16) + 8) * 1%), transparent), color-mix(in oklab, var(--sf-gradient--to) calc((min(32, var(--sf-gradient--strength, 16) + 16)) * 1%), transparent)) 0%, light-dark(color-mix(in oklab, var(--sf-gradient--to) calc((max(4, var(--sf-gradient--strength, 16) - 4)) * 1%), transparent), color-mix(in oklab, var(--sf-gradient--to) calc((var(--sf-gradient--strength, 16) + 4) * 1%), transparent)) 40%, transparent 100%);
   }
   .gradient-glow.gradient-glow-spot {
-    background-image: radial-gradient(circle calc(var(--sf-space-4) * 2.5) at 50% 33% in oklab, light-dark(color-mix(in oklab, var(--sf-gradient--from) calc((max(4, 16 - 4)) * 1%), transparent), color-mix(in oklab, var(--sf-gradient--from) calc((16 + 4) * 1%), transparent)) 0%, transparent 100%);
     background-image: radial-gradient(circle var(--sf-gradient--spot-size, calc(var(--sf-space-4) * 2.5)) at var(--sf-gradient--spot-x, 50%) var(--sf-gradient--spot-y, 33%) in oklab, light-dark(color-mix(in oklab, var(--sf-gradient--from) calc((max(4, var(--sf-gradient--strength, 16) - 4)) * 1%), transparent), color-mix(in oklab, var(--sf-gradient--from) calc((var(--sf-gradient--strength, 16) + 4) * 1%), transparent)) 0%, transparent 100%);
   }
   .gradient-tint {
     --sf-gradient--angle: 180deg;
-    background-image: linear-gradient(var(--sf-gradient--angle) in oklab, light-dark(color-mix(in oklab, var(--sf-gradient--from) calc((16) * 1%), transparent), color-mix(in oklab, var(--sf-gradient--from) calc((16 + 8) * 1%), transparent)) 0, transparent calc(var(--sf-space-4) * 6));
     background-image: linear-gradient(var(--sf-gradient--angle) in oklab, light-dark(color-mix(in oklab, var(--sf-gradient--from) calc((var(--sf-gradient--strength, 16)) * 1%), transparent), color-mix(in oklab, var(--sf-gradient--from) calc((var(--sf-gradient--strength, 16) + 8) * 1%), transparent)) 0, transparent var(--sf-gradient--tint-size, calc(var(--sf-space-4) * 6)));
   }
   .gradient-duo {
@@ -403,7 +400,6 @@
     --sf-gradient--angle: 120deg;
     background-color: var(--sf-gradient--from);
     color: var(--sf-white);
-    background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--from), var(--sf-gradient--to));
     background-image: linear-gradient(var(--sf-gradient--angle) in oklab, var(--sf-gradient--from), var(--sf-gradient--to));
     --sf-surface-place: var(--sf-gradient--from);
     --sf-surface-place-solid: var(--sf-gradient--from);
@@ -476,17 +472,12 @@
     --sf-gradient--to: light-dark(var(--sf-gradient--c-80, var(--sf-primary-80)), var(--sf-gradient--c-20, var(--sf-primary-20)));
     --sf-gradient--angle: 135deg;
     background-color: var(--sf-gradient--from);
-    color: light-dark(var(--sf-primary-10), var(--sf-primary-90));
     color: light-dark(var(--sf-gradient--c-10, var(--sf-primary-10)), var(--sf-gradient--c-90, var(--sf-primary-90)));
-    background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--from), var(--sf-gradient--to));
     background-image: linear-gradient(var(--sf-gradient--angle) in oklab, var(--sf-gradient--from), var(--sf-gradient--to));
   }
   .gradient-scrim {
     --sf-gradient--angle: 0deg;
     color: var(--sf-white);
-    background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-black--alfa-64) 0%, var(--sf-black--alfa-64) calc(100% - calc(var(--sf-space-4) * 4)), var(--sf-black--alfa-48) calc(100% - calc(var(--sf-space-4) * 4) * 0.85), var(--sf-black--alfa-28) calc(100% - calc(var(--sf-space-4) * 4) * 0.7), var(--sf-black--alfa-16) calc(100% - calc(var(--sf-space-4) * 4) * 0.45), var(--sf-black--alfa-8) calc(100% - calc(var(--sf-space-4) * 4) * 0.25), transparent 100%);
-    background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-black--alfa-64) 0%, var(--sf-black--alfa-64) calc(100% - var(--sf-gradient--scrim-ramp, calc(var(--sf-space-4) * 4))), var(--sf-black--alfa-48) calc(100% - var(--sf-gradient--scrim-ramp, calc(var(--sf-space-4) * 4)) * 0.85), var(--sf-black--alfa-28) calc(100% - var(--sf-gradient--scrim-ramp, calc(var(--sf-space-4) * 4)) * 0.7), var(--sf-black--alfa-16) calc(100% - var(--sf-gradient--scrim-ramp, calc(var(--sf-space-4) * 4)) * 0.45), var(--sf-black--alfa-8) calc(100% - var(--sf-gradient--scrim-ramp, calc(var(--sf-space-4) * 4)) * 0.25), transparent 100%);
-    background-image: linear-gradient(var(--sf-gradient--angle) in oklab, var(--sf-black--alfa-64) 0%, var(--sf-black--alfa-64) calc(100% - calc(var(--sf-space-4) * 4)), var(--sf-black--alfa-48) calc(100% - calc(var(--sf-space-4) * 4) * 0.85), var(--sf-black--alfa-28) calc(100% - calc(var(--sf-space-4) * 4) * 0.7), var(--sf-black--alfa-16) calc(100% - calc(var(--sf-space-4) * 4) * 0.45), var(--sf-black--alfa-8) calc(100% - calc(var(--sf-space-4) * 4) * 0.25), transparent 100%);
     background-image: linear-gradient(var(--sf-gradient--angle) in oklab, var(--sf-black--alfa-64) 0%, var(--sf-black--alfa-64) calc(100% - var(--sf-gradient--scrim-ramp, calc(var(--sf-space-4) * 4))), var(--sf-black--alfa-48) calc(100% - var(--sf-gradient--scrim-ramp, calc(var(--sf-space-4) * 4)) * 0.85), var(--sf-black--alfa-28) calc(100% - var(--sf-gradient--scrim-ramp, calc(var(--sf-space-4) * 4)) * 0.7), var(--sf-black--alfa-16) calc(100% - var(--sf-gradient--scrim-ramp, calc(var(--sf-space-4) * 4)) * 0.45), var(--sf-black--alfa-8) calc(100% - var(--sf-gradient--scrim-ramp, calc(var(--sf-space-4) * 4)) * 0.25), transparent 100%);
   }
   .gradient-scrim.gradient-scrim-plate {
@@ -495,8 +486,6 @@
   }
   .gradient-fade {
     --sf-gradient--angle: 180deg;
-    -webkit-mask-image: linear-gradient(var(--sf-gradient--angle), var(--sf-black) calc(100% - var(--sf-space-4)), transparent);
-            mask-image: linear-gradient(var(--sf-gradient--angle), var(--sf-black) calc(100% - var(--sf-space-4)), transparent);
     -webkit-mask-image: linear-gradient(var(--sf-gradient--angle), var(--sf-black) calc(100% - var(--sf-gradient--fade-size, var(--sf-space-4))), transparent);
             mask-image: linear-gradient(var(--sf-gradient--angle), var(--sf-black) calc(100% - var(--sf-gradient--fade-size, var(--sf-space-4))), transparent);
   }
@@ -504,7 +493,6 @@
     --sf-gradient--from: light-dark(var(--sf-gradient--c-40, var(--sf-primary-40)), var(--sf-gradient--c-80, var(--sf-primary-80)));
     --sf-gradient--to: light-dark(var(--sf-gradient--p-40, var(--sf-tertiary-40)), var(--sf-gradient--p-80, var(--sf-tertiary-80)));
     --sf-gradient--angle: 90deg;
-    background-image: linear-gradient(var(--sf-gradient--angle), var(--sf-gradient--from), var(--sf-gradient--to));
     background-image: linear-gradient(var(--sf-gradient--angle) in oklab, var(--sf-gradient--from), var(--sf-gradient--to));
     -webkit-background-clip: text;
     background-clip: text;

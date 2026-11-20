@@ -137,24 +137,8 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tile-metric{
-    text-align: left;
-  }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-tile-metric{
-    text-align: left;
-    }
-  }
   .sf-tile-metric:where(:dir(ltr)){
     text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tile-metric{
-    text-align: right;
-  }
-  @supports not (text-align: start){
-  [dir="rtl"] .sf-tile-metric{
-    text-align: right;
-    }
   }
   .sf-tile-metric:where(:dir(rtl)){
     text-align: right;
@@ -184,7 +168,6 @@
     padding: var(--sf-tile-metric--padding);
     border-width: var(--sf-tile-metric--border);
     border-style: solid;
-    border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-tile-metric-radius, var(--sf-radius--surface));
     font: inherit;
     font-family: var(--sf-text--family);
@@ -242,7 +225,6 @@
     -webkit-font-feature-settings: "tnum";
             font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
-    font-weight: 600;
     font-weight: var(--sf-text--font-weight-6, 600);
     line-height: var(--sf-tile-metric--value-line);
     text-overflow: ellipsis;
@@ -394,15 +376,12 @@
 }
 @layer sf.paint {
   .sf-tile-metric {
-    border-color: var(--sf-outline-variant);
     border-color: var(--sf-tile-metric-border-color, var(--sf-outline-variant));
-    background: var(--sf-surface-card);
     background: var(--sf-tile-metric-background-color, var(--sf-tile-metric-background, var(--sf-surface-card)));
     color: var(--sf-on-surface);
   }
   @media (hover: hover) {
     .sf-tile-metric.sf-tile-metric--target:hover {
-      background: var(--sf-surface-container-hover);
       background: var(--sf-tile-metric-hover-background-color, var(--sf-tile-metric-hover-background, var(--sf-surface-container-hover)));
     }
   }
@@ -414,7 +393,6 @@
     color: var(--sf-on-surface-variant);
   }
   .sf-tile-metric-value {
-    color: var(--sf-on-surface);
     color: var(--sf-tile-metric-value-color, var(--sf-on-surface));
   }
   .sf-tile-metric-unit {

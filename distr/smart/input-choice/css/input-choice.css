@@ -50,24 +50,8 @@
       line-height: var(--sf-text-height-1);
     }
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice .sf-choice-required{
-    margin-left: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-choice .sf-choice-required{
-    margin-left: var(--sf-space-1\/4);
-    }
-  }
   .sf-choice .sf-choice-required:where(:dir(ltr)){
     margin-left: var(--sf-space-1\/4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-choice .sf-choice-required{
-    margin-right: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-choice .sf-choice-required{
-    margin-right: var(--sf-space-1\/4);
-    }
   }
   .sf-choice .sf-choice-required:where(:dir(rtl)){
     margin-right: var(--sf-space-1\/4);
@@ -228,24 +212,8 @@
   }
   /* An option's icon stands on the name line at the line's height, as the class
      checkbox sizes its icon. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice .sf-choice-icon{
-    margin-right: calc(var(--sf-ui-1--text-space-x) - var(--sf-space-1\/3));
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-choice .sf-choice-icon{
-    margin-right: calc(var(--sf-ui-1--text-space-x) - var(--sf-space-1\/3));
-    }
-  }
   .sf-choice .sf-choice-icon:where(:dir(ltr)){
     margin-right: calc(var(--sf-ui-1--text-space-x) - var(--sf-space-1\/3));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-choice .sf-choice-icon{
-    margin-left: calc(var(--sf-ui-1--text-space-x) - var(--sf-space-1\/3));
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-choice .sf-choice-icon{
-    margin-left: calc(var(--sf-ui-1--text-space-x) - var(--sf-space-1\/3));
-    }
   }
   .sf-choice .sf-choice-icon:where(:dir(rtl)){
     margin-left: calc(var(--sf-ui-1--text-space-x) - var(--sf-space-1\/3));
@@ -272,46 +240,14 @@
   }
   /* List: price and term a column at the end of the name line -- the price on
      the name line, the term under it. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice .sf-choice-meta{
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-choice .sf-choice-meta{
-    margin-left: auto;
-    }
-  }
   .sf-choice .sf-choice-meta:where(:dir(ltr)){
     margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-choice .sf-choice-meta{
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-choice .sf-choice-meta{
-    margin-right: auto;
-    }
   }
   .sf-choice .sf-choice-meta:where(:dir(rtl)){
     margin-right: auto;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice .sf-choice-meta{
-    text-align: right;
-  }
-  @supports not (text-align: end){
-  html:not([dir="rtl"]) .sf-choice .sf-choice-meta{
-    text-align: right;
-    }
-  }
   .sf-choice .sf-choice-meta:where(:dir(ltr)){
     text-align: right;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-choice .sf-choice-meta{
-    text-align: left;
-  }
-  @supports not (text-align: end){
-  [dir="rtl"] .sf-choice .sf-choice-meta{
-    text-align: left;
-    }
   }
   .sf-choice .sf-choice-meta:where(:dir(rtl)){
     text-align: left;
@@ -414,46 +350,14 @@
     -webkit-margin-before: calc(var(--sf-px) * -1);
             margin-block-start: calc(var(--sf-px) * -1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice[data-layout=list] .sf-choice-card:first-child{
-    border-top-left-radius: var(--sf-choice--radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-choice[data-layout=list] .sf-choice-card:first-child{
-    border-top-left-radius: var(--sf-choice--radius);
-    }
-  }
   .sf-choice[data-layout=list] .sf-choice-card:first-child:where(:dir(ltr)){
     border-top-left-radius: var(--sf-choice--radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-choice[data-layout=list] .sf-choice-card:first-child{
-    border-top-right-radius: var(--sf-choice--radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-choice[data-layout=list] .sf-choice-card:first-child{
-    border-top-right-radius: var(--sf-choice--radius);
-    }
   }
   .sf-choice[data-layout=list] .sf-choice-card:first-child:where(:dir(rtl)){
     border-top-right-radius: var(--sf-choice--radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice[data-layout=list] .sf-choice-card:first-child{
-    border-top-right-radius: var(--sf-choice--radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-choice[data-layout=list] .sf-choice-card:first-child{
-    border-top-right-radius: var(--sf-choice--radius);
-    }
-  }
   .sf-choice[data-layout=list] .sf-choice-card:first-child:where(:dir(ltr)){
     border-top-right-radius: var(--sf-choice--radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-choice[data-layout=list] .sf-choice-card:first-child{
-    border-top-left-radius: var(--sf-choice--radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-choice[data-layout=list] .sf-choice-card:first-child{
-    border-top-left-radius: var(--sf-choice--radius);
-    }
   }
   .sf-choice[data-layout=list] .sf-choice-card:first-child:where(:dir(rtl)){
     border-top-left-radius: var(--sf-choice--radius);
@@ -462,46 +366,14 @@
     border-start-start-radius: var(--sf-choice--radius);
     border-start-end-radius: var(--sf-choice--radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice[data-layout=list] .sf-choice-card:last-child{
-    border-bottom-left-radius: var(--sf-choice--radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-choice[data-layout=list] .sf-choice-card:last-child{
-    border-bottom-left-radius: var(--sf-choice--radius);
-    }
-  }
   .sf-choice[data-layout=list] .sf-choice-card:last-child:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-choice--radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-choice[data-layout=list] .sf-choice-card:last-child{
-    border-bottom-right-radius: var(--sf-choice--radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-choice[data-layout=list] .sf-choice-card:last-child{
-    border-bottom-right-radius: var(--sf-choice--radius);
-    }
   }
   .sf-choice[data-layout=list] .sf-choice-card:last-child:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-choice--radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice[data-layout=list] .sf-choice-card:last-child{
-    border-bottom-right-radius: var(--sf-choice--radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-choice[data-layout=list] .sf-choice-card:last-child{
-    border-bottom-right-radius: var(--sf-choice--radius);
-    }
-  }
   .sf-choice[data-layout=list] .sf-choice-card:last-child:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-choice--radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-choice[data-layout=list] .sf-choice-card:last-child{
-    border-bottom-left-radius: var(--sf-choice--radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-choice[data-layout=list] .sf-choice-card:last-child{
-    border-bottom-left-radius: var(--sf-choice--radius);
-    }
   }
   .sf-choice[data-layout=list] .sf-choice-card:last-child:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-choice--radius);
@@ -618,46 +490,14 @@
       -webkit-margin-after: 0;
               margin-block-end: 0;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice[data-layout=picture] .sf-choice-media{
-      border-right-width: var(--sf-px);
-    }
-    @supports not (border-inline-end-width: initial){
-    html:not([dir="rtl"]) .sf-choice[data-layout=picture] .sf-choice-media{
-      border-right-width: var(--sf-px);
-      }
-    }
     .sf-choice[data-layout=picture] .sf-choice-media:where(:dir(ltr)){
       border-right-width: var(--sf-px);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-choice[data-layout=picture] .sf-choice-media{
-      border-left-width: var(--sf-px);
-    }
-    @supports not (border-inline-end-width: initial){
-    [dir="rtl"] .sf-choice[data-layout=picture] .sf-choice-media{
-      border-left-width: var(--sf-px);
-      }
     }
     .sf-choice[data-layout=picture] .sf-choice-media:where(:dir(rtl)){
       border-left-width: var(--sf-px);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice[data-layout=picture] .sf-choice-media{
-      border-right-style: solid;
-    }
-    @supports not (border-inline-end-style: initial){
-    html:not([dir="rtl"]) .sf-choice[data-layout=picture] .sf-choice-media{
-      border-right-style: solid;
-      }
-    }
     .sf-choice[data-layout=picture] .sf-choice-media:where(:dir(ltr)){
       border-right-style: solid;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-choice[data-layout=picture] .sf-choice-media{
-      border-left-style: solid;
-    }
-    @supports not (border-inline-end-style: initial){
-    [dir="rtl"] .sf-choice[data-layout=picture] .sf-choice-media{
-      border-left-style: solid;
-      }
     }
     .sf-choice[data-layout=picture] .sf-choice-media:where(:dir(rtl)){
       border-left-style: solid;
@@ -720,13 +560,7 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  .sf-choice .sf-choice-heading .sf-help-mark {
-    display: flex;
-    align-items: center;
-    height: var(--sf-text-height-1);
-    block-size: var(--sf-text-height-1);
-  }
-  .sf-choice .sf-choice-label-row .sf-help-mark {
+  .sf-choice :is(.sf-choice-heading, .sf-choice-label-row) .sf-help-mark {
     display: flex;
     align-items: center;
     height: var(--sf-text-height-1);
@@ -782,18 +616,10 @@
     width: 100%;
     inline-size: 100%;
   }
-  .sf-choice--list[data-control-position=end] .sf-choice-row > .sf-checkbox-box {
+  .sf-choice--list[data-control-position=end] .sf-choice-row > :is(.sf-checkbox-box, .sf-radio-button-box) {
     order: 1;
   }
-  .sf-choice--list[data-control-position=end] .sf-choice-row > .sf-radio-button-box {
-    order: 1;
-  }
-  .sf-choice--list[data-control-position=end] .sf-choice-row > .sf-checkbox-container {
-    flex: 1 1 auto;
-    min-width: 0;
-    min-inline-size: 0;
-  }
-  .sf-choice--list[data-control-position=end] .sf-choice-row > .sf-radio-button-container {
+  .sf-choice--list[data-control-position=end] .sf-choice-row > :is(.sf-checkbox-container, .sf-radio-button-container) {
     flex: 1 1 auto;
     min-width: 0;
     min-inline-size: 0;
@@ -822,11 +648,7 @@
      box-to-name gap of C105 H2); a name drawn as a tonal badge keeps the line.
      The circle is the menu's colour row (C85): the line less a quarter step,
      on a hairline. */
-  .sf-choice--list .sf-checkbox-top {
-    align-items: center;
-    gap: var(--sf-space-1\/4);
-  }
-  .sf-choice--list .sf-radio-button-top {
+  .sf-choice--list :is(.sf-checkbox-top, .sf-radio-button-top) {
     align-items: center;
     gap: var(--sf-space-1\/4);
   }
@@ -835,55 +657,13 @@
   }
   /* A card's picture or colour circle stands on the name line before the
      name, as its icon does (FO4-1). */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice:not(.sf-choice--list) .sf-choice-avatar{
+  .sf-choice:not(.sf-choice--list) :is(.sf-choice-avatar, .sf-choice-swatch):where(:dir(ltr)){
     margin-right: var(--sf-space-1\/2);
   }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-choice:not(.sf-choice--list) .sf-choice-avatar{
-    margin-right: var(--sf-space-1\/2);
-    }
-  }
-  .sf-choice:not(.sf-choice--list) .sf-choice-avatar:where(:dir(ltr)){
-    margin-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-choice:not(.sf-choice--list) .sf-choice-avatar{
+  .sf-choice:not(.sf-choice--list) :is(.sf-choice-avatar, .sf-choice-swatch):where(:dir(rtl)){
     margin-left: var(--sf-space-1\/2);
   }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-choice:not(.sf-choice--list) .sf-choice-avatar{
-    margin-left: var(--sf-space-1\/2);
-    }
-  }
-  .sf-choice:not(.sf-choice--list) .sf-choice-avatar:where(:dir(rtl)){
-    margin-left: var(--sf-space-1\/2);
-  }
-  .sf-choice:not(.sf-choice--list) .sf-choice-avatar {
-    -webkit-margin-end: var(--sf-space-1\/2);
-            margin-inline-end: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice:not(.sf-choice--list) .sf-choice-swatch{
-    margin-right: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-choice:not(.sf-choice--list) .sf-choice-swatch{
-    margin-right: var(--sf-space-1\/2);
-    }
-  }
-  .sf-choice:not(.sf-choice--list) .sf-choice-swatch:where(:dir(ltr)){
-    margin-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-choice:not(.sf-choice--list) .sf-choice-swatch{
-    margin-left: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-choice:not(.sf-choice--list) .sf-choice-swatch{
-    margin-left: var(--sf-space-1\/2);
-    }
-  }
-  .sf-choice:not(.sf-choice--list) .sf-choice-swatch:where(:dir(rtl)){
-    margin-left: var(--sf-space-1\/2);
-  }
-  .sf-choice:not(.sf-choice--list) .sf-choice-swatch {
+  .sf-choice:not(.sf-choice--list) :is(.sf-choice-avatar, .sf-choice-swatch) {
     -webkit-margin-end: var(--sf-space-1\/2);
             margin-inline-end: var(--sf-space-1\/2);
   }
@@ -1058,10 +838,7 @@
     border-color: var(--sf-outline-disabled);
     color: var(--sf-on-surface-disabled);
   }
-  .sf-choice .sf-choice-card--disabled .sf-choice-caption {
-    color: inherit;
-  }
-  .sf-choice .sf-choice-card--disabled .sf-choice-term {
+  .sf-choice .sf-choice-card--disabled :is(.sf-choice-caption, .sf-choice-term) {
     color: inherit;
   }
   .sf-choice .sf-choice-card--disabled .sf-choice-rule {
@@ -1078,24 +855,8 @@
     background-color: var(--sf-surface-area);
   }
   @container sf-choice (inline-size < 30rem) {
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-choice[data-layout=picture] .sf-choice-media{
-      border-right-color: var(--sf-outline-variant);
-    }
-    @supports not (border-inline-end-color: initial){
-    html:not([dir="rtl"]) .sf-choice[data-layout=picture] .sf-choice-media{
-      border-right-color: var(--sf-outline-variant);
-      }
-    }
     .sf-choice[data-layout=picture] .sf-choice-media:where(:dir(ltr)){
       border-right-color: var(--sf-outline-variant);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-choice[data-layout=picture] .sf-choice-media{
-      border-left-color: var(--sf-outline-variant);
-    }
-    @supports not (border-inline-end-color: initial){
-    [dir="rtl"] .sf-choice[data-layout=picture] .sf-choice-media{
-      border-left-color: var(--sf-outline-variant);
-      }
     }
     .sf-choice[data-layout=picture] .sf-choice-media:where(:dir(rtl)){
       border-left-color: var(--sf-outline-variant);
@@ -1122,7 +883,6 @@
   }
   .sf-choice .sf-choice-swatch {
     border-color: var(--sf-outline-variant);
-    background-color: transparent;
     background-color: var(--sf-choice--swatch, transparent);
   }
   .sf-choice--list .sf-choice-status {
@@ -1176,7 +936,6 @@
   }
   .sf-choice--list .sf-choice-search[focus-within] {
     border-bottom-color: var(--sf-primary);
-    border-bottom-color: var(--sf-primary);
     border-block-end-color: var(--sf-primary);
   }
   .sf-choice--list .sf-choice-search:focus-within {
@@ -1221,5 +980,134 @@
     .sf-choice .sf-choice-card {
       transition-duration: 0s;
     }
+  }
+}
+/* panel (owner decisions C313 (3), C312 (1)): the list as a dropping
+   panel's content -- the filter field window. The search is the panel's
+   header exactly as in sf-dropdown's open list: a row of the step and the
+   panel's inset above and below (48, 44 on a phone), across the whole list,
+   its hairline from edge to edge; its text over the names; its icon over
+   the rows' pictures (avatar, icon, colour circle) or, over rows without
+   one, at its end. The rows stand at the panel's inset and the row's padding
+   (16, 12 on a phone), a picture at the row's padding from its name, as a
+   dropdown option. «Select found (N)» is a row of the list in the primary
+   ink, its glyph over the pictures. */
+@layer sf.components {
+  .sf-choice--list[data-panel] {
+    --sf-choice--panel-inset: calc(var(--sf-space-1\/4) + var(--sf-space-1\/2));
+    gap: 0;
+  }
+  .sf-choice--list[data-panel] .sf-choice-search {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--sf-space-1\/2);
+    min-height: calc(var(--sf-ui-1--control-height) + var(--sf-space-1\/4) + var(--sf-space-1\/4));
+    min-block-size: calc(var(--sf-ui-1--control-height) + var(--sf-space-1\/4) + var(--sf-space-1\/4));
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-block: 0;
+    padding-left: calc(var(--sf-space-1\/4) + var(--sf-space-1\/2));
+    padding-right: calc(var(--sf-space-1\/4) + var(--sf-space-1\/2));
+    padding-inline: calc(var(--sf-space-1\/4) + var(--sf-space-1\/2)) calc(var(--sf-space-1\/4) + var(--sf-space-1\/2));
+    border: 0;
+    border-color: revert-layer;
+    border-bottom-width: var(--sf-px);
+    border-block-end-width: var(--sf-px);
+    border-bottom-style: solid;
+    border-block-end-style: solid;
+    margin-bottom: 0;
+    -webkit-margin-after: 0;
+            margin-block-end: 0;
+  }
+  .sf-choice--list[data-panel] .sf-choice-search-input {
+    height: calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1\/4) - var(--sf-px));
+    block-size: calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1\/4) - var(--sf-px));
+  }
+  .sf-choice--list[data-panel]:has(.sf-choice-avatar) .sf-choice-search-icon,
+  .sf-choice--list[data-panel]:has(.sf-choice-icon) .sf-choice-search-icon,
+  .sf-choice--list[data-panel]:has(.sf-choice-swatch) .sf-choice-search-icon {
+    order: 0;
+  }
+  /* The list scrolls under the search (C313): the band and the search stay
+     where they are and reach both edges; the panel's own scroll would draw
+     its bar beside them. */
+  .sf-choice--list[data-panel] {
+    min-height: 0;
+    min-block-size: 0;
+  }
+  .sf-choice--list[data-panel] .sf-choice-scroll {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-block-size: 0;
+    overflow-y: auto;
+    scroll-padding: var(--sf-focus-room);
+  }
+  .sf-choice--list[data-panel] .sf-choice-options {
+    align-items: stretch;
+  }
+  .sf-choice--list[data-panel] .sf-choice-row {
+    width: 100%;
+    inline-size: 100%;
+    max-width: none;
+    max-inline-size: none;
+    padding-left: var(--sf-choice--panel-inset);
+    padding-right: var(--sf-choice--panel-inset);
+    padding-inline: var(--sf-choice--panel-inset);
+  }
+  .sf-choice--list[data-panel] :is(.sf-checkbox-top, .sf-radio-button-top) {
+    gap: var(--sf-space-1\/2);
+  }
+  .sf-choice--list[data-panel] :is(.sf-choice-status, .sf-choice-message) {
+    padding-left: var(--sf-choice--panel-inset);
+    padding-right: var(--sf-choice--panel-inset);
+    padding-inline: var(--sf-choice--panel-inset);
+  }
+  .sf-choice--list[data-panel] .sf-choice-more {
+    margin-left: var(--sf-choice--panel-inset);
+    margin-right: var(--sf-choice--panel-inset);
+    margin-inline: var(--sf-choice--panel-inset);
+  }
+  .sf-choice--list[data-panel] .sf-choice-found:where(:dir(ltr)){
+    text-align: left;
+  }
+  .sf-choice--list[data-panel] .sf-choice-found:where(:dir(rtl)){
+    text-align: right;
+  }
+  .sf-choice--list[data-panel] .sf-choice-found {
+    display: flex;
+    align-items: center;
+    gap: var(--sf-space-1\/2);
+    width: 100%;
+    inline-size: 100%;
+    min-height: var(--sf-ui-1--control-height);
+    min-block-size: var(--sf-ui-1--control-height);
+    margin: 0;
+    padding: 0 var(--sf-choice--panel-inset);
+    border-width: 0;
+    font-family: var(--sf-text--family);
+    font-size: var(--sf-text-size-1);
+    line-height: var(--sf-text-height-1);
+    text-align: start;
+    cursor: pointer;
+  }
+  .sf-choice--list[data-panel] .sf-choice-found-icon {
+    --sf-icon--font-size: var(--sf-text-height-1);
+    --sf-icon--height: var(--sf-text-height-1);
+    --sf-icon--width: var(--sf-text-height-1);
+    flex: none;
+  }
+}
+@layer sf.paint {
+  .sf-choice--list[data-panel] .sf-choice-found {
+    background-color: var(--sf-transparent);
+    color: var(--sf-primary);
+    --sf-icon--color: var(--sf-primary);
+  }
+}
+@layer sf.states {
+  .sf-choice--list[data-panel] .sf-choice-found:not(:disabled):hover {
+    background-color: var(--sf-surface-state-hover);
   }
 }

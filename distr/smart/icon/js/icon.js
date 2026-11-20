@@ -410,14 +410,20 @@ function textWidth(el) {
 function namesUrl() {
   const base = String(globalThis.sfPath || '').replace(/\/+$/u, '');
   return base ? `${base}/core/contracts/icon-names.v1.json` : '';
-}
+} // The list answers null when it cannot be read: no sfPath, a server that
+// refuses it, or a sandboxed example frame (origin null) whose server sends
+// no Access-Control-Allow-Origin for JSON (DF-8). Unknown is not "no such
+// icon": an empty list made every glyph checked before its face arrived a
+// misspelling for good -- said in the console and never read again -- so
+// arrows in the docs' example frames stayed empty boxes.
+
 
 function loadNames() {
   const state = shared();
 
   if (!state.names) {
     const url = namesUrl();
-    state.names = url && typeof fetch === 'function' ? fetch(url).then(response => response.ok ? response.json() : null).then(data => Array.isArray(data?.names) ? data.names : []).catch(() => []) : Promise.resolve([]);
+    state.names = url && typeof fetch === 'function' ? fetch(url).then(response => response.ok ? response.json() : null).then(data => Array.isArray(data?.names) ? data.names : null).catch(() => null) : Promise.resolve(null);
   }
 
   return state.names;
@@ -469,9 +475,16 @@ function warnMissing(name) {
   if (state.warned.has(name)) return;
   state.warned.add(name);
   loadNames().then(names => {
-    if (names.includes(name)) {
+    // A name the list holds, or any name when the list cannot be read: a
+    // face on its way, read again when one arrives; only a name the list
+    // lacks is said.
+    if (!names || names.includes(name)) {
       state.warned.delete(name);
-      watchFaces();
+      watchFaces(); // The face may have come in while the list was on its way: no event
+      // is left to read the glyph again, and it stayed an empty box for good
+      // (AM-21, one cold load in twelve). It is read again now.
+
+      recheckSoon();
       return;
     }
 
@@ -487,18 +500,32 @@ function recheckMissing() {
   doc?.querySelectorAll?.('.sf-icon[data-sf-icon-missing]').forEach(el => checkIconGlyph(el));
 }
 
+function recheckSoon() {
+  const raf = globalThis.requestAnimationFrame;
+  if (typeof raf === 'function') raf(recheckMissing);else setTimeout(recheckMissing, 16);
+} // Watched from the first glyph marked missing, not from the answer of the
+// names list: a face that loaded between the two was never seen (AM-21).
+// Besides a face loading and a subset answer, the page's subset-pending mark
+// lifting changes the family every glyph draws in without loading anything
+// (a face already in the cache), and the fonts settling ends a wait.
+
+
 function watchFaces() {
   const state = shared();
   if (state.watching) return;
   state.watching = true;
+  const doc = globalThis.document;
+  doc?.fonts?.addEventListener?.('loadingdone', recheckSoon);
+  globalThis.addEventListener?.('sf-icons-subset:ready', recheckSoon);
+  Promise.resolve(doc?.fonts?.ready).then(recheckSoon, () => {});
+  const Watch = globalThis.MutationObserver;
 
-  const later = () => {
-    const raf = globalThis.requestAnimationFrame;
-    if (typeof raf === 'function') raf(recheckMissing);else setTimeout(recheckMissing, 16);
-  };
-
-  globalThis.document?.fonts?.addEventListener?.('loadingdone', later);
-  globalThis.addEventListener?.('sf-icons-subset:ready', later);
+  if (typeof Watch === 'function' && doc?.documentElement) {
+    new Watch(recheckSoon).observe(doc.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-sf-icons']
+    });
+  }
 } // A glyph is judged only once the face that draws it is in: marked loaded,
 // its family can still be on its way (font-display: block draws the name
 // unseen at the fallback's width, as wide as letters). Until then the check
@@ -576,6 +603,7 @@ function checkIconGlyph(el) {
         }
 
         if (!glyph.hasAttribute('data-sf-icon-missing')) glyph.setAttribute('data-sf-icon-missing', '');
+        watchFaces();
         if (name) warnMissing(name);
       } else if (glyph.hasAttribute('data-sf-icon-missing')) {
         glyph.removeAttribute('data-sf-icon-missing');
@@ -1206,7 +1234,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-icon 
 /***/ "756bf22cb853"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.4.3","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"mirror":{"type":"enum","values":["auto","on","off"],"default":"auto"},"type":{"type":"enum","values":["","outlined"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.4.4","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"mirror":{"type":"enum","values":["auto","on","off"],"default":"auto"},"type":{"type":"enum","values":["","outlined"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
 
 /***/ },
 

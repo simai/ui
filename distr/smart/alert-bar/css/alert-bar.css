@@ -107,11 +107,7 @@
     }
   }
   /* The level's fill and its ink: the theme's status roles, light and dark. */
-  .sf-alert-bar.sf-alert-bar--error {
-    --sf-alert-bar--fill: var(--sf-alert-bar--error-background);
-    --sf-alert-bar--ink: var(--sf-on-error);
-  }
-  .sf-alert-bar.sf-alert-bar--danger {
+  .sf-alert-bar:is(.sf-alert-bar--error, .sf-alert-bar--danger) {
     --sf-alert-bar--fill: var(--sf-alert-bar--error-background);
     --sf-alert-bar--ink: var(--sf-on-error);
   }
@@ -143,16 +139,7 @@
      icon button's own glyph colour; under a pointer it catches the text ink
      (C107 (4)) below. The glyph stays the bar's line, the size of its status
      icon (C112 (1)). */
-  .sf-alert-bar.sf-alert-bar--error .sf-alert-bar-row > .sf-alert-bar-close > .sf-icon-button .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
-  }
-  .sf-alert-bar.sf-alert-bar--error .sf-alert-bar-row > .sf-alert-bar-minimize > .sf-icon-button .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
-  }
-  .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-row > .sf-alert-bar-close > .sf-icon-button .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
-  }
-  .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-row > .sf-alert-bar-minimize > .sf-icon-button .sf-icon {
+  .sf-alert-bar:is(.sf-alert-bar--error, .sf-alert-bar--danger) .sf-alert-bar-row > :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > .sf-icon-button .sf-icon {
     --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
   }
   /* The accent on the bar is the bar's ink (C42 item 4, the strong places):
@@ -167,10 +154,7 @@
      icon button's own glyph colour; under a pointer it catches the text ink
      (C107 (4)) below. The glyph stays the bar's line, the size of its status
      icon (C112 (1)). */
-  .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-row > .sf-alert-bar-close > .sf-icon-button .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
-  }
-  .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-row > .sf-alert-bar-minimize > .sf-icon-button .sf-icon {
+  .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-row > :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > .sf-icon-button .sf-icon {
     --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
   }
   /* The accent on the bar is the bar's ink (C42 item 4, the strong places):
@@ -185,22 +169,10 @@
      icon button's own glyph colour; under a pointer it catches the text ink
      (C107 (4)) below. The glyph stays the bar's line, the size of its status
      icon (C112 (1)). */
-  .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-row > .sf-alert-bar-close > .sf-icon-button .sf-icon {
+  .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-row > :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > .sf-icon-button .sf-icon {
     --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
   }
-  .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-row > .sf-alert-bar-minimize > .sf-icon-button .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
-  }
-  .sf-alert-bar-row > .sf-alert-bar-close > .sf-icon-button:not(:disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-alert-bar--ink);
-  }
-  .sf-alert-bar-row > .sf-alert-bar-close > .sf-icon-button:not(:disabled):active .sf-icon {
-    --sf-icon--color: var(--sf-alert-bar--ink);
-  }
-  .sf-alert-bar-row > .sf-alert-bar-minimize > .sf-icon-button:not(:disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-alert-bar--ink);
-  }
-  .sf-alert-bar-row > .sf-alert-bar-minimize > .sf-icon-button:not(:disabled):active .sf-icon {
+  .sf-alert-bar-row > :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > .sf-icon-button:not(:disabled):is(:hover, :active) .sf-icon {
     --sf-icon--color: var(--sf-alert-bar--ink);
   }
   /* One row, wide: icon, text, actions, then close or minimize at the end. */
@@ -226,24 +198,8 @@
     --sf-icon--color: currentColor;
     flex: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-icon{
-    margin-right: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-icon{
-    margin-right: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
-    }
-  }
   .sf-alert-bar-row > .sf-alert-bar-icon:where(:dir(ltr)){
     margin-right: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-icon{
-    margin-left: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-icon{
-    margin-left: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
-    }
   }
   .sf-alert-bar-row > .sf-alert-bar-icon:where(:dir(rtl)){
     margin-left: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
@@ -285,19 +241,8 @@
   }
   /* An action keeps its label's natural width: never shrunk, never cut. The
      sf-button host is display: contents, so the native control is the item. */
-  .sf-alert-bar-actions > sf-button > button {
-    flex: none;
-    white-space: nowrap;
-  }
-  .sf-alert-bar-actions > sf-button > a {
-    flex: none;
-    white-space: nowrap;
-  }
-  .sf-alert-bar-item-actions > sf-button > button {
-    flex: none;
-    white-space: nowrap;
-  }
-  .sf-alert-bar-item-actions > sf-button > a {
+  .sf-alert-bar-actions > sf-button > :is(button, a),
+  .sf-alert-bar-item-actions > sf-button > :is(button, a) {
     flex: none;
     white-space: nowrap;
   }
@@ -315,142 +260,23 @@
   /* sf-button and sf-button-icon lay out as display: contents: the native
      control inside is the box, so placement rules name it. The end button
      stands 8 after the actions (C105 H5), not the 16 between groups. */
-  .sf-alert-bar-row > .sf-alert-bar-close > button {
+  .sf-alert-bar-row > :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > :is(button, a) {
     flex: none;
   }
-  .sf-alert-bar-row > .sf-alert-bar-close > a {
-    flex: none;
-  }
-  .sf-alert-bar-row > .sf-alert-bar-minimize > button {
-    flex: none;
-  }
-  .sf-alert-bar-row > .sf-alert-bar-minimize > a {
-    flex: none;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
+  .sf-alert-bar-row > .sf-alert-bar-actions + :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > :is(button, a):where(:dir(ltr)){
     margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
   }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button:where(:dir(ltr)){
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
+  .sf-alert-bar-row > .sf-alert-bar-actions + :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > :is(button, a):where(:dir(rtl)){
     margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
   }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button:where(:dir(rtl)){
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button {
-    -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-            margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a:where(:dir(ltr)){
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a:where(:dir(rtl)){
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a {
-    -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-            margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button:where(:dir(ltr)){
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button:where(:dir(rtl)){
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button {
-    -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-            margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a:where(:dir(ltr)){
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a:where(:dir(rtl)){
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a {
+  .sf-alert-bar-row > .sf-alert-bar-actions + :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > :is(button, a) {
     -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
             margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
   }
   /* Minimized: one thin strip of the rung below that keeps the colour, the
      icon and the count, and expands the bar on a press. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-strip{
-    text-align: left;
-  }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-alert-bar-strip{
-    text-align: left;
-    }
-  }
   .sf-alert-bar-strip:where(:dir(ltr)){
     text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-strip{
-    text-align: right;
-  }
-  @supports not (text-align: start){
-  [dir="rtl"] .sf-alert-bar-strip{
-    text-align: right;
-    }
   }
   .sf-alert-bar-strip:where(:dir(rtl)){
     text-align: right;
@@ -506,7 +332,7 @@
      the text's ink -- the level's on-colour on the bar, on-surface in the
      list -- underlined (owner decision C126; core mix/_mix__notice-link.scss).
      The actions are buttons. */
-  .sf-alert-bar .sf-alert-bar-text a[href] {
+  .sf-alert-bar :is(.sf-alert-bar-text, .sf-alert-bar-item-text) a[href] {
     -webkit-text-decoration-line: underline;
             text-decoration-line: underline;
     -webkit-text-decoration-color: currentColor;
@@ -514,66 +340,17 @@
     text-decoration-thickness: var(--sf-link--underline-weight);
     text-underline-offset: var(--sf-a3);
   }
-  .sf-alert-bar .sf-alert-bar-item-text a[href] {
-    -webkit-text-decoration-line: underline;
-            text-decoration-line: underline;
-    -webkit-text-decoration-color: currentColor;
-            text-decoration-color: currentColor;
-    text-decoration-thickness: var(--sf-link--underline-weight);
-    text-underline-offset: var(--sf-a3);
-  }
-  .sf-alert-bar .sf-alert-bar-text a[href]:hover {
+  .sf-alert-bar :is(.sf-alert-bar-text, .sf-alert-bar-item-text) a[href]:is(:hover, :active, :visited) {
     -webkit-text-decoration-color: currentColor;
             text-decoration-color: currentColor;
   }
-  .sf-alert-bar .sf-alert-bar-text a[href]:active {
-    -webkit-text-decoration-color: currentColor;
-            text-decoration-color: currentColor;
-  }
-  .sf-alert-bar .sf-alert-bar-text a[href]:visited {
-    -webkit-text-decoration-color: currentColor;
-            text-decoration-color: currentColor;
-  }
-  .sf-alert-bar .sf-alert-bar-item-text a[href]:hover {
-    -webkit-text-decoration-color: currentColor;
-            text-decoration-color: currentColor;
-  }
-  .sf-alert-bar .sf-alert-bar-item-text a[href]:active {
-    -webkit-text-decoration-color: currentColor;
-            text-decoration-color: currentColor;
-  }
-  .sf-alert-bar .sf-alert-bar-item-text a[href]:visited {
-    -webkit-text-decoration-color: currentColor;
-            text-decoration-color: currentColor;
-  }
-  .sf-alert-bar .sf-alert-bar-text a[href]:hover {
+  .sf-alert-bar :is(.sf-alert-bar-text, .sf-alert-bar-item-text) a[href]:is(:hover, :active) {
     text-decoration-thickness: calc(2 * var(--sf-link--underline-weight));
   }
-  .sf-alert-bar .sf-alert-bar-text a[href]:active {
-    text-decoration-thickness: calc(2 * var(--sf-link--underline-weight));
-  }
-  .sf-alert-bar .sf-alert-bar-item-text a[href]:hover {
-    text-decoration-thickness: calc(2 * var(--sf-link--underline-weight));
-  }
-  .sf-alert-bar .sf-alert-bar-item-text a[href]:active {
-    text-decoration-thickness: calc(2 * var(--sf-link--underline-weight));
-  }
-  .sf-alert-bar .sf-alert-bar-text a.focus-visible[href] {
+  .sf-alert-bar :is(.sf-alert-bar-text, .sf-alert-bar-item-text) a[href].focus-visible {
     outline-color: currentColor;
   }
-  .sf-alert-bar .sf-alert-bar-item-text a.focus-visible[href] {
-    outline-color: currentColor;
-  }
-  .sf-alert-bar .sf-alert-bar-text a[href].focus-visible {
-    outline-color: currentColor;
-  }
-  .sf-alert-bar .sf-alert-bar-text a[href]:focus-visible {
-    outline-color: currentColor;
-  }
-  .sf-alert-bar .sf-alert-bar-item-text a[href].focus-visible {
-    outline-color: currentColor;
-  }
-  .sf-alert-bar .sf-alert-bar-item-text a[href]:focus-visible {
+  .sf-alert-bar :is(.sf-alert-bar-text, .sf-alert-bar-item-text) a[href]:focus-visible {
     outline-color: currentColor;
   }
   /* The list of the others, under the bar (owner decision C114 (3), layout Р1,
@@ -622,24 +399,8 @@
     border-top-style: solid;
     border-block-start-style: solid;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-icon{
-    margin-right: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-icon{
-    margin-right: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
-    }
-  }
   .sf-alert-bar-item > .sf-alert-bar-item-icon:where(:dir(ltr)){
     margin-right: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-icon{
-    margin-left: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-icon{
-    margin-left: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
-    }
   }
   .sf-alert-bar-item > .sf-alert-bar-item-icon:where(:dir(rtl)){
     margin-left: calc(var(--sf-alert-bar--icon-gap) - var(--sf-alert-bar--gap));
@@ -671,12 +432,7 @@
   /* The close, or its kept place on an error row: 8 after the actions (C105
      H5), the low control's square. sf-button-icon is display: contents, so the
      native control is the item. */
-  .sf-alert-bar-item > .sf-alert-bar-item-close > button {
-    flex: none;
-  }
-  .sf-alert-bar-item > .sf-alert-bar-item-close > a {
-    flex: none;
-  }
+  .sf-alert-bar-item > .sf-alert-bar-item-close > :is(button, a),
   .sf-alert-bar-item > .sf-alert-bar-item-end {
     flex: none;
   }
@@ -686,80 +442,13 @@
     height: var(--sf-alert-bar--control);
     block-size: var(--sf-alert-bar--control);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
+  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > :is(button, a):where(:dir(ltr)), .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end:where(:dir(ltr)){
     margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
   }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button:where(:dir(ltr)){
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
+  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > :is(button, a):where(:dir(rtl)), .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end:where(:dir(rtl)){
     margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
   }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button:where(:dir(rtl)){
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button {
-    -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-            margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a:where(:dir(ltr)){
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a:where(:dir(rtl)){
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a {
-    -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-            margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end:where(:dir(ltr)){
-    margin-left: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-    }
-  }
-  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end:where(:dir(rtl)){
-    margin-right: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
-  }
+  .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > :is(button, a),
   .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end {
     -webkit-margin-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
             margin-inline-start: calc(var(--sf-alert-bar--between) - var(--sf-alert-bar--gap));
@@ -770,22 +459,16 @@
   .sf-alert-bar-item > .sf-alert-bar-item-close > .sf-icon-button .sf-icon {
     --sf-icon--color: light-dark(var(--sf-black--alfa-64), var(--sf-white--alfa-64));
   }
-  .sf-alert-bar-item > .sf-alert-bar-item-close > .sf-icon-button:not(:disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-alert-bar-item > .sf-alert-bar-item-close > .sf-icon-button:not(:disabled):active .sf-icon {
+  .sf-alert-bar-item > .sf-alert-bar-item-close > .sf-icon-button:not(:disabled):is(:hover, :active) .sf-icon {
     --sf-icon--color: var(--sf-on-surface);
   }
   @media (prefers-reduced-motion: no-preference) {
     .sf-alert-bar-list {
-      -webkit-animation: sf-alert-bar-list-in 120ms ease-out;
-              animation: sf-alert-bar-list-in 120ms ease-out;
       -webkit-animation: sf-alert-bar-list-in var(--sf-duration-fast, 120ms) var(--sf-animation, ease-out);
               animation: sf-alert-bar-list-in var(--sf-duration-fast, 120ms) var(--sf-animation, ease-out);
     }
     .sf-alert-bar-row,
     .sf-alert-bar-strip {
-      transition: background-color 120ms ease-out;
       transition: background-color var(--sf-duration-fast, 120ms) var(--sf-animation, ease-out);
     }
   }
@@ -827,12 +510,7 @@
               column-gap: var(--sf-alert-bar--icon-gap);
       grid-row-gap: var(--sf-alert-bar--under-gap);
       row-gap: var(--sf-alert-bar--under-gap);
-      padding-left: var(--sf-alert-bar--edge);
-      padding-right: var(--sf-alert-bar--edge);
-      padding-inline: var(--sf-alert-bar--edge);
-      padding-left: var(--sf-alert-bar--edge);
       padding-left: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--edge));
-      padding-right: var(--sf-alert-bar--edge);
       padding-right: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--edge));
       padding-inline: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--edge));
     }
@@ -841,24 +519,8 @@
       -webkit-padding-after: calc(var(--sf-alert-bar--padding-block) + (var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2 + (var(--sf-alert-bar--line) - 1cap) / 4);
               padding-block-end: calc(var(--sf-alert-bar--padding-block) + (var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2 + (var(--sf-alert-bar--line) - 1cap) / 4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-icon{
-      margin-right: 0;
-    }
-    @supports not (margin-inline-end: initial){
-    html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-icon{
-      margin-right: 0;
-      }
-    }
     .sf-alert-bar-row > .sf-alert-bar-icon:where(:dir(ltr)){
       margin-right: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-icon{
-      margin-left: 0;
-    }
-    @supports not (margin-inline-end: initial){
-    [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-icon{
-      margin-left: 0;
-      }
     }
     .sf-alert-bar-row > .sf-alert-bar-icon:where(:dir(rtl)){
       margin-left: 0;
@@ -885,123 +547,17 @@
     .sf-alert-bar-text > .sf-alert-bar-meta {
       display: block;
     }
-    .sf-alert-bar-row > .sf-alert-bar-close > button {
+    .sf-alert-bar-row > :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > :is(button, a) {
       grid-column: 3;
       grid-row: 1;
     }
-    .sf-alert-bar-row > .sf-alert-bar-close > a {
-      grid-column: 3;
-      grid-row: 1;
-    }
-    .sf-alert-bar-row > .sf-alert-bar-minimize > button {
-      grid-column: 3;
-      grid-row: 1;
-    }
-    .sf-alert-bar-row > .sf-alert-bar-minimize > a {
-      grid-column: 3;
-      grid-row: 1;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
+    .sf-alert-bar-row > .sf-alert-bar-actions + :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > :is(button, a):where(:dir(ltr)){
       margin-left: 0;
     }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
-      margin-left: 0;
-      }
-    }
-    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button:where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
+    .sf-alert-bar-row > .sf-alert-bar-actions + :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > :is(button, a):where(:dir(rtl)){
       margin-right: 0;
     }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button{
-      margin-right: 0;
-      }
-    }
-    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button:where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > button {
-      -webkit-margin-start: 0;
-              margin-inline-start: 0;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
-      margin-left: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
-      margin-left: 0;
-      }
-    }
-    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a:where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
-      margin-right: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a{
-      margin-right: 0;
-      }
-    }
-    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a:where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-close > a {
-      -webkit-margin-start: 0;
-              margin-inline-start: 0;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
-      margin-left: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
-      margin-left: 0;
-      }
-    }
-    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button:where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
-      margin-right: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button{
-      margin-right: 0;
-      }
-    }
-    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button:where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > button {
-      -webkit-margin-start: 0;
-              margin-inline-start: 0;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
-      margin-left: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
-      margin-left: 0;
-      }
-    }
-    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a:where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
-      margin-right: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a{
-      margin-right: 0;
-      }
-    }
-    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a:where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-alert-bar-row > .sf-alert-bar-actions + .sf-alert-bar-minimize > a {
+    .sf-alert-bar-row > .sf-alert-bar-actions + :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > :is(button, a) {
       -webkit-margin-start: 0;
               margin-inline-start: 0;
     }
@@ -1011,55 +567,13 @@
       grid-row: 2;
       justify-content: flex-start;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-all > button{
+    .sf-alert-bar-all > :is(button, a):where(:dir(ltr)){
       margin-left: auto;
     }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-alert-bar-all > button{
-      margin-left: auto;
-      }
-    }
-    .sf-alert-bar-all > button:where(:dir(ltr)){
-      margin-left: auto;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-all > button{
+    .sf-alert-bar-all > :is(button, a):where(:dir(rtl)){
       margin-right: auto;
     }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-alert-bar-all > button{
-      margin-right: auto;
-      }
-    }
-    .sf-alert-bar-all > button:where(:dir(rtl)){
-      margin-right: auto;
-    }
-    .sf-alert-bar-all > button {
-      -webkit-margin-start: auto;
-              margin-inline-start: auto;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-all > a{
-      margin-left: auto;
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-alert-bar-all > a{
-      margin-left: auto;
-      }
-    }
-    .sf-alert-bar-all > a:where(:dir(ltr)){
-      margin-left: auto;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-all > a{
-      margin-right: auto;
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-alert-bar-all > a{
-      margin-right: auto;
-      }
-    }
-    .sf-alert-bar-all > a:where(:dir(rtl)){
-      margin-right: auto;
-    }
-    .sf-alert-bar-all > a {
+    .sf-alert-bar-all > :is(button, a) {
       -webkit-margin-start: auto;
               margin-inline-start: auto;
     }
@@ -1100,12 +614,7 @@
               column-gap: var(--sf-alert-bar--icon-gap);
       grid-row-gap: var(--sf-alert-bar--under-gap);
       row-gap: var(--sf-alert-bar--under-gap);
-      padding-left: var(--sf-alert-bar--edge);
-      padding-right: var(--sf-alert-bar--edge);
-      padding-inline: var(--sf-alert-bar--edge);
-      padding-left: var(--sf-alert-bar--edge);
       padding-left: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--edge));
-      padding-right: var(--sf-alert-bar--edge);
       padding-right: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--edge));
       padding-inline: var(--sf-alert-bar-padding-inline, var(--sf-alert-bar--edge));
     }
@@ -1114,24 +623,8 @@
       -webkit-padding-after: calc(var(--sf-alert-bar--padding-block) + (var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2 + (var(--sf-alert-bar--line) - 1cap) / 4);
               padding-block-end: calc(var(--sf-alert-bar--padding-block) + (var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2 + (var(--sf-alert-bar--line) - 1cap) / 4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-icon{
-      margin-right: 0;
-    }
-    @supports not (margin-inline-end: initial){
-    html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-icon{
-      margin-right: 0;
-      }
-    }
     .sf-alert-bar-item > .sf-alert-bar-item-icon:where(:dir(ltr)){
       margin-right: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-icon{
-      margin-left: 0;
-    }
-    @supports not (margin-inline-end: initial){
-    [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-icon{
-      margin-left: 0;
-      }
     }
     .sf-alert-bar-item > .sf-alert-bar-item-icon:where(:dir(rtl)){
       margin-left: 0;
@@ -1152,92 +645,18 @@
       -webkit-padding-before: calc((var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2);
               padding-block-start: calc((var(--sf-alert-bar--control) - var(--sf-alert-bar--line)) / 2);
     }
-    .sf-alert-bar-item > .sf-alert-bar-item-close > button {
-      grid-column: 3;
-      grid-row: 1;
-    }
-    .sf-alert-bar-item > .sf-alert-bar-item-close > a {
-      grid-column: 3;
-      grid-row: 1;
-    }
+    .sf-alert-bar-item > .sf-alert-bar-item-close > :is(button, a),
     .sf-alert-bar-item > .sf-alert-bar-item-end {
       grid-column: 3;
       grid-row: 1;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
+    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > :is(button, a):where(:dir(ltr)), .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end:where(:dir(ltr)){
       margin-left: 0;
     }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
-      margin-left: 0;
-      }
-    }
-    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button:where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
+    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > :is(button, a):where(:dir(rtl)), .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end:where(:dir(rtl)){
       margin-right: 0;
     }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button{
-      margin-right: 0;
-      }
-    }
-    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button:where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > button {
-      -webkit-margin-start: 0;
-              margin-inline-start: 0;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
-      margin-left: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
-      margin-left: 0;
-      }
-    }
-    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a:where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
-      margin-right: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a{
-      margin-right: 0;
-      }
-    }
-    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a:where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > a {
-      -webkit-margin-start: 0;
-              margin-inline-start: 0;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
-      margin-left: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
-      margin-left: 0;
-      }
-    }
-    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end:where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
-      margin-right: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end{
-      margin-right: 0;
-      }
-    }
-    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end:where(:dir(rtl)){
-      margin-right: 0;
-    }
+    .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-close > :is(button, a),
     .sf-alert-bar-item > .sf-alert-bar-item-actions + .sf-alert-bar-item-end {
       -webkit-margin-start: 0;
               margin-inline-start: 0;
@@ -1250,7 +669,7 @@
   }
 }
 @layer sf.paint {
-  .sf-alert-bar.sf-alert-bar--error .sf-alert-bar-row {
+  .sf-alert-bar:is(.sf-alert-bar--error, .sf-alert-bar--danger) :is(.sf-alert-bar-row, .sf-alert-bar-strip) {
     --sf-surface-place: var(--sf-error);
     --sf-surface-place-solid: var(--sf-error);
     --sf-surface-place-ground: var(--sf-error);
@@ -1318,211 +737,7 @@
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
   }
-  .sf-alert-bar.sf-alert-bar--error .sf-alert-bar-strip {
-    --sf-surface-place: var(--sf-error);
-    --sf-surface-place-solid: var(--sf-error);
-    --sf-surface-place-ground: var(--sf-error);
-    --sf-surface-underlay: initial;
-    --sf-surface-place-fill: initial;
-    --sf-place--ink-variant: var(--sf-on-error);
-    --sf-place--ink: var(--sf-on-error);
-    --sf-place--fill-surface: initial;
-    --sf-on-surface: var(--sf-on-error);
-    --sf-on-surface-icon: var(--sf-on-error);
-    --sf-on-surface-hover: var(--sf-on-error);
-    --sf-on-surface-active: var(--sf-on-error);
-    --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
-    --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
-    --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-4));
-    --sf-surface-state-select: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-8));
-    --sf-surface-state-active: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
-    --sf-surface-container-hover: light-dark(var(--sf-white--alfa-16), var(--sf-error-20--alfa-16));
-    --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-error-20--alfa-20));
-    --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
-    --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-error-20--alfa-24));
-    --sf-place--container-outline: var(--sf-outline);
-    --sf-code--color: var(--sf-on-error);
-    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-8));
-    --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
-    --sf-on-surface-muted: var(--sf-on-surface-disabled);
-    --sf-disable: var(--sf-surface-disabled);
-    --sf-on-disable: var(--sf-on-surface-disabled);
-    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
-    --sf-surface-transparent-active: var(--sf-surface-state-active);
-    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
-    --sf-surface-transparent-select: var(--sf-surface-state-select);
-    --sf-place--outer-primary: var(--sf-primary);
-    --sf-place--outer-primary-hover: var(--sf-primary-hover);
-    --sf-place--outer-primary-active: var(--sf-primary-active);
-    --sf-place--outer-on-primary: var(--sf-on-primary);
-    --sf-place--outer-primary-container: var(--sf-primary-container);
-    --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
-    --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
-    --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
-    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
-    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
-    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
-    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
-    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
-    --sf-place--outer-on-info-container: var(--sf-on-info-container);
-    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
-    --sf-place--outer-on-success-container: var(--sf-on-success-container);
-    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
-    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
-    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
-    --sf-place--outer-on-error-container: var(--sf-on-error-container);
-    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
-    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
-    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
-    --sf-place--outer-link: var(--sf-link);
-    --sf-place--outer-link-hover: var(--sf-link-hover);
-    --sf-place--outer-link-active: var(--sf-link-active);
-    --sf-place--outer-link-visited: var(--sf-link-visited);
-    --sf-place--outer-focus: var(--sf-focus);
-    --sf-place--outer-focus--color: var(--sf-focus--color);
-    --sf-surface-place: var(--sf-alert-bar--fill);
-    --sf-surface-place-solid: var(--sf-alert-bar--fill);
-    --sf-surface-place-ground: var(--sf-alert-bar--fill);
-  }
-  .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-row {
-    --sf-surface-place: var(--sf-error);
-    --sf-surface-place-solid: var(--sf-error);
-    --sf-surface-place-ground: var(--sf-error);
-    --sf-surface-underlay: initial;
-    --sf-surface-place-fill: initial;
-    --sf-place--ink-variant: var(--sf-on-error);
-    --sf-place--ink: var(--sf-on-error);
-    --sf-place--fill-surface: initial;
-    --sf-on-surface: var(--sf-on-error);
-    --sf-on-surface-icon: var(--sf-on-error);
-    --sf-on-surface-hover: var(--sf-on-error);
-    --sf-on-surface-active: var(--sf-on-error);
-    --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
-    --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
-    --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-4));
-    --sf-surface-state-select: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-8));
-    --sf-surface-state-active: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
-    --sf-surface-container-hover: light-dark(var(--sf-white--alfa-16), var(--sf-error-20--alfa-16));
-    --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-error-20--alfa-20));
-    --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
-    --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-error-20--alfa-24));
-    --sf-place--container-outline: var(--sf-outline);
-    --sf-code--color: var(--sf-on-error);
-    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-8));
-    --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
-    --sf-on-surface-muted: var(--sf-on-surface-disabled);
-    --sf-disable: var(--sf-surface-disabled);
-    --sf-on-disable: var(--sf-on-surface-disabled);
-    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
-    --sf-surface-transparent-active: var(--sf-surface-state-active);
-    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
-    --sf-surface-transparent-select: var(--sf-surface-state-select);
-    --sf-place--outer-primary: var(--sf-primary);
-    --sf-place--outer-primary-hover: var(--sf-primary-hover);
-    --sf-place--outer-primary-active: var(--sf-primary-active);
-    --sf-place--outer-on-primary: var(--sf-on-primary);
-    --sf-place--outer-primary-container: var(--sf-primary-container);
-    --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
-    --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
-    --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
-    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
-    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
-    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
-    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
-    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
-    --sf-place--outer-on-info-container: var(--sf-on-info-container);
-    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
-    --sf-place--outer-on-success-container: var(--sf-on-success-container);
-    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
-    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
-    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
-    --sf-place--outer-on-error-container: var(--sf-on-error-container);
-    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
-    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
-    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
-    --sf-place--outer-link: var(--sf-link);
-    --sf-place--outer-link-hover: var(--sf-link-hover);
-    --sf-place--outer-link-active: var(--sf-link-active);
-    --sf-place--outer-link-visited: var(--sf-link-visited);
-    --sf-place--outer-focus: var(--sf-focus);
-    --sf-place--outer-focus--color: var(--sf-focus--color);
-    --sf-surface-place: var(--sf-alert-bar--fill);
-    --sf-surface-place-solid: var(--sf-alert-bar--fill);
-    --sf-surface-place-ground: var(--sf-alert-bar--fill);
-  }
-  .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-strip {
-    --sf-surface-place: var(--sf-error);
-    --sf-surface-place-solid: var(--sf-error);
-    --sf-surface-place-ground: var(--sf-error);
-    --sf-surface-underlay: initial;
-    --sf-surface-place-fill: initial;
-    --sf-place--ink-variant: var(--sf-on-error);
-    --sf-place--ink: var(--sf-on-error);
-    --sf-place--fill-surface: initial;
-    --sf-on-surface: var(--sf-on-error);
-    --sf-on-surface-icon: var(--sf-on-error);
-    --sf-on-surface-hover: var(--sf-on-error);
-    --sf-on-surface-active: var(--sf-on-error);
-    --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
-    --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
-    --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-4));
-    --sf-surface-state-select: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-8));
-    --sf-surface-state-active: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
-    --sf-surface-container-hover: light-dark(var(--sf-white--alfa-16), var(--sf-error-20--alfa-16));
-    --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-error-20--alfa-20));
-    --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
-    --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-error-20--alfa-24));
-    --sf-place--container-outline: var(--sf-outline);
-    --sf-code--color: var(--sf-on-error);
-    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-8));
-    --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-error-20--alfa-64));
-    --sf-on-surface-muted: var(--sf-on-surface-disabled);
-    --sf-disable: var(--sf-surface-disabled);
-    --sf-on-disable: var(--sf-on-surface-disabled);
-    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
-    --sf-surface-transparent-active: var(--sf-surface-state-active);
-    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
-    --sf-surface-transparent-select: var(--sf-surface-state-select);
-    --sf-place--outer-primary: var(--sf-primary);
-    --sf-place--outer-primary-hover: var(--sf-primary-hover);
-    --sf-place--outer-primary-active: var(--sf-primary-active);
-    --sf-place--outer-on-primary: var(--sf-on-primary);
-    --sf-place--outer-primary-container: var(--sf-primary-container);
-    --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
-    --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
-    --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
-    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
-    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
-    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
-    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
-    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
-    --sf-place--outer-on-info-container: var(--sf-on-info-container);
-    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
-    --sf-place--outer-on-success-container: var(--sf-on-success-container);
-    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
-    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
-    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
-    --sf-place--outer-on-error-container: var(--sf-on-error-container);
-    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
-    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
-    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
-    --sf-place--outer-link: var(--sf-link);
-    --sf-place--outer-link-hover: var(--sf-link-hover);
-    --sf-place--outer-link-active: var(--sf-link-active);
-    --sf-place--outer-link-visited: var(--sf-link-visited);
-    --sf-place--outer-focus: var(--sf-focus);
-    --sf-place--outer-focus--color: var(--sf-focus--color);
-    --sf-surface-place: var(--sf-alert-bar--fill);
-    --sf-surface-place-solid: var(--sf-alert-bar--fill);
-    --sf-surface-place-ground: var(--sf-alert-bar--fill);
-  }
-  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--error .sf-alert-bar-row {
+  :where(.bg-surface-4) .sf-alert-bar:is(.sf-alert-bar--error, .sf-alert-bar--danger) :is(.sf-alert-bar-row, .sf-alert-bar-strip) {
     --sf-primary: var(--sf-place--found-primary);
     --sf-primary-hover: var(--sf-place--found-primary-hover);
     --sf-primary-active: var(--sf-place--found-primary-active);
@@ -1530,31 +745,7 @@
     --sf-link-hover: var(--sf-place--found-link-hover);
     --sf-link-active: var(--sf-place--found-link-active);
   }
-  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--error .sf-alert-bar-strip {
-    --sf-primary: var(--sf-place--found-primary);
-    --sf-primary-hover: var(--sf-place--found-primary-hover);
-    --sf-primary-active: var(--sf-place--found-primary-active);
-    --sf-link: var(--sf-place--found-link);
-    --sf-link-hover: var(--sf-place--found-link-hover);
-    --sf-link-active: var(--sf-place--found-link-active);
-  }
-  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-row {
-    --sf-primary: var(--sf-place--found-primary);
-    --sf-primary-hover: var(--sf-place--found-primary-hover);
-    --sf-primary-active: var(--sf-place--found-primary-active);
-    --sf-link: var(--sf-place--found-link);
-    --sf-link-hover: var(--sf-place--found-link-hover);
-    --sf-link-active: var(--sf-place--found-link-active);
-  }
-  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-strip {
-    --sf-primary: var(--sf-place--found-primary);
-    --sf-primary-hover: var(--sf-place--found-primary-hover);
-    --sf-primary-active: var(--sf-place--found-primary-active);
-    --sf-link: var(--sf-place--found-link);
-    --sf-link-hover: var(--sf-place--found-link-hover);
-    --sf-link-active: var(--sf-place--found-link-active);
-  }
-  .sf-alert-bar.sf-alert-bar--error .sf-alert-bar-row > * {
+  .sf-alert-bar:is(.sf-alert-bar--error, .sf-alert-bar--danger) :is(.sf-alert-bar-row, .sf-alert-bar-strip) > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-error-20));
     --sf-primary-hover: light-dark(var(--sf-error-95), var(--sf-error-15));
     --sf-primary-active: light-dark(var(--sf-error-90), var(--sf-error-10));
@@ -1590,115 +781,7 @@
     --sf-focus: light-dark(var(--sf-white), var(--sf-error-20));
     --sf-focus--color: var(--sf-focus);
   }
-  .sf-alert-bar.sf-alert-bar--error .sf-alert-bar-strip > * {
-    --sf-primary: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-primary-hover: light-dark(var(--sf-error-95), var(--sf-error-15));
-    --sf-primary-active: light-dark(var(--sf-error-90), var(--sf-error-10));
-    --sf-on-primary: var(--sf-surface-place-solid, light-dark(var(--sf-error-40), var(--sf-error-80)));
-    --sf-primary-container: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
-    --sf-primary-container-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
-    --sf-primary-container-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
-    --sf-on-primary-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-place--plate: light-dark(var(--sf-white), var(--sf-error-90));
-    --sf-place--on-plate: light-dark(var(--sf-error-40), var(--sf-error-20));
-    --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
-    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
-    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-link: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-link-hover: light-dark(var(--sf-error-95), var(--sf-error-25));
-    --sf-link-active: light-dark(var(--sf-error-90), var(--sf-error-30));
-    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
-    --sf-focus: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-focus--color: var(--sf-focus);
-  }
-  .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-row > * {
-    --sf-primary: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-primary-hover: light-dark(var(--sf-error-95), var(--sf-error-15));
-    --sf-primary-active: light-dark(var(--sf-error-90), var(--sf-error-10));
-    --sf-on-primary: var(--sf-surface-place-solid, light-dark(var(--sf-error-40), var(--sf-error-80)));
-    --sf-primary-container: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
-    --sf-primary-container-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
-    --sf-primary-container-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
-    --sf-on-primary-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-place--plate: light-dark(var(--sf-white), var(--sf-error-90));
-    --sf-place--on-plate: light-dark(var(--sf-error-40), var(--sf-error-20));
-    --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
-    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
-    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-link: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-link-hover: light-dark(var(--sf-error-95), var(--sf-error-25));
-    --sf-link-active: light-dark(var(--sf-error-90), var(--sf-error-30));
-    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
-    --sf-focus: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-focus--color: var(--sf-focus);
-  }
-  .sf-alert-bar.sf-alert-bar--danger .sf-alert-bar-strip > * {
-    --sf-primary: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-primary-hover: light-dark(var(--sf-error-95), var(--sf-error-15));
-    --sf-primary-active: light-dark(var(--sf-error-90), var(--sf-error-10));
-    --sf-on-primary: var(--sf-surface-place-solid, light-dark(var(--sf-error-40), var(--sf-error-80)));
-    --sf-primary-container: light-dark(var(--sf-white--alfa-12), var(--sf-error-20--alfa-12));
-    --sf-primary-container-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
-    --sf-primary-container-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
-    --sf-on-primary-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-place--plate: light-dark(var(--sf-white), var(--sf-error-90));
-    --sf-place--on-plate: light-dark(var(--sf-error-40), var(--sf-error-20));
-    --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-16));
-    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-20));
-    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-link: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-link-hover: light-dark(var(--sf-error-95), var(--sf-error-25));
-    --sf-link-active: light-dark(var(--sf-error-90), var(--sf-error-30));
-    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
-    --sf-focus: light-dark(var(--sf-white), var(--sf-error-20));
-    --sf-focus--color: var(--sf-focus);
-  }
-  .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-row {
+  .sf-alert-bar.sf-alert-bar--warning :is(.sf-alert-bar-row, .sf-alert-bar-strip) {
     --sf-surface-place: var(--sf-warning);
     --sf-surface-place-solid: var(--sf-warning);
     --sf-surface-place-ground: var(--sf-warning);
@@ -1766,75 +849,7 @@
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
   }
-  .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-strip {
-    --sf-surface-place: var(--sf-warning);
-    --sf-surface-place-solid: var(--sf-warning);
-    --sf-surface-place-ground: var(--sf-warning);
-    --sf-surface-underlay: initial;
-    --sf-surface-place-fill: initial;
-    --sf-place--ink-variant: var(--sf-on-warning);
-    --sf-place--ink: var(--sf-on-warning);
-    --sf-place--fill-surface: initial;
-    --sf-on-surface: var(--sf-on-warning);
-    --sf-on-surface-icon: var(--sf-on-warning);
-    --sf-on-surface-hover: var(--sf-on-warning);
-    --sf-on-surface-active: var(--sf-on-warning);
-    --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
-    --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
-    --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-warning-20--alfa-4));
-    --sf-surface-state-select: light-dark(var(--sf-white--alfa-8), var(--sf-warning-20--alfa-8));
-    --sf-surface-state-active: light-dark(var(--sf-white--alfa-12), var(--sf-warning-20--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-white--alfa-12), var(--sf-warning-20--alfa-12));
-    --sf-surface-container-hover: light-dark(var(--sf-white--alfa-16), var(--sf-warning-20--alfa-16));
-    --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-warning-20--alfa-20));
-    --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
-    --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-warning-20--alfa-24));
-    --sf-place--container-outline: var(--sf-outline);
-    --sf-code--color: var(--sf-on-warning);
-    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-warning-20--alfa-12));
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-warning-20--alfa-8));
-    --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-warning-20--alfa-64));
-    --sf-on-surface-muted: var(--sf-on-surface-disabled);
-    --sf-disable: var(--sf-surface-disabled);
-    --sf-on-disable: var(--sf-on-surface-disabled);
-    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
-    --sf-surface-transparent-active: var(--sf-surface-state-active);
-    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
-    --sf-surface-transparent-select: var(--sf-surface-state-select);
-    --sf-place--outer-primary: var(--sf-primary);
-    --sf-place--outer-primary-hover: var(--sf-primary-hover);
-    --sf-place--outer-primary-active: var(--sf-primary-active);
-    --sf-place--outer-on-primary: var(--sf-on-primary);
-    --sf-place--outer-primary-container: var(--sf-primary-container);
-    --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
-    --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
-    --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
-    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
-    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
-    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
-    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
-    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
-    --sf-place--outer-on-info-container: var(--sf-on-info-container);
-    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
-    --sf-place--outer-on-success-container: var(--sf-on-success-container);
-    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
-    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
-    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
-    --sf-place--outer-on-error-container: var(--sf-on-error-container);
-    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
-    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
-    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
-    --sf-place--outer-link: var(--sf-link);
-    --sf-place--outer-link-hover: var(--sf-link-hover);
-    --sf-place--outer-link-active: var(--sf-link-active);
-    --sf-place--outer-link-visited: var(--sf-link-visited);
-    --sf-place--outer-focus: var(--sf-focus);
-    --sf-place--outer-focus--color: var(--sf-focus--color);
-    --sf-surface-place: var(--sf-alert-bar--fill);
-    --sf-surface-place-solid: var(--sf-alert-bar--fill);
-    --sf-surface-place-ground: var(--sf-alert-bar--fill);
-  }
-  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-row {
+  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--warning :is(.sf-alert-bar-row, .sf-alert-bar-strip) {
     --sf-primary: var(--sf-place--found-primary);
     --sf-primary-hover: var(--sf-place--found-primary-hover);
     --sf-primary-active: var(--sf-place--found-primary-active);
@@ -1842,15 +857,7 @@
     --sf-link-hover: var(--sf-place--found-link-hover);
     --sf-link-active: var(--sf-place--found-link-active);
   }
-  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-strip {
-    --sf-primary: var(--sf-place--found-primary);
-    --sf-primary-hover: var(--sf-place--found-primary-hover);
-    --sf-primary-active: var(--sf-place--found-primary-active);
-    --sf-link: var(--sf-place--found-link);
-    --sf-link-hover: var(--sf-place--found-link-hover);
-    --sf-link-active: var(--sf-place--found-link-active);
-  }
-  .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-row > * {
+  .sf-alert-bar.sf-alert-bar--warning :is(.sf-alert-bar-row, .sf-alert-bar-strip) > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-warning-20));
     --sf-primary-hover: light-dark(var(--sf-warning-95), var(--sf-warning-15));
     --sf-primary-active: light-dark(var(--sf-warning-90), var(--sf-warning-10));
@@ -1886,43 +893,7 @@
     --sf-focus: light-dark(var(--sf-white), var(--sf-warning-20));
     --sf-focus--color: var(--sf-focus);
   }
-  .sf-alert-bar.sf-alert-bar--warning .sf-alert-bar-strip > * {
-    --sf-primary: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-primary-hover: light-dark(var(--sf-warning-95), var(--sf-warning-15));
-    --sf-primary-active: light-dark(var(--sf-warning-90), var(--sf-warning-10));
-    --sf-on-primary: var(--sf-surface-place-solid, light-dark(var(--sf-warning-40), var(--sf-warning-80)));
-    --sf-primary-container: light-dark(var(--sf-white--alfa-12), var(--sf-warning-20--alfa-12));
-    --sf-primary-container-hover: light-dark(var(--sf-white--alfa-8), var(--sf-warning-20--alfa-16));
-    --sf-primary-container-active: light-dark(var(--sf-white--alfa-4), var(--sf-warning-20--alfa-20));
-    --sf-on-primary-container: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-place--plate: light-dark(var(--sf-white), var(--sf-warning-90));
-    --sf-place--on-plate: light-dark(var(--sf-warning-40), var(--sf-warning-20));
-    --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-warning-20--alfa-16));
-    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-warning-20--alfa-20));
-    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-link: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-link-hover: light-dark(var(--sf-warning-95), var(--sf-warning-25));
-    --sf-link-active: light-dark(var(--sf-warning-90), var(--sf-warning-30));
-    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
-    --sf-focus: light-dark(var(--sf-white), var(--sf-warning-20));
-    --sf-focus--color: var(--sf-focus);
-  }
-  .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-row {
+  .sf-alert-bar.sf-alert-bar--info :is(.sf-alert-bar-row, .sf-alert-bar-strip) {
     --sf-surface-place: var(--sf-info);
     --sf-surface-place-solid: var(--sf-info);
     --sf-surface-place-ground: var(--sf-info);
@@ -1990,75 +961,7 @@
     --sf-surface-place-solid: var(--sf-alert-bar--fill);
     --sf-surface-place-ground: var(--sf-alert-bar--fill);
   }
-  .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-strip {
-    --sf-surface-place: var(--sf-info);
-    --sf-surface-place-solid: var(--sf-info);
-    --sf-surface-place-ground: var(--sf-info);
-    --sf-surface-underlay: initial;
-    --sf-surface-place-fill: initial;
-    --sf-place--ink-variant: var(--sf-on-info);
-    --sf-place--ink: var(--sf-on-info);
-    --sf-place--fill-surface: initial;
-    --sf-on-surface: var(--sf-on-info);
-    --sf-on-surface-icon: var(--sf-on-info);
-    --sf-on-surface-hover: var(--sf-on-info);
-    --sf-on-surface-active: var(--sf-on-info);
-    --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
-    --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
-    --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-info-20--alfa-4));
-    --sf-surface-state-select: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-8));
-    --sf-surface-state-active: light-dark(var(--sf-white--alfa-12), var(--sf-info-20--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-white--alfa-12), var(--sf-info-20--alfa-12));
-    --sf-surface-container-hover: light-dark(var(--sf-white--alfa-16), var(--sf-info-20--alfa-16));
-    --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-info-20--alfa-20));
-    --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
-    --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-info-20--alfa-24));
-    --sf-place--container-outline: var(--sf-outline);
-    --sf-code--color: var(--sf-on-info);
-    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-info-20--alfa-12));
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-8));
-    --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
-    --sf-on-surface-muted: var(--sf-on-surface-disabled);
-    --sf-disable: var(--sf-surface-disabled);
-    --sf-on-disable: var(--sf-on-surface-disabled);
-    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
-    --sf-surface-transparent-active: var(--sf-surface-state-active);
-    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
-    --sf-surface-transparent-select: var(--sf-surface-state-select);
-    --sf-place--outer-primary: var(--sf-primary);
-    --sf-place--outer-primary-hover: var(--sf-primary-hover);
-    --sf-place--outer-primary-active: var(--sf-primary-active);
-    --sf-place--outer-on-primary: var(--sf-on-primary);
-    --sf-place--outer-primary-container: var(--sf-primary-container);
-    --sf-place--outer-primary-container-hover: var(--sf-primary-container-hover);
-    --sf-place--outer-primary-container-active: var(--sf-primary-container-active);
-    --sf-place--outer-on-primary-container: var(--sf-on-primary-container);
-    --sf-place--outer-on-primary-container-graphic: var(--sf-on-primary-container-graphic);
-    --sf-place--outer-on-secondary-container: var(--sf-on-secondary-container);
-    --sf-place--outer-on-secondary-container-graphic: var(--sf-on-secondary-container-graphic);
-    --sf-place--outer-on-tertiary-container: var(--sf-on-tertiary-container);
-    --sf-place--outer-on-tertiary-container-graphic: var(--sf-on-tertiary-container-graphic);
-    --sf-place--outer-on-info-container: var(--sf-on-info-container);
-    --sf-place--outer-on-info-container-graphic: var(--sf-on-info-container-graphic);
-    --sf-place--outer-on-success-container: var(--sf-on-success-container);
-    --sf-place--outer-on-success-container-graphic: var(--sf-on-success-container-graphic);
-    --sf-place--outer-on-warning-container: var(--sf-on-warning-container);
-    --sf-place--outer-on-warning-container-graphic: var(--sf-on-warning-container-graphic);
-    --sf-place--outer-on-error-container: var(--sf-on-error-container);
-    --sf-place--outer-on-error-container-graphic: var(--sf-on-error-container-graphic);
-    --sf-place--outer-on-neutral-container: var(--sf-on-neutral-container);
-    --sf-place--outer-on-neutral-container-graphic: var(--sf-on-neutral-container-graphic);
-    --sf-place--outer-link: var(--sf-link);
-    --sf-place--outer-link-hover: var(--sf-link-hover);
-    --sf-place--outer-link-active: var(--sf-link-active);
-    --sf-place--outer-link-visited: var(--sf-link-visited);
-    --sf-place--outer-focus: var(--sf-focus);
-    --sf-place--outer-focus--color: var(--sf-focus--color);
-    --sf-surface-place: var(--sf-alert-bar--fill);
-    --sf-surface-place-solid: var(--sf-alert-bar--fill);
-    --sf-surface-place-ground: var(--sf-alert-bar--fill);
-  }
-  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-row {
+  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--info :is(.sf-alert-bar-row, .sf-alert-bar-strip) {
     --sf-primary: var(--sf-place--found-primary);
     --sf-primary-hover: var(--sf-place--found-primary-hover);
     --sf-primary-active: var(--sf-place--found-primary-active);
@@ -2066,51 +969,7 @@
     --sf-link-hover: var(--sf-place--found-link-hover);
     --sf-link-active: var(--sf-place--found-link-active);
   }
-  :where(.bg-surface-4) .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-strip {
-    --sf-primary: var(--sf-place--found-primary);
-    --sf-primary-hover: var(--sf-place--found-primary-hover);
-    --sf-primary-active: var(--sf-place--found-primary-active);
-    --sf-link: var(--sf-place--found-link);
-    --sf-link-hover: var(--sf-place--found-link-hover);
-    --sf-link-active: var(--sf-place--found-link-active);
-  }
-  .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-row > * {
-    --sf-primary: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-primary-hover: light-dark(var(--sf-info-95), var(--sf-info-15));
-    --sf-primary-active: light-dark(var(--sf-info-90), var(--sf-info-10));
-    --sf-on-primary: var(--sf-surface-place-solid, light-dark(var(--sf-info-40), var(--sf-info-80)));
-    --sf-primary-container: light-dark(var(--sf-white--alfa-12), var(--sf-info-20--alfa-12));
-    --sf-primary-container-hover: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-16));
-    --sf-primary-container-active: light-dark(var(--sf-white--alfa-4), var(--sf-info-20--alfa-20));
-    --sf-on-primary-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-place--plate: light-dark(var(--sf-white), var(--sf-info-90));
-    --sf-place--on-plate: light-dark(var(--sf-info-40), var(--sf-info-20));
-    --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-16));
-    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-info-20--alfa-20));
-    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-link: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-link-hover: light-dark(var(--sf-info-95), var(--sf-info-25));
-    --sf-link-active: light-dark(var(--sf-info-90), var(--sf-info-30));
-    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
-    --sf-focus: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-focus--color: var(--sf-focus);
-  }
-  .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-strip > * {
+  .sf-alert-bar.sf-alert-bar--info :is(.sf-alert-bar-row, .sf-alert-bar-strip) > * {
     --sf-primary: light-dark(var(--sf-white), var(--sf-info-20));
     --sf-primary-hover: light-dark(var(--sf-info-95), var(--sf-info-15));
     --sf-primary-active: light-dark(var(--sf-info-90), var(--sf-info-10));
@@ -2160,28 +1019,10 @@
   .sf-alert-bar-strip {
     border: 0;
   }
-  .sf-alert-bar .sf-alert-bar-text a[href] {
+  .sf-alert-bar :is(.sf-alert-bar-text, .sf-alert-bar-item-text) a[href] {
     color: inherit;
   }
-  .sf-alert-bar .sf-alert-bar-item-text a[href] {
-    color: inherit;
-  }
-  .sf-alert-bar .sf-alert-bar-text a[href]:hover {
-    color: inherit;
-  }
-  .sf-alert-bar .sf-alert-bar-text a[href]:active {
-    color: inherit;
-  }
-  .sf-alert-bar .sf-alert-bar-text a[href]:visited {
-    color: inherit;
-  }
-  .sf-alert-bar .sf-alert-bar-item-text a[href]:hover {
-    color: inherit;
-  }
-  .sf-alert-bar .sf-alert-bar-item-text a[href]:active {
-    color: inherit;
-  }
-  .sf-alert-bar .sf-alert-bar-item-text a[href]:visited {
+  .sf-alert-bar :is(.sf-alert-bar-text, .sf-alert-bar-item-text) a[href]:is(:hover, :active, :visited) {
     color: inherit;
   }
   .sf-alert-bar-list {
@@ -2311,10 +1152,7 @@
     border-block-start-color: var(--sf-outline-variant);
   }
   /* The level's colour is the icon's only; the theme's status roles. */
-  .sf-alert-bar-item[data-level=error] > .sf-alert-bar-item-icon {
-    color: var(--sf-error);
-  }
-  .sf-alert-bar-item[data-level=danger] > .sf-alert-bar-item-icon {
+  .sf-alert-bar-item:is([data-level=error], [data-level=danger]) > .sf-alert-bar-item-icon {
     color: var(--sf-error);
   }
   .sf-alert-bar-item[data-level=warning] > .sf-alert-bar-item-icon {

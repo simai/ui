@@ -13,17 +13,12 @@
      stays in reach. */
   .sf-drawer {
     position: fixed;
-    top: 0;
     right: 0;
     bottom: 0;
     left: 0;
     inset: 0;
-    top: 0;
-    inset-block-start: 0;
-    top: 0;
     top: var(--sf-drawer-block-start, 0);
     inset-block-start: var(--sf-drawer-block-start, 0);
-    z-index: 9000;
     z-index: var(--sf-drawer-z-index, var(--sf-layer--window, 9000));
     pointer-events: none;
   }
@@ -35,7 +30,6 @@
     left: 0;
     inset: 0;
     pointer-events: none;
-    opacity: 1;
     opacity: var(--sf-drawer-overlay-opacity, var(--sf-scrim-opacity, 1));
     transition: opacity var(--sf-duration-normal) var(--sf-ease-exit);
   }
@@ -82,16 +76,12 @@
     --sf-drawer--title-size: var(--sf-heading-4--size);
     --sf-drawer--title-height: var(--sf-heading-4--height);
     position: fixed;
-    top: 0;
     bottom: 0;
-    inset-block: 0 0;
-    top: 0;
     top: var(--sf-drawer-block-start, 0);
     bottom: 0;
     inset-block: var(--sf-drawer-block-start, 0) 0;
     display: flex;
     flex-direction: column;
-    width: min(var(--sf-g2), 100vi);
     width: min(var(--sf-drawer-width, var(--sf-g2)), 100vi);
     max-width: 100vi;
     /* The block size is the containing block's, from inset-block: 0: the
@@ -115,16 +105,12 @@
     /* Keyboard focus stops core's ring room short of the clip edge (R242). */
     scroll-padding: var(--sf-focus-room);
     pointer-events: auto;
-    border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-drawer-radius, var(--sf-radius--surface));
-    box-shadow: var(--sf-shadow-modal);
     box-shadow: var(--sf-drawer-shadow, var(--sf-shadow-modal));
     /* sf-focus-ring: none — the panel takes focus programmatically when it
        opens, so it draws no ring of its own; the ring belongs to the controls
        inside it. */
     outline: 0;
-    transition: -webkit-transform var(--sf-duration-normal) var(--sf-ease-exit);
-    transition: transform var(--sf-duration-normal) var(--sf-ease-exit);
     transition: transform var(--sf-duration-normal) var(--sf-ease-exit), -webkit-transform var(--sf-duration-normal) var(--sf-ease-exit);
   }
   /* A panel with a resizer on its edge (an sf-resizer written in the drawer's
@@ -191,112 +177,32 @@
     --sf-drawer--edge-start: calc(var(--sf-px) * 0);
     --sf-drawer--edge-end: var(--sf-px);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    left: var(--sf-drawer-stack-inset);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    left: var(--sf-drawer-stack-inset);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(ltr)){
     left: var(--sf-drawer-stack-inset);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    right: var(--sf-drawer-stack-inset);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    right: var(--sf-drawer-stack-inset);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(rtl)){
     right: var(--sf-drawer-stack-inset);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-right-width: var(--sf-px);
-  }
-  @supports not (border-inline-end-width: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-right-width: var(--sf-px);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(ltr)){
     border-right-width: var(--sf-px);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-left-width: var(--sf-px);
-  }
-  @supports not (border-inline-end-width: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-left-width: var(--sf-px);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(rtl)){
     border-left-width: var(--sf-px);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-right-style: solid;
-  }
-  @supports not (border-inline-end-style: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-right-style: solid;
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(ltr)){
     border-right-style: solid;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-left-style: solid;
-  }
-  @supports not (border-inline-end-style: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-left-style: solid;
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(rtl)){
     border-left-style: solid;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-top-left-radius: var(--sf-0);
-  }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-top-left-radius: var(--sf-0);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(ltr)){
     border-top-left-radius: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-top-right-radius: var(--sf-0);
-  }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-top-right-radius: var(--sf-0);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(rtl)){
     border-top-right-radius: var(--sf-0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-bottom-left-radius: var(--sf-0);
-  }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-bottom-left-radius: var(--sf-0);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-bottom-right-radius: var(--sf-0);
-  }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-bottom-right-radius: var(--sf-0);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-0);
@@ -317,112 +223,32 @@
     -webkit-transform: translateX(100%);
             transform: translateX(100%);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    right: var(--sf-drawer-stack-inset);
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    right: var(--sf-drawer-stack-inset);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(ltr)){
     right: var(--sf-drawer-stack-inset);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    left: var(--sf-drawer-stack-inset);
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    left: var(--sf-drawer-stack-inset);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(rtl)){
     left: var(--sf-drawer-stack-inset);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-left-width: var(--sf-px);
-  }
-  @supports not (border-inline-start-width: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-left-width: var(--sf-px);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(ltr)){
     border-left-width: var(--sf-px);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-right-width: var(--sf-px);
-  }
-  @supports not (border-inline-start-width: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-right-width: var(--sf-px);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(rtl)){
     border-right-width: var(--sf-px);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-left-style: solid;
-  }
-  @supports not (border-inline-start-style: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-left-style: solid;
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(ltr)){
     border-left-style: solid;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-right-style: solid;
-  }
-  @supports not (border-inline-start-style: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-right-style: solid;
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(rtl)){
     border-right-style: solid;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-top-right-radius: var(--sf-0);
-  }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-top-right-radius: var(--sf-0);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(ltr)){
     border-top-right-radius: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-top-left-radius: var(--sf-0);
-  }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-top-left-radius: var(--sf-0);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(rtl)){
     border-top-left-radius: var(--sf-0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-bottom-right-radius: var(--sf-0);
-  }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-bottom-right-radius: var(--sf-0);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-bottom-left-radius: var(--sf-0);
-  }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-bottom-left-radius: var(--sf-0);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-0);
@@ -448,7 +274,6 @@
     -webkit-transform: translateX(var(--sf-0));
             transform: translateX(var(--sf-0));
     /* A finger pushing the panel toward its edge (C157 (4)): it follows. */
-    translate: var(--sf-0) 0;
     translate: var(--sf-drawer-swipe, var(--sf-0)) 0;
   }
   /* A closed panel is not drawn once it has slid out. Moved by its own width
@@ -475,41 +300,9 @@
      labels on three axes. */
   /* The head stays in view while the panel scrolls under it, which is where it
      was when the body was the scroller. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-head{
-    padding-left: var(--sf-drawer--inset-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer-head{
-    padding-left: var(--sf-drawer--inset-start);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-head{
-    padding-right: var(--sf-drawer--inset-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-drawer-head{
-    padding-right: var(--sf-drawer--inset-end);
-    }
-  }
   .sf-drawer-head:where(:dir(ltr)){
     padding-left: var(--sf-drawer--inset-start);
     padding-right: var(--sf-drawer--inset-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-head{
-    padding-right: var(--sf-drawer--inset-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-drawer-head{
-    padding-right: var(--sf-drawer--inset-start);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-head{
-    padding-left: var(--sf-drawer--inset-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-drawer-head{
-    padding-left: var(--sf-drawer--inset-end);
-    }
   }
   .sf-drawer-head:where(:dir(rtl)){
     padding-right: var(--sf-drawer--inset-start);
@@ -554,94 +347,10 @@
      44 (C173 (6), C49): the close and «Назад» stay the 1/3 step in sight
      (24 on a phone) and press wider round it (study VB-1: 24 was all). */
   @media (pointer: coarse) {
-    .sf-drawer-head sf-button-close button {
+    :is(.sf-drawer-head, .sf-drawer-edge) :is(:is(sf-button-close, sf-close), :is(sf-button-icon, sf-icon-button)) button {
       position: relative;
     }
-    .sf-drawer-head sf-close button {
-      position: relative;
-    }
-    .sf-drawer-head sf-button-icon button {
-      position: relative;
-    }
-    .sf-drawer-head sf-icon-button button {
-      position: relative;
-    }
-    .sf-drawer-edge sf-button-close button {
-      position: relative;
-    }
-    .sf-drawer-edge sf-close button {
-      position: relative;
-    }
-    .sf-drawer-edge sf-button-icon button {
-      position: relative;
-    }
-    .sf-drawer-edge sf-icon-button button {
-      position: relative;
-    }
-    .sf-drawer-head sf-button-close button::after {
-      content: "";
-      position: absolute;
-      top: calc((100% - var(--sf-d1)) / 2);
-      right: calc((100% - var(--sf-d1)) / 2);
-      bottom: calc((100% - var(--sf-d1)) / 2);
-      left: calc((100% - var(--sf-d1)) / 2);
-      inset: calc((100% - var(--sf-d1)) / 2);
-    }
-    .sf-drawer-head sf-close button::after {
-      content: "";
-      position: absolute;
-      top: calc((100% - var(--sf-d1)) / 2);
-      right: calc((100% - var(--sf-d1)) / 2);
-      bottom: calc((100% - var(--sf-d1)) / 2);
-      left: calc((100% - var(--sf-d1)) / 2);
-      inset: calc((100% - var(--sf-d1)) / 2);
-    }
-    .sf-drawer-head sf-button-icon button::after {
-      content: "";
-      position: absolute;
-      top: calc((100% - var(--sf-d1)) / 2);
-      right: calc((100% - var(--sf-d1)) / 2);
-      bottom: calc((100% - var(--sf-d1)) / 2);
-      left: calc((100% - var(--sf-d1)) / 2);
-      inset: calc((100% - var(--sf-d1)) / 2);
-    }
-    .sf-drawer-head sf-icon-button button::after {
-      content: "";
-      position: absolute;
-      top: calc((100% - var(--sf-d1)) / 2);
-      right: calc((100% - var(--sf-d1)) / 2);
-      bottom: calc((100% - var(--sf-d1)) / 2);
-      left: calc((100% - var(--sf-d1)) / 2);
-      inset: calc((100% - var(--sf-d1)) / 2);
-    }
-    .sf-drawer-edge sf-button-close button::after {
-      content: "";
-      position: absolute;
-      top: calc((100% - var(--sf-d1)) / 2);
-      right: calc((100% - var(--sf-d1)) / 2);
-      bottom: calc((100% - var(--sf-d1)) / 2);
-      left: calc((100% - var(--sf-d1)) / 2);
-      inset: calc((100% - var(--sf-d1)) / 2);
-    }
-    .sf-drawer-edge sf-close button::after {
-      content: "";
-      position: absolute;
-      top: calc((100% - var(--sf-d1)) / 2);
-      right: calc((100% - var(--sf-d1)) / 2);
-      bottom: calc((100% - var(--sf-d1)) / 2);
-      left: calc((100% - var(--sf-d1)) / 2);
-      inset: calc((100% - var(--sf-d1)) / 2);
-    }
-    .sf-drawer-edge sf-button-icon button::after {
-      content: "";
-      position: absolute;
-      top: calc((100% - var(--sf-d1)) / 2);
-      right: calc((100% - var(--sf-d1)) / 2);
-      bottom: calc((100% - var(--sf-d1)) / 2);
-      left: calc((100% - var(--sf-d1)) / 2);
-      inset: calc((100% - var(--sf-d1)) / 2);
-    }
-    .sf-drawer-edge sf-icon-button button::after {
+    :is(.sf-drawer-head, .sf-drawer-edge) :is(:is(sf-button-close, sf-close), :is(sf-button-icon, sf-icon-button)) button::after {
       content: "";
       position: absolute;
       top: calc((100% - var(--sf-d1)) / 2);
@@ -660,9 +369,7 @@
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
-    font-size: var(--sf-heading-4--size);
     font-size: var(--sf-drawer--title-size, var(--sf-heading-4--size));
-    line-height: var(--sf-heading-4--height);
     line-height: var(--sf-drawer--title-height, var(--sf-heading-4--height));
     font-weight: var(--sf-weight--bold);
     text-overflow: ellipsis;
@@ -672,41 +379,9 @@
      the panel can still hold its foot at the bottom: a bar of actions pinned to
      the end of a short record used to rise into the middle of an empty panel.
      Taller content is unaffected -- the panel is the scroller either way. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-body{
-    padding-left: var(--sf-drawer--inset-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer-body{
-    padding-left: var(--sf-drawer--inset-start);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-body{
-    padding-right: var(--sf-drawer--inset-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-drawer-body{
-    padding-right: var(--sf-drawer--inset-end);
-    }
-  }
   .sf-drawer-body:where(:dir(ltr)){
     padding-left: var(--sf-drawer--inset-start);
     padding-right: var(--sf-drawer--inset-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-body{
-    padding-right: var(--sf-drawer--inset-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-drawer-body{
-    padding-right: var(--sf-drawer--inset-start);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-body{
-    padding-left: var(--sf-drawer--inset-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-drawer-body{
-    padding-left: var(--sf-drawer--inset-end);
-    }
   }
   .sf-drawer-body:where(:dir(rtl)){
     padding-right: var(--sf-drawer--inset-start);
@@ -773,41 +448,9 @@
      «Сбросить». The panel's frame around it. A page wrote its own bar
      before (Pro, Larena, ui-mail; study DR-4). Without slot="footer" it
      takes no room. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot{
-    padding-left: var(--sf-drawer--inset-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer-foot{
-    padding-left: var(--sf-drawer--inset-start);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot{
-    padding-right: var(--sf-drawer--inset-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-drawer-foot{
-    padding-right: var(--sf-drawer--inset-end);
-    }
-  }
   .sf-drawer-foot:where(:dir(ltr)){
     padding-left: var(--sf-drawer--inset-start);
     padding-right: var(--sf-drawer--inset-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot{
-    padding-right: var(--sf-drawer--inset-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-drawer-foot{
-    padding-right: var(--sf-drawer--inset-start);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot{
-    padding-left: var(--sf-drawer--inset-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-drawer-foot{
-    padding-left: var(--sf-drawer--inset-end);
-    }
   }
   .sf-drawer-foot:where(:dir(rtl)){
     padding-right: var(--sf-drawer--inset-start);
@@ -834,81 +477,13 @@
     justify-content: flex-start;
     gap: var(--sf-space-1\/3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot [data-apart]:not(does-not-exist){
+  .sf-drawer-foot :is([data-apart], [data-apart] > :is(button, a)):where(:dir(ltr)){
     margin-left: auto;
   }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer-foot [data-apart]:not(does-not-exist){
-    margin-left: auto;
-    }
-  }
-  .sf-drawer-foot [data-apart]:not(does-not-exist):where(:dir(ltr)){
-    margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot [data-apart]:not(does-not-exist){
+  .sf-drawer-foot :is([data-apart], [data-apart] > :is(button, a)):where(:dir(rtl)){
     margin-right: auto;
   }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-drawer-foot [data-apart]:not(does-not-exist){
-    margin-right: auto;
-    }
-  }
-  .sf-drawer-foot [data-apart]:not(does-not-exist):where(:dir(rtl)){
-    margin-right: auto;
-  }
-  .sf-drawer-foot [data-apart]:not(does-not-exist) {
-    -webkit-margin-start: auto;
-            margin-inline-start: auto;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot :is([data-apart] > button){
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer-foot :is([data-apart] > button){
-    margin-left: auto;
-    }
-  }
-  .sf-drawer-foot :is([data-apart] > button):where(:dir(ltr)){
-    margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot :is([data-apart] > button){
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-drawer-foot :is([data-apart] > button){
-    margin-right: auto;
-    }
-  }
-  .sf-drawer-foot :is([data-apart] > button):where(:dir(rtl)){
-    margin-right: auto;
-  }
-  .sf-drawer-foot :is([data-apart] > button) {
-    -webkit-margin-start: auto;
-            margin-inline-start: auto;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot :is([data-apart] > a){
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer-foot :is([data-apart] > a){
-    margin-left: auto;
-    }
-  }
-  .sf-drawer-foot :is([data-apart] > a):where(:dir(ltr)){
-    margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot :is([data-apart] > a){
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-drawer-foot :is([data-apart] > a){
-    margin-right: auto;
-    }
-  }
-  .sf-drawer-foot :is([data-apart] > a):where(:dir(rtl)){
-    margin-right: auto;
-  }
-  .sf-drawer-foot :is([data-apart] > a) {
+  .sf-drawer-foot :is([data-apart], [data-apart] > :is(button, a)) {
     -webkit-margin-start: auto;
             margin-inline-start: auto;
   }
@@ -916,7 +491,8 @@
     .sf-drawer-foot {
       flex-wrap: wrap;
     }
-    .sf-drawer-foot > button {
+    .sf-drawer-foot > :is(button, a),
+    .sf-drawer-foot > :not(button):not(a) > :is(button, a) {
       flex: 1 1 0;
       min-width: -webkit-max-content;
       min-width: -moz-max-content;
@@ -925,108 +501,13 @@
       min-inline-size: -moz-max-content;
       min-inline-size: max-content;
     }
-    .sf-drawer-foot > a {
-      flex: 1 1 0;
-      min-width: -webkit-max-content;
-      min-width: -moz-max-content;
-      min-width: max-content;
-      min-inline-size: -webkit-max-content;
-      min-inline-size: -moz-max-content;
-      min-inline-size: max-content;
-    }
-    .sf-drawer-foot > :not(button):not(a) > button {
-      flex: 1 1 0;
-      min-width: -webkit-max-content;
-      min-width: -moz-max-content;
-      min-width: max-content;
-      min-inline-size: -webkit-max-content;
-      min-inline-size: -moz-max-content;
-      min-inline-size: max-content;
-    }
-    .sf-drawer-foot > :not(button):not(a) > a {
-      flex: 1 1 0;
-      min-width: -webkit-max-content;
-      min-width: -moz-max-content;
-      min-width: max-content;
-      min-inline-size: -webkit-max-content;
-      min-inline-size: -moz-max-content;
-      min-inline-size: max-content;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot [data-apart]:not(does-not-exist){
+    .sf-drawer-foot :is([data-apart], [data-apart] > :is(button, a)):where(:dir(ltr)){
       margin-left: 0;
     }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-drawer-foot [data-apart]:not(does-not-exist){
-      margin-left: 0;
-      }
-    }
-    .sf-drawer-foot [data-apart]:not(does-not-exist):where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot [data-apart]:not(does-not-exist){
+    .sf-drawer-foot :is([data-apart], [data-apart] > :is(button, a)):where(:dir(rtl)){
       margin-right: 0;
     }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-drawer-foot [data-apart]:not(does-not-exist){
-      margin-right: 0;
-      }
-    }
-    .sf-drawer-foot [data-apart]:not(does-not-exist):where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-drawer-foot [data-apart]:not(does-not-exist) {
-      -webkit-margin-start: 0;
-              margin-inline-start: 0;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot :is([data-apart] > button){
-      margin-left: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-drawer-foot :is([data-apart] > button){
-      margin-left: 0;
-      }
-    }
-    .sf-drawer-foot :is([data-apart] > button):where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot :is([data-apart] > button){
-      margin-right: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-drawer-foot :is([data-apart] > button){
-      margin-right: 0;
-      }
-    }
-    .sf-drawer-foot :is([data-apart] > button):where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-drawer-foot :is([data-apart] > button) {
-      -webkit-margin-start: 0;
-              margin-inline-start: 0;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot :is([data-apart] > a){
-      margin-left: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-drawer-foot :is([data-apart] > a){
-      margin-left: 0;
-      }
-    }
-    .sf-drawer-foot :is([data-apart] > a):where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot :is([data-apart] > a){
-      margin-right: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-drawer-foot :is([data-apart] > a){
-      margin-right: 0;
-      }
-    }
-    .sf-drawer-foot :is([data-apart] > a):where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-drawer-foot :is([data-apart] > a) {
+    .sf-drawer-foot :is([data-apart], [data-apart] > :is(button, a)) {
       -webkit-margin-start: 0;
               margin-inline-start: 0;
     }
@@ -1034,98 +515,21 @@
   /* A wrapper the page writes around its buttons (<div slot="footer">) draws
      no box: its buttons are the foot's items, so the gap, the order and the
      halves on a phone are the foot's. */
-  .sf-drawer-foot > :not(sf-button):not(sf-button-icon):not(sf-button-close):not(button):not(a) {
+  .sf-drawer-foot > :not(sf-button):not(:is(sf-button-icon, sf-icon-button)):not(:is(sf-button-close, sf-close)):not(button):not(a) {
     display: contents;
   }
-  .sf-drawer-foot > :not(sf-button):not(sf-button-icon):not(sf-close):not(button):not(a) {
-    display: contents;
-  }
-  .sf-drawer-foot > :not(sf-button):not(sf-icon-button):not(sf-button-close):not(button):not(a) {
-    display: contents;
-  }
-  .sf-drawer-foot > :not(sf-button):not(sf-icon-button):not(sf-close):not(button):not(a) {
-    display: contents;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot > * > [data-apart]:not(does-not-exist){
+  .sf-drawer-foot > * > :is([data-apart], [data-apart] > :is(button, a)):where(:dir(ltr)){
     margin-left: auto;
   }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer-foot > * > [data-apart]:not(does-not-exist){
-    margin-left: auto;
-    }
-  }
-  .sf-drawer-foot > * > [data-apart]:not(does-not-exist):where(:dir(ltr)){
-    margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot > * > [data-apart]:not(does-not-exist){
+  .sf-drawer-foot > * > :is([data-apart], [data-apart] > :is(button, a)):where(:dir(rtl)){
     margin-right: auto;
   }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-drawer-foot > * > [data-apart]:not(does-not-exist){
-    margin-right: auto;
-    }
-  }
-  .sf-drawer-foot > * > [data-apart]:not(does-not-exist):where(:dir(rtl)){
-    margin-right: auto;
-  }
-  .sf-drawer-foot > * > [data-apart]:not(does-not-exist) {
-    -webkit-margin-start: auto;
-            margin-inline-start: auto;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot > * > :is([data-apart] > button){
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer-foot > * > :is([data-apart] > button){
-    margin-left: auto;
-    }
-  }
-  .sf-drawer-foot > * > :is([data-apart] > button):where(:dir(ltr)){
-    margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot > * > :is([data-apart] > button){
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-drawer-foot > * > :is([data-apart] > button){
-    margin-right: auto;
-    }
-  }
-  .sf-drawer-foot > * > :is([data-apart] > button):where(:dir(rtl)){
-    margin-right: auto;
-  }
-  .sf-drawer-foot > * > :is([data-apart] > button) {
-    -webkit-margin-start: auto;
-            margin-inline-start: auto;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot > * > :is([data-apart] > a){
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer-foot > * > :is([data-apart] > a){
-    margin-left: auto;
-    }
-  }
-  .sf-drawer-foot > * > :is([data-apart] > a):where(:dir(ltr)){
-    margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot > * > :is([data-apart] > a){
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-drawer-foot > * > :is([data-apart] > a){
-    margin-right: auto;
-    }
-  }
-  .sf-drawer-foot > * > :is([data-apart] > a):where(:dir(rtl)){
-    margin-right: auto;
-  }
-  .sf-drawer-foot > * > :is([data-apart] > a) {
+  .sf-drawer-foot > * > :is([data-apart], [data-apart] > :is(button, a)) {
     -webkit-margin-start: auto;
             margin-inline-start: auto;
   }
   @media not all and (min-width: 32rem) {
-    .sf-drawer-foot > :not(sf-button):not(sf-button-icon):not(sf-button-close):not(button):not(a) > :not(button):not(a) > button {
+    .sf-drawer-foot > :not(sf-button):not(:is(sf-button-icon, sf-icon-button)):not(:is(sf-button-close, sf-close)):not(button):not(a) > :not(button):not(a) > :is(button, a) {
       flex: 1 1 0;
       min-width: -webkit-max-content;
       min-width: -moz-max-content;
@@ -1134,144 +538,13 @@
       min-inline-size: -moz-max-content;
       min-inline-size: max-content;
     }
-    .sf-drawer-foot > :not(sf-button):not(sf-button-icon):not(sf-button-close):not(button):not(a) > :not(button):not(a) > a {
-      flex: 1 1 0;
-      min-width: -webkit-max-content;
-      min-width: -moz-max-content;
-      min-width: max-content;
-      min-inline-size: -webkit-max-content;
-      min-inline-size: -moz-max-content;
-      min-inline-size: max-content;
-    }
-    .sf-drawer-foot > :not(sf-button):not(sf-button-icon):not(sf-close):not(button):not(a) > :not(button):not(a) > button {
-      flex: 1 1 0;
-      min-width: -webkit-max-content;
-      min-width: -moz-max-content;
-      min-width: max-content;
-      min-inline-size: -webkit-max-content;
-      min-inline-size: -moz-max-content;
-      min-inline-size: max-content;
-    }
-    .sf-drawer-foot > :not(sf-button):not(sf-button-icon):not(sf-close):not(button):not(a) > :not(button):not(a) > a {
-      flex: 1 1 0;
-      min-width: -webkit-max-content;
-      min-width: -moz-max-content;
-      min-width: max-content;
-      min-inline-size: -webkit-max-content;
-      min-inline-size: -moz-max-content;
-      min-inline-size: max-content;
-    }
-    .sf-drawer-foot > :not(sf-button):not(sf-icon-button):not(sf-button-close):not(button):not(a) > :not(button):not(a) > button {
-      flex: 1 1 0;
-      min-width: -webkit-max-content;
-      min-width: -moz-max-content;
-      min-width: max-content;
-      min-inline-size: -webkit-max-content;
-      min-inline-size: -moz-max-content;
-      min-inline-size: max-content;
-    }
-    .sf-drawer-foot > :not(sf-button):not(sf-icon-button):not(sf-button-close):not(button):not(a) > :not(button):not(a) > a {
-      flex: 1 1 0;
-      min-width: -webkit-max-content;
-      min-width: -moz-max-content;
-      min-width: max-content;
-      min-inline-size: -webkit-max-content;
-      min-inline-size: -moz-max-content;
-      min-inline-size: max-content;
-    }
-    .sf-drawer-foot > :not(sf-button):not(sf-icon-button):not(sf-close):not(button):not(a) > :not(button):not(a) > button {
-      flex: 1 1 0;
-      min-width: -webkit-max-content;
-      min-width: -moz-max-content;
-      min-width: max-content;
-      min-inline-size: -webkit-max-content;
-      min-inline-size: -moz-max-content;
-      min-inline-size: max-content;
-    }
-    .sf-drawer-foot > :not(sf-button):not(sf-icon-button):not(sf-close):not(button):not(a) > :not(button):not(a) > a {
-      flex: 1 1 0;
-      min-width: -webkit-max-content;
-      min-width: -moz-max-content;
-      min-width: max-content;
-      min-inline-size: -webkit-max-content;
-      min-inline-size: -moz-max-content;
-      min-inline-size: max-content;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot > * > [data-apart]:not(does-not-exist){
+    .sf-drawer-foot > * > :is([data-apart], [data-apart] > :is(button, a)):where(:dir(ltr)){
       margin-left: 0;
     }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-drawer-foot > * > [data-apart]:not(does-not-exist){
-      margin-left: 0;
-      }
-    }
-    .sf-drawer-foot > * > [data-apart]:not(does-not-exist):where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot > * > [data-apart]:not(does-not-exist){
+    .sf-drawer-foot > * > :is([data-apart], [data-apart] > :is(button, a)):where(:dir(rtl)){
       margin-right: 0;
     }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-drawer-foot > * > [data-apart]:not(does-not-exist){
-      margin-right: 0;
-      }
-    }
-    .sf-drawer-foot > * > [data-apart]:not(does-not-exist):where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-drawer-foot > * > [data-apart]:not(does-not-exist) {
-      -webkit-margin-start: 0;
-              margin-inline-start: 0;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot > * > :is([data-apart] > button){
-      margin-left: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-drawer-foot > * > :is([data-apart] > button){
-      margin-left: 0;
-      }
-    }
-    .sf-drawer-foot > * > :is([data-apart] > button):where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot > * > :is([data-apart] > button){
-      margin-right: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-drawer-foot > * > :is([data-apart] > button){
-      margin-right: 0;
-      }
-    }
-    .sf-drawer-foot > * > :is([data-apart] > button):where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-drawer-foot > * > :is([data-apart] > button) {
-      -webkit-margin-start: 0;
-              margin-inline-start: 0;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer-foot > * > :is([data-apart] > a){
-      margin-left: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    html:not([dir="rtl"]) .sf-drawer-foot > * > :is([data-apart] > a){
-      margin-left: 0;
-      }
-    }
-    .sf-drawer-foot > * > :is([data-apart] > a):where(:dir(ltr)){
-      margin-left: 0;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-drawer-foot > * > :is([data-apart] > a){
-      margin-right: 0;
-    }
-    @supports not (margin-inline-start: initial){
-    [dir="rtl"] .sf-drawer-foot > * > :is([data-apart] > a){
-      margin-right: 0;
-      }
-    }
-    .sf-drawer-foot > * > :is([data-apart] > a):where(:dir(rtl)){
-      margin-right: 0;
-    }
-    .sf-drawer-foot > * > :is([data-apart] > a) {
+    .sf-drawer-foot > * > :is([data-apart], [data-apart] > :is(button, a)) {
       -webkit-margin-start: 0;
               margin-inline-start: 0;
     }
@@ -1292,21 +565,15 @@
     box-shadow: 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
   }
   /* «Назад» in the head of a nested panel (C157 (6)) points to the start of
-     the line: in a right-to-left page the arrow turns. */
-  .sf-drawer-back:dir(rtl) .sf-icon {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
-  }
+     the line: arrow_back is a directional glyph, so in a right-to-left page
+     the icons sheet turns it (C151 point 3); a turn here as well turned it
+     back (RTL icons, 2026-11-19). */
   /* One panel at an edge (C157 (6)): a drawer opened from a floating panel
      at the same edge is drawn inside it. The panel under it hides at once
      while it is open (no slide, its edge controls with it) and shows again
      when it closes; the nested one comes and goes at once, so the content
      of the one panel changes in place. */
-  .sf-drawer[data-sf-drawer-under] .sf-drawer-panel {
-    visibility: hidden;
-    transition: none;
-  }
-  .sf-drawer[data-sf-drawer-under] .sf-drawer-edge {
+  .sf-drawer[data-sf-drawer-under] :is(.sf-drawer-panel, .sf-drawer-edge) {
     visibility: hidden;
     transition: none;
   }
@@ -1367,41 +634,9 @@
   /* A panel filling the screen has no outside, so the edge comes inside it and
      lies along the top. Placing it outside there put every control at a negative
      inline start -- a drawer opened on a phone could not be closed. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-size=full] .sf-drawer-edge{
-    left: var(--sf-space-1);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-size=full] .sf-drawer-edge{
-    left: var(--sf-space-1);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-size=full] .sf-drawer-edge{
-    right: auto;
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-size=full] .sf-drawer-edge{
-    right: auto;
-    }
-  }
   .sf-drawer[data-sf-drawer-size=full] .sf-drawer-edge:where(:dir(ltr)){
     left: var(--sf-space-1);
     right: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-size=full] .sf-drawer-edge{
-    right: var(--sf-space-1);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-size=full] .sf-drawer-edge{
-    right: var(--sf-space-1);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-size=full] .sf-drawer-edge{
-    left: auto;
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-size=full] .sf-drawer-edge{
-    left: auto;
-    }
   }
   .sf-drawer[data-sf-drawer-size=full] .sf-drawer-edge:where(:dir(rtl)){
     right: var(--sf-space-1);
@@ -1411,24 +646,8 @@
     inset-inline: var(--sf-space-1) auto;
     flex-direction: row;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-edge{
-    right: var(--sf-drawer-edge-inset);
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-edge{
-    right: var(--sf-drawer-edge-inset);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-edge:where(:dir(ltr)){
     right: var(--sf-drawer-edge-inset);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-edge{
-    left: var(--sf-drawer-edge-inset);
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-edge{
-    left: var(--sf-drawer-edge-inset);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-edge:where(:dir(rtl)){
     left: var(--sf-drawer-edge-inset);
@@ -1436,24 +655,8 @@
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-edge {
     inset-inline-end: var(--sf-drawer-edge-inset);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-edge{
-    left: var(--sf-drawer-edge-inset);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-edge{
-    left: var(--sf-drawer-edge-inset);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-edge:where(:dir(ltr)){
     left: var(--sf-drawer-edge-inset);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-edge{
-    right: var(--sf-drawer-edge-inset);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-edge{
-    right: var(--sf-drawer-edge-inset);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-edge:where(:dir(rtl)){
     right: var(--sf-drawer-edge-inset);
@@ -1499,41 +702,9 @@
       border-width: 0;
       border-radius: 0;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer:not([data-sf-drawer-placement=bottom]):not([data-sf-drawer-column=true]) .sf-drawer-edge{
-      left: var(--sf-space-1);
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-drawer:not([data-sf-drawer-placement=bottom]):not([data-sf-drawer-column=true]) .sf-drawer-edge{
-      left: var(--sf-space-1);
-      }
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer:not([data-sf-drawer-placement=bottom]):not([data-sf-drawer-column=true]) .sf-drawer-edge{
-      right: auto;
-    }
-    @supports not (inset-inline-end: initial){
-    html:not([dir="rtl"]) .sf-drawer:not([data-sf-drawer-placement=bottom]):not([data-sf-drawer-column=true]) .sf-drawer-edge{
-      right: auto;
-      }
-    }
     .sf-drawer:not([data-sf-drawer-placement=bottom]):not([data-sf-drawer-column=true]) .sf-drawer-edge:where(:dir(ltr)){
       left: var(--sf-space-1);
       right: auto;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-drawer:not([data-sf-drawer-placement=bottom]):not([data-sf-drawer-column=true]) .sf-drawer-edge{
-      right: var(--sf-space-1);
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-drawer:not([data-sf-drawer-placement=bottom]):not([data-sf-drawer-column=true]) .sf-drawer-edge{
-      right: var(--sf-space-1);
-      }
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-drawer:not([data-sf-drawer-placement=bottom]):not([data-sf-drawer-column=true]) .sf-drawer-edge{
-      left: auto;
-    }
-    @supports not (inset-inline-end: initial){
-    [dir="rtl"] .sf-drawer:not([data-sf-drawer-placement=bottom]):not([data-sf-drawer-column=true]) .sf-drawer-edge{
-      left: auto;
-      }
     }
     .sf-drawer:not([data-sf-drawer-placement=bottom]):not([data-sf-drawer-column=true]) .sf-drawer-edge:where(:dir(rtl)){
       right: var(--sf-space-1);
@@ -1558,87 +729,17 @@
      controls stand in the head's row at its end, a button group's gap apart,
      the close last, and the head keeps their room (--sf-drawer-edge-room), so
      the title never runs under them. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    left: auto;
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    left: auto;
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    right: calc(calc(var(--sf-px) * 0) + var(--sf-space-2));
-    right: calc(var(--sf-drawer-edge-end, calc(var(--sf-px) * 0)) + var(--sf-drawer-gutter, var(--sf-space-2)));
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    right: calc(calc(var(--sf-px) * 0) + var(--sf-space-2));
-    right: calc(var(--sf-drawer-edge-end, calc(var(--sf-px) * 0)) + var(--sf-drawer-gutter, var(--sf-space-2)));
-    }
-  }
   .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge:where(:dir(ltr)){
     left: auto;
-    right: calc(calc(var(--sf-px) * 0) + var(--sf-space-2));
     right: calc(var(--sf-drawer-edge-end, calc(var(--sf-px) * 0)) + var(--sf-drawer-gutter, var(--sf-space-2)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    right: auto;
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    right: auto;
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    left: calc(calc(var(--sf-px) * 0) + var(--sf-space-2));
-    left: calc(var(--sf-drawer-edge-end, calc(var(--sf-px) * 0)) + var(--sf-drawer-gutter, var(--sf-space-2)));
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    left: calc(calc(var(--sf-px) * 0) + var(--sf-space-2));
-    left: calc(var(--sf-drawer-edge-end, calc(var(--sf-px) * 0)) + var(--sf-drawer-gutter, var(--sf-space-2)));
-    }
   }
   .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge:where(:dir(rtl)){
     right: auto;
-    left: calc(calc(var(--sf-px) * 0) + var(--sf-space-2));
     left: calc(var(--sf-drawer-edge-end, calc(var(--sf-px) * 0)) + var(--sf-drawer-gutter, var(--sf-space-2)));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    left: auto;
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    left: auto;
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    right: calc(calc(var(--sf-px) * 0) + var(--sf-space-2));
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    right: calc(calc(var(--sf-px) * 0) + var(--sf-space-2));
-    }
   }
   .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge:where(:dir(ltr)){
     left: auto;
     right: calc(calc(var(--sf-px) * 0) + var(--sf-space-2));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    right: auto;
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    right: auto;
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    left: calc(calc(var(--sf-px) * 0) + var(--sf-space-2));
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge{
-    left: calc(calc(var(--sf-px) * 0) + var(--sf-space-2));
-    }
   }
   .sf-drawer[data-sf-drawer-edge-in-head]:not([data-sf-drawer-column=true]) .sf-drawer-edge:where(:dir(rtl)){
     right: auto;
@@ -1648,7 +749,6 @@
     /* The panel's gutter from the panel's inline end (the edge is the panel's
        sibling, so it reads the gutter, not the panel's own inset); the end is
        the root's unless the panel stops short of it (--sf-drawer-edge-end). */
-    inset-inline: auto calc(calc(var(--sf-px) * 0) + var(--sf-space-2));
     inset-inline: auto calc(var(--sf-drawer-edge-end, calc(var(--sf-px) * 0)) + var(--sf-drawer-gutter, var(--sf-space-2)));
     /* The head's content box: its row less its block padding, so the
        controls stand on the title's centre line. */
@@ -1660,59 +760,19 @@
     align-items: center;
     gap: var(--sf-space-1\/3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-edge-in-head]:has(.sf-drawer-edge:not(:empty)) .sf-drawer-head{
-    padding-right: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
-    padding-right: calc(var(--sf-drawer--inset-end) + var(--sf-drawer-edge-room, calc(var(--sf-px) * 0)) + var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-edge-in-head]:has(.sf-drawer-edge:not(:empty)) .sf-drawer-head{
-    padding-right: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
-    padding-right: calc(var(--sf-drawer--inset-end) + var(--sf-drawer-edge-room, calc(var(--sf-px) * 0)) + var(--sf-space-1\/3));
-    }
-  }
   .sf-drawer[data-sf-drawer-edge-in-head]:has(.sf-drawer-edge:not(:empty)) .sf-drawer-head:where(:dir(ltr)){
-    padding-right: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
     padding-right: calc(var(--sf-drawer--inset-end) + var(--sf-drawer-edge-room, calc(var(--sf-px) * 0)) + var(--sf-space-1\/3));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-edge-in-head]:has(.sf-drawer-edge:not(:empty)) .sf-drawer-head{
-    padding-left: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
-    padding-left: calc(var(--sf-drawer--inset-end) + var(--sf-drawer-edge-room, calc(var(--sf-px) * 0)) + var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-edge-in-head]:has(.sf-drawer-edge:not(:empty)) .sf-drawer-head{
-    padding-left: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
-    padding-left: calc(var(--sf-drawer--inset-end) + var(--sf-drawer-edge-room, calc(var(--sf-px) * 0)) + var(--sf-space-1\/3));
-    }
   }
   .sf-drawer[data-sf-drawer-edge-in-head]:has(.sf-drawer-edge:not(:empty)) .sf-drawer-head:where(:dir(rtl)){
-    padding-left: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
     padding-left: calc(var(--sf-drawer--inset-end) + var(--sf-drawer-edge-room, calc(var(--sf-px) * 0)) + var(--sf-space-1\/3));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-edge-in-head]:has(.sf-drawer-edge:not(:empty)) .sf-drawer-head{
-    padding-right: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-edge-in-head]:has(.sf-drawer-edge:not(:empty)) .sf-drawer-head{
-    padding-right: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
-    }
   }
   .sf-drawer[data-sf-drawer-edge-in-head]:has(.sf-drawer-edge:not(:empty)) .sf-drawer-head:where(:dir(ltr)){
     padding-right: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-edge-in-head]:has(.sf-drawer-edge:not(:empty)) .sf-drawer-head{
-    padding-left: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-edge-in-head]:has(.sf-drawer-edge:not(:empty)) .sf-drawer-head{
-    padding-left: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
-    }
   }
   .sf-drawer[data-sf-drawer-edge-in-head]:has(.sf-drawer-edge:not(:empty)) .sf-drawer-head:where(:dir(rtl)){
     padding-left: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
   }
   .sf-drawer[data-sf-drawer-edge-in-head]:has(.sf-drawer-edge:not(:empty)) .sf-drawer-head {
-    -webkit-padding-end: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
-            padding-inline-end: calc(var(--sf-drawer--inset-end) + calc(var(--sf-px) * 0) + var(--sf-space-1\/3));
     -webkit-padding-end: calc(var(--sf-drawer--inset-end) + var(--sf-drawer-edge-room, calc(var(--sf-px) * 0)) + var(--sf-space-1\/3));
             padding-inline-end: calc(var(--sf-drawer--inset-end) + var(--sf-drawer-edge-room, calc(var(--sf-px) * 0)) + var(--sf-space-1\/3));
   }
@@ -1724,71 +784,23 @@
      padding is the window inset, as before. At the end it outranks the room a
      full-screen panel keeps for its edge controls while the edge holds none
      (the drawer does not place the close at the end beside edge controls). */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-close-axis=start] .sf-drawer-panel > .sf-drawer-head{
-    padding-left: var(--sf-drawer--inset-start);
-    padding-left: var(--sf-drawer--close-axis, var(--sf-drawer--inset-start));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-close-axis=start] .sf-drawer-panel > .sf-drawer-head{
-    padding-left: var(--sf-drawer--inset-start);
-    padding-left: var(--sf-drawer--close-axis, var(--sf-drawer--inset-start));
-    }
-  }
   .sf-drawer[data-sf-drawer-close-axis=start] .sf-drawer-panel > .sf-drawer-head:where(:dir(ltr)){
-    padding-left: var(--sf-drawer--inset-start);
     padding-left: var(--sf-drawer--close-axis, var(--sf-drawer--inset-start));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-close-axis=start] .sf-drawer-panel > .sf-drawer-head{
-    padding-right: var(--sf-drawer--inset-start);
-    padding-right: var(--sf-drawer--close-axis, var(--sf-drawer--inset-start));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-close-axis=start] .sf-drawer-panel > .sf-drawer-head{
-    padding-right: var(--sf-drawer--inset-start);
-    padding-right: var(--sf-drawer--close-axis, var(--sf-drawer--inset-start));
-    }
   }
   .sf-drawer[data-sf-drawer-close-axis=start] .sf-drawer-panel > .sf-drawer-head:where(:dir(rtl)){
-    padding-right: var(--sf-drawer--inset-start);
     padding-right: var(--sf-drawer--close-axis, var(--sf-drawer--inset-start));
   }
   .sf-drawer[data-sf-drawer-close-axis=start] .sf-drawer-panel > .sf-drawer-head {
-    -webkit-padding-start: var(--sf-drawer--inset-start);
-            padding-inline-start: var(--sf-drawer--inset-start);
     -webkit-padding-start: var(--sf-drawer--close-axis, var(--sf-drawer--inset-start));
             padding-inline-start: var(--sf-drawer--close-axis, var(--sf-drawer--inset-start));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-close-axis=end]:not(:has(.sf-drawer-edge > *)) .sf-drawer-panel > .sf-drawer-head{
-    padding-right: var(--sf-drawer--inset-end);
-    padding-right: var(--sf-drawer--close-axis, var(--sf-drawer--inset-end));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-close-axis=end]:not(:has(.sf-drawer-edge > *)) .sf-drawer-panel > .sf-drawer-head{
-    padding-right: var(--sf-drawer--inset-end);
-    padding-right: var(--sf-drawer--close-axis, var(--sf-drawer--inset-end));
-    }
-  }
   .sf-drawer[data-sf-drawer-close-axis=end]:not(:has(.sf-drawer-edge > *)) .sf-drawer-panel > .sf-drawer-head:where(:dir(ltr)){
-    padding-right: var(--sf-drawer--inset-end);
     padding-right: var(--sf-drawer--close-axis, var(--sf-drawer--inset-end));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-close-axis=end]:not(:has(.sf-drawer-edge > *)) .sf-drawer-panel > .sf-drawer-head{
-    padding-left: var(--sf-drawer--inset-end);
-    padding-left: var(--sf-drawer--close-axis, var(--sf-drawer--inset-end));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-close-axis=end]:not(:has(.sf-drawer-edge > *)) .sf-drawer-panel > .sf-drawer-head{
-    padding-left: var(--sf-drawer--inset-end);
-    padding-left: var(--sf-drawer--close-axis, var(--sf-drawer--inset-end));
-    }
   }
   .sf-drawer[data-sf-drawer-close-axis=end]:not(:has(.sf-drawer-edge > *)) .sf-drawer-panel > .sf-drawer-head:where(:dir(rtl)){
-    padding-left: var(--sf-drawer--inset-end);
     padding-left: var(--sf-drawer--close-axis, var(--sf-drawer--inset-end));
   }
   .sf-drawer[data-sf-drawer-close-axis=end]:not(:has(.sf-drawer-edge > *)) .sf-drawer-panel > .sf-drawer-head {
-    -webkit-padding-end: var(--sf-drawer--inset-end);
-            padding-inline-end: var(--sf-drawer--inset-end);
     -webkit-padding-end: var(--sf-drawer--close-axis, var(--sf-drawer--inset-end));
             padding-inline-end: var(--sf-drawer--close-axis, var(--sf-drawer--inset-end));
   }
@@ -1798,9 +810,6 @@
     display: none;
   }
   .sf-drawer[data-sf-drawer-docked=true] .sf-drawer-panel {
-    top: 0;
-    inset-block-start: 0;
-    top: 0;
     top: var(--sf-drawer-dock-block-start, var(--sf-drawer-block-start, 0));
     inset-block-start: var(--sf-drawer-dock-block-start, var(--sf-drawer-block-start, 0));
     height: auto;
@@ -1823,46 +832,14 @@
      the room or all of it -- the room being the window under the app bar.
      The home indicator's safe area is kept below the content. While a finger
      drags it, it follows without the transition. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=bottom] .sf-drawer-panel{
-    border-bottom-left-radius: var(--sf-0);
-  }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=bottom] .sf-drawer-panel{
-    border-bottom-left-radius: var(--sf-0);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=bottom] .sf-drawer-panel:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=bottom] .sf-drawer-panel{
-    border-bottom-right-radius: var(--sf-0);
-  }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=bottom] .sf-drawer-panel{
-    border-bottom-right-radius: var(--sf-0);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=bottom] .sf-drawer-panel:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=bottom] .sf-drawer-panel{
-    border-bottom-right-radius: var(--sf-0);
-  }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=bottom] .sf-drawer-panel{
-    border-bottom-right-radius: var(--sf-0);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=bottom] .sf-drawer-panel:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=bottom] .sf-drawer-panel{
-    border-bottom-left-radius: var(--sf-0);
-  }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=bottom] .sf-drawer-panel{
-    border-bottom-left-radius: var(--sf-0);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=bottom] .sf-drawer-panel:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-0);
@@ -1901,46 +878,14 @@
     height: calc(var(--sf-drawer-sheet-room) / 2);
     block-size: calc(var(--sf-drawer-sheet-room) / 2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=bottom][data-sf-drawer-snap=full] .sf-drawer-panel{
-    border-top-left-radius: var(--sf-0);
-  }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=bottom][data-sf-drawer-snap=full] .sf-drawer-panel{
-    border-top-left-radius: var(--sf-0);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=bottom][data-sf-drawer-snap=full] .sf-drawer-panel:where(:dir(ltr)){
     border-top-left-radius: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=bottom][data-sf-drawer-snap=full] .sf-drawer-panel{
-    border-top-right-radius: var(--sf-0);
-  }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=bottom][data-sf-drawer-snap=full] .sf-drawer-panel{
-    border-top-right-radius: var(--sf-0);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=bottom][data-sf-drawer-snap=full] .sf-drawer-panel:where(:dir(rtl)){
     border-top-right-radius: var(--sf-0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=bottom][data-sf-drawer-snap=full] .sf-drawer-panel{
-    border-top-right-radius: var(--sf-0);
-  }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=bottom][data-sf-drawer-snap=full] .sf-drawer-panel{
-    border-top-right-radius: var(--sf-0);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=bottom][data-sf-drawer-snap=full] .sf-drawer-panel:where(:dir(ltr)){
     border-top-right-radius: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=bottom][data-sf-drawer-snap=full] .sf-drawer-panel{
-    border-top-left-radius: var(--sf-0);
-  }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=bottom][data-sf-drawer-snap=full] .sf-drawer-panel{
-    border-top-left-radius: var(--sf-0);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=bottom][data-sf-drawer-snap=full] .sf-drawer-panel:where(:dir(rtl)){
     border-top-left-radius: var(--sf-0);
@@ -1954,8 +899,6 @@
     border-start-end-radius: var(--sf-0);
   }
   .sf-drawer.is-open[data-sf-drawer-placement=bottom] .sf-drawer-panel {
-    -webkit-transform: translateY(0);
-            transform: translateY(0);
     -webkit-transform: translateY(var(--sf-drawer-sheet-drag, 0));
             transform: translateY(var(--sf-drawer-sheet-drag, 0));
   }
@@ -2021,70 +964,22 @@
     contain: layout;
   }
   /* The host layout reserves the width of open docked panels on each side. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [data-sf-drawer-dock-host]{
-    padding-left: var(--sf-0);
-    padding-left: var(--sf-drawer-dock-inline-start, var(--sf-0));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) [data-sf-drawer-dock-host]{
-    padding-left: var(--sf-0);
-    padding-left: var(--sf-drawer-dock-inline-start, var(--sf-0));
-    }
-  }
   [data-sf-drawer-dock-host]:where(:dir(ltr)){
-    padding-left: var(--sf-0);
     padding-left: var(--sf-drawer-dock-inline-start, var(--sf-0));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [data-sf-drawer-dock-host]{
-    padding-right: var(--sf-0);
-    padding-right: var(--sf-drawer-dock-inline-start, var(--sf-0));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] [data-sf-drawer-dock-host]{
-    padding-right: var(--sf-0);
-    padding-right: var(--sf-drawer-dock-inline-start, var(--sf-0));
-    }
   }
   [data-sf-drawer-dock-host]:where(:dir(rtl)){
-    padding-right: var(--sf-0);
     padding-right: var(--sf-drawer-dock-inline-start, var(--sf-0));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [data-sf-drawer-dock-host]{
-    padding-right: var(--sf-0);
-    padding-right: var(--sf-drawer-dock-inline-end, var(--sf-0));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) [data-sf-drawer-dock-host]{
-    padding-right: var(--sf-0);
-    padding-right: var(--sf-drawer-dock-inline-end, var(--sf-0));
-    }
-  }
   [data-sf-drawer-dock-host]:where(:dir(ltr)){
-    padding-right: var(--sf-0);
     padding-right: var(--sf-drawer-dock-inline-end, var(--sf-0));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [data-sf-drawer-dock-host]{
-    padding-left: var(--sf-0);
-    padding-left: var(--sf-drawer-dock-inline-end, var(--sf-0));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] [data-sf-drawer-dock-host]{
-    padding-left: var(--sf-0);
-    padding-left: var(--sf-drawer-dock-inline-end, var(--sf-0));
-    }
   }
   [data-sf-drawer-dock-host]:where(:dir(rtl)){
-    padding-left: var(--sf-0);
     padding-left: var(--sf-drawer-dock-inline-end, var(--sf-0));
   }
   [data-sf-drawer-dock-host] {
     box-sizing: border-box;
-    -webkit-padding-start: var(--sf-0);
-            padding-inline-start: var(--sf-0);
     -webkit-padding-start: var(--sf-drawer-dock-inline-start, var(--sf-0));
             padding-inline-start: var(--sf-drawer-dock-inline-start, var(--sf-0));
-    -webkit-padding-end: var(--sf-0);
-            padding-inline-end: var(--sf-0);
     -webkit-padding-end: var(--sf-drawer-dock-inline-end, var(--sf-0));
             padding-inline-end: var(--sf-drawer-dock-inline-end, var(--sf-0));
     transition: padding var(--sf-duration-normal) var(--sf-animation);
@@ -2106,15 +1001,12 @@
   .sf-drawer-overlay {
     /* The shared scrim (core --sf-scrim-*, black at 64: C16, C20), the
        drawer's own variables first. */
-    background: var(--sf-black--alfa-64);
     background: var(--sf-drawer-overlay-background, var(--sf-scrim-color, var(--sf-black--alfa-64)));
   }
   .sf-drawer-panel {
-    color: var(--sf-on-surface);
     color: var(--sf-drawer-color, var(--sf-on-surface));
   }
   .sf-drawer:not([data-sf-drawer-column=true]) .sf-drawer-panel {
-    background: var(--sf-surface-popup);
     background: var(--sf-drawer-background, var(--sf-surface-popup));
     --sf-surface-place: var(--sf-drawer-background, var(--sf-surface-popup));
     --sf-surface-place-solid: var(--sf-drawer-background, var(--sf-surface-popup));
@@ -2247,24 +1139,8 @@
   .sf-drawer[data-sf-drawer-placement=right] .sf-drawer-panel {
     border-left-color: var(--sf-outline-variant);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-right-color: var(--sf-outline-variant);
-  }
-  @supports not (border-inline-end-color: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-right-color: var(--sf-outline-variant);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(ltr)){
     border-right-color: var(--sf-outline-variant);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-left-color: var(--sf-outline-variant);
-  }
-  @supports not (border-inline-end-color: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel{
-    border-left-color: var(--sf-outline-variant);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel:where(:dir(rtl)){
     border-left-color: var(--sf-outline-variant);
@@ -2272,24 +1148,8 @@
   .sf-drawer[data-sf-drawer-placement=inline-start] .sf-drawer-panel {
     border-inline-end-color: var(--sf-outline-variant);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-left-color: var(--sf-outline-variant);
-  }
-  @supports not (border-inline-start-color: initial){
-  html:not([dir="rtl"]) .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-left-color: var(--sf-outline-variant);
-    }
-  }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(ltr)){
     border-left-color: var(--sf-outline-variant);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-right-color: var(--sf-outline-variant);
-  }
-  @supports not (border-inline-start-color: initial){
-  [dir="rtl"] .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel{
-    border-right-color: var(--sf-outline-variant);
-    }
   }
   .sf-drawer[data-sf-drawer-placement=inline-end] .sf-drawer-panel:where(:dir(rtl)){
     border-right-color: var(--sf-outline-variant);
@@ -2343,7 +1203,6 @@
     --sf-on-surface-variant: var(--sf-on-scrim-control);
   }
   .sf-drawer[data-sf-drawer-column=true] .sf-drawer-panel {
-    background: var(--sf-surface-area);
     background: var(--sf-drawer-background, var(--sf-surface-area));
     --sf-surface-place: var(--sf-drawer-background, var(--sf-surface-area));
     --sf-surface-place-solid: var(--sf-drawer-background, var(--sf-surface-area));
@@ -2496,10 +1355,7 @@
   .sf-drawer:not([data-sf-drawer-column=true]):not([data-sf-drawer-edge-in-head]) .sf-drawer-edge .sf-icon-button:not(:disabled):not([aria-disabled=true]):hover {
     --sf-drawer--edge-state: var(--sf-scrim-control-state-hover);
   }
-  .sf-drawer:not([data-sf-drawer-column=true]):not([data-sf-drawer-edge-in-head]) .sf-drawer-edge .sf-icon-button:not(:disabled):not([aria-disabled=true]):active {
-    --sf-drawer--edge-state: var(--sf-scrim-control-state-active);
-  }
-  .sf-drawer:not([data-sf-drawer-column=true]):not([data-sf-drawer-edge-in-head]) .sf-drawer-edge .sf-icon-button.active:not(:disabled):not([aria-disabled=true]) {
+  .sf-drawer:not([data-sf-drawer-column=true]):not([data-sf-drawer-edge-in-head]) .sf-drawer-edge .sf-icon-button:not(:disabled):not([aria-disabled=true]):is(:active, .active) {
     --sf-drawer--edge-state: var(--sf-scrim-control-state-active);
   }
   .sf-drawer:not([data-sf-drawer-column=true]):not([data-sf-drawer-edge-in-head]) .sf-drawer-edge .sf-icon-button:not(:disabled):not([aria-disabled=true]) .sf-icon {

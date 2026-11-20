@@ -130,37 +130,20 @@
     align-items: center;
     /* The gap between the thumbnail, the name and the buttons is the inset by
        default, so the thumbnail stands as far from the name as from the edge. */
-    grid-column-gap: var(--sf-image-field--inset);
-    -webkit-column-gap: var(--sf-image-field--inset);
-       -moz-column-gap: var(--sf-image-field--inset);
-            column-gap: var(--sf-image-field--inset);
-    grid-column-gap: var(--sf-image-field--inset);
     grid-column-gap: var(--sf-image-field-gap, var(--sf-image-field--inset));
     -webkit-column-gap: var(--sf-image-field-gap, var(--sf-image-field--inset));
        -moz-column-gap: var(--sf-image-field-gap, var(--sf-image-field--inset));
             column-gap: var(--sf-image-field-gap, var(--sf-image-field--inset));
     grid-row-gap: var(--sf-space-1\/4);
     row-gap: var(--sf-space-1\/4);
-    padding-top: var(--sf-image-field--inset);
-    padding-bottom: var(--sf-image-field--inset);
-    padding-block: var(--sf-image-field--inset);
-    padding-top: var(--sf-image-field--inset);
     padding-top: var(--sf-image-field-padding-block, var(--sf-image-field--inset));
-    padding-bottom: var(--sf-image-field--inset);
     padding-bottom: var(--sf-image-field-padding-block, var(--sf-image-field--inset));
     padding-block: var(--sf-image-field-padding-block, var(--sf-image-field--inset));
-    padding-left: var(--sf-image-field--inset);
-    padding-right: var(--sf-image-field--inset);
-    padding-inline: var(--sf-image-field--inset);
-    padding-left: var(--sf-image-field--inset);
     padding-left: var(--sf-image-field-padding-inline, var(--sf-image-field--inset));
-    padding-right: var(--sf-image-field--inset);
     padding-right: var(--sf-image-field-padding-inline, var(--sf-image-field--inset));
     padding-inline: var(--sf-image-field-padding-inline, var(--sf-image-field--inset));
-    border: var(--sf-px) var(--sf-image-field--border-style) var(--sf-image-field--border-color);
     border: var(--sf-image-field-border-width, var(--sf-px)) var(--sf-image-field--border-style) var(--sf-image-field--border-color);
     border-color: revert-layer;
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-image-field-radius, var(--sf-radius--ui));
     transition-duration: var(--sf-duration-fast);
     transition-property: background-color, border-color;
@@ -177,18 +160,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--sf-image-field--thumb);
-    inline-size: var(--sf-image-field--thumb);
-    width: var(--sf-image-field--thumb);
     width: var(--sf-image-field-thumbnail-size, var(--sf-image-field--thumb));
     inline-size: var(--sf-image-field-thumbnail-size, var(--sf-image-field--thumb));
-    height: var(--sf-image-field--thumb);
-    block-size: var(--sf-image-field--thumb);
-    height: var(--sf-image-field--thumb);
     height: var(--sf-image-field-thumbnail-size, var(--sf-image-field--thumb));
     block-size: var(--sf-image-field-thumbnail-size, var(--sf-image-field--thumb));
     overflow: hidden;
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-image-field-thumbnail-radius, var(--sf-radius--ui));
     --sf-icon--color: var(--sf-on-surface-variant);
   }
@@ -223,18 +199,8 @@
   /* A picture that may hold transparent pixels (PNG, SVG, WebP, GIF) stands on
      the checkerboard, as a translucent colour does (C86), so a white logo is
      seen and empty space reads as empty. */
-  .sf-image-field-thumb.sf-image-field-thumb--transparent {
-    background-image: conic-gradient(var(--sf-outline-variant) 25%, var(--sf-transparent) 0,var(--sf-transparent) 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, var(--sf-transparent) 0);
-    background-image: conic-gradient(var(--sf-outline-variant) 25%, var(--sf-transparent) 0 50%, var(--sf-outline-variant) 0 75%, var(--sf-transparent) 0);
-    background-size: var(--sf-a8) var(--sf-a8);
-  }
-  .sf-image-field-frame.sf-image-field-thumb--transparent {
-    background-image: conic-gradient(var(--sf-outline-variant) 25%, var(--sf-transparent) 0,var(--sf-transparent) 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, var(--sf-transparent) 0);
-    background-image: conic-gradient(var(--sf-outline-variant) 25%, var(--sf-transparent) 0 50%, var(--sf-outline-variant) 0 75%, var(--sf-transparent) 0);
-    background-size: var(--sf-a8) var(--sf-a8);
-  }
+  :is(.sf-image-field-thumb, .sf-image-field-frame).sf-image-field-thumb--transparent,
   .sf-image-field-frame--transparent {
-    background-image: conic-gradient(var(--sf-outline-variant) 25%, var(--sf-transparent) 0,var(--sf-transparent) 50%, var(--sf-outline-variant) 0,var(--sf-outline-variant) 75%, var(--sf-transparent) 0);
     background-image: conic-gradient(var(--sf-outline-variant) 25%, var(--sf-transparent) 0 50%, var(--sf-outline-variant) 0 75%, var(--sf-transparent) 0);
     background-size: var(--sf-a8) var(--sf-a8);
   }
@@ -296,10 +262,8 @@
     inline-size: var(--sf-image-field--frame);
     max-width: 100%;
     max-inline-size: 100%;
-    aspect-ratio: 16/9;
     aspect-ratio: var(--sf-image-field--aspect, 16/9);
     overflow: hidden;
-    border-width: var(--sf-px);
     border-width: var(--sf-image-field-border-width, var(--sf-px));
     border-style: solid;
     border-radius: var(--sf-radius--surface);
@@ -399,7 +363,6 @@
     position: relative;
     width: 100%;
     inline-size: 100%;
-    aspect-ratio: 16/9;
     aspect-ratio: var(--sf-image-field--aspect, 16/9);
     overflow: hidden;
     border-radius: var(--sf-radius--ui);
@@ -552,13 +515,11 @@
     color: var(--sf-error);
   }
   .sf-image-field-well {
-    border: var(--sf-px) var(--sf-image-field--border-style) var(--sf-image-field--border-color);
     border: var(--sf-image-field-border-width, var(--sf-px)) var(--sf-image-field--border-style) var(--sf-image-field--border-color);
     background-color: var(--sf-image-field--background-color);
     color: var(--sf-on-surface);
   }
   .sf-image-field-thumb {
-    background-color: var(--sf-surface-container);
     background-color: var(--sf-image-field-thumbnail-background-color, var(--sf-surface-container));
     /* The glyph stands on the container fill, so the dimmed role is the
        container's own: on-surface-variant alone falls under 4.5:1 there. */
@@ -567,12 +528,7 @@
   .sf-image-field-thumb .sf-icon {
     color: var(--sf-icon--color);
   }
-  .sf-image-field-thumb.sf-image-field-thumb--transparent {
-    background-color: var(--sf-surface-card);
-  }
-  .sf-image-field-frame.sf-image-field-thumb--transparent {
-    background-color: var(--sf-surface-card);
-  }
+  :is(.sf-image-field-thumb, .sf-image-field-frame).sf-image-field-thumb--transparent,
   .sf-image-field-frame--transparent {
     background-color: var(--sf-surface-card);
   }

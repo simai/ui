@@ -31,214 +31,50 @@
        plate hangs out by its spare room, so the cross stands where the
        status icon stands on the other side.
      A one-line notice is 56 (compact and phone 44) and its border. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
-    border-bottom-right-radius: var(--sf-radius--surface);
+  .sf-toast:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-right-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-toast{
-    border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-right-radius, var(--sf-radius--surface)));
-    }
-  }
-  .sf-toast:where(:dir(ltr)){
-    border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-right-radius, var(--sf-radius--surface)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
-    border-bottom-left-radius: var(--sf-radius--surface);
+  .sf-toast:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-right-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-toast{
-    border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-right-radius, var(--sf-radius--surface)));
-    }
-  }
-  .sf-toast:where(:dir(rtl)){
-    border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-right-radius, var(--sf-radius--surface)));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
-    border-bottom-left-radius: var(--sf-radius--surface);
+  .sf-toast:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-left-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-toast{
-    border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-left-radius, var(--sf-radius--surface)));
-    }
-  }
-  .sf-toast:where(:dir(ltr)){
-    border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-left-radius, var(--sf-radius--surface)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
-    border-bottom-right-radius: var(--sf-radius--surface);
+  .sf-toast:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-left-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-toast{
-    border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-left-radius, var(--sf-radius--surface)));
-    }
-  }
-  .sf-toast:where(:dir(rtl)){
-    border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-left-radius, var(--sf-radius--surface)));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
-    border-top-right-radius: var(--sf-radius--surface);
+  .sf-toast:where(:dir(ltr)){
     border-top-right-radius: var(--sf-toast-radius, var(--sf-toast--border-top-right-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-toast{
-    border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-toast-radius, var(--sf-toast--border-top-right-radius, var(--sf-radius--surface)));
-    }
-  }
-  .sf-toast:where(:dir(ltr)){
-    border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-toast-radius, var(--sf-toast--border-top-right-radius, var(--sf-radius--surface)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
-    border-top-left-radius: var(--sf-radius--surface);
+  .sf-toast:where(:dir(rtl)){
     border-top-left-radius: var(--sf-toast-radius, var(--sf-toast--border-top-right-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-toast{
-    border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-toast-radius, var(--sf-toast--border-top-right-radius, var(--sf-radius--surface)));
-    }
-  }
-  .sf-toast:where(:dir(rtl)){
-    border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-toast-radius, var(--sf-toast--border-top-right-radius, var(--sf-radius--surface)));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
-    border-top-left-radius: var(--sf-radius--surface);
+  .sf-toast:where(:dir(ltr)){
     border-top-left-radius: var(--sf-toast-radius, var(--sf-toast--border-top-left-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-toast{
-    border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-toast-radius, var(--sf-toast--border-top-left-radius, var(--sf-radius--surface)));
-    }
-  }
-  .sf-toast:where(:dir(ltr)){
-    border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-toast-radius, var(--sf-toast--border-top-left-radius, var(--sf-radius--surface)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
-    border-top-right-radius: var(--sf-radius--surface);
+  .sf-toast:where(:dir(rtl)){
     border-top-right-radius: var(--sf-toast-radius, var(--sf-toast--border-top-left-radius, var(--sf-radius--surface)));
   }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-toast{
-    border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-toast-radius, var(--sf-toast--border-top-left-radius, var(--sf-radius--surface)));
-    }
-  }
-  .sf-toast:where(:dir(rtl)){
-    border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-toast-radius, var(--sf-toast--border-top-left-radius, var(--sf-radius--surface)));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
-    padding-right: calc(var(--sf-space-1) - var(--sf-px));
+  .sf-toast:where(:dir(ltr)){
     padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
   }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-toast{
-    padding-right: calc(var(--sf-space-1) - var(--sf-px));
-    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
-    }
+  .sf-toast:where(:dir(rtl)){
+    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
   }
   .sf-toast:where(:dir(ltr)){
-    padding-right: calc(var(--sf-space-1) - var(--sf-px));
-    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
-    padding-left: calc(var(--sf-space-1) - var(--sf-px));
-    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-toast{
-    padding-left: calc(var(--sf-space-1) - var(--sf-px));
-    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
-    }
+    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
   }
   .sf-toast:where(:dir(rtl)){
-    padding-left: calc(var(--sf-space-1) - var(--sf-px));
-    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
-    padding-left: calc(var(--sf-space-1) - var(--sf-px));
-    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-toast{
-    padding-left: calc(var(--sf-space-1) - var(--sf-px));
-    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
-    }
-  }
-  .sf-toast:where(:dir(ltr)){
-    padding-left: calc(var(--sf-space-1) - var(--sf-px));
-    padding-left: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
-    padding-right: calc(var(--sf-space-1) - var(--sf-px));
     padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-toast{
-    padding-right: calc(var(--sf-space-1) - var(--sf-px));
-    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
-    }
-  }
-  .sf-toast:where(:dir(rtl)){
-    padding-right: calc(var(--sf-space-1) - var(--sf-px));
-    padding-right: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
-    padding-right: calc(var(--sf-space-1) - var(--sf-px));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-toast{
-    padding-right: calc(var(--sf-space-1) - var(--sf-px));
-    }
   }
   .sf-toast:where(:dir(ltr)){
     padding-right: calc(var(--sf-space-1) - var(--sf-px));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
-    padding-left: calc(var(--sf-space-1) - var(--sf-px));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-toast{
-    padding-left: calc(var(--sf-space-1) - var(--sf-px));
-    }
   }
   .sf-toast:where(:dir(rtl)){
     padding-left: calc(var(--sf-space-1) - var(--sf-px));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast{
-    padding-left: calc(var(--sf-space-1) - var(--sf-px));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-toast{
-    padding-left: calc(var(--sf-space-1) - var(--sf-px));
-    }
-  }
   .sf-toast:where(:dir(ltr)){
     padding-left: calc(var(--sf-space-1) - var(--sf-px));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast{
-    padding-right: calc(var(--sf-space-1) - var(--sf-px));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-toast{
-    padding-right: calc(var(--sf-space-1) - var(--sf-px));
-    }
   }
   .sf-toast:where(:dir(rtl)){
     padding-right: calc(var(--sf-space-1) - var(--sf-px));
@@ -250,38 +86,24 @@
     min-inline-size: var(--sf-0);
     max-width: 100%;
     max-inline-size: 100%;
-    border-width: var(--sf-px);
     border-width: var(--sf-toast-border-width, var(--sf-px));
     border-style: solid;
-    border-end-end-radius: var(--sf-radius--surface);
     border-end-end-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-right-radius, var(--sf-radius--surface)));
-    border-end-start-radius: var(--sf-radius--surface);
     border-end-start-radius: var(--sf-toast-radius, var(--sf-toast--border-bottom-left-radius, var(--sf-radius--surface)));
-    border-start-end-radius: var(--sf-radius--surface);
     border-start-end-radius: var(--sf-toast-radius, var(--sf-toast--border-top-right-radius, var(--sf-radius--surface)));
-    border-start-start-radius: var(--sf-radius--surface);
     border-start-start-radius: var(--sf-toast-radius, var(--sf-toast--border-top-left-radius, var(--sf-radius--surface)));
-    gap: var(--sf-space-1\/2);
     gap: var(--sf-toast-gap, var(--sf-toast--gap, var(--sf-space-1\/2)));
-    padding-bottom: var(--sf-space-1\/2);
     padding-bottom: var(--sf-toast-padding-block, var(--sf-toast--padding-bottom, var(--sf-space-1\/2)));
-    -webkit-padding-end: calc(var(--sf-space-1) - var(--sf-px));
-            padding-inline-end: calc(var(--sf-space-1) - var(--sf-px));
     -webkit-padding-end: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
             padding-inline-end: var(--sf-toast-padding-inline, var(--sf-toast--padding-right, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
-    -webkit-padding-start: calc(var(--sf-space-1) - var(--sf-px));
-            padding-inline-start: calc(var(--sf-space-1) - var(--sf-px));
     -webkit-padding-start: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
             padding-inline-start: var(--sf-toast-padding-inline, var(--sf-toast--padding-left, calc(var(--sf-space-1) - var(--sf-toast-border-width, var(--sf-px)))));
-    padding-top: var(--sf-space-1\/2);
     padding-top: var(--sf-toast-padding-block, var(--sf-toast--padding-top, var(--sf-space-1\/2)));
     background-image: linear-gradient(var(--sf-toast--background-color), var(--sf-toast--background-color));
     box-shadow: var(--sf-shadow-overlay);
     opacity: 1;
     -webkit-transform: translateY(var(--sf-0));
             transform: translateY(var(--sf-0));
-    transition: opacity var(--sf-duration-normal) var(--sf-ease-enter), -webkit-transform var(--sf-duration-normal) var(--sf-ease-enter);
-    transition: opacity var(--sf-duration-normal) var(--sf-ease-enter), transform var(--sf-duration-normal) var(--sf-ease-enter);
     transition: opacity var(--sf-duration-normal) var(--sf-ease-enter), transform var(--sf-duration-normal) var(--sf-ease-enter), -webkit-transform var(--sf-duration-normal) var(--sf-ease-enter);
   }
   .sf-toast.closing {
@@ -319,24 +141,8 @@
   }
   /* The close on the inline padding: the plate hangs out by the room between
      it and the cross (the lead and the room around the cross in its line). */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-toast > .sf-icon-button{
-    margin-right: calc(-1 * (var(--sf-toast--lead) + (var(--sf-text-height-1) - var(--sf-text-size-1)) / 2));
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-toast > .sf-icon-button{
-    margin-right: calc(-1 * (var(--sf-toast--lead) + (var(--sf-text-height-1) - var(--sf-text-size-1)) / 2));
-    }
-  }
   .sf-toast > .sf-icon-button:where(:dir(ltr)){
     margin-right: calc(-1 * (var(--sf-toast--lead) + (var(--sf-text-height-1) - var(--sf-text-size-1)) / 2));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-toast > .sf-icon-button{
-    margin-left: calc(-1 * (var(--sf-toast--lead) + (var(--sf-text-height-1) - var(--sf-text-size-1)) / 2));
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-toast > .sf-icon-button{
-    margin-left: calc(-1 * (var(--sf-toast--lead) + (var(--sf-text-height-1) - var(--sf-text-size-1)) / 2));
-    }
   }
   .sf-toast > .sf-icon-button:where(:dir(rtl)){
     margin-left: calc(-1 * (var(--sf-toast--lead) + (var(--sf-text-height-1) - var(--sf-text-size-1)) / 2));
@@ -471,10 +277,7 @@
   .sf-toast > .sf-icon-button.sf-icon-button--close > .sf-close > .sf-close-icon {
     --sf-close-icon--background-color: light-dark(var(--sf-black--alfa-64), var(--sf-white--alfa-64));
   }
-  .sf-toast > .sf-icon-button.sf-icon-button--close:not(:disabled):hover > .sf-close > .sf-close-icon {
-    --sf-close-icon--background-color: var(--sf-toast--content-color, var(--sf-on-surface));
-  }
-  .sf-toast > .sf-icon-button.sf-icon-button--close:not(:disabled):active > .sf-close > .sf-close-icon {
+  .sf-toast > .sf-icon-button.sf-icon-button--close:not(:disabled):is(:hover, :active) > .sf-close > .sf-close-icon {
     --sf-close-icon--background-color: var(--sf-toast--content-color, var(--sf-on-surface));
   }
   /* The quiet icon role, as on the alert (C35 acceptance F1): the theme's
@@ -482,52 +285,24 @@
      --sf-on-surface-container-variant: a toast is a popup place, where C43
      raised that role for the controls' keys (dark 90, the text's own ink), so
      the icon read it would lose its quiet tone (1.2.3). */
-  .sf-toast.sf-toast--neutral > .sf-icon {
+  .sf-toast:is(.sf-toast--neutral, .sf-toast--default) > .sf-icon,
+  .sf-toast:is(.sf-toast--neutral, .sf-toast--default) > sf-icon > .sf-icon {
     --sf-icon--color: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
   }
-  .sf-toast.sf-toast--default > .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
-  }
-  .sf-toast.sf-toast--neutral > sf-icon > .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
-  }
-  .sf-toast.sf-toast--default > sf-icon > .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
-  }
-  .sf-toast.sf-toast--neutral .sf-toast-supporting-text {
+  .sf-toast:is(.sf-toast--neutral, .sf-toast--default) .sf-toast-supporting-text {
     --sf-toast-supporting-text--color: var(--sf-toast-color, var(--sf-on-surface));
   }
-  .sf-toast.sf-toast--default .sf-toast-supporting-text {
-    --sf-toast-supporting-text--color: var(--sf-toast-color, var(--sf-on-surface));
-  }
-  .sf-toast.sf-toast--neutral .sf-toast-text {
+  .sf-toast:is(.sf-toast--neutral, .sf-toast--default) .sf-toast-text {
     --sf-toast-text--color: var(--sf-toast-color, var(--sf-on-surface));
   }
-  .sf-toast.sf-toast--default .sf-toast-text {
-    --sf-toast-text--color: var(--sf-toast-color, var(--sf-on-surface));
-  }
-  .sf-toast.sf-toast--info > .sf-icon {
+  .sf-toast:is(.sf-toast--info, .sf-toast--primary) > .sf-icon,
+  .sf-toast:is(.sf-toast--info, .sf-toast--primary) > sf-icon > .sf-icon {
     --sf-icon--color: var(--sf-info);
   }
-  .sf-toast.sf-toast--primary > .sf-icon {
-    --sf-icon--color: var(--sf-info);
-  }
-  .sf-toast.sf-toast--info > sf-icon > .sf-icon {
-    --sf-icon--color: var(--sf-info);
-  }
-  .sf-toast.sf-toast--primary > sf-icon > .sf-icon {
-    --sf-icon--color: var(--sf-info);
-  }
-  .sf-toast.sf-toast--info .sf-toast-supporting-text {
+  .sf-toast:is(.sf-toast--info, .sf-toast--primary) .sf-toast-supporting-text {
     --sf-toast-supporting-text--color: var(--sf-toast-color, var(--sf-on-info-container));
   }
-  .sf-toast.sf-toast--primary .sf-toast-supporting-text {
-    --sf-toast-supporting-text--color: var(--sf-toast-color, var(--sf-on-info-container));
-  }
-  .sf-toast.sf-toast--info .sf-toast-text {
-    --sf-toast-text--color: var(--sf-toast-color, var(--sf-on-info-container));
-  }
-  .sf-toast.sf-toast--primary .sf-toast-text {
+  .sf-toast:is(.sf-toast--info, .sf-toast--primary) .sf-toast-text {
     --sf-toast-text--color: var(--sf-toast-color, var(--sf-on-info-container));
   }
   .sf-toast.sf-toast--error > .sf-icon,
@@ -561,11 +336,7 @@
     --sf-toast-text--color: var(--sf-toast-color, var(--sf-on-success-container));
   }
   /* utility-hint: flex/1 (.flex-1) */
-  .sf-toast--neutral {
-    --sf-toast--background-color: var(--sf-toast-background-color, var(--sf-surface-container));
-    --sf-toast--content-color: var(--sf-toast-color, var(--sf-on-surface));
-  }
-  .sf-toast--default {
+  :is(.sf-toast--neutral, .sf-toast--default) {
     --sf-toast--background-color: var(--sf-toast-background-color, var(--sf-surface-container));
     --sf-toast--content-color: var(--sf-toast-color, var(--sf-on-surface));
   }
@@ -579,11 +350,7 @@
      theirs (C17 info parity, dispatcher 2026-11-09); it read the brand's
      primary container before, and under a theme of another colour an info
      toast took that colour. */
-  .sf-toast--info {
-    --sf-toast--background-color: var(--sf-toast-background-color, var(--sf-info-container));
-    --sf-toast--content-color: var(--sf-toast-color, var(--sf-on-info-container));
-  }
-  .sf-toast--primary {
+  :is(.sf-toast--info, .sf-toast--primary) {
     --sf-toast--background-color: var(--sf-toast-background-color, var(--sf-info-container));
     --sf-toast--content-color: var(--sf-toast-color, var(--sf-on-info-container));
   }
@@ -611,22 +378,11 @@
     text-decoration-thickness: var(--sf-link--underline-weight);
     text-underline-offset: var(--sf-a3);
   }
-  .sf-toast .sf-toast-wrap a[href]:hover {
+  .sf-toast .sf-toast-wrap a[href]:is(:hover, :active, :visited) {
     -webkit-text-decoration-color: currentColor;
             text-decoration-color: currentColor;
   }
-  .sf-toast .sf-toast-wrap a[href]:active {
-    -webkit-text-decoration-color: currentColor;
-            text-decoration-color: currentColor;
-  }
-  .sf-toast .sf-toast-wrap a[href]:visited {
-    -webkit-text-decoration-color: currentColor;
-            text-decoration-color: currentColor;
-  }
-  .sf-toast .sf-toast-wrap a[href]:hover {
-    text-decoration-thickness: calc(2 * var(--sf-link--underline-weight));
-  }
-  .sf-toast .sf-toast-wrap a[href]:active {
+  .sf-toast .sf-toast-wrap a[href]:is(:hover, :active) {
     text-decoration-thickness: calc(2 * var(--sf-link--underline-weight));
   }
   .sf-toast .sf-toast-wrap a[href].focus-visible {
@@ -643,7 +399,6 @@
 }
 @layer sf.paint {
   .sf-toast {
-    border-color: var(--sf-outline-variant);
     border-color: var(--sf-toast-border-color, var(--sf-toast--border-color, var(--sf-outline-variant)));
     /* A toast floats over the page, and the status containers are
        translucent fills: painted alone they let the table under a toast read
@@ -683,7 +438,6 @@
     --sf-code--color: var(--sf-on-surface);
     --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
-    color: var(--sf-on-surface);
     color: var(--sf-toast--content-color, var(--sf-on-surface));
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-toast {
@@ -779,14 +533,12 @@
   }
   .sf-toast .sf-close-icon {
     background-color: var(--sf-close-icon--background-color);
-    border-color: transparent;
     border-color: var(--sf-close-icon--border-color, transparent);
   }
   /* The status colour is the notice's own icon only (C35 acceptance A-F1): an
      icon inside an action button keeps the button's own icon role. */
   .sf-toast > .sf-icon,
   .sf-toast > sf-icon > .sf-icon {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-icon--color, var(--sf-on-surface-variant));
   }
   .sf-toast .sf-toast-container {
@@ -811,13 +563,10 @@
   .sf-toast .sf-toast-text {
     color: var(--sf-toast-text--color);
   }
-  .sf-toast--neutral {
+  :is(.sf-toast--neutral, .sf-toast--default) {
     --sf-on-surface-variant: var(--sf-on-surface-container-variant);
   }
-  .sf-toast--default {
-    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
-  }
-  .sf-toast--info {
+  :is(.sf-toast--info, .sf-toast--primary) {
     --sf-surface-place: var(--sf-info-container);
     --sf-surface-place-solid: initial;
     --sf-surface-underlay: initial;
@@ -837,35 +586,7 @@
     --sf-surface-transparent-hover: var(--sf-surface-state-hover);
     --sf-surface-transparent-select: var(--sf-surface-state-select);
   }
-  .sf-toast--primary {
-    --sf-surface-place: var(--sf-info-container);
-    --sf-surface-place-solid: initial;
-    --sf-surface-underlay: initial;
-    --sf-surface-place-fill: initial;
-    --sf-surface-container: var(--sf-info-container);
-    --sf-surface-container-hover: var(--sf-info-container-hover);
-    --sf-surface-container-active: var(--sf-info-container-active);
-    --sf-surface-state-hover: var(--sf-info-state-hover);
-    --sf-surface-state-select: var(--sf-info-state-select);
-    --sf-surface-state-active: var(--sf-info-state-active);
-    --sf-outline: var(--sf-info-outline);
-    --sf-outline-variant: var(--sf-info-container-strong);
-    --sf-place--container-outline: var(--sf-outline);
-    --sf-code--color: var(--sf-on-info-container);
-    --sf-code--background: var(--sf-info-container);
-    --sf-surface-transparent-active: var(--sf-surface-state-active);
-    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
-    --sf-surface-transparent-select: var(--sf-surface-state-select);
-  }
-  :where(.bg-surface-4) .sf-toast--info {
-    --sf-primary: var(--sf-place--found-primary);
-    --sf-primary-hover: var(--sf-place--found-primary-hover);
-    --sf-primary-active: var(--sf-place--found-primary-active);
-    --sf-link: var(--sf-place--found-link);
-    --sf-link-hover: var(--sf-place--found-link-hover);
-    --sf-link-active: var(--sf-place--found-link-active);
-  }
-  :where(.bg-surface-4) .sf-toast--primary {
+  :where(.bg-surface-4) :is(.sf-toast--info, .sf-toast--primary) {
     --sf-primary: var(--sf-place--found-primary);
     --sf-primary-hover: var(--sf-place--found-primary-hover);
     --sf-primary-active: var(--sf-place--found-primary-active);
@@ -960,13 +681,7 @@
   .sf-toast .sf-toast-wrap a[href] {
     color: inherit;
   }
-  .sf-toast .sf-toast-wrap a[href]:hover {
-    color: inherit;
-  }
-  .sf-toast .sf-toast-wrap a[href]:active {
-    color: inherit;
-  }
-  .sf-toast .sf-toast-wrap a[href]:visited {
+  .sf-toast .sf-toast-wrap a[href]:is(:hover, :active, :visited) {
     color: inherit;
   }
   @media (forced-colors: active) {
@@ -990,85 +705,16 @@
    buttons' stepped inks (--sf-on-surface-hover / -active). In sf.states, as
    the buttons' rule. */
 @layer sf.states {
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-button-text-container {
+  .sf-toast .sf-toast-bottom .sf-button:is(.sf-button--tonal, .sf-button--ghost, .sf-button--link).sf-button--on-surface:not(:disabled):not(.disabled):hover :is(.sf-button-text-container, .sf-button-shortcut) {
     --sf-button-text-container--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
   }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-button-shortcut {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-button-text-container {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-button-shortcut {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-button-text-container {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-button-shortcut {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-icon {
+  .sf-toast .sf-toast-bottom .sf-button:is(.sf-button--tonal, .sf-button--ghost, .sf-button--link).sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-icon {
     --sf-icon--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
   }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-on-surface-hover), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-button-text-container {
+  .sf-toast .sf-toast-bottom .sf-button:is(.sf-button--tonal, .sf-button--ghost, .sf-button--link).sf-button--on-surface:not(:disabled):not(.disabled):is(:active, .active) :is(.sf-button-text-container, .sf-button-shortcut) {
     --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
   }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-button-shortcut {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-button-text-container {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-button-shortcut {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-button-text-container {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-button-shortcut {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-button-text-container {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-button-shortcut {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-button-text-container {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-button-shortcut {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-button-text-container {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-button-shortcut {
-    --sf-button-text-container--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--tonal.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--ghost.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface:not(:disabled):not(.disabled):active .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
-  }
-  .sf-toast .sf-toast-bottom .sf-button.sf-button--link.sf-button--on-surface.active:not(:disabled):not(.disabled) .sf-icon {
+  .sf-toast .sf-toast-bottom .sf-button:is(.sf-button--tonal, .sf-button--ghost, .sf-button--link).sf-button--on-surface:not(:disabled):not(.disabled):is(:active, .active) .sf-icon {
     --sf-icon--color: light-dark(var(--sf-on-surface-active), var(--sf-alpha-base));
   }
 }
@@ -1110,24 +756,8 @@
   .sf-notifications > * {
     pointer-events: auto;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-notifications[data-placement$=end]{
-    right: var(--sf-space-1);
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-notifications[data-placement$=end]{
-    right: var(--sf-space-1);
-    }
-  }
   .sf-notifications[data-placement$=end]:where(:dir(ltr)){
     right: var(--sf-space-1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-notifications[data-placement$=end]{
-    left: var(--sf-space-1);
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-notifications[data-placement$=end]{
-    left: var(--sf-space-1);
-    }
   }
   .sf-notifications[data-placement$=end]:where(:dir(rtl)){
     left: var(--sf-space-1);
@@ -1135,24 +765,8 @@
   .sf-notifications[data-placement$=end] {
     inset-inline-end: var(--sf-space-1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-notifications[data-placement$=start]{
-    left: var(--sf-space-1);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-notifications[data-placement$=start]{
-    left: var(--sf-space-1);
-    }
-  }
   .sf-notifications[data-placement$=start]:where(:dir(ltr)){
     left: var(--sf-space-1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-notifications[data-placement$=start]{
-    right: var(--sf-space-1);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-notifications[data-placement$=start]{
-    right: var(--sf-space-1);
-    }
   }
   .sf-notifications[data-placement$=start]:where(:dir(rtl)){
     right: var(--sf-space-1);
@@ -1190,24 +804,8 @@
   .sf-notifications .sf-toast[data-count] {
     position: relative;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-notifications .sf-toast[data-count]::before{
-    left: calc(-1 * var(--sf-space-1\/4));
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-notifications .sf-toast[data-count]::before{
-    left: calc(-1 * var(--sf-space-1\/4));
-    }
-  }
   .sf-notifications .sf-toast[data-count]::before:where(:dir(ltr)){
     left: calc(-1 * var(--sf-space-1\/4));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-notifications .sf-toast[data-count]::before{
-    right: calc(-1 * var(--sf-space-1\/4));
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-notifications .sf-toast[data-count]::before{
-    right: calc(-1 * var(--sf-space-1\/4));
-    }
   }
   .sf-notifications .sf-toast[data-count]::before:where(:dir(rtl)){
     right: calc(-1 * var(--sf-space-1\/4));
@@ -1245,8 +843,6 @@
     right: 0;
     inset-inline: 0;
     margin: 0;
-    transition: opacity var(--sf-duration-normal) var(--sf-ease-enter), -webkit-transform var(--sf-duration-normal) var(--sf-ease-enter), -webkit-clip-path var(--sf-duration-normal) var(--sf-ease-enter);
-    transition: opacity var(--sf-duration-normal) var(--sf-ease-enter), transform var(--sf-duration-normal) var(--sf-ease-enter), clip-path var(--sf-duration-normal) var(--sf-ease-enter);
     transition: opacity var(--sf-duration-normal) var(--sf-ease-enter), transform var(--sf-duration-normal) var(--sf-ease-enter), clip-path var(--sf-duration-normal) var(--sf-ease-enter), -webkit-transform var(--sf-duration-normal) var(--sf-ease-enter), -webkit-clip-path var(--sf-duration-normal) var(--sf-ease-enter);
   }
   .sf-notifications[data-layout=stack][data-placement^=bottom] > .sf-toast {
@@ -1312,10 +908,7 @@
   .sf-toast > .sf-icon-button.sf-button-close {
     --sf-button-close--ink: light-dark(var(--sf-black--alfa-64), var(--sf-white--alfa-64));
   }
-  .sf-toast > .sf-icon-button.sf-button-close:not(:disabled):hover {
-    --sf-button-close--ink: var(--sf-toast--content-color, var(--sf-on-surface));
-  }
-  .sf-toast > .sf-icon-button.sf-button-close:not(:disabled):active {
+  .sf-toast > .sf-icon-button.sf-button-close:not(:disabled):is(:hover, :active) {
     --sf-button-close--ink: var(--sf-toast--content-color, var(--sf-on-surface));
   }
 }

@@ -816,6 +816,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isMainAction: () => (/* binding */ isMainAction),
 /* harmony export */   isPressed: () => (/* binding */ isPressed),
 /* harmony export */   layoutActionRow: () => (/* binding */ layoutActionRow),
+/* harmony export */   layoutHeight: () => (/* binding */ layoutHeight),
+/* harmony export */   layoutRowRoom: () => (/* binding */ layoutRowRoom),
+/* harmony export */   layoutWidth: () => (/* binding */ layoutWidth),
 /* harmony export */   measureShown: () => (/* binding */ measureShown),
 /* harmony export */   openRowMenu: () => (/* binding */ openRowMenu),
 /* harmony export */   readPriority: () => (/* binding */ readPriority),
@@ -946,6 +949,38 @@ function rowRoom(list) {
   const style = getComputedStyle(list);
   const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
   return list.getBoundingClientRect().width - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // The width an element is laid out at, in fractional CSS pixels, before any
+// transform of it or of an ancestor (its border box). getBoundingClientRect is
+// a screen box: inside scale(.7) a 90 px tab reads 63, inside rotate() it reads
+// the width of its rotated bounding box, and a row that compares such widths
+// with its padding, a text measured in canvas or a ResizeObserver size mixes
+// screen and layout pixels (docs hero study 2026-11-19, section 9). The used
+// width of the computed style is the layout's own, with its fractions; a box
+// without one (an inline box, an element not drawn) gives offsetWidth.
+
+function layoutWidth(element) {
+  if (!element) return 0;
+  const style = getComputedStyle(element);
+  const width = parseFloat(style.width);
+  if (!Number.isFinite(width)) return element.offsetWidth || 0;
+  if (style.boxSizing === 'border-box') return width;
+  return ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), width);
+} // The block size of the same box (layoutWidth's other axis).
+
+function layoutHeight(element) {
+  if (!element) return 0;
+  const style = getComputedStyle(element);
+  const height = parseFloat(style.height);
+  if (!Number.isFinite(height)) return element.offsetHeight || 0;
+  if (style.boxSizing === 'border-box') return height;
+  return ['paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), height);
+} // rowRoom in layout pixels: the row's content box before any transform, for a
+// row whose items are measured with layoutWidth.
+
+function layoutRowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return layoutWidth(list) - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
 } // A text measurer in an element's own face, or null without a canvas: the
 // width «Ещё (7)» will have before its button draws it.
 
@@ -5333,7 +5368,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "d41b3b9112e6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-rich","tag":"sf-input-rich","version":"1.10.4","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"overflow":{"type":"enum","values":["more","wrap"],"default":"more"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":6},"max-rows":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"counter":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-long","custom-error"]},"css-variables":{"--sf-rich-text-background-color":{"type":"color","state":"default"},"--sf-rich-text-border-color":{"type":"color","state":"default"},"--sf-rich-text-color":{"type":"color","state":"default"},"--sf-rich-text-radius":{"type":"length","state":"default"},"--sf-rich-text-padding-inline":{"type":"length","state":"default"},"--sf-rich-text-padding-block":{"type":"length","state":"default"},"--sf-rich-text-invalid-border-color":{"type":"color","state":"invalid"},"--sf-rich-text-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-rich","tag":"sf-input-rich","version":"1.10.5","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"overflow":{"type":"enum","values":["more","wrap"],"default":"more"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":6},"max-rows":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"counter":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-long","custom-error"]},"css-variables":{"--sf-rich-text-background-color":{"type":"color","state":"default"},"--sf-rich-text-border-color":{"type":"color","state":"default"},"--sf-rich-text-color":{"type":"color","state":"default"},"--sf-rich-text-radius":{"type":"length","state":"default"},"--sf-rich-text-padding-inline":{"type":"length","state":"default"},"--sf-rich-text-padding-block":{"type":"length","state":"default"},"--sf-rich-text-invalid-border-color":{"type":"color","state":"invalid"},"--sf-rich-text-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

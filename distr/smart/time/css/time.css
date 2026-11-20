@@ -22,15 +22,10 @@
     display: inline;
   }
   .sf-time {
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-time-radius, var(--sf-radius--ui));
-    -webkit-font-feature-settings: tabular-nums;
-            font-feature-settings: tabular-nums;
     -webkit-font-feature-settings: var(--sf-time-font-variant-numeric, tabular-nums);
             font-feature-settings: var(--sf-time-font-variant-numeric, tabular-nums);
-    font-variant-numeric: tabular-nums;
     font-variant-numeric: var(--sf-time-font-variant-numeric, tabular-nums);
-    white-space: nowrap;
     white-space: var(--sf-time-white-space, nowrap);
   }
   .sf-time[data-tooltip] {
@@ -62,7 +57,6 @@
 }
 @layer sf.paint {
   .sf-time {
-    color: inherit;
     color: var(--sf-time-color, inherit);
   }
   .sf-time.focus-visible {

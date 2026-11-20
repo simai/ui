@@ -238,24 +238,8 @@
     line-height: 0;
     white-space: nowrap;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) > .sf-input-required{
-    margin-left: var(--sf-input-label--gap);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) > .sf-input-required{
-    margin-left: var(--sf-input-label--gap);
-    }
-  }
   .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) > .sf-input-required:where(:dir(ltr)){
     margin-left: var(--sf-input-label--gap);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) > .sf-input-required{
-    margin-right: var(--sf-input-label--gap);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) > .sf-input-required{
-    margin-right: var(--sf-input-label--gap);
-    }
   }
   .sf-input .sf-input-label:has(> .sf-input-text):has(> sf-help-mark, > .sf-help-mark) > .sf-input-required:where(:dir(rtl)){
     margin-right: var(--sf-input-label--gap);
@@ -264,29 +248,9 @@
     -webkit-margin-start: var(--sf-input-label--gap);
             margin-inline-start: var(--sf-input-label--gap);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-label:has(> .sf-input-text) > sf-help-mark > .sf-help-mark,html:not([dir="rtl"])
-  .sf-input .sf-input-label:has(> .sf-input-text) > .sf-help-mark{
-    margin-left: var(--sf-input-label--gap);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-input .sf-input-label:has(> .sf-input-text) > sf-help-mark > .sf-help-mark,html:not([dir="rtl"])
-  .sf-input .sf-input-label:has(> .sf-input-text) > .sf-help-mark{
-    margin-left: var(--sf-input-label--gap);
-    }
-  }
   .sf-input .sf-input-label:has(> .sf-input-text) > sf-help-mark > .sf-help-mark:where(:dir(ltr)),
   .sf-input .sf-input-label:has(> .sf-input-text) > .sf-help-mark:where(:dir(ltr)){
     margin-left: var(--sf-input-label--gap);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-label:has(> .sf-input-text) > sf-help-mark > .sf-help-mark,[dir="rtl"]
-  .sf-input .sf-input-label:has(> .sf-input-text) > .sf-help-mark{
-    margin-right: var(--sf-input-label--gap);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-input .sf-input-label:has(> .sf-input-text) > sf-help-mark > .sf-help-mark,[dir="rtl"]
-  .sf-input .sf-input-label:has(> .sf-input-text) > .sf-help-mark{
-    margin-right: var(--sf-input-label--gap);
-    }
   }
   .sf-input .sf-input-label:has(> .sf-input-text) > sf-help-mark > .sf-help-mark:where(:dir(rtl)),
   .sf-input .sf-input-label:has(> .sf-input-text) > .sf-help-mark:where(:dir(rtl)){
@@ -324,146 +288,46 @@
     min-width: 0;
     min-inline-size: 0;
     --sf-input--radius: var(--sf-input-radius, var(--sf-radius--ui));
-    gap: var(--sf-space-1\/4);
     gap: var(--sf-input--gap, var(--sf-space-1\/4));
   }
   .sf-input .sf-icon {
-    font-size: var(--sf-icon-size-3);
     font-size: var(--sf-icon--font-size, var(--sf-icon-size-3));
-    height: var(--sf-icon-size-3);
     height: var(--sf-icon--height, var(--sf-icon-size-3));
-    width: var(--sf-icon-size-3);
     width: var(--sf-icon--width, var(--sf-icon-size-3));
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field{
-    border-bottom-right-radius: var(--sf-input-field--border-end-end-radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-input .sf-input-field{
-    border-bottom-right-radius: var(--sf-input-field--border-end-end-radius);
-    }
-  }
   .sf-input .sf-input-field:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-input-field--border-end-end-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field{
-    border-bottom-left-radius: var(--sf-input-field--border-end-end-radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-input .sf-input-field{
-    border-bottom-left-radius: var(--sf-input-field--border-end-end-radius);
-    }
   }
   .sf-input .sf-input-field:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-input-field--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field{
-    border-bottom-left-radius: var(--sf-input-field--border-end-start-radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-input .sf-input-field{
-    border-bottom-left-radius: var(--sf-input-field--border-end-start-radius);
-    }
-  }
   .sf-input .sf-input-field:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-input-field--border-end-start-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field{
-    border-bottom-right-radius: var(--sf-input-field--border-end-start-radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-input .sf-input-field{
-    border-bottom-right-radius: var(--sf-input-field--border-end-start-radius);
-    }
   }
   .sf-input .sf-input-field:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-input-field--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field{
-    border-top-right-radius: var(--sf-input-field--border-start-end-radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-input .sf-input-field{
-    border-top-right-radius: var(--sf-input-field--border-start-end-radius);
-    }
-  }
   .sf-input .sf-input-field:where(:dir(ltr)){
     border-top-right-radius: var(--sf-input-field--border-start-end-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field{
-    border-top-left-radius: var(--sf-input-field--border-start-end-radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-input .sf-input-field{
-    border-top-left-radius: var(--sf-input-field--border-start-end-radius);
-    }
   }
   .sf-input .sf-input-field:where(:dir(rtl)){
     border-top-left-radius: var(--sf-input-field--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field{
-    border-top-left-radius: var(--sf-input-field--border-start-start-radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-input .sf-input-field{
-    border-top-left-radius: var(--sf-input-field--border-start-start-radius);
-    }
-  }
   .sf-input .sf-input-field:where(:dir(ltr)){
     border-top-left-radius: var(--sf-input-field--border-start-start-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field{
-    border-top-right-radius: var(--sf-input-field--border-start-start-radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-input .sf-input-field{
-    border-top-right-radius: var(--sf-input-field--border-start-start-radius);
-    }
   }
   .sf-input .sf-input-field:where(:dir(rtl)){
     border-top-right-radius: var(--sf-input-field--border-start-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field{
-    padding-right: var(--sf-input-field--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-input .sf-input-field{
-    padding-right: var(--sf-input-field--padding-inline-end);
-    }
-  }
   .sf-input .sf-input-field:where(:dir(ltr)){
     padding-right: var(--sf-input-field--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field{
-    padding-left: var(--sf-input-field--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-input .sf-input-field{
-    padding-left: var(--sf-input-field--padding-inline-end);
-    }
   }
   .sf-input .sf-input-field:where(:dir(rtl)){
     padding-left: var(--sf-input-field--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field{
-    padding-left: var(--sf-input-field--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-input .sf-input-field{
-    padding-left: var(--sf-input-field--padding-inline-start);
-    }
-  }
   .sf-input .sf-input-field:where(:dir(ltr)){
     padding-left: var(--sf-input-field--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field{
-    padding-right: var(--sf-input-field--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-input .sf-input-field{
-    padding-right: var(--sf-input-field--padding-inline-start);
-    }
   }
   .sf-input .sf-input-field:where(:dir(rtl)){
     padding-right: var(--sf-input-field--padding-inline-start);
@@ -476,7 +340,6 @@
     --sf-input-field--border-end-start-radius: var(--sf-input--radius);
     --sf-input-field--border-start-end-radius: var(--sf-input--radius);
     --sf-input-field--border-start-start-radius: var(--sf-input--radius);
-    border: 0 solid;
     border: var(--sf-input-field--border, 0 solid);
     border-color: revert-layer;
     border-end-end-radius: var(--sf-input-field--border-end-end-radius);
@@ -498,46 +361,14 @@
     --sf-input-hint--background-color: transparent;
   }
   /* utility-hint: flex/1 (.flex-1) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field input{
-    padding-right: var(--sf-input-input--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-input .sf-input-field input{
-    padding-right: var(--sf-input-input--padding-inline-end);
-    }
-  }
   .sf-input .sf-input-field input:where(:dir(ltr)){
     padding-right: var(--sf-input-input--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field input{
-    padding-left: var(--sf-input-input--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-input .sf-input-field input{
-    padding-left: var(--sf-input-input--padding-inline-end);
-    }
   }
   .sf-input .sf-input-field input:where(:dir(rtl)){
     padding-left: var(--sf-input-input--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-field input{
-    padding-left: var(--sf-input-input--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-input .sf-input-field input{
-    padding-left: var(--sf-input-input--padding-inline-start);
-    }
-  }
   .sf-input .sf-input-field input:where(:dir(ltr)){
     padding-left: var(--sf-input-input--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-field input{
-    padding-right: var(--sf-input-input--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-input .sf-input-field input{
-    padding-right: var(--sf-input-input--padding-inline-start);
-    }
   }
   .sf-input .sf-input-field input:where(:dir(rtl)){
     padding-right: var(--sf-input-input--padding-inline-start);
@@ -568,24 +399,8 @@
      start and the control font, does not take by itself. Only that field:
      an input in a centred container (a dialog, a card) keeps the start
      alignment every other input has. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input.text-end .sf-input-field input{
-    text-align: right;
-  }
-  @supports not (text-align: end){
-  html:not([dir="rtl"]) .sf-input.text-end .sf-input-field input{
-    text-align: right;
-    }
-  }
   .sf-input.text-end .sf-input-field input:where(:dir(ltr)){
     text-align: right;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input.text-end .sf-input-field input{
-    text-align: left;
-  }
-  @supports not (text-align: end){
-  [dir="rtl"] .sf-input.text-end .sf-input-field input{
-    text-align: left;
-    }
   }
   .sf-input.text-end .sf-input-field input:where(:dir(rtl)){
     text-align: left;
@@ -655,46 +470,14 @@
     --sf-input-left--background-color: transparent;
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-right{
-    padding-right: var(--sf-input-right--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-input .sf-input-right{
-    padding-right: var(--sf-input-right--padding-inline-end);
-    }
-  }
   .sf-input .sf-input-right:where(:dir(ltr)){
     padding-right: var(--sf-input-right--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-right{
-    padding-left: var(--sf-input-right--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-input .sf-input-right{
-    padding-left: var(--sf-input-right--padding-inline-end);
-    }
   }
   .sf-input .sf-input-right:where(:dir(rtl)){
     padding-left: var(--sf-input-right--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-right{
-    padding-left: var(--sf-input-right--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-input .sf-input-right{
-    padding-left: var(--sf-input-right--padding-inline-start);
-    }
-  }
   .sf-input .sf-input-right:where(:dir(ltr)){
     padding-left: var(--sf-input-right--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-right{
-    padding-right: var(--sf-input-right--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-input .sf-input-right{
-    padding-right: var(--sf-input-right--padding-inline-start);
-    }
   }
   .sf-input .sf-input-right:where(:dir(rtl)){
     padding-right: var(--sf-input-right--padding-inline-start);
@@ -954,22 +737,15 @@
 }
 @layer sf.paint {
   .sf-input {
-    background-color: transparent;
     background-color: var(--sf-input--background-color, transparent);
   }
   .sf-input .sf-icon {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-icon--color, var(--sf-on-surface-variant));
   }
   .sf-input .sf-input-field {
     background-color: var(--sf-input-field--background-color);
-    border: 0 solid;
     border: var(--sf-input-field--border, 0 solid);
-    border-color: transparent;
     border-color: var(--sf-input-field--border-color, transparent);
-    border-bottom-color: transparent;
-    border-block-end-color: transparent;
-    border-bottom-color: transparent;
     border-bottom-color: var(--sf-input-field--line-color, var(--sf-input-field--border-color, transparent));
     border-block-end-color: var(--sf-input-field--line-color, var(--sf-input-field--border-color, transparent));
   }
@@ -978,7 +754,6 @@
   }
   .sf-input .sf-input-field input {
     background-color: var(--sf-input-input--background-color);
-    color: var(--sf-input-input--color);
     color: var(--sf-input-color, var(--sf-input-input--color));
   }
   .sf-input .sf-input-field input::-webkit-input-placeholder {
@@ -1142,22 +917,12 @@
      C16): no plate, and the line of a region for its edge -- in both looks.
      The filled look drops its plate and its bottom line too, so a read-only
      field looks the same whichever look it was given. */
-  .sf-input.sf-input--bordered:not(.error):has(input:-moz-read-only:not(:disabled)) .sf-input-field {
+  .sf-input:not(.error):is(.sf-input--bordered, .sf-input--filled):has(input:-moz-read-only:not(:disabled)) .sf-input-field {
     --sf-input-field--background-color: var(--sf-transparent);
     --sf-input-field--border-color: var(--sf-outline-variant);
     --sf-input-field--line-color: var(--sf-outline-variant);
   }
-  .sf-input.sf-input--bordered:not(.error):has(input:read-only:not(:disabled)) .sf-input-field {
-    --sf-input-field--background-color: var(--sf-transparent);
-    --sf-input-field--border-color: var(--sf-outline-variant);
-    --sf-input-field--line-color: var(--sf-outline-variant);
-  }
-  .sf-input.sf-input--filled:not(.error):has(input:-moz-read-only:not(:disabled)) .sf-input-field {
-    --sf-input-field--background-color: var(--sf-transparent);
-    --sf-input-field--border-color: var(--sf-outline-variant);
-    --sf-input-field--line-color: var(--sf-outline-variant);
-  }
-  .sf-input.sf-input--filled:not(.error):has(input:read-only:not(:disabled)) .sf-input-field {
+  .sf-input:not(.error):is(.sf-input--bordered, .sf-input--filled):has(input:read-only:not(:disabled)) .sf-input-field {
     --sf-input-field--background-color: var(--sf-transparent);
     --sf-input-field--border-color: var(--sf-outline-variant);
     --sf-input-field--line-color: var(--sf-outline-variant);
@@ -1261,149 +1026,18 @@
       --sf-input--inset: var(--sf-space-3);
     }
   }
-  .sf-input.sf-input--size-1\/3 .sf-input-field {
-    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--value-inset) - var(--sf-px)));
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--value-inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field {
-    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--value-inset) - var(--sf-px)));
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--value-inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1 .sf-input-field {
-    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--value-inset) - var(--sf-px)));
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--value-inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-2 .sf-input-field {
-    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--value-inset) - var(--sf-px)));
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--value-inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-3 .sf-input-field {
+  .sf-input:is(.sf-input--size-1\/3, .sf-input--size-1\/2, .sf-input--size-1, .sf-input--size-2, .sf-input--size-3) .sf-input-field {
     --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--value-inset) - var(--sf-px)));
     --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--value-inset) - var(--sf-px)));
   }
   /* A picture at either end stands at the plain inset, its step after it. */
-  .sf-input.sf-input--size-1\/3 .sf-input-field:where(:has(> .sf-input-left, > .sf-icon:first-child)) {
+  .sf-input:is(.sf-input--size-1\/3, .sf-input--size-1\/2, .sf-input--size-1, .sf-input--size-2, .sf-input--size-3) .sf-input-field:where(:has(> .sf-input-left, > .sf-icon:first-child)) {
     --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
   }
-  .sf-input.sf-input--size-1\/2 .sf-input-field:where(:has(> .sf-input-left, > .sf-icon:first-child)) {
-    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1 .sf-input-field:where(:has(> .sf-input-left, > .sf-icon:first-child)) {
-    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-2 .sf-input-field:where(:has(> .sf-input-left, > .sf-icon:first-child)) {
-    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-3 .sf-input-field:where(:has(> .sf-input-left, > .sf-icon:first-child)) {
-    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/3 .sf-input-field:where(:has(> input ~ .sf-input-right)) {
+  .sf-input:is(.sf-input--size-1\/3, .sf-input--size-1\/2, .sf-input--size-1, .sf-input--size-2, .sf-input--size-3) .sf-input-field:where(:has(> input ~ :is(.sf-input-right, .sf-input-hint, .sf-icon, .sf-field-action, :is(sf-button-copy, sf-copy-button)))) {
     --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
   }
-  .sf-input.sf-input--size-1\/3 .sf-input-field:where(:has(> input ~ .sf-input-hint)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/3 .sf-input-field:where(:has(> input ~ .sf-icon)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/3 .sf-input-field:where(:has(> input ~ .sf-field-action)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/3 .sf-input-field:where(:has(> input ~ sf-button-copy:not(.does-not-exist))) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/3 .sf-input-field:where(:has(> input ~ sf-copy-button:not(.does-not-exist))) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field:where(:has(> input ~ .sf-input-right)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field:where(:has(> input ~ .sf-input-hint)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field:where(:has(> input ~ .sf-icon)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field:where(:has(> input ~ .sf-field-action)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field:where(:has(> input ~ sf-button-copy:not(.does-not-exist))) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field:where(:has(> input ~ sf-copy-button:not(.does-not-exist))) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1 .sf-input-field:where(:has(> input ~ .sf-input-right)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1 .sf-input-field:where(:has(> input ~ .sf-input-hint)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1 .sf-input-field:where(:has(> input ~ .sf-icon)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1 .sf-input-field:where(:has(> input ~ .sf-field-action)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1 .sf-input-field:where(:has(> input ~ sf-button-copy:not(.does-not-exist))) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1 .sf-input-field:where(:has(> input ~ sf-copy-button:not(.does-not-exist))) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-2 .sf-input-field:where(:has(> input ~ .sf-input-right)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-2 .sf-input-field:where(:has(> input ~ .sf-input-hint)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-2 .sf-input-field:where(:has(> input ~ .sf-icon)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-2 .sf-input-field:where(:has(> input ~ .sf-field-action)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-2 .sf-input-field:where(:has(> input ~ sf-button-copy:not(.does-not-exist))) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-2 .sf-input-field:where(:has(> input ~ sf-copy-button:not(.does-not-exist))) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-3 .sf-input-field:where(:has(> input ~ .sf-input-right)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-3 .sf-input-field:where(:has(> input ~ .sf-input-hint)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-3 .sf-input-field:where(:has(> input ~ .sf-icon)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-3 .sf-input-field:where(:has(> input ~ .sf-field-action)) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-3 .sf-input-field:where(:has(> input ~ sf-button-copy:not(.does-not-exist))) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-3 .sf-input-field:where(:has(> input ~ sf-copy-button:not(.does-not-exist))) {
-    --sf-input-field--padding-inline-end: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/3 .sf-input-field input {
-    --sf-input-input--padding-inline-start: calc(var(--sf-px) * 0);
-    --sf-input-input--padding-inline-end: calc(var(--sf-px) * 0);
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field input {
-    --sf-input-input--padding-inline-start: calc(var(--sf-px) * 0);
-    --sf-input-input--padding-inline-end: calc(var(--sf-px) * 0);
-  }
-  .sf-input.sf-input--size-1 .sf-input-field input {
-    --sf-input-input--padding-inline-start: calc(var(--sf-px) * 0);
-    --sf-input-input--padding-inline-end: calc(var(--sf-px) * 0);
-  }
-  .sf-input.sf-input--size-2 .sf-input-field input {
-    --sf-input-input--padding-inline-start: calc(var(--sf-px) * 0);
-    --sf-input-input--padding-inline-end: calc(var(--sf-px) * 0);
-  }
-  .sf-input.sf-input--size-3 .sf-input-field input {
+  .sf-input:is(.sf-input--size-1\/3, .sf-input--size-1\/2, .sf-input--size-1, .sf-input--size-2, .sf-input--size-3) .sf-input-field input {
     --sf-input-input--padding-inline-start: calc(var(--sf-px) * 0);
     --sf-input-input--padding-inline-end: calc(var(--sf-px) * 0);
   }
@@ -1412,79 +1046,22 @@
      phone -- at every size, the step its options keep from their pictures,
      so the value and an option's text start on one axis. It was the button's
      picture-to-label step (--sf-ui-<S>--text-space-x, H1): 7, 8, 10. */
-  .sf-input.sf-input--size-1\/3 .sf-input-field > .sf-input-left ~ input {
+  .sf-input:is(.sf-input--size-1\/3, .sf-input--size-1\/2, .sf-input--size-1, .sf-input--size-2, .sf-input--size-3) .sf-input-field > :is(.sf-input-left, .sf-icon) ~ input {
     --sf-input-input--padding-inline-start: var(--sf-space-1\/2);
   }
-  .sf-input.sf-input--size-1\/3 .sf-input-field > .sf-icon ~ input {
-    --sf-input-input--padding-inline-start: var(--sf-space-1\/2);
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field > .sf-input-left ~ input {
-    --sf-input-input--padding-inline-start: var(--sf-space-1\/2);
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field > .sf-icon ~ input {
-    --sf-input-input--padding-inline-start: var(--sf-space-1\/2);
-  }
-  .sf-input.sf-input--size-1 .sf-input-field > .sf-input-left ~ input {
-    --sf-input-input--padding-inline-start: var(--sf-space-1\/2);
-  }
-  .sf-input.sf-input--size-1 .sf-input-field > .sf-icon ~ input {
-    --sf-input-input--padding-inline-start: var(--sf-space-1\/2);
-  }
-  .sf-input.sf-input--size-2 .sf-input-field > .sf-input-left ~ input {
-    --sf-input-input--padding-inline-start: var(--sf-space-1\/2);
-  }
-  .sf-input.sf-input--size-2 .sf-input-field > .sf-icon ~ input {
-    --sf-input-input--padding-inline-start: var(--sf-space-1\/2);
-  }
-  .sf-input.sf-input--size-3 .sf-input-field > .sf-input-left ~ input {
-    --sf-input-input--padding-inline-start: var(--sf-space-1\/2);
-  }
-  .sf-input.sf-input--size-3 .sf-input-field > .sf-icon ~ input {
-    --sf-input-input--padding-inline-start: var(--sf-space-1\/2);
-  }
-  .sf-input.sf-input--size-1\/3 .sf-input-field > input:has(~ .sf-input-right) {
+  .sf-input.sf-input--size-1\/3 .sf-input-field > input:has(~ :is(.sf-input-right, .sf-input-hint, .sf-icon)) {
     --sf-input-input--padding-inline-end: var(--sf-ui-1\/3--text-space-x);
   }
-  .sf-input.sf-input--size-1\/3 .sf-input-field > input:has(~ .sf-input-hint) {
-    --sf-input-input--padding-inline-end: var(--sf-ui-1\/3--text-space-x);
-  }
-  .sf-input.sf-input--size-1\/3 .sf-input-field > input:has(~ .sf-icon) {
-    --sf-input-input--padding-inline-end: var(--sf-ui-1\/3--text-space-x);
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field > input:has(~ .sf-input-right) {
+  .sf-input.sf-input--size-1\/2 .sf-input-field > input:has(~ :is(.sf-input-right, .sf-input-hint, .sf-icon)) {
     --sf-input-input--padding-inline-end: var(--sf-ui-1\/2--text-space-x);
   }
-  .sf-input.sf-input--size-1\/2 .sf-input-field > input:has(~ .sf-input-hint) {
-    --sf-input-input--padding-inline-end: var(--sf-ui-1\/2--text-space-x);
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field > input:has(~ .sf-icon) {
-    --sf-input-input--padding-inline-end: var(--sf-ui-1\/2--text-space-x);
-  }
-  .sf-input.sf-input--size-1 .sf-input-field > input:has(~ .sf-input-right) {
+  .sf-input.sf-input--size-1 .sf-input-field > input:has(~ :is(.sf-input-right, .sf-input-hint, .sf-icon)) {
     --sf-input-input--padding-inline-end: var(--sf-ui-1--text-space-x);
   }
-  .sf-input.sf-input--size-1 .sf-input-field > input:has(~ .sf-input-hint) {
-    --sf-input-input--padding-inline-end: var(--sf-ui-1--text-space-x);
-  }
-  .sf-input.sf-input--size-1 .sf-input-field > input:has(~ .sf-icon) {
-    --sf-input-input--padding-inline-end: var(--sf-ui-1--text-space-x);
-  }
-  .sf-input.sf-input--size-2 .sf-input-field > input:has(~ .sf-input-right) {
+  .sf-input.sf-input--size-2 .sf-input-field > input:has(~ :is(.sf-input-right, .sf-input-hint, .sf-icon)) {
     --sf-input-input--padding-inline-end: var(--sf-ui-2--text-space-x);
   }
-  .sf-input.sf-input--size-2 .sf-input-field > input:has(~ .sf-input-hint) {
-    --sf-input-input--padding-inline-end: var(--sf-ui-2--text-space-x);
-  }
-  .sf-input.sf-input--size-2 .sf-input-field > input:has(~ .sf-icon) {
-    --sf-input-input--padding-inline-end: var(--sf-ui-2--text-space-x);
-  }
-  .sf-input.sf-input--size-3 .sf-input-field > input:has(~ .sf-input-right) {
-    --sf-input-input--padding-inline-end: var(--sf-ui-3--text-space-x);
-  }
-  .sf-input.sf-input--size-3 .sf-input-field > input:has(~ .sf-input-hint) {
-    --sf-input-input--padding-inline-end: var(--sf-ui-3--text-space-x);
-  }
-  .sf-input.sf-input--size-3 .sf-input-field > input:has(~ .sf-icon) {
+  .sf-input.sf-input--size-3 .sf-input-field > input:has(~ :is(.sf-input-right, .sf-input-hint, .sf-icon)) {
     --sf-input-input--padding-inline-end: var(--sf-ui-3--text-space-x);
   }
 }
@@ -1500,12 +1077,7 @@
    this layer too (the colour field loads component.inputs): it reads the same
    steps. The browser's own search clear gives way to the Framework's. */
 @layer sf.components {
-  .sf-input-field {
-    --sf-field-action--standout: calc((max(var(--sf-field-action--glyph, var(--sf-text-height-1)) + var(--sf-field-action--inset, var(--sf-space-1)) / 2, var(--sf-c2)) - var(--sf-field-action--glyph, var(--sf-text-height-1))) / 2);
-    --sf-field-action--value-space: calc(var(--sf-field-action--inset, var(--sf-space-1)) / 2 - var(--sf-field-action--standout));
-    --sf-field-action--pair-space: calc(var(--sf-field-action--inset, var(--sf-space-1)) / 2 - 2 * var(--sf-field-action--standout));
-  }
-  .sf-color-frame {
+  :is(.sf-input-field, .sf-color-frame) {
     --sf-field-action--standout: calc((max(var(--sf-field-action--glyph, var(--sf-text-height-1)) + var(--sf-field-action--inset, var(--sf-space-1)) / 2, var(--sf-c2)) - var(--sf-field-action--glyph, var(--sf-text-height-1))) / 2);
     --sf-field-action--value-space: calc(var(--sf-field-action--inset, var(--sf-space-1)) / 2 - var(--sf-field-action--standout));
     --sf-field-action--pair-space: calc(var(--sf-field-action--inset, var(--sf-space-1)) / 2 - 2 * var(--sf-field-action--standout));
@@ -1550,317 +1122,41 @@
     border-radius: var(--sf-radius--ui);
     pointer-events: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input-field > .sf-field-action:last-child{
+  :is(.sf-input-field, .sf-color-frame) .sf-field-action {
+    --sf-field-action--give-back: min(var(--sf-px) * 0, calc(var(--sf-field-action--standout) - (var(--sf-field-action--hit-inline) - var(--sf-field-action--glyph-size)) / 2));
+  }
+  :is(.sf-input-field, .sf-color-frame) > .sf-field-action:not([hidden]):where(:dir(ltr)), :is(.sf-input-field, .sf-color-frame) > * .sf-field-action:not([hidden]):where(:dir(ltr)){
+    margin-left: var(--sf-field-action--give-back);
+  }
+  :is(.sf-input-field, .sf-color-frame) > .sf-field-action:not([hidden]):where(:dir(rtl)), :is(.sf-input-field, .sf-color-frame) > * .sf-field-action:not([hidden]):where(:dir(rtl)){
+    margin-right: var(--sf-field-action--give-back);
+  }
+  :is(.sf-input-field, .sf-color-frame) > .sf-field-action:not([hidden]),
+  :is(.sf-input-field, .sf-color-frame) > * .sf-field-action:not([hidden]) {
+    -webkit-margin-start: var(--sf-field-action--give-back);
+            margin-inline-start: var(--sf-field-action--give-back);
+  }
+  :is(.sf-input-field, .sf-color-frame) > .sf-field-action:last-child:where(:dir(ltr)), :is(.sf-input-field, .sf-color-frame) > :last-child .sf-field-action:where(:dir(ltr)){
     margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
   }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-input-field > .sf-field-action:last-child{
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
-  }
-  .sf-input-field > .sf-field-action:last-child:where(:dir(ltr)){
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input-field > .sf-field-action:last-child{
+  :is(.sf-input-field, .sf-color-frame) > .sf-field-action:last-child:where(:dir(rtl)), :is(.sf-input-field, .sf-color-frame) > :last-child .sf-field-action:where(:dir(rtl)){
     margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
   }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-input-field > .sf-field-action:last-child{
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
-  }
-  .sf-input-field > .sf-field-action:last-child:where(:dir(rtl)){
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  .sf-input-field > .sf-field-action:last-child {
+  :is(.sf-input-field, .sf-color-frame) > .sf-field-action:last-child,
+  :is(.sf-input-field, .sf-color-frame) > :last-child .sf-field-action {
     -webkit-margin-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
             margin-inline-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-frame > .sf-field-action:last-child{
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-color-frame > .sf-field-action:last-child{
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
-  }
-  .sf-color-frame > .sf-field-action:last-child:where(:dir(ltr)){
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-frame > .sf-field-action:last-child{
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-color-frame > .sf-field-action:last-child{
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
-  }
-  .sf-color-frame > .sf-field-action:last-child:where(:dir(rtl)){
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  .sf-color-frame > .sf-field-action:last-child {
-    -webkit-margin-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-            margin-inline-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input-field > :last-child .sf-field-action{
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-input-field > :last-child .sf-field-action{
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
-  }
-  .sf-input-field > :last-child .sf-field-action:where(:dir(ltr)){
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input-field > :last-child .sf-field-action{
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-input-field > :last-child .sf-field-action{
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
-  }
-  .sf-input-field > :last-child .sf-field-action:where(:dir(rtl)){
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  .sf-input-field > :last-child .sf-field-action {
-    -webkit-margin-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-            margin-inline-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-frame > :last-child .sf-field-action{
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-color-frame > :last-child .sf-field-action{
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
-  }
-  .sf-color-frame > :last-child .sf-field-action:where(:dir(ltr)){
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-frame > :last-child .sf-field-action{
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-color-frame > :last-child .sf-field-action{
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
-  }
-  .sf-color-frame > :last-child .sf-field-action:where(:dir(rtl)){
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  .sf-color-frame > :last-child .sf-field-action {
-    -webkit-margin-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-            margin-inline-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-input-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-input-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]):where(:dir(ltr)){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-input-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-input-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]):where(:dir(rtl)){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  .sf-input-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]) {
-    -webkit-margin-start: var(--sf-field-action--pair-space);
-            margin-inline-start: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-input-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-input-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]):where(:dir(ltr)){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-input-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-input-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]):where(:dir(rtl)){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  .sf-input-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]) {
-    -webkit-margin-start: var(--sf-field-action--pair-space);
-            margin-inline-start: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-color-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-color-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]):where(:dir(ltr)){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-color-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-color-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]):where(:dir(rtl)){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  .sf-color-frame > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]) {
-    -webkit-margin-start: var(--sf-field-action--pair-space);
-            margin-inline-start: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]):where(:dir(ltr)){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]):where(:dir(rtl)){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]) {
-    -webkit-margin-start: var(--sf-field-action--pair-space);
-            margin-inline-start: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-input-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-input-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]):where(:dir(ltr)){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-input-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-input-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]):where(:dir(rtl)){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  .sf-input-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]) {
-    -webkit-margin-start: var(--sf-field-action--pair-space);
-            margin-inline-start: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-input-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-input-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]):where(:dir(ltr)){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-input-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-input-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]):where(:dir(rtl)){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  .sf-input-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]) {
-    -webkit-margin-start: var(--sf-field-action--pair-space);
-            margin-inline-start: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-color-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-color-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]):where(:dir(ltr)){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-color-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-color-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]):where(:dir(rtl)){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  .sf-color-frame > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]) {
-    -webkit-margin-start: var(--sf-field-action--pair-space);
-            margin-inline-start: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]):where(:dir(ltr)){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]):where(:dir(rtl)){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  .sf-color-frame > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]) {
-    -webkit-margin-start: var(--sf-field-action--pair-space);
-            margin-inline-start: var(--sf-field-action--pair-space);
+  :is(.sf-input-field, .sf-color-frame) > :is(.sf-field-action:not([hidden]), :has(.sf-field-action:not([hidden]))) ~ .sf-field-action:not([hidden]):where(:dir(ltr)), :is(.sf-input-field, .sf-color-frame) > :is(.sf-field-action:not([hidden]), :has(.sf-field-action:not([hidden]))) ~ * .sf-field-action:not([hidden]):where(:dir(ltr)){
+    margin-left: calc(var(--sf-field-action--pair-space) + var(--sf-field-action--give-back));
+  }
+  :is(.sf-input-field, .sf-color-frame) > :is(.sf-field-action:not([hidden]), :has(.sf-field-action:not([hidden]))) ~ .sf-field-action:not([hidden]):where(:dir(rtl)), :is(.sf-input-field, .sf-color-frame) > :is(.sf-field-action:not([hidden]), :has(.sf-field-action:not([hidden]))) ~ * .sf-field-action:not([hidden]):where(:dir(rtl)){
+    margin-right: calc(var(--sf-field-action--pair-space) + var(--sf-field-action--give-back));
+  }
+  :is(.sf-input-field, .sf-color-frame) > :is(.sf-field-action:not([hidden]), :has(.sf-field-action:not([hidden]))) ~ .sf-field-action:not([hidden]),
+  :is(.sf-input-field, .sf-color-frame) > :is(.sf-field-action:not([hidden]), :has(.sf-field-action:not([hidden]))) ~ * .sf-field-action:not([hidden]) {
+    -webkit-margin-start: calc(var(--sf-field-action--pair-space) + var(--sf-field-action--give-back));
+            margin-inline-start: calc(var(--sf-field-action--pair-space) + var(--sf-field-action--give-back));
   }
 }
 @layer sf.paint {
@@ -1880,11 +1176,7 @@
   .sf-field-action:not(:disabled):not([aria-disabled=true]):active {
     --sf-field-action--ink: var(--sf-primary);
   }
-  .sf-field-action:disabled {
-    --sf-field-action--ink: var(--sf-on-surface-disabled);
-    cursor: default;
-  }
-  .sf-field-action[aria-disabled=true] {
+  .sf-field-action:is(:disabled, [aria-disabled=true]) {
     --sf-field-action--ink: var(--sf-on-surface-disabled);
     cursor: default;
   }
@@ -1940,49 +1232,7 @@
       --sf-field-action--glyph: var(--sf-icon-size-4);
     }
   }
-  .sf-input.sf-input--size-1\/3 .sf-input-field > input:has(+ .sf-field-action) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-1\/3 .sf-input-field > input:has(+ sf-button-copy:not(.does-not-exist)) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-1\/3 .sf-input-field > input:has(+ sf-copy-button:not(.does-not-exist)) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field > input:has(+ .sf-field-action) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field > input:has(+ sf-button-copy:not(.does-not-exist)) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field > input:has(+ sf-copy-button:not(.does-not-exist)) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-1 .sf-input-field > input:has(+ .sf-field-action) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-1 .sf-input-field > input:has(+ sf-button-copy:not(.does-not-exist)) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-1 .sf-input-field > input:has(+ sf-copy-button:not(.does-not-exist)) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-2 .sf-input-field > input:has(+ .sf-field-action) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-2 .sf-input-field > input:has(+ sf-button-copy:not(.does-not-exist)) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-2 .sf-input-field > input:has(+ sf-copy-button:not(.does-not-exist)) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-3 .sf-input-field > input:has(+ .sf-field-action) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-3 .sf-input-field > input:has(+ sf-button-copy:not(.does-not-exist)) {
-    --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
-  }
-  .sf-input.sf-input--size-3 .sf-input-field > input:has(+ sf-copy-button:not(.does-not-exist)) {
+  .sf-input:is(.sf-input--size-1\/3, .sf-input--size-1\/2, .sf-input--size-1, .sf-input--size-2, .sf-input--size-3) .sf-input-field > input:has(+ :is(.sf-field-action, :is(sf-button-copy, sf-copy-button))) {
     --sf-input-input--padding-inline-end: var(--sf-field-action--value-space);
   }
   .sf-input .sf-input-field input::-webkit-search-cancel-button {
@@ -2058,19 +1308,7 @@
   .sf-input.sf-input--size-3 .sf-input-field > .sf-input-start ~ input {
     --sf-input-input--padding-inline-start: var(--sf-ui-3--text-space-x);
   }
-  .sf-input.sf-input--size-1\/3 .sf-input-field:where(:has(> .sf-input-start:first-child)) {
-    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1\/2 .sf-input-field:where(:has(> .sf-input-start:first-child)) {
-    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-1 .sf-input-field:where(:has(> .sf-input-start:first-child)) {
-    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-2 .sf-input-field:where(:has(> .sf-input-start:first-child)) {
-    --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
-  }
-  .sf-input.sf-input--size-3 .sf-input-field:where(:has(> .sf-input-start:first-child)) {
+  .sf-input:is(.sf-input--size-1\/3, .sf-input--size-1\/2, .sf-input--size-1, .sf-input--size-2, .sf-input--size-3) .sf-input-field:where(:has(> .sf-input-start:first-child)) {
     --sf-input-field--padding-inline-start: var(--sf-input-padding-inline, calc(var(--sf-input--inset) - var(--sf-px)));
   }
   /* (7) A number field: no browser arrows, digits of one width. */
@@ -2100,24 +1338,8 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-input .sf-input-count{
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-input .sf-input-count{
-    margin-left: auto;
-    }
-  }
   .sf-input .sf-input-count:where(:dir(ltr)){
     margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-input .sf-input-count{
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-input .sf-input-count{
-    margin-right: auto;
-    }
   }
   .sf-input .sf-input-count:where(:dir(rtl)){
     margin-right: auto;
@@ -2193,37 +1415,65 @@
      the text ink in both themes. The browser's own box on the bare input
      (an !important of its own sheet) is held off by a transition that never
      ends, and its text colour by the fill colour of the text. */
-  .sf-input .sf-input-field:has(> input:-webkit-autofill) {
+  .sf-input .sf-input-field:has(> input:is(:-webkit-autofill, :-webkit-autofill)) {
     background-image: linear-gradient(var(--sf-primary-state-select), var(--sf-primary-state-select));
   }
-  .sf-input .sf-input-field:has(> input:autofill) {
+  .sf-input .sf-input-field:has(> input:is(:autofill, :-webkit-autofill)) {
     background-image: linear-gradient(var(--sf-primary-state-select), var(--sf-primary-state-select));
   }
-  .sf-input .sf-input-field:has(> input:-webkit-autofill) {
-    background-image: linear-gradient(var(--sf-primary-state-select), var(--sf-primary-state-select));
-  }
-  .sf-input .sf-input-field > input:-webkit-autofill {
-    -webkit-text-fill-color: var(--sf-input-input--color);
+  .sf-input .sf-input-field > input:is(:-webkit-autofill, :-webkit-autofill) {
     -webkit-text-fill-color: var(--sf-input-color, var(--sf-input-input--color));
-    caret-color: var(--sf-input-input--color);
     caret-color: var(--sf-input-color, var(--sf-input-input--color));
     -webkit-transition: background-color 0s 2147483647s, color 0s 2147483647s;
     transition: background-color 0s 2147483647s, color 0s 2147483647s;
   }
-  .sf-input .sf-input-field > input:autofill {
-    -webkit-text-fill-color: var(--sf-input-input--color);
+  .sf-input .sf-input-field > input:is(:autofill, :-webkit-autofill) {
     -webkit-text-fill-color: var(--sf-input-color, var(--sf-input-input--color));
-    caret-color: var(--sf-input-input--color);
-    caret-color: var(--sf-input-color, var(--sf-input-input--color));
-    transition: background-color 0s 2147483647s, color 0s 2147483647s;
-  }
-  .sf-input .sf-input-field > input:-webkit-autofill {
-    -webkit-text-fill-color: var(--sf-input-input--color);
-    -webkit-text-fill-color: var(--sf-input-color, var(--sf-input-input--color));
-    caret-color: var(--sf-input-input--color);
     caret-color: var(--sf-input-color, var(--sf-input-input--color));
     -webkit-transition: background-color 0s 2147483647s, color 0s 2147483647s;
     transition: background-color 0s 2147483647s, color 0s 2147483647s;
+  }
+}
+/* appearance="plain" (owner decision C313 (4)): the field with no frame, no
+   fill and no radius, its text at its own edge -- the look of a dropping
+   panel's search field (C06), for a value that stands where a search would
+   (the filter field window's value row). It is drawn on the bordered look
+   (the class markup carries both), which gives it its type and states; here
+   its frame gives way to its foot alone, a hairline nobody sees until the
+   focus turns it primary in place of the ring -- the search header's line
+   (sf-dropdown's panel search, C06); an error keeps it in the error colour.
+   In sf.overrides, so the bordered look's states never draw a frame back. */
+@layer sf.overrides {
+  .sf-input.sf-input--plain .sf-input-field {
+    --sf-input-field--background-color: var(--sf-transparent);
+    border-color: transparent;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-inline-width: 0;
+    border-top-width: 0;
+    border-block-start-width: 0;
+    border-radius: 0;
+    background-color: transparent;
+    padding-left: 0;
+    padding-right: 0;
+    padding-inline: 0;
+    outline: none;
+    box-shadow: none;
+  }
+  .sf-input.sf-input--plain:has(input:enabled:not(:disabled):not(.disabled):focus) .sf-input-field {
+    outline: none;
+    border-bottom-color: var(--sf-primary);
+    border-block-end-color: var(--sf-primary);
+  }
+  .sf-input.sf-input--plain.error .sf-input-field {
+    border-bottom-color: var(--sf-error);
+    border-block-end-color: var(--sf-error);
+  }
+  @media (forced-colors: active) {
+    .sf-input.sf-input--plain:has(input:enabled:not(:disabled):not(.disabled):focus) .sf-input-field {
+      border-bottom-color: Highlight;
+      border-block-end-color: Highlight;
+    }
   }
 }
 @layer sf.base {

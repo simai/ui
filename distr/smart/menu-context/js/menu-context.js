@@ -1633,10 +1633,33 @@ const editable = element => Boolean(element?.matches?.('input, select, textarea,
 
 
 const TARGETS = 'tbody > tr, [role="row"]:not(:has(> [role="columnheader"])), [role="option"], [role="treeitem"], [role="listitem"], li'; // Where the browser's own menu stays: a link, a field and text being edited,
-// selected text and the right button with Shift (C164 (1)).
+// selected text and the right button with Shift (C164 (1)). A field is one
+// that takes typed text: a text-like input, a textarea, editable text and a
+// textbox, searchbox or combobox with text entry (an editable one). A
+// checkbox, a radio, a switch, a select and a button are not: their browser
+// menu offers nothing, and a row's selection checkbox is where the keyboard
+// stands in a table, so the menu key there opens the row's menu (1.27.3).
 
-const BROWSER_KEEPS = 'a[href], input, select, textarea, [contenteditable=""], [contenteditable="true"]'; // A long press: half a second, the finger still within ten pixels (the
+const BROWSER_KEEPS = 'a[href], textarea, [role="textbox"], [role="searchbox"]';
+const TEXT_ENTRY_TYPES = new Set(["text", "search", "email", "url", "tel", "password", "number", "date", "time", "datetime-local", "month", "week"]);
+
+const keepsBrowserMenu = node => node instanceof Element && (node.matches(BROWSER_KEEPS) || node.isContentEditable || node.localName === "input" && TEXT_ENTRY_TYPES.has(node.type)); // The node an area's event came from and every node above it up to the
+// object, through the shadow roots between them (the composed path): one of
+// them that keeps the browser's menu keeps it for the event.
+
+
+const keptBy = (event, target) => {
+  const path = event.composedPath?.() ?? [event.target];
+
+  for (const node of path) {
+    if (keepsBrowserMenu(node) && holds(target, node)) return true;
+    if (node === target) break;
+  }
+
+  return false;
+}; // A long press: half a second, the finger still within ten pixels (the
 // platforms' own slop); a move further is a scroll.
+
 
 const LONG_PRESS_MS = 500;
 const LONG_PRESS_SLOP = 10;
@@ -3094,8 +3117,7 @@ class SfContextMenu extends ContextMenuElement {
 
   browserKeeps(event, target) {
     if (event.shiftKey && event.type === "contextmenu" && event.button === 2) return true;
-    const from = inTreeOf(origin(event), target);
-    if (from?.closest?.(BROWSER_KEEPS) && target.contains(from.closest(BROWSER_KEEPS))) return true;
+    if (keptBy(event, target)) return true;
     const root = target.getRootNode?.();
     const selection = (typeof root?.getSelection === "function" ? root : document).getSelection?.();
     return Boolean(selection && !selection.isCollapsed && String(selection).trim() && selection.anchorNode && holds(target, selection.anchorNode));
@@ -3156,12 +3178,11 @@ class SfContextMenu extends ContextMenuElement {
     if (event.defaultPrevented || holds(this, node)) return;
     const found = this.targetOf(node);
     if (!found) return;
-    const from = inTreeOf(node, found.area);
 
     if (type === "pointerdown") {
       this.cancelPress();
       if (event.pointerType !== "touch" || event.button > 0 || !event.isPrimary) return;
-      if (from.closest?.(BROWSER_KEEPS)) return;
+      if (keptBy(event, found.target)) return;
       const press = {
         x: event.clientX,
         y: event.clientY,
@@ -3182,7 +3203,7 @@ class SfContextMenu extends ContextMenuElement {
 
     if (type === "keydown") {
       if (event.key !== "ContextMenu" && !(event.shiftKey && event.key === "F10")) return;
-      if (from.closest?.(BROWSER_KEEPS)) return;
+      if (keptBy(event, found.target)) return;
       event.preventDefault();
       this._keyAt = Date.now();
       this.openAtTarget(found.target);
@@ -4924,7 +4945,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu-
 /***/ "4ff97a05802b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.27.1","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"width":{"type":"string","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true},"value-text":{"type":"string","optional":true},"warning-at":{"type":"number","optional":true},"error-at":{"type":"number","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false},"for":{"type":"string","default":""}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{"target":{"type":"object","nullable":true},"targets":{"type":"list"}},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"open-at":{"with":{"x":"number","y":"number","options":{"type":"object","optional":true,"schema":{"properties":{"target":{"type":"object"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"}}}}},"waits":true,"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.27.3","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"width":{"type":"string","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true},"value-text":{"type":"string","optional":true},"warning-at":{"type":"number","optional":true},"error-at":{"type":"number","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false},"for":{"type":"string","default":""}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{"target":{"type":"object","nullable":true},"targets":{"type":"list"}},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"open-at":{"with":{"x":"number","y":"number","options":{"type":"object","optional":true,"schema":{"properties":{"target":{"type":"object"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"}}}}},"waits":true,"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
 
 /***/ },
 

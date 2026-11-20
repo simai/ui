@@ -35,24 +35,8 @@
   /* One step down the column (OT 29): the nested list stands the same gap
      below its parent link as any two rows do; it began right under it (8,
      then 0, then 8). */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__list .sf-outline__list {
-    padding-left: var(--sf-outline--indent);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-outline__list .sf-outline__list {
-    padding-left: var(--sf-outline--indent);
-    }
-  }
   .sf-outline__list .sf-outline__list:where(:dir(ltr)) {
     padding-left: var(--sf-outline--indent);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-outline__list .sf-outline__list {
-    padding-right: var(--sf-outline--indent);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-outline__list .sf-outline__list {
-    padding-right: var(--sf-outline--indent);
-    }
   }
   .sf-outline__list .sf-outline__list:where(:dir(rtl)) {
     padding-right: var(--sf-outline--indent);
@@ -64,68 +48,20 @@
     -webkit-padding-start: var(--sf-outline--indent);
             padding-inline-start: var(--sf-outline--indent);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__link {
-    padding-left: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-outline__link {
-    padding-left: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
-    }
-  }
   .sf-outline__link:where(:dir(ltr)) {
     padding-left: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-outline__link {
-    padding-right: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .sf-outline__link {
-    padding-right: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
-    }
   }
   .sf-outline__link:where(:dir(rtl)) {
     padding-right: calc(var(--sf-outline--link-padding-inline) - var(--sf-outline--indicator-width));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__link {
-    border-left-width: var(--sf-outline--indicator-width);
-  }
-  @supports not (border-inline-start-width: initial) {
-  html:not([dir="rtl"]) .sf-outline__link {
-    border-left-width: var(--sf-outline--indicator-width);
-    }
-  }
   .sf-outline__link:where(:dir(ltr)) {
     border-left-width: var(--sf-outline--indicator-width);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-outline__link {
-    border-right-width: var(--sf-outline--indicator-width);
-  }
-  @supports not (border-inline-start-width: initial) {
-  [dir="rtl"] .sf-outline__link {
-    border-right-width: var(--sf-outline--indicator-width);
-    }
   }
   .sf-outline__link:where(:dir(rtl)) {
     border-right-width: var(--sf-outline--indicator-width);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__link {
-    border-left-style: solid;
-  }
-  @supports not (border-inline-start-style: initial) {
-  html:not([dir="rtl"]) .sf-outline__link {
-    border-left-style: solid;
-    }
-  }
   .sf-outline__link:where(:dir(ltr)) {
     border-left-style: solid;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-outline__link {
-    border-right-style: solid;
-  }
-  @supports not (border-inline-start-style: initial) {
-  [dir="rtl"] .sf-outline__link {
-    border-right-style: solid;
-    }
   }
   .sf-outline__link:where(:dir(rtl)) {
     border-right-style: solid;
@@ -191,24 +127,8 @@
   .sf-outline {
     color: var(--sf-on-surface);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__link {
-    border-left-color: var(--sf-transparent);
-  }
-  @supports not (border-inline-start-color: initial) {
-  html:not([dir="rtl"]) .sf-outline__link {
-    border-left-color: var(--sf-transparent);
-    }
-  }
   .sf-outline__link:where(:dir(ltr)) {
     border-left-color: var(--sf-transparent);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-outline__link {
-    border-right-color: var(--sf-transparent);
-  }
-  @supports not (border-inline-start-color: initial) {
-  [dir="rtl"] .sf-outline__link {
-    border-right-color: var(--sf-transparent);
-    }
   }
   .sf-outline__link:where(:dir(rtl)) {
     border-right-color: var(--sf-transparent);
@@ -223,29 +143,9 @@
     color: var(--sf-outline--hover-color);
     background-color: var(--sf-outline--hover-background);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__link[aria-current=location],html:not([dir="rtl"])
-  .sf-outline__link[data-sf-outline-active] {
-    border-left-color: var(--sf-outline--current-indicator);
-  }
-  @supports not (border-inline-start-color: initial) {
-  html:not([dir="rtl"]) .sf-outline__link[aria-current=location],html:not([dir="rtl"])
-  .sf-outline__link[data-sf-outline-active] {
-    border-left-color: var(--sf-outline--current-indicator);
-    }
-  }
   .sf-outline__link[aria-current=location]:where(:dir(ltr)),
   .sf-outline__link[data-sf-outline-active]:where(:dir(ltr)) {
     border-left-color: var(--sf-outline--current-indicator);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-outline__link[aria-current=location],[dir="rtl"]
-  .sf-outline__link[data-sf-outline-active] {
-    border-right-color: var(--sf-outline--current-indicator);
-  }
-  @supports not (border-inline-start-color: initial) {
-  [dir="rtl"] .sf-outline__link[aria-current=location],[dir="rtl"]
-  .sf-outline__link[data-sf-outline-active] {
-    border-right-color: var(--sf-outline--current-indicator);
-    }
   }
   .sf-outline__link[aria-current=location]:where(:dir(rtl)),
   .sf-outline__link[data-sf-outline-active]:where(:dir(rtl)) {
@@ -258,29 +158,9 @@
     background-color: var(--sf-outline--current-background);
   }
   @media (forced-colors: active) {
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-outline__link[aria-current=location],html:not([dir="rtl"])
-    .sf-outline__link[data-sf-outline-active] {
-      border-left-color: Highlight;
-    }
-    @supports not (border-inline-start-color: initial) {
-    html:not([dir="rtl"]) .sf-outline__link[aria-current=location],html:not([dir="rtl"])
-    .sf-outline__link[data-sf-outline-active] {
-      border-left-color: Highlight;
-      }
-    }
     .sf-outline__link[aria-current=location]:where(:dir(ltr)),
     .sf-outline__link[data-sf-outline-active]:where(:dir(ltr)) {
       border-left-color: Highlight;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-outline__link[aria-current=location],[dir="rtl"]
-    .sf-outline__link[data-sf-outline-active] {
-      border-right-color: Highlight;
-    }
-    @supports not (border-inline-start-color: initial) {
-    [dir="rtl"] .sf-outline__link[aria-current=location],[dir="rtl"]
-    .sf-outline__link[data-sf-outline-active] {
-      border-right-color: Highlight;
-      }
     }
     .sf-outline__link[aria-current=location]:where(:dir(rtl)),
     .sf-outline__link[data-sf-outline-active]:where(:dir(rtl)) {

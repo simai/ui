@@ -22,11 +22,6 @@
     display: grid;
     grid-template-columns: var(--sf-procedure--marker-size) minmax(0, 1fr);
     align-content: start;
-    grid-column-gap: calc(var(--sf-a8) + var(--sf-procedure--ring) * 2);
-    -webkit-column-gap: calc(var(--sf-a8) + var(--sf-procedure--ring) * 2);
-       -moz-column-gap: calc(var(--sf-a8) + var(--sf-procedure--ring) * 2);
-            column-gap: calc(var(--sf-a8) + var(--sf-procedure--ring) * 2);
-    grid-column-gap: calc(var(--sf-a8) + var(--sf-procedure--ring) * 2);
     grid-column-gap: var(--sf-procedure-indent, calc(var(--sf-a8) + var(--sf-procedure--ring) * 2));
     -webkit-column-gap: var(--sf-procedure-indent, calc(var(--sf-a8) + var(--sf-procedure--ring) * 2));
        -moz-column-gap: var(--sf-procedure-indent, calc(var(--sf-a8) + var(--sf-procedure--ring) * 2));
@@ -60,24 +55,8 @@
             font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-procedure-step:not(:last-child)::after {
-    left: calc((var(--sf-procedure--marker-size) - var(--sf-procedure--line-width)) / 2);
-  }
-  @supports not (inset-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-procedure-step:not(:last-child)::after {
-    left: calc((var(--sf-procedure--marker-size) - var(--sf-procedure--line-width)) / 2);
-    }
-  }
   .sf-procedure-step:not(:last-child)::after:where(:dir(ltr)) {
     left: calc((var(--sf-procedure--marker-size) - var(--sf-procedure--line-width)) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-procedure-step:not(:last-child)::after {
-    right: calc((var(--sf-procedure--marker-size) - var(--sf-procedure--line-width)) / 2);
-  }
-  @supports not (inset-inline-start: initial) {
-  [dir="rtl"] .sf-procedure-step:not(:last-child)::after {
-    right: calc((var(--sf-procedure--marker-size) - var(--sf-procedure--line-width)) / 2);
-    }
   }
   .sf-procedure-step:not(:last-child)::after:where(:dir(rtl)) {
     right: calc((var(--sf-procedure--marker-size) - var(--sf-procedure--line-width)) / 2);
@@ -158,14 +137,11 @@
 }
 @layer sf.paint {
   .sf-procedure-step::before {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-procedure-marker-color, var(--sf-on-surface-variant));
-    background-color: transparent;
     background-color: var(--sf-procedure-marker-background-color, var(--sf-procedure-marker-background, transparent));
     border-color: var(--sf-outline);
   }
   .sf-procedure-step:not(:last-child)::after {
-    background-color: var(--sf-outline-variant);
     background-color: var(--sf-procedure-line-color, var(--sf-outline-variant));
   }
   .sf-procedure-step--complete::before {

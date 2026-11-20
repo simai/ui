@@ -115,10 +115,28 @@ function nameOf(element) {
   const label = element.getAttribute('aria-label') || element.querySelector('.sf-button-text-container')?.textContent?.trim() || element.textContent?.trim() || '';
   const classes = [...element.classList].filter(name => /^sf-(icon-)?button--/u.test(name)).join(' ');
   return `<${element.localName}${element.id ? `#${element.id}` : ''} class="${classes}">${label ? ` «${label.slice(0, 40)}»` : ''}`;
+} // The words a button is named by from its content: its text outside the
+// glyphs (an icon's ligature is its name in the font, not words), the spinner
+// and anything aria-hidden. A label kept out of view (sr-only, sf-segmented's
+// sf-button-group-label--hidden on an icon-only segment) still names it: the
+// theme switch of sf-header-site was told it needed aria-label, though each
+// segment is named «Как в системе», «Светлая», «Тёмная» (DF-4).
+
+
+const NOT_WORDS = '.sf-icon, sf-icon, .sf-button-spinner, [aria-hidden="true"]';
+
+function contentName(element) {
+  let words = '';
+
+  for (const node of element.childNodes) {
+    if (node.nodeType === 3) words += node.nodeValue;else if (node.nodeType === 1 && !matches(node, NOT_WORDS)) words += contentName(node);
+  }
+
+  return words;
 }
 
 function hasName(element) {
-  return Boolean(element.getAttribute('aria-label')?.trim() || element.getAttribute('aria-labelledby')?.trim() || element.getAttribute('title')?.trim());
+  return Boolean(element.getAttribute('aria-label')?.trim() || element.getAttribute('aria-labelledby')?.trim() || element.getAttribute('title')?.trim() || contentName(element).trim());
 }
 
 function matches(element, selector) {
@@ -442,7 +460,8 @@ IconButtons.utilityMap = _json_icon_button_utility_json__WEBPACK_IMPORTED_MODULE
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   nameTarget: () => (/* binding */ nameTarget)
+/* harmony export */   nameTarget: () => (/* binding */ nameTarget),
+/* harmony export */   unlinkNameTip: () => (/* binding */ unlinkNameTip)
 /* harmony export */ });
 // The name tooltip of the class icon button (owner decision C248,
 // 2026-11-16; C160 (1), C224, C48): a .sf-icon-button the page wrote with an
@@ -481,9 +500,26 @@ function hasTitle(button) {
   }
 
   return false;
-}
+} // The surfaces' numbers are counted on the page, not in this file, and under
+// a name of their own: every bundle that carries this file has its own copy
+// of it (sf-button since C370, the icon buttons), and <sf-button-icon>
+// numbers its own tooltips «sf-icon-button-tooltip-N» from 1 too; two
+// counters from 1 made a second «sf-icon-button-tooltip-1», and the language
+// glyph in the docs header showed the shrunk search's «Поиск ⌘K».
 
-let made = 0;
+
+const MADE = Symbol.for('sf.icon-button.name-tooltip.made');
+
+function nextTipId(doc) {
+  let id = '';
+
+  do {
+    globalThis[MADE] = (globalThis[MADE] || 0) + 1;
+    id = `sf-name-tooltip-${globalThis[MADE]}`;
+  } while (doc.getElementById(id));
+
+  return id;
+}
 
 function tooltipController() {
   return globalThis.SF?.ComponentRegistry?.Tooltip || globalThis.SF?.Loader?.ComponentRegistry?.Tooltip || null;
@@ -518,11 +554,23 @@ function hasVisibleLabel(button) {
 }
 
 function nameOf(button) {
-  return String(button.getAttribute('aria-label') || '').replace(/\s+/gu, ' ').trim();
-} // The button a name tooltip is for, or null.
+  return String(button.getAttribute('data-sf-shrink-tip') || button.getAttribute('aria-label') || '').replace(/\s+/gu, ' ').trim();
+} // An sf-button drawn as its glyph by its bar (shrink="icon", data-shrunk;
+// owner decision C370): its words are hidden, so it shows its text and keys
+// as this tooltip, «Поиск ⌘K» (data-sf-shrink-tip), as an icon button shows
+// its name. Whole again, it shows none.
 
+
+const SHRUNK = 'sf-button[shrink="icon"][data-shrunk="true"] > .sf-button[data-sf-shrink-tip]'; // The button a name tooltip is for, or null.
 
 function nameTarget(node) {
+  const shrunk = node instanceof Element ? node.closest(SHRUNK) : null;
+
+  if (shrunk) {
+    if (shrunk.hasAttribute('data-tooltip') || hasTitle(shrunk) || shrunk.matches(':disabled, [aria-disabled="true"]')) return null;
+    return nameOf(shrunk) ? shrunk : null;
+  }
+
   const button = node instanceof Element ? node.closest('.sf-icon-button') : null;
   if (!button || !nameOf(button)) return null;
   if (!(button.localName === 'button' || button.localName === 'a' && button.hasAttribute('href') || button.getAttribute('role') === 'button')) return null;
@@ -547,7 +595,7 @@ function syncMadeTip(button) {
 
 function wake(event) {
   const origin = event.target;
-  if (origin instanceof Element) syncMadeTip(origin.closest('.sf-icon-button[data-tooltip]'));
+  if (origin instanceof Element) syncMadeTip(origin.closest('.sf-icon-button[data-tooltip], .sf-button[data-sf-shrink-tip][data-tooltip]'));
   if (event.type === 'pointerdown' && event.pointerType !== 'touch') return;
   if (event.type === 'pointerover' && event.pointerType === 'touch') return;
   const button = nameTarget(origin);
@@ -568,7 +616,7 @@ function wake(event) {
   const doc = button.ownerDocument;
   const tip = doc.createElement('span');
   tip.className = `sf-tooltip sf-tooltip--dark ${NAME_TIP}`;
-  tip.id = button.id ? `${button.id}--tooltip` : `${NAME_TIP}-${++made}`;
+  tip.id = button.id ? `${button.id}--tooltip` : nextTipId(doc);
   tip.hidden = true;
   const content = doc.createElement('span');
   content.className = 'sf-tooltip-content';
@@ -617,6 +665,18 @@ if (typeof document !== 'undefined' && !globalThis[BOUND]) {
       passive: true
     });
   }
+} // A name tooltip this file made for a button is taken away (an sf-button
+// whole again, shrink="icon"): the button no longer names it, and the
+// surface goes.
+
+
+function unlinkNameTip(button) {
+  const id = button?.getAttribute?.('data-tooltip');
+  if (!id) return;
+  const tip = button.ownerDocument.getElementById(id);
+  if (!tip?.classList.contains(NAME_TIP)) return;
+  button.removeAttribute('data-tooltip');
+  tip.remove();
 }
 
 

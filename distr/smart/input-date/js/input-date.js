@@ -900,7 +900,35 @@ const RIBBON_AFTER = 12;
 const RIBBON_STEP = 6;
 const YEARS_PAGE_SIZE = 18; // The kinds of a special day a site passes (owner decision C198).
 
-const HOLIDAY_KINDS = new Set(['holiday', 'day-off', 'working-day']);
+const HOLIDAY_KINDS = new Set(['holiday', 'day-off', 'working-day']); // The inks a day mark may take (CL-6); a mark without a known tone is primary.
+
+const MARK_TONES = new Set(['primary', 'error', 'warning', 'success', 'tertiary', 'neutral']); // A count over this is drawn as «99+» (the screen reader still hears it whole).
+
+const MARK_COUNT_CAP = 99; // One day's mark as the grid draws it, or null for none (CL-6): a count of 1
+// or none is a dot, 2 and more a small number; a count under 1, or one that is
+// no number, is no mark. The label is the host's own words for the day.
+
+function readDayMark(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  let count = null;
+
+  if (raw.count !== undefined && raw.count !== null && raw.count !== '') {
+    const number = Number(raw.count);
+    if (!Number.isFinite(number)) return null;
+    count = Math.floor(number);
+    if (count < 1) return null;
+  }
+
+  const label = typeof raw.label === 'string' ? raw.label.trim() : '';
+  const tone = MARK_TONES.has(raw.tone) ? raw.tone : 'primary';
+  const text = count !== null && count >= 2 ? count > MARK_COUNT_CAP ? `${MARK_COUNT_CAP}+` : String(count) : '';
+  return {
+    count,
+    tone,
+    label,
+    text
+  };
+}
 
 function padDatePart(value) {
   return String(value).padStart(2, '0');
@@ -1403,6 +1431,13 @@ const DatepickerElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
       return 'applied';
     },
 
+    // Draw the day marks again (CL-6): for a dayMarks function whose data
+    // changed; a new map or attribute draws by itself.
+    'refresh'() {
+      this.redrawDayMarks();
+      return 'applied';
+    },
+
     'choose-custom-range'() {
       if (this.disabled) return 'disabled';
       if (this.valueLocked) return 'readonly';
@@ -1640,6 +1675,13 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.S
       // in the attribute (see get holidays).
       holidays: {
         default: ''
+      },
+      // Marks on days (CL-6): a dot or a count of the day's events, the
+      // property as a function of the ISO day or a map by ISO day, the
+      // attribute as JSON of the map (see get dayMarks).
+      dayMarks: {
+        attribute: 'day-marks',
+        default: ''
       }
     };
   } // The panel's id comes from the instance path (§7.1.1), never from a counter.
@@ -1660,6 +1702,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.S
     this.upgradeProperty('value');
     this.upgradeProperty('presets');
     this.upgradeProperty('holidays');
+    this.upgradeProperty('dayMarks');
     super.connectedCallback();
   }
 
@@ -1898,13 +1941,18 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.S
   dayFacts(date, value, daysOff, locale = this.locale) {
     const special = this.holidayDays.get(value) || null;
     const weekend = special ? special.kind !== 'working-day' : daysOff.has(date.getDay());
+    const mark = this.dayMarkOf(value);
     const parts = [getDateLabel(date, locale)];
     if (special?.name) parts.push(special.name);
-    if (weekend) parts.push(this.sfWord('day-off'));
+    if (weekend) parts.push(this.sfWord('day-off')); // The day's mark (CL-6) is said last: the date, the holiday, then
+    // «3 события» or the host's label.
+
+    if (mark) parts.push(this.dayMarkWords(mark));
     return {
       weekend,
       special: Boolean(special),
       specialName: special?.name || '',
+      mark,
       label: parts.join(', ')
     };
   } // The line under the grid (C198): drawn only when the site gave special
@@ -1955,6 +2003,82 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.S
     if (!this.holidayDays.size || this._lineDay === value) return;
     this._lineDay = value;
     this.requestComponentUpdate('holidays');
+  } // Marks on days (CL-6, calendar layout study 2026-11-18, mini month with
+  // events): the property as a function (isoDate) -> {count?, tone?, label?}
+  // | null, asked for each day drawn, or as a map {isoDate: {...}}; the
+  // attribute as JSON of the map. A host whose function reads new data asks
+  // for a new drawing with refresh(). Anything else is no marks.
+
+
+  get dayMarks() {
+    if (this._dayMarks) return this._dayMarks;
+    const raw = this.getAttribute('day-marks');
+    if (!raw) return null;
+
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+
+  set dayMarks(next) {
+    if (typeof next === 'function' || next && typeof next === 'object' && !Array.isArray(next)) {
+      this._dayMarks = next;
+      this.redrawDayMarks();
+      return;
+    }
+
+    this._dayMarks = null;
+    this.setState({
+      dayMarks: typeof next === 'string' ? next : ''
+    });
+    this.redrawDayMarks();
+  } // The mark of one ISO day, or null. A function that throws marks nothing
+  // and is reported once per drawing, not once per day.
+
+
+  dayMarkOf(value) {
+    const marks = this.dayMarks;
+    if (!marks) return null;
+
+    if (typeof marks === 'function') {
+      try {
+        return readDayMark(marks(value));
+      } catch (error) {
+        if (!this._dayMarkFailed) {
+          this._dayMarkFailed = true;
+          this.reportComponentError?.(error, 'day-marks');
+          queueMicrotask(() => {
+            this._dayMarkFailed = false;
+          });
+        }
+
+        return null;
+      }
+    }
+
+    return Object.prototype.hasOwnProperty.call(marks, value) ? readDayMark(marks[value]) : null;
+  } // What a screen reader hears of a mark after the day's name: the host's
+  // label, else the count in the page language's plural («3 события»), else
+  // that the day has some.
+
+
+  dayMarkWords(mark) {
+    if (!mark) return '';
+    if (mark.label) return mark.label;
+    if (mark.count !== null) return this.sfWord('mark-count', {
+      count: mark.count
+    });
+    return this.sfWord('mark-present');
+  } // The grid and the open phone ribbon drawn again with the marks as they
+  // are now.
+
+
+  redrawDayMarks() {
+    this.requestComponentUpdate('day-marks');
+    if (this._sheetOpen && this._ribbon) this.renderRibbon();
   }
 
   set preset(next) {
@@ -2679,6 +2803,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.S
       const {
         weekend,
         special,
+        mark,
         label
       } = this.dayFacts(date, value, daysOff);
       return {
@@ -2687,6 +2812,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.S
         formattedValue: formatDateValue(date, this.format),
         label,
         special,
+        mark,
         day: date.getDate(),
         today: sameDay(date, today),
         currentMonth: date.getMonth() === this.month,
@@ -3466,6 +3592,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.S
         const {
           weekend,
           special,
+          mark,
           label
         } = this.dayFacts(date, value, daysOff, locale);
         const disabled = Boolean(minDate && compareDates(date, minDate) < 0 || maxDate && compareDates(date, maxDate) > 0);
@@ -3475,6 +3602,7 @@ class SfDatepicker extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.S
           day,
           weekend,
           special,
+          mark,
           disabled,
           today: sameDay(date, today),
           label,
@@ -4712,7 +4840,8 @@ function formatPlaceholder(format, code) {
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   renderDatepickerTemplate: () => (/* binding */ renderDatepickerTemplate)
+/* harmony export */   renderDatepickerTemplate: () => (/* binding */ renderDatepickerTemplate),
+/* harmony export */   renderDayMark: () => (/* binding */ renderDayMark)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var lit_directives_ref_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8137feb490e0");
@@ -4855,6 +4984,15 @@ function renderDatepickerInput(context) {
             ><sf-icon icon=${context.hintIcon || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-icon></span
         ><span slot="end" class="sf-field-action sf-field-action--indicator sf-datepicker-indicator" aria-hidden="true"
             ><sf-icon icon=${context.calendarIcon}></sf-icon></span></sf-input>`;
+} // A day's mark (CL-6): a dot (a count of 1 or none) or a small number, in
+// the tone's ink, in the row under the number that every day keeps, so a
+// marked day is as tall as any other. The day's own label says it to a screen
+// reader, so the mark is hidden from it.
+
+
+function renderDayMark(mark) {
+  if (!mark) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${joinClasses('sf-datepicker-day-mark', `sf-datepicker-day-mark--${mark.tone}`, mark.text ? 'sf-datepicker-day-mark--count' : 'sf-datepicker-day-mark--dot')} aria-hidden="true">${mark.text || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>`;
 }
 
 function renderDay(day, context) {
@@ -4868,7 +5006,7 @@ function renderDay(day, context) {
             @focus=${() => context.component.setActiveDate(day.value)}
             @pointerenter=${() => context.component.showDayLine(day.value)}
             @keydown=${event => context.component.handleDayKeydown(event, day)}>
-            <span class="sf-datepicker-day-date">${day.day}</span>
+            <span class="sf-datepicker-day-date">${day.day}</span>${renderDayMark(day.mark)}
         </button>`;
 } // The days are an ARIA grid (APG date picker dialog; audit S18a): a row of
 // column headers with the weekdays' full names for a screen reader (the
@@ -5047,10 +5185,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("efa66f8927d1");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _default_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("292f5fe79a22");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__, _default_js__WEBPACK_IMPORTED_MODULE_2__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__, _default_js__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 
@@ -5069,7 +5209,7 @@ function renderRibbonDay(day, context) {
             aria-selected=${day.selected || day.rangeSelected ? 'true' : 'false'} tabindex=${day.tabIndex}
             @click=${() => context.component.pickRibbonDay(day.value)}
             @keydown=${event => context.component.handleRibbonKeydown(event, day.value)}>
-            <span class="sf-datepicker-day-date">${day.day}</span>
+            <span class="sf-datepicker-day-date">${day.day}</span>${(0,_default_js__WEBPACK_IMPORTED_MODULE_2__.renderDayMark)(day.mark)}
         </button>`;
 } // A month of the ribbon: its title, held over it while it is in view, then its
 // weeks. The days before the first and after the last are empty cells, so the
@@ -5261,14 +5401,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "d7180f8fbd98"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.16.0","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"weekend":{"type":"string","default":""},"locale":{"type":"string","default":""},"format":{"type":"string","default":""},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"icon-start":{"type":"icon","default":""},"left-icon":{"type":"icon","default":""},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","last-week","this-month","last-month","this-year","tomorrow","next-week","next-month"],"optional":true},"range":{"type":"list","optional":true}}},"holidays":{"type":"list","default":[],"of":{"date":"string","kind":{"type":"enum","values":["holiday","day-off","working-day"]},"name":{"type":"string","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"},"--sf-datepicker-day-off":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-date","tag":"sf-input-date","version":"1.17.0","kind":"leaf","settings":{"date":{"type":"string","default":""},"start-value":{"type":"string","default":""},"end-value":{"type":"string","default":""},"max-date":{"type":"string","default":""},"min-date":{"type":"string","default":""},"mode":{"type":"enum","values":["date","datetime","time"],"default":"date"},"min-time":{"type":"string","default":""},"max-time":{"type":"string","default":""},"minute-step":{"type":"number","default":1,"integer":true,"min":1,"max":60},"range":{"type":"boolean","default":false},"month":{"type":"number","optional":true,"integer":true,"min":0,"max":11},"year":{"type":"number","optional":true,"integer":true},"context":{"type":"enum","values":["","month","year"],"default":""},"week-start":{"type":"number","optional":true,"integer":true,"min":0,"max":6},"weekend":{"type":"string","default":""},"locale":{"type":"string","default":""},"format":{"type":"string","default":""},"close-on-select":{"type":"boolean","default":true},"input":{"type":"boolean","default":true},"portal":{"type":"boolean","default":true},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"input-type":{"type":"string","default":"bordered"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"input-name":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"label":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"icon-start":{"type":"icon","default":""},"left-icon":{"type":"icon","default":""},"hint-icon":{"type":"icon","default":""},"input-root-class":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"mask-options":{"type":"string","default":""},"name":{"type":"string","default":""},"preset":{"type":"string","default":""},"readonly":{"type":"boolean","default":false},"presets":{"type":"list","default":[],"of":{"id":"id","label":{"type":"string","optional":true},"relative":{"type":"enum","values":["today","yesterday","last-7-days","last-30-days","this-week","last-week","this-month","last-month","this-year","tomorrow","next-week","next-month"],"optional":true},"range":{"type":"list","optional":true}}},"holidays":{"type":"list","default":[],"of":{"date":"string","kind":{"type":"enum","values":["holiday","day-off","working-day"]},"name":{"type":"string","optional":true}}},"day-marks":{"type":"object","default":{},"of":{"count":{"type":"number","integer":true,"optional":true},"tone":{"type":"enum","values":["primary","error","warning","success","tertiary","neutral"],"optional":true},"label":{"type":"string","optional":true}}}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":{"value":"object","date":"string","start-value":"string","end-value":"string","formatted-value":"string","iso-value":"string","range":"boolean","format":"string","preset":"object","mode":"string","time":"string"}}},"actions":{"open-panel":{"with":{"options":"object"}},"close-panel":{"with":{"options":"object"}},"toggle-panel":{},"choose-preset":{"with":{"item":"object"}},"choose-custom-range":{},"refresh":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"layer":{"kind":"surface","traps-focus":false},"css-variables":{"--sf-datepicker-background-color":{"type":"color","state":"open"},"--sf-datepicker-day-color":{"type":"color","state":"rest"},"--sf-datepicker-selected-background-color":{"type":"color","state":"selected"},"--sf-datepicker-selected-color":{"type":"color","state":"selected"},"--sf-datepicker-range-background-color":{"type":"color","state":"in-range"},"--sf-datepicker-weekday-color":{"type":"color","state":"rest"},"--sf-datepicker-day-off":{"type":"color","state":"rest"}}}');
 
 /***/ },
 
 /***/ "2fe06cbdeec6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Datepicker","runtime":{"choose-end":"choose the end","choose-month":"Choose a month","choose-start":"Choose the start of the period","choose-year":"Choose a year","close":"Close","custom-range":"Custom range","day-off":"day off","done":"Done","earlier-hour":"Previous hour","earlier-minute":"Previous minutes","go-to-today":"Today","hours":"Hours","later-hour":"Next hour","later-minute":"Next minutes","minutes":"Minutes","next-month":"Next month","next-years":"Next years","period":"Period","preset-last-month":"Last month","preset-last-week":"Last week","preset-last30-days":"Last 30 days","preset-last7-days":"Last 7 days","preset-next-month":"Next month","preset-next-week":"Next week","preset-this-month":"This month","preset-this-week":"This week","preset-this-year":"This year","preset-today":"Today","preset-tomorrow":"Tomorrow","preset-yesterday":"Yesterday","presets":"Quick ranges","previous-month":"Previous month","previous-years":"Previous years","time":"Time","time-not-set":"Not set","value-missing":"Choose a date.","value-missing-datetime":"Choose a date and a time.","value-missing-time":"Choose a time."}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Datepicker","runtime":{"choose-end":"choose the end","choose-month":"Choose a month","choose-start":"Choose the start of the period","choose-year":"Choose a year","close":"Close","custom-range":"Custom range","day-off":"day off","done":"Done","earlier-hour":"Previous hour","earlier-minute":"Previous minutes","go-to-today":"Today","hours":"Hours","later-hour":"Next hour","later-minute":"Next minutes","mark-count":{"one":"{n} event","other":"{n} events"},"mark-present":"has events","minutes":"Minutes","next-month":"Next month","next-years":"Next years","period":"Period","preset-last-month":"Last month","preset-last-week":"Last week","preset-last30-days":"Last 30 days","preset-last7-days":"Last 7 days","preset-next-month":"Next month","preset-next-week":"Next week","preset-this-month":"This month","preset-this-week":"This week","preset-this-year":"This year","preset-today":"Today","preset-tomorrow":"Tomorrow","preset-yesterday":"Yesterday","presets":"Quick ranges","previous-month":"Previous month","previous-years":"Previous years","time":"Time","time-not-set":"Not set","value-missing":"Choose a date.","value-missing-datetime":"Choose a date and a time.","value-missing-time":"Choose a time."}}');
 
 /***/ }
 

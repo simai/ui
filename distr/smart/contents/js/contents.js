@@ -473,6 +473,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isMainAction: () => (/* binding */ isMainAction),
 /* harmony export */   isPressed: () => (/* binding */ isPressed),
 /* harmony export */   layoutActionRow: () => (/* binding */ layoutActionRow),
+/* harmony export */   layoutHeight: () => (/* binding */ layoutHeight),
+/* harmony export */   layoutRowRoom: () => (/* binding */ layoutRowRoom),
+/* harmony export */   layoutWidth: () => (/* binding */ layoutWidth),
 /* harmony export */   measureShown: () => (/* binding */ measureShown),
 /* harmony export */   openRowMenu: () => (/* binding */ openRowMenu),
 /* harmony export */   readPriority: () => (/* binding */ readPriority),
@@ -603,6 +606,38 @@ function rowRoom(list) {
   const style = getComputedStyle(list);
   const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
   return list.getBoundingClientRect().width - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // The width an element is laid out at, in fractional CSS pixels, before any
+// transform of it or of an ancestor (its border box). getBoundingClientRect is
+// a screen box: inside scale(.7) a 90 px tab reads 63, inside rotate() it reads
+// the width of its rotated bounding box, and a row that compares such widths
+// with its padding, a text measured in canvas or a ResizeObserver size mixes
+// screen and layout pixels (docs hero study 2026-11-19, section 9). The used
+// width of the computed style is the layout's own, with its fractions; a box
+// without one (an inline box, an element not drawn) gives offsetWidth.
+
+function layoutWidth(element) {
+  if (!element) return 0;
+  const style = getComputedStyle(element);
+  const width = parseFloat(style.width);
+  if (!Number.isFinite(width)) return element.offsetWidth || 0;
+  if (style.boxSizing === 'border-box') return width;
+  return ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), width);
+} // The block size of the same box (layoutWidth's other axis).
+
+function layoutHeight(element) {
+  if (!element) return 0;
+  const style = getComputedStyle(element);
+  const height = parseFloat(style.height);
+  if (!Number.isFinite(height)) return element.offsetHeight || 0;
+  if (style.boxSizing === 'border-box') return height;
+  return ['paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), height);
+} // rowRoom in layout pixels: the row's content box before any transform, for a
+// row whose items are measured with layoutWidth.
+
+function layoutRowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return layoutWidth(list) - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
 } // A text measurer in an element's own face, or null without a canvas: the
 // width «Ещё (7)» will have before its button draws it.
 
@@ -1999,7 +2034,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-conte
 /***/ "98e539eba4a2"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.contents","tag":"sf-contents","version":"1.8.4","kind":"leaf","settings":{"layout":{"type":"enum","values":["auto","column","sheet","rail","bar"],"default":"auto"},"collapse":{"type":"enum","values":["sm","md","lg","xl"],"default":"lg"},"target":{"type":"string","default":""},"levels":{"type":"string","default":"2-3"},"items":{"type":"list","default":[],"of":{"id":"id","text":"string","level":{"type":"number","optional":true},"count":{"type":"number","optional":true},"status":{"type":"string","optional":true}}},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"sticky":{"type":"boolean","default":true},"line":{"type":"enum","values":["own","edge","none"],"default":"own"},"expand":{"type":"enum","values":["all","current"],"default":"all"},"overflow":{"type":"enum","values":["more","scroll"],"default":"more"},"hash":{"type":"enum","values":["choose","scroll","false"],"default":"choose"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":2}},"values":{"current":{"type":"id"}},"events":{"change":{"x-native":false,"carries":{"id":"id","previous":{"type":"id","nullable":true}}}},"actions":{"refresh":{},"toggle":{}},"host-states":{"data-open":"boolean","data-compact":"boolean","data-empty":"boolean"},"css-variables":{"--sf-contents-color":{"type":"color","state":"default"},"--sf-contents-current-color":{"type":"color","state":"current"},"--sf-contents-line-color":{"type":"color","state":"default"},"--sf-contents-background-color":{"type":"color","state":"default"},"--sf-contents-indent":{"type":"length","state":"default"},"--sf-contents-inset-inline":{"type":"length","state":"default"},"--sf-contents-gap":{"type":"length","state":"default"},"--sf-contents-inset-block-start":{"type":"length","state":"default"},"--sf-contents-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.contents","tag":"sf-contents","version":"1.8.5","kind":"leaf","settings":{"layout":{"type":"enum","values":["auto","column","sheet","rail","bar"],"default":"auto"},"collapse":{"type":"enum","values":["sm","md","lg","xl"],"default":"lg"},"target":{"type":"string","default":""},"levels":{"type":"string","default":"2-3"},"items":{"type":"list","default":[],"of":{"id":"id","text":"string","level":{"type":"number","optional":true},"count":{"type":"number","optional":true},"status":{"type":"string","optional":true}}},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"sticky":{"type":"boolean","default":true},"line":{"type":"enum","values":["own","edge","none"],"default":"own"},"expand":{"type":"enum","values":["all","current"],"default":"all"},"overflow":{"type":"enum","values":["more","scroll"],"default":"more"},"hash":{"type":"enum","values":["choose","scroll","false"],"default":"choose"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":2}},"values":{"current":{"type":"id"}},"events":{"change":{"x-native":false,"carries":{"id":"id","previous":{"type":"id","nullable":true}}}},"actions":{"refresh":{},"toggle":{}},"host-states":{"data-open":"boolean","data-compact":"boolean","data-empty":"boolean"},"css-variables":{"--sf-contents-color":{"type":"color","state":"default"},"--sf-contents-current-color":{"type":"color","state":"current"},"--sf-contents-line-color":{"type":"color","state":"default"},"--sf-contents-background-color":{"type":"color","state":"default"},"--sf-contents-indent":{"type":"length","state":"default"},"--sf-contents-inset-inline":{"type":"length","state":"default"},"--sf-contents-gap":{"type":"length","state":"default"},"--sf-contents-inset-block-start":{"type":"length","state":"default"},"--sf-contents-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

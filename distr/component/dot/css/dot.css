@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
   /* One dot for every status mark (owner decision C185 (7), (8)): the
@@ -14,7 +15,6 @@
     align-items: center;
     justify-content: center;
     vertical-align: middle;
-    gap: var(--sf-space-1\/2);
     gap: var(--sf-dot--gap, var(--sf-space-1\/2));
     padding: 0;
   }
@@ -24,14 +24,8 @@
     flex: 0 0 auto;
     box-sizing: border-box;
     border-radius: var(--sf-dot-item--border-radius);
-    height: var(--sf-dot-item--size);
-    block-size: var(--sf-dot-item--size);
-    height: var(--sf-dot-item--size);
     height: var(--sf-dot-item--height, var(--sf-dot-item--size));
     block-size: var(--sf-dot-item--height, var(--sf-dot-item--size));
-    width: var(--sf-dot-item--size);
-    inline-size: var(--sf-dot-item--size);
-    width: var(--sf-dot-item--size);
     width: var(--sf-dot-item--width, var(--sf-dot-item--size));
     inline-size: var(--sf-dot-item--width, var(--sf-dot-item--size));
   }
@@ -57,10 +51,7 @@
   .sf-dot.sf-dot--size-1\/2 .sf-dot-item {
     --sf-dot-item--size: var(--sf-a6);
   }
-  .sf-dot.sf-dot--size-1\/4 {
-    --sf-dot-item--ring: var(--sf-a1);
-  }
-  .sf-dot.sf-dot--size-1\/3 {
+  .sf-dot:is(.sf-dot--size-1\/4, .sf-dot--size-1\/3) {
     --sf-dot-item--ring: var(--sf-a1);
   }
   /* Three forms (C185 (8), C61, C73): a state is told by the shape as well
@@ -76,6 +67,11 @@
   }
   .sf-dot.sf-dot--primary {
     --sf-dot-item--background-color: var(--sf-primary);
+  }
+  /* Tertiary (owner decision C314 (2)): the filter window's presence
+     conditions, «не задано» and «задано», in sf-dropdown's option dots. */
+  .sf-dot.sf-dot--tertiary {
+    --sf-dot-item--background-color: var(--sf-tertiary);
   }
   .sf-dot.sf-dot--info {
     --sf-dot-item--background-color: var(--sf-info);
@@ -93,7 +89,6 @@
     --sf-dot-item--background-color: var(--sf-on-surface-variant);
   }
   .sf-dot.sf-dot--ring .sf-dot-item {
-    box-shadow: 0 0 0 var(--sf-dot-item--ring) var(--sf-surface-page), 0 0 0 calc(2 * var(--sf-dot-item--ring)) var(--sf-dot-item--background-color);
     box-shadow: 0 0 0 var(--sf-dot-item--ring) var(--sf-surface-place, var(--sf-surface-page)), 0 0 0 calc(2 * var(--sf-dot-item--ring)) var(--sf-dot-item--background-color);
   }
   .sf-dot.sf-dot--hollow .sf-dot-item {
@@ -102,7 +97,6 @@
   /* The ring stands outside the disc, so the box keeps the disc's size; a
      word after a ringed dot keeps the mark gap from the ring, not the disc. */
   .sf-dot.sf-dot--ring {
-    gap: calc(var(--sf-space-1\/2) + 2 * var(--sf-dot-item--ring));
     gap: var(--sf-dot--gap, calc(var(--sf-space-1\/2) + 2 * var(--sf-dot-item--ring)));
   }
   @media (forced-colors: active) {
@@ -125,7 +119,6 @@
 }
 @layer sf.paint {
   .sf-dot {
-    background-color: var(--sf-transparent);
     background-color: var(--sf-dot--background-color, var(--sf-transparent));
   }
   .sf-dot .sf-dot-item {

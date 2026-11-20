@@ -371,7 +371,6 @@
    it, which is the order the rest of the Framework is written in. */
 @layer sf.base {
   .sf-icon {
-    color: currentColor;
     color: var(--sf-icon--color, var(--sf-icon-color, currentColor));
   }
   /* A page with this sheet and no Loader (core.css and the icons sheet linked
@@ -387,9 +386,6 @@
     /* One glyph wide while the font loads or when it cannot load: the name's
        letters would otherwise widen rows and scroll pages sideways
        (menu-smart, 2026-11-04). */
-    width: var(--sf-text-height-1);
-    inline-size: var(--sf-text-height-1);
-    width: var(--sf-text-height-1);
     width: var(--sf-icon-glyph-size, var(--sf-icon--font-size, var(--sf-text-height-1)));
     inline-size: var(--sf-icon-glyph-size, var(--sf-icon--font-size, var(--sf-text-height-1)));
     overflow: hidden;
@@ -422,9 +418,9 @@ sf-icon:not(:defined) {
   display: inline-flex;
   flex: none;
   width: var(--sf-text-height-1);
-  width: var(--sf-icon--width, var(--sf-text-height-1));
+  width: var(--sf-icon-glyph-size, var(--sf-icon--width, var(--sf-text-height-1)));
   height: var(--sf-text-height-1);
-  height: var(--sf-icon--height, var(--sf-text-height-1));
+  height: var(--sf-icon-glyph-size, var(--sf-icon--height, var(--sf-text-height-1)));
   vertical-align: middle;
 }
 

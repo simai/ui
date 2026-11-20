@@ -1,8 +1,5 @@
 @layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .float-inline-end {
-    float: right;
-  }
   @supports not (float: inline-end) {
   html:not([dir="rtl"]) .float-inline-end {
     float: right;
@@ -10,9 +7,6 @@
   }
   .float-inline-end:where(:dir(ltr)) {
     float: right;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .float-inline-end {
-    float: left;
   }
   @supports not (float: inline-end) {
   [dir="rtl"] .float-inline-end {
@@ -25,9 +19,6 @@
   .float-inline-end {
     float: inline-end;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .float-inline-start {
-    float: left;
-  }
   @supports not (float: inline-start) {
   html:not([dir="rtl"]) .float-inline-start {
     float: left;
@@ -35,9 +26,6 @@
   }
   .float-inline-start:where(:dir(ltr)) {
     float: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .float-inline-start {
-    float: right;
   }
   @supports not (float: inline-start) {
   [dir="rtl"] .float-inline-start {

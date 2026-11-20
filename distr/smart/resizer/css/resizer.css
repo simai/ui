@@ -6,24 +6,8 @@
      strip is the system's hit zone, 24 (C76, C58), and the touch place, 44, under
      a finger (D21; --sf-d1 as the list and the menus take it): it was 8, also on
      a phone (study RS-1, 2026-11-14). The line does not change. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-resizer{
-    right: calc(-1 * var(--sf-resizer--hit) / 2);
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) sf-resizer{
-    right: calc(-1 * var(--sf-resizer--hit) / 2);
-    }
-  }
   sf-resizer:where(:dir(ltr)){
     right: calc(-1 * var(--sf-resizer--hit) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] sf-resizer{
-    left: calc(-1 * var(--sf-resizer--hit) / 2);
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] sf-resizer{
-    left: calc(-1 * var(--sf-resizer--hit) / 2);
-    }
   }
   sf-resizer:where(:dir(rtl)){
     left: calc(-1 * var(--sf-resizer--hit) / 2);
@@ -41,7 +25,6 @@
        layer (GB11, dispatcher decision msg-bc1702eb): the sticky role (50) of
        the C181 layer roles put the handle back under a z-6 menu, and no role
        lies between 60 and 90. */
-    z-index: 90;
     z-index: var(--sf-resizer-z-index, var(--sf-layer--popover, 90));
     display: block;
     width: var(--sf-resizer--hit);
@@ -55,46 +38,14 @@
       --sf-resizer--hit: var(--sf-resizer-hit-size, var(--sf-d1));
     }
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-resizer[edge=inline-start]{
-    left: calc(-1 * var(--sf-resizer--hit) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) sf-resizer[edge=inline-start]{
-    left: calc(-1 * var(--sf-resizer--hit) / 2);
-    }
-  }
   sf-resizer[edge=inline-start]:where(:dir(ltr)){
     left: calc(-1 * var(--sf-resizer--hit) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] sf-resizer[edge=inline-start]{
-    right: calc(-1 * var(--sf-resizer--hit) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] sf-resizer[edge=inline-start]{
-    right: calc(-1 * var(--sf-resizer--hit) / 2);
-    }
   }
   sf-resizer[edge=inline-start]:where(:dir(rtl)){
     right: calc(-1 * var(--sf-resizer--hit) / 2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-resizer[edge=inline-start]{
-    right: auto;
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) sf-resizer[edge=inline-start]{
-    right: auto;
-    }
-  }
   sf-resizer[edge=inline-start]:where(:dir(ltr)){
     right: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] sf-resizer[edge=inline-start]{
-    left: auto;
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] sf-resizer[edge=inline-start]{
-    left: auto;
-    }
   }
   sf-resizer[edge=inline-start]:where(:dir(rtl)){
     left: auto;
@@ -109,70 +60,25 @@
      ancestor, fixed against the viewport), physical left and top in both
      directions. */
   sf-resizer[data-sf-resizer-outside] {
-    top: auto;
     right: auto;
     bottom: auto;
-    left: auto;
     inset: auto;
-    left: var(--sf-0);
     left: var(--sf-resizer--x, var(--sf-0));
-    top: var(--sf-0);
     top: var(--sf-resizer--y, var(--sf-0));
-    height: var(--sf-0);
-    block-size: var(--sf-0);
-    height: var(--sf-0);
     height: var(--sf-resizer--h, var(--sf-0));
     block-size: var(--sf-resizer--h, var(--sf-0));
   }
   sf-resizer[data-sf-resizer-outside=fixed] {
     position: fixed;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-resizer::after{
-    left: calc(50% - calc(2 * var(--sf-px)) / 2);
-    left: calc(50% - var(--sf-resizer-line-width, calc(2 * var(--sf-px))) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) sf-resizer::after{
-    left: calc(50% - calc(2 * var(--sf-px)) / 2);
-    left: calc(50% - var(--sf-resizer-line-width, calc(2 * var(--sf-px))) / 2);
-    }
-  }
   sf-resizer::after:where(:dir(ltr)){
-    left: calc(50% - calc(2 * var(--sf-px)) / 2);
     left: calc(50% - var(--sf-resizer-line-width, calc(2 * var(--sf-px))) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] sf-resizer::after{
-    right: calc(50% - calc(2 * var(--sf-px)) / 2);
-    right: calc(50% - var(--sf-resizer-line-width, calc(2 * var(--sf-px))) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] sf-resizer::after{
-    right: calc(50% - calc(2 * var(--sf-px)) / 2);
-    right: calc(50% - var(--sf-resizer-line-width, calc(2 * var(--sf-px))) / 2);
-    }
   }
   sf-resizer::after:where(:dir(rtl)){
-    right: calc(50% - calc(2 * var(--sf-px)) / 2);
     right: calc(50% - var(--sf-resizer-line-width, calc(2 * var(--sf-px))) / 2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-resizer::after{
-    left: calc(50% - calc(2 * var(--sf-px)) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) sf-resizer::after{
-    left: calc(50% - calc(2 * var(--sf-px)) / 2);
-    }
   }
   sf-resizer::after:where(:dir(ltr)){
     left: calc(50% - calc(2 * var(--sf-px)) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] sf-resizer::after{
-    right: calc(50% - calc(2 * var(--sf-px)) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] sf-resizer::after{
-    right: calc(50% - calc(2 * var(--sf-px)) / 2);
-    }
   }
   sf-resizer::after:where(:dir(rtl)){
     right: calc(50% - calc(2 * var(--sf-px)) / 2);
@@ -183,14 +89,9 @@
     top: 0;
     bottom: 0;
     inset-block: 0;
-    inset-inline-start: calc(50% - calc(2 * var(--sf-px)) / 2);
     inset-inline-start: calc(50% - var(--sf-resizer-line-width, calc(2 * var(--sf-px))) / 2);
-    width: calc(2 * var(--sf-px));
-    inline-size: calc(2 * var(--sf-px));
-    width: calc(2 * var(--sf-px));
     width: var(--sf-resizer-line-width, calc(2 * var(--sf-px)));
     inline-size: var(--sf-resizer-line-width, calc(2 * var(--sf-px)));
-    transition: background-color 0.15s ease;
     transition: background-color var(--sf-duration-fast, 0.15s) var(--sf-animation, ease);
   }
   sf-resizer[aria-disabled=true] {
@@ -201,6 +102,17 @@
      and the width waits for a wide screen (owner decision C158 (4)). */
   sf-resizer[data-sf-resizer-narrow] {
     display: none;
+  }
+  /* On a phone's screen (below sm, 32rem) the split a panel stands in is
+     always under the split step, so the handle is never there: said by the
+     sheet as well, the first paint a page prints has no handle before the
+     script measures the split (data-sf-resizer-narrow), and nothing appears and
+     goes when it comes (first-paint gate 24 at 390). Between sm and the split
+     step the script alone decides: the split there may be a container. */
+  @media not all and (min-width: 32rem) {
+    sf-resizer {
+      display: none;
+    }
   }
   /* A folded panel (collapsible, C158 (2)): it keeps only its edge -- its own
      border, the handle on it and the «Показать» button -- with its width written
@@ -222,46 +134,14 @@
   [data-sf-resizer-unfold] {
     display: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [data-folded] > [data-sf-resizer-unfold]{
-    left: 100%;
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) [data-folded] > [data-sf-resizer-unfold]{
-    left: 100%;
-    }
-  }
   [data-folded] > [data-sf-resizer-unfold]:where(:dir(ltr)){
     left: 100%;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [data-folded] > [data-sf-resizer-unfold]{
-    right: 100%;
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] [data-folded] > [data-sf-resizer-unfold]{
-    right: 100%;
-    }
   }
   [data-folded] > [data-sf-resizer-unfold]:where(:dir(rtl)){
     right: 100%;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [data-folded] > [data-sf-resizer-unfold]{
-    margin-left: calc(var(--sf-ui-1\/2--control-height) / -2);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) [data-folded] > [data-sf-resizer-unfold]{
-    margin-left: calc(var(--sf-ui-1\/2--control-height) / -2);
-    }
-  }
   [data-folded] > [data-sf-resizer-unfold]:where(:dir(ltr)){
     margin-left: calc(var(--sf-ui-1\/2--control-height) / -2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [data-folded] > [data-sf-resizer-unfold]{
-    margin-right: calc(var(--sf-ui-1\/2--control-height) / -2);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] [data-folded] > [data-sf-resizer-unfold]{
-    margin-right: calc(var(--sf-ui-1\/2--control-height) / -2);
-    }
   }
   [data-folded] > [data-sf-resizer-unfold]:where(:dir(rtl)){
     margin-right: calc(var(--sf-ui-1\/2--control-height) / -2);
@@ -271,96 +151,31 @@
     top: var(--sf-space-1\/4);
     inset-block-start: var(--sf-space-1\/4);
     inset-inline-start: 100%;
-    z-index: calc(90 + 1);
     z-index: calc(var(--sf-resizer-z-index, var(--sf-layer--popover, 90)) + 1);
     display: inline-flex;
     -webkit-margin-start: calc(var(--sf-ui-1\/2--control-height) / -2);
             margin-inline-start: calc(var(--sf-ui-1\/2--control-height) / -2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    left: auto;
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    left: auto;
-    }
-  }
   [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]:where(:dir(ltr)){
     left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    right: auto;
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    right: auto;
-    }
   }
   [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]:where(:dir(rtl)){
     right: auto;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    right: 100%;
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    right: 100%;
-    }
-  }
   [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]:where(:dir(ltr)){
     right: 100%;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    left: 100%;
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    left: 100%;
-    }
   }
   [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]:where(:dir(rtl)){
     left: 100%;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    margin-left: 0;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    margin-left: 0;
-    }
-  }
   [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]:where(:dir(ltr)){
     margin-left: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    margin-right: 0;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    margin-right: 0;
-    }
   }
   [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]:where(:dir(rtl)){
     margin-right: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    margin-right: calc(var(--sf-ui-1\/2--control-height) / -2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    margin-right: calc(var(--sf-ui-1\/2--control-height) / -2);
-    }
-  }
   [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]:where(:dir(ltr)){
     margin-right: calc(var(--sf-ui-1\/2--control-height) / -2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    margin-left: calc(var(--sf-ui-1\/2--control-height) / -2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]{
-    margin-left: calc(var(--sf-ui-1\/2--control-height) / -2);
-    }
   }
   [data-folded]:has(> sf-resizer[edge=inline-start]) > [data-sf-resizer-unfold]:where(:dir(rtl)){
     margin-left: calc(var(--sf-ui-1\/2--control-height) / -2);
@@ -384,7 +199,6 @@
 }
 @layer sf.paint {
   sf-resizer::after {
-    background-color: transparent;
     background-color: var(--sf-resizer-line-color, transparent);
   }
 }
@@ -393,12 +207,10 @@
      somewhere else flashed it (study RS-7, 2026-11-14). A drag and the
      keyboard show it at once; it goes at once. */
   sf-resizer:not([aria-disabled=true]):hover::after {
-    background-color: var(--sf-primary);
     background-color: var(--sf-resizer-hover-line-color, var(--sf-primary));
     transition-delay: var(--sf-duration-normal);
   }
   sf-resizer[data-sf-resizing]::after {
-    background-color: var(--sf-primary);
     background-color: var(--sf-resizer-hover-line-color, var(--sf-primary));
     transition-delay: 0s;
   }
@@ -413,24 +225,8 @@
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--inset);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-resizer.focus-visible::after{
-    left: calc(50% - var(--sf-focus--width) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) sf-resizer.focus-visible::after{
-    left: calc(50% - var(--sf-focus--width) / 2);
-    }
-  }
   sf-resizer.focus-visible::after:where(:dir(ltr)){
     left: calc(50% - var(--sf-focus--width) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] sf-resizer.focus-visible::after{
-    right: calc(50% - var(--sf-focus--width) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] sf-resizer.focus-visible::after{
-    right: calc(50% - var(--sf-focus--width) / 2);
-    }
   }
   sf-resizer.focus-visible::after:where(:dir(rtl)){
     right: calc(50% - var(--sf-focus--width) / 2);
@@ -442,75 +238,26 @@
     inset-inline-start: calc(50% - var(--sf-focus--width) / 2);
     transition-delay: 0s;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-resizer.focus-visible::after{
-    left: calc(50% - var(--sf-focus--width) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) sf-resizer.focus-visible::after{
-    left: calc(50% - var(--sf-focus--width) / 2);
-    }
-  }
   sf-resizer.focus-visible::after:where(:dir(ltr)){
     left: calc(50% - var(--sf-focus--width) / 2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-resizer:focus-visible::after{
-    left: calc(50% - var(--sf-focus--width) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) sf-resizer:focus-visible::after{
-    left: calc(50% - var(--sf-focus--width) / 2);
-    }
   }
   sf-resizer:focus-visible::after:where(:dir(ltr)){
     left: calc(50% - var(--sf-focus--width) / 2);
   }
-  _:-ms-input-placeholder, [dir="rtl"] sf-resizer.focus-visible::after{
-    right: calc(50% - var(--sf-focus--width) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] sf-resizer.focus-visible::after{
-    right: calc(50% - var(--sf-focus--width) / 2);
-    }
-  }
   sf-resizer.focus-visible::after:where(:dir(rtl)){
     right: calc(50% - var(--sf-focus--width) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] sf-resizer:focus-visible::after{
-    right: calc(50% - var(--sf-focus--width) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] sf-resizer:focus-visible::after{
-    right: calc(50% - var(--sf-focus--width) / 2);
-    }
   }
   sf-resizer:focus-visible::after:where(:dir(rtl)){
     right: calc(50% - var(--sf-focus--width) / 2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-resizer.focus-visible::after{
-    left: calc(50% - var(--sf-focus--width) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) sf-resizer.focus-visible::after{
-    left: calc(50% - var(--sf-focus--width) / 2);
-    }
-  }
   sf-resizer.focus-visible::after:where(:dir(ltr)){
     left: calc(50% - var(--sf-focus--width) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] sf-resizer.focus-visible::after{
-    right: calc(50% - var(--sf-focus--width) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] sf-resizer.focus-visible::after{
-    right: calc(50% - var(--sf-focus--width) / 2);
-    }
   }
   sf-resizer.focus-visible::after:where(:dir(rtl)){
     right: calc(50% - var(--sf-focus--width) / 2);
   }
   sf-resizer.focus-visible::after {
     background-color: var(--sf-focus--color);
-    width: var(--sf-focus--width);
     width: var(--sf-focus--width);
     inline-size: var(--sf-focus--width);
     inset-inline-start: calc(50% - var(--sf-focus--width) / 2);

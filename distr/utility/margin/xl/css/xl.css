@@ -7,24 +7,8 @@
     .xl\:m-top-auto {
       margin-top: var(--sf-space-auto);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-end-auto {
-      margin-right: var(--sf-space-auto);
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-end-auto {
-      margin-right: var(--sf-space-auto);
-      }
-    }
     .xl\:m-inline-end-auto:where(:dir(ltr)) {
       margin-right: var(--sf-space-auto);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-end-auto {
-      margin-left: var(--sf-space-auto);
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .xl\:m-inline-end-auto {
-      margin-left: var(--sf-space-auto);
-      }
     }
     .xl\:m-inline-end-auto:where(:dir(rtl)) {
       margin-left: var(--sf-space-auto);
@@ -36,24 +20,8 @@
     .xl\:m-bottom-auto {
       margin-bottom: var(--sf-space-auto);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-start-auto {
-      margin-left: var(--sf-space-auto);
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-start-auto {
-      margin-left: var(--sf-space-auto);
-      }
-    }
     .xl\:m-inline-start-auto:where(:dir(ltr)) {
       margin-left: var(--sf-space-auto);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-start-auto {
-      margin-right: var(--sf-space-auto);
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .xl\:m-inline-start-auto {
-      margin-right: var(--sf-space-auto);
-      }
     }
     .xl\:m-inline-start-auto:where(:dir(rtl)) {
       margin-right: var(--sf-space-auto);
@@ -84,24 +52,8 @@
     .-xl\:m-top-0 {
       margin-top: calc(0rem - var(--sf-space-0));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-end-0 {
-      margin-right: var(--sf-space-0);
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-end-0 {
-      margin-right: var(--sf-space-0);
-      }
-    }
     .xl\:m-inline-end-0:where(:dir(ltr)) {
       margin-right: var(--sf-space-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-end-0 {
-      margin-left: var(--sf-space-0);
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .xl\:m-inline-end-0 {
-      margin-left: var(--sf-space-0);
-      }
     }
     .xl\:m-inline-end-0:where(:dir(rtl)) {
       margin-left: var(--sf-space-0);
@@ -110,24 +62,8 @@
       -webkit-margin-end: var(--sf-space-0);
               margin-inline-end: var(--sf-space-0);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-end-0 {
-      margin-right: calc(0rem - var(--sf-space-0));
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-end-0 {
-      margin-right: calc(0rem - var(--sf-space-0));
-      }
-    }
     .-xl\:m-inline-end-0:where(:dir(ltr)) {
       margin-right: calc(0rem - var(--sf-space-0));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-end-0 {
-      margin-left: calc(0rem - var(--sf-space-0));
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .-xl\:m-inline-end-0 {
-      margin-left: calc(0rem - var(--sf-space-0));
-      }
     }
     .-xl\:m-inline-end-0:where(:dir(rtl)) {
       margin-left: calc(0rem - var(--sf-space-0));
@@ -142,24 +78,8 @@
     .-xl\:m-bottom-0 {
       margin-bottom: calc(0rem - var(--sf-space-0));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-start-0 {
-      margin-left: var(--sf-space-0);
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-start-0 {
-      margin-left: var(--sf-space-0);
-      }
-    }
     .xl\:m-inline-start-0:where(:dir(ltr)) {
       margin-left: var(--sf-space-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-start-0 {
-      margin-right: var(--sf-space-0);
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .xl\:m-inline-start-0 {
-      margin-right: var(--sf-space-0);
-      }
     }
     .xl\:m-inline-start-0:where(:dir(rtl)) {
       margin-right: var(--sf-space-0);
@@ -168,24 +88,8 @@
       -webkit-margin-start: var(--sf-space-0);
               margin-inline-start: var(--sf-space-0);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-start-0 {
-      margin-left: calc(0rem - var(--sf-space-0));
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-start-0 {
-      margin-left: calc(0rem - var(--sf-space-0));
-      }
-    }
     .-xl\:m-inline-start-0:where(:dir(ltr)) {
       margin-left: calc(0rem - var(--sf-space-0));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-start-0 {
-      margin-right: calc(0rem - var(--sf-space-0));
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .-xl\:m-inline-start-0 {
-      margin-right: calc(0rem - var(--sf-space-0));
-      }
     }
     .-xl\:m-inline-start-0:where(:dir(rtl)) {
       margin-right: calc(0rem - var(--sf-space-0));
@@ -226,24 +130,8 @@
     .-xl\:m-top-1\/4 {
       margin-top: calc(0rem - var(--sf-space-1\/4));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-end-1\/4 {
-      margin-right: var(--sf-space-1\/4);
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-end-1\/4 {
-      margin-right: var(--sf-space-1\/4);
-      }
-    }
     .xl\:m-inline-end-1\/4:where(:dir(ltr)) {
       margin-right: var(--sf-space-1\/4);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-end-1\/4 {
-      margin-left: var(--sf-space-1\/4);
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .xl\:m-inline-end-1\/4 {
-      margin-left: var(--sf-space-1\/4);
-      }
     }
     .xl\:m-inline-end-1\/4:where(:dir(rtl)) {
       margin-left: var(--sf-space-1\/4);
@@ -252,24 +140,8 @@
       -webkit-margin-end: var(--sf-space-1\/4);
               margin-inline-end: var(--sf-space-1\/4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-end-1\/4 {
-      margin-right: calc(0rem - var(--sf-space-1\/4));
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-end-1\/4 {
-      margin-right: calc(0rem - var(--sf-space-1\/4));
-      }
-    }
     .-xl\:m-inline-end-1\/4:where(:dir(ltr)) {
       margin-right: calc(0rem - var(--sf-space-1\/4));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-end-1\/4 {
-      margin-left: calc(0rem - var(--sf-space-1\/4));
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .-xl\:m-inline-end-1\/4 {
-      margin-left: calc(0rem - var(--sf-space-1\/4));
-      }
     }
     .-xl\:m-inline-end-1\/4:where(:dir(rtl)) {
       margin-left: calc(0rem - var(--sf-space-1\/4));
@@ -284,24 +156,8 @@
     .-xl\:m-bottom-1\/4 {
       margin-bottom: calc(0rem - var(--sf-space-1\/4));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-start-1\/4 {
-      margin-left: var(--sf-space-1\/4);
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-start-1\/4 {
-      margin-left: var(--sf-space-1\/4);
-      }
-    }
     .xl\:m-inline-start-1\/4:where(:dir(ltr)) {
       margin-left: var(--sf-space-1\/4);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-start-1\/4 {
-      margin-right: var(--sf-space-1\/4);
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .xl\:m-inline-start-1\/4 {
-      margin-right: var(--sf-space-1\/4);
-      }
     }
     .xl\:m-inline-start-1\/4:where(:dir(rtl)) {
       margin-right: var(--sf-space-1\/4);
@@ -310,24 +166,8 @@
       -webkit-margin-start: var(--sf-space-1\/4);
               margin-inline-start: var(--sf-space-1\/4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-start-1\/4 {
-      margin-left: calc(0rem - var(--sf-space-1\/4));
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-start-1\/4 {
-      margin-left: calc(0rem - var(--sf-space-1\/4));
-      }
-    }
     .-xl\:m-inline-start-1\/4:where(:dir(ltr)) {
       margin-left: calc(0rem - var(--sf-space-1\/4));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-start-1\/4 {
-      margin-right: calc(0rem - var(--sf-space-1\/4));
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .-xl\:m-inline-start-1\/4 {
-      margin-right: calc(0rem - var(--sf-space-1\/4));
-      }
     }
     .-xl\:m-inline-start-1\/4:where(:dir(rtl)) {
       margin-right: calc(0rem - var(--sf-space-1\/4));
@@ -368,24 +208,8 @@
     .-xl\:m-top-1\/3 {
       margin-top: calc(0rem - var(--sf-space-1\/3));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-end-1\/3 {
-      margin-right: var(--sf-space-1\/3);
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-end-1\/3 {
-      margin-right: var(--sf-space-1\/3);
-      }
-    }
     .xl\:m-inline-end-1\/3:where(:dir(ltr)) {
       margin-right: var(--sf-space-1\/3);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-end-1\/3 {
-      margin-left: var(--sf-space-1\/3);
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .xl\:m-inline-end-1\/3 {
-      margin-left: var(--sf-space-1\/3);
-      }
     }
     .xl\:m-inline-end-1\/3:where(:dir(rtl)) {
       margin-left: var(--sf-space-1\/3);
@@ -394,24 +218,8 @@
       -webkit-margin-end: var(--sf-space-1\/3);
               margin-inline-end: var(--sf-space-1\/3);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-end-1\/3 {
-      margin-right: calc(0rem - var(--sf-space-1\/3));
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-end-1\/3 {
-      margin-right: calc(0rem - var(--sf-space-1\/3));
-      }
-    }
     .-xl\:m-inline-end-1\/3:where(:dir(ltr)) {
       margin-right: calc(0rem - var(--sf-space-1\/3));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-end-1\/3 {
-      margin-left: calc(0rem - var(--sf-space-1\/3));
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .-xl\:m-inline-end-1\/3 {
-      margin-left: calc(0rem - var(--sf-space-1\/3));
-      }
     }
     .-xl\:m-inline-end-1\/3:where(:dir(rtl)) {
       margin-left: calc(0rem - var(--sf-space-1\/3));
@@ -426,24 +234,8 @@
     .-xl\:m-bottom-1\/3 {
       margin-bottom: calc(0rem - var(--sf-space-1\/3));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-start-1\/3 {
-      margin-left: var(--sf-space-1\/3);
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-start-1\/3 {
-      margin-left: var(--sf-space-1\/3);
-      }
-    }
     .xl\:m-inline-start-1\/3:where(:dir(ltr)) {
       margin-left: var(--sf-space-1\/3);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-start-1\/3 {
-      margin-right: var(--sf-space-1\/3);
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .xl\:m-inline-start-1\/3 {
-      margin-right: var(--sf-space-1\/3);
-      }
     }
     .xl\:m-inline-start-1\/3:where(:dir(rtl)) {
       margin-right: var(--sf-space-1\/3);
@@ -452,24 +244,8 @@
       -webkit-margin-start: var(--sf-space-1\/3);
               margin-inline-start: var(--sf-space-1\/3);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-start-1\/3 {
-      margin-left: calc(0rem - var(--sf-space-1\/3));
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-start-1\/3 {
-      margin-left: calc(0rem - var(--sf-space-1\/3));
-      }
-    }
     .-xl\:m-inline-start-1\/3:where(:dir(ltr)) {
       margin-left: calc(0rem - var(--sf-space-1\/3));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-start-1\/3 {
-      margin-right: calc(0rem - var(--sf-space-1\/3));
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .-xl\:m-inline-start-1\/3 {
-      margin-right: calc(0rem - var(--sf-space-1\/3));
-      }
     }
     .-xl\:m-inline-start-1\/3:where(:dir(rtl)) {
       margin-right: calc(0rem - var(--sf-space-1\/3));
@@ -510,24 +286,8 @@
     .-xl\:m-top-1\/2 {
       margin-top: calc(0rem - var(--sf-space-1\/2));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-end-1\/2 {
-      margin-right: var(--sf-space-1\/2);
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-end-1\/2 {
-      margin-right: var(--sf-space-1\/2);
-      }
-    }
     .xl\:m-inline-end-1\/2:where(:dir(ltr)) {
       margin-right: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-end-1\/2 {
-      margin-left: var(--sf-space-1\/2);
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .xl\:m-inline-end-1\/2 {
-      margin-left: var(--sf-space-1\/2);
-      }
     }
     .xl\:m-inline-end-1\/2:where(:dir(rtl)) {
       margin-left: var(--sf-space-1\/2);
@@ -536,24 +296,8 @@
       -webkit-margin-end: var(--sf-space-1\/2);
               margin-inline-end: var(--sf-space-1\/2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-end-1\/2 {
-      margin-right: calc(0rem - var(--sf-space-1\/2));
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-end-1\/2 {
-      margin-right: calc(0rem - var(--sf-space-1\/2));
-      }
-    }
     .-xl\:m-inline-end-1\/2:where(:dir(ltr)) {
       margin-right: calc(0rem - var(--sf-space-1\/2));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-end-1\/2 {
-      margin-left: calc(0rem - var(--sf-space-1\/2));
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .-xl\:m-inline-end-1\/2 {
-      margin-left: calc(0rem - var(--sf-space-1\/2));
-      }
     }
     .-xl\:m-inline-end-1\/2:where(:dir(rtl)) {
       margin-left: calc(0rem - var(--sf-space-1\/2));
@@ -568,24 +312,8 @@
     .-xl\:m-bottom-1\/2 {
       margin-bottom: calc(0rem - var(--sf-space-1\/2));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-start-1\/2 {
-      margin-left: var(--sf-space-1\/2);
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-start-1\/2 {
-      margin-left: var(--sf-space-1\/2);
-      }
-    }
     .xl\:m-inline-start-1\/2:where(:dir(ltr)) {
       margin-left: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-start-1\/2 {
-      margin-right: var(--sf-space-1\/2);
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .xl\:m-inline-start-1\/2 {
-      margin-right: var(--sf-space-1\/2);
-      }
     }
     .xl\:m-inline-start-1\/2:where(:dir(rtl)) {
       margin-right: var(--sf-space-1\/2);
@@ -594,24 +322,8 @@
       -webkit-margin-start: var(--sf-space-1\/2);
               margin-inline-start: var(--sf-space-1\/2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-start-1\/2 {
-      margin-left: calc(0rem - var(--sf-space-1\/2));
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-start-1\/2 {
-      margin-left: calc(0rem - var(--sf-space-1\/2));
-      }
-    }
     .-xl\:m-inline-start-1\/2:where(:dir(ltr)) {
       margin-left: calc(0rem - var(--sf-space-1\/2));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-start-1\/2 {
-      margin-right: calc(0rem - var(--sf-space-1\/2));
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .-xl\:m-inline-start-1\/2 {
-      margin-right: calc(0rem - var(--sf-space-1\/2));
-      }
     }
     .-xl\:m-inline-start-1\/2:where(:dir(rtl)) {
       margin-right: calc(0rem - var(--sf-space-1\/2));
@@ -652,24 +364,8 @@
     .-xl\:m-top-1 {
       margin-top: calc(0rem - var(--sf-space-1));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-end-1 {
-      margin-right: var(--sf-space-1);
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-end-1 {
-      margin-right: var(--sf-space-1);
-      }
-    }
     .xl\:m-inline-end-1:where(:dir(ltr)) {
       margin-right: var(--sf-space-1);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-end-1 {
-      margin-left: var(--sf-space-1);
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .xl\:m-inline-end-1 {
-      margin-left: var(--sf-space-1);
-      }
     }
     .xl\:m-inline-end-1:where(:dir(rtl)) {
       margin-left: var(--sf-space-1);
@@ -678,24 +374,8 @@
       -webkit-margin-end: var(--sf-space-1);
               margin-inline-end: var(--sf-space-1);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-end-1 {
-      margin-right: calc(0rem - var(--sf-space-1));
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-end-1 {
-      margin-right: calc(0rem - var(--sf-space-1));
-      }
-    }
     .-xl\:m-inline-end-1:where(:dir(ltr)) {
       margin-right: calc(0rem - var(--sf-space-1));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-end-1 {
-      margin-left: calc(0rem - var(--sf-space-1));
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .-xl\:m-inline-end-1 {
-      margin-left: calc(0rem - var(--sf-space-1));
-      }
     }
     .-xl\:m-inline-end-1:where(:dir(rtl)) {
       margin-left: calc(0rem - var(--sf-space-1));
@@ -710,24 +390,8 @@
     .-xl\:m-bottom-1 {
       margin-bottom: calc(0rem - var(--sf-space-1));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-start-1 {
-      margin-left: var(--sf-space-1);
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-start-1 {
-      margin-left: var(--sf-space-1);
-      }
-    }
     .xl\:m-inline-start-1:where(:dir(ltr)) {
       margin-left: var(--sf-space-1);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-start-1 {
-      margin-right: var(--sf-space-1);
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .xl\:m-inline-start-1 {
-      margin-right: var(--sf-space-1);
-      }
     }
     .xl\:m-inline-start-1:where(:dir(rtl)) {
       margin-right: var(--sf-space-1);
@@ -736,24 +400,8 @@
       -webkit-margin-start: var(--sf-space-1);
               margin-inline-start: var(--sf-space-1);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-start-1 {
-      margin-left: calc(0rem - var(--sf-space-1));
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-start-1 {
-      margin-left: calc(0rem - var(--sf-space-1));
-      }
-    }
     .-xl\:m-inline-start-1:where(:dir(ltr)) {
       margin-left: calc(0rem - var(--sf-space-1));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-start-1 {
-      margin-right: calc(0rem - var(--sf-space-1));
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .-xl\:m-inline-start-1 {
-      margin-right: calc(0rem - var(--sf-space-1));
-      }
     }
     .-xl\:m-inline-start-1:where(:dir(rtl)) {
       margin-right: calc(0rem - var(--sf-space-1));
@@ -794,24 +442,8 @@
     .-xl\:m-top-2 {
       margin-top: calc(0rem - var(--sf-space-2));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-end-2 {
-      margin-right: var(--sf-space-2);
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-end-2 {
-      margin-right: var(--sf-space-2);
-      }
-    }
     .xl\:m-inline-end-2:where(:dir(ltr)) {
       margin-right: var(--sf-space-2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-end-2 {
-      margin-left: var(--sf-space-2);
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .xl\:m-inline-end-2 {
-      margin-left: var(--sf-space-2);
-      }
     }
     .xl\:m-inline-end-2:where(:dir(rtl)) {
       margin-left: var(--sf-space-2);
@@ -820,24 +452,8 @@
       -webkit-margin-end: var(--sf-space-2);
               margin-inline-end: var(--sf-space-2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-end-2 {
-      margin-right: calc(0rem - var(--sf-space-2));
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-end-2 {
-      margin-right: calc(0rem - var(--sf-space-2));
-      }
-    }
     .-xl\:m-inline-end-2:where(:dir(ltr)) {
       margin-right: calc(0rem - var(--sf-space-2));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-end-2 {
-      margin-left: calc(0rem - var(--sf-space-2));
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .-xl\:m-inline-end-2 {
-      margin-left: calc(0rem - var(--sf-space-2));
-      }
     }
     .-xl\:m-inline-end-2:where(:dir(rtl)) {
       margin-left: calc(0rem - var(--sf-space-2));
@@ -852,24 +468,8 @@
     .-xl\:m-bottom-2 {
       margin-bottom: calc(0rem - var(--sf-space-2));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-start-2 {
-      margin-left: var(--sf-space-2);
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-start-2 {
-      margin-left: var(--sf-space-2);
-      }
-    }
     .xl\:m-inline-start-2:where(:dir(ltr)) {
       margin-left: var(--sf-space-2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-start-2 {
-      margin-right: var(--sf-space-2);
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .xl\:m-inline-start-2 {
-      margin-right: var(--sf-space-2);
-      }
     }
     .xl\:m-inline-start-2:where(:dir(rtl)) {
       margin-right: var(--sf-space-2);
@@ -878,24 +478,8 @@
       -webkit-margin-start: var(--sf-space-2);
               margin-inline-start: var(--sf-space-2);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-start-2 {
-      margin-left: calc(0rem - var(--sf-space-2));
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-start-2 {
-      margin-left: calc(0rem - var(--sf-space-2));
-      }
-    }
     .-xl\:m-inline-start-2:where(:dir(ltr)) {
       margin-left: calc(0rem - var(--sf-space-2));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-start-2 {
-      margin-right: calc(0rem - var(--sf-space-2));
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .-xl\:m-inline-start-2 {
-      margin-right: calc(0rem - var(--sf-space-2));
-      }
     }
     .-xl\:m-inline-start-2:where(:dir(rtl)) {
       margin-right: calc(0rem - var(--sf-space-2));
@@ -936,24 +520,8 @@
     .-xl\:m-top-3 {
       margin-top: calc(0rem - var(--sf-space-3));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-end-3 {
-      margin-right: var(--sf-space-3);
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-end-3 {
-      margin-right: var(--sf-space-3);
-      }
-    }
     .xl\:m-inline-end-3:where(:dir(ltr)) {
       margin-right: var(--sf-space-3);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-end-3 {
-      margin-left: var(--sf-space-3);
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .xl\:m-inline-end-3 {
-      margin-left: var(--sf-space-3);
-      }
     }
     .xl\:m-inline-end-3:where(:dir(rtl)) {
       margin-left: var(--sf-space-3);
@@ -962,24 +530,8 @@
       -webkit-margin-end: var(--sf-space-3);
               margin-inline-end: var(--sf-space-3);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-end-3 {
-      margin-right: calc(0rem - var(--sf-space-3));
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-end-3 {
-      margin-right: calc(0rem - var(--sf-space-3));
-      }
-    }
     .-xl\:m-inline-end-3:where(:dir(ltr)) {
       margin-right: calc(0rem - var(--sf-space-3));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-end-3 {
-      margin-left: calc(0rem - var(--sf-space-3));
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .-xl\:m-inline-end-3 {
-      margin-left: calc(0rem - var(--sf-space-3));
-      }
     }
     .-xl\:m-inline-end-3:where(:dir(rtl)) {
       margin-left: calc(0rem - var(--sf-space-3));
@@ -994,24 +546,8 @@
     .-xl\:m-bottom-3 {
       margin-bottom: calc(0rem - var(--sf-space-3));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-start-3 {
-      margin-left: var(--sf-space-3);
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-start-3 {
-      margin-left: var(--sf-space-3);
-      }
-    }
     .xl\:m-inline-start-3:where(:dir(ltr)) {
       margin-left: var(--sf-space-3);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-start-3 {
-      margin-right: var(--sf-space-3);
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .xl\:m-inline-start-3 {
-      margin-right: var(--sf-space-3);
-      }
     }
     .xl\:m-inline-start-3:where(:dir(rtl)) {
       margin-right: var(--sf-space-3);
@@ -1020,24 +556,8 @@
       -webkit-margin-start: var(--sf-space-3);
               margin-inline-start: var(--sf-space-3);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-start-3 {
-      margin-left: calc(0rem - var(--sf-space-3));
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-start-3 {
-      margin-left: calc(0rem - var(--sf-space-3));
-      }
-    }
     .-xl\:m-inline-start-3:where(:dir(ltr)) {
       margin-left: calc(0rem - var(--sf-space-3));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-start-3 {
-      margin-right: calc(0rem - var(--sf-space-3));
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .-xl\:m-inline-start-3 {
-      margin-right: calc(0rem - var(--sf-space-3));
-      }
     }
     .-xl\:m-inline-start-3:where(:dir(rtl)) {
       margin-right: calc(0rem - var(--sf-space-3));
@@ -1078,24 +598,8 @@
     .-xl\:m-top-4 {
       margin-top: calc(0rem - var(--sf-space-4));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-end-4 {
-      margin-right: var(--sf-space-4);
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-end-4 {
-      margin-right: var(--sf-space-4);
-      }
-    }
     .xl\:m-inline-end-4:where(:dir(ltr)) {
       margin-right: var(--sf-space-4);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-end-4 {
-      margin-left: var(--sf-space-4);
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .xl\:m-inline-end-4 {
-      margin-left: var(--sf-space-4);
-      }
     }
     .xl\:m-inline-end-4:where(:dir(rtl)) {
       margin-left: var(--sf-space-4);
@@ -1104,24 +608,8 @@
       -webkit-margin-end: var(--sf-space-4);
               margin-inline-end: var(--sf-space-4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-end-4 {
-      margin-right: calc(0rem - var(--sf-space-4));
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-end-4 {
-      margin-right: calc(0rem - var(--sf-space-4));
-      }
-    }
     .-xl\:m-inline-end-4:where(:dir(ltr)) {
       margin-right: calc(0rem - var(--sf-space-4));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-end-4 {
-      margin-left: calc(0rem - var(--sf-space-4));
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .-xl\:m-inline-end-4 {
-      margin-left: calc(0rem - var(--sf-space-4));
-      }
     }
     .-xl\:m-inline-end-4:where(:dir(rtl)) {
       margin-left: calc(0rem - var(--sf-space-4));
@@ -1136,24 +624,8 @@
     .-xl\:m-bottom-4 {
       margin-bottom: calc(0rem - var(--sf-space-4));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-start-4 {
-      margin-left: var(--sf-space-4);
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-start-4 {
-      margin-left: var(--sf-space-4);
-      }
-    }
     .xl\:m-inline-start-4:where(:dir(ltr)) {
       margin-left: var(--sf-space-4);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-start-4 {
-      margin-right: var(--sf-space-4);
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .xl\:m-inline-start-4 {
-      margin-right: var(--sf-space-4);
-      }
     }
     .xl\:m-inline-start-4:where(:dir(rtl)) {
       margin-right: var(--sf-space-4);
@@ -1162,24 +634,8 @@
       -webkit-margin-start: var(--sf-space-4);
               margin-inline-start: var(--sf-space-4);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-start-4 {
-      margin-left: calc(0rem - var(--sf-space-4));
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-start-4 {
-      margin-left: calc(0rem - var(--sf-space-4));
-      }
-    }
     .-xl\:m-inline-start-4:where(:dir(ltr)) {
       margin-left: calc(0rem - var(--sf-space-4));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-start-4 {
-      margin-right: calc(0rem - var(--sf-space-4));
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .-xl\:m-inline-start-4 {
-      margin-right: calc(0rem - var(--sf-space-4));
-      }
     }
     .-xl\:m-inline-start-4:where(:dir(rtl)) {
       margin-right: calc(0rem - var(--sf-space-4));
@@ -1220,24 +676,8 @@
     .-xl\:m-top-5 {
       margin-top: calc(0rem - var(--sf-space-5));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-end-5 {
-      margin-right: var(--sf-space-5);
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-end-5 {
-      margin-right: var(--sf-space-5);
-      }
-    }
     .xl\:m-inline-end-5:where(:dir(ltr)) {
       margin-right: var(--sf-space-5);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-end-5 {
-      margin-left: var(--sf-space-5);
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .xl\:m-inline-end-5 {
-      margin-left: var(--sf-space-5);
-      }
     }
     .xl\:m-inline-end-5:where(:dir(rtl)) {
       margin-left: var(--sf-space-5);
@@ -1246,24 +686,8 @@
       -webkit-margin-end: var(--sf-space-5);
               margin-inline-end: var(--sf-space-5);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-end-5 {
-      margin-right: calc(0rem - var(--sf-space-5));
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-end-5 {
-      margin-right: calc(0rem - var(--sf-space-5));
-      }
-    }
     .-xl\:m-inline-end-5:where(:dir(ltr)) {
       margin-right: calc(0rem - var(--sf-space-5));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-end-5 {
-      margin-left: calc(0rem - var(--sf-space-5));
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .-xl\:m-inline-end-5 {
-      margin-left: calc(0rem - var(--sf-space-5));
-      }
     }
     .-xl\:m-inline-end-5:where(:dir(rtl)) {
       margin-left: calc(0rem - var(--sf-space-5));
@@ -1278,24 +702,8 @@
     .-xl\:m-bottom-5 {
       margin-bottom: calc(0rem - var(--sf-space-5));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-start-5 {
-      margin-left: var(--sf-space-5);
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-start-5 {
-      margin-left: var(--sf-space-5);
-      }
-    }
     .xl\:m-inline-start-5:where(:dir(ltr)) {
       margin-left: var(--sf-space-5);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-start-5 {
-      margin-right: var(--sf-space-5);
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .xl\:m-inline-start-5 {
-      margin-right: var(--sf-space-5);
-      }
     }
     .xl\:m-inline-start-5:where(:dir(rtl)) {
       margin-right: var(--sf-space-5);
@@ -1304,24 +712,8 @@
       -webkit-margin-start: var(--sf-space-5);
               margin-inline-start: var(--sf-space-5);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-start-5 {
-      margin-left: calc(0rem - var(--sf-space-5));
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-start-5 {
-      margin-left: calc(0rem - var(--sf-space-5));
-      }
-    }
     .-xl\:m-inline-start-5:where(:dir(ltr)) {
       margin-left: calc(0rem - var(--sf-space-5));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-start-5 {
-      margin-right: calc(0rem - var(--sf-space-5));
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .-xl\:m-inline-start-5 {
-      margin-right: calc(0rem - var(--sf-space-5));
-      }
     }
     .-xl\:m-inline-start-5:where(:dir(rtl)) {
       margin-right: calc(0rem - var(--sf-space-5));
@@ -1362,24 +754,8 @@
     .-xl\:m-top-6 {
       margin-top: calc(0rem - var(--sf-space-6));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-end-6 {
-      margin-right: var(--sf-space-6);
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-end-6 {
-      margin-right: var(--sf-space-6);
-      }
-    }
     .xl\:m-inline-end-6:where(:dir(ltr)) {
       margin-right: var(--sf-space-6);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-end-6 {
-      margin-left: var(--sf-space-6);
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .xl\:m-inline-end-6 {
-      margin-left: var(--sf-space-6);
-      }
     }
     .xl\:m-inline-end-6:where(:dir(rtl)) {
       margin-left: var(--sf-space-6);
@@ -1388,24 +764,8 @@
       -webkit-margin-end: var(--sf-space-6);
               margin-inline-end: var(--sf-space-6);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-end-6 {
-      margin-right: calc(0rem - var(--sf-space-6));
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-end-6 {
-      margin-right: calc(0rem - var(--sf-space-6));
-      }
-    }
     .-xl\:m-inline-end-6:where(:dir(ltr)) {
       margin-right: calc(0rem - var(--sf-space-6));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-end-6 {
-      margin-left: calc(0rem - var(--sf-space-6));
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .-xl\:m-inline-end-6 {
-      margin-left: calc(0rem - var(--sf-space-6));
-      }
     }
     .-xl\:m-inline-end-6:where(:dir(rtl)) {
       margin-left: calc(0rem - var(--sf-space-6));
@@ -1420,24 +780,8 @@
     .-xl\:m-bottom-6 {
       margin-bottom: calc(0rem - var(--sf-space-6));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-start-6 {
-      margin-left: var(--sf-space-6);
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-start-6 {
-      margin-left: var(--sf-space-6);
-      }
-    }
     .xl\:m-inline-start-6:where(:dir(ltr)) {
       margin-left: var(--sf-space-6);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-start-6 {
-      margin-right: var(--sf-space-6);
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .xl\:m-inline-start-6 {
-      margin-right: var(--sf-space-6);
-      }
     }
     .xl\:m-inline-start-6:where(:dir(rtl)) {
       margin-right: var(--sf-space-6);
@@ -1446,24 +790,8 @@
       -webkit-margin-start: var(--sf-space-6);
               margin-inline-start: var(--sf-space-6);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-start-6 {
-      margin-left: calc(0rem - var(--sf-space-6));
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-start-6 {
-      margin-left: calc(0rem - var(--sf-space-6));
-      }
-    }
     .-xl\:m-inline-start-6:where(:dir(ltr)) {
       margin-left: calc(0rem - var(--sf-space-6));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-start-6 {
-      margin-right: calc(0rem - var(--sf-space-6));
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .-xl\:m-inline-start-6 {
-      margin-right: calc(0rem - var(--sf-space-6));
-      }
     }
     .-xl\:m-inline-start-6:where(:dir(rtl)) {
       margin-right: calc(0rem - var(--sf-space-6));
@@ -1504,24 +832,8 @@
     .-xl\:m-top-7 {
       margin-top: calc(0rem - var(--sf-space-7));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-end-7 {
-      margin-right: var(--sf-space-7);
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-end-7 {
-      margin-right: var(--sf-space-7);
-      }
-    }
     .xl\:m-inline-end-7:where(:dir(ltr)) {
       margin-right: var(--sf-space-7);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-end-7 {
-      margin-left: var(--sf-space-7);
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .xl\:m-inline-end-7 {
-      margin-left: var(--sf-space-7);
-      }
     }
     .xl\:m-inline-end-7:where(:dir(rtl)) {
       margin-left: var(--sf-space-7);
@@ -1530,24 +842,8 @@
       -webkit-margin-end: var(--sf-space-7);
               margin-inline-end: var(--sf-space-7);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-end-7 {
-      margin-right: calc(0rem - var(--sf-space-7));
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-end-7 {
-      margin-right: calc(0rem - var(--sf-space-7));
-      }
-    }
     .-xl\:m-inline-end-7:where(:dir(ltr)) {
       margin-right: calc(0rem - var(--sf-space-7));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-end-7 {
-      margin-left: calc(0rem - var(--sf-space-7));
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .-xl\:m-inline-end-7 {
-      margin-left: calc(0rem - var(--sf-space-7));
-      }
     }
     .-xl\:m-inline-end-7:where(:dir(rtl)) {
       margin-left: calc(0rem - var(--sf-space-7));
@@ -1562,24 +858,8 @@
     .-xl\:m-bottom-7 {
       margin-bottom: calc(0rem - var(--sf-space-7));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-start-7 {
-      margin-left: var(--sf-space-7);
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-start-7 {
-      margin-left: var(--sf-space-7);
-      }
-    }
     .xl\:m-inline-start-7:where(:dir(ltr)) {
       margin-left: var(--sf-space-7);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-start-7 {
-      margin-right: var(--sf-space-7);
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .xl\:m-inline-start-7 {
-      margin-right: var(--sf-space-7);
-      }
     }
     .xl\:m-inline-start-7:where(:dir(rtl)) {
       margin-right: var(--sf-space-7);
@@ -1588,24 +868,8 @@
       -webkit-margin-start: var(--sf-space-7);
               margin-inline-start: var(--sf-space-7);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-start-7 {
-      margin-left: calc(0rem - var(--sf-space-7));
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-start-7 {
-      margin-left: calc(0rem - var(--sf-space-7));
-      }
-    }
     .-xl\:m-inline-start-7:where(:dir(ltr)) {
       margin-left: calc(0rem - var(--sf-space-7));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-start-7 {
-      margin-right: calc(0rem - var(--sf-space-7));
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .-xl\:m-inline-start-7 {
-      margin-right: calc(0rem - var(--sf-space-7));
-      }
     }
     .-xl\:m-inline-start-7:where(:dir(rtl)) {
       margin-right: calc(0rem - var(--sf-space-7));
@@ -1646,24 +910,8 @@
     .-xl\:m-top-8 {
       margin-top: calc(0rem - var(--sf-space-8));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-end-8 {
-      margin-right: var(--sf-space-8);
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-end-8 {
-      margin-right: var(--sf-space-8);
-      }
-    }
     .xl\:m-inline-end-8:where(:dir(ltr)) {
       margin-right: var(--sf-space-8);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-end-8 {
-      margin-left: var(--sf-space-8);
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .xl\:m-inline-end-8 {
-      margin-left: var(--sf-space-8);
-      }
     }
     .xl\:m-inline-end-8:where(:dir(rtl)) {
       margin-left: var(--sf-space-8);
@@ -1672,24 +920,8 @@
       -webkit-margin-end: var(--sf-space-8);
               margin-inline-end: var(--sf-space-8);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-end-8 {
-      margin-right: calc(0rem - var(--sf-space-8));
-    }
-    @supports not (margin-inline-end: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-end-8 {
-      margin-right: calc(0rem - var(--sf-space-8));
-      }
-    }
     .-xl\:m-inline-end-8:where(:dir(ltr)) {
       margin-right: calc(0rem - var(--sf-space-8));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-end-8 {
-      margin-left: calc(0rem - var(--sf-space-8));
-    }
-    @supports not (margin-inline-end: initial) {
-    [dir="rtl"] .-xl\:m-inline-end-8 {
-      margin-left: calc(0rem - var(--sf-space-8));
-      }
     }
     .-xl\:m-inline-end-8:where(:dir(rtl)) {
       margin-left: calc(0rem - var(--sf-space-8));
@@ -1704,24 +936,8 @@
     .-xl\:m-bottom-8 {
       margin-bottom: calc(0rem - var(--sf-space-8));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:m-inline-start-8 {
-      margin-left: var(--sf-space-8);
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .xl\:m-inline-start-8 {
-      margin-left: var(--sf-space-8);
-      }
-    }
     .xl\:m-inline-start-8:where(:dir(ltr)) {
       margin-left: var(--sf-space-8);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:m-inline-start-8 {
-      margin-right: var(--sf-space-8);
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .xl\:m-inline-start-8 {
-      margin-right: var(--sf-space-8);
-      }
     }
     .xl\:m-inline-start-8:where(:dir(rtl)) {
       margin-right: var(--sf-space-8);
@@ -1730,24 +946,8 @@
       -webkit-margin-start: var(--sf-space-8);
               margin-inline-start: var(--sf-space-8);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .-xl\:m-inline-start-8 {
-      margin-left: calc(0rem - var(--sf-space-8));
-    }
-    @supports not (margin-inline-start: initial) {
-    html:not([dir="rtl"]) .-xl\:m-inline-start-8 {
-      margin-left: calc(0rem - var(--sf-space-8));
-      }
-    }
     .-xl\:m-inline-start-8:where(:dir(ltr)) {
       margin-left: calc(0rem - var(--sf-space-8));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .-xl\:m-inline-start-8 {
-      margin-right: calc(0rem - var(--sf-space-8));
-    }
-    @supports not (margin-inline-start: initial) {
-    [dir="rtl"] .-xl\:m-inline-start-8 {
-      margin-right: calc(0rem - var(--sf-space-8));
-      }
     }
     .-xl\:m-inline-start-8:where(:dir(rtl)) {
       margin-right: calc(0rem - var(--sf-space-8));

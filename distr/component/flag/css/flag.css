@@ -70,7 +70,6 @@
   /* While the file is still coming, the box holds its place instead of letting
      the line jump. */
   .sf-flag:not(:has(img, svg)) {
-    background-color: var(--sf-surface-container);
     background-color: var(--sf-flag-placeholder-color, var(--sf-surface-container));
   }
 }

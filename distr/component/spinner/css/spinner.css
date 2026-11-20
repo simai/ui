@@ -129,8 +129,6 @@
      once. If a page stops every animation the spinner simply shows at once. */
   sf-spinner > .sf-loader-container,
   .sf-loader-container[data-delay] {
-    -webkit-animation: sf-loader-wait 1s step-end;
-            animation: sf-loader-wait 1s step-end;
     -webkit-animation: sf-loader-wait var(--sf-loader--delay, 1s) step-end;
             animation: sf-loader-wait var(--sf-loader--delay, 1s) step-end;
   }
@@ -150,16 +148,10 @@
   .sf-loader-container.sf-loader--pixel-geometry {
     --sf-loader-stroke-width: var(--sf-a5);
   }
-  .sf-loader-container.sf-loader--pixel-geometry.sf-loader--size-1\/3 {
+  .sf-loader-container.sf-loader--pixel-geometry:is(.sf-loader--size-1\/3, .sf-loader--size-1\/2) {
     --sf-loader-stroke-width: var(--sf-a4);
   }
-  .sf-loader-container.sf-loader--pixel-geometry.sf-loader--size-1\/2 {
-    --sf-loader-stroke-width: var(--sf-a4);
-  }
-  .sf-loader-container.sf-loader--pixel-geometry.sf-loader--size-1 {
-    --sf-loader-stroke-width: var(--sf-a6);
-  }
-  .sf-loader-container.sf-loader--pixel-geometry.sf-loader--size-2 {
+  .sf-loader-container.sf-loader--pixel-geometry:is(.sf-loader--size-1, .sf-loader--size-2) {
     --sf-loader-stroke-width: var(--sf-a6);
   }
   .sf-loader-container.sf-loader--pixel-geometry.sf-loader--size-3 {
@@ -174,7 +166,6 @@
        that draws one (a button, an icon button, a badge, a modal) sets the
        colour on its own spinner, so a spinner in a button keeps the button's
        ink. --sf-spinner-color and --sf-loader--color still set it. */
-    color: var(--sf-on-surface-variant);
     color: var(--sf-spinner-color, var(--sf-loader--color, var(--sf-on-surface-variant)));
   }
   .sf-loader-container .sf-loader--text {
@@ -182,7 +173,6 @@
        on-surface-variant for a spinner on its own, as its arc (C130 (6), set on
        the container above), and the control's ink inside a button or another
        control. --sf-spinner-text-color still sets them apart. */
-    color: currentColor;
     color: var(--sf-spinner-text-color, currentColor);
   }
   .sf-loader-container.sf-loader--label-hidden .sf-loader--text {
@@ -251,12 +241,8 @@
      breathing's does (simai/ui-source#13). */
   /* In longhands: in the shorthand a name of none reads as the fill mode. */
   .sf-loader-container .sf-loader-svg {
-    -webkit-animation-name: sf-loader-svg-rotate;
-            animation-name: sf-loader-svg-rotate;
     -webkit-animation-name: var(--sf-loader--look-spin, sf-loader-svg-rotate);
             animation-name: var(--sf-loader--look-spin, sf-loader-svg-rotate);
-    -webkit-animation-duration: var(--sf-loader-arc-duration);
-            animation-duration: var(--sf-loader-arc-duration);
     -webkit-animation-duration: var(--sf-loader--look-spin-duration, var(--sf-loader-arc-duration));
             animation-duration: var(--sf-loader--look-spin-duration, var(--sf-loader-arc-duration));
     -webkit-animation-timing-function: linear;
@@ -265,40 +251,30 @@
             animation-fill-mode: both;
   }
   .sf-loader-container .sf-loader-ring-filled {
-    display: inline;
     display: var(--sf-loader--look-track, inline);
     fill: none;
     /* Drawn whole: the alpha is in --sf-loader-track-color. 1, not nothing: the
        drawing's own opacity attribute (0.3, for the paint before this sheet)
        would hold otherwise. */
     opacity: 1;
-    stroke: color-mix(in srgb, currentColor 16%, transparent);
     stroke: var(--sf-loader-track-color, color-mix(in srgb, currentColor 16%, transparent));
     stroke-linecap: round;
     stroke-width: var(--sf-loader-stroke-width);
   }
   .sf-loader-container .sf-loader-ring-accent {
-    display: inline;
     display: var(--sf-loader--look-accent, inline);
     fill: none;
     stroke: currentColor;
-    stroke-dasharray: 30 70;
     stroke-dasharray: var(--sf-loader--look-dash, 30 70);
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: var(--sf-loader-stroke-width);
   }
   .sf-loader-container .sf-loader--loading-indicator .sf-loader-ring-accent {
-    -webkit-animation-name: none;
-            animation-name: none;
     -webkit-animation-name: var(--sf-loader--look-motion, none);
             animation-name: var(--sf-loader--look-motion, none);
-    -webkit-animation-duration: var(--sf-loader-cycle-duration);
-            animation-duration: var(--sf-loader-cycle-duration);
     -webkit-animation-duration: var(--sf-loader--look-motion-duration, var(--sf-loader-cycle-duration));
             animation-duration: var(--sf-loader--look-motion-duration, var(--sf-loader-cycle-duration));
-    -webkit-animation-timing-function: linear;
-            animation-timing-function: linear;
     -webkit-animation-timing-function: var(--sf-loader--look-motion-easing, linear);
             animation-timing-function: var(--sf-loader--look-motion-easing, linear);
     -webkit-animation-fill-mode: both;
@@ -310,7 +286,6 @@
             animation-iteration-count: infinite;
   }
   .sf-loader-container .sf-loader-comet {
-    display: none;
     display: var(--sf-loader--look-comet, none);
   }
   .sf-loader-container .sf-loader-comet-segment {
@@ -319,7 +294,6 @@
     stroke-width: var(--sf-loader-stroke-width);
   }
   .sf-loader-container .sf-loader-dots {
-    display: none;
     display: var(--sf-loader--look-dots, none);
   }
   .sf-loader-container .sf-loader-dot {

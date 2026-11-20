@@ -79,41 +79,9 @@
   }
   /* The head: the title, or the groups as tabs, and the close button. It never
      scrolls; one hairline under it across the whole panel. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-panel-head{
-    padding-left: calc(var(--sf-settings-panel--inset-inline) + var(--sf-settings-panel--pad));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-settings-panel-head{
-    padding-left: calc(var(--sf-settings-panel--inset-inline) + var(--sf-settings-panel--pad));
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-panel-head{
-    padding-right: var(--sf-settings-panel--inset-inline);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-settings-panel-head{
-    padding-right: var(--sf-settings-panel--inset-inline);
-    }
-  }
   .sf-settings-panel-head:where(:dir(ltr)){
     padding-left: calc(var(--sf-settings-panel--inset-inline) + var(--sf-settings-panel--pad));
     padding-right: var(--sf-settings-panel--inset-inline);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-panel-head{
-    padding-right: calc(var(--sf-settings-panel--inset-inline) + var(--sf-settings-panel--pad));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-settings-panel-head{
-    padding-right: calc(var(--sf-settings-panel--inset-inline) + var(--sf-settings-panel--pad));
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-panel-head{
-    padding-left: var(--sf-settings-panel--inset-inline);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-settings-panel-head{
-    padding-left: var(--sf-settings-panel--inset-inline);
-    }
   }
   .sf-settings-panel-head:where(:dir(rtl)){
     padding-right: calc(var(--sf-settings-panel--inset-inline) + var(--sf-settings-panel--pad));
@@ -238,24 +206,8 @@
     --sf-scroll--gap-edge: var(--sf-settings-panel--inset);
     --sf-scroll--thumb-min: var(--sf-settings-panel--row-height);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-panel-body.sf-settings-panel-body--scrollbar{
-    padding-right: 0;
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-settings-panel-body.sf-settings-panel-body--scrollbar{
-    padding-right: 0;
-    }
-  }
   .sf-settings-panel-body.sf-settings-panel-body--scrollbar:where(:dir(ltr)){
     padding-right: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-panel-body.sf-settings-panel-body--scrollbar{
-    padding-left: 0;
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-settings-panel-body.sf-settings-panel-body--scrollbar{
-    padding-left: 0;
-    }
   }
   .sf-settings-panel-body.sf-settings-panel-body--scrollbar:where(:dir(rtl)){
     padding-left: 0;
@@ -361,29 +313,9 @@
   /* The handle (C106 (6)): at the row's start, always shown. It stands a step
      into the inset, so a list that orders starts its text where a list that
      does not starts its handle. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-row-handle,html:not([dir="rtl"])
-  .sf-settings-row-handle-place{
-    margin-left: calc(-1 * var(--sf-settings-panel--inset));
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-settings-row-handle,html:not([dir="rtl"])
-  .sf-settings-row-handle-place{
-    margin-left: calc(-1 * var(--sf-settings-panel--inset));
-    }
-  }
   .sf-settings-row-handle:where(:dir(ltr)),
   .sf-settings-row-handle-place:where(:dir(ltr)){
     margin-left: calc(-1 * var(--sf-settings-panel--inset));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-row-handle,[dir="rtl"]
-  .sf-settings-row-handle-place{
-    margin-right: calc(-1 * var(--sf-settings-panel--inset));
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-settings-row-handle,[dir="rtl"]
-  .sf-settings-row-handle-place{
-    margin-right: calc(-1 * var(--sf-settings-panel--inset));
-    }
   }
   .sf-settings-row-handle:where(:dir(rtl)),
   .sf-settings-row-handle-place:where(:dir(rtl)){
@@ -434,24 +366,8 @@
     width: var(--sf-settings-panel--pin);
     inline-size: var(--sf-settings-panel--pin);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-row-pin > .sf-icon-button{
-    margin-right: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-settings-row-pin > .sf-icon-button{
-    margin-right: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
-    }
-  }
   .sf-settings-row-pin > .sf-icon-button:where(:dir(ltr)){
     margin-right: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-row-pin > .sf-icon-button{
-    margin-left: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-settings-row-pin > .sf-icon-button{
-    margin-left: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
-    }
   }
   .sf-settings-row-pin > .sf-icon-button:where(:dir(rtl)){
     margin-left: calc(var(--sf-settings-panel--pad) + var(--sf-settings-panel--line) + var(--sf-settings-panel--gap));
@@ -465,24 +381,8 @@
   }
   /* A choice that pins (C106 (3)) has no check column: its pin stands at the
      row's end. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-row--option > .sf-settings-row-pin > .sf-icon-button{
-    margin-right: var(--sf-settings-panel--pad);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-settings-row--option > .sf-settings-row-pin > .sf-icon-button{
-    margin-right: var(--sf-settings-panel--pad);
-    }
-  }
   .sf-settings-row--option > .sf-settings-row-pin > .sf-icon-button:where(:dir(ltr)){
     margin-right: var(--sf-settings-panel--pad);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-row--option > .sf-settings-row-pin > .sf-icon-button{
-    margin-left: var(--sf-settings-panel--pad);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-settings-row--option > .sf-settings-row-pin > .sf-icon-button{
-    margin-left: var(--sf-settings-panel--pad);
-    }
   }
   .sf-settings-row--option > .sf-settings-row-pin > .sf-icon-button:where(:dir(rtl)){
     margin-left: var(--sf-settings-panel--pad);
@@ -581,90 +481,26 @@
      clear of the home indicator, the sheet's grab bar (24 x 4 in the quiet
      ink; it was 20 x 4 in the outline's colour) in a handle row a swipe down
      starts from. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
-    border-top-left-radius: var(--sf-radius--surface);
-  }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
-    border-top-left-radius: var(--sf-radius--surface);
-    }
-  }
   .sf-settings-panel[data-sf-sheet]:where(:dir(ltr)){
     border-top-left-radius: var(--sf-radius--surface);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
-    border-top-right-radius: var(--sf-radius--surface);
-  }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
-    border-top-right-radius: var(--sf-radius--surface);
-    }
   }
   .sf-settings-panel[data-sf-sheet]:where(:dir(rtl)){
     border-top-right-radius: var(--sf-radius--surface);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
-    border-top-right-radius: var(--sf-radius--surface);
-  }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
-    border-top-right-radius: var(--sf-radius--surface);
-    }
-  }
   .sf-settings-panel[data-sf-sheet]:where(:dir(ltr)){
     border-top-right-radius: var(--sf-radius--surface);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
-    border-top-left-radius: var(--sf-radius--surface);
-  }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
-    border-top-left-radius: var(--sf-radius--surface);
-    }
   }
   .sf-settings-panel[data-sf-sheet]:where(:dir(rtl)){
     border-top-left-radius: var(--sf-radius--surface);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
-    border-bottom-left-radius: 0;
-  }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
-    border-bottom-left-radius: 0;
-    }
-  }
   .sf-settings-panel[data-sf-sheet]:where(:dir(ltr)){
     border-bottom-left-radius: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
-    border-bottom-right-radius: 0;
-  }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
-    border-bottom-right-radius: 0;
-    }
   }
   .sf-settings-panel[data-sf-sheet]:where(:dir(rtl)){
     border-bottom-right-radius: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
-    border-bottom-right-radius: 0;
-  }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-settings-panel[data-sf-sheet]{
-    border-bottom-right-radius: 0;
-    }
-  }
   .sf-settings-panel[data-sf-sheet]:where(:dir(ltr)){
     border-bottom-right-radius: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
-    border-bottom-left-radius: 0;
-  }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-settings-panel[data-sf-sheet]{
-    border-bottom-left-radius: 0;
-    }
   }
   .sf-settings-panel[data-sf-sheet]:where(:dir(rtl)){
     border-bottom-left-radius: 0;
@@ -696,7 +532,6 @@
     border-end-start-radius: 0;
     border-end-end-radius: 0;
     box-shadow: var(--sf-shadow-modal);
-    translate: 0 0px;
     translate: 0 var(--sf-sheet--drag, 0px);
     border-bottom-width: 0;
     border-block-end-width: 0;
@@ -937,18 +772,11 @@
   .sf-settings-row:not([data-disabled]):hover {
     background-color: var(--sf-surface-state-select);
   }
-  .sf-settings-row.sf-settings-row--field[data-checked] {
+  .sf-settings-row:is(.sf-settings-row--field, .sf-settings-row--option)[data-checked] {
     background-color: var(--sf-primary-container);
     color: var(--sf-on-primary-container);
   }
-  .sf-settings-row.sf-settings-row--option[data-checked] {
-    background-color: var(--sf-primary-container);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-settings-row.sf-settings-row--field[data-checked]:not([data-disabled]):hover {
-    background-color: var(--sf-primary-container-hover);
-  }
-  .sf-settings-row.sf-settings-row--option[data-checked]:not([data-disabled]):hover {
+  .sf-settings-row:is(.sf-settings-row--field, .sf-settings-row--option)[data-checked]:not([data-disabled]):hover {
     background-color: var(--sf-primary-container-hover);
   }
   .sf-settings-row[data-disabled] {
@@ -972,7 +800,6 @@
   }
   .sf-settings-panel-search[focus-within] {
     border-bottom-color: var(--sf-primary);
-    border-bottom-color: var(--sf-primary);
     border-block-end-color: var(--sf-primary);
   }
   .sf-settings-panel-search:focus-within {
@@ -995,10 +822,7 @@
     }
   }
   @media (forced-colors: active) {
-    .sf-settings-row.sf-settings-row--field[data-checked] {
-      outline: var(--sf-px) solid Highlight;
-    }
-    .sf-settings-row.sf-settings-row--option[data-checked] {
+    .sf-settings-row:is(.sf-settings-row--field, .sf-settings-row--option)[data-checked] {
       outline: var(--sf-px) solid Highlight;
     }
   }

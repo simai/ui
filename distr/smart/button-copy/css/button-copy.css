@@ -4,16 +4,8 @@
   /* A button that copies, and a status a screen reader hears and nobody sees:
      the icon says it on screen. The public variables (standard 1.3.8 §6): the
      host's display and alignment, the pending look, the icon's ink per result. */
-  sf-button-copy {
-    display: inline-flex;
+  :is(sf-button-copy, sf-copy-button) {
     display: var(--sf-copy-button-display, inline-flex);
-    vertical-align: middle;
-    vertical-align: var(--sf-copy-button-vertical-align, middle);
-  }
-  sf-copy-button {
-    display: inline-flex;
-    display: var(--sf-copy-button-display, inline-flex);
-    vertical-align: middle;
     vertical-align: var(--sf-copy-button-vertical-align, middle);
   }
   .sf-copy-button {
@@ -28,7 +20,6 @@
        depended on the page's load -- the full first-paint run moved it, a run of
        the component alone did not. The middle depends on the box and the text
        around it only. */
-    vertical-align: middle;
     vertical-align: var(--sf-copy-button-vertical-align, middle);
   }
   .sf-copy-button-status,
@@ -44,7 +35,6 @@
     white-space: nowrap;
   }
   .sf-copy-button--pending {
-    opacity: 1;
     opacity: var(--sf-copy-button-pending-opacity, 1);
   }
 }
@@ -53,28 +43,10 @@
      set --sf-icon--color on their root, nearer the glyph than this wrapper, so a
      variable set here never reached it and the check stayed in the resting ink
      (found by tests/browser/public-variables, 2026-10-27). */
-  .sf-copy-button--success .sf-icon-button .sf-icon {
-    color: var(--sf-success);
+  .sf-copy-button--success :is(.sf-icon-button, .sf-button, .sf-field-action) .sf-icon {
     color: var(--sf-copy-button-success-color, var(--sf-success));
   }
-  .sf-copy-button--success .sf-button .sf-icon {
-    color: var(--sf-success);
-    color: var(--sf-copy-button-success-color, var(--sf-success));
-  }
-  .sf-copy-button--success .sf-field-action .sf-icon {
-    color: var(--sf-success);
-    color: var(--sf-copy-button-success-color, var(--sf-success));
-  }
-  .sf-copy-button--error .sf-icon-button .sf-icon {
-    color: var(--sf-error);
-    color: var(--sf-copy-button-error-color, var(--sf-error));
-  }
-  .sf-copy-button--error .sf-button .sf-icon {
-    color: var(--sf-error);
-    color: var(--sf-copy-button-error-color, var(--sf-error));
-  }
-  .sf-copy-button--error .sf-field-action .sf-icon {
-    color: var(--sf-error);
+  .sf-copy-button--error :is(.sf-icon-button, .sf-button, .sf-field-action) .sf-icon {
     color: var(--sf-copy-button-error-color, var(--sf-error));
   }
 }
@@ -89,22 +61,10 @@
    does. In the states layer, where the button's own ring is. Outside a field
    the ring is unchanged. */
 @layer sf.states {
-  .sf-input-field .sf-copy-button .sf-icon-button.focus-visible:not(:disabled):not(.disabled) {
+  .sf-input-field .sf-copy-button :is(.sf-icon-button, .sf-button):not(:disabled):not(.disabled).focus-visible {
     outline-offset: var(--sf-focus--inset);
   }
-  .sf-input-field .sf-copy-button .sf-button.focus-visible:not(:disabled):not(.disabled) {
-    outline-offset: var(--sf-focus--inset);
-  }
-  .sf-input-field .sf-copy-button .sf-icon-button:not(:disabled):not(.disabled).focus-visible {
-    outline-offset: var(--sf-focus--inset);
-  }
-  .sf-input-field .sf-copy-button .sf-icon-button:not(:disabled):not(.disabled):focus-visible {
-    outline-offset: var(--sf-focus--inset);
-  }
-  .sf-input-field .sf-copy-button .sf-button:not(:disabled):not(.disabled).focus-visible {
-    outline-offset: var(--sf-focus--inset);
-  }
-  .sf-input-field .sf-copy-button .sf-button:not(:disabled):not(.disabled):focus-visible {
+  .sf-input-field .sf-copy-button :is(.sf-icon-button, .sf-button):not(:disabled):not(.disabled):focus-visible {
     outline-offset: var(--sf-focus--inset);
   }
 }

@@ -7,19 +7,10 @@
     scrollbar-gutter: auto;
   }
   @supports not selector(::-webkit-scrollbar) {
-    .scroll-subtle:hover {
+    .scroll-subtle:is(:hover,[focus-within]) {
       --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
     }
-    .scroll-subtle[focus-within] {
-      --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
-    }
-    .scroll-subtle:hover {
-      --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
-    }
-    .scroll-subtle[focus-within] {
-      --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
-    }
-    .scroll-subtle:focus-within {
+    .scroll-subtle:is(:hover, :focus-within) {
       --sf-scroll-bg-thumb: var(--sf-scroll--thumb-hover);
     }
   }

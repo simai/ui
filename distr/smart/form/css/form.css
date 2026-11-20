@@ -71,24 +71,8 @@
     margin: 0;
     font-weight: var(--sf-weight--medium);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-form-summary-list{
-    padding-left: var(--sf-space-1);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-form-summary-list{
-    padding-left: var(--sf-space-1);
-    }
-  }
   .sf-form-summary-list:where(:dir(ltr)){
     padding-left: var(--sf-space-1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-form-summary-list{
-    padding-right: var(--sf-space-1);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-form-summary-list{
-    padding-right: var(--sf-space-1);
-    }
   }
   .sf-form-summary-list:where(:dir(rtl)){
     padding-right: var(--sf-space-1);
@@ -122,9 +106,6 @@
     border-top-style: solid;
     border-block-start-style: solid;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-form-legend{
-    float: left;
-  }
   @supports not (float: inline-start){
   html:not([dir="rtl"]) .sf-form-legend{
     float: left;
@@ -132,9 +113,6 @@
   }
   .sf-form-legend:where(:dir(ltr)){
     float: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-form-legend{
-    float: right;
   }
   @supports not (float: inline-start){
   [dir="rtl"] .sf-form-legend{
@@ -201,24 +179,8 @@
   .sf-form-label-text {
     cursor: default;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-form-required{
-    margin-left: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-form-required{
-    margin-left: var(--sf-space-1\/4);
-    }
-  }
   .sf-form-required:where(:dir(ltr)){
     margin-left: var(--sf-space-1\/4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-form-required{
-    margin-right: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-form-required{
-    margin-right: var(--sf-space-1\/4);
-    }
   }
   .sf-form-required:where(:dir(rtl)){
     margin-right: var(--sf-space-1\/4);
@@ -332,7 +294,6 @@
     position: sticky;
     bottom: 0;
     inset-block-end: 0;
-    z-index: 1;
     z-index: var(--sf-layer--sticky, 1);
     padding-top: var(--sf-space-1\/2);
     padding-bottom: var(--sf-space-1\/2);

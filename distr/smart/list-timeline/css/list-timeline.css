@@ -80,17 +80,7 @@
     font-size: var(--sf-list-timeline--font-size);
     line-height: var(--sf-list-timeline--line);
   }
-  .sf-list-timeline.sf-list-timeline--size-half {
-    --sf-list-timeline--line: var(--sf-text-height-1\/2);
-    --sf-list-timeline--font-size: var(--sf-text-size-1\/2);
-    --sf-list-timeline--below-line: var(--sf-text-height-1\/3);
-    --sf-list-timeline--below-font-size: var(--sf-text-size-1\/3);
-    --sf-list-timeline--rail: var(--sf-ui-1\/3--control-height);
-    --sf-list-timeline--control: var(--sf-ui-1\/2--control-height);
-    --sf-list-timeline--button: var(--sf-ui-1\/3--control-height);
-    --sf-list-timeline--dot: var(--sf-micro--dot-1\/2);
-  }
-  .sf-list-timeline-sub.sf-list-timeline--size-half {
+  :is(.sf-list-timeline, .sf-list-timeline-sub).sf-list-timeline--size-half {
     --sf-list-timeline--line: var(--sf-text-height-1\/2);
     --sf-list-timeline--font-size: var(--sf-text-size-1\/2);
     --sf-list-timeline--below-line: var(--sf-text-height-1\/3);
@@ -163,24 +153,8 @@
   }
   /* The connector: from the middle of this event's first line to the middle
      of the next one's. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-timeline-item:not(:last-child)::before{
-    left: calc((var(--sf-list-timeline--rail) - var(--sf-px)) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-timeline-item:not(:last-child)::before{
-    left: calc((var(--sf-list-timeline--rail) - var(--sf-px)) / 2);
-    }
-  }
   .sf-list-timeline-item:not(:last-child)::before:where(:dir(ltr)){
     left: calc((var(--sf-list-timeline--rail) - var(--sf-px)) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-timeline-item:not(:last-child)::before{
-    right: calc((var(--sf-list-timeline--rail) - var(--sf-px)) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-list-timeline-item:not(:last-child)::before{
-    right: calc((var(--sf-list-timeline--rail) - var(--sf-px)) / 2);
-    }
   }
   .sf-list-timeline-item:not(:last-child)::before:where(:dir(rtl)){
     right: calc((var(--sf-list-timeline--rail) - var(--sf-px)) / 2);
@@ -198,24 +172,8 @@
   /* A passed step's segment: sf-steps' line (C204 (1), C101 (2)), 2 px in the
      primary colour on the same axis. The current and the ahead segments keep
      the quiet hairline above. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before{
-    left: calc((var(--sf-list-timeline--rail) - var(--sf-px) * 2) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before{
-    left: calc((var(--sf-list-timeline--rail) - var(--sf-px) * 2) / 2);
-    }
-  }
   .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before:where(:dir(ltr)){
     left: calc((var(--sf-list-timeline--rail) - var(--sf-px) * 2) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before{
-    right: calc((var(--sf-list-timeline--rail) - var(--sf-px) * 2) / 2);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before{
-    right: calc((var(--sf-list-timeline--rail) - var(--sf-px) * 2) / 2);
-    }
   }
   .sf-list-timeline-list--steps > .sf-list-timeline-item[data-state=done]:not(:last-child)::before:where(:dir(rtl)){
     right: calc((var(--sf-list-timeline--rail) - var(--sf-px) * 2) / 2);
@@ -320,24 +278,8 @@
     min-inline-size: 0;
     word-wrap: anywhere;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-timeline-avatar{
-    margin-right: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-list-timeline-avatar{
-    margin-right: var(--sf-space-1\/4);
-    }
-  }
   .sf-list-timeline-avatar:where(:dir(ltr)){
     margin-right: var(--sf-space-1\/4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-timeline-avatar{
-    margin-left: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-list-timeline-avatar{
-    margin-left: var(--sf-space-1\/4);
-    }
   }
   .sf-list-timeline-avatar:where(:dir(rtl)){
     margin-left: var(--sf-space-1\/4);
@@ -359,7 +301,6 @@
   }
   .sf-list-timeline-link:hover {
     text-decoration: underline;
-    text-decoration-thickness: var(--sf-px);
     text-decoration-thickness: var(--sf-link--underline-weight, var(--sf-px));
     text-underline-offset: var(--sf-a3);
   }
@@ -388,24 +329,8 @@
   }
   /* «Ещё N»: a button across the row, the glyph on the rail, the words in the
      link colour. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-timeline-run{
-    text-align: left;
-  }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-list-timeline-run{
-    text-align: left;
-    }
-  }
   .sf-list-timeline-run:where(:dir(ltr)){
     text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-timeline-run{
-    text-align: right;
-  }
-  @supports not (text-align: start){
-  [dir="rtl"] .sf-list-timeline-run{
-    text-align: right;
-    }
   }
   .sf-list-timeline-run:where(:dir(rtl)){
     text-align: right;
@@ -489,24 +414,8 @@
   }
   /* «Показать ещё»: the rung below's button on the text's axis.
      (sf-button's host is display: contents.) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-timeline-more{
-    padding-left: calc(var(--sf-list-timeline--rail) + var(--sf-list-timeline--column-gap));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-timeline-more{
-    padding-left: calc(var(--sf-list-timeline--rail) + var(--sf-list-timeline--column-gap));
-    }
-  }
   .sf-list-timeline-more:where(:dir(ltr)){
     padding-left: calc(var(--sf-list-timeline--rail) + var(--sf-list-timeline--column-gap));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-timeline-more{
-    padding-right: calc(var(--sf-list-timeline--rail) + var(--sf-list-timeline--column-gap));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-list-timeline-more{
-    padding-right: calc(var(--sf-list-timeline--rail) + var(--sf-list-timeline--column-gap));
-    }
   }
   .sf-list-timeline-more:where(:dir(rtl)){
     padding-right: calc(var(--sf-list-timeline--rail) + var(--sf-list-timeline--column-gap));
@@ -519,24 +428,8 @@
     -webkit-padding-start: calc(var(--sf-list-timeline--rail) + var(--sf-list-timeline--column-gap));
             padding-inline-start: calc(var(--sf-list-timeline--rail) + var(--sf-list-timeline--column-gap));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-timeline--empty .sf-list-timeline-more{
-    padding-left: 0;
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-timeline--empty .sf-list-timeline-more{
-    padding-left: 0;
-    }
-  }
   .sf-list-timeline--empty .sf-list-timeline-more:where(:dir(ltr)){
     padding-left: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-timeline--empty .sf-list-timeline-more{
-    padding-right: 0;
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-list-timeline--empty .sf-list-timeline-more{
-    padding-right: 0;
-    }
   }
   .sf-list-timeline--empty .sf-list-timeline-more:where(:dir(rtl)){
     padding-right: 0;
@@ -570,13 +463,7 @@
       outline: calc(var(--sf-px) * 2) solid CanvasText;
       outline-offset: calc(var(--sf-px) * -2);
     }
-    .sf-list-timeline-marker.sf-list-timeline-marker--done .sf-featured-icon {
-      forced-color-adjust: none;
-      --sf-featured-icon--background-color: CanvasText;
-      --sf-featured-icon--foreground-color: Canvas;
-      box-shadow: none;
-    }
-    .sf-list-timeline-marker.sf-list-timeline-marker--current .sf-featured-icon {
+    .sf-list-timeline-marker:is(.sf-list-timeline-marker--done, .sf-list-timeline-marker--current) .sf-featured-icon {
       forced-color-adjust: none;
       --sf-featured-icon--background-color: CanvasText;
       --sf-featured-icon--foreground-color: Canvas;
@@ -603,7 +490,6 @@
   /* A day: block list's heading (.sf-group-heading) carries the type and the
      spaces; the timeline keeps its words' colour. */
   .sf-list-timeline-group > .sf-list-timeline-day {
-    color: var(--sf-on-surface);
     color: var(--sf-list-timeline-day-color, var(--sf-on-surface));
   }
   .sf-list-timeline-item:not(:last-child)::before {
@@ -619,7 +505,6 @@
     color: var(--sf-on-surface-variant);
   }
   .sf-list-timeline-marker--dot {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-list-timeline-marker-color, var(--sf-on-surface-variant));
   }
   .sf-list-timeline-marker--dot.sf-list-timeline-marker--success {
@@ -642,16 +527,7 @@
      --sf-on-surface-variant; --sf-outline-variant, the line's 24 %, is lost on
      a dot this small), or the status colour (success, warning, error), which
      keeps the shape: an upcoming step with an error is an empty error ring. */
-  .sf-list-timeline-item[data-state=done] > .sf-list-timeline-rail > .sf-list-timeline-marker--dot.sf-list-timeline-marker--neutral {
-    color: var(--sf-primary);
-  }
-  .sf-list-timeline-item[data-state=done] > .sf-list-timeline-rail > .sf-list-timeline-marker--dot.sf-list-timeline-marker--info {
-    color: var(--sf-primary);
-  }
-  .sf-list-timeline-item[data-state=current] > .sf-list-timeline-rail > .sf-list-timeline-marker--dot.sf-list-timeline-marker--neutral {
-    color: var(--sf-primary);
-  }
-  .sf-list-timeline-item[data-state=current] > .sf-list-timeline-rail > .sf-list-timeline-marker--dot.sf-list-timeline-marker--info {
+  .sf-list-timeline-item:is([data-state=done], [data-state=current]) > .sf-list-timeline-rail > .sf-list-timeline-marker--dot:is(.sf-list-timeline-marker--neutral, .sf-list-timeline-marker--info) {
     color: var(--sf-primary);
   }
   .sf-list-timeline-item[data-state=upcoming] > .sf-list-timeline-rail > .sf-list-timeline-marker--dot .sf-list-timeline-dot {

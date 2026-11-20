@@ -73,15 +73,12 @@
 }
 @layer sf.paint {
   .sf-display-settings__panel {
-    border-color: var(--sf-outline-variant);
     border-color: var(--sf-display-settings-border-color, var(--sf-outline-variant));
-    background-color: var(--sf-surface-card);
     background-color: var(--sf-display-settings-background, var(--sf-surface-card));
     color: var(--sf-on-surface);
   }
   .sf-display-settings__label,
   .sf-display-settings__note {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-display-settings-label-color, var(--sf-on-surface-variant));
   }
   .sf-display-settings__value {

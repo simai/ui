@@ -250,6 +250,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isMainAction: () => (/* binding */ isMainAction),
 /* harmony export */   isPressed: () => (/* binding */ isPressed),
 /* harmony export */   layoutActionRow: () => (/* binding */ layoutActionRow),
+/* harmony export */   layoutHeight: () => (/* binding */ layoutHeight),
+/* harmony export */   layoutRowRoom: () => (/* binding */ layoutRowRoom),
+/* harmony export */   layoutWidth: () => (/* binding */ layoutWidth),
 /* harmony export */   measureShown: () => (/* binding */ measureShown),
 /* harmony export */   openRowMenu: () => (/* binding */ openRowMenu),
 /* harmony export */   readPriority: () => (/* binding */ readPriority),
@@ -380,6 +383,38 @@ function rowRoom(list) {
   const style = getComputedStyle(list);
   const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
   return list.getBoundingClientRect().width - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // The width an element is laid out at, in fractional CSS pixels, before any
+// transform of it or of an ancestor (its border box). getBoundingClientRect is
+// a screen box: inside scale(.7) a 90 px tab reads 63, inside rotate() it reads
+// the width of its rotated bounding box, and a row that compares such widths
+// with its padding, a text measured in canvas or a ResizeObserver size mixes
+// screen and layout pixels (docs hero study 2026-11-19, section 9). The used
+// width of the computed style is the layout's own, with its fractions; a box
+// without one (an inline box, an element not drawn) gives offsetWidth.
+
+function layoutWidth(element) {
+  if (!element) return 0;
+  const style = getComputedStyle(element);
+  const width = parseFloat(style.width);
+  if (!Number.isFinite(width)) return element.offsetWidth || 0;
+  if (style.boxSizing === 'border-box') return width;
+  return ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), width);
+} // The block size of the same box (layoutWidth's other axis).
+
+function layoutHeight(element) {
+  if (!element) return 0;
+  const style = getComputedStyle(element);
+  const height = parseFloat(style.height);
+  if (!Number.isFinite(height)) return element.offsetHeight || 0;
+  if (style.boxSizing === 'border-box') return height;
+  return ['paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), height);
+} // rowRoom in layout pixels: the row's content box before any transform, for a
+// row whose items are measured with layoutWidth.
+
+function layoutRowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return layoutWidth(list) - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
 } // A text measurer in an element's own face, or null without a canvas: the
 // width «Ещё (7)» will have before its button draws it.
 
@@ -799,6 +834,11 @@ class SfSmartMenu extends MenuElement {
       moreLabel: {
         attribute: 'more-label',
         default: ''
+      },
+      keepCurrent: {
+        attribute: 'keep-current',
+        type: Boolean,
+        default: true
       },
       openOn: {
         attribute: 'open-on',
@@ -2009,14 +2049,36 @@ class SfSmartMenu extends MenuElement {
     }
 
     this.measureFit();
+  } // The bar the row stands in, when it lays the row out itself: an
+  // sf-header-site with collapse auto (C371, C372) measures its own row and
+  // gives way in its order -- tools, then this row's items into «Ещё», then
+  // the menu button -- so the row's measure goes through it, and it asks the
+  // row back with the room it has decided (measureFit({driven: true})). One
+  // decision, before the paint, in the observer that saw the width change.
+
+
+  rowHost() {
+    const host = this._frame?.parentElement;
+    return host && typeof host.drivesRow === 'function' && host.drivesRow(this) ? host : null;
   }
 
-  measureFit() {
+  measureFit({
+    driven = false
+  } = {}) {
     const nav = this._observed;
     if (!nav?.isConnected) return;
 
     if (this.moreActive) {
-      this.measureOverflow(nav);
+      const host = driven ? null : this.rowHost();
+
+      if (host) {
+        host.fitRow();
+        return;
+      }
+
+      this.measureOverflow(nav, {
+        driven
+      });
       return;
     }
 
@@ -2046,61 +2108,130 @@ class SfSmartMenu extends MenuElement {
       this._autoCollapsed = false;
       this.requestComponentUpdate('collapse');
     }
-  } // overflow more (priority+, C30): each first-level item's width is measured
-  // as the row draws it -- every item and «Ещё» shown for the measure, in the
-  // same task, so nothing is painted -- and the items that do not fit leave
-  // the row from its end; the section that holds the current page stays
-  // while it fits beside «Ещё». sf-menu-overflow says which left, each time
-  // that changes.
+  } // The row as it would be drawn whole: each first-level item's width --
+  // every item and «Ещё» shown for the measure, in the same task, so nothing
+  // is painted -- the gap, the room, the item that must stay (the section
+  // that holds the current page, unless keep-current is false) and the
+  // width of the whole row with the nav's own edges. null when the row has
+  // no list or no «Ещё» yet.
 
 
-  measureOverflow(nav) {
-    const list = nav.querySelector(':scope > ul.sf-menu');
+  measureRow(nav) {
+    const list = nav?.querySelector(':scope > ul.sf-menu');
     const more = list?.querySelector(':scope > .sf-menu-item--more');
-    if (!list || !more) return;
+    if (!list || !more) return null;
     const tops = Array.from(list.children).filter(li => li !== more && li.matches('[data-sf-menu-item], [data-sf-menu-placeholder]'));
     const was = [...tops, more].map(li => li.hidden);
 
-    for (const li of [...tops, more]) li.hidden = false;
+    for (const li of [...tops, more]) li.hidden = false; // Layout boxes (layoutWidth): a row under a transformed ancestor (a
+    // scaled preview) reads the widths it is laid out at, not its screen's.
 
-    const widths = tops.map(li => li.getBoundingClientRect().width);
-    const moreWidth = more.getBoundingClientRect().width;
+
+    const widths = tops.map(li => (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_6__.layoutWidth)(li));
+    const moreWidth = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_6__.layoutWidth)(more);
     [...tops, more].forEach((li, at) => {
       li.hidden = was[at];
     });
     const gap = parseFloat(getComputedStyle(list).columnGap) || 0;
     const ids = tops.map(li => li.dataset.sfMenuItem || li.dataset.sfMenuPlaceholder);
     const currentId = this.currentId;
-    const above = currentId ? [currentId, ...((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.pathTo)(this.menuItems, currentId) || [])] : [];
-    const keep = ids.findIndex(id => above.includes(id)); // The room in fractional pixels (the row engine's rowRoom; clientWidth
+    const above = currentId ? [currentId, ...((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.pathTo)(this.menuItems, currentId) || [])] : []; // keep-current false: the current section leaves the row in its turn,
+    // and «Ещё» holding it says so (its mark and its name).
+
+    const keep = this.keepCurrent === false ? -1 : ids.findIndex(id => above.includes(id)); // The room in fractional pixels (the row engine's rowRoom; clientWidth
     // is a whole pixel, the C54 return), the arithmetic the shared engine's
     // (fitRow, owner decision C155 (1)).
 
-    const room = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_6__.rowRoom)(nav);
+    const room = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_6__.layoutRowRoom)(nav);
+    const edges = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_6__.layoutWidth)(nav) - room;
+    const whole = widths.reduce((sum, width) => sum + width, 0) + gap * Math.max(0, widths.length - 1) + edges; // The narrowest row that still is a row: the item that stays (the
+    // current section, else the first) beside «Ещё», with the nav's edges.
+    // Narrower than that, nothing but «Ещё» is left: the bar's menu button
+    // is the place then (sf-header-site collapse auto, C371).
+
+    const first = widths.length ? widths[keep >= 0 ? keep : 0] : 0;
+    const least = widths.length > 1 ? first + gap + moreWidth + edges : whole;
+    return {
+      widths,
+      moreWidth,
+      gap,
+      ids,
+      keep,
+      room,
+      whole,
+      least
+    };
+  } // What the row asks of the place it stands in: whole, the width of every
+  // item side by side; least, the narrowest row with one item and «Ещё». The
+  // bar that lays the row out (rowHost) reads it, in the same task as its
+  // own measure. null while the row is not drawn as a row with «Ещё».
+
+
+  rowNeeds() {
+    const nav = this._observed;
+    if (!this.moreActive || !nav?.isConnected) return null;
+    const row = this.measureRow(nav);
+    return row ? {
+      whole: row.whole,
+      least: row.least
+    } : null;
+  } // overflow more (priority+, C30, C371): the items that do not fit leave
+  // the row from its end; the section that holds the current page stays
+  // while it fits beside «Ещё» -- it changes places with the last shown one.
+  // sf-menu-overflow says which left, and whether any item is left (fits),
+  // each time that changes.
+
+
+  measureOverflow(nav, {
+    driven = false
+  } = {}) {
+    const row = this.measureRow(nav);
+    if (!row) return;
+    const {
+      widths,
+      moreWidth,
+      gap,
+      ids,
+      keep,
+      room,
+      whole
+    } = row; // The width of the whole row, every item shown and no «Ещё», with the
+    // nav's own edges: the room the row asks. The nav's width is the room it
+    // is given (contain: inline-size), so as content it is nothing; a place
+    // that sizes the nav from its content -- sf-header-site's centred nav --
+    // reads this instead (--sf-menu--row-size) and gives the row that much
+    // while it fits. It does not change with the items that left, so the
+    // row's own measure stays the room it is given (Docara, 2026-11-18).
+
+    const rowSize = `${Math.ceil(whole)}px`;
+    if (nav.style.getPropertyValue('--sf-menu--row-size') !== rowSize) nav.style.setProperty('--sf-menu--row-size', rowSize);
     const stays = new Set((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.fitRow)(widths, moreWidth, room, gap, keep));
-    this.setOverflowHidden(ids.filter((_, at) => !stays.has(at)), nav.clientWidth);
+    this.setOverflowHidden(ids.filter((_, at) => !stays.has(at)), nav.clientWidth, driven);
   }
 
-  setOverflowHidden(hidden, width) {
+  setOverflowHidden(hidden, width, driven = false) {
     if (hidden.length === this._overflowHidden.length && hidden.every((id, at) => id === this._overflowHidden[at])) return; // A row in a box that takes its width from its content (a header not yet
     // drawn, a shrink-to-fit cell) gets wider when items leave it and
     // narrower when they come back: going straight back to the set it just
     // left, sooner than a frame or two, is that loop -- the row keeps the
     // set with more items under «Ещё» until its width changes on its own.
+    // A row its bar lays out (driven) is given its room by the bar's own
+    // decision, never by its content: no loop to guard, and the guard would
+    // keep a set the bar has already left.
 
     const key = hidden.join('\u0000');
     const now = typeof performance === 'undefined' ? Date.now() : performance.now();
     const flip = this._overflowFlip;
-    if (flip && flip.back === key && now - flip.at < 100 && hidden.length < this._overflowHidden.length) return; // The other way round: a set with fewer items under «Ещё» that bounced
+    if (!driven && flip && flip.back === key && now - flip.at < 100 && hidden.length < this._overflowHidden.length) return; // The other way round: a set with fewer items under «Ещё» that bounced
     // straight back (the row narrowed once they were shown) does not hold at
     // the width it was measured at; a later measure at that same width (a
     // panel opening re-draws the row) keeps the row as it is, and the open
     // panel stays.
 
     const loop = this._overflowLoop;
-    if (loop && loop.key === key && width !== undefined && loop.width === width) return;
+    if (!driven && loop && loop.key === key && width !== undefined && loop.width === width) return;
 
-    if (flip && flip.back === key && now - flip.at < 100 && hidden.length > this._overflowHidden.length) {
+    if (!driven && flip && flip.back === key && now - flip.at < 100 && hidden.length > this._overflowHidden.length) {
       this._overflowLoop = {
         key: this._overflowHidden.join('\u0000'),
         width: flip.width
@@ -2116,8 +2247,10 @@ class SfSmartMenu extends MenuElement {
     if (this.flyouts) this.closeFlyouts('method');
     this._overflowHidden = hidden;
     this.requestComponentUpdate('overflow');
+    const all = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.withoutGroups)(this.menuItems).length;
     this.sfEmit('overflow', {
-      hidden: [...hidden]
+      hidden: [...hidden],
+      fits: hidden.length < all || all === 0
     });
   }
 
@@ -2161,6 +2294,9 @@ class SfSmartMenu extends MenuElement {
       moreItem: moreActive ? tree[tree.length - 1] : null,
       moreShown: moreActive && this._overflowHidden.length > 0,
       moreId: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MORE_ID,
+      // «Ещё» holding the current page says so in its name (C371, with
+      // keep-current false or a current section too wide to stay).
+      holdsCurrentName: label => `${label}, ${this.sfWord('holds-current')}`,
       regionContent: name => this.regionNodes(name),
       // collapse narrow: the button is a selector showing the current item.
       selector,
@@ -2345,9 +2481,14 @@ function renderRow(context, item, level, branch, open, submenuId, placeholder = 
               aria-label=${context.subsectionsName(item.label)} ?disabled=${item.disabled}
               data-sf-menu-toggle=${own(item.id)}><span class="sf-icon" aria-hidden="true">${glyph}</span></button>
     </div>`;
-  }
+  } // «Ещё» holding the current page (keep-current false, or a current
+  // section too wide to stay beside it) says so in its name as well as by
+  // its mark: «Ещё, содержит текущую страницу» (C371).
 
+
+  const named = holds && item.id === context.moreId && context.holdsCurrentName ? context.holdsCurrentName(item.label) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button class=${classes} type="button" aria-expanded=${open ? 'true' : 'false'} aria-controls=${own(submenuId)}
+                      aria-label=${own(named)}
                       ?disabled=${item.disabled} data-sf-menu-toggle=${own(item.id)}>${renderWrap(context, item)}${renderTrailing(glyph)}</button>`;
 } // A region's own row: a link, or the words of an item without an address, in
 // the class row of its place (head, link or small link).
@@ -3060,14 +3201,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu 
 /***/ "e0fa46ed075f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.14.3","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"count":{"type":"number","optional":true},"status":{"type":"enum","values":["success","warning","error","info","neutral"],"optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true},"region":{"type":"string","optional":true},"target":{"type":"string","optional":true},"external":{"type":"boolean","optional":true},"group":{"type":"boolean","optional":true},"collapsible":{"type":"boolean","optional":true},"items":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","rail","navigation","framed"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","narrow","none"],"default":"auto"},"overflow":{"type":"enum","values":["more","collapse","none"],"default":"collapse"},"more-label":{"type":"string","default-from":"runtime.more-label"},"open-on":{"type":"enum","values":["click","hover"],"default":"hover"},"indicator":{"type":"enum","values":["line","fill"],"default":"line"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"},"sticky":{"type":"boolean","default":false},"bordered":{"type":"boolean","default":false},"search":{"type":"boolean","default":false},"search-placeholder":{"type":"string","default-from":"runtime.search-placeholder"}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}},"overflow":{"carries":{"hidden":{"type":"list","of":"id"}}},"search":{"carries":{"query":"string","count":"number"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"},"--sf-menu-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.15.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"count":{"type":"number","optional":true},"status":{"type":"enum","values":["success","warning","error","info","neutral"],"optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true},"region":{"type":"string","optional":true},"target":{"type":"string","optional":true},"external":{"type":"boolean","optional":true},"group":{"type":"boolean","optional":true},"collapsible":{"type":"boolean","optional":true},"items":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","rail","navigation","framed"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","narrow","none"],"default":"auto"},"overflow":{"type":"enum","values":["more","collapse","none"],"default":"collapse"},"more-label":{"type":"string","default-from":"runtime.more-label"},"keep-current":{"type":"boolean","default":true},"open-on":{"type":"enum","values":["click","hover"],"default":"hover"},"indicator":{"type":"enum","values":["line","fill"],"default":"line"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"},"sticky":{"type":"boolean","default":false},"bordered":{"type":"boolean","default":false},"search":{"type":"boolean","default":false},"search-placeholder":{"type":"string","default-from":"runtime.search-placeholder"}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}},"overflow":{"carries":{"hidden":{"type":"list","of":"id"},"fits":{"type":"boolean"}}},"search":{"carries":{"query":"string","count":"number"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"},"--sf-menu-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "33262fd5308c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Menu","runtime":{"toggle-label":"Menu","more-label":"More","status-success":"all good","status-warning":"needs attention","status-error":"error","status-info":"something new","status-neutral":"no data","subsections":"subsections","search-placeholder":"Search","search-found":"Found: {n}","search-empty":"Nothing found","new-tab":"opens in a new tab"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Menu","runtime":{"toggle-label":"Menu","more-label":"More","holds-current":"holds the current page","status-success":"all good","status-warning":"needs attention","status-error":"error","status-info":"something new","status-neutral":"no data","subsections":"subsections","search-placeholder":"Search","search-found":"Found: {n}","search-empty":"Nothing found","new-tab":"opens in a new tab"}}');
 
 /***/ }
 

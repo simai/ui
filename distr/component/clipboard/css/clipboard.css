@@ -1,12 +1,6 @@
 @layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.components {
-  .sf-clipboard {
-    cursor: pointer;
-  }
-  [data-sf-copy] {
-    cursor: pointer;
-  }
-  [data-sf-copy-target] {
+  :is(.sf-clipboard, [data-sf-copy], [data-sf-copy-target]) {
     cursor: pointer;
   }
   /* The overlay stands on the first line of its host's content (owner remark
@@ -21,29 +15,9 @@
      ladder's height and the text line, as the sizes below set them); a
      button with no size class is size 1. A multi-line block keeps it on the
      first line. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-clipboard--overlay,html:not([dir="rtl"])
-  .btn-clipboard.sf-clipboard-surface:not(.sf-clipboard--inline) {
-    right: calc(var(--sf-clipboard--overlay-inset) - (var(--sf-clipboard--overlay-box) - var(--sf-clipboard--overlay-glyph)) / 2);
-  }
-  @supports not (inset-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-clipboard--overlay,html:not([dir="rtl"])
-  .btn-clipboard.sf-clipboard-surface:not(.sf-clipboard--inline) {
-    right: calc(var(--sf-clipboard--overlay-inset) - (var(--sf-clipboard--overlay-box) - var(--sf-clipboard--overlay-glyph)) / 2);
-    }
-  }
   .sf-clipboard--overlay:where(:dir(ltr)),
   .btn-clipboard.sf-clipboard-surface:not(.sf-clipboard--inline):where(:dir(ltr)) {
     right: calc(var(--sf-clipboard--overlay-inset) - (var(--sf-clipboard--overlay-box) - var(--sf-clipboard--overlay-glyph)) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-clipboard--overlay,[dir="rtl"]
-  .btn-clipboard.sf-clipboard-surface:not(.sf-clipboard--inline) {
-    left: calc(var(--sf-clipboard--overlay-inset) - (var(--sf-clipboard--overlay-box) - var(--sf-clipboard--overlay-glyph)) / 2);
-  }
-  @supports not (inset-inline-end: initial) {
-  [dir="rtl"] .sf-clipboard--overlay,[dir="rtl"]
-  .btn-clipboard.sf-clipboard-surface:not(.sf-clipboard--inline) {
-    left: calc(var(--sf-clipboard--overlay-inset) - (var(--sf-clipboard--overlay-box) - var(--sf-clipboard--overlay-glyph)) / 2);
-    }
   }
   .sf-clipboard--overlay:where(:dir(rtl)),
   .btn-clipboard.sf-clipboard-surface:not(.sf-clipboard--inline):where(:dir(rtl)) {
@@ -82,9 +56,6 @@
        -moz-appearance: none;
             appearance: none;
     background-image: none;
-    height: var(--sf-ui-1--control-height);
-    block-size: var(--sf-ui-1--control-height);
-    height: var(--sf-ui-1--control-height);
     height: var(--sf-clipboard--box, var(--sf-ui-1--control-height));
     block-size: var(--sf-clipboard--box, var(--sf-ui-1--control-height));
     border: 0;
@@ -93,24 +64,13 @@
     box-sizing: border-box;
     display: inline-flex;
     justify-content: center;
-    min-height: var(--sf-ui-1--control-height);
-    min-block-size: var(--sf-ui-1--control-height);
-    min-height: var(--sf-ui-1--control-height);
     min-height: var(--sf-clipboard--box, var(--sf-ui-1--control-height));
     min-block-size: var(--sf-clipboard--box, var(--sf-ui-1--control-height));
-    min-width: var(--sf-ui-1--control-height);
-    min-inline-size: var(--sf-ui-1--control-height);
-    min-width: var(--sf-ui-1--control-height);
     min-width: var(--sf-clipboard--box, var(--sf-ui-1--control-height));
     min-inline-size: var(--sf-clipboard--box, var(--sf-ui-1--control-height));
     padding: 0;
   }
-  .sf-clipboard-surface:not(.sf-button):not(.sf-icon-button) > .sf-icon:not(does-not-exist) {
-    --sf-icon--font-size: var(--sf-clipboard--icon, var(--sf-text-height-1));
-    --sf-icon--height: var(--sf-clipboard--icon, var(--sf-text-height-1));
-    --sf-icon--width: var(--sf-clipboard--icon, var(--sf-text-height-1));
-  }
-  .sf-clipboard-surface:not(.sf-button):not(.sf-icon-button) > sf-icon:not(:defined) {
+  .sf-clipboard-surface:not(.sf-button):not(.sf-icon-button) > :is(.sf-icon, sf-icon:not(:defined)) {
     --sf-icon--font-size: var(--sf-clipboard--icon, var(--sf-text-height-1));
     --sf-icon--height: var(--sf-clipboard--icon, var(--sf-text-height-1));
     --sf-icon--width: var(--sf-clipboard--icon, var(--sf-text-height-1));
@@ -136,34 +96,11 @@
      disabled plain icon button draws it. An sf-button or sf-icon-button
      route draws its own disabled look, which reads aria-disabled too
      (component.buttons, component.icon-buttons). */
-  .sf-clipboard[aria-disabled=true] {
+  :is(.sf-clipboard, [data-sf-copy], [data-sf-copy-target]):is([aria-disabled=true], :disabled) {
     cursor: default;
     pointer-events: none;
   }
-  .sf-clipboard:disabled {
-    cursor: default;
-    pointer-events: none;
-  }
-  [data-sf-copy][aria-disabled=true] {
-    cursor: default;
-    pointer-events: none;
-  }
-  [data-sf-copy]:disabled {
-    cursor: default;
-    pointer-events: none;
-  }
-  [data-sf-copy-target][aria-disabled=true] {
-    cursor: default;
-    pointer-events: none;
-  }
-  [data-sf-copy-target]:disabled {
-    cursor: default;
-    pointer-events: none;
-  }
-  .sf-clipboard-surface[aria-disabled=true]:not(.sf-button):not(.sf-icon-button) {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-clipboard-surface:not(.sf-button):not(.sf-icon-button):disabled {
+  .sf-clipboard-surface:not(.sf-button):not(.sf-icon-button):is([aria-disabled=true], :disabled) {
     --sf-icon--color: var(--sf-on-surface-disabled);
   }
   /* The sizes are the icon button's five (C18, C103; RG-CP-2): the box is the
@@ -237,29 +174,9 @@
      wrapper that place lay outside the scroller -- it widened the page by
      1927 px at 1440 and 2475 at 390. At the corner it lies inside whatever
      box contains it. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-clipboard-status,html:not([dir="rtl"])
-  .sf-clipboard-holder {
-    left: 0;
-  }
-  @supports not (inset-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-clipboard-status,html:not([dir="rtl"])
-  .sf-clipboard-holder {
-    left: 0;
-    }
-  }
   .sf-clipboard-status:where(:dir(ltr)),
   .sf-clipboard-holder:where(:dir(ltr)) {
     left: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-clipboard-status,[dir="rtl"]
-  .sf-clipboard-holder {
-    right: 0;
-  }
-  @supports not (inset-inline-start: initial) {
-  [dir="rtl"] .sf-clipboard-status,[dir="rtl"]
-  .sf-clipboard-holder {
-    right: 0;
-    }
   }
   .sf-clipboard-status:where(:dir(rtl)),
   .sf-clipboard-holder:where(:dir(rtl)) {
@@ -290,9 +207,6 @@
     inline-size: -webkit-max-content;
     inline-size: -moz-max-content;
     inline-size: max-content;
-    max-width: min(var(--sf-g0), 100vw - var(--sf-space-2));
-    max-inline-size: min(var(--sf-g0), 100vw - var(--sf-space-2));
-    max-width: min(var(--sf-g0), 100vw - var(--sf-space-2));
     max-width: min(var(--sf-tooltip--max-inline-size, var(--sf-g0)), 100vw - var(--sf-space-2));
     max-inline-size: min(var(--sf-tooltip--max-inline-size, var(--sf-g0)), 100vw - var(--sf-space-2));
     pointer-events: none;
@@ -343,29 +257,14 @@
   .sf-clipboard-surface:not(.sf-button):not(.sf-icon-button):not(:disabled):not([aria-disabled=true]):active {
     color: var(--sf-primary);
   }
-  .sf-clipboard-surface[aria-disabled=true]:not(.sf-button):not(.sf-icon-button) {
-    color: var(--sf-on-surface-disabled);
-  }
-  .sf-clipboard-surface:not(.sf-button):not(.sf-icon-button):disabled {
+  .sf-clipboard-surface:not(.sf-button):not(.sf-icon-button):is([aria-disabled=true], :disabled) {
     color: var(--sf-on-surface-disabled);
   }
   /* The result's ink is the glyph's own, as sf-button-copy's. */
-  .sf-clipboard[data-copy-state=success] .sf-icon {
+  :is(.sf-clipboard, [data-sf-copy], [data-sf-copy-target])[data-copy-state=success] .sf-icon {
     color: var(--sf-success);
   }
-  [data-sf-copy][data-copy-state=success] .sf-icon {
-    color: var(--sf-success);
-  }
-  [data-sf-copy-target][data-copy-state=success] .sf-icon {
-    color: var(--sf-success);
-  }
-  .sf-clipboard[data-copy-state=error] .sf-icon {
-    color: var(--sf-error);
-  }
-  [data-sf-copy][data-copy-state=error] .sf-icon {
-    color: var(--sf-error);
-  }
-  [data-sf-copy-target][data-copy-state=error] .sf-icon {
+  :is(.sf-clipboard, [data-sf-copy], [data-sf-copy-target])[data-copy-state=error] .sf-icon {
     color: var(--sf-error);
   }
   @media (forced-colors: active) {

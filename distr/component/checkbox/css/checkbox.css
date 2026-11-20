@@ -56,8 +56,6 @@
   .sf-checkbox > .sf-checkbox-box .sf-icon {
     -webkit-clip-path: inset(0 100% 0 0);
             clip-path: inset(0 100% 0 0);
-    transition: -webkit-clip-path var(--sf-checkbox--duration) var(--sf-checkbox--easing);
-    transition: clip-path var(--sf-checkbox--duration) var(--sf-checkbox--easing);
     transition: clip-path var(--sf-checkbox--duration) var(--sf-checkbox--easing), -webkit-clip-path var(--sf-checkbox--duration) var(--sf-checkbox--easing);
   }
   .sf-checkbox:dir(rtl) > .sf-checkbox-box .sf-icon {
@@ -95,81 +93,26 @@
      There the hit area keeps its 24px but grows towards the text: its end
      stays on the box's outer edge. The inline axis only; logical, so RTL
      needs nothing. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
-    left: auto;
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
-    left: auto;
-    }
-  }
   .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]:where(:dir(ltr)){
     left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
-    right: auto;
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
-    right: auto;
-    }
   }
   .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]:where(:dir(rtl)){
     right: auto;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
-    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
-    right: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
-    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
-    right: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
-    }
-  }
   .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]:where(:dir(ltr)){
-    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
     right: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
-    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
-    left: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
-    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
-    left: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
-    }
   }
   .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]:where(:dir(rtl)){
-    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
     left: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
-    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
-    right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
-    }
   }
   .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]:where(:dir(ltr)){
     right: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
-    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]{
-    left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
-    }
   }
   .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox]:where(:dir(rtl)){
     left: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
   }
   .sf-checkbox > .sf-checkbox-container + .sf-checkbox-box:last-child > input[type=checkbox] {
     inset-inline-start: auto;
-    inset-inline-end: max(-1 * var(--sf-px), min(0px, (100% - var(--sf-c2)) / 2));
     inset-inline-end: max(-1 * var(--sf-checkbox-border-width, var(--sf-px)), min(0px, (100% - var(--sf-c2)) / 2));
   }
   /* The help mark («?», sf-help-mark) is the help's own button: it stands
@@ -204,90 +147,26 @@
     gap: var(--sf-checkbox--gap);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
-    border-bottom-right-radius: var(--sf-checkbox-box--border-end-end-radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
-    border-bottom-right-radius: var(--sf-checkbox-box--border-end-end-radius);
-    }
-  }
   .sf-checkbox .sf-checkbox-box:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-checkbox-box--border-end-end-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box{
-    border-bottom-left-radius: var(--sf-checkbox-box--border-end-end-radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-checkbox .sf-checkbox-box{
-    border-bottom-left-radius: var(--sf-checkbox-box--border-end-end-radius);
-    }
   }
   .sf-checkbox .sf-checkbox-box:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-checkbox-box--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
-    border-bottom-left-radius: var(--sf-checkbox-box--border-end-start-radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
-    border-bottom-left-radius: var(--sf-checkbox-box--border-end-start-radius);
-    }
-  }
   .sf-checkbox .sf-checkbox-box:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-checkbox-box--border-end-start-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box{
-    border-bottom-right-radius: var(--sf-checkbox-box--border-end-start-radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-checkbox .sf-checkbox-box{
-    border-bottom-right-radius: var(--sf-checkbox-box--border-end-start-radius);
-    }
   }
   .sf-checkbox .sf-checkbox-box:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-checkbox-box--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
-    border-top-right-radius: var(--sf-checkbox-box--border-start-end-radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
-    border-top-right-radius: var(--sf-checkbox-box--border-start-end-radius);
-    }
-  }
   .sf-checkbox .sf-checkbox-box:where(:dir(ltr)){
     border-top-right-radius: var(--sf-checkbox-box--border-start-end-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box{
-    border-top-left-radius: var(--sf-checkbox-box--border-start-end-radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-checkbox .sf-checkbox-box{
-    border-top-left-radius: var(--sf-checkbox-box--border-start-end-radius);
-    }
   }
   .sf-checkbox .sf-checkbox-box:where(:dir(rtl)){
     border-top-left-radius: var(--sf-checkbox-box--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
-    border-top-left-radius: var(--sf-checkbox-box--border-start-start-radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-checkbox .sf-checkbox-box{
-    border-top-left-radius: var(--sf-checkbox-box--border-start-start-radius);
-    }
-  }
   .sf-checkbox .sf-checkbox-box:where(:dir(ltr)){
     border-top-left-radius: var(--sf-checkbox-box--border-start-start-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-checkbox .sf-checkbox-box{
-    border-top-right-radius: var(--sf-checkbox-box--border-start-start-radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-checkbox .sf-checkbox-box{
-    border-top-right-radius: var(--sf-checkbox-box--border-start-start-radius);
-    }
   }
   .sf-checkbox .sf-checkbox-box:where(:dir(rtl)){
     border-top-right-radius: var(--sf-checkbox-box--border-start-start-radius);
@@ -304,7 +183,6 @@
     --sf-checkbox-box--border-end-start-radius: var(--sf-checkbox-radius, var(--sf-radius--ui));
     --sf-checkbox-box--border-start-end-radius: var(--sf-checkbox-radius, var(--sf-radius--ui));
     --sf-checkbox-box--border-start-start-radius: var(--sf-checkbox-radius, var(--sf-radius--ui));
-    border: 0 solid;
     border: var(--sf-checkbox-box--border, 0 solid);
     border-color: revert-layer;
     border-end-end-radius: var(--sf-checkbox-box--border-end-end-radius);
@@ -353,11 +231,8 @@
      its own button's glyph, sized and coloured by sf-help-mark (it took the
      size-2 line, 28 in a 32 button). :where keeps the weight of the rules. */
   .sf-checkbox .sf-icon:where(:not(sf-help-mark *)) {
-    font-size: var(--sf-icon-size-3);
     font-size: var(--sf-icon--font-size, var(--sf-icon-size-3));
-    height: var(--sf-icon-size-3);
     height: var(--sf-icon--height, var(--sf-icon-size-3));
-    width: var(--sf-icon-size-3);
     width: var(--sf-icon--width, var(--sf-icon-size-3));
   }
   .sf-checkbox.sf-checkbox--size-1\/2 .sf-checkbox-box {
@@ -425,14 +300,11 @@
 }
 @layer sf.paint {
   .sf-checkbox {
-    background-color: transparent;
     background-color: var(--sf-checkbox--background-color, transparent);
   }
   .sf-checkbox .sf-checkbox-box {
     background-color: var(--sf-checkbox-box--background-color);
-    border: 0 solid;
     border: var(--sf-checkbox-box--border, 0 solid);
-    border-color: transparent;
     border-color: var(--sf-checkbox-box--border-color, transparent);
   }
   .sf-checkbox .sf-checkbox-container {
@@ -449,7 +321,6 @@
     color: var(--sf-checkbox-label--color);
   }
   .sf-checkbox .sf-icon:where(:not(sf-help-mark *)) {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-icon--color, var(--sf-on-surface-variant));
   }
 }

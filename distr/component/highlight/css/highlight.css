@@ -85,16 +85,8 @@
   .theme-dark .hljs-number {
     color: var(--sf-highlight--number);
   }
-  .theme-light .hljs-attr {
-    color: var(--sf-highlight--property);
-  }
-  .theme-light .hljs-property {
-    color: var(--sf-highlight--property);
-  }
-  .theme-dark .hljs-attr {
-    color: var(--sf-highlight--property);
-  }
-  .theme-dark .hljs-property {
+  .theme-light :is(.hljs-attr, .hljs-property),
+  .theme-dark :is(.hljs-attr, .hljs-property) {
     color: var(--sf-highlight--property);
   }
   .theme-light .hljs-operator,
@@ -191,16 +183,7 @@
      writes its rows at build time (a documentation site) marks them with Framework
      classes. The runtime writes the same classes; the data-line-* attributes
      it wrote before stay on its rows and draw the same. */
-  .sf-highlight__wrap > .sf-scrollbar__viewport:has(> code > .sf-code-lines) {
-    padding-left: 0;
-    padding-right: 0;
-    padding-inline: 0;
-  }
-  .sf--highlight-wrap > .sf-scrollbar__viewport:has(> code > .sf-code-lines) {
-    padding-left: 0;
-    padding-right: 0;
-    padding-inline: 0;
-  }
+  :is(.sf-highlight__wrap, .sf--highlight-wrap) > .sf-scrollbar__viewport:has(> code > .sf-code-lines),
   .sf-code-surface__scroll:has(> code > .sf-code-lines) {
     padding-left: 0;
     padding-right: 0;
@@ -210,55 +193,20 @@
      longer number, --sf-code-line--number-size) plus its end room: the box
      is border-box, so 3ch alone held under two digits with the room, and
      rows 9 and 10 started their code at different places (1.10.0). */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line__number{
-    padding-right: var(--sf-space-1\/2);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-code-line__number{
-    padding-right: var(--sf-space-1\/2);
-    }
-  }
   .sf-code-line__number:where(:dir(ltr)){
     padding-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-code-line__number{
-    padding-left: var(--sf-space-1\/2);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-code-line__number{
-    padding-left: var(--sf-space-1\/2);
-    }
   }
   .sf-code-line__number:where(:dir(rtl)){
     padding-left: var(--sf-space-1\/2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line__number{
-    text-align: right;
-  }
-  @supports not (text-align: end){
-  html:not([dir="rtl"]) .sf-code-line__number{
-    text-align: right;
-    }
-  }
   .sf-code-line__number:where(:dir(ltr)){
     text-align: right;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-code-line__number{
-    text-align: left;
-  }
-  @supports not (text-align: end){
-  [dir="rtl"] .sf-code-line__number{
-    text-align: left;
-    }
   }
   .sf-code-line__number:where(:dir(rtl)){
     text-align: left;
   }
   .sf-code-line__number {
     flex: none;
-    min-width: calc(3ch + var(--sf-space-1\/2));
-    min-inline-size: calc(3ch + var(--sf-space-1\/2));
-    min-width: calc(3ch + var(--sf-space-1\/2));
     min-width: calc(var(--sf-code-line--number-size, 3ch) + var(--sf-space-1\/2));
     min-inline-size: calc(var(--sf-code-line--number-size, 3ch) + var(--sf-space-1\/2));
     -webkit-padding-end: var(--sf-space-1\/2);
@@ -276,13 +224,7 @@
     white-space: pre;
   }
   /* A wrapped line keeps its number, sign and prompt on its first line. */
-  .sf-code-line__number {
-    align-self: flex-start;
-  }
-  .sf-code-line__sign {
-    align-self: flex-start;
-  }
-  .sf-code-line__prompt {
+  :is(.sf-code-line__number, .sf-code-line__sign, .sf-code-line__prompt) {
     align-self: flex-start;
   }
   /* Changed lines (owner decision C255): the row's tint and a sign, two
@@ -300,16 +242,10 @@
         -ms-user-select: none;
             user-select: none;
   }
-  .sf-code-line.sf-code-line--added > .sf-code-line__sign::before {
+  .sf-code-line:is(.sf-code-line--added, [data-line-diff=add]) > .sf-code-line__sign::before {
     content: "+"/"";
   }
-  .sf-code-line[data-line-diff=add] > .sf-code-line__sign::before {
-    content: "+"/"";
-  }
-  .sf-code-line.sf-code-line--removed > .sf-code-line__sign::before {
-    content: "−"/"";
-  }
-  .sf-code-line[data-line-diff=remove] > .sf-code-line__sign::before {
+  .sf-code-line:is(.sf-code-line--removed, [data-line-diff=remove]) > .sf-code-line__sign::before {
     content: "−"/"";
   }
   /* A terminal (C257): the frame is the code block of the site's theme; a
@@ -327,55 +263,13 @@
   .sf-code-line__prompt::before {
     content: "$"/"";
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line.sf-code-line--output > .sf-code-line__content{
+  .sf-code-line:is(.sf-code-line--output, [data-line-output]) > .sf-code-line__content:where(:dir(ltr)){
     padding-left: 2ch;
   }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-code-line.sf-code-line--output > .sf-code-line__content{
-    padding-left: 2ch;
-    }
-  }
-  .sf-code-line.sf-code-line--output > .sf-code-line__content:where(:dir(ltr)){
-    padding-left: 2ch;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-code-line.sf-code-line--output > .sf-code-line__content{
+  .sf-code-line:is(.sf-code-line--output, [data-line-output]) > .sf-code-line__content:where(:dir(rtl)){
     padding-right: 2ch;
   }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-code-line.sf-code-line--output > .sf-code-line__content{
-    padding-right: 2ch;
-    }
-  }
-  .sf-code-line.sf-code-line--output > .sf-code-line__content:where(:dir(rtl)){
-    padding-right: 2ch;
-  }
-  .sf-code-line.sf-code-line--output > .sf-code-line__content {
-    -webkit-padding-start: 2ch;
-            padding-inline-start: 2ch;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line[data-line-output] > .sf-code-line__content{
-    padding-left: 2ch;
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-code-line[data-line-output] > .sf-code-line__content{
-    padding-left: 2ch;
-    }
-  }
-  .sf-code-line[data-line-output] > .sf-code-line__content:where(:dir(ltr)){
-    padding-left: 2ch;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-code-line[data-line-output] > .sf-code-line__content{
-    padding-right: 2ch;
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-code-line[data-line-output] > .sf-code-line__content{
-    padding-right: 2ch;
-    }
-  }
-  .sf-code-line[data-line-output] > .sf-code-line__content:where(:dir(rtl)){
-    padding-right: 2ch;
-  }
-  .sf-code-line[data-line-output] > .sf-code-line__content {
+  .sf-code-line:is(.sf-code-line--output, [data-line-output]) > .sf-code-line__content {
     -webkit-padding-start: 2ch;
             padding-inline-start: 2ch;
   }
@@ -401,24 +295,8 @@
   /* Wrapped lines (the head's wrap toggle, or data-wrap="true"): long lines
      break inside the block instead of scrolling sideways. The toggle stands
      with copy at the end of the head. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-highlight__wrap-toggle{
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-highlight__wrap-toggle{
-    margin-left: auto;
-    }
-  }
   .sf-highlight__wrap-toggle:where(:dir(ltr)){
     margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-highlight__wrap-toggle{
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-highlight__wrap-toggle{
-    margin-right: auto;
-    }
   }
   .sf-highlight__wrap-toggle:where(:dir(rtl)){
     margin-right: auto;
@@ -437,19 +315,7 @@
      step 1, one step above the size-1/2 icon buttons it holds, so they stand
      on its middle with the same room above and below. It was the line box plus
      2 x --sf-space-1/3, between two steps of the ladder. */
-  .sf-highlight__head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    /* Wrap and copy are a button group, an action row (C105 H5, C144):
-       the actions gap role, 8 and 4 in compact. */
-    -webkit-column-gap: var(--sf-gap--actions);
-       -moz-column-gap: var(--sf-gap--actions);
-            column-gap: var(--sf-gap--actions);
-    min-height: var(--sf-ui-1--control-height);
-    min-block-size: var(--sf-ui-1--control-height);
-  }
-  .sf--highlight-head {
+  :is(.sf-highlight__head, .sf--highlight-head) {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -467,12 +333,7 @@
      the next part, the wrap toggle, 16 above it, and the head drew 48, not
      the step's 40 (36 on a phone). The read-aloud status keeps the sr-only
      box. */
-  .sf-highlight__head > :not(.sr-only):not(.sf-highlight__status) {
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-block: 0;
-  }
-  .sf--highlight-head > :not(.sr-only):not(.sf-highlight__status) {
+  :is(.sf-highlight__head, .sf--highlight-head) > :not(.sr-only):not(.sf-highlight__status) {
     margin-top: 0;
     margin-bottom: 0;
     margin-block: 0;
@@ -483,34 +344,14 @@
      is the label's title when it is cut (the script marks it, as a cut crumb
      of sf-breadcrumbs). A terminal's label is a row of its icon and the name,
      so the name's own span is the one cut. */
-  .sf-highlight__head > :not(.sf-highlight__language) {
+  :is(.sf-highlight__head, .sf--highlight-head) > :not(.sf-highlight__language) {
     flex-shrink: 0;
   }
-  .sf--highlight-head > :not(.sf-highlight__language) {
-    flex-shrink: 0;
-  }
-  .sf-highlight__head > .sf-highlight__language {
+  :is(.sf-highlight__head, .sf--highlight-head) > .sf-highlight__language {
     min-width: 0;
     min-inline-size: 0;
   }
-  .sf--highlight-head > .sf-highlight__language {
-    min-width: 0;
-    min-inline-size: 0;
-  }
-  .sf-highlight__head > .sf-highlight__language:not(:has(> .sf-highlight__language-text)) {
-    min-width: 0;
-    min-inline-size: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .sf--highlight-head > .sf-highlight__language:not(:has(> .sf-highlight__language-text)) {
-    min-width: 0;
-    min-inline-size: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  :is(.sf-highlight__head, .sf--highlight-head) > .sf-highlight__language:not(:has(> .sf-highlight__language-text)),
   .sf-highlight__language-text {
     min-width: 0;
     min-inline-size: 0;
@@ -521,9 +362,6 @@
   .sf-highlight__head {
     padding: 0 var(--sf-space-1);
     margin: 0;
-    border-bottom-width: var(--sf-px);
-    border-block-end-width: var(--sf-px);
-    border-bottom-width: var(--sf-px);
     border-bottom-width: var(--sf-highlight-border-width, var(--sf-px));
     border-block-end-width: var(--sf-highlight-border-width, var(--sf-px));
     border-bottom-style: solid;
@@ -570,13 +408,11 @@
     min-width: 0;
     overflow: hidden;
     margin: 0;
-    border-width: var(--sf-px);
     border-width: var(--sf-highlight-border-width, var(--sf-px));
     border-style: solid;
-    border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-highlight-radius, var(--sf-radius--surface));
   }
-  .sf-code-surface > .sf-highlight__head {
+  .sf-code-surface > :is(.sf-highlight__head, .sf--highlight-head) {
     margin: 0;
     padding-top: 0;
     padding-bottom: 0;
@@ -584,25 +420,6 @@
     padding-left: var(--sf-space-1);
     padding-right: var(--sf-space-1);
     padding-inline: var(--sf-space-1);
-    border-bottom-width: var(--sf-px);
-    border-block-end-width: var(--sf-px);
-    border-bottom-width: var(--sf-px);
-    border-bottom-width: var(--sf-highlight-border-width, var(--sf-px));
-    border-block-end-width: var(--sf-highlight-border-width, var(--sf-px));
-    border-bottom-style: solid;
-    border-block-end-style: solid;
-  }
-  .sf-code-surface > .sf--highlight-head {
-    margin: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    padding-block: 0;
-    padding-left: var(--sf-space-1);
-    padding-right: var(--sf-space-1);
-    padding-inline: var(--sf-space-1);
-    border-bottom-width: var(--sf-px);
-    border-block-end-width: var(--sf-px);
-    border-bottom-width: var(--sf-px);
     border-bottom-width: var(--sf-highlight-border-width, var(--sf-px));
     border-block-end-width: var(--sf-highlight-border-width, var(--sf-px));
     border-bottom-style: solid;
@@ -617,34 +434,13 @@
      stood twice the text's space away and a heading lost its own top. A
      block that ends its holder adds nothing (a card, a chat bubble). After
      the code surface's margin: 0, which this outranks. */
-  .sf-highlight:not(:last-child) {
+  :is(.sf-highlight, .source):not(:last-child) {
     margin-bottom: var(--sf-text--space-bottom);
     -webkit-margin-after: var(--sf-text--space-bottom);
             margin-block-end: var(--sf-text--space-bottom);
-  }
-  .source:not(:last-child) {
-    margin-bottom: var(--sf-text--space-bottom);
-    -webkit-margin-after: var(--sf-text--space-bottom);
-            margin-block-end: var(--sf-text--space-bottom);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-surface__scroll{
-    text-align: left;
-  }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-code-surface__scroll{
-    text-align: left;
-    }
   }
   .sf-code-surface__scroll:where(:dir(ltr)){
     text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-code-surface__scroll{
-    text-align: right;
-  }
-  @supports not (text-align: start){
-  [dir="rtl"] .sf-code-surface__scroll{
-    text-align: right;
-    }
   }
   .sf-code-surface__scroll:where(:dir(rtl)){
     text-align: right;
@@ -676,34 +472,13 @@
   /* After the code surface's own rule, which sizes the code to its longest
      line (max-content) and keeps it on one: wrapped, the code is as wide as
      the block and its lines break. */
-  .sf-highlight--wrap pre:not(.does-not-exist) {
+  .sf-highlight--wrap :is(pre, .sf-code-surface__scroll code, code, .sf-code-line__content) {
     min-width: 0;
     min-inline-size: 0;
     white-space: pre-wrap;
     word-wrap: anywhere;
   }
-  .sf-highlight--wrap :is(.sf-code-surface__scroll code) {
-    min-width: 0;
-    min-inline-size: 0;
-    white-space: pre-wrap;
-    word-wrap: anywhere;
-  }
-  .sf-highlight--wrap code:not(.does-not-exist) {
-    min-width: 0;
-    min-inline-size: 0;
-    white-space: pre-wrap;
-    word-wrap: anywhere;
-  }
-  .sf-highlight--wrap .sf-code-line__content:not(does-not-exist) {
-    min-width: 0;
-    min-inline-size: 0;
-    white-space: pre-wrap;
-    word-wrap: anywhere;
-  }
-  li .sf-highlight {
-    margin-top: var(--sf-space-1);
-  }
-  li .source {
+  li :is(.sf-highlight, .source) {
     margin-top: var(--sf-space-1);
   }
   .theme-dark .hljs,
@@ -722,68 +497,20 @@
     vertical-align: top;
     /* your custom style here */
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div{
-    border-right-width: var(--sf-px);
-  }
-  @supports not (border-inline-end-width: initial){
-  html:not([dir="rtl"]) .hljs-ln-numbers div{
-    border-right-width: var(--sf-px);
-    }
-  }
   .hljs-ln-numbers div:where(:dir(ltr)){
     border-right-width: var(--sf-px);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-numbers div{
-    border-left-width: var(--sf-px);
-  }
-  @supports not (border-inline-end-width: initial){
-  [dir="rtl"] .hljs-ln-numbers div{
-    border-left-width: var(--sf-px);
-    }
   }
   .hljs-ln-numbers div:where(:dir(rtl)){
     border-left-width: var(--sf-px);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div{
-    border-right-style: solid;
-  }
-  @supports not (border-inline-end-style: initial){
-  html:not([dir="rtl"]) .hljs-ln-numbers div{
-    border-right-style: solid;
-    }
-  }
   .hljs-ln-numbers div:where(:dir(ltr)){
     border-right-style: solid;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-numbers div{
-    border-left-style: solid;
-  }
-  @supports not (border-inline-end-style: initial){
-  [dir="rtl"] .hljs-ln-numbers div{
-    border-left-style: solid;
-    }
   }
   .hljs-ln-numbers div:where(:dir(rtl)){
     border-left-style: solid;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div{
-    padding-right: var(--sf-a5);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .hljs-ln-numbers div{
-    padding-right: var(--sf-a5);
-    }
-  }
   .hljs-ln-numbers div:where(:dir(ltr)){
     padding-right: var(--sf-a5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-numbers div{
-    padding-left: var(--sf-a5);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .hljs-ln-numbers div{
-    padding-left: var(--sf-a5);
-    }
   }
   .hljs-ln-numbers div:where(:dir(rtl)){
     padding-left: var(--sf-a5);
@@ -798,24 +525,8 @@
             padding-inline-end: var(--sf-a5);
   }
   /* for block of code */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-code{
-    padding-left: var(--sf-b0);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .hljs-ln-code{
-    padding-left: var(--sf-b0);
-    }
-  }
   .hljs-ln-code:where(:dir(ltr)){
     padding-left: var(--sf-b0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-code{
-    padding-right: var(--sf-b0);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .hljs-ln-code{
-    padding-right: var(--sf-b0);
-    }
   }
   .hljs-ln-code:where(:dir(rtl)){
     padding-right: var(--sf-b0);
@@ -832,10 +543,7 @@
   .hljs-ln-n:before {
     content: attr(data-line-number);
   }
-  .sf-highlight pre {
-    overflow: auto;
-  }
-  .source pre {
+  :is(.sf-highlight, .source) pre {
     overflow: auto;
   }
   /* Code in a block is one step below the text (owner decision C186 (10),
@@ -846,60 +554,13 @@
      (--sf-code--font-family, --sf-mono; C18): the base code rule leaves a
      block's code alone, so it fell to the browser's monospace (Courier, its
      Cyrillic in Times). */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-highlight code{
+  :is(.sf-highlight, .source) code:where(:dir(ltr)){
     text-align: left;
   }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-highlight code{
-    text-align: left;
-    }
-  }
-  .sf-highlight code:where(:dir(ltr)){
-    text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-highlight code{
+  :is(.sf-highlight, .source) code:where(:dir(rtl)){
     text-align: right;
   }
-  @supports not (text-align: start){
-  [dir="rtl"] .sf-highlight code{
-    text-align: right;
-    }
-  }
-  .sf-highlight code:where(:dir(rtl)){
-    text-align: right;
-  }
-  .sf-highlight code {
-    font-family: var(--sf-code--font-family);
-    font-family: var(--sf-code-font-family, var(--sf-code--font-family));
-    font-size: var(--sf-text-size-1\/2);
-    line-height: var(--sf-text-height-1\/2);
-    direction: ltr;
-    text-align: start;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .source code{
-    text-align: left;
-  }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .source code{
-    text-align: left;
-    }
-  }
-  .source code:where(:dir(ltr)){
-    text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .source code{
-    text-align: right;
-  }
-  @supports not (text-align: start){
-  [dir="rtl"] .source code{
-    text-align: right;
-    }
-  }
-  .source code:where(:dir(rtl)){
-    text-align: right;
-  }
-  .source code {
-    font-family: var(--sf-code--font-family);
+  :is(.sf-highlight, .source) code {
     font-family: var(--sf-code-font-family, var(--sf-code--font-family));
     font-size: var(--sf-text-size-1\/2);
     line-height: var(--sf-text-height-1\/2);
@@ -909,87 +570,43 @@
 }
 @layer sf.paint {
   .sf-code-line__number {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-place--ink-variant, var(--sf-on-surface-variant));
   }
-  .sf-code-line.sf-code-line--added {
+  .sf-code-line:is(.sf-code-line--added, [data-line-diff=add]) {
     background: var(--sf-highlight-addition-background);
   }
-  .sf-code-line[data-line-diff=add] {
-    background: var(--sf-highlight-addition-background);
-  }
-  .sf-code-line.sf-code-line--removed {
+  .sf-code-line:is(.sf-code-line--removed, [data-line-diff=remove]) {
     background: var(--sf-highlight-deletion-background);
   }
-  .sf-code-line[data-line-diff=remove] {
-    background: var(--sf-highlight-deletion-background);
-  }
-  .sf-code-line.sf-code-line--added > .sf-code-line__sign::before {
+  .sf-code-line:is(.sf-code-line--added, [data-line-diff=add]) > .sf-code-line__sign::before {
     color: var(--sf-success);
   }
-  .sf-code-line[data-line-diff=add] > .sf-code-line__sign::before {
-    color: var(--sf-success);
-  }
-  .sf-code-line.sf-code-line--removed > .sf-code-line__sign::before {
-    color: var(--sf-error);
-  }
-  .sf-code-line[data-line-diff=remove] > .sf-code-line__sign::before {
+  .sf-code-line:is(.sf-code-line--removed, [data-line-diff=remove]) > .sf-code-line__sign::before {
     color: var(--sf-error);
   }
   /* Marked and focused lines (C256): a light fill, the primary container
      (12 % light, 24 % dark), and a 2 px bar at the line's start in primary
      -- a second cue that leaves the code's contrast alone. Focus is drawn
      the same: the other lines are neither dimmed nor blurred. */
-  .sf-code-line.sf-code-line--highlight {
-    /* The bar is a background layer, not an inset shadow (a shadow is the
-       retired focus ring's tool); code runs left to right here (direction:
-       ltr on the scroller), so its start is the left edge. */
-    background: linear-gradient(var(--sf-primary), var(--sf-primary)) left/calc(2 * var(--sf-px)) 100% no-repeat, var(--sf-primary-container);
-  }
-  .sf-code-line.sf-code-line--focus {
-    /* The bar is a background layer, not an inset shadow (a shadow is the
-       retired focus ring's tool); code runs left to right here (direction:
-       ltr on the scroller), so its start is the left edge. */
-    background: linear-gradient(var(--sf-primary), var(--sf-primary)) left/calc(2 * var(--sf-px)) 100% no-repeat, var(--sf-primary-container);
-  }
-  .sf-code-line[data-line-mark] {
-    /* The bar is a background layer, not an inset shadow (a shadow is the
-       retired focus ring's tool); code runs left to right here (direction:
-       ltr on the scroller), so its start is the left edge. */
-    background: linear-gradient(var(--sf-primary), var(--sf-primary)) left/calc(2 * var(--sf-px)) 100% no-repeat, var(--sf-primary-container);
-  }
-  .sf-code-line[data-line-focus] {
+  .sf-code-line:is(.sf-code-line--highlight, .sf-code-line--focus, [data-line-mark], [data-line-focus]) {
     /* The bar is a background layer, not an inset shadow (a shadow is the
        retired focus ring's tool); code runs left to right here (direction:
        ltr on the scroller), so its start is the left edge. */
     background: linear-gradient(var(--sf-primary), var(--sf-primary)) left/calc(2 * var(--sf-px)) 100% no-repeat, var(--sf-primary-container);
   }
   .sf-code-line__prompt {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-highlight--punctuation, var(--sf-on-surface-variant));
   }
-  .sf-code-line.sf-code-line--output > .sf-code-line__content {
-    color: var(--sf-on-surface-variant);
+  .sf-code-line:is(.sf-code-line--output, [data-line-output]) > .sf-code-line__content {
     color: var(--sf-highlight--comment, var(--sf-on-surface-variant));
   }
-  .sf-code-line[data-line-output] > .sf-code-line__content {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-highlight--comment, var(--sf-on-surface-variant));
-  }
-  .sf-code-line.sf-code-line--output > .sf-code-line__content * {
-    color: inherit;
-  }
-  .sf-code-line[data-line-output] > .sf-code-line__content * {
+  .sf-code-line:is(.sf-code-line--output, [data-line-output]) > .sf-code-line__content * {
     color: inherit;
   }
   .sf-highlight--terminal .sf-highlight__language .sf-icon {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-on-surface-icon, var(--sf-on-surface-variant));
   }
   .sf-highlight__head {
-    border-bottom-color: var(--sf-outline-variant);
-    border-block-end-color: var(--sf-outline-variant);
-    border-bottom-color: var(--sf-outline-variant);
     border-bottom-color: var(--sf-highlight-border-color, var(--sf-outline-variant));
     border-block-end-color: var(--sf-highlight-border-color, var(--sf-outline-variant));
   }
@@ -1000,25 +617,12 @@
   .sf-code-surface {
     /* On a grey plate the plate is the fill: the place hook draws none
        (--sf-place--fill-surface, core mix/_mix__places.scss). */
-    background: var(--sf-surface-container);
     background: var(--sf-highlight-background-color, var(--sf-place--fill-surface, var(--sf-surface-container)));
     --sf-on-surface-variant: var(--sf-on-surface-container-variant);
-    border-color: var(--sf-outline-variant);
     border-color: var(--sf-highlight-border-color, var(--sf-outline-variant));
-    color: var(--sf-on-surface);
     color: var(--sf-highlight-color, var(--sf-on-surface));
   }
-  .sf-code-surface > .sf-highlight__head {
-    border-bottom-color: var(--sf-outline-variant);
-    border-block-end-color: var(--sf-outline-variant);
-    border-bottom-color: var(--sf-outline-variant);
-    border-bottom-color: var(--sf-highlight-border-color, var(--sf-outline-variant));
-    border-block-end-color: var(--sf-highlight-border-color, var(--sf-outline-variant));
-  }
-  .sf-code-surface > .sf--highlight-head {
-    border-bottom-color: var(--sf-outline-variant);
-    border-block-end-color: var(--sf-outline-variant);
-    border-bottom-color: var(--sf-outline-variant);
+  .sf-code-surface > :is(.sf-highlight__head, .sf--highlight-head) {
     border-bottom-color: var(--sf-highlight-border-color, var(--sf-outline-variant));
     border-block-end-color: var(--sf-highlight-border-color, var(--sf-outline-variant));
   }
@@ -1032,36 +636,13 @@
   .hljs-ln-numbers {
     color: var(--sf-highlight--line-number);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .hljs-ln-numbers div{
-    border-right-color: var(--sf-outline-variant);
-    border-right-color: var(--sf-highlight-line-divider, var(--sf-outline-variant));
-  }
-  @supports not (border-inline-end-color: initial){
-  html:not([dir="rtl"]) .hljs-ln-numbers div{
-    border-right-color: var(--sf-outline-variant);
-    border-right-color: var(--sf-highlight-line-divider, var(--sf-outline-variant));
-    }
-  }
   .hljs-ln-numbers div:where(:dir(ltr)){
-    border-right-color: var(--sf-outline-variant);
     border-right-color: var(--sf-highlight-line-divider, var(--sf-outline-variant));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .hljs-ln-numbers div{
-    border-left-color: var(--sf-outline-variant);
-    border-left-color: var(--sf-highlight-line-divider, var(--sf-outline-variant));
-  }
-  @supports not (border-inline-end-color: initial){
-  [dir="rtl"] .hljs-ln-numbers div{
-    border-left-color: var(--sf-outline-variant);
-    border-left-color: var(--sf-highlight-line-divider, var(--sf-outline-variant));
-    }
   }
   .hljs-ln-numbers div:where(:dir(rtl)){
-    border-left-color: var(--sf-outline-variant);
     border-left-color: var(--sf-highlight-line-divider, var(--sf-outline-variant));
   }
   .hljs-ln-numbers div {
-    border-inline-end-color: var(--sf-outline-variant);
     border-inline-end-color: var(--sf-highlight-line-divider, var(--sf-outline-variant));
   }
   @media (forced-colors: active) {
@@ -1071,107 +652,13 @@
     /* The fill and the start bar of a marked or focused line are background
        layers, which forced colours drop; the bar comes back as an edge in
        the system highlight colour. A diff line keeps its + / - sign. */
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line.sf-code-line--highlight{
+    .sf-code-line:is(.sf-code-line--highlight, .sf-code-line--focus, [data-line-mark], [data-line-focus]):where(:dir(ltr)){
       border-left: calc(2 * var(--sf-px)) solid Highlight;
     }
-    @supports not (border-inline-start: initial){
-    html:not([dir="rtl"]) .sf-code-line.sf-code-line--highlight{
-      border-left: calc(2 * var(--sf-px)) solid Highlight;
-      }
-    }
-    .sf-code-line.sf-code-line--highlight:where(:dir(ltr)){
-      border-left: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-code-line.sf-code-line--highlight{
+    .sf-code-line:is(.sf-code-line--highlight, .sf-code-line--focus, [data-line-mark], [data-line-focus]):where(:dir(rtl)){
       border-right: calc(2 * var(--sf-px)) solid Highlight;
     }
-    @supports not (border-inline-start: initial){
-    [dir="rtl"] .sf-code-line.sf-code-line--highlight{
-      border-right: calc(2 * var(--sf-px)) solid Highlight;
-      }
-    }
-    .sf-code-line.sf-code-line--highlight:where(:dir(rtl)){
-      border-right: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    .sf-code-line.sf-code-line--highlight {
-      -webkit-border-start: calc(2 * var(--sf-px)) solid Highlight;
-              border-inline-start: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line.sf-code-line--focus{
-      border-left: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    @supports not (border-inline-start: initial){
-    html:not([dir="rtl"]) .sf-code-line.sf-code-line--focus{
-      border-left: calc(2 * var(--sf-px)) solid Highlight;
-      }
-    }
-    .sf-code-line.sf-code-line--focus:where(:dir(ltr)){
-      border-left: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-code-line.sf-code-line--focus{
-      border-right: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    @supports not (border-inline-start: initial){
-    [dir="rtl"] .sf-code-line.sf-code-line--focus{
-      border-right: calc(2 * var(--sf-px)) solid Highlight;
-      }
-    }
-    .sf-code-line.sf-code-line--focus:where(:dir(rtl)){
-      border-right: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    .sf-code-line.sf-code-line--focus {
-      -webkit-border-start: calc(2 * var(--sf-px)) solid Highlight;
-              border-inline-start: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line[data-line-mark]{
-      border-left: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    @supports not (border-inline-start: initial){
-    html:not([dir="rtl"]) .sf-code-line[data-line-mark]{
-      border-left: calc(2 * var(--sf-px)) solid Highlight;
-      }
-    }
-    .sf-code-line[data-line-mark]:where(:dir(ltr)){
-      border-left: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-code-line[data-line-mark]{
-      border-right: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    @supports not (border-inline-start: initial){
-    [dir="rtl"] .sf-code-line[data-line-mark]{
-      border-right: calc(2 * var(--sf-px)) solid Highlight;
-      }
-    }
-    .sf-code-line[data-line-mark]:where(:dir(rtl)){
-      border-right: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    .sf-code-line[data-line-mark] {
-      -webkit-border-start: calc(2 * var(--sf-px)) solid Highlight;
-              border-inline-start: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-code-line[data-line-focus]{
-      border-left: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    @supports not (border-inline-start: initial){
-    html:not([dir="rtl"]) .sf-code-line[data-line-focus]{
-      border-left: calc(2 * var(--sf-px)) solid Highlight;
-      }
-    }
-    .sf-code-line[data-line-focus]:where(:dir(ltr)){
-      border-left: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-code-line[data-line-focus]{
-      border-right: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    @supports not (border-inline-start: initial){
-    [dir="rtl"] .sf-code-line[data-line-focus]{
-      border-right: calc(2 * var(--sf-px)) solid Highlight;
-      }
-    }
-    .sf-code-line[data-line-focus]:where(:dir(rtl)){
-      border-right: calc(2 * var(--sf-px)) solid Highlight;
-    }
-    .sf-code-line[data-line-focus] {
+    .sf-code-line:is(.sf-code-line--highlight, .sf-code-line--focus, [data-line-mark], [data-line-focus]) {
       -webkit-border-start: calc(2 * var(--sf-px)) solid Highlight;
               border-inline-start: calc(2 * var(--sf-px)) solid Highlight;
     }

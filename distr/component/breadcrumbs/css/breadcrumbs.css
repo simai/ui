@@ -42,15 +42,11 @@
   /* A crumb one presses is a target of the 1/3 control height (BC-04): 28 on
      the desktop ladder, 24 on the phone and in compact. «…» is that square
      (BC-03). The words keep their own line; the target is the box. */
-  a.sf-breadcrumbs-item {
+  .sf-breadcrumbs-item:is(a, button) {
     min-height: var(--sf-breadcrumbs--target);
     min-block-size: var(--sf-breadcrumbs--target);
   }
-  button.sf-breadcrumbs-item {
-    min-height: var(--sf-breadcrumbs--target);
-    min-block-size: var(--sf-breadcrumbs--target);
-  }
-  button.sf-breadcrumbs-item {
+  .sf-breadcrumbs-item:is(button) {
     border: 0;
     border-color: revert-layer;
     padding: 0;
@@ -65,25 +61,7 @@
   /* A crumb that is an icon alone (the home link) is a square target as
      «…» is (RG-NV 2, C173 (6): a tap zone of 24 at least): it was as wide as
      its 20 glyph. The glyph stays 20 in the middle. */
-  a.sf-breadcrumbs-item:has(> .sf-breadcrumbs-item-container > .sf-icon:only-child) {
-    justify-content: center;
-    min-width: var(--sf-breadcrumbs--target);
-    min-inline-size: var(--sf-breadcrumbs--target);
-    flex: none;
-  }
-  a.sf-breadcrumbs-item:has(> .sf-breadcrumbs-item-container > sf-icon:not(.does-not-exist):only-child) {
-    justify-content: center;
-    min-width: var(--sf-breadcrumbs--target);
-    min-inline-size: var(--sf-breadcrumbs--target);
-    flex: none;
-  }
-  button.sf-breadcrumbs-item:has(> .sf-breadcrumbs-item-container > .sf-icon:only-child) {
-    justify-content: center;
-    min-width: var(--sf-breadcrumbs--target);
-    min-inline-size: var(--sf-breadcrumbs--target);
-    flex: none;
-  }
-  button.sf-breadcrumbs-item:has(> .sf-breadcrumbs-item-container > sf-icon:not(.does-not-exist):only-child) {
+  .sf-breadcrumbs-item:is(a, button):has(> .sf-breadcrumbs-item-container > :is(.sf-icon, sf-icon):only-child) {
     justify-content: center;
     min-width: var(--sf-breadcrumbs--target);
     min-inline-size: var(--sf-breadcrumbs--target);
@@ -132,9 +110,6 @@
     min-inline-size: 0;
   }
   .sf-breadcrumbs-item:not([aria-current]):not([aria-expanded]):not(.sf-breadcrumbs-item--separator) > .sf-breadcrumbs-item-container {
-    max-width: var(--sf-f2);
-    max-inline-size: var(--sf-f2);
-    max-width: var(--sf-f2);
     max-width: var(--sf-breadcrumbs--label-max, var(--sf-f2));
     max-inline-size: var(--sf-breadcrumbs--label-max, var(--sf-f2));
   }
@@ -168,7 +143,7 @@
   .sf-breadcrumbs-item {
     background-color: var(--sf-breadcrumbs-item--background-color);
   }
-  button.sf-breadcrumbs-item {
+  .sf-breadcrumbs-item:is(button) {
     border: 0;
     color: inherit;
   }
@@ -177,7 +152,6 @@
     color: var(--sf-breadcrumbs-item-container--color);
   }
   .sf-breadcrumbs-item .sf-breadcrumbs-item-container > .sf-icon, .sf-breadcrumbs-item .sf-breadcrumbs-item-container > sf-icon > .sf-icon {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-icon--color, var(--sf-on-surface-variant));
   }
 }
@@ -219,17 +193,7 @@
   }
   /* A disabled item takes the disabled ink, its icon too (C16; docs precheck
      BC-01): it was drawn in the link colour and read as a link. */
-  .sf-breadcrumbs-item.sf-breadcrumbs-item:disabled .sf-breadcrumbs-item-container {
-    --sf-breadcrumbs-item-container--color: var(--sf-on-surface-disabled);
-    --sf-icon--color: var(--sf-on-surface-disabled);
-    cursor: default;
-  }
-  .sf-breadcrumbs-item.sf-breadcrumbs-item.disabled .sf-breadcrumbs-item-container {
-    --sf-breadcrumbs-item-container--color: var(--sf-on-surface-disabled);
-    --sf-icon--color: var(--sf-on-surface-disabled);
-    cursor: default;
-  }
-  .sf-breadcrumbs-item.sf-breadcrumbs-item[aria-disabled=true] .sf-breadcrumbs-item-container {
+  .sf-breadcrumbs-item.sf-breadcrumbs-item:is(:disabled, .disabled, [aria-disabled=true]) .sf-breadcrumbs-item-container {
     --sf-breadcrumbs-item-container--color: var(--sf-on-surface-disabled);
     --sf-icon--color: var(--sf-on-surface-disabled);
     cursor: default;
@@ -269,7 +233,6 @@
     max-width: 100%;
     max-inline-size: 100%;
     flex-wrap: nowrap;
-    gap: var(--sf-space-1\/3);
     gap: var(--sf-breadcrumbs-gap, var(--sf-breadcrumbs--gap, var(--sf-space-1\/3)));
     overscroll-behavior-inline: contain;
     /* The trail's text step (BC-04): one step under the body text, which is
@@ -305,19 +268,7 @@
     }
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/3) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
-  .sf-breadcrumbs > ol {
-    display: flex;
-    align-items: flex-start;
-    flex-wrap: nowrap;
-    flex: 1 1 auto;
-    min-width: 0;
-    min-inline-size: 0;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    gap: inherit;
-  }
-  .sf-breadcrumbs > ul {
+  .sf-breadcrumbs > :is(ol, ul) {
     display: flex;
     align-items: flex-start;
     flex-wrap: nowrap;
@@ -330,14 +281,7 @@
     gap: inherit;
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/3) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  .sf-breadcrumbs > ol > li {
-    display: flex;
-    align-items: center;
-    min-width: 0;
-    min-inline-size: 0;
-    gap: inherit;
-  }
-  .sf-breadcrumbs > ul > li {
+  .sf-breadcrumbs > :is(ol, ul) > li {
     display: flex;
     align-items: center;
     min-width: 0;
@@ -348,35 +292,11 @@
      the separator and the whole button, so the next separator is never drawn
      under it. A crumb squeezed instead below a few letters folds (_trail.js
      starvedFit). The siblings button (C128) stays in its crumb's entry. */
-  .sf-breadcrumbs > ol > li:has(> .sf-breadcrumbs-item[aria-expanded]:not([data-sf-breadcrumb-siblings])) {
-    flex: none;
-  }
-  .sf-breadcrumbs > ul > li:has(> .sf-breadcrumbs-item[aria-expanded]:not([data-sf-breadcrumb-siblings])) {
+  .sf-breadcrumbs > :is(ol, ul) > li:has(> .sf-breadcrumbs-item[aria-expanded]:not([data-sf-breadcrumb-siblings])) {
     flex: none;
   }
   /* An icon-only crumb (the home link) keeps its square target too (RG-NV 2). */
-  .sf-breadcrumbs > ol > li:has(> a.sf-breadcrumbs-item > .sf-breadcrumbs-item-container > .sf-icon:only-child) {
-    flex: none;
-  }
-  .sf-breadcrumbs > ol > li:has(> a.sf-breadcrumbs-item > .sf-breadcrumbs-item-container > sf-icon:not(.does-not-exist):only-child) {
-    flex: none;
-  }
-  .sf-breadcrumbs > ol > li:has(> button.sf-breadcrumbs-item > .sf-breadcrumbs-item-container > .sf-icon:only-child) {
-    flex: none;
-  }
-  .sf-breadcrumbs > ol > li:has(> button.sf-breadcrumbs-item > .sf-breadcrumbs-item-container > sf-icon:not(.does-not-exist):only-child) {
-    flex: none;
-  }
-  .sf-breadcrumbs > ul > li:has(> a.sf-breadcrumbs-item > .sf-breadcrumbs-item-container > .sf-icon:only-child) {
-    flex: none;
-  }
-  .sf-breadcrumbs > ul > li:has(> a.sf-breadcrumbs-item > .sf-breadcrumbs-item-container > sf-icon:not(.does-not-exist):only-child) {
-    flex: none;
-  }
-  .sf-breadcrumbs > ul > li:has(> button.sf-breadcrumbs-item > .sf-breadcrumbs-item-container > .sf-icon:only-child) {
-    flex: none;
-  }
-  .sf-breadcrumbs > ul > li:has(> button.sf-breadcrumbs-item > .sf-breadcrumbs-item-container > sf-icon:not(.does-not-exist):only-child) {
+  .sf-breadcrumbs > :is(ol, ul) > li:has(> .sf-breadcrumbs-item:is(a, button) > .sf-breadcrumbs-item-container > :is(.sf-icon, sf-icon):only-child) {
     flex: none;
   }
   /* The flat form is its own row. */
@@ -387,14 +307,7 @@
      first line beside the crumbs. Every entry is a box of the target's height
      with its words in the middle: one line of the trail reads the same with or
      without a link in it. */
-  .sf-breadcrumbs > ol > li {
-    min-height: var(--sf-breadcrumbs--target);
-    min-block-size: var(--sf-breadcrumbs--target);
-  }
-  .sf-breadcrumbs > ul > li {
-    min-height: var(--sf-breadcrumbs--target);
-    min-block-size: var(--sf-breadcrumbs--target);
-  }
+  .sf-breadcrumbs > :is(ol, ul) > li,
   .sf-breadcrumbs:not(:has(> ol)):not(:has(> ul)) > .sf-breadcrumbs-item {
     min-height: var(--sf-breadcrumbs--target);
     min-block-size: var(--sf-breadcrumbs--target);
@@ -402,26 +315,7 @@
   /* The page's entry (L2): the rest of the row, at least its longest word;
      its name wraps by words. The separator before it stays beside the first
      line. A trail of parents only (current="none") has no such entry. */
-  .sf-breadcrumbs > ol > li:has(> .sf-breadcrumbs-item[aria-current]) {
-    flex: 1 1 0;
-    align-items: flex-start;
-    min-width: -webkit-min-content;
-    min-width: -moz-min-content;
-    min-width: min-content;
-    min-inline-size: -webkit-min-content;
-    min-inline-size: -moz-min-content;
-    min-inline-size: min-content;
-  }
-  .sf-breadcrumbs > ul > li:has(> .sf-breadcrumbs-item[aria-current]) {
-    flex: 1 1 0;
-    align-items: flex-start;
-    min-width: -webkit-min-content;
-    min-width: -moz-min-content;
-    min-width: min-content;
-    min-inline-size: -webkit-min-content;
-    min-inline-size: -moz-min-content;
-    min-inline-size: min-content;
-  }
+  .sf-breadcrumbs > :is(ol, ul) > li:has(> .sf-breadcrumbs-item[aria-current]),
   .sf-breadcrumbs:not(:has(> ol)):not(:has(> ul)) > .sf-breadcrumbs-item[aria-current] {
     flex: 1 1 0;
     align-items: flex-start;
@@ -432,11 +326,7 @@
     min-inline-size: -moz-min-content;
     min-inline-size: min-content;
   }
-  .sf-breadcrumbs > ol > li:has(> .sf-breadcrumbs-item[aria-current]) > .sf-breadcrumbs-item--separator {
-    min-height: var(--sf-breadcrumbs--target);
-    min-block-size: var(--sf-breadcrumbs--target);
-  }
-  .sf-breadcrumbs > ul > li:has(> .sf-breadcrumbs-item[aria-current]) > .sf-breadcrumbs-item--separator {
+  .sf-breadcrumbs > :is(ol, ul) > li:has(> .sf-breadcrumbs-item[aria-current]) > .sf-breadcrumbs-item--separator {
     min-height: var(--sf-breadcrumbs--target);
     min-block-size: var(--sf-breadcrumbs--target);
   }
@@ -456,13 +346,8 @@
     word-break: normal;
   }
   /* A trail opened in place shows every crumb and may take more lines. */
-  .sf-breadcrumbs[data-sf-breadcrumbs-expanded=true] > ol {
-    flex-wrap: wrap;
-  }
-  .sf-breadcrumbs[data-sf-breadcrumbs-expanded=true] > ul {
-    flex-wrap: wrap;
-  }
-  .sf-breadcrumbs[data-sf-breadcrumbs-expanded=true] {
+  .sf-breadcrumbs[data-sf-breadcrumbs-expanded=true],
+  .sf-breadcrumbs[data-sf-breadcrumbs-expanded=true] > :is(ol, ul) {
     flex-wrap: wrap;
   }
   /* On the phone ladder (below lg, 60rem) the trail is one line (owner
@@ -477,20 +362,7 @@
      share and keeps its size. On a wider screen the page's name still wraps
      (C93 item 6). */
   @media not all and (min-width: 60rem) {
-    .sf-breadcrumbs > ol {
-      display: grid;
-      grid-auto-flow: column;
-      grid-auto-columns: minmax(0, -webkit-max-content);
-      grid-auto-columns: minmax(0, max-content);
-      justify-content: start;
-    }
-    .sf-breadcrumbs > ul {
-      display: grid;
-      grid-auto-flow: column;
-      grid-auto-columns: minmax(0, -webkit-max-content);
-      grid-auto-columns: minmax(0, max-content);
-      justify-content: start;
-    }
+    .sf-breadcrumbs > :is(ol, ul),
     .sf-breadcrumbs:not(:has(> ol)):not(:has(> ul)) {
       display: grid;
       grid-auto-flow: column;
@@ -498,30 +370,15 @@
       grid-auto-columns: minmax(0, max-content);
       justify-content: start;
     }
-    .sf-breadcrumbs > ol {
+    .sf-breadcrumbs > :is(ol, ul) {
       flex: 0 1 auto;
     }
-    .sf-breadcrumbs > ul {
-      flex: 0 1 auto;
-    }
-    .sf-breadcrumbs > ol > li:has(> .sf-breadcrumbs-item[aria-current]) {
-      min-width: 0;
-      min-inline-size: 0;
-    }
-    .sf-breadcrumbs > ul > li:has(> .sf-breadcrumbs-item[aria-current]) {
-      min-width: 0;
-      min-inline-size: 0;
-    }
+    .sf-breadcrumbs > :is(ol, ul) > li:has(> .sf-breadcrumbs-item[aria-current]),
     .sf-breadcrumbs:not(:has(> ol)):not(:has(> ul)) > .sf-breadcrumbs-item[aria-current] {
       min-width: 0;
       min-inline-size: 0;
     }
-    .sf-breadcrumbs[data-sf-breadcrumbs-expanded=true] > ol {
-      display: flex;
-    }
-    .sf-breadcrumbs[data-sf-breadcrumbs-expanded=true] > ul {
-      display: flex;
-    }
+    .sf-breadcrumbs[data-sf-breadcrumbs-expanded=true] > :is(ol, ul),
     .sf-breadcrumbs[data-sf-breadcrumbs-expanded=true]:not(:has(> ol)):not(:has(> ul)) {
       display: flex;
     }
@@ -545,24 +402,22 @@
       white-space: nowrap;
     }
   }
-  .sf-breadcrumbs > ol > li[hidden] {
-    display: none;
-  }
-  .sf-breadcrumbs > ul > li[hidden] {
-    display: none;
-  }
+  .sf-breadcrumbs > :is(ol, ul) > li[hidden],
   .sf-breadcrumbs-item[hidden] {
     display: none;
   }
-  [dir=rtl] .sf-breadcrumbs .sf-breadcrumbs-item--separator .sf-icon,
-  .sf-breadcrumbs[dir=rtl] .sf-breadcrumbs-item--separator .sf-icon {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+  /* A separator points along the line, so right to left it points to the
+     start (AM-39). It is turned with the scale property, the one the icons
+     sheet turns a directional glyph with (C151 point 3): chevron_right is
+     such a glyph, and a transform here on top of the glyph's own scale turned
+     it twice, back to pointing right. One property, one turn, whatever the
+     separator's glyph is. */
+  .sf-breadcrumbs .sf-breadcrumbs-item--separator .sf-icon:dir(rtl) {
+    scale: -1 1;
   }
 }
 @layer sf.paint {
   .sf-breadcrumbs {
-    background-color: transparent;
     background-color: var(--sf-breadcrumbs--background-color, transparent);
   }
 }

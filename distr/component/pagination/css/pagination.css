@@ -18,148 +18,47 @@
      on a card, C42 (2)), the button's hover and press fills, the current page
      primary-container with on-primary-container words and no frame.
      utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-ui-1--text-space-x) justify-content/center (.justify-center) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
-    border-top-left-radius: var(--sf-radius--ui);
+  .sf-page-number:where(:dir(ltr)){
     border-top-left-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-page-number{
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-    }
-  }
-  .sf-page-number:where(:dir(ltr)){
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
-    border-top-right-radius: var(--sf-radius--ui);
+  .sf-page-number:where(:dir(rtl)){
     border-top-right-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-page-number{
-    border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-    }
-  }
-  .sf-page-number:where(:dir(rtl)){
-    border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
-    border-top-right-radius: var(--sf-radius--ui);
+  .sf-page-number:where(:dir(ltr)){
     border-top-right-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-page-number{
-    border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-    }
-  }
-  .sf-page-number:where(:dir(ltr)){
-    border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
-    border-top-left-radius: var(--sf-radius--ui);
+  .sf-page-number:where(:dir(rtl)){
     border-top-left-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-page-number{
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-    }
+  .sf-page-number:where(:dir(ltr)){
+    border-bottom-left-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   .sf-page-number:where(:dir(rtl)){
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-  }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-page-number{
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-    }
+    border-bottom-right-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   .sf-page-number:where(:dir(ltr)){
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-  }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-page-number{
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-    }
+    border-bottom-right-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   .sf-page-number:where(:dir(rtl)){
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-page-number{
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-  }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-page-number{
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-    }
-  }
-  .sf-page-number:where(:dir(ltr)){
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-page-number{
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-  }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-page-number{
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-    }
-  }
-  .sf-page-number:where(:dir(rtl)){
-    border-bottom-left-radius: var(--sf-radius--ui);
     border-bottom-left-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
   }
   .sf-page-number {
     align-items: center;
-    font-family: var(--sf-text--family);
     font-family: var(--sf-page-number--font-family, var(--sf-text--family));
-    font-size: var(--sf-text-size-1);
     font-size: var(--sf-page-number--font-size, var(--sf-text-size-1));
-    font-weight: var(--sf-font-weight-medium);
     font-weight: var(--sf-page-number--font-weight, var(--sf-font-weight-medium));
     /* A page number is the page button: its picture-to-words gap is the
        button's label inset (C105 H1; it was --sf-b0, 10, no space step). */
-    gap: var(--sf-ui-1--text-space-x);
     gap: var(--sf-page-number--gap, var(--sf-ui-1--text-space-x));
     /* A page number is a size 1 control, like the arrows beside it: it was a
        text-height-4 box, which on mobile is shorter than the arrows. */
-    height: var(--sf-ui-1--control-height);
-    block-size: var(--sf-ui-1--control-height);
-    height: var(--sf-ui-1--control-height);
     height: var(--sf-page-number--height, var(--sf-ui-1--control-height));
     block-size: var(--sf-page-number--height, var(--sf-ui-1--control-height));
-    line-height: var(--sf-text-height-1);
     line-height: var(--sf-page-number--line-height, var(--sf-text-height-1));
     padding-top: 0;
     padding-bottom: 0;
     padding-block: 0;
-    padding-left: var(--sf-ui-1--space-x);
-    padding-right: var(--sf-ui-1--space-x);
-    padding-inline: var(--sf-ui-1--space-x);
-    padding-left: var(--sf-ui-1--space-x);
     padding-left: var(--sf-page-number--space-x, var(--sf-ui-1--space-x));
-    padding-right: var(--sf-ui-1--space-x);
     padding-right: var(--sf-page-number--space-x, var(--sf-ui-1--space-x));
     padding-inline: var(--sf-page-number--space-x, var(--sf-ui-1--space-x));
     /* Square at least, and as wide as its number with the button's side
@@ -169,25 +68,16 @@
        its width while a person pages. */
     width: auto;
     inline-size: auto;
-    min-width: max(var(--sf-ui-1--control-height), 1 * 1ch + 2 * var(--sf-ui-1--space-x));
-    min-inline-size: max(var(--sf-ui-1--control-height), 1 * 1ch + 2 * var(--sf-ui-1--space-x));
-    min-width: max(var(--sf-ui-1--control-height), 1 * 1ch + 2 * var(--sf-ui-1--space-x));
     min-width: max(var(--sf-page-number--width, var(--sf-ui-1--control-height)), var(--sf-pagination--digits, 1) * 1ch + 2 * var(--sf-page-number--space-x, var(--sf-ui-1--space-x)));
     min-inline-size: max(var(--sf-page-number--width, var(--sf-ui-1--control-height)), var(--sf-pagination--digits, 1) * 1ch + 2 * var(--sf-page-number--space-x, var(--sf-ui-1--space-x)));
     /* The button's corner (C237: one shape, the square; the circle is a
        retired name). */
-    border-start-start-radius: var(--sf-radius--ui);
     border-start-start-radius: var(--sf-page-number--border-start-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-    border-start-end-radius: var(--sf-radius--ui);
     border-start-end-radius: var(--sf-page-number--border-start-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-    border-end-start-radius: var(--sf-radius--ui);
     border-end-start-radius: var(--sf-page-number--border-end-start-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
-    border-end-end-radius: var(--sf-radius--ui);
     border-end-end-radius: var(--sf-page-number--border-end-end-radius, var(--sf-pagination-page-radius, var(--sf-radius--ui)));
     box-shadow: var(--sf-page-number--box-shadow);
-    border-style: solid;
     border-style: var(--sf-page-number--border-style, solid);
-    border-width: var(--sf-px);
     border-width: var(--sf-page-number--border-width, var(--sf-px));
     box-sizing: border-box;
     display: inline-flex;
@@ -271,7 +161,6 @@
     background-color: var(--sf-page-number--background-color);
     color: var(--sf-page-number--color);
     /* The button's frame: one pixel, transparent unless a look draws it. */
-    border-color: transparent;
     border-color: var(--sf-page-number--border-color, transparent);
   }
   @media (forced-colors: active) {
@@ -294,16 +183,10 @@
   }
   /* The current page steps along its own container, as a tonal primary
      button does. */
-  .sf-page-number.selected:not(:disabled):not(.disabled):hover {
+  .sf-page-number:is(.selected, [aria-current=page]):not(:disabled):not(.disabled):hover {
     --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container-hover));
   }
-  .sf-page-number[aria-current=page]:not(:disabled):not(.disabled):hover {
-    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container-hover));
-  }
-  .sf-page-number.selected:not(:disabled):not(.disabled):active {
-    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container-active));
-  }
-  .sf-page-number[aria-current=page]:not(:disabled):not(.disabled):active {
+  .sf-page-number:is(.selected, [aria-current=page]):not(:disabled):not(.disabled):active {
     --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container-active));
   }
   /* The keyboard ring over no plate, as the button's. */
@@ -313,22 +196,10 @@
   .sf-page-number:not(:disabled):not(.disabled):focus-visible {
     --sf-page-number--background-color: var(--sf-transparent-for-focus);
   }
-  .sf-page-number.selected.focus-visible:not(:disabled):not(.disabled) {
+  .sf-page-number:is(.selected, [aria-current=page]):not(:disabled):not(.disabled).focus-visible {
     --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container));
   }
-  .sf-page-number.focus-visible[aria-current=page]:not(:disabled):not(.disabled) {
-    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container));
-  }
-  .sf-page-number.selected:not(:disabled):not(.disabled).focus-visible {
-    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container));
-  }
-  .sf-page-number.selected:not(:disabled):not(.disabled):focus-visible {
-    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container));
-  }
-  .sf-page-number[aria-current=page]:not(:disabled):not(.disabled).focus-visible {
-    --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container));
-  }
-  .sf-page-number[aria-current=page]:not(:disabled):not(.disabled):focus-visible {
+  .sf-page-number:is(.selected, [aria-current=page]):not(:disabled):not(.disabled):focus-visible {
     --sf-page-number--background-color: var(--sf-pagination-current-background-color, var(--sf-primary-container));
   }
 }
@@ -403,22 +274,7 @@
     --sf-icon-button--padding-inline-end: var(--sf-icon-button-padding-inline, var(--sf-ui-1\/2--space-y-tightness-default));
     --sf-icon-button-spinner--size: var(--sf-text-height-1\/2);
   }
-  .sf-pagination.sf-pagination--size-1\/2 .sf-icon-button:not(.does-not-exist) .sf-icon:not(does-not-exist) {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-pagination.sf-pagination--size-1\/2 .sf-icon-button:not(.does-not-exist) sf-icon:not(:defined) {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-pagination.sf-pagination--size-1\/2 .sf-icon-button.sf-icon-button--icon .sf-icon:not(does-not-exist) {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-pagination.sf-pagination--size-1\/2 .sf-icon-button.sf-icon-button--icon sf-icon:not(:defined) {
+  .sf-pagination.sf-pagination--size-1\/2 :is(.sf-icon-button, .sf-icon-button.sf-icon-button--icon) :is(.sf-icon, sf-icon:not(:defined)) {
     --sf-icon--font-size: var(--sf-text-height-1\/2);
     --sf-icon--height: var(--sf-text-height-1\/2);
     --sf-icon--width: var(--sf-text-height-1\/2);
@@ -479,7 +335,6 @@
      and the number spilled). */
   .sf-pagination .sf-pagination-item.sf-pagination-slot,
   .sf-pagination .sf-pagination-item:has(> .sf-page-number) {
-    flex: 0 1 max(var(--sf-pagination--control-height), 2 * 1ch + 2 * var(--sf-pagination--space-x));
     flex: 0 1 max(var(--sf-pagination--control-height), var(--sf-pagination--digits, 2) * 1ch + 2 * var(--sf-pagination--space-x));
     min-width: -webkit-min-content;
     min-width: -moz-min-content;
@@ -494,9 +349,6 @@
      place's own text (RG-NV 9). A shrunk row of «1 … 59 60 61 … 120» had a 45
      place among 40 ones. */
   .sf-pagination .sf-pagination-item.sf-pagination-slot {
-    min-width: max(var(--sf-pagination--control-height), 2 * 1ch + 2 * var(--sf-pagination--place-x));
-    min-inline-size: max(var(--sf-pagination--control-height), 2 * 1ch + 2 * var(--sf-pagination--place-x));
-    min-width: max(var(--sf-pagination--control-height), 2 * 1ch + 2 * var(--sf-pagination--place-x));
     min-width: max(var(--sf-pagination--control-height), var(--sf-pagination--digits, 2) * 1ch + 2 * var(--sf-pagination--place-x));
     min-inline-size: max(var(--sf-pagination--control-height), var(--sf-pagination--digits, 2) * 1ch + 2 * var(--sf-pagination--place-x));
   }
@@ -590,7 +442,6 @@
        this row contributes only the difference. */
     --sf-pagination-top--padding-bottom: calc(var(--sf-space-3) - var(--sf-space-1));
     border-bottom-width: var(--sf-pagination-top--border-bottom-width);
-    border-style: solid;
     border-style: var(--sf-pagination-top--border-style, solid);
     /* The buttons of the row (Show more): one group, H5 8 (C105; it was
        --sf-b0, 10, no space step). */
@@ -613,7 +464,6 @@
     --sf-pagination-main--padding-bottom: var(--sf-pagination--padding-block);
     --sf-pagination-main--padding-top: var(--sf-pagination--padding-block);
     border-bottom-width: var(--sf-pagination-main--border-bottom-width);
-    border-style: solid;
     border-style: var(--sf-pagination-main--border-style, solid);
     gap: var(--sf-space-1);
     padding-bottom: var(--sf-pagination-main--padding-bottom);
@@ -634,24 +484,8 @@
   .sf-pagination .sf-pagination-main > .sf-pagination-left {
     flex: 1 1 auto;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-pagination-main > .sf-pagination-container{
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-pagination .sf-pagination-main > .sf-pagination-container{
-    margin-left: auto;
-    }
-  }
   .sf-pagination .sf-pagination-main > .sf-pagination-container:where(:dir(ltr)){
     margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-pagination-main > .sf-pagination-container{
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-pagination .sf-pagination-main > .sf-pagination-container{
-    margin-right: auto;
-    }
   }
   .sf-pagination .sf-pagination-main > .sf-pagination-container:where(:dir(rtl)){
     margin-right: auto;
@@ -697,14 +531,10 @@
   .sf-pagination .sf-pagination-total {
     --sf-pagination-total--background-color: transparent;
     --sf-pagination-total--gap: var(--sf-space-1\/3);
-    font-family: var(--sf-text--family);
     font-family: var(--sf-pagination-total--font-family, var(--sf-text--family));
-    font-size: var(--sf-text-size-1);
     font-size: var(--sf-pagination-total--font-size, var(--sf-text-size-1));
-    font-weight: var(--sf-font-weight-regular);
     font-weight: var(--sf-pagination-total--font-weight, var(--sf-font-weight-regular));
     gap: var(--sf-pagination-total--gap);
-    line-height: var(--sf-text-height-1);
     line-height: var(--sf-pagination-total--line-height, var(--sf-text-height-1));
   }
   /* The label and the row of arrows wrap too: in a column too narrow for both,
@@ -714,14 +544,10 @@
     flex-wrap: wrap;
     --sf-pagination-container--background-color: transparent;
     --sf-pagination-container--gap: var(--sf-pagination-gap, var(--sf-space-1\/3));
-    font-family: var(--sf-text--family);
     font-family: var(--sf-pagination-container--font-family, var(--sf-text--family));
-    font-size: var(--sf-text-size-1);
     font-size: var(--sf-pagination-container--font-size, var(--sf-text-size-1));
-    font-weight: var(--sf-font-weight-regular);
     font-weight: var(--sf-pagination-container--font-weight, var(--sf-font-weight-regular));
     gap: var(--sf-pagination-container--gap);
-    line-height: var(--sf-text-height-1);
     line-height: var(--sf-pagination-container--line-height, var(--sf-text-height-1));
     min-width: 0;
     min-inline-size: 0;
@@ -733,7 +559,6 @@
      --sf-pagination-container--gap is not set: the list names the same value
      itself, or its edge buttons touched their neighbours. */
   .sf-pagination .sf-pagination-list {
-    gap: var(--sf-space-1\/3);
     gap: var(--sf-pagination-container--gap, var(--sf-pagination-gap, var(--sf-space-1\/3)));
     list-style: none;
     margin: 0;
@@ -745,90 +570,26 @@
     display: flex;
     flex: 0 0 auto;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
-    border-bottom-right-radius: var(--sf-icon-button--border-end-end-radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
-    border-bottom-right-radius: var(--sf-icon-button--border-end-end-radius);
-    }
-  }
   .sf-pagination .sf-icon-button:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-icon-button--border-end-end-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button{
-    border-bottom-left-radius: var(--sf-icon-button--border-end-end-radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-pagination .sf-icon-button{
-    border-bottom-left-radius: var(--sf-icon-button--border-end-end-radius);
-    }
   }
   .sf-pagination .sf-icon-button:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-icon-button--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
-    border-bottom-left-radius: var(--sf-icon-button--border-end-start-radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
-    border-bottom-left-radius: var(--sf-icon-button--border-end-start-radius);
-    }
-  }
   .sf-pagination .sf-icon-button:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-icon-button--border-end-start-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button{
-    border-bottom-right-radius: var(--sf-icon-button--border-end-start-radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-pagination .sf-icon-button{
-    border-bottom-right-radius: var(--sf-icon-button--border-end-start-radius);
-    }
   }
   .sf-pagination .sf-icon-button:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-icon-button--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
-    border-top-right-radius: var(--sf-icon-button--border-start-end-radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
-    border-top-right-radius: var(--sf-icon-button--border-start-end-radius);
-    }
-  }
   .sf-pagination .sf-icon-button:where(:dir(ltr)){
     border-top-right-radius: var(--sf-icon-button--border-start-end-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button{
-    border-top-left-radius: var(--sf-icon-button--border-start-end-radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-pagination .sf-icon-button{
-    border-top-left-radius: var(--sf-icon-button--border-start-end-radius);
-    }
   }
   .sf-pagination .sf-icon-button:where(:dir(rtl)){
     border-top-left-radius: var(--sf-icon-button--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
-    border-top-left-radius: var(--sf-icon-button--border-start-start-radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-pagination .sf-icon-button{
-    border-top-left-radius: var(--sf-icon-button--border-start-start-radius);
-    }
-  }
   .sf-pagination .sf-icon-button:where(:dir(ltr)){
     border-top-left-radius: var(--sf-icon-button--border-start-start-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-pagination .sf-icon-button{
-    border-top-right-radius: var(--sf-icon-button--border-start-start-radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-pagination .sf-icon-button{
-    border-top-right-radius: var(--sf-icon-button--border-start-start-radius);
-    }
   }
   .sf-pagination .sf-icon-button:where(:dir(rtl)){
     border-top-right-radius: var(--sf-icon-button--border-start-start-radius);
@@ -846,23 +607,19 @@
   /* The arrows of the row with the count keep the icon button's own ink,
      --sf-on-surface-icon, as every other arrow of the pagination (RG-NV 11,
      C107 (3)): a rule here forced them to --sf-on-surface-variant. */
-  [dir=rtl] .sf-pagination .sf-pagination-direction .sf-icon,
-  [dir=rtl] .sf-pagination .sf-pagination-direction sf-icon {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
-  }
+  /* The direction arrows (first_page, keyboard_arrow_left/right, last_page)
+     are directional glyphs: the icons sheet turns them in a right-to-left
+     page (C151 point 3). This sheet turned them as well, the glyph and its
+     sf-icon host both, and the arrows pointed the left-to-right way (RTL
+     icons, 2026-11-19). */
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-pagination-count--gap) justify-content/flex-end (.justify-end) align-items/center (.items-center) */
   .sf-pagination .sf-pagination-count {
     --sf-pagination-count--background-color: transparent;
     --sf-pagination-count--gap: var(--sf-space-1\/3);
-    font-family: var(--sf-text--family);
     font-family: var(--sf-pagination-count--font-family, var(--sf-text--family));
-    font-size: var(--sf-text-size-1);
     font-size: var(--sf-pagination-count--font-size, var(--sf-text-size-1));
-    font-weight: var(--sf-font-weight-regular);
     font-weight: var(--sf-pagination-count--font-weight, var(--sf-font-weight-regular));
     gap: var(--sf-pagination-count--gap);
-    line-height: var(--sf-text-height-1);
     line-height: var(--sf-pagination-count--line-height, var(--sf-text-height-1));
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-pagination-bottom--gap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
@@ -925,10 +682,7 @@
   /* A direction is a button, not a cell: its item box would otherwise take a gap
      of its own even while it is hidden, and the row of numbers moved by a few
      pixels between the middle pages and the ends. */
-  .sf-pagination .sf-pagination-list .sf-pagination-item:has(sf-button-icon) {
-    display: contents;
-  }
-  .sf-pagination .sf-pagination-list .sf-pagination-item:has(sf-icon-button) {
+  .sf-pagination .sf-pagination-list .sf-pagination-item:has(:is(sf-button-icon, sf-icon-button)) {
     display: contents;
   }
   /* The page row itself does not stick. It did for one pair, as the only way to
@@ -973,14 +727,8 @@
        and the number was clipped again -- and under a reset that forces
        content-box the field only comes out wider by its padding, never short. */
     box-sizing: border-box;
-    width: calc(max(1, 1) * 1ch + var(--sf-a0) + var(--sf-a0));
-    inline-size: calc(max(1, 1) * 1ch + var(--sf-a0) + var(--sf-a0));
-    width: calc(max(1, 1) * 1ch + var(--sf-a0) + var(--sf-a0));
     width: calc(max(var(--sf-pagination-page-input--digits, 1), 1) * 1ch + var(--sf-input-input--padding-inline-start, var(--sf-a0)) + var(--sf-input-input--padding-inline-end, var(--sf-a0)));
     inline-size: calc(max(var(--sf-pagination-page-input--digits, 1), 1) * 1ch + var(--sf-input-input--padding-inline-start, var(--sf-a0)) + var(--sf-input-input--padding-inline-end, var(--sf-a0)));
-    min-width: calc(1ch + var(--sf-a0) + var(--sf-a0));
-    min-inline-size: calc(1ch + var(--sf-a0) + var(--sf-a0));
-    min-width: calc(1ch + var(--sf-a0) + var(--sf-a0));
     min-width: calc(1ch + var(--sf-input-input--padding-inline-start, var(--sf-a0)) + var(--sf-input-input--padding-inline-end, var(--sf-a0)));
     min-inline-size: calc(1ch + var(--sf-input-input--padding-inline-start, var(--sf-a0)) + var(--sf-input-input--padding-inline-end, var(--sf-a0)));
     text-align: center;
@@ -1046,30 +794,24 @@
   .sf-pagination {
     /* The public variables of sf-pagination (component.json css-variables,
        standard 1.3.8 §6) over the role tokens. */
-    background-color: transparent;
     background-color: var(--sf-pagination-background-color, var(--sf-pagination--background-color, transparent));
   }
   .sf-pagination .sf-pagination-of,
   .sf-pagination .sf-pagination-place {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-pagination-color, var(--sf-on-surface-variant));
   }
   .sf-pagination .sf-pagination-gap {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-pagination-color, var(--sf-on-surface-variant));
   }
   .sf-pagination .sf-pagination-shown {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-pagination-color, var(--sf-on-surface-variant));
   }
   .sf-pagination .sf-pagination-top {
     background-color: var(--sf-pagination-top--background-color);
-    border-color: transparent;
     border-color: var(--sf-pagination-top--border-color, transparent);
   }
   .sf-pagination .sf-pagination-main {
     background-color: var(--sf-pagination-main--background-color);
-    border-color: transparent;
     border-color: var(--sf-pagination-main--border-color, transparent);
   }
   .sf-pagination .sf-pagination-left {
@@ -1083,17 +825,14 @@
   }
   .sf-pagination .sf-pagination-total {
     background-color: var(--sf-pagination-total--background-color);
-    color: var(--sf-on-surface-variant);
     color: var(--sf-pagination-total--color, var(--sf-pagination-color, var(--sf-on-surface-variant)));
   }
   .sf-pagination .sf-pagination-container {
     background-color: var(--sf-pagination-container--background-color);
-    color: var(--sf-on-surface-variant);
     color: var(--sf-pagination-container--color, var(--sf-pagination-color, var(--sf-on-surface-variant)));
   }
   .sf-pagination .sf-pagination-count {
     background-color: var(--sf-pagination-count--background-color);
-    color: var(--sf-on-surface-variant);
     color: var(--sf-pagination-count--color, var(--sf-on-surface-variant));
   }
   .sf-pagination .sf-pagination-bottom {
@@ -1145,11 +884,9 @@
 }
 @layer sf.components {
   .sf-pagination-count .sf-dropdown-field {
-    max-width: var(--sf-e3);
     max-width: var(--sf-pagination-count--dropdown, var(--sf-e3));
   }
   .sf-pagination-bottom .sf-dropdown-field {
-    max-width: var(--sf-f2);
     max-width: var(--sf-pagination-bottom--dropdown, var(--sf-f2));
   }
   /* «Показать ещё» takes the room between the pages and the page size (owner,

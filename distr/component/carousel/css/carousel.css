@@ -99,13 +99,10 @@
        -moz-appearance: none;
             appearance: none;
     align-items: center;
-    -webkit-backdrop-filter: none;
-            backdrop-filter: none;
     -webkit-backdrop-filter: var(--sf-carousel-control--backdrop, none);
             backdrop-filter: var(--sf-carousel-control--backdrop, none);
     border: 0;
     border-color: revert-layer;
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-carousel-control--radius, var(--sf-radius--ui));
     cursor: pointer;
     display: inline-flex;
@@ -194,29 +191,9 @@
             transform: translateY(-50%);
     z-index: 2;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-carousel .sf-carousel-switch--right,html:not([dir="rtl"])
-  .sf-carousel .sf-carousel-switch--next {
-    right: var(--sf-space-1);
-  }
-  @supports not (inset-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-carousel .sf-carousel-switch--right,html:not([dir="rtl"])
-  .sf-carousel .sf-carousel-switch--next {
-    right: var(--sf-space-1);
-    }
-  }
   .sf-carousel .sf-carousel-switch--right:where(:dir(ltr)),
   .sf-carousel .sf-carousel-switch--next:where(:dir(ltr)) {
     right: var(--sf-space-1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-carousel .sf-carousel-switch--right,[dir="rtl"]
-  .sf-carousel .sf-carousel-switch--next {
-    left: var(--sf-space-1);
-  }
-  @supports not (inset-inline-end: initial) {
-  [dir="rtl"] .sf-carousel .sf-carousel-switch--right,[dir="rtl"]
-  .sf-carousel .sf-carousel-switch--next {
-    left: var(--sf-space-1);
-    }
   }
   .sf-carousel .sf-carousel-switch--right:where(:dir(rtl)),
   .sf-carousel .sf-carousel-switch--next:where(:dir(rtl)) {
@@ -226,29 +203,9 @@
   .sf-carousel .sf-carousel-switch--next {
     inset-inline-end: var(--sf-space-1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-carousel .sf-carousel-switch--left,html:not([dir="rtl"])
-  .sf-carousel .sf-carousel-switch--prev {
-    left: var(--sf-space-1);
-  }
-  @supports not (inset-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-carousel .sf-carousel-switch--left,html:not([dir="rtl"])
-  .sf-carousel .sf-carousel-switch--prev {
-    left: var(--sf-space-1);
-    }
-  }
   .sf-carousel .sf-carousel-switch--left:where(:dir(ltr)),
   .sf-carousel .sf-carousel-switch--prev:where(:dir(ltr)) {
     left: var(--sf-space-1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-carousel .sf-carousel-switch--left,[dir="rtl"]
-  .sf-carousel .sf-carousel-switch--prev {
-    right: var(--sf-space-1);
-  }
-  @supports not (inset-inline-start: initial) {
-  [dir="rtl"] .sf-carousel .sf-carousel-switch--left,[dir="rtl"]
-  .sf-carousel .sf-carousel-switch--prev {
-    right: var(--sf-space-1);
-    }
   }
   .sf-carousel .sf-carousel-switch--left:where(:dir(rtl)),
   .sf-carousel .sf-carousel-switch--prev:where(:dir(rtl)) {
@@ -258,24 +215,8 @@
   .sf-carousel .sf-carousel-switch--prev {
     inset-inline-start: var(--sf-space-1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-carousel .sf-carousel-rotation {
-    right: var(--sf-space-1);
-  }
-  @supports not (inset-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-carousel .sf-carousel-rotation {
-    right: var(--sf-space-1);
-    }
-  }
   .sf-carousel .sf-carousel-rotation:where(:dir(ltr)) {
     right: var(--sf-space-1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-carousel .sf-carousel-rotation {
-    left: var(--sf-space-1);
-  }
-  @supports not (inset-inline-end: initial) {
-  [dir="rtl"] .sf-carousel .sf-carousel-rotation {
-    left: var(--sf-space-1);
-    }
   }
   .sf-carousel .sf-carousel-rotation:where(:dir(rtl)) {
     left: var(--sf-space-1);
@@ -287,35 +228,16 @@
     position: absolute;
     z-index: 2;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-carousel-pagination {
-    left: 50%;
-  }
-  @supports not (inset-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-carousel-pagination {
-    left: 50%;
-    }
-  }
   .sf-carousel-pagination:where(:dir(ltr)) {
     left: 50%;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-carousel-pagination {
-    right: 50%;
-  }
-  @supports not (inset-inline-start: initial) {
-  [dir="rtl"] .sf-carousel-pagination {
-    right: 50%;
-    }
   }
   .sf-carousel-pagination:where(:dir(rtl)) {
     right: 50%;
   }
   .sf-carousel-pagination {
     align-items: center;
-    -webkit-backdrop-filter: blur(var(--sf-blur-large));
-            backdrop-filter: blur(var(--sf-blur-large));
     -webkit-backdrop-filter: var(--sf-carousel-pagination--backdrop, blur(var(--sf-blur-large)));
             backdrop-filter: var(--sf-carousel-pagination--backdrop, blur(var(--sf-blur-large)));
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-carousel-pagination--radius, var(--sf-radius--ui));
     display: inline-flex;
     gap: var(--sf-space-1\/2);
@@ -348,24 +270,8 @@
      by its fade (RG-OT 14): the shown dot is a pill as long as three dots, as
      the slider's (C143 (4)); the others keep a fade of the ink scale, 3:1 or
      more to the glass on any picture (WCAG 1.4.11). */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-carousel-pagination-item::after {
-    left: 50%;
-  }
-  @supports not (inset-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-carousel-pagination-item::after {
-    left: 50%;
-    }
-  }
   .sf-carousel-pagination-item::after:where(:dir(ltr)) {
     left: 50%;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-carousel-pagination-item::after {
-    right: 50%;
-  }
-  @supports not (inset-inline-start: initial) {
-  [dir="rtl"] .sf-carousel-pagination-item::after {
-    right: 50%;
-    }
   }
   .sf-carousel-pagination-item::after:where(:dir(rtl)) {
     right: 50%;

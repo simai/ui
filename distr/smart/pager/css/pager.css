@@ -56,13 +56,10 @@
     --sf-icon--height: var(--sf-pager--icon-size);
     flex: none;
   }
-  .sf-pager:dir(rtl) .sf-pager-icon:not(.sf-pager-lesson-mark),
-  .sf-pager:dir(rtl) .sf-pager-back .sf-icon,
-  .sf-pager:dir(rtl) .sf-pager-forward .sf-icon,
-  .sf-pager:dir(rtl) .sf-pager-lesson-action .sf-icon {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
-  }
+  /* The arrows (chevron_left/right, arrow_back/forward) are directional
+     glyphs: the icons sheet turns them in a right-to-left page (C151 point 3).
+     A turn here as well turned them back, so every arrow of the pager pointed
+     the left-to-right way (RTL icons, 2026-11-19). */
   .sf-pager-title {
     display: block;
     min-width: 0;
@@ -77,24 +74,8 @@
     line-height: var(--sf-pager--note-line);
   }
   /* The sides of cards and row: a link, or a button from items. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pager-side{
-    text-align: left;
-  }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-pager-side{
-    text-align: left;
-    }
-  }
   .sf-pager-side:where(:dir(ltr)){
     text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-pager-side{
-    text-align: right;
-  }
-  @supports not (text-align: start){
-  [dir="rtl"] .sf-pager-side{
-    text-align: right;
-    }
   }
   .sf-pager-side:where(:dir(rtl)){
     text-align: right;
@@ -143,24 +124,8 @@
   .sf-pager--cards .sf-pager-side--prev {
     grid-column: 1;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pager--cards .sf-pager-side--next{
-    text-align: right;
-  }
-  @supports not (text-align: end){
-  html:not([dir="rtl"]) .sf-pager--cards .sf-pager-side--next{
-    text-align: right;
-    }
-  }
   .sf-pager--cards .sf-pager-side--next:where(:dir(ltr)){
     text-align: right;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-pager--cards .sf-pager-side--next{
-    text-align: left;
-  }
-  @supports not (text-align: end){
-  [dir="rtl"] .sf-pager--cards .sf-pager-side--next{
-    text-align: left;
-    }
   }
   .sf-pager--cards .sf-pager-side--next:where(:dir(rtl)){
     text-align: left;
@@ -222,24 +187,8 @@
     white-space: normal;
     word-wrap: anywhere;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pager--row .sf-pager-side--next{
-    text-align: right;
-  }
-  @supports not (text-align: end){
-  html:not([dir="rtl"]) .sf-pager--row .sf-pager-side--next{
-    text-align: right;
-    }
-  }
   .sf-pager--row .sf-pager-side--next:where(:dir(ltr)){
     text-align: right;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-pager--row .sf-pager-side--next{
-    text-align: left;
-  }
-  @supports not (text-align: end){
-  [dir="rtl"] .sf-pager--row .sf-pager-side--next{
-    text-align: left;
-    }
   }
   .sf-pager--row .sf-pager-side--next:where(:dir(rtl)){
     text-align: left;
@@ -385,24 +334,8 @@
   .sf-pager--counter .sf-icon {
     contain: layout;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-pager--counter .sf-pager-list{
-    margin-right: var(--sf-pager--gap);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-pager--counter .sf-pager-list{
-    margin-right: var(--sf-pager--gap);
-    }
-  }
   .sf-pager--counter .sf-pager-list:where(:dir(ltr)){
     margin-right: var(--sf-pager--gap);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-pager--counter .sf-pager-list{
-    margin-left: var(--sf-pager--gap);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-pager--counter .sf-pager-list{
-    margin-left: var(--sf-pager--gap);
-    }
   }
   .sf-pager--counter .sf-pager-list:where(:dir(rtl)){
     margin-left: var(--sf-pager--gap);

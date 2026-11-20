@@ -18,22 +18,17 @@
      ghost's opacity, the drop line's and the silhouette's colours, the
      layer the ghost and the line stand on. */
   [data-sf-sortable-item][data-sf-sortable-dragging] {
-    opacity: 0.4;
     opacity: var(--sf-sortable-dragging-opacity, 0.4);
   }
   [data-sf-sortable-item].focus-visible {
-    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
     outline-offset: var(--sf-focus--offset);
   }
   [data-sf-sortable-item].focus-visible {
-    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
-    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
     outline-offset: var(--sf-focus--offset);
   }
   [data-sf-sortable-item]:focus-visible {
-    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
     outline-offset: var(--sf-focus--offset);
   }
@@ -60,12 +55,10 @@
      the overlay shadow, no value of its own. */
   .sf-sortable-ghost {
     position: fixed;
-    z-index: 90;
     z-index: var(--sf-sortable-ghost-z-index, var(--sf-layer--popover, 90));
     box-sizing: border-box;
     margin: 0;
     pointer-events: none;
-    opacity: 1;
     opacity: var(--sf-sortable-ghost-opacity, 1);
     box-shadow: var(--sf-shadow-overlay);
   }
@@ -79,7 +72,6 @@
      class. */
   .sf-sortable-indicator {
     position: fixed;
-    z-index: 90;
     z-index: var(--sf-sortable-ghost-z-index, var(--sf-layer--popover, 90));
     border-radius: var(--sf-radius-1\/3);
     pointer-events: none;
@@ -97,7 +89,6 @@
      column being moved is dimmed in every row. */
   .sf-sortable-column-outline {
     position: fixed;
-    z-index: 90;
     z-index: var(--sf-sortable-ghost-z-index, var(--sf-layer--popover, 90));
     box-sizing: border-box;
     border-width: var(--sf-px);
@@ -122,24 +113,8 @@
      scrolls sideways inside a board with no position of its own that place
      is past the page's end -- the page grew 1155 px wider at 390. At the
      corner it is always inside its containing block, positioned or not. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-sortable-live{
-    left: 0;
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-sortable-live{
-    left: 0;
-    }
-  }
   .sf-sortable-live:where(:dir(ltr)){
     left: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-sortable-live{
-    right: 0;
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-sortable-live{
-    right: 0;
-    }
   }
   .sf-sortable-live:where(:dir(rtl)){
     right: 0;
@@ -200,24 +175,8 @@
     height: calc(var(--sf-px) * 2);
     block-size: calc(var(--sf-px) * 2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-sortable-insert[data-axis=x]::before{
-    left: calc(var(--sf-px) * -1);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-sortable-insert[data-axis=x]::before{
-    left: calc(var(--sf-px) * -1);
-    }
-  }
   .sf-sortable-insert[data-axis=x]::before:where(:dir(ltr)){
     left: calc(var(--sf-px) * -1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-sortable-insert[data-axis=x]::before{
-    right: calc(var(--sf-px) * -1);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-sortable-insert[data-axis=x]::before{
-    right: calc(var(--sf-px) * -1);
-    }
   }
   .sf-sortable-insert[data-axis=x]::before:where(:dir(rtl)){
     right: calc(var(--sf-px) * -1);
@@ -242,7 +201,6 @@
     align-items: center;
     justify-content: center;
     margin: 0;
-    background-image: linear-gradient(transparent, transparent);
     background-image: linear-gradient(var(--sf-icon-button--background-color, transparent), var(--sf-icon-button--background-color, transparent));
     --sf-icon-button--box-shadow: var(--sf-shadow-raised);
   }
@@ -274,31 +232,23 @@
 }
 @layer sf.paint {
   .sf-sortable-ghost {
-    background-color: Canvas;
     background-color: var(--sf-surface-popup, Canvas);
   }
   .sf-sortable-indicator {
-    background: Highlight;
     background: var(--sf-sortable-indicator-color, var(--sf-primary, Highlight));
   }
   .sf-sortable-column-outline {
-    border-color: Highlight;
     border-color: var(--sf-primary-outline, var(--sf-primary, Highlight));
-    background-color: transparent;
     background-color: var(--sf-primary-state-select, transparent);
   }
   .sf-sortable-placeholder {
-    border-color: Highlight;
     border-color: var(--sf-sortable-placeholder-border-color, var(--sf-primary-outline, var(--sf-primary, Highlight)));
-    background-color: transparent;
     background-color: var(--sf-primary-state-select, transparent);
   }
   .sf-sortable-insert::before {
-    background: Highlight;
     background: var(--sf-primary, Highlight);
   }
   .sf-sortable-insert .sf-sortable-insert-button.sf-icon-button {
-    background-color: Canvas;
     background-color: var(--sf-surface-raised, Canvas);
     --sf-on-surface-variant: var(--sf-on-surface-raised-variant);
   }

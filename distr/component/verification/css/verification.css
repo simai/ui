@@ -65,8 +65,14 @@
     flex: 0 1 var(--sf-verification--cell-size);
     min-width: min(var(--sf-verification--cell-size), var(--sf-ui-1\/2--control-height));
     min-inline-size: min(var(--sf-verification--cell-size), var(--sf-ui-1\/2--control-height));
-    width: auto;
-    inline-size: auto;
+    /* The cell's own width is its side (1.9.0, DEV order msg-cfe379b5 item 5):
+       the row is sized by its content, and with inline-size auto a cell's
+       content size was its empty content, so every cell stood at its floor --
+       32 x 40 at size 1, 32 x 48 at size 2 on a desktop -- whatever the size
+       or --sf-verification-cell-size said. It still gives way in a narrow
+       column (C284), down to the floor above. */
+    width: var(--sf-verification--cell-size);
+    inline-size: var(--sf-verification--cell-size);
     height: var(--sf-verification--cell-size);
     block-size: var(--sf-verification--cell-size);
     box-sizing: border-box;
@@ -74,10 +80,8 @@
     border-style: solid;
     border-radius: var(--sf-verification--radius);
     font-family: var(--sf-text--family);
-    font-size: var(--sf-text-size-1);
     font-size: var(--sf-verification--font-size, var(--sf-text-size-1));
     font-weight: var(--sf-font-weight-regular);
-    line-height: var(--sf-text-height-1);
     line-height: var(--sf-verification--line-height, var(--sf-text-height-1));
   }
   /* The input lies over the cells and draws nothing of its own: no text, no
@@ -143,53 +147,18 @@
     margin: auto;
     width: calc(var(--sf-px) * 2);
     inline-size: calc(var(--sf-px) * 2);
-    height: var(--sf-text-height-1);
-    block-size: var(--sf-text-height-1);
-    height: var(--sf-text-height-1);
     height: var(--sf-verification--line-height, var(--sf-text-height-1));
     block-size: var(--sf-verification--line-height, var(--sf-text-height-1));
     pointer-events: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification-cell.caret-end::after {
-    left: auto;
-  }
-  @supports not (inset-inline-start: initial) {
-  html:not([dir="rtl"]) .sf-verification-cell.caret-end::after {
-    left: auto;
-    }
-  }
   .sf-verification-cell.caret-end::after:where(:dir(ltr)) {
     left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-verification-cell.caret-end::after {
-    right: auto;
-  }
-  @supports not (inset-inline-start: initial) {
-  [dir="rtl"] .sf-verification-cell.caret-end::after {
-    right: auto;
-    }
   }
   .sf-verification-cell.caret-end::after:where(:dir(rtl)) {
     right: auto;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-verification-cell.caret-end::after {
-    right: var(--sf-space-1\/4);
-  }
-  @supports not (inset-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-verification-cell.caret-end::after {
-    right: var(--sf-space-1\/4);
-    }
-  }
   .sf-verification-cell.caret-end::after:where(:dir(ltr)) {
     right: var(--sf-space-1\/4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-verification-cell.caret-end::after {
-    left: var(--sf-space-1\/4);
-  }
-  @supports not (inset-inline-end: initial) {
-  [dir="rtl"] .sf-verification-cell.caret-end::after {
-    left: var(--sf-space-1\/4);
-    }
   }
   .sf-verification-cell.caret-end::after:where(:dir(rtl)) {
     left: var(--sf-space-1\/4);
@@ -265,11 +234,8 @@
   }
   .sf-verification-cell,
   .sf-verification-form-wrap .sf-verification {
-    border-color: var(--sf-outline);
     border-color: var(--sf-verification-border-color, var(--sf-outline));
-    background: var(--sf-transparent);
     background: var(--sf-verification-background-color, var(--sf-transparent));
-    color: var(--sf-on-surface);
     color: var(--sf-verification-color, var(--sf-on-surface));
   }
   .sf-verification-input {
@@ -295,7 +261,6 @@
   /* A refused code marks its current cell in the error colour, as its border. */
   .sf-verification-form.error .sf-verification:has(.sf-verification-input:focus) .sf-verification-cell.current,
   .sf-verification.error:has(.sf-verification-input:focus) .sf-verification-cell.current {
-    border-color: var(--sf-error);
     border-color: var(--sf-verification-invalid-border-color, var(--sf-error));
   }
   .sf-verification-cell.caret::after {
@@ -304,7 +269,6 @@
   .sf-verification--filled .sf-verification-cell,
   .sf-verification-form--filled .sf-verification-form-wrap .sf-verification {
     border-color: transparent;
-    background: var(--sf-surface-container);
     background: var(--sf-verification-background-color, var(--sf-surface-container));
     --sf-on-surface-variant: var(--sf-on-surface-container-variant);
   }
@@ -326,7 +290,6 @@
   .sf-verification.error .sf-verification-cell,
   .sf-verification-form.error .sf-verification-form-wrap .sf-verification,
   .sf-verification.error {
-    border-color: var(--sf-error);
     border-color: var(--sf-verification-invalid-border-color, var(--sf-error));
     color: var(--sf-error);
   }

@@ -6,19 +6,15 @@
      value is H2 of the horizontal-spacing standard (C105), a picture before
      text in a row: 12 on a desktop, 8 in compact and on a phone. */
   .sf-tree-item .sf-tree-item-container {
-    gap: var(--sf-space-1\/2);
     gap: var(--sf-tree-item-gap, var(--sf-space-1\/2));
   }
   .sf-tree-item .sf-tree-item-name {
-    font-size: var(--sf-text-size-1);
     font-size: var(--sf-tree-item-name--font-size, var(--sf-text-size-1));
-    line-height: var(--sf-text-height-1);
     line-height: var(--sf-tree-item-name--line-height, var(--sf-text-height-1));
   }
 }
 @layer sf.paint {
   .sf-tree-item .sf-tree-item-name {
-    color: var(--sf-primary);
     color: var(--sf-tree-item-name-color, var(--sf-tree-item-name--color, var(--sf-primary)));
   }
 }
@@ -53,9 +49,7 @@
    primary container's fill and a dashed ring. */
 @layer sf.states {
   .sf-tree-item[data-sf-drop-target] > .sf-tree-item-container {
-    background-color: var(--sf-primary-container);
     background-color: var(--sf-tree-item-drop-background-color, var(--sf-primary-container));
-    outline: var(--sf-focus--width) dashed var(--sf-primary);
     outline: var(--sf-focus--width) dashed var(--sf-tree-item-drop-outline-color, var(--sf-primary));
     outline-offset: calc(var(--sf-focus--width) * -1);
   }

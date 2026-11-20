@@ -36,7 +36,6 @@
     --sf-change--after: var(--sf-change-after-color, var(--sf-on-surface));
   }
   .sf-change__after {
-    font-weight: var(--sf-font-weight-medium);
     font-weight: var(--sf-change-after-weight, var(--sf-font-weight-medium));
   }
   .sf-change__empty {
@@ -60,9 +59,6 @@
     display: grid;
     grid-template-columns: -webkit-max-content minmax(0, 1fr);
     grid-template-columns: max-content minmax(0, 1fr);
-    grid-gap: var(--sf-space-1\/4) var(--sf-space-1);
-    gap: var(--sf-space-1\/4) var(--sf-space-1);
-    grid-gap: var(--sf-space-1\/4) var(--sf-space-1);
     grid-gap: var(--sf-space-1\/4) var(--sf-change-column-gap, var(--sf-space-1));
     gap: var(--sf-space-1\/4) var(--sf-change-column-gap, var(--sf-space-1));
     margin: 0;
@@ -170,14 +166,12 @@
   }
   .sf-change__label,
   .sf-change__term {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-change-label-color, var(--sf-on-surface-variant));
   }
   .sf-change__before {
     color: var(--sf-change--before);
   }
   .sf-change__arrow {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-change-arrow-color, var(--sf-on-surface-variant));
   }
   .sf-change__after {
@@ -199,7 +193,6 @@
     color: var(--sf-change--before);
   }
   .sf-change__block-label {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-change-label-color, var(--sf-on-surface-variant));
   }
 }

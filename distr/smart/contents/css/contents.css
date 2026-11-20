@@ -104,24 +104,8 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents-count{
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-contents-count{
-    margin-left: auto;
-    }
-  }
   .sf-contents-count:where(:dir(ltr)){
     margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-contents-count{
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-contents-count{
-    margin-right: auto;
-    }
   }
   .sf-contents-count:where(:dir(rtl)){
     margin-right: auto;
@@ -159,24 +143,8 @@
      its bar and its hover keep the full width. Written once for every layout
      (the rail's names and the bar's tabs do not step in), so the sheet holds
      one copy rather than one per layout and breakpoint. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents:not(.sf-contents--layout-rail):not(.sf-contents--layout-bar) .sf-contents-item[data-depth="1"] .sf-contents-text{
-    margin-left: var(--sf-contents--indent);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-contents:not(.sf-contents--layout-rail):not(.sf-contents--layout-bar) .sf-contents-item[data-depth="1"] .sf-contents-text{
-    margin-left: var(--sf-contents--indent);
-    }
-  }
   .sf-contents:not(.sf-contents--layout-rail):not(.sf-contents--layout-bar) .sf-contents-item[data-depth="1"] .sf-contents-text:where(:dir(ltr)){
     margin-left: var(--sf-contents--indent);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-contents:not(.sf-contents--layout-rail):not(.sf-contents--layout-bar) .sf-contents-item[data-depth="1"] .sf-contents-text{
-    margin-right: var(--sf-contents--indent);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-contents:not(.sf-contents--layout-rail):not(.sf-contents--layout-bar) .sf-contents-item[data-depth="1"] .sf-contents-text{
-    margin-right: var(--sf-contents--indent);
-    }
   }
   .sf-contents:not(.sf-contents--layout-rail):not(.sf-contents--layout-bar) .sf-contents-item[data-depth="1"] .sf-contents-text:where(:dir(rtl)){
     margin-right: var(--sf-contents--indent);
@@ -185,24 +153,8 @@
     -webkit-margin-start: var(--sf-contents--indent);
             margin-inline-start: var(--sf-contents--indent);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents:not(.sf-contents--layout-rail):not(.sf-contents--layout-bar) .sf-contents-item:not([data-depth="0"]):not([data-depth="1"]) .sf-contents-text{
-    margin-left: calc(2 * var(--sf-contents--indent));
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-contents:not(.sf-contents--layout-rail):not(.sf-contents--layout-bar) .sf-contents-item:not([data-depth="0"]):not([data-depth="1"]) .sf-contents-text{
-    margin-left: calc(2 * var(--sf-contents--indent));
-    }
-  }
   .sf-contents:not(.sf-contents--layout-rail):not(.sf-contents--layout-bar) .sf-contents-item:not([data-depth="0"]):not([data-depth="1"]) .sf-contents-text:where(:dir(ltr)){
     margin-left: calc(2 * var(--sf-contents--indent));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-contents:not(.sf-contents--layout-rail):not(.sf-contents--layout-bar) .sf-contents-item:not([data-depth="0"]):not([data-depth="1"]) .sf-contents-text{
-    margin-right: calc(2 * var(--sf-contents--indent));
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-contents:not(.sf-contents--layout-rail):not(.sf-contents--layout-bar) .sf-contents-item:not([data-depth="0"]):not([data-depth="1"]) .sf-contents-text{
-    margin-right: calc(2 * var(--sf-contents--indent));
-    }
   }
   .sf-contents:not(.sf-contents--layout-rail):not(.sf-contents--layout-bar) .sf-contents-item:not([data-depth="0"]):not([data-depth="1"]) .sf-contents-text:where(:dir(rtl)){
     margin-right: calc(2 * var(--sf-contents--indent));
@@ -236,41 +188,9 @@
     -ms-scroll-chaining: none;
         overscroll-behavior: contain;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-label{
-    padding-left: var(--sf-contents--inset);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-label{
-    padding-left: var(--sf-contents--inset);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-label{
-    padding-right: var(--sf-space-1\/2);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-label{
-    padding-right: var(--sf-space-1\/2);
-    }
-  }
   .sf-contents--layout-column .sf-contents-label:where(:dir(ltr)){
     padding-left: var(--sf-contents--inset);
     padding-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-column .sf-contents-label{
-    padding-right: var(--sf-contents--inset);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-contents--layout-column .sf-contents-label{
-    padding-right: var(--sf-contents--inset);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-column .sf-contents-label{
-    padding-left: var(--sf-space-1\/2);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-contents--layout-column .sf-contents-label{
-    padding-left: var(--sf-space-1\/2);
-    }
   }
   .sf-contents--layout-column .sf-contents-label:where(:dir(rtl)){
     padding-right: var(--sf-contents--inset);
@@ -288,27 +208,10 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--sf-0);
     gap: var(--sf-contents-gap, var(--sf-0));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-list::after{
-    left: var(--sf-0);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-list::after{
-    left: var(--sf-0);
-    }
   }
   .sf-contents--layout-column .sf-contents-list::after:where(:dir(ltr)){
     left: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-column .sf-contents-list::after{
-    right: var(--sf-0);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-contents--layout-column .sf-contents-list::after{
-    right: var(--sf-0);
-    }
   }
   .sf-contents--layout-column .sf-contents-list::after:where(:dir(rtl)){
     right: var(--sf-0);
@@ -323,41 +226,9 @@
     width: var(--sf-px);
     inline-size: var(--sf-px);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-link{
-    padding-left: var(--sf-contents--inset);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-link{
-    padding-left: var(--sf-contents--inset);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-link{
-    padding-right: var(--sf-space-1\/2);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-link{
-    padding-right: var(--sf-space-1\/2);
-    }
-  }
   .sf-contents--layout-column .sf-contents-link:where(:dir(ltr)){
     padding-left: var(--sf-contents--inset);
     padding-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-column .sf-contents-link{
-    padding-right: var(--sf-contents--inset);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-contents--layout-column .sf-contents-link{
-    padding-right: var(--sf-contents--inset);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-column .sf-contents-link{
-    padding-left: var(--sf-space-1\/2);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-contents--layout-column .sf-contents-link{
-    padding-left: var(--sf-space-1\/2);
-    }
   }
   .sf-contents--layout-column .sf-contents-link:where(:dir(rtl)){
     padding-right: var(--sf-contents--inset);
@@ -385,24 +256,8 @@
   .sf-contents--layout-column .sf-contents-text {
     display: block;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-mark{
-    left: var(--sf-0);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-contents--layout-column .sf-contents-mark{
-    left: var(--sf-0);
-    }
-  }
   .sf-contents--layout-column .sf-contents-mark:where(:dir(ltr)){
     left: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-column .sf-contents-mark{
-    right: var(--sf-0);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-contents--layout-column .sf-contents-mark{
-    right: var(--sf-0);
-    }
   }
   .sf-contents--layout-column .sf-contents-mark:where(:dir(rtl)){
     right: var(--sf-0);
@@ -421,7 +276,7 @@
   /* sheet; sf-contents--layout-compact is its former class (layout="compact"),
      drawn the same until 2027-01-01 (owner decision C134: the word compact
      means density only; journal value-contents-layout-compact-to-sheet). */
-  .sf-contents--layout-sheet {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) {
     position: relative;
     /* Sticky, the button travels with the reader. The page scrolls under it, so
        the head takes the page's own surface and gives the band back with a
@@ -444,32 +299,8 @@
        control height below 60rem). The open element rises over the page's
        sticky parts. */
   }
-  .sf-contents--layout-compact {
-    position: relative;
-    /* Sticky, the button travels with the reader. The page scrolls under it, so
-       the head takes the page's own surface and gives the band back with a
-       negative margin: without it the text shows through the button's gaps and
-       under the progress line. The column keeps the reading width, so the band
-       is the host's own. */
-    /* The reading line lies on the button's own bottom edge (C95 point 4,
-       CT-12, the owner's phone screenshot): inside the border, inset by the
-       corner radius at both ends; no track under the button and no plate below
-       it -- the element ends where the button does. */
-    /* A row of the open list is a menu's row: the control height of the size,
-       the value inset of the size (C77), the panel's inset given back. */
-    /* The current section (C95 point 2): the surface's ink at medium weight
-       and the 2 px line at the row's inline start, as in the column; no fill
-       (a fill says «where I am in the site», sf-menu's, C23). */
-    /* A phone (below md, 44rem, as the form sheet of C32 and sf-input-rich's
-       link editor): the open list is a bottom sheet -- the screen's width up
-       to 44rem, the top corners rounded, the modal shadow, the veil behind it,
-       clear of the safe area; its rows are the phone ladder's (the size's
-       control height below 60rem). The open element rises over the page's
-       sticky parts. */
-  }
-  .sf-contents--layout-sheet.sf-contents--sticky {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--sticky {
     position: sticky;
-    z-index: var(--sf-layer--sticky);
     z-index: var(--sf-contents-z-index, var(--sf-layer--sticky));
     top: var(--sf-contents--top);
     inset-block-start: var(--sf-contents--top);
@@ -480,30 +311,12 @@
     margin-bottom: var(--sf-0);
     margin-block: calc(var(--sf-space-1\/4) * -1) var(--sf-0);
   }
-  .sf-contents--layout-compact.sf-contents--sticky {
-    position: sticky;
-    z-index: var(--sf-layer--sticky);
-    z-index: var(--sf-contents-z-index, var(--sf-layer--sticky));
-    top: var(--sf-contents--top);
-    inset-block-start: var(--sf-contents--top);
-    padding-top: var(--sf-space-1\/4);
-    padding-bottom: var(--sf-0);
-    padding-block: var(--sf-space-1\/4) var(--sf-0);
-    margin-top: calc(var(--sf-space-1\/4) * -1);
-    margin-bottom: var(--sf-0);
-    margin-block: calc(var(--sf-space-1\/4) * -1) var(--sf-0);
-  }
-  .sf-contents--layout-sheet .sf-contents-head {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-head {
     position: relative;
     display: flex;
     flex-direction: column;
   }
-  .sf-contents--layout-compact .sf-contents-head {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-  .sf-contents--layout-sheet .sf-contents-toggle .sf-button-text-container {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-toggle .sf-button-text-container {
     flex: 1 1 auto;
     min-width: 0;
     min-inline-size: 0;
@@ -511,15 +324,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .sf-contents--layout-compact .sf-contents-toggle .sf-button-text-container {
-    flex: 1 1 auto;
-    min-width: 0;
-    min-inline-size: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .sf-contents--layout-sheet .sf-contents-progress {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-progress {
     position: absolute;
     left: var(--sf-radius--ui);
     right: var(--sf-radius--ui);
@@ -533,49 +338,18 @@
     border-radius: var(--sf-px);
     pointer-events: none;
   }
-  .sf-contents--layout-compact .sf-contents-progress {
-    position: absolute;
-    left: var(--sf-radius--ui);
-    right: var(--sf-radius--ui);
-    inset-inline: var(--sf-radius--ui);
-    bottom: var(--sf-px);
-    inset-block-end: var(--sf-px);
-    display: block;
-    height: var(--sf-a2);
-    block-size: var(--sf-a2);
-    overflow: hidden;
-    border-radius: var(--sf-px);
-    pointer-events: none;
-  }
-  .sf-contents--layout-sheet .sf-contents-progress-value {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-progress-value {
     display: block;
     height: 100%;
     block-size: 100%;
-    width: calc(0 * 100%);
-    inline-size: calc(0 * 100%);
-    width: calc(0 * 100%);
     width: calc(var(--sf-contents--progress, 0) * 100%);
     inline-size: calc(var(--sf-contents--progress, 0) * 100%);
   }
-  .sf-contents--layout-compact .sf-contents-progress-value {
-    display: block;
-    height: 100%;
-    block-size: 100%;
-    width: calc(0 * 100%);
-    inline-size: calc(0 * 100%);
-    width: calc(0 * 100%);
-    width: calc(var(--sf-contents--progress, 0) * 100%);
-    inline-size: calc(var(--sf-contents--progress, 0) * 100%);
-  }
-  .sf-contents--layout-sheet .sf-contents-list {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-list {
     display: none;
   }
-  .sf-contents--layout-compact .sf-contents-list {
-    display: none;
-  }
-  .sf-contents--layout-sheet.sf-contents--open .sf-contents-list {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list {
     position: absolute;
-    z-index: var(--sf-layer--sticky);
     z-index: var(--sf-contents-z-index, var(--sf-layer--sticky));
     top: calc(100% + var(--sf-space-1\/4));
     inset-block-start: calc(100% + var(--sf-space-1\/4));
@@ -594,28 +368,7 @@
     border-radius: var(--sf-radius--ui);
     box-shadow: var(--sf-shadow-overlay);
   }
-  .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
-    position: absolute;
-    z-index: var(--sf-layer--sticky);
-    z-index: var(--sf-contents-z-index, var(--sf-layer--sticky));
-    top: calc(100% + var(--sf-space-1\/4));
-    inset-block-start: calc(100% + var(--sf-space-1\/4));
-    left: var(--sf-0);
-    right: var(--sf-0);
-    inset-inline: var(--sf-0);
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    max-height: min(60dvh, var(--sf-g1));
-    max-block-size: min(60dvh, var(--sf-g1));
-    padding: var(--sf-space-1\/4);
-    overflow-y: auto;
-    -ms-scroll-chaining: none;
-        overscroll-behavior: contain;
-    border-radius: var(--sf-radius--ui);
-    box-shadow: var(--sf-shadow-overlay);
-  }
-  .sf-contents--layout-sheet .sf-contents-link {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-link {
     display: flex;
     align-items: center;
     min-height: var(--sf-contents--control-height);
@@ -624,79 +377,17 @@
     padding-right: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
     padding-inline: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
   }
-  .sf-contents--layout-compact .sf-contents-link {
-    display: flex;
-    align-items: center;
-    min-height: var(--sf-contents--control-height);
-    min-block-size: var(--sf-contents--control-height);
-    padding-left: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
-    padding-right: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
-    padding-inline: calc(var(--sf-contents--value-inset) - var(--sf-space-1\/4));
-  }
-  .sf-contents--layout-sheet .sf-contents-link:hover {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-link:hover {
     /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
        keeps its own tone under the pointer. */
   }
-  .sf-contents--layout-compact .sf-contents-link:hover {
-    /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
-       keeps its own tone under the pointer. */
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-sheet .sf-contents-mark{
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-mark:where(:dir(ltr)){
     left: var(--sf-0);
   }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-contents--layout-sheet .sf-contents-mark{
-    left: var(--sf-0);
-    }
-  }
-  .sf-contents--layout-sheet .sf-contents-mark:where(:dir(ltr)){
-    left: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-sheet .sf-contents-mark{
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-mark:where(:dir(rtl)){
     right: var(--sf-0);
   }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-contents--layout-sheet .sf-contents-mark{
-    right: var(--sf-0);
-    }
-  }
-  .sf-contents--layout-sheet .sf-contents-mark:where(:dir(rtl)){
-    right: var(--sf-0);
-  }
-  .sf-contents--layout-sheet .sf-contents-mark {
-    position: absolute;
-    top: var(--sf-space-1\/4);
-    bottom: var(--sf-space-1\/4);
-    inset-block: var(--sf-space-1\/4);
-    inset-inline-start: var(--sf-0);
-    display: block;
-    width: var(--sf-a2);
-    inline-size: var(--sf-a2);
-    border-radius: var(--sf-px);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-compact .sf-contents-mark{
-    left: var(--sf-0);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-contents--layout-compact .sf-contents-mark{
-    left: var(--sf-0);
-    }
-  }
-  .sf-contents--layout-compact .sf-contents-mark:where(:dir(ltr)){
-    left: var(--sf-0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-compact .sf-contents-mark{
-    right: var(--sf-0);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-contents--layout-compact .sf-contents-mark{
-    right: var(--sf-0);
-    }
-  }
-  .sf-contents--layout-compact .sf-contents-mark:where(:dir(rtl)){
-    right: var(--sf-0);
-  }
-  .sf-contents--layout-compact .sf-contents-mark {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-mark {
     position: absolute;
     top: var(--sf-space-1\/4);
     bottom: var(--sf-space-1\/4);
@@ -708,19 +399,13 @@
     border-radius: var(--sf-px);
   }
   @media not all and (min-width: 44rem) {
-    .sf-contents--layout-sheet {
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) {
       /* Before the list in the markup, so at the same level it lies under it. */
     }
-    .sf-contents--layout-compact {
-      /* Before the list in the markup, so at the same level it lies under it. */
-    }
-    .sf-contents--layout-sheet.sf-contents--open {
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open {
       z-index: var(--sf-layer--window);
     }
-    .sf-contents--layout-compact.sf-contents--open {
-      z-index: var(--sf-layer--window);
-    }
-    .sf-contents--layout-sheet.sf-contents--open .sf-contents-veil {
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-veil {
       position: fixed;
       z-index: var(--sf-layer--window);
       top: var(--sf-0);
@@ -730,217 +415,31 @@
       inset: var(--sf-0);
       display: block;
     }
-    .sf-contents--layout-compact.sf-contents--open .sf-contents-veil {
-      position: fixed;
-      z-index: var(--sf-layer--window);
-      top: var(--sf-0);
-      right: var(--sf-0);
-      bottom: var(--sf-0);
-      left: var(--sf-0);
-      inset: var(--sf-0);
-      display: block;
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list:where(:dir(ltr)){
       border-bottom-right-radius: var(--sf-0);
     }
-    @supports not (border-end-end-radius: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
-      border-bottom-right-radius: var(--sf-0);
-      }
-    }
-    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(ltr)){
-      border-bottom-right-radius: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list:where(:dir(rtl)){
       border-bottom-left-radius: var(--sf-0);
     }
-    @supports not (border-end-end-radius: initial){
-    [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
-      border-bottom-left-radius: var(--sf-0);
-      }
-    }
-    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list:where(:dir(ltr)){
       border-bottom-left-radius: var(--sf-0);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
-      border-bottom-left-radius: var(--sf-0);
-    }
-    @supports not (border-end-start-radius: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
-      border-bottom-left-radius: var(--sf-0);
-      }
-    }
-    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(ltr)){
-      border-bottom-left-radius: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list:where(:dir(rtl)){
       border-bottom-right-radius: var(--sf-0);
     }
-    @supports not (border-end-start-radius: initial){
-    [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
-      border-bottom-right-radius: var(--sf-0);
-      }
-    }
-    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(rtl)){
-      border-bottom-right-radius: var(--sf-0);
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list:where(:dir(ltr)){
       border-top-right-radius: var(--sf-radius--surface);
     }
-    @supports not (border-start-end-radius: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
-      border-top-right-radius: var(--sf-radius--surface);
-      }
-    }
-    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(ltr)){
-      border-top-right-radius: var(--sf-radius--surface);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list:where(:dir(rtl)){
       border-top-left-radius: var(--sf-radius--surface);
     }
-    @supports not (border-start-end-radius: initial){
-    [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
-      border-top-left-radius: var(--sf-radius--surface);
-      }
-    }
-    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(rtl)){
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list:where(:dir(ltr)){
       border-top-left-radius: var(--sf-radius--surface);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
-      border-top-left-radius: var(--sf-radius--surface);
-    }
-    @supports not (border-start-start-radius: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
-      border-top-left-radius: var(--sf-radius--surface);
-      }
-    }
-    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(ltr)){
-      border-top-left-radius: var(--sf-radius--surface);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list:where(:dir(rtl)){
       border-top-right-radius: var(--sf-radius--surface);
     }
-    @supports not (border-start-start-radius: initial){
-    [dir="rtl"] .sf-contents--layout-sheet.sf-contents--open .sf-contents-list{
-      border-top-right-radius: var(--sf-radius--surface);
-      }
-    }
-    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list:where(:dir(rtl)){
-      border-top-right-radius: var(--sf-radius--surface);
-    }
-    .sf-contents--layout-sheet.sf-contents--open .sf-contents-list {
-      position: fixed;
-      z-index: var(--sf-layer--window);
-      top: auto;
-      right: var(--sf-0);
-      bottom: var(--sf-0);
-      left: var(--sf-0);
-      inset: auto var(--sf-0) var(--sf-0);
-      width: 100%;
-      inline-size: 100%;
-      max-width: var(--sf-h1);
-      max-inline-size: var(--sf-h1);
-      max-height: 70dvh;
-      max-block-size: 70dvh;
-      margin: var(--sf-0) auto;
-      padding-top: var(--sf-space-1\/2);
-      padding-bottom: calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
-      padding-block: var(--sf-space-1\/2) calc(var(--sf-space-1\/2) + env(safe-area-inset-bottom, var(--sf-a0)));
-      border-end-end-radius: var(--sf-0);
-      border-end-start-radius: var(--sf-0);
-      border-start-end-radius: var(--sf-radius--surface);
-      border-start-start-radius: var(--sf-radius--surface);
-      box-shadow: var(--sf-shadow-modal);
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-bottom-right-radius: var(--sf-0);
-    }
-    @supports not (border-end-end-radius: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-bottom-right-radius: var(--sf-0);
-      }
-    }
-    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(ltr)){
-      border-bottom-right-radius: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-bottom-left-radius: var(--sf-0);
-    }
-    @supports not (border-end-end-radius: initial){
-    [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-bottom-left-radius: var(--sf-0);
-      }
-    }
-    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(rtl)){
-      border-bottom-left-radius: var(--sf-0);
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-bottom-left-radius: var(--sf-0);
-    }
-    @supports not (border-end-start-radius: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-bottom-left-radius: var(--sf-0);
-      }
-    }
-    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(ltr)){
-      border-bottom-left-radius: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-bottom-right-radius: var(--sf-0);
-    }
-    @supports not (border-end-start-radius: initial){
-    [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-bottom-right-radius: var(--sf-0);
-      }
-    }
-    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(rtl)){
-      border-bottom-right-radius: var(--sf-0);
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-top-right-radius: var(--sf-radius--surface);
-    }
-    @supports not (border-start-end-radius: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-top-right-radius: var(--sf-radius--surface);
-      }
-    }
-    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(ltr)){
-      border-top-right-radius: var(--sf-radius--surface);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-top-left-radius: var(--sf-radius--surface);
-    }
-    @supports not (border-start-end-radius: initial){
-    [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-top-left-radius: var(--sf-radius--surface);
-      }
-    }
-    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(rtl)){
-      border-top-left-radius: var(--sf-radius--surface);
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-top-left-radius: var(--sf-radius--surface);
-    }
-    @supports not (border-start-start-radius: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-top-left-radius: var(--sf-radius--surface);
-      }
-    }
-    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(ltr)){
-      border-top-left-radius: var(--sf-radius--surface);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-top-right-radius: var(--sf-radius--surface);
-    }
-    @supports not (border-start-start-radius: initial){
-    [dir="rtl"] .sf-contents--layout-compact.sf-contents--open .sf-contents-list{
-      border-top-right-radius: var(--sf-radius--surface);
-      }
-    }
-    .sf-contents--layout-compact.sf-contents--open .sf-contents-list:where(:dir(rtl)){
-      border-top-right-radius: var(--sf-radius--surface);
-    }
-    .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list {
       position: fixed;
       z-index: var(--sf-layer--window);
       top: auto;
@@ -980,7 +479,6 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: var(--sf-space-1\/2);
     gap: var(--sf-contents-gap, var(--sf-space-1\/2));
   }
   .sf-contents--layout-rail .sf-contents-link {
@@ -1011,24 +509,8 @@
     width: var(--sf-space-3);
     inline-size: var(--sf-space-3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-rail .sf-contents-text{
-    right: calc(100% + var(--sf-space-1\/4));
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-contents--layout-rail .sf-contents-text{
-    right: calc(100% + var(--sf-space-1\/4));
-    }
-  }
   .sf-contents--layout-rail .sf-contents-text:where(:dir(ltr)){
     right: calc(100% + var(--sf-space-1\/4));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-rail .sf-contents-text{
-    left: calc(100% + var(--sf-space-1\/4));
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-contents--layout-rail .sf-contents-text{
-    left: calc(100% + var(--sf-space-1\/4));
-    }
   }
   .sf-contents--layout-rail .sf-contents-text:where(:dir(rtl)){
     left: calc(100% + var(--sf-space-1\/4));
@@ -1054,19 +536,10 @@
     pointer-events: none;
     transition: opacity var(--sf-duration-fast) var(--sf-animation);
   }
-  .sf-contents--layout-rail .sf-contents-list:hover .sf-contents-text {
+  .sf-contents--layout-rail .sf-contents-list:is(:hover,[focus-within]) .sf-contents-text {
     opacity: 1;
   }
-  .sf-contents--layout-rail .sf-contents-list[focus-within] .sf-contents-text {
-    opacity: 1;
-  }
-  .sf-contents--layout-rail .sf-contents-list:hover .sf-contents-text {
-    opacity: 1;
-  }
-  .sf-contents--layout-rail .sf-contents-list[focus-within] .sf-contents-text {
-    opacity: 1;
-  }
-  .sf-contents--layout-rail .sf-contents-list:focus-within .sf-contents-text {
+  .sf-contents--layout-rail .sf-contents-list:is(:hover, :focus-within) .sf-contents-text {
     opacity: 1;
   }
   .sf-contents--layout-rail .sf-contents-count {
@@ -1090,14 +563,12 @@
   }
   .sf-contents--layout-bar.sf-contents--sticky {
     position: sticky;
-    z-index: var(--sf-layer--sticky);
     z-index: var(--sf-contents-z-index, var(--sf-layer--sticky));
     top: var(--sf-contents--top);
     inset-block-start: var(--sf-contents--top);
   }
   .sf-contents--layout-bar .sf-contents-list {
     display: flex;
-    gap: var(--sf-space-1\/4);
     gap: var(--sf-contents-gap, var(--sf-space-1\/4));
     overflow-x: auto;
     scrollbar-width: none;
@@ -1178,28 +649,7 @@
     height: var(--sf-a2);
     block-size: var(--sf-a2);
   }
-  .sf-contents--layout-bar.sf-contents--line-edge {
-    border-bottom: none;
-    -webkit-border-after: none;
-            border-block-end: none;
-    border-bottom-color: revert-layer;
-    border-block-end-color: revert-layer;
-  }
-  .sf-contents--layout-bar.sf-contents--line-none {
-    border-bottom: none;
-    -webkit-border-after: none;
-            border-block-end: none;
-    border-bottom-color: revert-layer;
-    border-block-end-color: revert-layer;
-  }
-  .sf-contents--layout-bar.sf-contents--line-edge .sf-contents-list {
-    border-bottom: none;
-    -webkit-border-after: none;
-            border-block-end: none;
-    border-bottom-color: revert-layer;
-    border-block-end-color: revert-layer;
-  }
-  .sf-contents--layout-bar.sf-contents--line-none .sf-contents-list {
+  .sf-contents--layout-bar:is(.sf-contents--line-edge, .sf-contents--line-none), .sf-contents--layout-bar:is(.sf-contents--line-edge, .sf-contents--line-none) .sf-contents-list {
     border-bottom: none;
     -webkit-border-after: none;
             border-block-end: none;
@@ -1233,41 +683,9 @@
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
-      padding-left: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
-      padding-left: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
-      padding-right: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
-      padding-right: var(--sf-space-1\/2);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label:where(:dir(ltr)){
       padding-left: var(--sf-contents--inset);
       padding-right: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
-      padding-right: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
-      padding-right: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
-      padding-left: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label{
-      padding-left: var(--sf-space-1\/2);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-label:where(:dir(rtl)){
       padding-right: var(--sf-contents--inset);
@@ -1285,27 +703,10 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      gap: var(--sf-0);
       gap: var(--sf-contents-gap, var(--sf-0));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-list::after{
-      left: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-list::after{
-      left: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-list::after:where(:dir(ltr)){
       left: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-list::after{
-      right: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-list::after{
-      right: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-list::after:where(:dir(rtl)){
       right: var(--sf-0);
@@ -1320,41 +721,9 @@
       width: var(--sf-px);
       inline-size: var(--sf-px);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
-      padding-left: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
-      padding-left: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
-      padding-right: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
-      padding-right: var(--sf-space-1\/2);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link:where(:dir(ltr)){
       padding-left: var(--sf-contents--inset);
       padding-right: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
-      padding-right: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
-      padding-right: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
-      padding-left: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link{
-      padding-left: var(--sf-space-1\/2);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-link:where(:dir(rtl)){
       padding-right: var(--sf-contents--inset);
@@ -1382,24 +751,8 @@
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-text {
       display: block;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark{
-      left: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark{
-      left: var(--sf-0);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark:where(:dir(ltr)){
       left: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark{
-      right: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark{
-      right: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark:where(:dir(rtl)){
       right: var(--sf-0);
@@ -1442,7 +795,6 @@
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--sticky {
       position: sticky;
-      z-index: var(--sf-layer--sticky);
       z-index: var(--sf-contents-z-index, var(--sf-layer--sticky));
       top: var(--sf-contents--top);
       inset-block-start: var(--sf-contents--top);
@@ -1484,9 +836,6 @@
       display: block;
       height: 100%;
       block-size: 100%;
-      width: calc(0 * 100%);
-      inline-size: calc(0 * 100%);
-      width: calc(0 * 100%);
       width: calc(var(--sf-contents--progress, 0) * 100%);
       inline-size: calc(var(--sf-contents--progress, 0) * 100%);
     }
@@ -1495,7 +844,6 @@
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list {
       position: absolute;
-      z-index: var(--sf-layer--sticky);
       z-index: var(--sf-contents-z-index, var(--sf-layer--sticky));
       top: calc(100% + var(--sf-space-1\/4));
       inset-block-start: calc(100% + var(--sf-space-1\/4));
@@ -1527,24 +875,8 @@
       /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
          keeps its own tone under the pointer. */
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark{
-      left: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark{
-      left: var(--sf-0);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark:where(:dir(ltr)){
       left: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark{
-      right: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark{
-      right: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-mark:where(:dir(rtl)){
       right: var(--sf-0);
@@ -1577,90 +909,26 @@
         inset: var(--sf-0);
         display: block;
       }
-      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-bottom-right-radius: var(--sf-0);
-      }
-      @supports not (border-end-end-radius: initial){
-      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-bottom-right-radius: var(--sf-0);
-        }
-      }
       .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(ltr)){
         border-bottom-right-radius: var(--sf-0);
-      }
-      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-bottom-left-radius: var(--sf-0);
-      }
-      @supports not (border-end-end-radius: initial){
-      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-bottom-left-radius: var(--sf-0);
-        }
       }
       .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(rtl)){
         border-bottom-left-radius: var(--sf-0);
       }
-      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-bottom-left-radius: var(--sf-0);
-      }
-      @supports not (border-end-start-radius: initial){
-      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-bottom-left-radius: var(--sf-0);
-        }
-      }
       .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(ltr)){
         border-bottom-left-radius: var(--sf-0);
-      }
-      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-bottom-right-radius: var(--sf-0);
-      }
-      @supports not (border-end-start-radius: initial){
-      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-bottom-right-radius: var(--sf-0);
-        }
       }
       .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(rtl)){
         border-bottom-right-radius: var(--sf-0);
       }
-      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-top-right-radius: var(--sf-radius--surface);
-      }
-      @supports not (border-start-end-radius: initial){
-      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-top-right-radius: var(--sf-radius--surface);
-        }
-      }
       .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(ltr)){
         border-top-right-radius: var(--sf-radius--surface);
-      }
-      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-top-left-radius: var(--sf-radius--surface);
-      }
-      @supports not (border-start-end-radius: initial){
-      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-top-left-radius: var(--sf-radius--surface);
-        }
       }
       .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(rtl)){
         border-top-left-radius: var(--sf-radius--surface);
       }
-      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-top-left-radius: var(--sf-radius--surface);
-      }
-      @supports not (border-start-start-radius: initial){
-      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-top-left-radius: var(--sf-radius--surface);
-        }
-      }
       .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(ltr)){
         border-top-left-radius: var(--sf-radius--surface);
-      }
-      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-top-right-radius: var(--sf-radius--surface);
-      }
-      @supports not (border-start-start-radius: initial){
-      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list{
-        border-top-right-radius: var(--sf-radius--surface);
-        }
       }
       .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list:where(:dir(rtl)){
         border-top-right-radius: var(--sf-radius--surface);
@@ -1713,41 +981,9 @@
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
-      padding-left: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
-      padding-left: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
-      padding-right: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
-      padding-right: var(--sf-space-1\/2);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label:where(:dir(ltr)){
       padding-left: var(--sf-contents--inset);
       padding-right: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
-      padding-right: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
-      padding-right: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
-      padding-left: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label{
-      padding-left: var(--sf-space-1\/2);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-label:where(:dir(rtl)){
       padding-right: var(--sf-contents--inset);
@@ -1765,27 +1001,10 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      gap: var(--sf-0);
       gap: var(--sf-contents-gap, var(--sf-0));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-list::after{
-      left: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-list::after{
-      left: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-list::after:where(:dir(ltr)){
       left: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-list::after{
-      right: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-list::after{
-      right: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-list::after:where(:dir(rtl)){
       right: var(--sf-0);
@@ -1800,41 +1019,9 @@
       width: var(--sf-px);
       inline-size: var(--sf-px);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
-      padding-left: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
-      padding-left: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
-      padding-right: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
-      padding-right: var(--sf-space-1\/2);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link:where(:dir(ltr)){
       padding-left: var(--sf-contents--inset);
       padding-right: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
-      padding-right: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
-      padding-right: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
-      padding-left: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link{
-      padding-left: var(--sf-space-1\/2);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-link:where(:dir(rtl)){
       padding-right: var(--sf-contents--inset);
@@ -1862,24 +1049,8 @@
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-text {
       display: block;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark{
-      left: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark{
-      left: var(--sf-0);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark:where(:dir(ltr)){
       left: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark{
-      right: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark{
-      right: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark:where(:dir(rtl)){
       right: var(--sf-0);
@@ -1922,7 +1093,6 @@
     }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--sticky {
       position: sticky;
-      z-index: var(--sf-layer--sticky);
       z-index: var(--sf-contents-z-index, var(--sf-layer--sticky));
       top: var(--sf-contents--top);
       inset-block-start: var(--sf-contents--top);
@@ -1964,9 +1134,6 @@
       display: block;
       height: 100%;
       block-size: 100%;
-      width: calc(0 * 100%);
-      inline-size: calc(0 * 100%);
-      width: calc(0 * 100%);
       width: calc(var(--sf-contents--progress, 0) * 100%);
       inline-size: calc(var(--sf-contents--progress, 0) * 100%);
     }
@@ -1975,7 +1142,6 @@
     }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list {
       position: absolute;
-      z-index: var(--sf-layer--sticky);
       z-index: var(--sf-contents-z-index, var(--sf-layer--sticky));
       top: calc(100% + var(--sf-space-1\/4));
       inset-block-start: calc(100% + var(--sf-space-1\/4));
@@ -2007,24 +1173,8 @@
       /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
          keeps its own tone under the pointer. */
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark{
-      left: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark{
-      left: var(--sf-0);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark:where(:dir(ltr)){
       left: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark{
-      right: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark{
-      right: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-mark:where(:dir(rtl)){
       right: var(--sf-0);
@@ -2058,90 +1208,26 @@
       inset: var(--sf-0);
       display: block;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-bottom-right-radius: var(--sf-0);
-    }
-    @supports not (border-end-end-radius: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-bottom-right-radius: var(--sf-0);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(ltr)){
       border-bottom-right-radius: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-bottom-left-radius: var(--sf-0);
-    }
-    @supports not (border-end-end-radius: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-bottom-left-radius: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(rtl)){
       border-bottom-left-radius: var(--sf-0);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-bottom-left-radius: var(--sf-0);
-    }
-    @supports not (border-end-start-radius: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-bottom-left-radius: var(--sf-0);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(ltr)){
       border-bottom-left-radius: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-bottom-right-radius: var(--sf-0);
-    }
-    @supports not (border-end-start-radius: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-bottom-right-radius: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(rtl)){
       border-bottom-right-radius: var(--sf-0);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-top-right-radius: var(--sf-radius--surface);
-    }
-    @supports not (border-start-end-radius: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-top-right-radius: var(--sf-radius--surface);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(ltr)){
       border-top-right-radius: var(--sf-radius--surface);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-top-left-radius: var(--sf-radius--surface);
-    }
-    @supports not (border-start-end-radius: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-top-left-radius: var(--sf-radius--surface);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(rtl)){
       border-top-left-radius: var(--sf-radius--surface);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-top-left-radius: var(--sf-radius--surface);
-    }
-    @supports not (border-start-start-radius: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-top-left-radius: var(--sf-radius--surface);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(ltr)){
       border-top-left-radius: var(--sf-radius--surface);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-top-right-radius: var(--sf-radius--surface);
-    }
-    @supports not (border-start-start-radius: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list{
-      border-top-right-radius: var(--sf-radius--surface);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list:where(:dir(rtl)){
       border-top-right-radius: var(--sf-radius--surface);
@@ -2193,41 +1279,9 @@
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
-      padding-left: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
-      padding-left: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
-      padding-right: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
-      padding-right: var(--sf-space-1\/2);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label:where(:dir(ltr)){
       padding-left: var(--sf-contents--inset);
       padding-right: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
-      padding-right: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
-      padding-right: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
-      padding-left: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label{
-      padding-left: var(--sf-space-1\/2);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-label:where(:dir(rtl)){
       padding-right: var(--sf-contents--inset);
@@ -2245,27 +1299,10 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      gap: var(--sf-0);
       gap: var(--sf-contents-gap, var(--sf-0));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-list::after{
-      left: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-list::after{
-      left: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-list::after:where(:dir(ltr)){
       left: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-list::after{
-      right: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-list::after{
-      right: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-list::after:where(:dir(rtl)){
       right: var(--sf-0);
@@ -2280,41 +1317,9 @@
       width: var(--sf-px);
       inline-size: var(--sf-px);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
-      padding-left: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
-      padding-left: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
-      padding-right: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
-      padding-right: var(--sf-space-1\/2);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link:where(:dir(ltr)){
       padding-left: var(--sf-contents--inset);
       padding-right: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
-      padding-right: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
-      padding-right: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
-      padding-left: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link{
-      padding-left: var(--sf-space-1\/2);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-link:where(:dir(rtl)){
       padding-right: var(--sf-contents--inset);
@@ -2342,24 +1347,8 @@
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-text {
       display: block;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark{
-      left: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark{
-      left: var(--sf-0);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark:where(:dir(ltr)){
       left: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark{
-      right: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark{
-      right: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark:where(:dir(rtl)){
       right: var(--sf-0);
@@ -2402,7 +1391,6 @@
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--sticky {
       position: sticky;
-      z-index: var(--sf-layer--sticky);
       z-index: var(--sf-contents-z-index, var(--sf-layer--sticky));
       top: var(--sf-contents--top);
       inset-block-start: var(--sf-contents--top);
@@ -2444,9 +1432,6 @@
       display: block;
       height: 100%;
       block-size: 100%;
-      width: calc(0 * 100%);
-      inline-size: calc(0 * 100%);
-      width: calc(0 * 100%);
       width: calc(var(--sf-contents--progress, 0) * 100%);
       inline-size: calc(var(--sf-contents--progress, 0) * 100%);
     }
@@ -2455,7 +1440,6 @@
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list {
       position: absolute;
-      z-index: var(--sf-layer--sticky);
       z-index: var(--sf-contents-z-index, var(--sf-layer--sticky));
       top: calc(100% + var(--sf-space-1\/4));
       inset-block-start: calc(100% + var(--sf-space-1\/4));
@@ -2487,24 +1471,8 @@
       /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
          keeps its own tone under the pointer. */
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark{
-      left: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark{
-      left: var(--sf-0);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark:where(:dir(ltr)){
       left: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark{
-      right: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark{
-      right: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-mark:where(:dir(rtl)){
       right: var(--sf-0);
@@ -2537,90 +1505,26 @@
         inset: var(--sf-0);
         display: block;
       }
-      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-bottom-right-radius: var(--sf-0);
-      }
-      @supports not (border-end-end-radius: initial){
-      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-bottom-right-radius: var(--sf-0);
-        }
-      }
       .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(ltr)){
         border-bottom-right-radius: var(--sf-0);
-      }
-      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-bottom-left-radius: var(--sf-0);
-      }
-      @supports not (border-end-end-radius: initial){
-      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-bottom-left-radius: var(--sf-0);
-        }
       }
       .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(rtl)){
         border-bottom-left-radius: var(--sf-0);
       }
-      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-bottom-left-radius: var(--sf-0);
-      }
-      @supports not (border-end-start-radius: initial){
-      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-bottom-left-radius: var(--sf-0);
-        }
-      }
       .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(ltr)){
         border-bottom-left-radius: var(--sf-0);
-      }
-      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-bottom-right-radius: var(--sf-0);
-      }
-      @supports not (border-end-start-radius: initial){
-      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-bottom-right-radius: var(--sf-0);
-        }
       }
       .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(rtl)){
         border-bottom-right-radius: var(--sf-0);
       }
-      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-top-right-radius: var(--sf-radius--surface);
-      }
-      @supports not (border-start-end-radius: initial){
-      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-top-right-radius: var(--sf-radius--surface);
-        }
-      }
       .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(ltr)){
         border-top-right-radius: var(--sf-radius--surface);
-      }
-      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-top-left-radius: var(--sf-radius--surface);
-      }
-      @supports not (border-start-end-radius: initial){
-      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-top-left-radius: var(--sf-radius--surface);
-        }
       }
       .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(rtl)){
         border-top-left-radius: var(--sf-radius--surface);
       }
-      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-top-left-radius: var(--sf-radius--surface);
-      }
-      @supports not (border-start-start-radius: initial){
-      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-top-left-radius: var(--sf-radius--surface);
-        }
-      }
       .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(ltr)){
         border-top-left-radius: var(--sf-radius--surface);
-      }
-      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-top-right-radius: var(--sf-radius--surface);
-      }
-      @supports not (border-start-start-radius: initial){
-      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list{
-        border-top-right-radius: var(--sf-radius--surface);
-        }
       }
       .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list:where(:dir(rtl)){
         border-top-right-radius: var(--sf-radius--surface);
@@ -2673,41 +1577,9 @@
       -ms-scroll-chaining: none;
           overscroll-behavior: contain;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
-      padding-left: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
-      padding-left: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
-      padding-right: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
-      padding-right: var(--sf-space-1\/2);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label:where(:dir(ltr)){
       padding-left: var(--sf-contents--inset);
       padding-right: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
-      padding-right: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
-      padding-right: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
-      padding-left: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label{
-      padding-left: var(--sf-space-1\/2);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-label:where(:dir(rtl)){
       padding-right: var(--sf-contents--inset);
@@ -2725,27 +1597,10 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      gap: var(--sf-0);
       gap: var(--sf-contents-gap, var(--sf-0));
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-list::after{
-      left: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-list::after{
-      left: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-list::after:where(:dir(ltr)){
       left: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-list::after{
-      right: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-list::after{
-      right: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-list::after:where(:dir(rtl)){
       right: var(--sf-0);
@@ -2760,41 +1615,9 @@
       width: var(--sf-px);
       inline-size: var(--sf-px);
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
-      padding-left: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
-      padding-left: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
-      padding-right: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
-      padding-right: var(--sf-space-1\/2);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link:where(:dir(ltr)){
       padding-left: var(--sf-contents--inset);
       padding-right: var(--sf-space-1\/2);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
-      padding-right: var(--sf-contents--inset);
-    }
-    @supports not (padding-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
-      padding-right: var(--sf-contents--inset);
-      }
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
-      padding-left: var(--sf-space-1\/2);
-    }
-    @supports not (padding-inline-end: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link{
-      padding-left: var(--sf-space-1\/2);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-link:where(:dir(rtl)){
       padding-right: var(--sf-contents--inset);
@@ -2822,24 +1645,8 @@
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-text {
       display: block;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark{
-      left: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark{
-      left: var(--sf-0);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark:where(:dir(ltr)){
       left: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark{
-      right: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark{
-      right: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark:where(:dir(rtl)){
       right: var(--sf-0);
@@ -2882,7 +1689,6 @@
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--sticky {
       position: sticky;
-      z-index: var(--sf-layer--sticky);
       z-index: var(--sf-contents-z-index, var(--sf-layer--sticky));
       top: var(--sf-contents--top);
       inset-block-start: var(--sf-contents--top);
@@ -2924,9 +1730,6 @@
       display: block;
       height: 100%;
       block-size: 100%;
-      width: calc(0 * 100%);
-      inline-size: calc(0 * 100%);
-      width: calc(0 * 100%);
       width: calc(var(--sf-contents--progress, 0) * 100%);
       inline-size: calc(var(--sf-contents--progress, 0) * 100%);
     }
@@ -2935,7 +1738,6 @@
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list {
       position: absolute;
-      z-index: var(--sf-layer--sticky);
       z-index: var(--sf-contents-z-index, var(--sf-layer--sticky));
       top: calc(100% + var(--sf-space-1\/4));
       inset-block-start: calc(100% + var(--sf-space-1\/4));
@@ -2967,24 +1769,8 @@
       /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
          keeps its own tone under the pointer. */
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark{
-      left: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark{
-      left: var(--sf-0);
-      }
-    }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark:where(:dir(ltr)){
       left: var(--sf-0);
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark{
-      right: var(--sf-0);
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark{
-      right: var(--sf-0);
-      }
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-mark:where(:dir(rtl)){
       right: var(--sf-0);
@@ -3017,90 +1803,26 @@
         inset: var(--sf-0);
         display: block;
       }
-      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-bottom-right-radius: var(--sf-0);
-      }
-      @supports not (border-end-end-radius: initial){
-      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-bottom-right-radius: var(--sf-0);
-        }
-      }
       .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(ltr)){
         border-bottom-right-radius: var(--sf-0);
-      }
-      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-bottom-left-radius: var(--sf-0);
-      }
-      @supports not (border-end-end-radius: initial){
-      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-bottom-left-radius: var(--sf-0);
-        }
       }
       .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(rtl)){
         border-bottom-left-radius: var(--sf-0);
       }
-      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-bottom-left-radius: var(--sf-0);
-      }
-      @supports not (border-end-start-radius: initial){
-      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-bottom-left-radius: var(--sf-0);
-        }
-      }
       .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(ltr)){
         border-bottom-left-radius: var(--sf-0);
-      }
-      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-bottom-right-radius: var(--sf-0);
-      }
-      @supports not (border-end-start-radius: initial){
-      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-bottom-right-radius: var(--sf-0);
-        }
       }
       .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(rtl)){
         border-bottom-right-radius: var(--sf-0);
       }
-      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-top-right-radius: var(--sf-radius--surface);
-      }
-      @supports not (border-start-end-radius: initial){
-      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-top-right-radius: var(--sf-radius--surface);
-        }
-      }
       .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(ltr)){
         border-top-right-radius: var(--sf-radius--surface);
-      }
-      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-top-left-radius: var(--sf-radius--surface);
-      }
-      @supports not (border-start-end-radius: initial){
-      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-top-left-radius: var(--sf-radius--surface);
-        }
       }
       .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(rtl)){
         border-top-left-radius: var(--sf-radius--surface);
       }
-      _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-top-left-radius: var(--sf-radius--surface);
-      }
-      @supports not (border-start-start-radius: initial){
-      html:not([dir="rtl"]) .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-top-left-radius: var(--sf-radius--surface);
-        }
-      }
       .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(ltr)){
         border-top-left-radius: var(--sf-radius--surface);
-      }
-      _:-ms-input-placeholder, [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-top-right-radius: var(--sf-radius--surface);
-      }
-      @supports not (border-start-start-radius: initial){
-      [dir="rtl"] .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list{
-        border-top-right-radius: var(--sf-radius--surface);
-        }
       }
       .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list:where(:dir(rtl)){
         border-top-right-radius: var(--sf-radius--surface);
@@ -3183,7 +1905,7 @@
   .sf-contents--layout-column .sf-contents-link[aria-current=location] .sf-contents-mark {
     background-color: var(--sf-contents--current);
   }
-  .sf-contents--layout-sheet {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) {
     /* Sticky, the button travels with the reader. The page scrolls under it, so
        the head takes the page's own surface and gives the band back with a
        negative margin: without it the text shows through the button's gaps and
@@ -3205,50 +1927,16 @@
        control height below 60rem). The open element rises over the page's
        sticky parts. */
   }
-  .sf-contents--layout-compact {
-    /* Sticky, the button travels with the reader. The page scrolls under it, so
-       the head takes the page's own surface and gives the band back with a
-       negative margin: without it the text shows through the button's gaps and
-       under the progress line. The column keeps the reading width, so the band
-       is the host's own. */
-    /* The reading line lies on the button's own bottom edge (C95 point 4,
-       CT-12, the owner's phone screenshot): inside the border, inset by the
-       corner radius at both ends; no track under the button and no plate below
-       it -- the element ends where the button does. */
-    /* A row of the open list is a menu's row: the control height of the size,
-       the value inset of the size (C77), the panel's inset given back. */
-    /* The current section (C95 point 2): the surface's ink at medium weight
-       and the 2 px line at the row's inline start, as in the column; no fill
-       (a fill says «where I am in the site», sf-menu's, C23). */
-    /* A phone (below md, 44rem, as the form sheet of C32 and sf-input-rich's
-       link editor): the open list is a bottom sheet -- the screen's width up
-       to 44rem, the top corners rounded, the modal shadow, the veil behind it,
-       clear of the safe area; its rows are the phone ladder's (the size's
-       control height below 60rem). The open element rises over the page's
-       sticky parts. */
-  }
-  .sf-contents--layout-sheet.sf-contents--sticky {
-    background-color: var(--sf-surface-page);
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--sticky {
     background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
   }
-  .sf-contents--layout-compact.sf-contents--sticky {
-    background-color: var(--sf-surface-page);
-    background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
-  }
-  .sf-contents--layout-sheet .sf-contents-progress {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-progress {
     background-color: var(--sf-contents--line);
   }
-  .sf-contents--layout-compact .sf-contents-progress {
-    background-color: var(--sf-contents--line);
-  }
-  .sf-contents--layout-sheet .sf-contents-progress-value {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-progress-value {
     background-color: var(--sf-contents--current);
   }
-  .sf-contents--layout-compact .sf-contents-progress-value {
-    background-color: var(--sf-contents--current);
-  }
-  .sf-contents--layout-sheet.sf-contents--open .sf-contents-list {
-    background-color: var(--sf-surface-popup);
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list {
     background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
     --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
     --sf-surface-place-solid: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
@@ -3284,54 +1972,12 @@
     --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
   }
-  .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
-    background-color: var(--sf-surface-popup);
-    background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
-    --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
-    --sf-surface-place-solid: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
-    --sf-surface-place-ground: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
-    --sf-place--ink-variant: var(--sf-on-surface-container-variant);
-    --sf-place--ink: initial;
-    --sf-place--fill-surface: light-dark(var(--sf-surface-container), transparent);
-    --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
-    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-85));
-    --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
-    --sf-on-surface-variant: var(--sf-on-surface-popup-variant);
-    --sf-on-surface-container-variant: var(--sf-place--popup-container-variant, light-dark(var(--sf-neutral-35), var(--sf-neutral-90)));
-    --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
-    --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-surface-state-active: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
-    --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
-    --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
-    --sf-outline: var(--sf-place--popup-outline, light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48)));
-    --sf-surface-disabled: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
-    --sf-on-surface-disabled: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-90--alfa-48));
-    --sf-on-surface-muted: var(--sf-on-surface-disabled);
-    --sf-surface-underlay: initial;
-    --sf-surface-place-fill: initial;
-    --sf-disable: var(--sf-surface-disabled);
-    --sf-on-disable: var(--sf-on-surface-disabled);
-    --sf-on-surface-container--variant: var(--sf-on-surface-container-variant);
-    --sf-surface-transparent-active: var(--sf-surface-state-active);
-    --sf-surface-transparent-hover: var(--sf-surface-state-hover);
-    --sf-surface-transparent-select: var(--sf-surface-state-select);
-    --sf-code--color: var(--sf-on-surface);
-    --sf-code--background: var(--sf-surface-container);
-    --sf-place--container-outline: initial;
-  }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list {
     --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
     --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
     --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-85));
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
-    --sf-outline-variant: light-dark(var(--sf-neutral-50--alfa-24), var(--sf-neutral-90--alfa-24));
-    --sf-on-surface-hover: light-dark(var(--sf-neutral-15), var(--sf-neutral-85));
-    --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-85));
-  }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list {
+  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
     --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
     --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -3368,44 +2014,7 @@
     --sf-place--control-active: initial;
     --sf-place--tonal-edge: initial;
   }
-  :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo) .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
-    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
-    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
-    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
-    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
-    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
-    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
-    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
-    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
-    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
-    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
-    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
-    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
-    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
-    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
-    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
-    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
-    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
-    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
-    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
-    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
-    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
-    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
-    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
-    --sf-place--plate: initial;
-    --sf-place--on-plate: initial;
-    --sf-place--fill-placeholder: initial;
-    --sf-place--control-hover: initial;
-    --sf-place--control-active: initial;
-    --sf-place--tonal-edge: initial;
-  }
-  :where(.sf-surface-media) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list {
+  :where(.sf-surface-media) :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list {
     --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
     --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
     --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
@@ -3438,40 +2047,7 @@
     --sf-place--control-hover: initial;
     --sf-place--control-active: initial;
   }
-  :where(.sf-surface-media) .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
-    --sf-primary: var(--sf-place--outer-primary, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-primary-hover: var(--sf-place--outer-primary-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-primary-active: var(--sf-place--outer-primary-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-on-primary: var(--sf-place--outer-on-primary, light-dark(var(--sf-white), var(--sf-primary-20)));
-    --sf-primary-container: var(--sf-place--outer-primary-container, light-dark(var(--sf-primary-50--alfa-12), var(--sf-primary-50--alfa-24)));
-    --sf-primary-container-hover: var(--sf-place--outer-primary-container-hover, light-dark(var(--sf-primary-50--alfa-16), var(--sf-primary-50--alfa-28)));
-    --sf-primary-container-active: var(--sf-place--outer-primary-container-active, light-dark(var(--sf-primary-50--alfa-20), var(--sf-primary-50--alfa-32)));
-    --sf-on-primary-container: var(--sf-place--outer-on-primary-container, light-dark(var(--sf-primary-10), var(--sf-primary-90)));
-    --sf-link: var(--sf-place--outer-link, light-dark(var(--sf-primary-40), var(--sf-primary-80)));
-    --sf-link-hover: var(--sf-place--outer-link-hover, light-dark(var(--sf-primary-35), var(--sf-primary-85)));
-    --sf-link-active: var(--sf-place--outer-link-active, light-dark(var(--sf-primary-30), var(--sf-primary-90)));
-    --sf-link-visited: var(--sf-place--outer-link-visited, light-dark(var(--sf-tertiary-40), var(--sf-tertiary-80)));
-    --sf-focus: var(--sf-place--outer-focus, light-dark(var(--sf-primary-50), var(--sf-primary-90)));
-    --sf-on-primary-container-graphic: var(--sf-place--outer-on-primary-container-graphic, light-dark(var(--sf-primary-50), var(--sf-primary-70)));
-    --sf-on-secondary-container: var(--sf-place--outer-on-secondary-container, light-dark(var(--sf-secondary-10), var(--sf-secondary-90)));
-    --sf-on-secondary-container-graphic: var(--sf-place--outer-on-secondary-container-graphic, light-dark(var(--sf-secondary-50), var(--sf-secondary-70)));
-    --sf-on-tertiary-container: var(--sf-place--outer-on-tertiary-container, light-dark(var(--sf-tertiary-10), var(--sf-tertiary-90)));
-    --sf-on-tertiary-container-graphic: var(--sf-place--outer-on-tertiary-container-graphic, light-dark(var(--sf-tertiary-50), var(--sf-tertiary-70)));
-    --sf-on-info-container: var(--sf-place--outer-on-info-container, light-dark(var(--sf-info-10), var(--sf-info-90)));
-    --sf-on-info-container-graphic: var(--sf-place--outer-on-info-container-graphic, light-dark(var(--sf-info-50), var(--sf-info-70)));
-    --sf-on-success-container: var(--sf-place--outer-on-success-container, light-dark(var(--sf-success-10), var(--sf-success-90)));
-    --sf-on-success-container-graphic: var(--sf-place--outer-on-success-container-graphic, light-dark(var(--sf-success-50), var(--sf-success-70)));
-    --sf-on-warning-container: var(--sf-place--outer-on-warning-container, light-dark(var(--sf-warning-10), var(--sf-warning-90)));
-    --sf-on-warning-container-graphic: var(--sf-place--outer-on-warning-container-graphic, light-dark(var(--sf-warning-50), var(--sf-warning-70)));
-    --sf-on-error-container: var(--sf-place--outer-on-error-container, light-dark(var(--sf-error-10), var(--sf-error-90)));
-    --sf-on-error-container-graphic: var(--sf-place--outer-on-error-container-graphic, light-dark(var(--sf-error-50), var(--sf-error-70)));
-    --sf-on-neutral-container: var(--sf-place--outer-on-neutral-container, light-dark(var(--sf-neutral-10), var(--sf-neutral-90)));
-    --sf-on-neutral-container-graphic: var(--sf-place--outer-on-neutral-container-graphic, light-dark(var(--sf-neutral-50), var(--sf-neutral-70)));
-    --sf-focus--color: var(--sf-place--outer-focus--color, var(--sf-focus));
-    --sf-place--control-hover: initial;
-    --sf-place--control-active: initial;
-  }
-  :where(.bg-surface-4) .sf-contents--layout-sheet.sf-contents--open .sf-contents-list {
+  :where(.bg-surface-4) :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list {
     --sf-primary: var(--sf-place--found-primary);
     --sf-primary-hover: var(--sf-place--found-primary-hover);
     --sf-primary-active: var(--sf-place--found-primary-active);
@@ -3479,15 +2055,7 @@
     --sf-link-hover: var(--sf-place--found-link-hover);
     --sf-link-active: var(--sf-place--found-link-active);
   }
-  :where(.bg-surface-4) .sf-contents--layout-compact.sf-contents--open .sf-contents-list {
-    --sf-primary: var(--sf-place--found-primary);
-    --sf-primary-hover: var(--sf-place--found-primary-hover);
-    --sf-primary-active: var(--sf-place--found-primary-active);
-    --sf-link: var(--sf-place--found-link);
-    --sf-link-hover: var(--sf-place--found-link-hover);
-    --sf-link-active: var(--sf-place--found-link-active);
-  }
-  .sf-contents--layout-sheet.sf-contents--open .sf-contents-list > * {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-list > * {
     --sf-surface-popup: var(--sf-surface-popup-nested);
     --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
     --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
@@ -3495,71 +2063,33 @@
     --sf-elevation-3--surface: var(--sf-surface-popup);
     --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
   }
-  .sf-contents--layout-compact.sf-contents--open .sf-contents-list > * {
-    --sf-surface-popup: var(--sf-surface-popup-nested);
-    --sf-on-surface-popup-variant: var(--sf-on-surface-popup-nested-variant);
-    --sf-place--popup-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-95));
-    --sf-place--popup-outline: light-dark(var(--sf-neutral-50--alfa-80), var(--sf-neutral-70));
-    --sf-elevation-3--surface: var(--sf-surface-popup);
-    --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
-  }
-  .sf-contents--layout-sheet .sf-contents-link {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-link {
     color: var(--sf-on-surface);
   }
-  .sf-contents--layout-compact .sf-contents-link {
-    color: var(--sf-on-surface);
-  }
-  .sf-contents--layout-sheet .sf-contents-item:not([data-depth="0"]) .sf-contents-link {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-item:not([data-depth="0"]) .sf-contents-link {
     color: var(--sf-contents--color);
   }
-  .sf-contents--layout-compact .sf-contents-item:not([data-depth="0"]) .sf-contents-link {
-    color: var(--sf-contents--color);
-  }
-  .sf-contents--layout-sheet .sf-contents-link:hover {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-link:hover {
     background-color: var(--sf-surface-container-hover);
     /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
        keeps its own tone under the pointer. */
     --sf-surface-underlay: var(--sf-surface-place-solid);
     --sf-surface-place-fill: var(--sf-surface-container-hover);
   }
-  .sf-contents--layout-compact .sf-contents-link:hover {
-    background-color: var(--sf-surface-container-hover);
-    /* A translucent fill, as a menu's row (C43 D4): the count's tonal badge
-       keeps its own tone under the pointer. */
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-surface-container-hover);
-  }
-  .sf-contents--layout-sheet .sf-contents-link[aria-current=location] {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-link[aria-current=location] {
     color: var(--sf-on-surface);
   }
-  .sf-contents--layout-compact .sf-contents-link[aria-current=location] {
-    color: var(--sf-on-surface);
-  }
-  .sf-contents--layout-sheet .sf-contents-mark {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-mark {
     background-color: transparent;
   }
-  .sf-contents--layout-compact .sf-contents-mark {
-    background-color: transparent;
-  }
-  .sf-contents--layout-sheet .sf-contents-link[aria-current=location] .sf-contents-mark {
-    background-color: var(--sf-contents--current);
-  }
-  .sf-contents--layout-compact .sf-contents-link[aria-current=location] .sf-contents-mark {
+  :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) .sf-contents-link[aria-current=location] .sf-contents-mark {
     background-color: var(--sf-contents--current);
   }
   @media not all and (min-width: 44rem) {
-    .sf-contents--layout-sheet {
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact) {
       /* Before the list in the markup, so at the same level it lies under it. */
     }
-    .sf-contents--layout-compact {
-      /* Before the list in the markup, so at the same level it lies under it. */
-    }
-    .sf-contents--layout-sheet.sf-contents--open .sf-contents-veil {
-      background-color: var(--sf-black--alfa-64);
-      background-color: var(--sf-scrim-color, var(--sf-black--alfa-64));
-    }
-    .sf-contents--layout-compact.sf-contents--open .sf-contents-veil {
-      background-color: var(--sf-black--alfa-64);
+    :is(.sf-contents--layout-sheet, .sf-contents--layout-compact).sf-contents--open .sf-contents-veil {
       background-color: var(--sf-scrim-color, var(--sf-black--alfa-64));
     }
   }
@@ -3717,13 +2247,11 @@
   .sf-contents--layout-bar .sf-contents-list {
     border-bottom-color: var(--sf-contents--line);
     border-block-end-color: var(--sf-contents--line);
-    background-color: var(--sf-surface-page);
     background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
   }
   .sf-contents--layout-bar.sf-contents--overflow-more {
     border-bottom-color: var(--sf-contents--line);
     border-block-end-color: var(--sf-contents--line);
-    background-color: var(--sf-surface-page);
     background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
   }
   .sf-contents--layout-bar.sf-contents--overflow-more .sf-contents-list {
@@ -3738,22 +2266,7 @@
   .sf-contents--layout-bar .sf-contents-link[aria-current=location] .sf-contents-mark {
     background-color: var(--sf-contents--current);
   }
-  .sf-contents--layout-bar.sf-contents--line-edge {
-    border-bottom: none;
-    -webkit-border-after: none;
-            border-block-end: none;
-  }
-  .sf-contents--layout-bar.sf-contents--line-none {
-    border-bottom: none;
-    -webkit-border-after: none;
-            border-block-end: none;
-  }
-  .sf-contents--layout-bar.sf-contents--line-edge .sf-contents-list {
-    border-bottom: none;
-    -webkit-border-after: none;
-            border-block-end: none;
-  }
-  .sf-contents--layout-bar.sf-contents--line-none .sf-contents-list {
+  .sf-contents--layout-bar:is(.sf-contents--line-edge, .sf-contents--line-none), .sf-contents--layout-bar:is(.sf-contents--line-edge, .sf-contents--line-none) .sf-contents-list {
     border-bottom: none;
     -webkit-border-after: none;
             border-block-end: none;
@@ -3807,7 +2320,6 @@
          sticky parts. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--sticky {
-      background-color: var(--sf-surface-page);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm .sf-contents-progress {
@@ -3817,7 +2329,6 @@
       background-color: var(--sf-contents--current);
     }
     .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-list {
-      background-color: var(--sf-surface-popup);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place-solid: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
@@ -3971,7 +2482,6 @@
         /* Before the list in the markup, so at the same level it lies under it. */
       }
       .sf-contents--layout-auto.sf-contents--collapse-sm.sf-contents--open .sf-contents-veil {
-        background-color: var(--sf-black--alfa-64);
         background-color: var(--sf-scrim-color, var(--sf-black--alfa-64));
       }
     }
@@ -4025,7 +2535,6 @@
          sticky parts. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--sticky {
-      background-color: var(--sf-surface-page);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
     }
     .sf-contents--layout-auto.sf-contents--collapse-md .sf-contents-progress {
@@ -4035,7 +2544,6 @@
       background-color: var(--sf-contents--current);
     }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-list {
-      background-color: var(--sf-surface-popup);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place-solid: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
@@ -4190,7 +2698,6 @@
       /* Before the list in the markup, so at the same level it lies under it. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-md.sf-contents--open .sf-contents-veil {
-      background-color: var(--sf-black--alfa-64);
       background-color: var(--sf-scrim-color, var(--sf-black--alfa-64));
     }
   }
@@ -4243,7 +2750,6 @@
          sticky parts. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--sticky {
-      background-color: var(--sf-surface-page);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg .sf-contents-progress {
@@ -4253,7 +2759,6 @@
       background-color: var(--sf-contents--current);
     }
     .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-list {
-      background-color: var(--sf-surface-popup);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place-solid: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
@@ -4407,7 +2912,6 @@
         /* Before the list in the markup, so at the same level it lies under it. */
       }
       .sf-contents--layout-auto.sf-contents--collapse-lg.sf-contents--open .sf-contents-veil {
-        background-color: var(--sf-black--alfa-64);
         background-color: var(--sf-scrim-color, var(--sf-black--alfa-64));
       }
     }
@@ -4461,7 +2965,6 @@
          sticky parts. */
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--sticky {
-      background-color: var(--sf-surface-page);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-page)));
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl .sf-contents-progress {
@@ -4471,7 +2974,6 @@
       background-color: var(--sf-contents--current);
     }
     .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-list {
-      background-color: var(--sf-surface-popup);
       background-color: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
       --sf-surface-place-solid: var(--sf-contents-background-color, var(--sf-contents-background, var(--sf-surface-popup)));
@@ -4625,7 +3127,6 @@
         /* Before the list in the markup, so at the same level it lies under it. */
       }
       .sf-contents--layout-auto.sf-contents--collapse-xl.sf-contents--open .sf-contents-veil {
-        background-color: var(--sf-black--alfa-64);
         background-color: var(--sf-scrim-color, var(--sf-black--alfa-64));
       }
     }

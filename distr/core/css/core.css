@@ -87,7 +87,6 @@
     outline-width: var(--sf-focus--width);
   }
   .border {
-    border: 1px var(--sf-outline-variant) solid;
     border: var(--sf-px) var(--sf-outline-variant) solid;
   }
   /* One meaning for the name: the border-style utility's, border-style: none.
@@ -97,24 +96,19 @@
     border-style: none;
   }
   .divider > :not([hidden]) ~ :not([hidden]) {
-    border: 1px var(--sf-outline-variant) solid;
     border: var(--sf-px) var(--sf-outline-variant) solid;
   }
   .divider-none > :not([hidden]) ~ :not([hidden]) {
-    border-width: 0;
     border-width: var(--sf-0);
   }
   .outline {
-    outline: 1px var(--sf-outline-variant) solid;
     outline: var(--sf-px) var(--sf-outline-variant) solid;
   }
   .outline-none {
-    outline-width: 0;
     outline-width: var(--sf-0);
   }
   @media (min-width: 32rem) {
     .sm\:border {
-      border: 1px var(--sf-outline-variant) solid;
       border: var(--sf-px) var(--sf-outline-variant) solid;
     }
     .sm\:border-none {
@@ -123,7 +117,6 @@
   }
   @media (min-width: 44rem) {
     .md\:border {
-      border: 1px var(--sf-outline-variant) solid;
       border: var(--sf-px) var(--sf-outline-variant) solid;
     }
     .md\:border-none {
@@ -132,7 +125,6 @@
   }
   @media (min-width: 60rem) {
     .lg\:border {
-      border: 1px var(--sf-outline-variant) solid;
       border: var(--sf-px) var(--sf-outline-variant) solid;
     }
     .lg\:border-none {
@@ -141,7 +133,6 @@
   }
   @media (min-width: 72rem) {
     .xl\:border {
-      border: 1px var(--sf-outline-variant) solid;
       border: var(--sf-px) var(--sf-outline-variant) solid;
     }
     .xl\:border-none {
@@ -149,7 +140,6 @@
     }
   }
   .hover\:border:hover {
-    border: 1px var(--sf-outline-variant) solid;
     border: var(--sf-px) var(--sf-outline-variant) solid;
   }
   .hover\:border-none:hover {
@@ -1317,6 +1307,97 @@
     }
     [data-sf-density=compact]:not(:root) {
       --sf-micro--cross-3: var(--sf-b2);
+    }
+  }
+}
+@layer sf.base {
+  /* An sf-icon before its element is defined keeps the box its glyph will
+  	 have, and draws nothing (AM-16). The element's host is empty until its
+  	 bundle runs, and the box it held came with the icons sheet: a rail of
+  	 glyphs drew its names at once and its icons 0 wide for 1.5 s on a cold
+  	 load (10 Mbit/s, 100 ms), then grew them and moved the names. The box is
+  	 the icons sheet's, from the same steps (_sf_icon_steps.scss) and the
+  	 same size variables, the one a component gives the glyph included; it
+  	 has no weight (:where), so the icons sheet and any component rule
+  	 still speak over it when they are in. A ladder region's size names wait
+  	 for the icons sheet, which holds the region's steps. */
+  :where(sf-icon:not(:defined):not([hidden])) {
+    display: inline-block;
+    flex: none;
+    vertical-align: middle;
+    width: var(--sf-icon-glyph-size, var(--sf-icon--width, var(--sf-text-height-1)));
+    inline-size: var(--sf-icon-glyph-size, var(--sf-icon--width, var(--sf-text-height-1)));
+    height: var(--sf-icon-glyph-size, var(--sf-icon--height, var(--sf-text-height-1)));
+    block-size: var(--sf-icon-glyph-size, var(--sf-icon--height, var(--sf-text-height-1)));
+  }
+  :where(sf-icon[size="1/4"]:not(:defined)) {
+    --sf-icon--width: var(--sf-icon-size-1\/4);
+    --sf-icon--height: var(--sf-icon-size-1\/4);
+  }
+  :where(sf-icon[size="1/3"]:not(:defined)) {
+    --sf-icon--width: var(--sf-icon-size-1\/4);
+    --sf-icon--height: var(--sf-icon-size-1\/4);
+  }
+  @media (min-width: 60rem) {
+    :where(sf-icon[size="1/3"]:not(:defined)) {
+      --sf-icon--width: var(--sf-icon-size-1\/3);
+      --sf-icon--height: var(--sf-icon-size-1\/3);
+    }
+  }
+  :where(sf-icon[size="1/2"]:not(:defined)) {
+    --sf-icon--width: var(--sf-icon-size-1\/3);
+    --sf-icon--height: var(--sf-icon-size-1\/3);
+  }
+  @media (min-width: 60rem) {
+    :where(sf-icon[size="1/2"]:not(:defined)) {
+      --sf-icon--width: var(--sf-icon-size-1\/2);
+      --sf-icon--height: var(--sf-icon-size-1\/2);
+    }
+  }
+  :where(sf-icon[size="1"]:not(:defined)) {
+    --sf-icon--width: var(--sf-text-height-1\/3);
+    --sf-icon--height: var(--sf-text-height-1\/3);
+  }
+  :where(sf-icon[size="2"]:not(:defined)) {
+    --sf-icon--width: var(--sf-text-height-1\/2);
+    --sf-icon--height: var(--sf-text-height-1\/2);
+  }
+  :where(sf-icon[size="3"]:not(:defined)) {
+    --sf-icon--width: var(--sf-text-height-1);
+    --sf-icon--height: var(--sf-text-height-1);
+  }
+  :where(sf-icon[size="4"]:not(:defined)) {
+    --sf-icon--width: var(--sf-text-height-2);
+    --sf-icon--height: var(--sf-text-height-2);
+  }
+  :where(sf-icon[size="5"]:not(:defined)) {
+    --sf-icon--width: var(--sf-icon-size-4);
+    --sf-icon--height: var(--sf-icon-size-4);
+  }
+  @media (min-width: 60rem) {
+    :where(sf-icon[size="5"]:not(:defined)) {
+      --sf-icon--width: var(--sf-icon-size-5);
+      --sf-icon--height: var(--sf-icon-size-5);
+    }
+  }
+  :where(sf-icon[size="6"]:not(:defined)) {
+    --sf-icon--width: var(--sf-icon-size-5);
+    --sf-icon--height: var(--sf-icon-size-5);
+  }
+  @media (min-width: 60rem) {
+    :where(sf-icon[size="6"]:not(:defined)) {
+      --sf-icon--width: var(--sf-icon-size-6);
+      --sf-icon--height: var(--sf-icon-size-6);
+    }
+  }
+  :where(sf-icon[size="7"]:not(:defined)) {
+    --sf-icon--width: var(--sf-icon-size-6);
+    --sf-icon--height: var(--sf-icon-size-6);
+  }
+  @media (min-width: 60rem) {
+    :where(sf-icon[size="7"]:not(:defined)) {
+      --sf-icon--width: var(--sf-icon-size-7);
+      --sf-icon--height: var(--sf-icon-size-7);
     }
   }
 }
@@ -2641,22 +2722,6 @@ body {
       border-left-width: var(--sf-scroll--gap-edge);
       border-top-width: var(--sf-scroll--gap-content);
     }
-    _:-ms-input-placeholder, html[dir="rtl"]::-webkit-scrollbar-thumb:vertical {
-      border-left-width: var(--sf-scroll--gap-edge);
-    }
-    @supports not (border-inline-end-width: initial){
-    html[dir="rtl"]::-webkit-scrollbar-thumb:vertical {
-      border-left-width: var(--sf-scroll--gap-edge);
-    }
-    }
-    _:-ms-input-placeholder, html[dir="rtl"]::-webkit-scrollbar-thumb:vertical {
-      border-right-width: var(--sf-scroll--gap-content);
-    }
-    @supports not (border-inline-start-width: initial){
-    html[dir="rtl"]::-webkit-scrollbar-thumb:vertical {
-      border-right-width: var(--sf-scroll--gap-content);
-    }
-    }
     html:where(:dir(rtl))::-webkit-scrollbar-thumb:vertical {
       border-left-width: var(--sf-scroll--gap-edge);
       border-right-width: var(--sf-scroll--gap-content);
@@ -2689,9 +2754,7 @@ body {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    border-radius: 4rem;
     border-radius: var(--sf-scroll--radius, var(--sf-d6));
-    background: var(--sf-transparent);
     background: var(--sf-scroll--track, var(--sf-transparent));
     opacity: 0;
     pointer-events: none;
@@ -2710,24 +2773,8 @@ body {
   .sf-scrollbar__track[data-sf-scrollbar-off] {
     visibility: hidden;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-scrollbar__thumb{
-    left: 0;
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-scrollbar__thumb{
-    left: 0;
-    }
-  }
   .sf-scrollbar__thumb:where(:dir(ltr)){
     left: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-scrollbar__thumb{
-    right: 0;
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-scrollbar__thumb{
-    right: 0;
-    }
   }
   .sf-scrollbar__thumb:where(:dir(rtl)){
     right: 0;
@@ -2750,7 +2797,6 @@ body {
   }
   .sf-scrollbar__thumb::before {
     position: absolute;
-    border-radius: min(4rem, var(--sf-scroll--size) / 2);
     border-radius: min(var(--sf-scroll--radius, var(--sf-d6)), var(--sf-scroll--size) / 2);
     background-color: var(--sf-scroll--rest-colour);
     content: "";
@@ -3748,17 +3794,10 @@ body {
     display: inline-block;
     white-space: nowrap;
     vertical-align: middle;
-    font-size: var(--sf-text-height-1);
     font-size: var(--sf-icon-glyph-size, var(--sf-icon--font-size, var(--sf-text-height-1)));
     line-height: 1;
-    width: var(--sf-text-height-1);
-    inline-size: var(--sf-text-height-1);
-    width: var(--sf-text-height-1);
     width: var(--sf-icon-glyph-size, var(--sf-icon--width, var(--sf-text-height-1)));
     inline-size: var(--sf-icon-glyph-size, var(--sf-icon--width, var(--sf-text-height-1)));
-    height: var(--sf-text-height-1);
-    block-size: var(--sf-text-height-1);
-    height: var(--sf-text-height-1);
     height: var(--sf-icon-glyph-size, var(--sf-icon--height, var(--sf-text-height-1)));
     block-size: var(--sf-icon-glyph-size, var(--sf-icon--height, var(--sf-text-height-1)));
   }
@@ -3767,7 +3806,6 @@ body {
       --sf-icon--text-middle: var(--sf-text--middle);
     }
     :where(:root[data-sf-loader] body .sf-icon:not(.sf-icon-loaded)) {
-      vertical-align: calc(var(--sf-icon--text-middle) - var(--sf-text-height-1) / 2);
       vertical-align: calc(var(--sf-icon--text-middle) - var(--sf-icon-glyph-size, var(--sf-icon--height, var(--sf-text-height-1))) / 2);
     }
   }
@@ -3922,68 +3960,20 @@ body {
     font-size: var(--sf-text-large--size);
     line-height: var(--sf-text-large--height);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) ul{
-    margin-left: 0px;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) ul{
-    margin-left: 0px;
-    }
-  }
   ul:where(:dir(ltr)){
     margin-left: 0px;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] ul{
-    margin-right: 0px;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] ul{
-    margin-right: 0px;
-    }
   }
   ul:where(:dir(rtl)){
     margin-right: 0px;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) ul{
-    margin-right: 0px;
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) ul{
-    margin-right: 0px;
-    }
-  }
   ul:where(:dir(ltr)){
     margin-right: 0px;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] ul{
-    margin-left: 0px;
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] ul{
-    margin-left: 0px;
-    }
   }
   ul:where(:dir(rtl)){
     margin-left: 0px;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) ul{
-    padding-left: var(--sf-text--size-2);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) ul{
-    padding-left: var(--sf-text--size-2);
-    }
-  }
   ul:where(:dir(ltr)){
     padding-left: var(--sf-text--size-2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] ul{
-    padding-right: var(--sf-text--size-2);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] ul{
-    padding-right: var(--sf-text--size-2);
-    }
   }
   ul:where(:dir(rtl)){
     padding-right: var(--sf-text--size-2);
@@ -4007,17 +3997,11 @@ body {
     color: var(--sf-code--color);
   }
   code:where(:not([class*=sf-]):not([class*=sf-] > code):not(pre code):not(kbd code):not(samp code):not(button code):not([role=button] code):not(.sf-highlight code):not(.sf-code-surface code)) {
-    padding: var(--sf-code--padding);
     padding: var(--sf-code-padding, var(--sf-code--padding));
-    border-radius: var(--sf-code--radius);
     border-radius: var(--sf-code-radius, var(--sf-code--radius));
-    background-color: var(--sf-code--background);
     background-color: var(--sf-code-background-color, var(--sf-code-background, var(--sf-code--background)));
-    color: var(--sf-code--color);
     color: var(--sf-code-color, var(--sf-code--color));
-    font-family: var(--sf-code--font-family);
     font-family: var(--sf-code-font-family, var(--sf-code--font-family));
-    font-size: var(--sf-code--font-size);
     font-size: var(--sf-code-font-size, var(--sf-code--font-size));
     word-wrap: break-word;
     line-height: 1;
@@ -4030,7 +4014,6 @@ body {
     transition: box-shadow var(--sf-duration-fast) var(--sf-animation);
   }
   [data-sf-code-copy] code[data-sf-code-copy-target]:hover {
-    box-shadow: inset 0 0 0 1px var(--sf-outline-variant);
     box-shadow: inset 0 0 0 var(--sf-px) var(--sf-outline-variant);
   }
   .sf-code-copy-status {
@@ -4068,88 +4051,14 @@ body {
   }
 }
 @layer sf.utilities {
-  .sf-card > h1 {
-    font-size: var(--sf-heading-6--size);
+  .sf-card > :is(h1, h2, h3, h4, h5, h6) {
     font-size: var(--sf-card-title-size, var(--sf-heading-6--size));
     line-height: var(--sf-title--height-card);
-    font-weight: var(--sf-text--font-weight-6);
     font-weight: var(--sf-card-title-weight, var(--sf-text--font-weight-6));
   }
-  .sf-card > h2 {
-    font-size: var(--sf-heading-6--size);
+  .sf-card > .sf-card-header > :is(h1, h2, h3, h4, h5, h6) {
     font-size: var(--sf-card-title-size, var(--sf-heading-6--size));
     line-height: var(--sf-title--height-card);
-    font-weight: var(--sf-text--font-weight-6);
-    font-weight: var(--sf-card-title-weight, var(--sf-text--font-weight-6));
-  }
-  .sf-card > h3 {
-    font-size: var(--sf-heading-6--size);
-    font-size: var(--sf-card-title-size, var(--sf-heading-6--size));
-    line-height: var(--sf-title--height-card);
-    font-weight: var(--sf-text--font-weight-6);
-    font-weight: var(--sf-card-title-weight, var(--sf-text--font-weight-6));
-  }
-  .sf-card > h4 {
-    font-size: var(--sf-heading-6--size);
-    font-size: var(--sf-card-title-size, var(--sf-heading-6--size));
-    line-height: var(--sf-title--height-card);
-    font-weight: var(--sf-text--font-weight-6);
-    font-weight: var(--sf-card-title-weight, var(--sf-text--font-weight-6));
-  }
-  .sf-card > h5 {
-    font-size: var(--sf-heading-6--size);
-    font-size: var(--sf-card-title-size, var(--sf-heading-6--size));
-    line-height: var(--sf-title--height-card);
-    font-weight: var(--sf-text--font-weight-6);
-    font-weight: var(--sf-card-title-weight, var(--sf-text--font-weight-6));
-  }
-  .sf-card > h6 {
-    font-size: var(--sf-heading-6--size);
-    font-size: var(--sf-card-title-size, var(--sf-heading-6--size));
-    line-height: var(--sf-title--height-card);
-    font-weight: var(--sf-text--font-weight-6);
-    font-weight: var(--sf-card-title-weight, var(--sf-text--font-weight-6));
-  }
-  .sf-card > .sf-card-header > h1 {
-    font-size: var(--sf-heading-6--size);
-    font-size: var(--sf-card-title-size, var(--sf-heading-6--size));
-    line-height: var(--sf-title--height-card);
-    font-weight: var(--sf-weight--semi-bold);
-    font-weight: var(--sf-card-title-weight, var(--sf-weight--semi-bold));
-  }
-  .sf-card > .sf-card-header > h2 {
-    font-size: var(--sf-heading-6--size);
-    font-size: var(--sf-card-title-size, var(--sf-heading-6--size));
-    line-height: var(--sf-title--height-card);
-    font-weight: var(--sf-weight--semi-bold);
-    font-weight: var(--sf-card-title-weight, var(--sf-weight--semi-bold));
-  }
-  .sf-card > .sf-card-header > h3 {
-    font-size: var(--sf-heading-6--size);
-    font-size: var(--sf-card-title-size, var(--sf-heading-6--size));
-    line-height: var(--sf-title--height-card);
-    font-weight: var(--sf-weight--semi-bold);
-    font-weight: var(--sf-card-title-weight, var(--sf-weight--semi-bold));
-  }
-  .sf-card > .sf-card-header > h4 {
-    font-size: var(--sf-heading-6--size);
-    font-size: var(--sf-card-title-size, var(--sf-heading-6--size));
-    line-height: var(--sf-title--height-card);
-    font-weight: var(--sf-weight--semi-bold);
-    font-weight: var(--sf-card-title-weight, var(--sf-weight--semi-bold));
-  }
-  .sf-card > .sf-card-header > h5 {
-    font-size: var(--sf-heading-6--size);
-    font-size: var(--sf-card-title-size, var(--sf-heading-6--size));
-    line-height: var(--sf-title--height-card);
-    font-weight: var(--sf-weight--semi-bold);
-    font-weight: var(--sf-card-title-weight, var(--sf-weight--semi-bold));
-  }
-  .sf-card > .sf-card-header > h6 {
-    font-size: var(--sf-heading-6--size);
-    font-size: var(--sf-card-title-size, var(--sf-heading-6--size));
-    line-height: var(--sf-title--height-card);
-    font-weight: var(--sf-weight--semi-bold);
     font-weight: var(--sf-card-title-weight, var(--sf-weight--semi-bold));
   }
 }
@@ -4515,18 +4424,12 @@ body {
     cursor: pointer;
   }
   a:hover:not(.sf-button) {
-    color: var(--sf-link-hover);
     color: var(--sf-place--ink, var(--sf-link-hover));
-    -webkit-text-decoration-color: var(--sf-link-hover);
-            text-decoration-color: var(--sf-link-hover);
     -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-hover));
             text-decoration-color: var(--sf-place--ink, var(--sf-link-hover));
   }
   a:active:not(.sf-button) {
-    color: var(--sf-link-active);
     color: var(--sf-place--ink, var(--sf-link-active));
-    -webkit-text-decoration-color: var(--sf-link-active);
-            text-decoration-color: var(--sf-link-active);
     -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-active));
             text-decoration-color: var(--sf-place--ink, var(--sf-link-active));
   }
@@ -4537,14 +4440,12 @@ body {
   [class^=link-] ~ a,
   [class*=" link-"] ~ a,
   [class*=":link-"] ~ a {
-    color: var(--sf-link);
     color: var(--sf-place--ink, var(--sf-link));
     -webkit-text-decoration-line: underline;
             text-decoration-line: underline;
     text-decoration-thickness: var(--sf-link--underline-weight);
     -webkit-text-decoration-color: color-mix(in srgb, currentColor var(--sf-link--underline-ink), transparent);
             text-decoration-color: color-mix(in srgb, currentColor var(--sf-link--underline-ink), transparent);
-    text-underline-offset: 0.1875rem;
     text-underline-offset: var(--sf-a3);
   }
   a:not([class]):hover,
@@ -4554,11 +4455,8 @@ body {
   [class^=link-] ~ a:hover,
   [class*=" link-"] ~ a:hover,
   [class*=":link-"] ~ a:hover {
-    -webkit-text-decoration-color: var(--sf-link-hover);
-            text-decoration-color: var(--sf-link-hover);
     -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-hover));
             text-decoration-color: var(--sf-place--ink, var(--sf-link-hover));
-    color: var(--sf-link-hover);
     color: var(--sf-place--ink, var(--sf-link-hover));
   }
   a:not([class]):active,
@@ -4568,34 +4466,19 @@ body {
   [class^=link-] ~ a:active,
   [class*=" link-"] ~ a:active,
   [class*=":link-"] ~ a:active {
-    -webkit-text-decoration-color: var(--sf-link-active);
-            text-decoration-color: var(--sf-link-active);
     -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-active));
             text-decoration-color: var(--sf-place--ink, var(--sf-link-active));
-    color: var(--sf-link-active);
     color: var(--sf-place--ink, var(--sf-link-active));
   }
   :where(nav, menu, [role=navigation], [role=menu], [role=menubar], [role=tablist], table, [role=table], [role=grid], [role=treegrid]) a:not([class]) {
     -webkit-text-decoration-line: none;
             text-decoration-line: none;
   }
-  :where(nav, menu, table, [role=navigation], [role=menu], [role=menubar], [role=tablist], [role=table], [role=grid], [role=treegrid]) a:not([class]):hover {
+  :where(nav, menu, [role=navigation], [role=menu], [role=menubar], [role=tablist], table, [role=table], [role=grid], [role=treegrid]) a:not([class]):is(:hover,.focus-visible) {
     -webkit-text-decoration-line: underline;
             text-decoration-line: underline;
   }
-  :where(nav, menu, table, [role=navigation], [role=menu], [role=menubar], [role=tablist], [role=table], [role=grid], [role=treegrid]) a.focus-visible:not([class]) {
-    -webkit-text-decoration-line: underline;
-            text-decoration-line: underline;
-  }
-  :where(nav, menu, table, [role=navigation], [role=menu], [role=menubar], [role=tablist], [role=table], [role=grid], [role=treegrid]) a:not([class]):hover {
-    -webkit-text-decoration-line: underline;
-            text-decoration-line: underline;
-  }
-  :where(nav, menu, table, [role=navigation], [role=menu], [role=menubar], [role=tablist], [role=table], [role=grid], [role=treegrid]) a:not([class]).focus-visible {
-    -webkit-text-decoration-line: underline;
-            text-decoration-line: underline;
-  }
-  :where(nav, menu, table, [role=navigation], [role=menu], [role=menubar], [role=tablist], [role=table], [role=grid], [role=treegrid]) a:not([class]):focus-visible {
+  :where(nav, menu, [role=navigation], [role=menu], [role=menubar], [role=tablist], table, [role=table], [role=grid], [role=treegrid]) a:not([class]):is(:hover, :focus-visible) {
     -webkit-text-decoration-line: underline;
             text-decoration-line: underline;
   }
@@ -4606,94 +4489,17 @@ body {
   :where([data-sf-visited=on]) [class^=link-] ~ a:visited,
   :where([data-sf-visited=on]) [class*=" link-"] ~ a:visited,
   :where([data-sf-visited=on]) [class*=":link-"] ~ a:visited {
-    color: var(--sf-link-visited);
     color: var(--sf-place--ink, var(--sf-link-visited));
-    -webkit-text-decoration-color: color-mix(in srgb, var(--sf-link-visited) var(--sf-link--underline-ink), transparent);
-            text-decoration-color: color-mix(in srgb, var(--sf-link-visited) var(--sf-link--underline-ink), transparent);
     -webkit-text-decoration-color: color-mix(in srgb, var(--sf-place--ink, var(--sf-link-visited)) var(--sf-link--underline-ink), transparent);
             text-decoration-color: color-mix(in srgb, var(--sf-place--ink, var(--sf-link-visited)) var(--sf-link--underline-ink), transparent);
   }
-  :where([data-sf-visited=on]) a:not([class]):visited:hover {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-  }
-  :where([data-sf-visited=on]) a:not([class]):visited:active {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-  }
-  :where([data-sf-visited=on]) a[class^=link-]:visited:hover {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-  }
-  :where([data-sf-visited=on]) a[class^=link-]:visited:active {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-  }
-  :where([data-sf-visited=on]) a[class*=" link-"]:visited:hover {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-  }
-  :where([data-sf-visited=on]) a[class*=" link-"]:visited:active {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-  }
-  :where([data-sf-visited=on]) a[class*=":link-"]:visited:hover {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-  }
-  :where([data-sf-visited=on]) a[class*=":link-"]:visited:active {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-  }
-  :where([data-sf-visited=on]) [class^=link-] ~ a:visited:hover {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-  }
-  :where([data-sf-visited=on]) [class^=link-] ~ a:visited:active {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-  }
-  :where([data-sf-visited=on]) [class*=" link-"] ~ a:visited:hover {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-  }
-  :where([data-sf-visited=on]) [class*=" link-"] ~ a:visited:active {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-  }
-  :where([data-sf-visited=on]) [class*=":link-"] ~ a:visited:hover {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
-    -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-            text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
-  }
-  :where([data-sf-visited=on]) [class*=":link-"] ~ a:visited:active {
-    -webkit-text-decoration-color: var(--sf-link-visited);
-            text-decoration-color: var(--sf-link-visited);
+  :where([data-sf-visited=on]) a:not([class]):visited:is(:hover, :active),
+  :where([data-sf-visited=on]) a[class^=link-]:visited:is(:hover, :active),
+  :where([data-sf-visited=on]) a[class*=" link-"]:visited:is(:hover, :active),
+  :where([data-sf-visited=on]) a[class*=":link-"]:visited:is(:hover, :active),
+  :where([data-sf-visited=on]) [class^=link-] ~ a:visited:is(:hover, :active),
+  :where([data-sf-visited=on]) [class*=" link-"] ~ a:visited:is(:hover, :active),
+  :where([data-sf-visited=on]) [class*=":link-"] ~ a:visited:is(:hover, :active) {
     -webkit-text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
             text-decoration-color: var(--sf-place--ink, var(--sf-link-visited));
   }
@@ -4704,7 +4510,6 @@ body {
   [class^=link-] ~ a.focus-visible,
   [class*=" link-"] ~ a.focus-visible,
   [class*=":link-"] ~ a.focus-visible {
-    outline-offset: 0.125rem;
     outline-offset: var(--sf-a2);
     border-radius: var(--sf-radius--ui);
     -webkit-box-decoration-break: clone;
@@ -4717,8 +4522,6 @@ body {
   [class^=link-] ~ a.focus-visible,
   [class*=" link-"] ~ a.focus-visible,
   [class*=":link-"] ~ a.focus-visible {
-    outline-offset: 0.125rem;
-    outline-offset: 0.125rem;
     outline-offset: var(--sf-a2);
     border-radius: var(--sf-radius--ui);
     -webkit-box-decoration-break: clone;
@@ -4731,7 +4534,6 @@ body {
   [class^=link-] ~ a:focus-visible,
   [class*=" link-"] ~ a:focus-visible,
   [class*=":link-"] ~ a:focus-visible {
-    outline-offset: 0.125rem;
     outline-offset: var(--sf-a2);
     border-radius: var(--sf-radius--ui);
     -webkit-box-decoration-break: clone;
@@ -4740,24 +4542,8 @@ body {
   a [data-sf-new-tab=tail] {
     white-space: nowrap;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) a [data-sf-new-tab=mark]{
-    margin-left: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) a [data-sf-new-tab=mark]{
-    margin-left: var(--sf-space-1\/4);
-    }
-  }
   a [data-sf-new-tab=mark]:where(:dir(ltr)){
     margin-left: var(--sf-space-1\/4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] a [data-sf-new-tab=mark]{
-    margin-right: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] a [data-sf-new-tab=mark]{
-    margin-right: var(--sf-space-1\/4);
-    }
   }
   a [data-sf-new-tab=mark]:where(:dir(rtl)){
     margin-right: var(--sf-space-1\/4);
@@ -4775,20 +4561,10 @@ body {
          user-select: none;
     -webkit-user-select: none;
   }
-  a:dir(rtl) [data-sf-new-tab=mark] {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
-  }
   a [data-sf-new-tab=words] {
     position: absolute;
-    width: 1px;
-    inline-size: 1px;
-    width: 1px;
     width: var(--sf-px);
     inline-size: var(--sf-px);
-    height: 1px;
-    block-size: 1px;
-    height: 1px;
     height: var(--sf-px);
     block-size: var(--sf-px);
     overflow: hidden;
@@ -4877,67 +4653,8 @@ body {
     --sf-highlight-operator: var(--sf-highlight-attribute);
     --sf-highlight-variable: var(--sf-highlight-attribute);
   }
-  .theme-light .sf-code-surface {
-    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
-    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
-    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
-    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
-    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
-    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
-    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
-    --sf-highlight--number: var(--sf-place--ink, var(--sf-highlight-number));
-    --sf-highlight--property: var(--sf-place--ink, var(--sf-highlight-property));
-    --sf-highlight--operator: var(--sf-place--ink, var(--sf-highlight-operator));
-    --sf-highlight--variable: var(--sf-place--ink, var(--sf-highlight-variable));
-    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
-    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
-    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
-    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
-    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
-    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
-    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
-  }
-  .theme-light .hljs {
-    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
-    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
-    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
-    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
-    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
-    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
-    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
-    --sf-highlight--number: var(--sf-place--ink, var(--sf-highlight-number));
-    --sf-highlight--property: var(--sf-place--ink, var(--sf-highlight-property));
-    --sf-highlight--operator: var(--sf-place--ink, var(--sf-highlight-operator));
-    --sf-highlight--variable: var(--sf-place--ink, var(--sf-highlight-variable));
-    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
-    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
-    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
-    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
-    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
-    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
-    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
-  }
-  .theme-dark .sf-code-surface {
-    --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
-    --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
-    --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
-    --sf-highlight--line-number: var(--sf-place--ink-variant, var(--sf-highlight-line-number));
-    --sf-highlight--keyword: var(--sf-place--ink, var(--sf-highlight-keyword));
-    --sf-highlight--title: var(--sf-place--ink, var(--sf-highlight-title));
-    --sf-highlight--attribute: var(--sf-place--ink, var(--sf-highlight-attribute));
-    --sf-highlight--number: var(--sf-place--ink, var(--sf-highlight-number));
-    --sf-highlight--property: var(--sf-place--ink, var(--sf-highlight-property));
-    --sf-highlight--operator: var(--sf-place--ink, var(--sf-highlight-operator));
-    --sf-highlight--variable: var(--sf-place--ink, var(--sf-highlight-variable));
-    --sf-highlight--string: var(--sf-place--ink, var(--sf-highlight-string));
-    --sf-highlight--built-in: var(--sf-place--ink, var(--sf-highlight-built-in));
-    --sf-highlight--tag: var(--sf-place--ink, var(--sf-highlight-tag));
-    --sf-highlight--section: var(--sf-place--ink, var(--sf-highlight-section));
-    --sf-highlight--bullet: var(--sf-place--ink, var(--sf-highlight-bullet));
-    --sf-highlight--addition: var(--sf-place--ink, var(--sf-highlight-addition));
-    --sf-highlight--deletion: var(--sf-place--ink, var(--sf-highlight-deletion));
-  }
-  .theme-dark .hljs {
+  .theme-light :is(.sf-code-surface, .hljs),
+  .theme-dark :is(.sf-code-surface, .hljs) {
     --sf-highlight--text: var(--sf-place--ink, var(--sf-highlight-text));
     --sf-highlight--comment: var(--sf-place--ink-variant, var(--sf-highlight-comment));
     --sf-highlight--punctuation: var(--sf-place--ink-variant, var(--sf-highlight-punctuation));
@@ -5001,24 +4718,8 @@ body {
   }
 }
 @layer sf.base {
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-loader.loader-default{
-    left: 0;
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-loader.loader-default{
-    left: 0;
-    }
-  }
   .sf-loader.loader-default:where(:dir(ltr)){
     left: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-loader.loader-default{
-    right: 0;
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-loader.loader-default{
-    right: 0;
-    }
   }
   .sf-loader.loader-default:where(:dir(rtl)){
     right: 0;
@@ -5037,24 +4738,8 @@ body {
   .sf-loader.hidden {
     display: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-loader-inner{
-    left: 50vw;
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-loader-inner{
-    left: 50vw;
-    }
-  }
   .sf-loader-inner:where(:dir(ltr)){
     left: 50vw;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-loader-inner{
-    right: 50vw;
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-loader-inner{
-    right: 50vw;
-    }
   }
   .sf-loader-inner:where(:dir(rtl)){
     right: 50vw;
@@ -5094,26 +4779,18 @@ body {
               transform: translateY(0);
     }
     20%, 50% {
-      -webkit-transform: translateY(0.5625rem);
-              transform: translateY(0.5625rem);
       -webkit-transform: translateY(var(--sf-a9));
               transform: translateY(var(--sf-a9));
     }
     80% {
-      -webkit-transform: translateY(0.125rem);
-              transform: translateY(0.125rem);
       -webkit-transform: translateY(var(--sf-a2));
               transform: translateY(var(--sf-a2));
     }
     40% {
-      -webkit-transform: translateY(calc(-1 * 0.9375rem));
-              transform: translateY(calc(-1 * 0.9375rem));
       -webkit-transform: translateY(calc(-1 * var(--sf-b5)));
               transform: translateY(calc(-1 * var(--sf-b5)));
     }
     60% {
-      -webkit-transform: translateY(calc(-1 * 0.4375rem));
-              transform: translateY(calc(-1 * 0.4375rem));
       -webkit-transform: translateY(calc(-1 * var(--sf-a7)));
               transform: translateY(calc(-1 * var(--sf-a7)));
     }
@@ -5124,26 +4801,18 @@ body {
               transform: translateY(0);
     }
     20%, 50% {
-      -webkit-transform: translateY(0.5625rem);
-              transform: translateY(0.5625rem);
       -webkit-transform: translateY(var(--sf-a9));
               transform: translateY(var(--sf-a9));
     }
     80% {
-      -webkit-transform: translateY(0.125rem);
-              transform: translateY(0.125rem);
       -webkit-transform: translateY(var(--sf-a2));
               transform: translateY(var(--sf-a2));
     }
     40% {
-      -webkit-transform: translateY(calc(-1 * 0.9375rem));
-              transform: translateY(calc(-1 * 0.9375rem));
       -webkit-transform: translateY(calc(-1 * var(--sf-b5)));
               transform: translateY(calc(-1 * var(--sf-b5)));
     }
     60% {
-      -webkit-transform: translateY(calc(-1 * 0.4375rem));
-              transform: translateY(calc(-1 * 0.4375rem));
       -webkit-transform: translateY(calc(-1 * var(--sf-a7)));
               transform: translateY(calc(-1 * var(--sf-a7)));
     }
@@ -5187,12 +4856,10 @@ body {
   .sf-logo svg {
     width: 100%;
     height: 100%;
-    max-height: 1.5rem;
     max-height: var(--sf-c2);
   }
   @media (min-width: 60rem) {
     .sf-logo svg {
-      max-height: 1.75rem;
       max-height: var(--sf-c4);
     }
   }
@@ -5382,13 +5049,10 @@ body {
 }
 @layer sf.paint {
   .sf-composition-unknown {
-    border-color: GrayText;
     border-color: var(--sf-outline-variant, GrayText);
-    color: CanvasText;
     color: var(--sf-on-surface-variant, var(--sf-on-surface, CanvasText));
   }
   .sf-composition-regions-grid > [data-sf-region-placement=block][data-sf-region-sticky] {
-    background: Canvas;
     background: var(--sf-surface-area, Canvas);
   }
 }
@@ -5455,52 +5119,19 @@ body {
     -webkit-margin-after: 0;
             margin-block-end: 0;
   }
-  .grid[data-sf-composition-part=content] > * {
+  [data-sf-composition-part=content]:is(.grid, .flex) > * {
     margin-top: 0;
     margin-bottom: 0;
     margin-block: 0;
   }
-  .flex[data-sf-composition-part=content] > * {
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-block: 0;
-  }
-  :where(.grid[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :first-child {
+  :where([data-sf-composition-part=content]:is(.grid, .flex)) > :where(blockquote, div:not([class])) > :first-child {
     margin-top: 0;
     -webkit-margin-before: 0;
             margin-block-start: 0;
   }
-  :where(.flex[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :first-child {
-    margin-top: 0;
-    -webkit-margin-before: 0;
-            margin-block-start: 0;
-  }
-  :where(.grid[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :last-child {
-    margin-bottom: 0;
-    -webkit-margin-after: 0;
-            margin-block-end: 0;
-  }
-  :where(.flex[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :last-child {
-    margin-bottom: 0;
-    -webkit-margin-after: 0;
-            margin-block-end: 0;
-  }
-  :where(.grid[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :last-child > :last-child {
-    margin-bottom: 0;
-    -webkit-margin-after: 0;
-            margin-block-end: 0;
-  }
-  :where(.flex[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :last-child > :last-child {
-    margin-bottom: 0;
-    -webkit-margin-after: 0;
-            margin-block-end: 0;
-  }
-  :where(.grid[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :last-child > :last-child > :last-child {
-    margin-bottom: 0;
-    -webkit-margin-after: 0;
-            margin-block-end: 0;
-  }
-  :where(.flex[data-sf-composition-part=content]) > :where(blockquote, div:not([class])) > :last-child > :last-child > :last-child {
+  :where([data-sf-composition-part=content]:is(.grid, .flex)) > :where(blockquote, div:not([class])) > :last-child,
+  :where([data-sf-composition-part=content]:is(.grid, .flex)) > :where(blockquote, div:not([class])) > :last-child > :last-child,
+  :where([data-sf-composition-part=content]:is(.grid, .flex)) > :where(blockquote, div:not([class])) > :last-child > :last-child > :last-child {
     margin-bottom: 0;
     -webkit-margin-after: 0;
             margin-block-end: 0;
@@ -5550,36 +5181,25 @@ body {
     font: inherit;
   }
   .sf-editor-field-control[type=checkbox] {
-    width: 1.25rem;
-    inline-size: 1.25rem;
-    width: 1.25rem;
     width: var(--sf-c0);
     inline-size: var(--sf-c0);
-    height: 1.25rem;
-    block-size: 1.25rem;
-    height: 1.25rem;
     height: var(--sf-c0);
     block-size: var(--sf-c0);
     margin: 0;
-    accent-color: AccentColor;
     accent-color: var(--sf-primary, AccentColor);
   }
   .sf-editor-field-control.focus-visible,
   .sf-editor-field-disclosure > summary.focus-visible {
-    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
     outline-offset: var(--sf-focus--offset);
   }
   .sf-editor-field-control.focus-visible,
   .sf-editor-field-disclosure > summary.focus-visible {
-    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
-    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
     outline-offset: var(--sf-focus--offset);
   }
   .sf-editor-field-control:focus-visible,
   .sf-editor-field-disclosure > summary:focus-visible {
-    outline: var(--sf-focus--width) var(--sf-focus--style) Highlight;
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-primary, Highlight);
     outline-offset: var(--sf-focus--offset);
   }
@@ -5589,19 +5209,14 @@ body {
 }
 @layer sf.paint {
   .sf-editor-field {
-    color: CanvasText;
     color: var(--sf-on-surface, CanvasText);
   }
   .sf-editor-field-control:not([type=checkbox]) {
-    border-color: GrayText;
     border-color: var(--sf-outline, GrayText);
-    background: Canvas;
     background: var(--sf-surface-area, Canvas);
-    color: CanvasText;
     color: var(--sf-on-surface, CanvasText);
   }
   .sf-editor-field-help {
-    color: CanvasText;
     color: var(--sf-on-surface-variant, var(--sf-on-surface, CanvasText));
   }
 }
@@ -5616,7 +5231,6 @@ body {
     position: relative;
     display: flex;
     align-items: stretch;
-    gap: 0;
     gap: var(--sf-workspace-gap, var(--sf-0));
     box-sizing: border-box;
     height: 100%;
@@ -5644,257 +5258,75 @@ body {
   .sf-workspace > [tabindex="-1"]:focus {
     outline: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-workspace > .sf-workspace-rail{
-    border-right-width: 1px;
-    border-right-width: var(--sf-px);
-  }
-  @supports not (border-inline-end-width: initial){
-  html:not([dir="rtl"]) .sf-workspace > .sf-workspace-rail{
-    border-right-width: 1px;
-    border-right-width: var(--sf-px);
-    }
-  }
   .sf-workspace > .sf-workspace-rail:where(:dir(ltr)){
-    border-right-width: 1px;
     border-right-width: var(--sf-px);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-workspace > .sf-workspace-rail{
-    border-left-width: 1px;
-    border-left-width: var(--sf-px);
-  }
-  @supports not (border-inline-end-width: initial){
-  [dir="rtl"] .sf-workspace > .sf-workspace-rail{
-    border-left-width: 1px;
-    border-left-width: var(--sf-px);
-    }
   }
   .sf-workspace > .sf-workspace-rail:where(:dir(rtl)){
-    border-left-width: 1px;
     border-left-width: var(--sf-px);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-workspace > .sf-workspace-rail{
-    border-right-style: solid;
-  }
-  @supports not (border-inline-end-style: initial){
-  html:not([dir="rtl"]) .sf-workspace > .sf-workspace-rail{
-    border-right-style: solid;
-    }
   }
   .sf-workspace > .sf-workspace-rail:where(:dir(ltr)){
     border-right-style: solid;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-workspace > .sf-workspace-rail{
-    border-left-style: solid;
-  }
-  @supports not (border-inline-end-style: initial){
-  [dir="rtl"] .sf-workspace > .sf-workspace-rail{
-    border-left-style: solid;
-    }
   }
   .sf-workspace > .sf-workspace-rail:where(:dir(rtl)){
     border-left-style: solid;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-workspace > .sf-workspace-rail{
-    border-right-width: 1px;
-  }
-  @supports not (border-inline-end-width: initial){
-  html:not([dir="rtl"]) .sf-workspace > .sf-workspace-rail{
-    border-right-width: 1px;
-    }
-  }
   .sf-workspace > .sf-workspace-rail:where(:dir(ltr)){
     border-right-width: 1px;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-workspace > .sf-workspace-rail{
-    border-left-width: 1px;
-  }
-  @supports not (border-inline-end-width: initial){
-  [dir="rtl"] .sf-workspace > .sf-workspace-rail{
-    border-left-width: 1px;
-    }
   }
   .sf-workspace > .sf-workspace-rail:where(:dir(rtl)){
     border-left-width: 1px;
   }
   .sf-workspace > .sf-workspace-rail {
-    flex: 0 0 auto;
     flex: 0 0 var(--sf-workspace-rail, auto);
-    border-inline-end-width: 1px;
     border-inline-end-width: var(--sf-px);
     border-inline-end-style: solid;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-workspace > .sf-workspace-list{
-    border-right-width: 1px;
-    border-right-width: var(--sf-workspace--list-edge, var(--sf-px));
-  }
-  @supports not (border-inline-end-width: initial){
-  html:not([dir="rtl"]) .sf-workspace > .sf-workspace-list{
-    border-right-width: 1px;
-    border-right-width: var(--sf-workspace--list-edge, var(--sf-px));
-    }
-  }
   .sf-workspace > .sf-workspace-list:where(:dir(ltr)){
-    border-right-width: 1px;
     border-right-width: var(--sf-workspace--list-edge, var(--sf-px));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-workspace > .sf-workspace-list{
-    border-left-width: 1px;
-    border-left-width: var(--sf-workspace--list-edge, var(--sf-px));
-  }
-  @supports not (border-inline-end-width: initial){
-  [dir="rtl"] .sf-workspace > .sf-workspace-list{
-    border-left-width: 1px;
-    border-left-width: var(--sf-workspace--list-edge, var(--sf-px));
-    }
   }
   .sf-workspace > .sf-workspace-list:where(:dir(rtl)){
-    border-left-width: 1px;
     border-left-width: var(--sf-workspace--list-edge, var(--sf-px));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-workspace > .sf-workspace-list{
-    border-right-style: solid;
-  }
-  @supports not (border-inline-end-style: initial){
-  html:not([dir="rtl"]) .sf-workspace > .sf-workspace-list{
-    border-right-style: solid;
-    }
   }
   .sf-workspace > .sf-workspace-list:where(:dir(ltr)){
     border-right-style: solid;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-workspace > .sf-workspace-list{
-    border-left-style: solid;
-  }
-  @supports not (border-inline-end-style: initial){
-  [dir="rtl"] .sf-workspace > .sf-workspace-list{
-    border-left-style: solid;
-    }
   }
   .sf-workspace > .sf-workspace-list:where(:dir(rtl)){
     border-left-style: solid;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-workspace > .sf-workspace-list{
-    border-right-width: 1px;
-  }
-  @supports not (border-inline-end-width: initial){
-  html:not([dir="rtl"]) .sf-workspace > .sf-workspace-list{
-    border-right-width: 1px;
-    }
-  }
   .sf-workspace > .sf-workspace-list:where(:dir(ltr)){
     border-right-width: 1px;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-workspace > .sf-workspace-list{
-    border-left-width: 1px;
-  }
-  @supports not (border-inline-end-width: initial){
-  [dir="rtl"] .sf-workspace > .sf-workspace-list{
-    border-left-width: 1px;
-    }
   }
   .sf-workspace > .sf-workspace-list:where(:dir(rtl)){
     border-left-width: 1px;
   }
   .sf-workspace > .sf-workspace-list {
-    flex: 0 0 20rem;
     flex: 0 0 var(--sf-workspace-list, var(--sf-g0));
-    border-inline-end-width: 1px;
     border-inline-end-width: var(--sf-workspace--list-edge, var(--sf-px));
     border-inline-end-style: solid;
   }
   .sf-workspace > .sf-workspace-main {
     flex: 1 1 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-workspace > .sf-workspace-panel{
-    right: 0;
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-workspace > .sf-workspace-panel{
-    right: 0;
-    }
-  }
   .sf-workspace > .sf-workspace-panel:where(:dir(ltr)){
     right: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-workspace > .sf-workspace-panel{
-    left: 0;
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-workspace > .sf-workspace-panel{
-    left: 0;
-    }
   }
   .sf-workspace > .sf-workspace-panel:where(:dir(rtl)){
     left: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-workspace > .sf-workspace-panel{
-    border-left-width: 1px;
-    border-left-width: var(--sf-px);
-  }
-  @supports not (border-inline-start-width: initial){
-  html:not([dir="rtl"]) .sf-workspace > .sf-workspace-panel{
-    border-left-width: 1px;
-    border-left-width: var(--sf-px);
-    }
-  }
   .sf-workspace > .sf-workspace-panel:where(:dir(ltr)){
-    border-left-width: 1px;
     border-left-width: var(--sf-px);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-workspace > .sf-workspace-panel{
-    border-right-width: 1px;
-    border-right-width: var(--sf-px);
-  }
-  @supports not (border-inline-start-width: initial){
-  [dir="rtl"] .sf-workspace > .sf-workspace-panel{
-    border-right-width: 1px;
-    border-right-width: var(--sf-px);
-    }
   }
   .sf-workspace > .sf-workspace-panel:where(:dir(rtl)){
-    border-right-width: 1px;
     border-right-width: var(--sf-px);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-workspace > .sf-workspace-panel{
-    border-left-style: solid;
-  }
-  @supports not (border-inline-start-style: initial){
-  html:not([dir="rtl"]) .sf-workspace > .sf-workspace-panel{
-    border-left-style: solid;
-    }
   }
   .sf-workspace > .sf-workspace-panel:where(:dir(ltr)){
     border-left-style: solid;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-workspace > .sf-workspace-panel{
-    border-right-style: solid;
-  }
-  @supports not (border-inline-start-style: initial){
-  [dir="rtl"] .sf-workspace > .sf-workspace-panel{
-    border-right-style: solid;
-    }
   }
   .sf-workspace > .sf-workspace-panel:where(:dir(rtl)){
     border-right-style: solid;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-workspace > .sf-workspace-panel{
-    border-left-width: 1px;
-  }
-  @supports not (border-inline-start-width: initial){
-  html:not([dir="rtl"]) .sf-workspace > .sf-workspace-panel{
-    border-left-width: 1px;
-    }
-  }
   .sf-workspace > .sf-workspace-panel:where(:dir(ltr)){
     border-left-width: 1px;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-workspace > .sf-workspace-panel{
-    border-right-width: 1px;
-  }
-  @supports not (border-inline-start-width: initial){
-  [dir="rtl"] .sf-workspace > .sf-workspace-panel{
-    border-right-width: 1px;
-    }
   }
   .sf-workspace > .sf-workspace-panel:where(:dir(rtl)){
     border-right-width: 1px;
@@ -5905,12 +5337,8 @@ body {
     bottom: 0;
     inset-block: 0;
     inset-inline-end: 0;
-    width: min(22rem, 100%);
-    inline-size: min(22rem, 100%);
-    width: min(22rem, 100%);
     width: min(var(--sf-workspace-panel, var(--sf-g1)), 100%);
     inline-size: min(var(--sf-workspace-panel, var(--sf-g1)), 100%);
-    border-inline-start-width: 1px;
     border-inline-start-width: var(--sf-px);
     border-inline-start-style: solid;
   }
@@ -5922,19 +5350,8 @@ body {
     display: none;
   }
   @container sf-workspace (width < 32rem) {
-    .sf-workspace.sf-workspace--split-g6[data-sf-workspace-view=main] > .sf-workspace-rail {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-g6[data-sf-workspace-view=main] > .sf-workspace-list {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-g6[data-sf-workspace-list=hidden] > .sf-workspace-rail {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-g6[data-sf-workspace-list=hidden] > .sf-workspace-list {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-g6:not([data-sf-workspace-view=main]):not([data-sf-workspace-list=hidden]) > .sf-workspace-main {
+    .sf-workspace.sf-workspace--split-g6:not([data-sf-workspace-view=main]):not([data-sf-workspace-list=hidden]) > .sf-workspace-main,
+    .sf-workspace.sf-workspace--split-g6:is([data-sf-workspace-view=main], [data-sf-workspace-list=hidden]) > :is(.sf-workspace-rail, .sf-workspace-list) {
       display: none;
     }
     .sf-workspace.sf-workspace--split-g6 > .sf-workspace-list {
@@ -5951,73 +5368,26 @@ body {
     }
   }
   @container sf-workspace (width < 40rem) {
-    .sf-workspace:not([class*=sf-workspace--split-]):not([data-sf-workspace-view=main]):not([data-sf-workspace-list=hidden]) > .sf-workspace-main {
+    .sf-workspace:is(:not([class*=sf-workspace--split-]), .sf-workspace--split-h0):not([data-sf-workspace-view=main]):not([data-sf-workspace-list=hidden]) > .sf-workspace-main,
+    .sf-workspace:is(:not([class*=sf-workspace--split-]), .sf-workspace--split-h0):is([data-sf-workspace-view=main], [data-sf-workspace-list=hidden]) > :is(.sf-workspace-rail, .sf-workspace-list) {
       display: none;
     }
-    .sf-workspace.sf-workspace--split-h0:not([data-sf-workspace-view=main]):not([data-sf-workspace-list=hidden]) > .sf-workspace-main {
-      display: none;
-    }
-    .sf-workspace[data-sf-workspace-view=main]:not([class*=sf-workspace--split-]) > .sf-workspace-rail {
-      display: none;
-    }
-    .sf-workspace[data-sf-workspace-view=main]:not([class*=sf-workspace--split-]) > .sf-workspace-list {
-      display: none;
-    }
-    .sf-workspace[data-sf-workspace-list=hidden]:not([class*=sf-workspace--split-]) > .sf-workspace-rail {
-      display: none;
-    }
-    .sf-workspace[data-sf-workspace-list=hidden]:not([class*=sf-workspace--split-]) > .sf-workspace-list {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-h0[data-sf-workspace-view=main] > .sf-workspace-rail {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-h0[data-sf-workspace-view=main] > .sf-workspace-list {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-h0[data-sf-workspace-list=hidden] > .sf-workspace-rail {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-h0[data-sf-workspace-list=hidden] > .sf-workspace-list {
-      display: none;
-    }
-    .sf-workspace:not([class*=sf-workspace--split-]) > .sf-workspace-list {
-      --sf-workspace--list-edge: 0;
-      flex: 1 1 0;
-    }
-    .sf-workspace.sf-workspace--split-h0 > .sf-workspace-list {
+    .sf-workspace:is(:not([class*=sf-workspace--split-]), .sf-workspace--split-h0) > .sf-workspace-list {
       --sf-workspace--list-edge: 0;
       flex: 1 1 0;
     }
   }
   @container sf-workspace (width >= 40rem) {
-    .sf-workspace:not([class*=sf-workspace--split-]) > * {
+    .sf-workspace:is(:not([class*=sf-workspace--split-]), .sf-workspace--split-h0) > * {
       --sf-workspace--layout: split;
     }
-    .sf-workspace.sf-workspace--split-h0 > * {
-      --sf-workspace--layout: split;
-    }
-    .sf-workspace:not([class*=sf-workspace--split-]) > .sf-workspace-main .sf-workspace-back {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-h0 > .sf-workspace-main .sf-workspace-back {
+    .sf-workspace:is(:not([class*=sf-workspace--split-]), .sf-workspace--split-h0) > .sf-workspace-main .sf-workspace-back {
       display: none;
     }
   }
   @container sf-workspace (width < 48rem) {
-    .sf-workspace.sf-workspace--split-h2[data-sf-workspace-view=main] > .sf-workspace-rail {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-h2[data-sf-workspace-view=main] > .sf-workspace-list {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-h2[data-sf-workspace-list=hidden] > .sf-workspace-rail {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-h2[data-sf-workspace-list=hidden] > .sf-workspace-list {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-h2:not([data-sf-workspace-view=main]):not([data-sf-workspace-list=hidden]) > .sf-workspace-main {
+    .sf-workspace.sf-workspace--split-h2:not([data-sf-workspace-view=main]):not([data-sf-workspace-list=hidden]) > .sf-workspace-main,
+    .sf-workspace.sf-workspace--split-h2:is([data-sf-workspace-view=main], [data-sf-workspace-list=hidden]) > :is(.sf-workspace-rail, .sf-workspace-list) {
       display: none;
     }
     .sf-workspace.sf-workspace--split-h2 > .sf-workspace-list {
@@ -6034,19 +5404,8 @@ body {
     }
   }
   @container sf-workspace (width < 56rem) {
-    .sf-workspace.sf-workspace--split-h4[data-sf-workspace-view=main] > .sf-workspace-rail {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-h4[data-sf-workspace-view=main] > .sf-workspace-list {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-h4[data-sf-workspace-list=hidden] > .sf-workspace-rail {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-h4[data-sf-workspace-list=hidden] > .sf-workspace-list {
-      display: none;
-    }
-    .sf-workspace.sf-workspace--split-h4:not([data-sf-workspace-view=main]):not([data-sf-workspace-list=hidden]) > .sf-workspace-main {
+    .sf-workspace.sf-workspace--split-h4:not([data-sf-workspace-view=main]):not([data-sf-workspace-list=hidden]) > .sf-workspace-main,
+    .sf-workspace.sf-workspace--split-h4:is([data-sf-workspace-view=main], [data-sf-workspace-list=hidden]) > :is(.sf-workspace-rail, .sf-workspace-list) {
       display: none;
     }
     .sf-workspace.sf-workspace--split-h4 > .sf-workspace-list {
@@ -6065,9 +5424,7 @@ body {
   @container sf-workspace (width < 56rem) {
     .sf-workspace.sf-workspace--wide-h4 > .sf-workspace-panel {
       position: absolute;
-      z-index: 9000;
       z-index: var(--sf-layer--window, 9000);
-      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
       box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
     }
     @media (prefers-reduced-motion: no-preference) {
@@ -6094,61 +5451,38 @@ body {
     }
   }
   @container sf-workspace (width < 64rem) {
-    .sf-workspace:not([class*=sf-workspace--wide-]) > .sf-workspace-panel {
+    .sf-workspace:is(:not([class*=sf-workspace--wide-]), .sf-workspace--wide-h6) > .sf-workspace-panel {
       position: absolute;
-      z-index: 9000;
       z-index: var(--sf-layer--window, 9000);
-      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
-      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
-    }
-    .sf-workspace.sf-workspace--wide-h6 > .sf-workspace-panel {
-      position: absolute;
-      z-index: 9000;
-      z-index: var(--sf-layer--window, 9000);
-      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
       box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
     }
     @media (prefers-reduced-motion: no-preference) {
-      .sf-workspace:not([class*=sf-workspace--wide-]) > .sf-workspace-panel {
-        transition: translate var(--sf-duration-normal) var(--sf-ease-enter);
-      }
-      .sf-workspace.sf-workspace--wide-h6 > .sf-workspace-panel {
+      .sf-workspace:is(:not([class*=sf-workspace--wide-]), .sf-workspace--wide-h6) > .sf-workspace-panel {
         transition: translate var(--sf-duration-normal) var(--sf-ease-enter);
       }
       @starting-style {
-        .sf-workspace:not([class*=sf-workspace--wide-]) > .sf-workspace-panel {
-          translate: 100% 0;
-        }
-        .sf-workspace.sf-workspace--wide-h6 > .sf-workspace-panel {
+        .sf-workspace:is(:not([class*=sf-workspace--wide-]), .sf-workspace--wide-h6) > .sf-workspace-panel {
           translate: 100% 0;
         }
       }
     }
     @media (prefers-reduced-motion: no-preference) {
       @starting-style {
-        .sf-workspace:not([class*=sf-workspace--wide-]):dir(rtl) > .sf-workspace-panel {
-          translate: -100% 0;
-        }
-        .sf-workspace.sf-workspace--wide-h6:dir(rtl) > .sf-workspace-panel {
+        .sf-workspace:is(:not([class*=sf-workspace--wide-]), .sf-workspace--wide-h6):dir(rtl) > .sf-workspace-panel {
           translate: -100% 0;
         }
       }
     }
   }
   @container sf-workspace (width >= 64rem) {
-    .sf-workspace:not([class*=sf-workspace--wide-]) > * {
-      --sf-workspace--layout: wide;
-    }
-    .sf-workspace.sf-workspace--wide-h6 > * {
+    .sf-workspace:is(:not([class*=sf-workspace--wide-]), .sf-workspace--wide-h6) > * {
       --sf-workspace--layout: wide;
     }
   }
   @container sf-workspace (width < 72rem) {
     .sf-workspace.sf-workspace--wide-h8 > .sf-workspace-panel {
       position: absolute;
-      z-index: 9000;
       z-index: var(--sf-layer--window, 9000);
-      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
       box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
     }
     @media (prefers-reduced-motion: no-preference) {
@@ -6177,9 +5511,7 @@ body {
   @container sf-workspace (width < 80rem) {
     .sf-workspace.sf-workspace--wide-i0 > .sf-workspace-panel {
       position: absolute;
-      z-index: 9000;
       z-index: var(--sf-layer--window, 9000);
-      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
       box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
     }
     @media (prefers-reduced-motion: no-preference) {
@@ -6208,9 +5540,7 @@ body {
   @container sf-workspace (width < 96rem) {
     .sf-workspace.sf-workspace--wide-i2 > .sf-workspace-panel {
       position: absolute;
-      z-index: 9000;
       z-index: var(--sf-layer--window, 9000);
-      box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-black--alfa-64);
       box-shadow: var(--sf-shadow-modal), 0 0 0 100vmax var(--sf-scrim-color, var(--sf-black--alfa-64));
     }
     @media (prefers-reduced-motion: no-preference) {
@@ -6238,138 +5568,59 @@ body {
   }
 }
 @layer sf.paint {
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-workspace > .sf-workspace-rail{
-    border-right-color: var(--sf-outline-variant);
-    border-right-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-  }
-  @supports not (border-inline-end-color: initial){
-  html:not([dir="rtl"]) .sf-workspace > .sf-workspace-rail{
-    border-right-color: var(--sf-outline-variant);
-    border-right-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-    }
-  }
   .sf-workspace > .sf-workspace-rail:where(:dir(ltr)){
-    border-right-color: var(--sf-outline-variant);
     border-right-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-workspace > .sf-workspace-rail{
-    border-left-color: var(--sf-outline-variant);
-    border-left-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-  }
-  @supports not (border-inline-end-color: initial){
-  [dir="rtl"] .sf-workspace > .sf-workspace-rail{
-    border-left-color: var(--sf-outline-variant);
-    border-left-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-    }
   }
   .sf-workspace > .sf-workspace-rail:where(:dir(rtl)){
-    border-left-color: var(--sf-outline-variant);
     border-left-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
   }
   .sf-workspace > .sf-workspace-rail {
-    border-inline-end-color: var(--sf-outline-variant);
     border-inline-end-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-workspace > .sf-workspace-list{
-    border-right-color: var(--sf-outline-variant);
-    border-right-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-  }
-  @supports not (border-inline-end-color: initial){
-  html:not([dir="rtl"]) .sf-workspace > .sf-workspace-list{
-    border-right-color: var(--sf-outline-variant);
-    border-right-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-    }
-  }
   .sf-workspace > .sf-workspace-list:where(:dir(ltr)){
-    border-right-color: var(--sf-outline-variant);
     border-right-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-workspace > .sf-workspace-list{
-    border-left-color: var(--sf-outline-variant);
-    border-left-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-  }
-  @supports not (border-inline-end-color: initial){
-  [dir="rtl"] .sf-workspace > .sf-workspace-list{
-    border-left-color: var(--sf-outline-variant);
-    border-left-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-    }
   }
   .sf-workspace > .sf-workspace-list:where(:dir(rtl)){
-    border-left-color: var(--sf-outline-variant);
     border-left-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
   }
   .sf-workspace > .sf-workspace-list {
-    border-inline-end-color: var(--sf-outline-variant);
     border-inline-end-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-workspace > .sf-workspace-panel{
-    border-left-color: var(--sf-outline-variant);
-    border-left-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-  }
-  @supports not (border-inline-start-color: initial){
-  html:not([dir="rtl"]) .sf-workspace > .sf-workspace-panel{
-    border-left-color: var(--sf-outline-variant);
-    border-left-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-    }
-  }
   .sf-workspace > .sf-workspace-panel:where(:dir(ltr)){
-    border-left-color: var(--sf-outline-variant);
     border-left-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-workspace > .sf-workspace-panel{
-    border-right-color: var(--sf-outline-variant);
-    border-right-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-  }
-  @supports not (border-inline-start-color: initial){
-  [dir="rtl"] .sf-workspace > .sf-workspace-panel{
-    border-right-color: var(--sf-outline-variant);
-    border-right-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
-    }
   }
   .sf-workspace > .sf-workspace-panel:where(:dir(rtl)){
-    border-right-color: var(--sf-outline-variant);
     border-right-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
   }
   .sf-workspace > .sf-workspace-panel {
-    border-inline-start-color: var(--sf-outline-variant);
     border-inline-start-color: var(--sf-workspace-divider-color, var(--sf-outline-variant));
   }
   @container sf-workspace (width < 56rem) {
     .sf-workspace.sf-workspace--wide-h4 > .sf-workspace-panel {
-      background: var(--sf-surface-popup);
       background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
     }
   }
   @container sf-workspace (width < 64rem) {
-    .sf-workspace:not([class*=sf-workspace--wide-]) > .sf-workspace-panel {
-      background: var(--sf-surface-popup);
-      background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
-      color: var(--sf-on-surface);
-    }
-    .sf-workspace.sf-workspace--wide-h6 > .sf-workspace-panel {
-      background: var(--sf-surface-popup);
+    .sf-workspace:is(:not([class*=sf-workspace--wide-]), .sf-workspace--wide-h6) > .sf-workspace-panel {
       background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
     }
   }
   @container sf-workspace (width < 72rem) {
     .sf-workspace.sf-workspace--wide-h8 > .sf-workspace-panel {
-      background: var(--sf-surface-popup);
       background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
     }
   }
   @container sf-workspace (width < 80rem) {
     .sf-workspace.sf-workspace--wide-i0 > .sf-workspace-panel {
-      background: var(--sf-surface-popup);
       background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
     }
   }
   @container sf-workspace (width < 96rem) {
     .sf-workspace.sf-workspace--wide-i2 > .sf-workspace-panel {
-      background: var(--sf-surface-popup);
       background: var(--sf-workspace-drawer-background-color, var(--sf-workspace-drawer-background, var(--sf-surface-popup)));
       color: var(--sf-on-surface);
     }
@@ -6424,16 +5675,10 @@ body {
   :where([data-sf-skeleton=rows]):not(:defined):not(:has(> [data-sf-static])),
   :where([data-sf-skeleton=record]):not(:defined):not(:has(> [data-sf-static])),
   :where([data-sf-skeleton=menu]):not(:defined):not(:has(> [data-sf-static])) {
-    min-height: 0;
-    min-block-size: 0;
-    min-height: 0;
     min-height: var(--sf-skeleton-block-size, 0);
     min-block-size: var(--sf-skeleton-block-size, 0);
   }
   :where([data-sf-skeleton=block]):not(:defined):not(:has(> [data-sf-static])) {
-    min-height: var(--sf-ui-1--control-height);
-    min-block-size: var(--sf-ui-1--control-height);
-    min-height: var(--sf-ui-1--control-height);
     min-height: var(--sf-skeleton-block-size, var(--sf-ui-1--control-height));
     min-block-size: var(--sf-skeleton-block-size, var(--sf-ui-1--control-height));
     background-image: linear-gradient(var(--sf-skeleton-base), var(--sf-skeleton-base));
@@ -6443,9 +5688,6 @@ body {
             animation: sf-placeholder-pulse calc(var(--sf-duration-slow) * 3) var(--sf-animation) infinite;
   }
   :where([data-sf-skeleton=line]):not(:defined):not(:has(> [data-sf-static])) {
-    min-height: var(--sf-skeleton-line);
-    min-block-size: var(--sf-skeleton-line);
-    min-height: var(--sf-skeleton-line);
     min-height: var(--sf-skeleton-block-size, var(--sf-skeleton-line));
     min-block-size: var(--sf-skeleton-block-size, var(--sf-skeleton-line));
     background-image: repeating-linear-gradient(to bottom, transparent 0 calc((var(--sf-skeleton-line) - var(--sf-skeleton-bar)) / 2), var(--sf-skeleton-base) calc((var(--sf-skeleton-line) - var(--sf-skeleton-bar)) / 2) calc((var(--sf-skeleton-line) + var(--sf-skeleton-bar)) / 2), transparent calc((var(--sf-skeleton-line) + var(--sf-skeleton-bar)) / 2) var(--sf-skeleton-line));
@@ -6511,6 +5753,12 @@ body {
     --sf-language--trigger: calc(2 * var(--sf-language--space-x) + 2 * var(--sf-language--text-x) + 3 * var(--sf-language--line));
     --sf-language--field-box: calc(var(--sf-language--field-label) + var(--sf-space-1\/4) + var(--sf-language--field));
   }
+  /* trigger icon (owner decision C369): the glyph alone, a square of the
+     size's step -- the icon button's box -- held before the code as the code
+     trigger's box is. */
+  :where(sf-language[trigger=icon]) {
+    --sf-language--trigger: var(--sf-language--box);
+  }
   :where(sf-language[size="1/3"]) {
     --sf-language--box: var(--sf-ui-1\/3--control-height);
     --sf-language--space-x: var(--sf-button-padding-inline, var(--sf-ui-1\/3--space-x));
@@ -6548,6 +5796,13 @@ body {
       --sf-language--field-label: var(--sf-text-height-1);
     }
   }
+  /* trigger name (C381): the glyph and the language's own name in the words of
+     its place, one line of that place high; its width is the name's, which no
+     attribute gives, so before the code the host holds the line and no width. */
+  :where(sf-language[trigger=name]) {
+    --sf-language--box: 1lh;
+    --sf-language--trigger: auto;
+  }
   :where(sf-language:not([data-look])):not(:has(> [data-sf-static])) {
     display: inline-block;
     vertical-align: middle;
@@ -6570,7 +5825,7 @@ body {
   /* Drawn, the element is its parts (display: contents); a part whose own
      code has not come yet (sf-dropdown is fetched on its own) holds the same
      box until it draws, or the row closed up for a frame between the two. */
-  :where(sf-language .sf-language-parts > sf-button:not(:defined)) {
+  :where(sf-language .sf-language-parts > :is(sf-button, :is(sf-button-icon, sf-icon-button)):not(:defined)) {
     display: inline-block;
     vertical-align: middle;
     height: var(--sf-language--box);
@@ -6591,13 +5846,7 @@ body {
     height: var(--sf-language--box);
     block-size: var(--sf-language--box);
   }
-  :where(sf-language .sf-language-parts > sf-segmented:not(:defined)) {
-    display: inline-block;
-    vertical-align: middle;
-    height: var(--sf-language--box);
-    block-size: var(--sf-language--box);
-  }
-  :where(sf-language .sf-language-parts > sf-button-group:not(:defined)) {
+  :where(sf-language .sf-language-parts > :is(sf-segmented, sf-button-group):not(:defined)) {
     display: inline-block;
     vertical-align: middle;
     height: var(--sf-language--box);
@@ -6647,16 +5896,10 @@ body {
      alone. A row taller than the bar (size 1/2 with size-1 controls in it)
      is read from its children's sizes (below); a bar narrower than the window
      that collapses on its own width is the one thing the hold cannot tell. */
-  :where(sf-header-site) {
+  :where(:is(sf-header-site, sf-site-header)) {
     --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
   }
-  :where(sf-site-header) {
-    --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
-  }
-  [size="1/2"]:where(sf-header-site) {
-    --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1\/2--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
-  }
-  [size="1/2"]:where(sf-site-header) {
+  :where(:is(sf-header-site, sf-site-header))[size="1/2"] {
     --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1\/2--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
   }
   /* A 1/2 bar whose row holds a size-1 control is as tall as that control: its
@@ -6673,116 +5916,45 @@ body {
      The lists are :where and :not: the build's :is() fallback writes out
      every combination, and nested :is() lists multiplied past what a string
      holds (the tag pair keeps its :is(), the alias contract's spelling). */
-  [size="1/2"]:where(sf-header-site):where(:has(> [slot=tools]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]):not(sf-language):not([theme-switch]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]):not(sf-language):not([theme-switch]))) {
+  :where(:is(sf-header-site, sf-site-header))[size="1/2"]:where(:has(> [slot=tools]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]):not(sf-language):not([theme-switch]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]):not(sf-language):not([theme-switch]))) {
     --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
   }
-  [size="1/2"]:where(sf-site-header):where(:has(> [slot=tools]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]):not(sf-language):not([theme-switch]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]):not(sf-language):not([theme-switch]))) {
-    --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
-  }
-  [size="1/2"][collapse=none]:where(sf-header-site):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
-    --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
-  }
-  [size="1/2"][collapse=none]:where(sf-site-header):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+  :where(:is(sf-header-site, sf-site-header))[size="1/2"][collapse=none]:where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
     --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
   }
   @media (min-width: 32rem) {
-    [size="1/2"][collapse=sm]:where(sf-header-site):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
-      --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
-    }
-    [size="1/2"][collapse=sm]:where(sf-site-header):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+    :where(:is(sf-header-site, sf-site-header))[size="1/2"][collapse=sm]:where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
       --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
     }
   }
   @media (min-width: 44rem) {
-    [size="1/2"][collapse=md]:where(sf-header-site):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
-      --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
-    }
-    [size="1/2"][collapse=md]:where(sf-site-header):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+    :where(:is(sf-header-site, sf-site-header))[size="1/2"][collapse=md]:where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
       --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
     }
   }
   @media (min-width: 60rem) {
-    [size="1/2"]:where(sf-header-site):not([collapse=none]):not([collapse=sm]):not([collapse=md]):not([collapse=xl]):not([collapse=always]):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
-      --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
-    }
-    [size="1/2"]:where(sf-site-header):not([collapse=none]):not([collapse=sm]):not([collapse=md]):not([collapse=xl]):not([collapse=always]):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+    :where(:is(sf-header-site, sf-site-header))[size="1/2"]:not([collapse=none]):not([collapse=sm]):not([collapse=md]):not([collapse=xl]):not([collapse=always]):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
       --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
     }
   }
   @media (min-width: 72rem) {
-    [size="1/2"][collapse=xl]:where(sf-header-site):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
-      --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
-    }
-    [size="1/2"][collapse=xl]:where(sf-site-header):where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
+    :where(:is(sf-header-site, sf-site-header))[size="1/2"][collapse=xl]:where(:has(> sf-menu:not([slot]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=actions]:where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > [slot=tools]:where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row > .sf-site-header-tools > :where(sf-language, [theme-switch]):where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-nav > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]), > .sf-site-header > .sf-site-header-row .sf-site-header-actions > :where(sf-button, sf-button-icon, sf-icon-button, sf-segmented, sf-button-group, sf-language, sf-menu):not([size="1/2"]):not([size="1/3"]):not([size="2"]):not([size="3"]))) {
       --sf-site-header--box: var(--sf-site-header-block-size, calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1) + var(--sf-px)));
     }
   }
-  :where(sf-header-site):not(:defined):not(:has(> [data-sf-static])) {
+  :where(:is(sf-header-site, sf-site-header)):not(:defined):not(:has(> [data-sf-static])),
+  :where(:is(sf-header-site, sf-site-header)) > :where(.sf-site-header:not([data-sf-static])) {
     display: block;
     box-sizing: border-box;
     height: var(--sf-site-header--box);
     block-size: var(--sf-site-header--box);
     overflow: clip;
-    border-bottom: 1px solid var(--sf-outline-variant);
-    -webkit-border-after: 1px solid var(--sf-outline-variant);
-            border-block-end: 1px solid var(--sf-outline-variant);
-    border-bottom: 1px solid var(--sf-outline-variant);
     border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
     -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
             border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
   }
-  :where(sf-site-header):not(:defined):not(:has(> [data-sf-static])) {
-    display: block;
-    box-sizing: border-box;
-    height: var(--sf-site-header--box);
-    block-size: var(--sf-site-header--box);
-    overflow: clip;
-    border-bottom: 1px solid var(--sf-outline-variant);
-    -webkit-border-after: 1px solid var(--sf-outline-variant);
-            border-block-end: 1px solid var(--sf-outline-variant);
-    border-bottom: 1px solid var(--sf-outline-variant);
-    border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
-    -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
-            border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
-  }
-  :where(sf-header-site) > :where(.sf-site-header:not([data-sf-static])) {
-    display: block;
-    box-sizing: border-box;
-    height: var(--sf-site-header--box);
-    block-size: var(--sf-site-header--box);
-    overflow: clip;
-    border-bottom: 1px solid var(--sf-outline-variant);
-    -webkit-border-after: 1px solid var(--sf-outline-variant);
-            border-block-end: 1px solid var(--sf-outline-variant);
-    border-bottom: 1px solid var(--sf-outline-variant);
-    border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
-    -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
-            border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
-  }
-  :where(sf-site-header) > :where(.sf-site-header:not([data-sf-static])) {
-    display: block;
-    box-sizing: border-box;
-    height: var(--sf-site-header--box);
-    block-size: var(--sf-site-header--box);
-    overflow: clip;
-    border-bottom: 1px solid var(--sf-outline-variant);
-    -webkit-border-after: 1px solid var(--sf-outline-variant);
-            border-block-end: 1px solid var(--sf-outline-variant);
-    border-bottom: 1px solid var(--sf-outline-variant);
-    border-bottom: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
-    -webkit-border-after: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
-            border-block-end: var(--sf-px) solid var(--sf-site-header-border-color, var(--sf-outline-variant));
-  }
-  :where(sf-header-site):not(:defined):not(:has(> [data-sf-static])) > * {
-    visibility: hidden;
-  }
-  :where(sf-site-header):not(:defined):not(:has(> [data-sf-static])) > * {
-    visibility: hidden;
-  }
-  :where(sf-header-site) > :where(.sf-site-header:not([data-sf-static])) > * {
-    visibility: hidden;
-  }
-  :where(sf-site-header) > :where(.sf-site-header:not([data-sf-static])) > * {
+  :where(:is(sf-header-site, sf-site-header)):not(:defined):not(:has(> [data-sf-static])) > *,
+  :where(:is(sf-header-site, sf-site-header)) > :where(.sf-site-header:not([data-sf-static])) > * {
     visibility: hidden;
   }
   /* sf-input before it draws (first-paint study R222, pilot of «box from
@@ -6826,10 +5998,7 @@ body {
   :where(sf-input[label]:not([label=""]):not(:defined)) {
     --sf-input--box-label: 1;
   }
-  :where(sf-input[hint]:not([hint=""]):not(.does-not-exist):not(:defined)) {
-    --sf-input--box-message: 1;
-  }
-  :where(sf-input[invalid][error-message]:not([error-message=""]):not(:defined)) {
+  :where(sf-input:is([hint]:not([hint=""]), [invalid][error-message]:not([error-message=""])):not(:defined)) {
     --sf-input--box-message: 1;
   }
   :where(sf-input:not(:defined):not([appearance=hidden])):not(:has(> [data-sf-static])) {
@@ -6858,17 +6027,11 @@ body {
   :where(sf-file-upload:not(:defined)) {
     --sf-file-upload--box-text: 0;
   }
-  :where(sf-file-upload[formats]:not([formats=""]):not(:defined)) {
-    --sf-file-upload--box-text: 1;
-  }
-  :where(sf-file-upload[supporting-text]:not([supporting-text=""]):not(:defined)) {
+  :where(sf-file-upload:is([formats]:not([formats=""]), [supporting-text]:not([supporting-text=""])):not(:defined)) {
     --sf-file-upload--box-text: 1;
   }
   :where(sf-file-upload:not(:defined):not([size]:not([size="1"])):not([label]:not([label=""]))):not(:has(> [data-sf-static])) {
     display: block;
-    height: calc(2 * 1px + 2 * var(--sf-space-1) + 2 * var(--sf-ui-1--space-y-tightness-default) + var(--sf-text-height-1) + var(--sf-space-1\/3) + var(--sf-text-height-1) + var(--sf-file-upload--box-text) * (var(--sf-space-1\/4) + var(--sf-text-height-1)));
-    block-size: calc(2 * 1px + 2 * var(--sf-space-1) + 2 * var(--sf-ui-1--space-y-tightness-default) + var(--sf-text-height-1) + var(--sf-space-1\/3) + var(--sf-text-height-1) + var(--sf-file-upload--box-text) * (var(--sf-space-1\/4) + var(--sf-text-height-1)));
-    height: calc(2 * 1px + 2 * var(--sf-space-1) + 2 * var(--sf-ui-1--space-y-tightness-default) + var(--sf-text-height-1) + var(--sf-space-1\/3) + var(--sf-text-height-1) + var(--sf-file-upload--box-text) * (var(--sf-space-1\/4) + var(--sf-text-height-1)));
     height: calc(2 * var(--sf-px) + 2 * var(--sf-space-1) + 2 * var(--sf-ui-1--space-y-tightness-default) + var(--sf-text-height-1) + var(--sf-space-1\/3) + var(--sf-text-height-1) + var(--sf-file-upload--box-text) * (var(--sf-space-1\/4) + var(--sf-text-height-1)));
     block-size: calc(2 * var(--sf-px) + 2 * var(--sf-space-1) + 2 * var(--sf-ui-1--space-y-tightness-default) + var(--sf-text-height-1) + var(--sf-space-1\/3) + var(--sf-text-height-1) + var(--sf-file-upload--box-text) * (var(--sf-space-1\/4) + var(--sf-text-height-1)));
   }
@@ -6958,19 +6121,10 @@ body {
     --sf-tile-metric--box-change: 0;
     --sf-tile-metric--box-meter: 1;
   }
-  :where(sf-tile-metric[previous]:not([previous=""]):not(:defined)) {
+  :where(sf-tile-metric:is([previous]:not([previous=""]), [delta]:not([delta=""]), [period-text]:not([period-text=""])):not(:defined)) {
     --sf-tile-metric--box-change: 1;
   }
-  :where(sf-tile-metric[delta]:not([delta=""]):not(:defined)) {
-    --sf-tile-metric--box-change: 1;
-  }
-  :where(sf-tile-metric[period-text]:not([period-text=""]):not(:defined)) {
-    --sf-tile-metric--box-change: 1;
-  }
-  :where(sf-tile-metric[status]:not([status=""]):not([status=neutral]):not(:defined)) {
-    --sf-tile-metric--box-status: 1;
-  }
-  :where(sf-tile-metric[hint]:not([hint=""]):not(.does-not-exist):not(:defined)) {
+  :where(sf-tile-metric:is([status]:not([status=""]):not([status=neutral]), [hint]:not([hint=""])):not(:defined)) {
     --sf-tile-metric--box-status: 1;
   }
   :where(sf-tile-metric:not(:defined)):not(:has(> [data-sf-static])) {
@@ -7042,107 +6196,38 @@ body {
      filter tag (kind checkbox, the default) shows its check mark, a picture,
      only when it is chosen (C145 (2)); a colour is a dot of the point step
      (C145 (7)). */
-  :where(sf-tag[kind=icon]:not(:defined)) {
+  :where(sf-tag:is([kind=icon], [kind=avatar], [kind=color], [type=icon], [type=avatar], [type=color]):not(:defined)) {
     --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
     --sf-tag--box-lead-on: 1;
     --sf-tag--box-cross-on: 1;
   }
-  :where(sf-tag[kind=avatar]:not(:defined)) {
-    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
-    --sf-tag--box-lead-on: 1;
-    --sf-tag--box-cross-on: 1;
-  }
-  :where(sf-tag[kind=color]:not(:defined)) {
-    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
-    --sf-tag--box-lead-on: 1;
-    --sf-tag--box-cross-on: 1;
-  }
-  :where(sf-tag[type=icon]:not(:defined)) {
-    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
-    --sf-tag--box-lead-on: 1;
-    --sf-tag--box-cross-on: 1;
-  }
-  :where(sf-tag[type=avatar]:not(:defined)) {
-    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
-    --sf-tag--box-lead-on: 1;
-    --sf-tag--box-cross-on: 1;
-  }
-  :where(sf-tag[type=color]:not(:defined)) {
-    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
-    --sf-tag--box-lead-on: 1;
-    --sf-tag--box-cross-on: 1;
-  }
-  :where(sf-tag[active]:not([kind]):not([type]):not([active=false]):not(:defined)) {
+  :where(sf-tag:is(:not([kind]):not([type]), [kind=checkbox], [type=checkbox])[active]:not([active=false]):not(:defined)) {
     --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
     --sf-tag--box-lead-on: 1;
   }
-  :where(sf-tag[kind=checkbox][active]:not(.does-not-exist):not([active=false]):not(:defined)) {
-    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
-    --sf-tag--box-lead-on: 1;
-  }
-  :where(sf-tag[type=checkbox][active]:not(.does-not-exist):not([active=false]):not(:defined)) {
-    --sf-tag--box-lead: calc(var(--sf-tag--box-control) - 2 * var(--sf-space-1\/4));
-    --sf-tag--box-lead-on: 1;
-  }
-  :where(sf-tag[kind=color]:not(:defined)) {
+  :where(sf-tag:is([kind=color], [type=color]):not(:defined)) {
     --sf-tag--box-lead: var(--sf-micro--point-1\/2);
   }
-  :where(sf-tag[type=color]:not(:defined)) {
-    --sf-tag--box-lead: var(--sf-micro--point-1\/2);
-  }
-  :where(sf-tag[kind=color][size="1/3"]:not(:defined)) {
+  :where(sf-tag:is([kind=color], [type=color])[size="1/3"]:not(:defined)) {
     --sf-tag--box-lead: var(--sf-micro--point-1\/3);
   }
-  :where(sf-tag[type=color][size="1/3"]:not(:defined)) {
-    --sf-tag--box-lead: var(--sf-micro--point-1\/3);
-  }
-  :where(sf-tag[kind=color][size="1"]:not(:defined)) {
+  :where(sf-tag:is([kind=color], [type=color])[size="1"]:not(:defined)) {
     --sf-tag--box-lead: var(--sf-micro--point-1);
   }
-  :where(sf-tag[type=color][size="1"]:not(:defined)) {
-    --sf-tag--box-lead: var(--sf-micro--point-1);
-  }
-  :where(sf-tag[kind=color][size="2"]:not(:defined)) {
+  :where(sf-tag:is([kind=color], [type=color])[size="2"]:not(:defined)) {
     --sf-tag--box-lead: var(--sf-micro--point-2);
   }
-  :where(sf-tag[type=color][size="2"]:not(:defined)) {
-    --sf-tag--box-lead: var(--sf-micro--point-2);
-  }
-  :where(sf-tag[kind=color][size="3"]:not(:defined)) {
-    --sf-tag--box-lead: var(--sf-micro--point-3);
-  }
-  :where(sf-tag[type=color][size="3"]:not(:defined)) {
+  :where(sf-tag:is([kind=color], [type=color])[size="3"]:not(:defined)) {
     --sf-tag--box-lead: var(--sf-micro--point-3);
   }
   /* The picture's optical pull (the tag sheet): a Material Symbols glyph's box
      moves out by a twelfth of its size on both sides, an avatar or a colour dot
      by a sixteenth at the start, so the lead takes that much less room (FP-5 of
      the first-paint status R222: a chosen filter tag held 4 px too wide). */
-  :where(sf-tag[kind=icon]:not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(:defined)) {
+  :where(sf-tag:is([kind=icon], [type=icon], :not([kind]):not([type])[active]:not([active=false]), [kind=checkbox][active]:not([active=false]), [type=checkbox][active]:not([active=false])):not(:defined)) {
     --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 6);
   }
-  :where(sf-tag[type=icon]:not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(:defined)) {
-    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 6);
-  }
-  :where(sf-tag[active]:not([kind]):not([type]):not([active=false]):not(:defined)) {
-    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 6);
-  }
-  :where(sf-tag[kind=checkbox][active]:not([active=false]):not(.does-not-exist):not(:defined)) {
-    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 6);
-  }
-  :where(sf-tag[type=checkbox][active]:not([active=false]):not(.does-not-exist):not(:defined)) {
-    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 6);
-  }
-  :where(sf-tag[kind=avatar]:not(:defined)) {
-    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 16);
-  }
-  :where(sf-tag[type=avatar]:not(:defined)) {
-    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 16);
-  }
-  :where(sf-tag[kind=color]:not(:defined)) {
-    --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 16);
-  }
-  :where(sf-tag[type=color]:not(:defined)) {
+  :where(sf-tag:is([kind=avatar], [type=avatar], [kind=color], [type=color]):not(:defined)) {
     --sf-tag--box-pull: calc(var(--sf-tag--box-lead) / 16);
   }
   :where(sf-tag[closable]:not([closable=false]):not(:defined)) {
@@ -7155,13 +6240,7 @@ body {
   :where(sf-tag[href]:not([href=""]):not(:defined)) {
     --sf-tag--box-cross-on: 0;
   }
-  :where(sf-tag[href]:not([href=""]):not([kind]):not([type]):not(:defined)) {
-    --sf-tag--box-lead-on: 0;
-  }
-  :where(sf-tag[href][kind=checkbox]:not([href=""]):not(.does-not-exist):not(:defined)) {
-    --sf-tag--box-lead-on: 0;
-  }
-  :where(sf-tag[href][type=checkbox]:not([href=""]):not(.does-not-exist):not(:defined)) {
+  :where(sf-tag[href]:not([href=""]):is(:not([kind]):not([type]), [kind=checkbox], [type=checkbox]):not(:defined)) {
     --sf-tag--box-lead-on: 0;
   }
   /* A compact region on a desktop moves each edge one step down, as the tag
@@ -7177,22 +6256,8 @@ body {
       --sf-tag--box-edge: var(--sf-b6);
     }
     /* A 1/2 tag outside a compact region is 32 high: its cross is 12 (C145 (1)). */
-    :where(sf-tag:not([size]):not(:defined):not([data-sf-density=compact] *)) {
-      --sf-tag--box-cross: var(--sf-micro--cross-1);
-    }
-    :where(sf-tag[size=""]:not(:defined):not([data-sf-density=compact] *)) {
-      --sf-tag--box-cross: var(--sf-micro--cross-1);
-    }
-    :where(sf-tag[size="1/2"]:not(:defined):not([data-sf-density=compact] *)) {
-      --sf-tag--box-cross: var(--sf-micro--cross-1);
-    }
-    :where([data-sf-density=compact] [data-sf-density=normal] sf-tag:not([size]):not(:defined)) {
-      --sf-tag--box-cross: var(--sf-micro--cross-1);
-    }
-    :where([data-sf-density=compact] [data-sf-density=normal] sf-tag[size=""]:not(:defined)) {
-      --sf-tag--box-cross: var(--sf-micro--cross-1);
-    }
-    :where([data-sf-density=compact] [data-sf-density=normal] sf-tag[size="1/2"]:not(:defined)) {
+    :where(sf-tag:is(:not([size]), [size=""], [size="1/2"]):not(:defined):not([data-sf-density=compact] *)),
+    :where([data-sf-density=compact] [data-sf-density=normal] sf-tag:is(:not([size]), [size=""], [size="1/2"]):not(:defined)) {
       --sf-tag--box-cross: var(--sf-micro--cross-1);
     }
   }
@@ -7254,46 +6319,14 @@ body {
   :where(sf-tag[interactive]:not([interactive=false])[closable]:not([closable=false]):not([line]:not([line=""])):not(:defined)) {
     --sf-tag--box-cross-gap: max(calc(var(--sf-px) * 0), calc((var(--sf-c2) - var(--sf-tag--box-cross)) / 2));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
-    }
-  }
   :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
     padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
-    }
   }
   :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
     padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
-    }
-  }
   :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
     padding-right: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
-    }
   }
   :where(sf-tag:not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
     padding-left: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-cross-on) * (var(--sf-tag--box-cross) + var(--sf-tag--box-cross-gap)));
@@ -7308,9 +6341,6 @@ body {
     padding-top: calc((var(--sf-tag--box-control) - var(--sf-tag--box-line)) / 2);
     padding-bottom: calc((var(--sf-tag--box-control) - var(--sf-tag--box-line)) / 2);
     padding-block: calc((var(--sf-tag--box-control) - var(--sf-tag--box-line)) / 2);
-    max-width: min(20rem, 100%);
-    max-inline-size: min(20rem, 100%);
-    max-width: min(20rem, 100%);
     max-width: min(var(--sf-g0), 100%);
     max-inline-size: min(var(--sf-g0), 100%);
     -webkit-padding-start: calc(var(--sf-tag--box-edge) + var(--sf-tag--box-lead-on) * (var(--sf-tag--box-lead) - var(--sf-tag--box-pull) + var(--sf-tag--box-gap)));
@@ -7333,24 +6363,8 @@ body {
     display: inline-flex;
     vertical-align: top;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static]))::after{
-    margin-left: var(--sf-tag--box-gap);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static]))::after{
-    margin-left: var(--sf-tag--box-gap);
-    }
-  }
   :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static]))::after:where(:dir(ltr)){
     margin-left: var(--sf-tag--box-gap);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static]))::after{
-    margin-right: var(--sf-tag--box-gap);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static]))::after{
-    margin-right: var(--sf-tag--box-gap);
-    }
   }
   :where(sf-tag[count]:not([count=""]):not(:defined)):not(:has(> [data-sf-static]))::after:where(:dir(rtl)){
     margin-right: var(--sf-tag--box-gap);
@@ -7434,19 +6448,13 @@ body {
     --sf-accordion--box-text: var(--sf-text-size-3);
     --sf-accordion--box-line: var(--sf-text-height-3);
   }
-  :where(sf-accordion[appearance=default]:not(:defined)) {
-    --sf-accordion--box-gap: var(--sf-space-2);
-  }
-  :where(sf-accordion[appearance=outline]:not(:defined)) {
+  :where(sf-accordion:is([appearance=default], [appearance=outline]):not(:defined)) {
     --sf-accordion--box-gap: var(--sf-space-2);
   }
   :where(sf-accordion:not(:defined)):not(:has(> [data-sf-static])) {
     display: flex;
     flex-direction: column;
     gap: var(--sf-accordion--box-gap);
-    min-height: max(calc(1px * 0), var(--sf-accordion--box-header));
-    min-block-size: max(calc(1px * 0), var(--sf-accordion--box-header));
-    min-height: max(calc(1px * 0), var(--sf-accordion--box-header));
     min-height: max(var(--sf-skeleton-block-size, calc(var(--sf-px) * 0)), var(--sf-accordion--box-header));
     min-block-size: max(var(--sf-skeleton-block-size, calc(var(--sf-px) * 0)), var(--sf-accordion--box-header));
     font-size: var(--sf-accordion--box-text);
@@ -7475,7 +6483,6 @@ body {
     margin-left: calc(var(--sf-accordion--box-inset) * -1);
     margin-right: calc(var(--sf-accordion--box-inset) * -1);
     margin-inline: calc(var(--sf-accordion--box-inset) * -1);
-    padding: max(1px * 0, (var(--sf-accordion--box-header) - var(--sf-accordion--box-line)) / 2) var(--sf-accordion--box-inset);
     padding: max(var(--sf-px) * 0, (var(--sf-accordion--box-header) - var(--sf-accordion--box-line)) / 2) var(--sf-accordion--box-inset);
     font-weight: var(--sf-weight--medium);
     list-style: none;
@@ -7506,16 +6513,10 @@ body {
   :where(sf-reference-link[size]:not([size=""]):not(:defined)) {
     --sf-reference-link--box: var(--sf-ui-1--control-height);
   }
-  :where(sf-reference-link[size="1/2"]:not(:defined)) {
+  :where(sf-reference-link:is([size="1/2"], [size="1/3"]):not(:defined)) {
     --sf-reference-link--box: var(--sf-ui-1\/2--control-height);
   }
-  :where(sf-reference-link[size="1/3"]:not(:defined)) {
-    --sf-reference-link--box: var(--sf-ui-1\/2--control-height);
-  }
-  :where(sf-reference-link[size="2"]:not(:defined)) {
-    --sf-reference-link--box: var(--sf-ui-2--control-height);
-  }
-  :where(sf-reference-link[size="3"]:not(:defined)) {
+  :where(sf-reference-link:is([size="2"], [size="3"]):not(:defined)) {
     --sf-reference-link--box: var(--sf-ui-2--control-height);
   }
   :where(sf-reference-link[appearance=plain]:not([size]):not(:defined)),
@@ -7526,31 +6527,19 @@ body {
   :where(sf-reference-link[appearance=plain][size]:not([size=""]):not(:defined)) {
     --sf-reference-link--box: calc(var(--sf-ui-1--control-height) - 2 * var(--sf-px));
   }
-  :where(sf-reference-link[appearance=plain][size="1/2"]:not(:defined)) {
+  :where(sf-reference-link[appearance=plain]:is([size="1/2"], [size="1/3"]):not(:defined)) {
     --sf-reference-link--box: calc(var(--sf-ui-1\/2--control-height) - 2 * var(--sf-px));
   }
-  :where(sf-reference-link[appearance=plain][size="1/3"]:not(:defined)) {
-    --sf-reference-link--box: calc(var(--sf-ui-1\/2--control-height) - 2 * var(--sf-px));
-  }
-  :where(sf-reference-link[appearance=plain][size="2"]:not(:defined)) {
-    --sf-reference-link--box: calc(var(--sf-ui-2--control-height) - 2 * var(--sf-px));
-  }
-  :where(sf-reference-link[appearance=plain][size="3"]:not(:defined)) {
+  :where(sf-reference-link[appearance=plain]:is([size="2"], [size="3"]):not(:defined)) {
     --sf-reference-link--box: calc(var(--sf-ui-2--control-height) - 2 * var(--sf-px));
   }
   :where(sf-reference-link[line]:not([line=""]):not(:defined)) {
     --sf-reference-link--box: var(--sf-text-height-1);
   }
-  :where(sf-reference-link[line][line="1/2"]:not(:defined)) {
+  :where(sf-reference-link[line]:is([line="1/2"], [line="1/3"]):not(:defined)) {
     --sf-reference-link--box: var(--sf-text-height-1\/2);
   }
-  :where(sf-reference-link[line][line="1/3"]:not(:defined)) {
-    --sf-reference-link--box: var(--sf-text-height-1\/2);
-  }
-  :where(sf-reference-link[line][line="2"]:not(:defined)) {
-    --sf-reference-link--box: var(--sf-text-height-2);
-  }
-  :where(sf-reference-link[line][line="3"]:not(:defined)) {
+  :where(sf-reference-link[line]:is([line="2"], [line="3"]):not(:defined)) {
     --sf-reference-link--box: var(--sf-text-height-2);
   }
   :where(sf-reference-link[text]:not([text=""]):not(:defined)) {
@@ -7580,17 +6569,10 @@ body {
     color: var(--sf-link);
     -webkit-text-decoration-line: underline;
             text-decoration-line: underline;
-    text-decoration-thickness: 1px;
     text-decoration-thickness: var(--sf-px);
-    text-underline-offset: 0.1875rem;
     text-underline-offset: var(--sf-a3);
   }
-  :where(sf-reference-link[appearance=inline][label][state=missing]:not(:defined)):not(:has(> [data-sf-static]))::before {
-    color: var(--sf-on-surface-variant);
-    -webkit-text-decoration-line: none;
-            text-decoration-line: none;
-  }
-  :where(sf-reference-link[appearance=inline][label][state=forbidden]:not(:defined)):not(:has(> [data-sf-static]))::before {
+  :where(sf-reference-link[appearance=inline][label]:is([state=missing], [state=forbidden]):not(:defined)):not(:has(> [data-sf-static]))::before {
     color: var(--sf-on-surface-variant);
     -webkit-text-decoration-line: none;
             text-decoration-line: none;
@@ -7600,171 +6582,19 @@ body {
      gone record shows, stands before the name: the line's height and the
      icon's 4 px gap. The reason follows the name after « · », in the words of
      the page's language (the element's lang files). */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
+  :where(sf-reference-link[appearance=inline]:is([icon]:not([icon=""]), [state=missing], [state=forbidden]):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
     padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
   }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
-    }
-  }
-  :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
+  :where(sf-reference-link[appearance=inline]:is([icon]:not([icon=""]), [state=missing], [state=forbidden]):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
     padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
   }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
-    }
-  }
-  :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
+  :where(sf-reference-link[appearance=inline]:is([icon]:not([icon=""]), [state=missing], [state=forbidden]):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
     padding-left: calc(var(--sf-text-height-1) + 0.25rem);
   }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    }
-  }
-  :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
+  :where(sf-reference-link[appearance=inline]:is([icon]:not([icon=""]), [state=missing], [state=forbidden]):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
     padding-right: calc(var(--sf-text-height-1) + 0.25rem);
   }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    }
-  }
-  :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-  }
-  :where(sf-reference-link[appearance=inline][icon]:not([icon=""]):not(:defined)):not(:has(> [data-sf-static])) {
-    -webkit-padding-start: calc(var(--sf-text-height-1) + 0.25rem);
-            padding-inline-start: calc(var(--sf-text-height-1) + 0.25rem);
-    -webkit-padding-start: calc(var(--sf-text-height-1) + var(--sf-a4));
-            padding-inline-start: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
-    }
-  }
-  :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
-    }
-  }
-  :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    }
-  }
-  :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    }
-  }
-  :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-  }
-  :where(sf-reference-link[appearance=inline][state=missing]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])) {
-    -webkit-padding-start: calc(var(--sf-text-height-1) + 0.25rem);
-            padding-inline-start: calc(var(--sf-text-height-1) + 0.25rem);
-    -webkit-padding-start: calc(var(--sf-text-height-1) + var(--sf-a4));
-            padding-inline-start: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
-    }
-  }
-  :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
-    }
-  }
-  :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    }
-  }
-  :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    }
-  }
-  :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-  }
-  :where(sf-reference-link[appearance=inline][state=forbidden]:not(.does-not-exist):not(:defined)):not(:has(> [data-sf-static])) {
-    -webkit-padding-start: calc(var(--sf-text-height-1) + 0.25rem);
-            padding-inline-start: calc(var(--sf-text-height-1) + 0.25rem);
+  :where(sf-reference-link[appearance=inline]:is([icon]:not([icon=""]), [state=missing], [state=forbidden]):not(:defined)):not(:has(> [data-sf-static])) {
     -webkit-padding-start: calc(var(--sf-text-height-1) + var(--sf-a4));
             padding-inline-start: calc(var(--sf-text-height-1) + var(--sf-a4));
   }
@@ -7776,59 +6606,19 @@ body {
             font-feature-settings: "tnum";
     font-variant-numeric: tabular-nums; /* the number's figures, as its sheet draws them */
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
-    }
-  }
   :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
     padding-right: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
-    }
   }
   :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
     padding-left: calc(var(--sf-text-height-1) + var(--sf-a4));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-    }
   }
   :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
     padding-right: calc(var(--sf-text-height-1) + 0.25rem);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-text-height-1) + 0.25rem);
-    }
   }
   :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
     padding-left: calc(var(--sf-text-height-1) + 0.25rem);
   }
   :where(sf-reference-link[appearance=inline][target=_blank][href]:not([href=""]):not([disabled]:not([disabled=false])):not([state]:not([state=""])):not(:defined)):not(:has(> [data-sf-static])) {
-    -webkit-padding-end: calc(var(--sf-text-height-1) + 0.25rem);
-            padding-inline-end: calc(var(--sf-text-height-1) + 0.25rem);
     -webkit-padding-end: calc(var(--sf-text-height-1) + var(--sf-a4));
             padding-inline-end: calc(var(--sf-text-height-1) + var(--sf-a4));
   }
@@ -7858,9 +6648,6 @@ body {
      enough to wrap is the one thing the attributes cannot tell. */
   :where(sf-file-preview:not(:defined)):not(:has(> [data-sf-static])) {
     display: block;
-    height: var(--sf-ui-2--control-height);
-    block-size: var(--sf-ui-2--control-height);
-    height: var(--sf-ui-2--control-height);
     height: var(--sf-file-preview-holder-size, var(--sf-ui-2--control-height));
     block-size: var(--sf-file-preview-holder-size, var(--sf-ui-2--control-height));
   }
@@ -7879,9 +6666,6 @@ body {
     display: inline-block;
     vertical-align: middle;
     box-sizing: border-box;
-    max-width: min(100%, 18rem);
-    max-inline-size: min(100%, 18rem);
-    max-width: min(100%, 18rem);
     max-width: min(100%, var(--sf-f8));
     max-inline-size: min(100%, var(--sf-f8));
     height: var(--sf-ui-2--control-height);
@@ -7914,9 +6698,6 @@ body {
   }
   :where(sf-file-preview[compact]:not([compact=false]):not(:defined)):not(:has(> [data-sf-static])) {
     display: block;
-    height: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
-    block-size: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
-    height: calc(var(--sf-icon-size-2) + 2 * 0.375rem);
     height: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
     block-size: calc(var(--sf-icon-size-2) + 2 * var(--sf-a6));
   }
@@ -7988,10 +6769,7 @@ body {
   :where(sf-avatar[template=card][heading]:not([heading=""]):not(:defined)) {
     --sf-avatar--card-heading: 1;
   }
-  :where(sf-avatar[template=card][meta]:not([meta=""]):not(:defined)) {
-    --sf-avatar--card-row: 1;
-  }
-  :where(sf-avatar[template=card][description]:not([description=""]):not(:defined)) {
+  :where(sf-avatar[template=card]:is([meta]:not([meta=""]), [description]:not([description=""])):not(:defined)) {
     --sf-avatar--card-row: 1;
   }
   :where(sf-avatar[template=card]:not(:defined)):not(:has(> [data-sf-static])) {
@@ -8032,10 +6810,7 @@ body {
   :where(sf-avatar[template=label][size="3"]:not(:defined)) {
     --sf-avatar--box-line: var(--sf-text-height-3);
   }
-  :where(sf-avatar[template=label][heading]:not([heading=""]):not(:defined)) {
-    --sf-avatar--box-heading: 1;
-  }
-  :where(sf-avatar[template=label][title]:not([title=""]):not(:defined)) {
+  :where(sf-avatar[template=label]:is([heading]:not([heading=""]), [title]:not([title=""])):not(:defined)) {
     --sf-avatar--box-heading: 1;
   }
   :where(sf-avatar[template=label][description]:not([description=""]):not(:defined)) {
@@ -8088,10 +6863,7 @@ body {
   /* Its menu waits for its own code in the parts the element drew: an empty
      undefined sf-menu-context would stand in the row as one more item, a gap
      wider than the trigger, until it upgrades into its popup. */
-  :where(sf-language .sf-language-parts > sf-menu-context[popup]:not(:defined)) {
-    display: none;
-  }
-  :where(sf-language .sf-language-parts > sf-context-menu[popup]:not(:defined)) {
+  :where(sf-language .sf-language-parts > :is(sf-menu-context, sf-context-menu)[popup]:not(:defined)) {
     display: none;
   }
   /* sf-slider before it draws (decision C143 (8)). Its slides are the page's
@@ -8153,10 +6925,6 @@ body {
             padding-block-end: calc(var(--sf-space-1) + var(--sf-ui-1--control-height));
   }
   :where(sf-slider:not(:defined)[thumbs]:not([thumbs=false])):not(:has(> [data-sf-static])) {
-    padding-bottom: calc(var(--sf-space-1) + 3rem);
-    -webkit-padding-after: calc(var(--sf-space-1) + 3rem);
-            padding-block-end: calc(var(--sf-space-1) + 3rem);
-    padding-bottom: calc(var(--sf-space-1) + 3rem);
     padding-bottom: calc(var(--sf-space-1) + var(--sf-d2));
     -webkit-padding-after: calc(var(--sf-space-1) + var(--sf-d2));
             padding-block-end: calc(var(--sf-space-1) + var(--sf-d2));
@@ -8205,78 +6973,7 @@ body {
   :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > :not(img):not(picture):not(figure):not(a) {
     display: none;
   }
-  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > img :where(img) {
-    display: block;
-    width: 100%;
-    inline-size: 100%;
-    height: auto;
-    block-size: auto;
-    -o-object-fit: cover;
-       object-fit: cover;
-    border-radius: var(--sf-radius--surface);
-    background-color: var(--sf-surface-container);
-    /* A picture not yet in (or missing) shows its alt text, and that text set
-       its minimum height above the tile's ratio: 112 held, 103.4 drawn in a
-       tile of size s (FP-5 of the first-paint status R222). The tile's shape
-       holds, as the drawn tile's does. */
-    overflow: hidden;
-    min-height: 0;
-    min-block-size: 0;
-  }
-  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > picture :where(img) {
-    display: block;
-    width: 100%;
-    inline-size: 100%;
-    height: auto;
-    block-size: auto;
-    -o-object-fit: cover;
-       object-fit: cover;
-    border-radius: var(--sf-radius--surface);
-    background-color: var(--sf-surface-container);
-    /* A picture not yet in (or missing) shows its alt text, and that text set
-       its minimum height above the tile's ratio: 112 held, 103.4 drawn in a
-       tile of size s (FP-5 of the first-paint status R222). The tile's shape
-       holds, as the drawn tile's does. */
-    overflow: hidden;
-    min-height: 0;
-    min-block-size: 0;
-  }
-  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > figure :where(img) {
-    display: block;
-    width: 100%;
-    inline-size: 100%;
-    height: auto;
-    block-size: auto;
-    -o-object-fit: cover;
-       object-fit: cover;
-    border-radius: var(--sf-radius--surface);
-    background-color: var(--sf-surface-container);
-    /* A picture not yet in (or missing) shows its alt text, and that text set
-       its minimum height above the tile's ratio: 112 held, 103.4 drawn in a
-       tile of size s (FP-5 of the first-paint status R222). The tile's shape
-       holds, as the drawn tile's does. */
-    overflow: hidden;
-    min-height: 0;
-    min-block-size: 0;
-  }
-  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > a :where(img) {
-    display: block;
-    width: 100%;
-    inline-size: 100%;
-    height: auto;
-    block-size: auto;
-    -o-object-fit: cover;
-       object-fit: cover;
-    border-radius: var(--sf-radius--surface);
-    background-color: var(--sf-surface-container);
-    /* A picture not yet in (or missing) shows its alt text, and that text set
-       its minimum height above the tile's ratio: 112 held, 103.4 drawn in a
-       tile of size s (FP-5 of the first-paint status R222). The tile's shape
-       holds, as the drawn tile's does. */
-    overflow: hidden;
-    min-height: 0;
-    min-block-size: 0;
-  }
+  :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > :is(img, picture, figure, a) :where(img),
   :where(sf-gallery:not(:defined)):not(:has(> [data-sf-static])) > img {
     display: block;
     width: 100%;
@@ -8297,48 +6994,15 @@ body {
   }
   /* One ratio for every tile; ratio="auto" and the masonry look keep each
      picture's own, which its width and height give before it arrives. */
-  :where(sf-gallery:not(:defined):not([layout=masonry]):not([ratio=auto])):not(:has(> [data-sf-static])) > img :where(img) {
-    aspect-ratio: 1/1;
-  }
-  :where(sf-gallery:not(:defined):not([layout=masonry]):not([ratio=auto])):not(:has(> [data-sf-static])) > picture :where(img) {
-    aspect-ratio: 1/1;
-  }
-  :where(sf-gallery:not(:defined):not([layout=masonry]):not([ratio=auto])):not(:has(> [data-sf-static])) > figure :where(img) {
-    aspect-ratio: 1/1;
-  }
-  :where(sf-gallery:not(:defined):not([layout=masonry]):not([ratio=auto])):not(:has(> [data-sf-static])) > a :where(img) {
-    aspect-ratio: 1/1;
-  }
+  :where(sf-gallery:not(:defined):not([layout=masonry]):not([ratio=auto])):not(:has(> [data-sf-static])) > :is(img, picture, figure, a) :where(img),
   :where(sf-gallery:not(:defined):not([layout=masonry]):not([ratio=auto])):not(:has(> [data-sf-static])) > img {
     aspect-ratio: 1/1;
   }
-  :where(sf-gallery[ratio="4/3"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > img :where(img) {
-    aspect-ratio: 4/3;
-  }
-  :where(sf-gallery[ratio="4/3"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > picture :where(img) {
-    aspect-ratio: 4/3;
-  }
-  :where(sf-gallery[ratio="4/3"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > figure :where(img) {
-    aspect-ratio: 4/3;
-  }
-  :where(sf-gallery[ratio="4/3"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > a :where(img) {
-    aspect-ratio: 4/3;
-  }
+  :where(sf-gallery:not(:defined)[ratio="4/3"]:not([layout=masonry])):not(:has(> [data-sf-static])) > :is(img, picture, figure, a) :where(img),
   :where(sf-gallery:not(:defined)[ratio="4/3"]:not([layout=masonry])):not(:has(> [data-sf-static])) > img {
     aspect-ratio: 4/3;
   }
-  :where(sf-gallery[ratio="16/9"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > img :where(img) {
-    aspect-ratio: 16/9;
-  }
-  :where(sf-gallery[ratio="16/9"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > picture :where(img) {
-    aspect-ratio: 16/9;
-  }
-  :where(sf-gallery[ratio="16/9"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > figure :where(img) {
-    aspect-ratio: 16/9;
-  }
-  :where(sf-gallery[ratio="16/9"]:not(:defined):not([layout=masonry])):not(:has(> [data-sf-static])) > a :where(img) {
-    aspect-ratio: 16/9;
-  }
+  :where(sf-gallery:not(:defined)[ratio="16/9"]:not([layout=masonry])):not(:has(> [data-sf-static])) > :is(img, picture, figure, a) :where(img),
   :where(sf-gallery:not(:defined)[ratio="16/9"]:not([layout=masonry])):not(:has(> [data-sf-static])) > img {
     aspect-ratio: 16/9;
   }
@@ -8371,10 +7035,6 @@ body {
   }
   /* The thumbnails' row (72 and the ring's room) and the place line under it. */
   :where(sf-gallery:not(:defined)[layout=thumbnails]):not(:has(> [data-sf-static])):has(> :nth-child(2)) {
-    padding-bottom: calc(var(--sf-space-1\/3) * 2 + 4.5rem + 0.125rem * 2 + var(--sf-text-height-1\/2));
-    -webkit-padding-after: calc(var(--sf-space-1\/3) * 2 + 4.5rem + 0.125rem * 2 + var(--sf-text-height-1\/2));
-            padding-block-end: calc(var(--sf-space-1\/3) * 2 + 4.5rem + 0.125rem * 2 + var(--sf-text-height-1\/2));
-    padding-bottom: calc(var(--sf-space-1\/3) * 2 + 4.5rem + 0.125rem * 2 + var(--sf-text-height-1\/2));
     padding-bottom: calc(var(--sf-space-1\/3) * 2 + var(--sf-d8) + var(--sf-a2) * 2 + var(--sf-text-height-1\/2));
     -webkit-padding-after: calc(var(--sf-space-1\/3) * 2 + var(--sf-d8) + var(--sf-a2) * 2 + var(--sf-text-height-1\/2));
             padding-block-end: calc(var(--sf-space-1\/3) * 2 + var(--sf-d8) + var(--sf-a2) * 2 + var(--sf-text-height-1\/2));
@@ -8391,18 +7051,7 @@ body {
   :where(sf-gallery:not(:defined)[layout=masonry][tile-size=l]):not(:has(> [data-sf-static])) {
     --sf-gallery--columns: 2;
   }
-  :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > img :where(img:not([width][height])) {
-    aspect-ratio: auto 1/1;
-  }
-  :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > picture :where(img:not([width][height])) {
-    aspect-ratio: auto 1/1;
-  }
-  :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > figure :where(img:not([width][height])) {
-    aspect-ratio: auto 1/1;
-  }
-  :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > a :where(img:not([width][height])) {
-    aspect-ratio: auto 1/1;
-  }
+  :where(sf-gallery:not(:defined)[layout=masonry]):not(:has(> [data-sf-static])) > :is(img, picture, figure, a) :where(img:not([width][height])),
   :where(sf-gallery:not(:defined)[layout=masonry]):not(:has(> [data-sf-static])) > img:not([width][height]) {
     aspect-ratio: auto 1/1;
   }
@@ -8424,22 +7073,7 @@ body {
       -webkit-margin-after: var(--sf-gallery--gap);
               margin-block-end: var(--sf-gallery--gap);
     }
-    :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > img :where(img) {
-      -o-object-position: 0 -200vmax !important;
-         object-position: 0 -200vmax !important;
-    }
-    :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > picture :where(img) {
-      -o-object-position: 0 -200vmax !important;
-         object-position: 0 -200vmax !important;
-    }
-    :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > figure :where(img) {
-      -o-object-position: 0 -200vmax !important;
-         object-position: 0 -200vmax !important;
-    }
-    :where(sf-gallery[layout=masonry]:not(:defined)):not(:has(> [data-sf-static])) > a :where(img) {
-      -o-object-position: 0 -200vmax !important;
-         object-position: 0 -200vmax !important;
-    }
+    :where(sf-gallery:not(:defined)[layout=masonry]):not(:has(> [data-sf-static])) > :is(img, picture, figure, a) :where(img),
     :where(sf-gallery:not(:defined)[layout=masonry]):not(:has(> [data-sf-static])) > img {
       -o-object-position: 0 -200vmax !important;
          object-position: 0 -200vmax !important;
@@ -8480,10 +7114,7 @@ body {
      the frame's gap apart, and the footer (a hairline and a control). The
      other steps wait out of the flow. Printed markup (data-sf-static) is its
      own box. */
-  :where(sf-wizard[place=modal]:not(:defined)):not(:has(> [data-sf-static])) {
-    display: none;
-  }
-  :where(sf-wizard[place=drawer]:not(:defined)):not(:has(> [data-sf-static])) {
+  :where(sf-wizard:not(:defined):is([place=modal], [place=drawer])):not(:has(> [data-sf-static])) {
     display: none;
   }
   :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer])):not(:has(> [data-sf-static])) {
@@ -8498,14 +7129,9 @@ body {
     padding-top: calc(var(--sf-wizard--box-frame) + var(--sf-wizard--box-control) * 2 + var(--sf-wizard--box-related) + var(--sf-wizard--box-gap) + var(--sf-heading-5--height) + var(--sf-wizard--box-why) + var(--sf-wizard--box-gap));
     -webkit-padding-before: calc(var(--sf-wizard--box-frame) + var(--sf-wizard--box-control) * 2 + var(--sf-wizard--box-related) + var(--sf-wizard--box-gap) + var(--sf-heading-5--height) + var(--sf-wizard--box-why) + var(--sf-wizard--box-gap));
             padding-block-start: calc(var(--sf-wizard--box-frame) + var(--sf-wizard--box-control) * 2 + var(--sf-wizard--box-related) + var(--sf-wizard--box-gap) + var(--sf-heading-5--height) + var(--sf-wizard--box-why) + var(--sf-wizard--box-gap));
-    padding-bottom: calc(var(--sf-wizard--box-gap) * 2 + 1px + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
-    -webkit-padding-after: calc(var(--sf-wizard--box-gap) * 2 + 1px + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
-            padding-block-end: calc(var(--sf-wizard--box-gap) * 2 + 1px + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
-    padding-bottom: calc(var(--sf-wizard--box-gap) * 2 + 1px + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
     padding-bottom: calc(var(--sf-wizard--box-gap) * 2 + var(--sf-px) + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
     -webkit-padding-after: calc(var(--sf-wizard--box-gap) * 2 + var(--sf-px) + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
             padding-block-end: calc(var(--sf-wizard--box-gap) * 2 + var(--sf-px) + var(--sf-wizard--box-control) + var(--sf-wizard--box-frame));
-    border: 1px solid var(--sf-outline-variant);
     border: var(--sf-px) solid var(--sf-outline-variant);
     border-radius: var(--sf-radius--surface);
   }
@@ -8515,13 +7141,7 @@ body {
   :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer])):not(:has(> [data-sf-static])) > sf-wizard-step:not(:first-of-type) {
     display: none;
   }
-  :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer])):not(:has(> [data-sf-static])) > sf-wizard-step > p {
-    margin: 0;
-  }
-  :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer])):not(:has(> [data-sf-static])) > sf-wizard-step > ul {
-    margin: 0;
-  }
-  :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer])):not(:has(> [data-sf-static])) > sf-wizard-step > ol {
+  :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer])):not(:has(> [data-sf-static])) > sf-wizard-step > :is(p, ul, ol) {
     margin: 0;
   }
   :where(sf-wizard:not(:defined):not([place=modal]):not([place=drawer])):not(:has(> [data-sf-static])) > sf-wizard-step > form {
@@ -8713,137 +7333,16 @@ body {
       --sf-list-item--box-caption-step: max(var(--sf-ui-1\/2--control-height), var(--sf-d1));
     }
   }
-  :where(:not(sf-dropdown) > sf-list-item[kind=icon]:not(:defined)) {
+  :where(:not(sf-dropdown) > sf-list-item:is([kind=icon], [kind=avatar], [kind=checkbox], [type=icon], [type=avatar], [type=checkbox]):not(:defined)),
+  :where(:is(sf-sortable, [role=list], [role=listbox], [data-sf-list]):has(> sf-list-item:is([kind=icon], [kind=avatar])) > sf-list-item:is(:not([kind]):not([type]), [kind=text], [type=text]):not(:defined)) {
     --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
   }
-  :where(:not(sf-dropdown) > sf-list-item[kind=avatar]:not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where(:not(sf-dropdown) > sf-list-item[kind=checkbox]:not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where(:not(sf-dropdown) > sf-list-item[type=icon]:not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where(:not(sf-dropdown) > sf-list-item[type=avatar]:not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where(:not(sf-dropdown) > sf-list-item[type=checkbox]:not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where(sf-sortable:not(.does-not-exist):has(> sf-list-item[kind=icon]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where(sf-sortable:not(.does-not-exist):has(> sf-list-item[kind=icon]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where(sf-sortable:not(.does-not-exist):has(> sf-list-item[kind=icon]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where(sf-sortable:not(.does-not-exist):has(> sf-list-item[kind=avatar]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where(sf-sortable:not(.does-not-exist):has(> sf-list-item[kind=avatar]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where(sf-sortable:not(.does-not-exist):has(> sf-list-item[kind=avatar]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([role=list]:has(> sf-list-item[kind=icon]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([role=list]:has(> sf-list-item[kind=icon]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([role=list]:has(> sf-list-item[kind=icon]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([role=list]:has(> sf-list-item[kind=avatar]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([role=list]:has(> sf-list-item[kind=avatar]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([role=list]:has(> sf-list-item[kind=avatar]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([role=listbox]:has(> sf-list-item[kind=icon]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([role=listbox]:has(> sf-list-item[kind=icon]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([role=listbox]:has(> sf-list-item[kind=icon]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([role=listbox]:has(> sf-list-item[kind=avatar]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([role=listbox]:has(> sf-list-item[kind=avatar]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([role=listbox]:has(> sf-list-item[kind=avatar]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([data-sf-list]:has(> sf-list-item[kind=icon]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([data-sf-list]:has(> sf-list-item[kind=icon]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([data-sf-list]:has(> sf-list-item[kind=icon]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([data-sf-list]:has(> sf-list-item[kind=avatar]) > sf-list-item:not([kind]):not([type]):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([data-sf-list]:has(> sf-list-item[kind=avatar]) > sf-list-item[kind=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where([data-sf-list]:has(> sf-list-item[kind=avatar]) > sf-list-item[type=text]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-picture: calc(var(--sf-list-item--box-line) + var(--sf-space-1\/2));
-  }
-  :where(:not(sf-dropdown) > sf-list-item[sortable-item]:not([sortable-item=""]):not(:defined)) {
+  :where(:not(sf-dropdown) > sf-list-item:is([sortable-item]:not([sortable-item=""]), [pinned]):not(:defined)) {
     --sf-list-item--box-handle: var(--sf-list-item--box-line);
-  }
-  :where(:not(sf-dropdown) > sf-list-item[pinned]:not(.does-not-exist):not(:defined)) {
-    --sf-list-item--box-handle: var(--sf-list-item--box-line);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture));
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: var(--sf-list-item--box-inset);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: var(--sf-list-item--box-inset);
-    }
   }
   :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])):where(:dir(ltr)){
     padding-left: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture));
     padding-right: var(--sf-list-item--box-inset);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
-    padding-right: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture));
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: var(--sf-list-item--box-inset);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])){
-    padding-left: var(--sf-list-item--box-inset);
-    }
   }
   :where(:not(sf-dropdown) > sf-list-item:not(:defined)):not(:has(> [data-sf-static])):where(:dir(rtl)){
     padding-right: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture));
@@ -8859,7 +7358,6 @@ body {
     min-width: 0;
     min-inline-size: 0;
     padding-inline: calc(var(--sf-list-item--box-inset) + var(--sf-list-item--box-handle) + var(--sf-list-item--box-picture)) var(--sf-list-item--box-inset);
-    color: var(--sf-on-surface);
     color: var(--sf-list-item-color, var(--sf-on-surface));
     font-family: var(--sf-text--family);
     font-size: var(--sf-list-item--box-size);
@@ -8880,7 +7378,6 @@ body {
     content: attr(supporting);
     overflow: hidden;
     visibility: visible;
-    color: var(--sf-on-surface-variant);
     color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
     font-size: var(--sf-list-item--box-caption-size);
     line-height: var(--sf-list-item--box-caption-line);
@@ -8945,7 +7442,7 @@ body {
      has drawn, the drawn head holds it, its rows out of view, until the head's
      own sheet arrives and lets both go (block-size auto, the rows visible).
      Printed markup (data-sf-static) is its own box and is left alone. */
-  :where(sf-header-page) {
+  :where(:is(sf-header-page, sf-page-header)) {
     --sf-page-header--box-path: calc(var(--sf-px) * 0);
     --sf-page-header--box-line: max(var(--sf-heading-4--height), var(--sf-ui-1\/2--control-height));
     --sf-page-header--box-actions: calc(var(--sf-px) * 0);
@@ -8953,52 +7450,24 @@ body {
     --sf-page-header--box-pad: calc(var(--sf-px) * 0);
     --sf-page-header--box: calc(var(--sf-page-header--box-path) + max(var(--sf-page-header--box-line), var(--sf-page-header--box-actions)) + var(--sf-page-header--box-tabs) + var(--sf-page-header--box-pad));
   }
-  :where(sf-page-header) {
-    --sf-page-header--box-path: calc(var(--sf-px) * 0);
-    --sf-page-header--box-line: max(var(--sf-heading-4--height), var(--sf-ui-1\/2--control-height));
-    --sf-page-header--box-actions: calc(var(--sf-px) * 0);
-    --sf-page-header--box-tabs: calc(var(--sf-px) * 0);
-    --sf-page-header--box-pad: calc(var(--sf-px) * 0);
-    --sf-page-header--box: calc(var(--sf-page-header--box-path) + max(var(--sf-page-header--box-line), var(--sf-page-header--box-actions)) + var(--sf-page-header--box-tabs) + var(--sf-page-header--box-pad));
-  }
-  :where(sf-header-page):has(> [slot=path], > header > .sf-page-header-path > [slot=path]) {
-    --sf-page-header--box-path: calc(var(--sf-ui-1\/3--control-height) + var(--sf-page-header-gap, var(--sf-space-1\/2)));
-  }
-  :where(sf-page-header):has(> [slot=path], > header > .sf-page-header-path > [slot=path]) {
+  :where(:is(sf-header-page, sf-page-header)):has(> [slot=path], > header > .sf-page-header-path > [slot=path]) {
     --sf-page-header--box-path: calc(var(--sf-ui-1\/3--control-height) + var(--sf-page-header-gap, var(--sf-space-1\/2)));
   }
   /* The actions are buttons of the default size 1 unless every one says 1/2;
      one of size 2 makes the line that tall. The slot content is the host's
      child until the element draws, then a child of the drawn head's rows:
      the box reads both. */
-  :where(sf-header-page):has(> [slot=actions], > header .sf-page-header-actions > [slot=actions]) {
+  :where(:is(sf-header-page, sf-page-header)):has(> [slot=actions], > header .sf-page-header-actions > [slot=actions]) {
     --sf-page-header--box-actions: var(--sf-ui-1--control-height);
   }
-  :where(sf-page-header):has(> [slot=actions], > header .sf-page-header-actions > [slot=actions]) {
-    --sf-page-header--box-actions: var(--sf-ui-1--control-height);
-  }
-  :where(sf-header-page):has(> [slot=actions], > header .sf-page-header-actions > [slot=actions]):not(:has(> [slot=actions]:not([size="1/2"]), > header .sf-page-header-actions > [slot=actions]:not([size="1/2"]))) {
+  :where(:is(sf-header-page, sf-page-header)):has(> [slot=actions], > header .sf-page-header-actions > [slot=actions]):not(:has(> [slot=actions]:not([size="1/2"]), > header .sf-page-header-actions > [slot=actions]:not([size="1/2"]))) {
     --sf-page-header--box-actions: var(--sf-ui-1\/2--control-height);
   }
-  :where(sf-page-header):has(> [slot=actions], > header .sf-page-header-actions > [slot=actions]):not(:has(> [slot=actions]:not([size="1/2"]), > header .sf-page-header-actions > [slot=actions]:not([size="1/2"]))) {
-    --sf-page-header--box-actions: var(--sf-ui-1\/2--control-height);
-  }
-  :where(sf-header-page):has(> [slot=actions][size="2"], > header .sf-page-header-actions > [slot=actions][size="2"]) {
+  :where(:is(sf-header-page, sf-page-header)):has(> [slot=actions][size="2"], > header .sf-page-header-actions > [slot=actions][size="2"]) {
     --sf-page-header--box-actions: var(--sf-ui-2--control-height);
   }
-  :where(sf-page-header):has(> [slot=actions][size="2"], > header .sf-page-header-actions > [slot=actions][size="2"]) {
-    --sf-page-header--box-actions: var(--sf-ui-2--control-height);
-  }
-  :where(sf-header-page):where([expressive]:not([expressive=false])) {
-    --sf-page-header--box-pad: calc(var(--sf-space-1) + var(--sf-space-2));
-  }
-  :where(sf-page-header):where([expressive]:not([expressive=false])) {
-    --sf-page-header--box-pad: calc(var(--sf-space-1) + var(--sf-space-2));
-  }
-  :where([data-sf-style=expressive]) :where(sf-header-page):not([expressive=false]) {
-    --sf-page-header--box-pad: calc(var(--sf-space-1) + var(--sf-space-2));
-  }
-  :where([data-sf-style=expressive]) :where(sf-page-header):not([expressive=false]) {
+  :where(:is(sf-header-page, sf-page-header)):where([expressive]:not([expressive=false])),
+  :where([data-sf-style=expressive]) :where(:is(sf-header-page, sf-page-header)):not([expressive=false]) {
     --sf-page-header--box-pad: calc(var(--sf-space-1) + var(--sf-space-2));
   }
   /* The tabs slot (C161 (5)) ends the head: the header's gap below the line,
@@ -9008,74 +7477,35 @@ body {
      only. The header's sheet holds the strip while the tabs have no code
      (sf-header-page 1.8.1: before, the bare tag's box had no tabs row and the
      head grew 40 -> 52 -> 92 at 1440). */
-  :where(sf-header-page):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
+  :where(:is(sf-header-page, sf-page-header)):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
     --sf-page-header--box-tabs-strip: var(--sf-ui-1--control-height);
     --sf-page-header--box-tabs: calc(var(--sf-page-header-gap, var(--sf-space-1\/2)) + var(--sf-page-header--box-tabs-strip));
   }
-  :where(sf-page-header):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
-    --sf-page-header--box-tabs-strip: var(--sf-ui-1--control-height);
-    --sf-page-header--box-tabs: calc(var(--sf-page-header-gap, var(--sf-space-1\/2)) + var(--sf-page-header--box-tabs-strip));
-  }
-  :where(sf-header-page):has(> [slot=tabs][size="1/2"], > header > .sf-page-header-tabs > [slot=tabs][size="1/2"]) {
+  :where(:is(sf-header-page, sf-page-header)):has(> [slot=tabs][size="1/2"], > header > .sf-page-header-tabs > [slot=tabs][size="1/2"]) {
     --sf-page-header--box-tabs-strip: var(--sf-ui-1\/2--control-height);
   }
-  :where(sf-page-header):has(> [slot=tabs][size="1/2"], > header > .sf-page-header-tabs > [slot=tabs][size="1/2"]) {
-    --sf-page-header--box-tabs-strip: var(--sf-ui-1\/2--control-height);
-  }
-  :where(sf-header-page):has(> [slot=tabs][size="2"], > header > .sf-page-header-tabs > [slot=tabs][size="2"]) {
+  :where(:is(sf-header-page, sf-page-header)):has(> [slot=tabs][size="2"], > header > .sf-page-header-tabs > [slot=tabs][size="2"]) {
     --sf-page-header--box-tabs-strip: var(--sf-ui-2--control-height);
   }
-  :where(sf-page-header):has(> [slot=tabs][size="2"], > header > .sf-page-header-tabs > [slot=tabs][size="2"]) {
-    --sf-page-header--box-tabs-strip: var(--sf-ui-2--control-height);
-  }
-  :where(sf-header-page):where([expressive]:not([expressive=false])):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
+  :where(:is(sf-header-page, sf-page-header)):where([expressive]:not([expressive=false])):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]),
+  :where([data-sf-style=expressive]) :where(:is(sf-header-page, sf-page-header)):not([expressive=false]):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
     --sf-page-header--box-pad: var(--sf-space-1);
   }
-  :where(sf-page-header):where([expressive]:not([expressive=false])):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
-    --sf-page-header--box-pad: var(--sf-space-1);
-  }
-  :where([data-sf-style=expressive]) :where(sf-header-page):not([expressive=false]):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
-    --sf-page-header--box-pad: var(--sf-space-1);
-  }
-  :where([data-sf-style=expressive]) :where(sf-page-header):not([expressive=false]):has(> [slot=tabs], > header > .sf-page-header-tabs > [slot=tabs]) {
-    --sf-page-header--box-pad: var(--sf-space-1);
-  }
-  :where(sf-header-page):not(:defined):not(:has(> [data-sf-static])) {
+  :where(:is(sf-header-page, sf-page-header)):not(:defined):not(:has(> [data-sf-static])) {
     display: block;
     box-sizing: border-box;
     height: var(--sf-page-header--box);
     block-size: var(--sf-page-header--box);
     overflow: clip;
   }
-  :where(sf-page-header):not(:defined):not(:has(> [data-sf-static])) {
-    display: block;
+  :where(:is(sf-header-page, sf-page-header)) > :where(.sf-page-header:not([data-sf-static])) {
     box-sizing: border-box;
     height: var(--sf-page-header--box);
     block-size: var(--sf-page-header--box);
     overflow: clip;
   }
-  :where(sf-header-page) > :where(.sf-page-header:not([data-sf-static])) {
-    box-sizing: border-box;
-    height: var(--sf-page-header--box);
-    block-size: var(--sf-page-header--box);
-    overflow: clip;
-  }
-  :where(sf-page-header) > :where(.sf-page-header:not([data-sf-static])) {
-    box-sizing: border-box;
-    height: var(--sf-page-header--box);
-    block-size: var(--sf-page-header--box);
-    overflow: clip;
-  }
-  :where(sf-header-page):not(:defined):not(:has(> [data-sf-static])) > * {
-    visibility: hidden;
-  }
-  :where(sf-page-header):not(:defined):not(:has(> [data-sf-static])) > * {
-    visibility: hidden;
-  }
-  :where(sf-header-page) > :where(.sf-page-header:not([data-sf-static])) > * {
-    visibility: hidden;
-  }
-  :where(sf-page-header) > :where(.sf-page-header:not([data-sf-static])) > * {
+  :where(:is(sf-header-page, sf-page-header)):not(:defined):not(:has(> [data-sf-static])) > *,
+  :where(:is(sf-header-page, sf-page-header)) > :where(.sf-page-header:not([data-sf-static])) > * {
     visibility: hidden;
   }
   /* sf-breadcrumbs before it draws (RG-S2-5: the trail in a page header's path
@@ -9110,64 +7540,18 @@ body {
    it -- data-state="hidden", or owned content already hidden -- and the
    button of the action already done is out of the flow. Out of any layer, as
    the script's [hidden] is: a button's own display must not win. */
-.sf-hide-show[data-state=hidden]:not([data-hide-show-init]):not(.does-not-exist) [data-action=hide] {
-  display: none;
-}
-.sf-hide-show[data-state=hidden]:not([data-hide-show-init]):not(.does-not-exist) .sf-hide {
-  display: none;
-}
-.sf-hide-show:not([data-hide-show-init]):has([data-content][hidden]) [data-action=hide] {
-  display: none;
-}
-.sf-hide-show:not([data-hide-show-init]):has(.sf-hide-show-content[hidden]) [data-action=hide] {
-  display: none;
-}
-.sf-hide-show:not([data-hide-show-init]):has(.hide-show-block[hidden]) [data-action=hide] {
-  display: none;
-}
-.sf-hide-show:not([data-hide-show-init]):has([data-content][hidden]) .sf-hide {
-  display: none;
-}
-.sf-hide-show:not([data-hide-show-init]):has(.sf-hide-show-content[hidden]) .sf-hide {
-  display: none;
-}
-.sf-hide-show:not([data-hide-show-init]):has(.hide-show-block[hidden]) .sf-hide {
-  display: none;
-}
-.sf-hide-show:not([data-hide-show-init]):not([data-state=hidden]):not(:has([data-content][hidden])) [data-action=show] {
-  display: none;
-}
-.sf-hide-show:not([data-hide-show-init]):not([data-state=hidden]):not(:has([data-content][hidden])) .sf-show {
-  display: none;
-}
-.sf-hide-show:not([data-hide-show-init]):not([data-state=hidden]):not(:has(.sf-hide-show-content[hidden])) [data-action=show] {
-  display: none;
-}
-.sf-hide-show:not([data-hide-show-init]):not([data-state=hidden]):not(:has(.sf-hide-show-content[hidden])) .sf-show {
-  display: none;
-}
-.sf-hide-show:not([data-hide-show-init]):not([data-state=hidden]):not(:has(.hide-show-block[hidden])) [data-action=show] {
-  display: none;
-}
-.sf-hide-show:not([data-hide-show-init]):not([data-state=hidden]):not(:has(.hide-show-block[hidden])) .sf-show {
+.sf-hide-show:not([data-hide-show-init]):is([data-state=hidden], :has(:is([data-content], .sf-hide-show-content, .hide-show-block)[hidden])) :is([data-action=hide], .sf-hide),
+.sf-hide-show:not([data-hide-show-init]):not([data-state=hidden]):not(:has(:is([data-content], .sf-hide-show-content, .hide-show-block)[hidden])) :is([data-action=show], .sf-show) {
   display: none;
 }
 
 @media (hover: none) and (pointer: coarse) {
   @media not all and (min-width: 60rem) {
     @layer sf.states {
-      [class*="--size-3"] [class*="--size-"]:not([class*="--size-3"]) input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=button]):not([type=submit]):not([type=reset]):not([type=image]):not([type=hidden]) {
-        font-size: 16px;
-      }
-      [class*="--size-3"] [class*="--size-"]:not([class*="--size-3"]) textarea:not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist) {
-        font-size: 16px;
-      }
-      [class*="--size-3"] [class*="--size-"]:not([class*="--size-3"]) select:not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist):not(.does-not-exist) {
-        font-size: 16px;
-      }
       input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=button]):not([type=submit]):not([type=reset]):not([type=image]):not([type=hidden]):not([class*="--size-3"]):not([class*="--size-3"] *),
       textarea:not([class*="--size-3"]):not([class*="--size-3"] *),
-      select:not([class*="--size-3"]):not([class*="--size-3"] *) {
+      select:not([class*="--size-3"]):not([class*="--size-3"] *),
+      [class*="--size-3"] [class*="--size-"]:not([class*="--size-3"]) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]):not([type=button]):not([type=submit]):not([type=reset]):not([type=image]):not([type=hidden]), textarea, select) {
         font-size: 16px;
       }
     }
@@ -9176,12 +7560,9 @@ body {
 @layer sf.utilities {
   .sr-only {
     position: absolute !important;
-    width: 1px !important;
     width: var(--sf-px) !important;
-    height: 1px !important;
     height: var(--sf-px) !important;
     padding: 0 !important;
-    margin: calc(-1 * 1px) !important;
     margin: calc(-1 * var(--sf-px)) !important;
     overflow: hidden !important;
     -webkit-clip-path: inset(50%) !important;
@@ -9799,7 +8180,6 @@ body {
     max-width: 100%;
     max-inline-size: 100%;
     padding: var(--sf-space-1\/4) var(--sf-space-1\/3);
-    border: 1px dashed var(--sf-outline);
     border: var(--sf-px) dashed var(--sf-outline);
     border-radius: var(--sf-radius--ui);
     color: var(--sf-on-surface);
@@ -9853,14 +8233,8 @@ body {
   }
   .sf-skip-link:not(:focus) {
     position: absolute;
-    width: 1px;
-    inline-size: 1px;
-    width: 1px;
     width: var(--sf-px);
     inline-size: var(--sf-px);
-    height: 1px;
-    block-size: 1px;
-    height: 1px;
     height: var(--sf-px);
     block-size: var(--sf-px);
     overflow: hidden;
@@ -9868,24 +8242,8 @@ body {
             clip-path: inset(50%);
     white-space: nowrap;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-skip-link:focus{
-    left: var(--sf-space-1\/2);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-skip-link:focus{
-    left: var(--sf-space-1\/2);
-    }
-  }
   .sf-skip-link:focus:where(:dir(ltr)){
     left: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-skip-link:focus{
-    right: var(--sf-space-1\/2);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-skip-link:focus{
-    right: var(--sf-space-1\/2);
-    }
   }
   .sf-skip-link:focus:where(:dir(rtl)){
     right: var(--sf-space-1\/2);
@@ -9895,7 +8253,6 @@ body {
     top: var(--sf-space-1\/2);
     inset-block-start: var(--sf-space-1\/2);
     inset-inline-start: var(--sf-space-1\/2);
-    z-index: calc(9000 + 1000);
     z-index: calc(var(--sf-z-index-layer, 9000) + 1000);
     display: inline-flex;
     align-items: center;

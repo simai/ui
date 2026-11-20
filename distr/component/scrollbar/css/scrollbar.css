@@ -64,41 +64,22 @@
     -webkit-mask-image: linear-gradient(var(--sf-scrollbar--fade-direction), transparent 0, var(--sf-black) var(--sf-scrollbar--fade-start), var(--sf-black) calc(100% - var(--sf-scrollbar--fade-end)), transparent 100%);
             mask-image: linear-gradient(var(--sf-scrollbar--fade-direction), transparent 0, var(--sf-black) var(--sf-scrollbar--fade-start), var(--sf-black) calc(100% - var(--sf-scrollbar--fade-end)), transparent 100%);
   }
-  .sf-scrollbar[data-sf-scrollbar-more=start] .sf-scrollbar__viewport {
+  .sf-scrollbar:is([data-sf-scrollbar-more=start], [data-sf-scrollbar-more=both]) .sf-scrollbar__viewport {
     --sf-scrollbar--fade-start: var(--sf-scrollbar-fade-size, var(--sf-space-2));
   }
-  .sf-scrollbar[data-sf-scrollbar-more=both] .sf-scrollbar__viewport {
-    --sf-scrollbar--fade-start: var(--sf-scrollbar-fade-size, var(--sf-space-2));
-  }
-  .sf-scrollbar[data-sf-scrollbar-more=end] .sf-scrollbar__viewport {
+  .sf-scrollbar:is([data-sf-scrollbar-more=end], [data-sf-scrollbar-more=both]) .sf-scrollbar__viewport {
     --sf-scrollbar--fade-end: var(--sf-scrollbar-fade-size, var(--sf-space-2));
   }
-  .sf-scrollbar[data-sf-scrollbar-more=both] .sf-scrollbar__viewport {
-    --sf-scrollbar--fade-end: var(--sf-scrollbar-fade-size, var(--sf-space-2));
-  }
-  .sf-scrollbar[data-axis=horizontal]:not(.does-not-exist) .sf-scrollbar__viewport {
+  .sf-scrollbar:is([data-axis=horizontal],
+  :not([data-axis])[data-sf-scrollbar-axis=horizontal]) .sf-scrollbar__viewport {
     --sf-scrollbar--fade-direction: to right;
   }
-  .sf-scrollbar[data-sf-scrollbar-axis=horizontal]:not([data-axis]) .sf-scrollbar__viewport {
-    --sf-scrollbar--fade-direction: to right;
-  }
-  .sf-scrollbar[data-axis=horizontal]:not(.does-not-exist) .sf-scrollbar__viewport:dir(rtl) {
+  .sf-scrollbar:is([data-axis=horizontal],
+  :not([data-axis])[data-sf-scrollbar-axis=horizontal]) .sf-scrollbar__viewport:dir(rtl) {
     --sf-scrollbar--fade-direction: to left;
   }
-  .sf-scrollbar[data-sf-scrollbar-axis=horizontal]:not([data-axis]) .sf-scrollbar__viewport:dir(rtl) {
-    --sf-scrollbar--fade-direction: to left;
-  }
-  .sf-scrollbar[data-axis=horizontal]:not(.does-not-exist) .sf-scrollbar__viewport {
-    height: auto;
-    block-size: auto;
-    max-width: 100%;
-    max-inline-size: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    overscroll-behavior-block: auto;
-    overscroll-behavior-inline: contain;
-  }
-  .sf-scrollbar[data-sf-scrollbar-axis=horizontal]:not([data-axis]) .sf-scrollbar__viewport {
+  .sf-scrollbar:is([data-axis=horizontal],
+  :not([data-axis])[data-sf-scrollbar-axis=horizontal]) .sf-scrollbar__viewport {
     height: auto;
     block-size: auto;
     max-width: 100%;

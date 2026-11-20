@@ -1159,6 +1159,36 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
     while (last + 1 < shown.length && opened.has(shown[last + 1].value)) last += 1;
 
     return last >= 0 && last < shown.length - 1 ? last : -1;
+  } // panel (owner decisions C313 (3), C312 (1)): the list as a dropping
+  // panel's content. While a search is typed in a multiple list, the rows
+  // found and not chosen can be chosen at once («Select found (N)»).
+
+
+  get panelValue() {
+    return this.hasAttribute('panel') && this.getAttribute('panel') !== 'false';
+  }
+
+  foundToSelect() {
+    if (!this.multiple || !this.panelValue || !this._pages.query.trim()) return [];
+    const chosen = new Set(this.selected);
+    return this.shownOptions.filter(one => !one.disabled && !chosen.has(one.value)).map(one => one.value);
+  }
+
+  selectFound() {
+    const found = this.foundToSelect();
+    if (!found.length || this.effectiveDisabled) return;
+    const next = [...this.selected, ...found];
+    this._value = (0,_js_choice_model_mjs__WEBPACK_IMPORTED_MODULE_7__.formatValue)(next);
+    this.requestComponentUpdate('value');
+    this.sfSyncFormState();
+    const detail = {
+      value: this.value,
+      values: [...next],
+      item: null,
+      checked: true
+    };
+    this.sfEmit('input', detail);
+    this.sfEmit('change', detail);
   } // Where a row's box stands (C308 FO-5): start, or end of the row.
 
 
@@ -1320,8 +1350,10 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
         error: this.sfWord('options-error'),
         empty: this.sfWord('nothing-found'),
         retry: this.sfWord('retry'),
-        more: this.sfWord('show-more')
-      }
+        more: this.sfWord('show-more'),
+        found: this.sfWord('select-found')
+      },
+      found: this.foundToSelect().length
     };
   }
 
@@ -1345,6 +1377,7 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
       flow: this.flowValue,
       optionLook: this.optionLookValue,
       controlPosition: this.controlPositionValue,
+      panel: this.panelValue,
       label: this.label || '',
       // C165 (1), C153 (8): the «?» after the heading, named by its subject.
       help: this.help || '',
@@ -1636,6 +1669,20 @@ function renderSearch(context) {
   }}
            @change=${event => event.stopPropagation()}>
   </label>`;
+} // «Select found (N)» (owner decision C312 (1)): in a panel, while a search
+// is typed in a multiple list, the first row chooses the rows found and not
+// chosen; it is gone with the search, or when nothing found is left to choose.
+
+
+function renderSelectFound(context) {
+  const {
+    paging
+  } = context;
+  if (!context.panel || !context.multiple || !paging.found) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button type="button" class="sf-choice-found" data-sf-select-found ?disabled=${context.fieldDisabled}
+                      @click=${() => context.component.selectFound()}>
+    <span class="sf-icon sf-choice-found-icon" aria-hidden="true">done_all</span><span class="sf-choice-found-text">${paging.words.found} (${paging.found})</span>
+  </button>`;
 }
 
 function renderPaging(context) {
@@ -1646,6 +1693,13 @@ function renderPaging(context) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-status" role="status" aria-live="polite" ?hidden=${!line}>${line}</span>${paging.status === 'error' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-choice-more" size="1/2" appearance="ghost" scheme="on-surface" text=${paging.words.retry}
                       @click=${() => context.component.loadPage(paging.retryCursor)}></sf-button>` : paging.nextCursor && paging.status !== 'loading' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-choice-more" size="1/2" appearance="ghost" scheme="on-surface" icon="expand_more" text=${paging.words.more}
                         @click=${() => context.component.loadPage(paging.nextCursor)}></sf-button><span class="sf-choice-end" data-sf-more aria-hidden="true"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`;
+} // In a panel (C313 (3)) the rows and their paging scroll under the search,
+// in one box: the band and the search stay and reach both edges, and the
+// mark after «Show more» comes into view only at the list's end (FO4-4).
+
+
+function renderScroll(context, content) {
+  return context.panel ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-choice-scroll">${content}</div>` : content;
 }
 
 function renderListTemplate(context) {
@@ -1656,11 +1710,12 @@ function renderListTemplate(context) {
   const described = [context.hint ? hintId : '', error ? messageId : ''].filter(Boolean).join(' ');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${joinClasses('sf-choice', 'sf-choice--list', context.multiple ? 'sf-choice--multiple' : '', context.invalid ? 'sf-choice--invalid' : '', context.fieldDisabled ? 'sf-choice--disabled' : '', context.rootClass)}
                    style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-appearance="list" data-flow=${context.flow}
-                   data-control-position=${context.controlPosition}>
+                   data-control-position=${context.controlPosition} ?data-panel=${context.panel}>
     ${context.label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-choice-heading"><span class="sf-choice-heading-text" id=${labelId}>${context.label}${context.required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>${renderHelp(context)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${context.hint ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-hint" id=${hintId}>${context.hint}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${renderSearch(context)}
-    <div class="sf-choice-options" role=${context.multiple ? 'group' : 'radiogroup'}
+    ${renderSelectFound(context)}
+    ${renderScroll(context, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-choice-options" role=${context.multiple ? 'group' : 'radiogroup'}
          aria-labelledby=${context.label ? labelId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
          aria-label=${!context.label && context.ariaLabel ? context.ariaLabel : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
          aria-describedby=${described || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1669,7 +1724,7 @@ function renderListTemplate(context) {
          aria-disabled=${context.fieldDisabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
       ${(0,lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__.repeat)(context.items, item => item.value, (item, index) => renderRow(context, item, index))}
     </div>
-    ${context.paging.shown ? renderPaging(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${context.paging.shown ? renderPaging(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}`)}
     ${error ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-message" id=${messageId} data-field-message="error"><span class="sf-icon sf-choice-message-icon" aria-hidden="true">error</span><span class="sf-choice-message-text">${error}</span></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   </div>`;
 } // The cards' label row: the label, then with help its «?» beside it in one
@@ -2031,14 +2086,14 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "0c1826bbbeb3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-choice","tag":"sf-input-choice","version":"1.10.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"value":"string","label":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"price":{"type":"string","optional":true},"term":{"type":"string","optional":true},"image":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"avatar":{"type":"object","optional":true},"swatch":{"type":"string","optional":true},"scheme":{"type":"string","optional":true}}},"searchable":{"type":"boolean","default":false},"provider":{"type":"object","default":null},"option-look":{"type":"enum","values":["badge","dot"]},"control-position":{"type":"enum","values":["start","end"],"default":"start"},"multiple":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["cards","list"],"default":"cards"},"layout":{"type":"enum","values":["tile","list","picture"],"default":"tile"},"flow":{"type":"enum","values":["auto","row","column"],"default":"auto"},"columns":{"type":"enum","values":["auto","1","2","3","4"],"default":"auto"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-choice-gap":{"type":"length","state":"default"},"--sf-choice-min-inline-size":{"type":"length","state":"default"},"--sf-choice-padding":{"type":"length","state":"default"},"--sf-choice-radius":{"type":"length","state":"default"},"--sf-choice-background-color":{"type":"color","state":"default"},"--sf-choice-border-color":{"type":"color","state":"default"},"--sf-choice-selected-background-color":{"type":"color","state":"selected"},"--sf-choice-selected-border-color":{"type":"color","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-choice","tag":"sf-input-choice","version":"1.11.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"value":"string","label":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"price":{"type":"string","optional":true},"term":{"type":"string","optional":true},"image":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"avatar":{"type":"object","optional":true},"swatch":{"type":"string","optional":true},"scheme":{"type":"string","optional":true}}},"searchable":{"type":"boolean","default":false},"provider":{"type":"object","default":null},"option-look":{"type":"enum","values":["badge","dot"]},"control-position":{"type":"enum","values":["start","end"],"default":"start"},"panel":{"type":"boolean","default":false},"multiple":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["cards","list"],"default":"cards"},"layout":{"type":"enum","values":["tile","list","picture"],"default":"tile"},"flow":{"type":"enum","values":["auto","row","column"],"default":"auto"},"columns":{"type":"enum","values":["auto","1","2","3","4"],"default":"auto"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-choice-gap":{"type":"length","state":"default"},"--sf-choice-min-inline-size":{"type":"length","state":"default"},"--sf-choice-padding":{"type":"length","state":"default"},"--sf-choice-radius":{"type":"length","state":"default"},"--sf-choice-background-color":{"type":"color","state":"default"},"--sf-choice-border-color":{"type":"color","state":"default"},"--sf-choice-selected-background-color":{"type":"color","state":"selected"},"--sf-choice-selected-border-color":{"type":"color","state":"selected"}}}');
 
 /***/ },
 
 /***/ "68b61d1e5ff4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Choice","runtime":{"value-missing":"Choose an option.","help":"More about: {label}","search-label":"Find in the list","loading-options":"Loading the options","options-error":"The options could not be loaded","nothing-found":"Nothing found","retry":"Retry","show-more":"Show more"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Choice","runtime":{"value-missing":"Choose an option.","help":"More about: {label}","search-label":"Find in the list","loading-options":"Loading the options","options-error":"The options could not be loaded","nothing-found":"Nothing found","retry":"Retry","show-more":"Show more","select-found":"Select found"}}');
 
 /***/ }
 

@@ -716,6 +716,35 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => initBreadcrumbs(document));
 } else {
   initBreadcrumbs(document);
+} // The trails a batch of changes touched are folded again once, in the next
+// frame, before it is drawn. Folding measures the trail, and folding it for
+// each record -- one per Smart icon in its separators as each draws its
+// glyph -- made the browser work out the page's styles again every time
+// (DF-9).
+
+
+const pendingRoots = new Set();
+let pendingFrame = 0;
+
+function foldLater(root) {
+  pendingRoots.add(root);
+  if (pendingFrame) return;
+
+  const run = () => {
+    pendingFrame = 0;
+    const roots = Array.from(pendingRoots);
+    pendingRoots.clear();
+    roots.forEach(one => {
+      if (one.isConnected && one[BOUND_KEY]) collapseBreadcrumbs(one);
+    });
+  };
+
+  if (typeof requestAnimationFrame === 'function') {
+    pendingFrame = requestAnimationFrame(run);
+  } else {
+    pendingFrame = 1;
+    Promise.resolve().then(run);
+  }
 }
 
 if (typeof MutationObserver !== 'undefined') {
@@ -738,7 +767,7 @@ if (typeof MutationObserver !== 'undefined') {
 
         if (root instanceof HTMLElement && root.matches(ROOT_SELECTOR) && root[BOUND_KEY]) {
           delete root.dataset.sfBreadcrumbsExpanded;
-          collapseBreadcrumbs(root);
+          foldLater(root);
         }
 
         return;
@@ -754,7 +783,7 @@ if (typeof MutationObserver !== 'undefined') {
 
         if (root instanceof HTMLElement && root[BOUND_KEY]) {
           delete root.dataset.sfBreadcrumbsExpanded;
-          collapseBreadcrumbs(root);
+          foldLater(root);
         }
       });
       const changedByRemoval = Array.from(mutation.removedNodes).some(node => !isGenerated(node) && !transient.has(node));
@@ -762,7 +791,7 @@ if (typeof MutationObserver !== 'undefined') {
 
       if (changedByRemoval && mutationRoot instanceof HTMLElement && mutationRoot[BOUND_KEY]) {
         delete mutationRoot.dataset.sfBreadcrumbsExpanded;
-        collapseBreadcrumbs(mutationRoot);
+        foldLater(mutationRoot);
       }
     });
   }).observe(document.documentElement, {

@@ -473,6 +473,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isMainAction: () => (/* binding */ isMainAction),
 /* harmony export */   isPressed: () => (/* binding */ isPressed),
 /* harmony export */   layoutActionRow: () => (/* binding */ layoutActionRow),
+/* harmony export */   layoutHeight: () => (/* binding */ layoutHeight),
+/* harmony export */   layoutRowRoom: () => (/* binding */ layoutRowRoom),
+/* harmony export */   layoutWidth: () => (/* binding */ layoutWidth),
 /* harmony export */   measureShown: () => (/* binding */ measureShown),
 /* harmony export */   openRowMenu: () => (/* binding */ openRowMenu),
 /* harmony export */   readPriority: () => (/* binding */ readPriority),
@@ -603,6 +606,38 @@ function rowRoom(list) {
   const style = getComputedStyle(list);
   const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
   return list.getBoundingClientRect().width - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // The width an element is laid out at, in fractional CSS pixels, before any
+// transform of it or of an ancestor (its border box). getBoundingClientRect is
+// a screen box: inside scale(.7) a 90 px tab reads 63, inside rotate() it reads
+// the width of its rotated bounding box, and a row that compares such widths
+// with its padding, a text measured in canvas or a ResizeObserver size mixes
+// screen and layout pixels (docs hero study 2026-11-19, section 9). The used
+// width of the computed style is the layout's own, with its fractions; a box
+// without one (an inline box, an element not drawn) gives offsetWidth.
+
+function layoutWidth(element) {
+  if (!element) return 0;
+  const style = getComputedStyle(element);
+  const width = parseFloat(style.width);
+  if (!Number.isFinite(width)) return element.offsetWidth || 0;
+  if (style.boxSizing === 'border-box') return width;
+  return ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), width);
+} // The block size of the same box (layoutWidth's other axis).
+
+function layoutHeight(element) {
+  if (!element) return 0;
+  const style = getComputedStyle(element);
+  const height = parseFloat(style.height);
+  if (!Number.isFinite(height)) return element.offsetHeight || 0;
+  if (style.boxSizing === 'border-box') return height;
+  return ['paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), height);
+} // rowRoom in layout pixels: the row's content box before any transform, for a
+// row whose items are measured with layoutWidth.
+
+function layoutRowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return layoutWidth(list) - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
 } // A text measurer in an element's own face, or null without a canvas: the
 // width «Ещё (7)» will have before its button draws it.
 
@@ -1380,10 +1415,11 @@ function panelHasContent(panel) {
 
   return false;
 } // A box's content width: its border box less its padding and border.
+// Layout widths (1.4.7): before any scale() or rotate() around the tabs.
 
 
 function contentWidth(box) {
-  const width = box.getBoundingClientRect().width;
+  const width = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.layoutWidth)(box);
   if (!width) return 0;
   const style = globalThis.getComputedStyle?.(box);
   const sides = ['paddingInlineStart', 'paddingInlineEnd', 'borderInlineStartWidth', 'borderInlineEndWidth'].reduce((sum, side) => sum + (Number.parseFloat(style?.[side]) || 0), 0);
@@ -2212,7 +2248,8 @@ class SfTabs extends TabsElement {
     if (value === null || value === undefined || value === '') this.removeAttribute('selected');else this.setAttribute('selected', String(value));
   } // The width the vertical look folds on (C181 (2)): the box that holds the
   // tabs and their content (VP-26, C96 (5), C289 (5)); before the first
-  // drawing, the parent's content box.
+  // drawing, the parent's content box. Layout widths (1.4.7): a screen box
+  // inside scale() or rotate() is not the width the md step is compared with.
 
 
   placeWidth() {
@@ -2235,7 +2272,7 @@ class SfTabs extends TabsElement {
     const root = this.querySelector(':scope > .sf-tabs');
     if (!root) return null;
     if (this.holdsContent()) return root;
-    const own = root.getBoundingClientRect().width;
+    const own = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.layoutWidth)(root);
     const top = this.ownerDocument?.documentElement;
 
     for (let box = this.parentElement; box && box !== top; box = box.parentElement) {
@@ -2628,18 +2665,23 @@ class SfTabs extends TabsElement {
       showMore(false);
       this._expectedTabSizes = null;
       return;
-    }
+    } // Layout widths (1.4.7): the room, the text of «Ещё (n)» measured in canvas
+    // and the ResizeObserver sizes are layout pixels, so the tabs are too; a
+    // screen box inside scale() or rotate() mixed the two (docs hero study
+    // 2026-11-19, section 9).
 
-    const width = host => tabBox(host)?.getBoundingClientRect().width ?? 0;
+
+    const width = host => (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.layoutWidth)(tabBox(host));
 
     const widths = hosts.map(width);
     const gap = parseFloat(getComputedStyle(list).columnGap) || 0; // The row's arithmetic is the shared row engine (core/js/overflow-row.js,
     // taken out of these tabs for sf-contents' bar): the tabs in their order
     // up to the first that does not fit, each whole in the row or in «Ещё»
     // (owner decision C54); the room is the row's content box in fractional
-    // pixels (rowRoom: clientWidth is a whole pixel, C54 return).
+    // pixels (rowRoom: clientWidth is a whole pixel, C54 return), before any
+    // transform (layoutRowRoom).
 
-    const room = () => (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.rowRoom)(list);
+    const room = () => (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.layoutRowRoom)(list);
 
     showMore(false);
     this.syncMoreErrors(more, 0);
@@ -3650,7 +3692,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs 
 /***/ "84d032c55810"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.4.6","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.4.7","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

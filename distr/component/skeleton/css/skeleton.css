@@ -10,7 +10,6 @@
     --sf-skeleton-duration: calc(var(--sf-duration-slow) * 3);
     display: flex;
     flex-direction: column;
-    gap: 0;
     gap: var(--sf-skeleton-gap, 0);
   }
   /* A bar stands for a line of text, so it takes a line's room: the text's
@@ -30,7 +29,6 @@
     --sf-skeleton-text--bar: calc(var(--sf-skeleton-text--height) * 0.727);
     position: relative;
     overflow: hidden;
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-skeleton-radius, var(--sf-radius--ui));
     height: var(--sf-skeleton-text--height);
     block-size: var(--sf-skeleton-text--height);
@@ -41,12 +39,7 @@
   .sf-skeleton-text:not(.sf-skeleton-circle):not(.sf-skeleton-square):not(.sf-skeleton-rounded):not(.sf-skeleton-icon):not([style*=block-size]) {
     height: var(--sf-skeleton-text--bar);
     block-size: var(--sf-skeleton-text--bar);
-    margin-top: calc((var(--sf-skeleton-text--height) - var(--sf-skeleton-text--bar)) / 2);
-    margin-bottom: calc((var(--sf-skeleton-text--height) - var(--sf-skeleton-text--bar)) / 2);
-    margin-block: calc((var(--sf-skeleton-text--height) - var(--sf-skeleton-text--bar)) / 2);
-    margin-top: calc((var(--sf-skeleton-text--height) - var(--sf-skeleton-text--bar)) / 2);
     margin-top: calc((var(--sf-skeleton-text--line, var(--sf-skeleton-text--height)) - var(--sf-skeleton-text--bar)) / 2);
-    margin-bottom: calc((var(--sf-skeleton-text--height) - var(--sf-skeleton-text--bar)) / 2);
     margin-bottom: calc((var(--sf-skeleton-text--line, var(--sf-skeleton-text--height)) - var(--sf-skeleton-text--bar)) / 2);
     margin-block: calc((var(--sf-skeleton-text--line, var(--sf-skeleton-text--height)) - var(--sf-skeleton-text--bar)) / 2);
   }
@@ -61,8 +54,6 @@
      opening on a slow CPU: rows at 7.7 s against 4.1 s with the bars still
      (stand 25, D7). A skeleton inside a pulsing one does not pulse again. */
   .sf-skeleton--animation-pulse {
-    -webkit-animation: sf-placeholder-pulse var(--sf-skeleton-duration) var(--sf-animation) infinite;
-            animation: sf-placeholder-pulse var(--sf-skeleton-duration) var(--sf-animation) infinite;
     -webkit-animation: sf-placeholder-pulse var(--sf-skeleton-animation-duration, var(--sf-skeleton-duration)) var(--sf-animation) infinite;
             animation: sf-placeholder-pulse var(--sf-skeleton-animation-duration, var(--sf-skeleton-duration)) var(--sf-animation) infinite;
   }
@@ -80,10 +71,7 @@
     inset: 0;
     -webkit-transform: translateX(-100%);
             transform: translateX(-100%);
-    background-image: linear-gradient(90deg, var(--sf-transparent), var(--sf-skeleton-highlight), var(--sf-transparent));
     background-image: linear-gradient(90deg, var(--sf-transparent), var(--sf-skeleton-highlight-color, var(--sf-skeleton-highlight)), var(--sf-transparent));
-    -webkit-animation: sf-skeleton-wave var(--sf-skeleton-duration) var(--sf-animation) infinite;
-            animation: sf-skeleton-wave var(--sf-skeleton-duration) var(--sf-animation) infinite;
     -webkit-animation: sf-skeleton-wave var(--sf-skeleton-animation-duration, var(--sf-skeleton-duration)) var(--sf-animation) infinite;
             animation: sf-skeleton-wave var(--sf-skeleton-animation-duration, var(--sf-skeleton-duration)) var(--sf-animation) infinite;
   }
@@ -163,11 +151,7 @@
     --sf-skeleton-text--height: var(--sf-text-size-1\/7);
     --sf-skeleton-text--line: var(--sf-text-height-1\/4);
   }
-  .sf-skeleton-text.sf-skeleton-circle:not(.sf-skeleton-icon):not([style*=inline-size]) {
-    width: var(--sf-skeleton-text--height);
-    inline-size: var(--sf-skeleton-text--height);
-  }
-  .sf-skeleton-text.sf-skeleton-square:not(.sf-skeleton-icon):not([style*=inline-size]) {
+  .sf-skeleton-text:is(.sf-skeleton-circle, .sf-skeleton-square):not(.sf-skeleton-icon):not([style*=inline-size]) {
     width: var(--sf-skeleton-text--height);
     inline-size: var(--sf-skeleton-text--height);
   }
@@ -179,16 +163,10 @@
      was replaced by an icon of 24. Steps the ladder has no icon for (1/4 and
      below, 4 to 7) keep the text size. A width or a height in style still wins. */
   .sf-skeleton-text.sf-skeleton-icon:not([style*=inline-size]) {
-    width: var(--sf-skeleton-text--height);
-    inline-size: var(--sf-skeleton-text--height);
-    width: var(--sf-skeleton-text--height);
     width: var(--sf-skeleton-text--icon, var(--sf-skeleton-text--height));
     inline-size: var(--sf-skeleton-text--icon, var(--sf-skeleton-text--height));
   }
   .sf-skeleton-text.sf-skeleton-icon:not([style*=block-size]) {
-    height: var(--sf-skeleton-text--height);
-    block-size: var(--sf-skeleton-text--height);
-    height: var(--sf-skeleton-text--height);
     height: var(--sf-skeleton-text--icon, var(--sf-skeleton-text--height));
     block-size: var(--sf-skeleton-text--icon, var(--sf-skeleton-text--height));
   }
@@ -200,49 +178,13 @@
      (the text size), as an icon placeholder's. The shape does not stretch: its
      skeleton keeps its own width. A width or a height still wins (they are
      written in style), and so does type="icon". */
-  .sf-skeleton-text.sf-skeleton-circle:not(.sf-skeleton-icon):not([style*=inline-size]):not([style*=block-size]) {
-    width: var(--sf-skeleton-text--height);
-    inline-size: var(--sf-skeleton-text--height);
-    width: var(--sf-skeleton-text--height);
+  .sf-skeleton-text:is(.sf-skeleton-circle, .sf-skeleton-square, .sf-skeleton-rounded):not(.sf-skeleton-icon):not([style*=inline-size]):not([style*=block-size]) {
     width: var(--sf-skeleton-text--box, var(--sf-skeleton-text--height));
     inline-size: var(--sf-skeleton-text--box, var(--sf-skeleton-text--height));
-    height: var(--sf-skeleton-text--height);
-    block-size: var(--sf-skeleton-text--height);
-    height: var(--sf-skeleton-text--height);
     height: var(--sf-skeleton-text--box, var(--sf-skeleton-text--height));
     block-size: var(--sf-skeleton-text--box, var(--sf-skeleton-text--height));
   }
-  .sf-skeleton-text.sf-skeleton-square:not(.sf-skeleton-icon):not([style*=inline-size]):not([style*=block-size]) {
-    width: var(--sf-skeleton-text--height);
-    inline-size: var(--sf-skeleton-text--height);
-    width: var(--sf-skeleton-text--height);
-    width: var(--sf-skeleton-text--box, var(--sf-skeleton-text--height));
-    inline-size: var(--sf-skeleton-text--box, var(--sf-skeleton-text--height));
-    height: var(--sf-skeleton-text--height);
-    block-size: var(--sf-skeleton-text--height);
-    height: var(--sf-skeleton-text--height);
-    height: var(--sf-skeleton-text--box, var(--sf-skeleton-text--height));
-    block-size: var(--sf-skeleton-text--box, var(--sf-skeleton-text--height));
-  }
-  .sf-skeleton-text.sf-skeleton-rounded:not(.sf-skeleton-icon):not([style*=inline-size]):not([style*=block-size]) {
-    width: var(--sf-skeleton-text--height);
-    inline-size: var(--sf-skeleton-text--height);
-    width: var(--sf-skeleton-text--height);
-    width: var(--sf-skeleton-text--box, var(--sf-skeleton-text--height));
-    inline-size: var(--sf-skeleton-text--box, var(--sf-skeleton-text--height));
-    height: var(--sf-skeleton-text--height);
-    block-size: var(--sf-skeleton-text--height);
-    height: var(--sf-skeleton-text--height);
-    height: var(--sf-skeleton-text--box, var(--sf-skeleton-text--height));
-    block-size: var(--sf-skeleton-text--box, var(--sf-skeleton-text--height));
-  }
-  .sf-skeleton:has(> .sf-skeleton-text.sf-skeleton-circle:not(.sf-skeleton-icon):not([style*=inline-size]):not([style*=block-size])) {
-    flex: none;
-  }
-  .sf-skeleton:has(> .sf-skeleton-text.sf-skeleton-square:not(.sf-skeleton-icon):not([style*=inline-size]):not([style*=block-size])) {
-    flex: none;
-  }
-  .sf-skeleton:has(> .sf-skeleton-text.sf-skeleton-rounded:not(.sf-skeleton-icon):not([style*=inline-size]):not([style*=block-size])) {
+  .sf-skeleton:has(> .sf-skeleton-text:is(.sf-skeleton-circle, .sf-skeleton-square, .sf-skeleton-rounded):not(.sf-skeleton-icon):not([style*=inline-size]):not([style*=block-size])) {
     flex: none;
   }
   .sf-skeleton-circle {
@@ -251,12 +193,10 @@
   /* A square is a thumbnail or a control: the control's radius (C130 (1)); a
      radius of 0 was a sharp hole in a page where everything is rounded. */
   .sf-skeleton-square {
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-skeleton-radius, var(--sf-radius--ui));
   }
   /* Rounded is a card or a picture: the surface radius (C130 (1)). */
   .sf-skeleton-rounded {
-    border-radius: var(--sf-radius--surface);
     border-radius: var(--sf-skeleton-radius, var(--sf-radius--surface));
   }
   .sf-skeleton--animation-wave .sf-skeleton-text {
@@ -312,7 +252,6 @@
 }
 @layer sf.paint {
   .sf-skeleton-text {
-    background: var(--sf-skeleton-base);
     background: var(--sf-skeleton-background-color, var(--sf-skeleton-base));
   }
   @media (forced-colors: active) {

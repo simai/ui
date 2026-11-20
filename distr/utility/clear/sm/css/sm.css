@@ -1,9 +1,6 @@
 @layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
   @media (min-width: 32rem) {
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:clear-inline-start {
-      clear: left;
-    }
     @supports not (clear: inline-start) {
     html:not([dir="rtl"]) .sm\:clear-inline-start {
       clear: left;
@@ -11,9 +8,6 @@
     }
     .sm\:clear-inline-start:where(:dir(ltr)) {
       clear: left;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:clear-inline-start {
-      clear: right;
     }
     @supports not (clear: inline-start) {
     [dir="rtl"] .sm\:clear-inline-start {
@@ -26,9 +20,6 @@
     .sm\:clear-inline-start {
       clear: inline-start;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sm\:clear-inline-end {
-      clear: right;
-    }
     @supports not (clear: inline-end) {
     html:not([dir="rtl"]) .sm\:clear-inline-end {
       clear: right;
@@ -36,9 +27,6 @@
     }
     .sm\:clear-inline-end:where(:dir(ltr)) {
       clear: right;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sm\:clear-inline-end {
-      clear: left;
     }
     @supports not (clear: inline-end) {
     [dir="rtl"] .sm\:clear-inline-end {

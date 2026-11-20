@@ -42,9 +42,6 @@
     unicode-bidi: isolate;
     vertical-align: top;
     white-space: nowrap;
-    width: auto;
-    inline-size: auto;
-    width: auto;
     width: var(--sf-kbd--inline-size, auto);
     inline-size: var(--sf-kbd--inline-size, auto);
     min-width: var(--sf-kbd--size);
@@ -54,16 +51,12 @@
     padding-left: var(--sf-kbd--padding-inline);
     padding-right: var(--sf-kbd--padding-inline);
     padding-inline: var(--sf-kbd--padding-inline);
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-kbd-radius, var(--sf-radius--ui));
-    font-family: var(--sf-text--family);
     font-family: var(--sf-kbd-font-family, var(--sf-text--family));
-    font-size: var(--sf-text-size-1\/2);
     font-size: var(--sf-kbd-font-size, var(--sf-kbd--step-font-size, var(--sf-text-size-1\/2)));
     font-weight: var(--sf-font-weight-medium);
     border-width: var(--sf-px);
     border-style: solid;
-    box-shadow: inset 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
     box-shadow: inset 0 calc(-1 * var(--sf-px)) 0 var(--sf-kbd-border-color, var(--sf-outline-variant));
   }
   :where(kbd.sf-kbd--square, .sf-kbd.sf-kbd--square) {
@@ -75,7 +68,6 @@
     flex: none;
     box-sizing: border-box;
     align-items: center;
-    gap: var(--sf-space-1\/4);
     gap: var(--sf-kbd-gap, var(--sf-space-1\/4));
     width: auto;
     inline-size: auto;
@@ -101,9 +93,6 @@
     display: none;
   }
   :where(button, [role=button], [role=combobox], [role=searchbox], .sf-button, .sf-input) :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
-    width: auto;
-    inline-size: auto;
-    width: auto;
     width: var(--sf-kbd--inline-size, auto);
     inline-size: var(--sf-kbd--inline-size, auto);
     min-width: var(--sf-kbd--size);
@@ -113,11 +102,8 @@
     padding-left: var(--sf-kbd--padding-inline);
     padding-right: var(--sf-kbd--padding-inline);
     padding-inline: var(--sf-kbd--padding-inline);
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-kbd-radius, var(--sf-radius--ui));
-    font-family: var(--sf-text--family);
     font-family: var(--sf-kbd-font-family, var(--sf-text--family));
-    font-size: var(--sf-text-size-1\/2);
     font-size: var(--sf-kbd-font-size, var(--sf-kbd--step-font-size, var(--sf-text-size-1\/2)));
     font-weight: var(--sf-font-weight-medium);
     border: none;
@@ -125,7 +111,6 @@
     box-shadow: none;
   }
   :where(.sf-button-shortcut, .sf-input-shortcut) > :where(kbd:has(> kbd), .sf-kbd--group) {
-    line-height: var(--sf-text-height-1\/2);
     line-height: var(--sf-kbd-size, var(--sf-kbd--step-size, var(--sf-text-height-1\/2)));
   }
   :where([role=menu], [role=menubar], [role=listbox], [role=tooltip], .sf-tooltip, .sf-context-menu) :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
@@ -160,9 +145,6 @@
     line-height: 1;
   }
   :where(kbd[appearance=cap]:not(:has(> kbd)), .sf-kbd[appearance=cap], kbd[appearance=cap] kbd) {
-    width: auto;
-    inline-size: auto;
-    width: auto;
     width: var(--sf-kbd--inline-size, auto);
     inline-size: var(--sf-kbd--inline-size, auto);
     min-width: var(--sf-kbd--size);
@@ -172,11 +154,8 @@
     padding-left: var(--sf-kbd--padding-inline);
     padding-right: var(--sf-kbd--padding-inline);
     padding-inline: var(--sf-kbd--padding-inline);
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-kbd-radius, var(--sf-radius--ui));
-    font-family: var(--sf-text--family);
     font-family: var(--sf-kbd-font-family, var(--sf-text--family));
-    font-size: var(--sf-text-size-1\/2);
     font-size: var(--sf-kbd-font-size, var(--sf-kbd--step-font-size, var(--sf-text-size-1\/2)));
     font-weight: var(--sf-font-weight-medium);
     border: none;
@@ -184,7 +163,6 @@
     box-shadow: none;
   }
   :where(kbd[appearance=cap]:has(> kbd), .sf-kbd--group[appearance=cap]) {
-    gap: var(--sf-space-1\/4);
     gap: var(--sf-kbd-gap, var(--sf-space-1\/4));
   }
   :where(kbd[appearance=cap]:has(> kbd), .sf-kbd--group[appearance=cap]) > :where(.sf-kbd-join) {
@@ -222,9 +200,6 @@
     line-height: 1;
   }
   :where(kbd[appearance=key]:not(:has(> kbd)), .sf-kbd[appearance=key], kbd[appearance=key] kbd) {
-    width: auto;
-    inline-size: auto;
-    width: auto;
     width: var(--sf-kbd--inline-size, auto);
     inline-size: var(--sf-kbd--inline-size, auto);
     min-width: var(--sf-kbd--size);
@@ -234,20 +209,15 @@
     padding-left: var(--sf-kbd--padding-inline);
     padding-right: var(--sf-kbd--padding-inline);
     padding-inline: var(--sf-kbd--padding-inline);
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-kbd-radius, var(--sf-radius--ui));
-    font-family: var(--sf-text--family);
     font-family: var(--sf-kbd-font-family, var(--sf-text--family));
-    font-size: var(--sf-text-size-1\/2);
     font-size: var(--sf-kbd-font-size, var(--sf-kbd--step-font-size, var(--sf-text-size-1\/2)));
     font-weight: var(--sf-font-weight-medium);
     border-width: var(--sf-px);
     border-style: solid;
-    box-shadow: inset 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
     box-shadow: inset 0 calc(-1 * var(--sf-px)) 0 var(--sf-kbd-border-color, var(--sf-outline-variant));
   }
   :where(kbd[appearance=key]:has(> kbd), .sf-kbd--group[appearance=key]) {
-    gap: var(--sf-space-1\/4);
     gap: var(--sf-kbd-gap, var(--sf-space-1\/4));
   }
   :where(kbd[appearance=key]:has(> kbd), .sf-kbd--group[appearance=key]) > :where(.sf-kbd-join) {
@@ -280,7 +250,6 @@
     color: var(--sf-on-surface);
     background: var(--sf-surface-container);
     --sf-on-surface-variant: var(--sf-on-surface-container-variant);
-    border-color: var(--sf-outline-variant);
     border-color: var(--sf-kbd-border-color, var(--sf-outline-variant));
   }
   :where(kbd:has(> kbd), .sf-kbd--group) {
@@ -289,16 +258,13 @@
     border: none;
   }
   :where(button, [role=button], [role=combobox], [role=searchbox], .sf-button, .sf-input) :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
-    color: currentColor;
     color: var(--sf-kbd-color, currentColor);
-    background: color-mix(in srgb, currentColor 8%, transparent);
     background: var(--sf-kbd-background-color, var(--sf-kbd-background, color-mix(in srgb, currentColor 8%, transparent)));
     --sf-on-surface-variant: inherit;
     border: none;
   }
   :where([role=menu], [role=menubar], [role=listbox], [role=tooltip], .sf-tooltip, .sf-context-menu) :where(kbd:not(.sf-kbd--group):not(:has(> kbd)), .sf-kbd:not(.sf-kbd--group)) {
     --sf-on-surface-variant: inherit;
-    color: var(--sf-on-surface-variant);
     color: var(--sf-kbd-plain-color, var(--sf-on-surface-variant));
     background: var(--sf-transparent);
     border: none;
@@ -310,16 +276,13 @@
     color: inherit;
   }
   :where(kbd[appearance=cap]:not(:has(> kbd)), .sf-kbd[appearance=cap], kbd[appearance=cap] kbd) {
-    color: currentColor;
     color: var(--sf-kbd-color, currentColor);
-    background: color-mix(in srgb, currentColor 8%, transparent);
     background: var(--sf-kbd-background-color, var(--sf-kbd-background, color-mix(in srgb, currentColor 8%, transparent)));
     --sf-on-surface-variant: inherit;
     border: none;
   }
   :where(kbd[appearance=plain]:not(:has(> kbd)), .sf-kbd[appearance=plain], kbd[appearance=plain] kbd) {
     --sf-on-surface-variant: inherit;
-    color: var(--sf-on-surface-variant);
     color: var(--sf-kbd-plain-color, var(--sf-on-surface-variant));
     background: var(--sf-transparent);
     border: none;
@@ -328,7 +291,6 @@
     color: var(--sf-on-surface);
     background: var(--sf-surface-container);
     --sf-on-surface-variant: var(--sf-on-surface-container-variant);
-    border-color: var(--sf-outline-variant);
     border-color: var(--sf-kbd-border-color, var(--sf-outline-variant));
   }
   @media (forced-colors: active) {

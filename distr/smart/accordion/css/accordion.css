@@ -42,10 +42,6 @@ sf-accordion[size="3"] .sf-accordion-all {
   color: inherit;
 }
 
-.sf-accordion.sf-accordion--disabled .sf-accordion-trigger:disabled:hover {
-  background-color: transparent;
-}
-
-.sf-accordion.sf-accordion--disabled .sf-accordion-trigger:disabled:active {
+.sf-accordion.sf-accordion--disabled .sf-accordion-trigger:disabled:is(:hover, :active) {
   background-color: transparent;
 }

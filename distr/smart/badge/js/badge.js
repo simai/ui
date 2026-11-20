@@ -671,6 +671,11 @@ class SfBadge extends BadgeElement {
       drawnIcon: this.drawnIcon,
       activitySpinner: this.activitySpinner,
       ariaLabel: this.getAttribute('aria-label') || '',
+      // Name and value (C317): the second text and the word said before it.
+      // The property value is the state object, so the template reads the
+      // attribute through the props context.
+      valueText: props.value ?? '',
+      valueLabel: props.valueLabel || this.sfWord('value-label'),
       component: this
     });
   }
@@ -698,11 +703,20 @@ class SfBadge extends BadgeElement {
       iconStart: this.iconStart,
       iconEnd: this.iconEnd,
       iconPosition: this.iconPosition,
-      ariaLabel: this.getAttribute('aria-label') || ''
+      ariaLabel: this.getAttribute('aria-label') || '',
+      value: this.getAttribute('value') || '',
+      valueLabel: this.getAttribute('value-label') || ''
     };
-  }
+  } // An object writes its keys as attributes (value and valueLabel among
+  // them); a string is the second text, the attribute value (C317).
+
 
   set value(nextValue) {
+    if (nextValue === null || nextValue === undefined || typeof nextValue !== 'object') {
+      this.setAttributeValue('value', nextValue);
+      return;
+    }
+
     this.setValueAttributes(nextValue);
   }
 
@@ -776,8 +790,12 @@ function renderBadgeTemplate(context) {
   isIconOnly ? 'sf-badge--icon-only sf-badge--compact' : '', context.tight ? 'sf-badge--tight' : '', isFigure ? 'sf-badge--figure' : '', // Inline: a badge is as wide as its text. As a block-level flex box it
   // filled whatever held it -- every status in a table cell was a bar the
   // width of the column.
-  'inline-flex', 'flex-row', 'flex-nowrap', 'justify-center', 'items-center', context.rootClass].filter(Boolean);
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+  'inline-flex', 'flex-row', 'flex-nowrap', 'justify-center', 'items-center', context.rootClass].filter(Boolean); // Without a value the template is the one it always was, character for
+  // character, so the drawn markup (Lit's part markers included) is
+  // byte-identical to 1.6.x.
+
+  const value = valuePart(context, hasAccessibleLabel);
+  if (value === lit__WEBPACK_IMPORTED_MODULE_0__.nothing) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <span
       class=${classes.join(' ')}
       style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -796,6 +814,37 @@ function renderBadgeTemplate(context) {
       ${rightIconContent}
     </span>
   `;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+    <span
+      class=${classes.join(' ')}
+      style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      aria-hidden=${!hasTextContent && !hasAccessibleLabel ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    >
+      ${hasAccessibleLabel ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sr-only">${context.ariaLabel}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${leftIconContent}
+      ${hasTextContent ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
+            <span
+              class=${`sf-badge-text-container flex items-center${isIconOnly ? ' sr-only' : ''}`}
+              aria-hidden=${hasAccessibleLabel ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            >
+              <span class="sf-badge-text">${textContent}</span>
+            </span>
+          ` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${rightIconContent}${value}
+    </span>
+  `;
+} // Name and value (owner decisions C317-C319): after the name a divider and the
+// value, in the same badge. The divider is hidden from assistive technology
+// and a visually hidden word stands before the value, so the badge reads
+// «sf-wizard, версия 1.5.3». Without a value (attribute or slot) nothing is
+// added, and the badge is drawn exactly as before.
+
+function valuePart(context, hasAccessibleLabel) {
+  const hasValueSlot = context.component?.hasSlotContent?.('value');
+  const valueText = String(context.valueText ?? '');
+  if (!hasValueSlot && !valueText.length) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const content = hasValueSlot ? context.component.getSlotContent('value') : valueText;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-badge-divider" aria-hidden="true"></span><span class="sf-badge-value" aria-hidden=${hasAccessibleLabel ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}><span class="sr-only">, ${context.valueLabel} </span>${content}</span>`;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -862,14 +911,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-badge
 /***/ "55155acfa4cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.6.4","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2","text"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"tonal"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed","paused","queued"],"default":""},"icon-only":{"type":"boolean","default":false},"tight":{"type":"boolean","default":false},"text":{"type":"string","default":""},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.7.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2","text"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"tonal"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed","paused","queued"],"default":""},"icon-only":{"type":"boolean","default":false},"tight":{"type":"boolean","default":false},"text":{"type":"string","default":""},"value":{"type":"string","default":""},"value-label":{"type":"string","default-from":"runtime.value-label"},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"},"--sf-badge-divider-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "f6a7c3a64b57"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Badges","runtime":{"activity-running":"Running","activity-waiting":"Needs your input","activity-done":"Ready","activity-stopped":"Stopped","activity-failed":"Failed","activity-paused":"Paused","activity-queued":"Queued"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Badges","runtime":{"activity-running":"Running","activity-waiting":"Needs your input","activity-done":"Ready","activity-stopped":"Stopped","activity-failed":"Failed","activity-paused":"Paused","activity-queued":"Queued","value-label":"value"}}');
 
 /***/ }
 

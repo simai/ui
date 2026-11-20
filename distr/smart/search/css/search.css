@@ -66,9 +66,6 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    width: min(var(--sf-g8), 100% - 2 * var(--sf-space-2));
-    inline-size: min(var(--sf-g8), 100% - 2 * var(--sf-space-2));
-    width: min(var(--sf-g8), 100% - 2 * var(--sf-space-2));
     width: min(var(--sf-search-inline-size, var(--sf-popup--window-form-width, var(--sf-g8))), 100% - 2 * var(--sf-space-2));
     inline-size: min(var(--sf-search-inline-size, var(--sf-popup--window-form-width, var(--sf-g8))), 100% - 2 * var(--sf-space-2));
     max-height: calc(100% - 2 * var(--sf-search--inset-block));
@@ -84,9 +81,6 @@
   /* With a host that shows previews the window is the wide step (C175 (5),
      C159 (1)). A public width still wins. */
   .sf-search-window--pane {
-    width: min(var(--sf-h2), 100% - 2 * var(--sf-space-2));
-    inline-size: min(var(--sf-h2), 100% - 2 * var(--sf-space-2));
-    width: min(var(--sf-h2), 100% - 2 * var(--sf-space-2));
     width: min(var(--sf-search-inline-size, var(--sf-popup--window-wide-width, var(--sf-h2))), 100% - 2 * var(--sf-space-2));
     inline-size: min(var(--sf-search-inline-size, var(--sf-popup--window-wide-width, var(--sf-h2))), 100% - 2 * var(--sf-space-2));
   }
@@ -124,41 +118,9 @@
   }
   /* The head (C06, C175 (1)): no frame, a line under it; the glyph over the
      rows' glyphs, the text over their titles; the X at the end. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-search-head{
-    padding-left: var(--sf-search--axis);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-search-head{
-    padding-left: var(--sf-search--axis);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-search-head{
-    padding-right: calc(var(--sf-search--pad) + var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-search-head{
-    padding-right: calc(var(--sf-search--pad) + var(--sf-space-1\/3));
-    }
-  }
   .sf-search-head:where(:dir(ltr)){
     padding-left: var(--sf-search--axis);
     padding-right: calc(var(--sf-search--pad) + var(--sf-space-1\/3));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-search-head{
-    padding-right: var(--sf-search--axis);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-search-head{
-    padding-right: var(--sf-search--axis);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-search-head{
-    padding-left: calc(var(--sf-search--pad) + var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-search-head{
-    padding-left: calc(var(--sf-search--pad) + var(--sf-space-1\/3));
-    }
   }
   .sf-search-head:where(:dir(rtl)){
     padding-right: var(--sf-search--axis);
@@ -277,9 +239,6 @@
     box-sizing: border-box;
     min-height: 0;
     min-block-size: 0;
-    max-height: none;
-    max-block-size: none;
-    max-height: none;
     max-height: var(--sf-search-list-max-block-size, none);
     max-block-size: var(--sf-search-list-max-block-size, none);
     overflow: auto;
@@ -450,24 +409,8 @@
   }
   /* The row's buttons: 32, 8 apart (C105 H5), the last one's edge on the
      row's plate inset, so its glyph stands over the head's X. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-search-row-actions{
-    margin-right: calc(var(--sf-space-1\/3) - var(--sf-search--row-pad));
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-search-row-actions{
-    margin-right: calc(var(--sf-space-1\/3) - var(--sf-search--row-pad));
-    }
-  }
   .sf-search-row-actions:where(:dir(ltr)){
     margin-right: calc(var(--sf-space-1\/3) - var(--sf-search--row-pad));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-search-row-actions{
-    margin-left: calc(var(--sf-space-1\/3) - var(--sf-search--row-pad));
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-search-row-actions{
-    margin-left: calc(var(--sf-space-1\/3) - var(--sf-search--row-pad));
-    }
   }
   .sf-search-row-actions:where(:dir(rtl)){
     margin-left: calc(var(--sf-space-1\/3) - var(--sf-search--row-pad));
@@ -564,24 +507,8 @@
     line-height: var(--sf-text-height-1\/2);
     cursor: pointer;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-search-count{
-    margin-left: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-search-count{
-    margin-left: var(--sf-space-1\/4);
-    }
-  }
   .sf-search-count:where(:dir(ltr)){
     margin-left: var(--sf-space-1\/4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-search-count{
-    margin-right: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-search-count{
-    margin-right: var(--sf-space-1\/4);
-    }
   }
   .sf-search-count:where(:dir(rtl)){
     margin-right: var(--sf-space-1\/4);
@@ -597,24 +524,8 @@
     line-height: var(--sf-text-height-1);
   }
   /* «Возможно, вы искали …»: offered over the results of the query as asked. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-search-correction{
-    text-align: left;
-  }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-search-correction{
-    text-align: left;
-    }
-  }
   .sf-search-correction:where(:dir(ltr)){
     text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-search-correction{
-    text-align: right;
-  }
-  @supports not (text-align: start){
-  [dir="rtl"] .sf-search-correction{
-    text-align: right;
-    }
   }
   .sf-search-correction:where(:dir(rtl)){
     text-align: right;
@@ -643,46 +554,14 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: stretch;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-search-preview{
-    border-left-width: var(--sf-px);
-  }
-  @supports not (border-inline-start-width: initial){
-  html:not([dir="rtl"]) .sf-search-preview{
-    border-left-width: var(--sf-px);
-    }
-  }
   .sf-search-preview:where(:dir(ltr)){
     border-left-width: var(--sf-px);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-search-preview{
-    border-right-width: var(--sf-px);
-  }
-  @supports not (border-inline-start-width: initial){
-  [dir="rtl"] .sf-search-preview{
-    border-right-width: var(--sf-px);
-    }
   }
   .sf-search-preview:where(:dir(rtl)){
     border-right-width: var(--sf-px);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-search-preview{
-    border-left-style: solid;
-  }
-  @supports not (border-inline-start-style: initial){
-  html:not([dir="rtl"]) .sf-search-preview{
-    border-left-style: solid;
-    }
-  }
   .sf-search-preview:where(:dir(ltr)){
     border-left-style: solid;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-search-preview{
-    border-right-style: solid;
-  }
-  @supports not (border-inline-start-style: initial){
-  [dir="rtl"] .sf-search-preview{
-    border-right-style: solid;
-    }
   }
   .sf-search-preview:where(:dir(rtl)){
     border-right-style: solid;
@@ -952,7 +831,6 @@
   .sf-search-scrim {
     /* The shared scrim (core --sf-scrim-*) unless the page sets the search's
        own colour, which is then the whole scrim (C16, C20). */
-    background: var(--sf-black--alfa-64);
     background: var(--sf-search-scrim-color, var(--sf-scrim-color, var(--sf-black--alfa-64)));
   }
   .sf-search-window {
@@ -1021,7 +899,6 @@
     color: var(--sf-on-surface-variant);
   }
   .sf-search-mark {
-    background: transparent;
     background: var(--sf-search-mark-color, transparent);
     color: inherit;
   }
@@ -1056,24 +933,8 @@
   .sf-search-correction:hover {
     background: var(--sf-surface-container-hover);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-search-preview{
-    border-left-color: var(--sf-outline-variant);
-  }
-  @supports not (border-inline-start-color: initial){
-  html:not([dir="rtl"]) .sf-search-preview{
-    border-left-color: var(--sf-outline-variant);
-    }
-  }
   .sf-search-preview:where(:dir(ltr)){
     border-left-color: var(--sf-outline-variant);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-search-preview{
-    border-right-color: var(--sf-outline-variant);
-  }
-  @supports not (border-inline-start-color: initial){
-  [dir="rtl"] .sf-search-preview{
-    border-right-color: var(--sf-outline-variant);
-    }
   }
   .sf-search-preview:where(:dir(rtl)){
     border-right-color: var(--sf-outline-variant);

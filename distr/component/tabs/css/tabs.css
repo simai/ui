@@ -36,13 +36,7 @@
      left the button display: block, so the label was an inline box -- the
      selected line stood 2-3 px above the row's line, the icon touched the
      label (the icon gap is a column gap) and vertical labels stood centred. */
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top :is(.sf-button, .sf-icon-button) {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -82,171 +76,59 @@
     flex-shrink: 0;
   }
   .sf-tabs.sf-tabs--vertical {
-    -webkit-column-gap: var(--sf-space-2);
-       -moz-column-gap: var(--sf-space-2);
-            column-gap: var(--sf-space-2);
     -webkit-column-gap: var(--sf-tabs--gap, var(--sf-space-2));
        -moz-column-gap: var(--sf-tabs--gap, var(--sf-space-2));
             column-gap: var(--sf-tabs--gap, var(--sf-space-2));
   }
   .sf-tabs-top {
-    margin: 0;
     margin: var(--sf-tabs-top--margin, 0);
-    border-width: 0;
     border-width: var(--sf-tabs-top--border-width, 0);
-    border-style: solid;
     border-style: var(--sf-tabs-top--border-style, solid);
-    gap: var(--sf-space-1);
     gap: var(--sf-tabs-top--gap, var(--sf-tabs-gap, var(--sf-space-1)));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs-main-container{
-    padding-right: 0;
-    padding-right: var(--sf-tabs-main-container--padding-inline-end, 0);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs-main-container{
-    padding-right: 0;
-    padding-right: var(--sf-tabs-main-container--padding-inline-end, 0);
-    }
-  }
   .sf-tabs-main-container:where(:dir(ltr)){
-    padding-right: 0;
     padding-right: var(--sf-tabs-main-container--padding-inline-end, 0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs-main-container{
-    padding-left: 0;
-    padding-left: var(--sf-tabs-main-container--padding-inline-end, 0);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-tabs-main-container{
-    padding-left: 0;
-    padding-left: var(--sf-tabs-main-container--padding-inline-end, 0);
-    }
   }
   .sf-tabs-main-container:where(:dir(rtl)){
-    padding-left: 0;
     padding-left: var(--sf-tabs-main-container--padding-inline-end, 0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs-main-container{
-    padding-left: 0;
-    padding-left: var(--sf-tabs-main-container--padding-inline-start, 0);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-tabs-main-container{
-    padding-left: 0;
-    padding-left: var(--sf-tabs-main-container--padding-inline-start, 0);
-    }
-  }
   .sf-tabs-main-container:where(:dir(ltr)){
-    padding-left: 0;
     padding-left: var(--sf-tabs-main-container--padding-inline-start, 0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs-main-container{
-    padding-right: 0;
-    padding-right: var(--sf-tabs-main-container--padding-inline-start, 0);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-tabs-main-container{
-    padding-right: 0;
-    padding-right: var(--sf-tabs-main-container--padding-inline-start, 0);
-    }
   }
   .sf-tabs-main-container:where(:dir(rtl)){
-    padding-right: 0;
     padding-right: var(--sf-tabs-main-container--padding-inline-start, 0);
   }
   .sf-tabs-main-container {
-    -webkit-padding-end: 0;
-            padding-inline-end: 0;
     -webkit-padding-end: var(--sf-tabs-main-container--padding-inline-end, 0);
             padding-inline-end: var(--sf-tabs-main-container--padding-inline-end, 0);
-    -webkit-padding-start: 0;
-            padding-inline-start: 0;
     -webkit-padding-start: var(--sf-tabs-main-container--padding-inline-start, 0);
             padding-inline-start: var(--sf-tabs-main-container--padding-inline-start, 0);
-    padding-top: var(--sf-space-1);
     padding-top: var(--sf-tabs-main-container--padding-top, var(--sf-space-1));
-    padding-bottom: var(--sf-space-1);
     padding-bottom: var(--sf-tabs-main-container--padding-bottom, var(--sf-space-1));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs-top-container{
-    padding-right: 0;
-    padding-right: var(--sf-tabs-top-container--padding-inline-end, 0);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs-top-container{
-    padding-right: 0;
-    padding-right: var(--sf-tabs-top-container--padding-inline-end, 0);
-    }
-  }
   .sf-tabs-top-container:where(:dir(ltr)){
-    padding-right: 0;
     padding-right: var(--sf-tabs-top-container--padding-inline-end, 0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs-top-container{
-    padding-left: 0;
-    padding-left: var(--sf-tabs-top-container--padding-inline-end, 0);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-tabs-top-container{
-    padding-left: 0;
-    padding-left: var(--sf-tabs-top-container--padding-inline-end, 0);
-    }
   }
   .sf-tabs-top-container:where(:dir(rtl)){
-    padding-left: 0;
     padding-left: var(--sf-tabs-top-container--padding-inline-end, 0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs-top-container{
-    padding-left: 0;
-    padding-left: var(--sf-tabs-top-container--padding-inline-start, 0);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-tabs-top-container{
-    padding-left: 0;
-    padding-left: var(--sf-tabs-top-container--padding-inline-start, 0);
-    }
-  }
   .sf-tabs-top-container:where(:dir(ltr)){
-    padding-left: 0;
     padding-left: var(--sf-tabs-top-container--padding-inline-start, 0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs-top-container{
-    padding-right: 0;
-    padding-right: var(--sf-tabs-top-container--padding-inline-start, 0);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-tabs-top-container{
-    padding-right: 0;
-    padding-right: var(--sf-tabs-top-container--padding-inline-start, 0);
-    }
   }
   .sf-tabs-top-container:where(:dir(rtl)){
-    padding-right: 0;
     padding-right: var(--sf-tabs-top-container--padding-inline-start, 0);
   }
   .sf-tabs-top-container {
-    border-width: 0 0 var(--sf-px) 0;
     border-width: var(--sf-tabs-top-container--border-width, 0 0 var(--sf-tabs-border-width, var(--sf-tabs--border-width, var(--sf-px))) 0);
-    border-style: solid;
     border-style: var(--sf-tabs-top-container--border-style, solid);
-    -webkit-padding-end: 0;
-            padding-inline-end: 0;
     -webkit-padding-end: var(--sf-tabs-top-container--padding-inline-end, 0);
             padding-inline-end: var(--sf-tabs-top-container--padding-inline-end, 0);
-    -webkit-padding-start: 0;
-            padding-inline-start: 0;
     -webkit-padding-start: var(--sf-tabs-top-container--padding-inline-start, 0);
             padding-inline-start: var(--sf-tabs-top-container--padding-inline-start, 0);
-    padding-top: 0;
     padding-top: var(--sf-tabs-top-container--padding-top, 0);
-    padding-bottom: 0;
     padding-bottom: var(--sf-tabs-top-container--padding-bottom, 0);
   }
-  .sf-tabs--underline > .sf-tabs-top-container > .sf-tabs-top {
-    --sf-tabs-top--margin: 0 0 calc(var(--sf-tabs-border-width, var(--sf-tabs--border-width, var(--sf-px))) * -1) 0;
-  }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container > .sf-tabs-top {
     --sf-tabs-top--margin: 0 0 calc(var(--sf-tabs-border-width, var(--sf-tabs--border-width, var(--sf-px))) * -1) 0;
   }
   .sf-tabs--pills > .sf-tabs-top-container,
@@ -274,21 +156,13 @@
     min-inline-size: -moz-max-content;
     min-inline-size: max-content;
   }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top > span[role=tab] > [inert] > sf-button-icon {
-    display: contents;
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top > span[role=tab] > [inert] > sf-icon-button {
-    display: contents;
-  }
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top > span[role=tab] > [inert],
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top > span[role=tab] > [inert] > sf-button {
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top > span[role=tab] > [inert] > sf-button,
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top > span[role=tab] > [inert] > :is(sf-button-icon, sf-icon-button) {
     display: contents;
   }
   .sf-tabs.sf-tabs--sticky > .sf-tabs-top-container {
     position: sticky;
-    top: var(--sf-0);
-    inset-block-start: var(--sf-0);
-    top: var(--sf-0);
     top: var(--sf-tabs-sticky-top, var(--sf-0));
     inset-block-start: var(--sf-tabs-sticky-top, var(--sf-0));
     z-index: var(--sf-layer--sticky);
@@ -299,15 +173,12 @@
 }
 @layer sf.paint {
   .sf-tabs {
-    background-color: transparent;
     background-color: var(--sf-tabs--background-color, transparent);
   }
   .sf-tabs-top {
-    border-color: transparent;
     border-color: var(--sf-tabs-top--border-color, transparent);
   }
   .sf-tabs-top-container {
-    border-color: var(--sf-outline-variant);
     border-color: var(--sf-tabs-top-container--border-color, var(--sf-tabs-border-color, var(--sf-outline-variant)));
   }
   .sf-tabs.sf-tabs--sticky > .sf-tabs-top-container {
@@ -338,37 +209,8 @@
     --sf-icon-button--border-top-right-radius: var(--sf-radius-rounded);
     --sf-icon-button--border-top-left-radius: var(--sf-radius-rounded);
   }
-  .sf-tabs--underline > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    --sf-button--border-top-width: 0;
-    --sf-button--border-inline-start-width: 0;
-    --sf-button--border-bottom-width: 0;
-    --sf-button--border-inline-end-width: 0;
-    --sf-icon-button--border-top-width: 0;
-    --sf-icon-button--border-inline-start-width: 0;
-    --sf-icon-button--border-bottom-width: 0;
-    --sf-icon-button--border-inline-end-width: 0;
-  }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    --sf-button--border-top-width: 0;
-    --sf-button--border-inline-start-width: 0;
-    --sf-button--border-bottom-width: 0;
-    --sf-button--border-inline-end-width: 0;
-    --sf-icon-button--border-top-width: 0;
-    --sf-icon-button--border-inline-start-width: 0;
-    --sf-icon-button--border-bottom-width: 0;
-    --sf-icon-button--border-inline-end-width: 0;
-  }
-  .sf-tabs--underline > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
-    --sf-button--border-top-width: 0;
-    --sf-button--border-inline-start-width: 0;
-    --sf-button--border-bottom-width: 0;
-    --sf-button--border-inline-end-width: 0;
-    --sf-icon-button--border-top-width: 0;
-    --sf-icon-button--border-inline-start-width: 0;
-    --sf-icon-button--border-bottom-width: 0;
-    --sf-icon-button--border-inline-end-width: 0;
-  }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container > .sf-tabs-top .sf-button,
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
     --sf-button--border-top-width: 0;
     --sf-button--border-inline-start-width: 0;
     --sf-button--border-bottom-width: 0;
@@ -414,102 +256,27 @@
   }
 }
 @layer sf.states {
-  .sf-tabs-top .sf-button--default.sf-button--primary {
+  .sf-tabs-top :is(.sf-button--default.sf-button--primary, .sf-icon-button--default.sf-icon-button--primary) {
     --sf-tabs--focus-ink: var(--sf-on-primary);
   }
-  .sf-tabs-top .sf-icon-button--default.sf-icon-button--primary {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-  }
-  .sf-tabs-top .sf-button--default.sf-button--on-surface {
+  .sf-tabs-top :is(.sf-button--default.sf-button--on-surface, .sf-icon-button--default.sf-icon-button--on-surface) {
     --sf-tabs--focus-ink: var(--sf-on-surface-inverse);
   }
-  .sf-tabs-top .sf-icon-button--default.sf-icon-button--on-surface {
-    --sf-tabs--focus-ink: var(--sf-on-surface-inverse);
-  }
-  .sf-tabs-top .sf-button--tonal.sf-button--secondary {
+  .sf-tabs-top :is(.sf-button--tonal.sf-button--secondary, .sf-icon-button--tonal.sf-icon-button--secondary) {
     --sf-tabs--focus-ink: var(--sf-on-secondary-container);
   }
-  .sf-tabs-top .sf-icon-button--tonal.sf-icon-button--secondary {
-    --sf-tabs--focus-ink: var(--sf-on-secondary-container);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):active {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected.focus-visible:not(:disabled):not(.disabled) {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):active {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected.focus-visible:not(:disabled):not(.disabled) {
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled),
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled),
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):is(:hover, :active,.focus-visible),
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):is(:hover, :active,.focus-visible) {
     --sf-tabs--focus-ink: var(--sf-on-primary);
     --sf-button--background-color: var(--sf-primary-active);
     --sf-icon-button--background-color: var(--sf-primary-active);
   }
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled),
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):active {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled).focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):active {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled).focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-primary);
-    --sf-button--background-color: var(--sf-primary-active);
-    --sf-icon-button--background-color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled),
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled),
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):is(:hover, :active, :focus-visible),
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):is(:hover, :active, :focus-visible) {
     --sf-tabs--focus-ink: var(--sf-on-primary);
     --sf-button--background-color: var(--sf-primary-active);
     --sf-icon-button--background-color: var(--sf-primary-active);
@@ -521,84 +288,18 @@
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) .sf-icon {
     --sf-icon--color: var(--sf-on-primary);
   }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):active {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected.focus-visible:not(:disabled):not(.disabled) {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):active {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected.focus-visible:not(:disabled):not(.disabled) {
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled),
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled),
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):is(:hover, :active,.focus-visible),
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):is(:hover, :active,.focus-visible) {
     --sf-tabs--focus-ink: var(--sf-on-primary-container);
     --sf-button--background-color: var(--sf-primary-container);
     --sf-icon-button--background-color: var(--sf-primary-container);
   }
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled),
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):active {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled).focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):active {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled).focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container);
-    --sf-icon-button--background-color: var(--sf-primary-container);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled),
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled),
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):is(:hover, :active, :focus-visible),
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):is(:hover, :active, :focus-visible) {
     --sf-tabs--focus-ink: var(--sf-on-primary-container);
     --sf-button--background-color: var(--sf-primary-container);
     --sf-icon-button--background-color: var(--sf-primary-container);
@@ -610,616 +311,101 @@
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) .sf-icon {
     --sf-icon--color: var(--sf-on-primary-container);
   }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled),
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled),
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):is(:hover, :active,.focus-visible),
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):is(:hover, :active,.focus-visible) {
     --sf-button--background-color: transparent;
     --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
     --sf-icon-button--background-color: transparent;
     --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
   }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled),
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled),
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):is(:hover, :active, :focus-visible),
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):is(:hover, :active, :focus-visible) {
     --sf-button--background-color: transparent;
     --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
     --sf-icon-button--background-color: transparent;
     --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
   }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):active {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected.focus-visible:not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):active {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected.focus-visible:not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):active {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected.focus-visible:not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):active {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected.focus-visible:not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):active {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled).focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):active {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled).focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):active {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled).focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):active {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled).focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: var(--sf-tabs-indicator-color, var(--sf-primary));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) .sf-button-text-container {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) .sf-button-text-container {
     --sf-button-text-container--color: var(--sf-tabs-color, var(--sf-on-surface-variant));
   }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-tabs-color, var(--sf-on-surface-variant));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) .sf-icon {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) .sf-icon,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled) .sf-icon {
     --sf-icon--color: var(--sf-tabs-color, var(--sf-on-surface-variant));
   }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) .sf-icon {
-    --sf-icon--color: var(--sf-tabs-color, var(--sf-on-surface-variant));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled) .sf-icon {
-    --sf-icon--color: var(--sf-tabs-color, var(--sf-on-surface-variant));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled) .sf-icon {
-    --sf-icon--color: var(--sf-tabs-color, var(--sf-on-surface-variant));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled),
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled) {
     --sf-button--background-color: var(--sf-transparent);
     --sf-icon-button--background-color: var(--sf-transparent);
   }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) {
-    --sf-button--background-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-transparent);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled) {
-    --sf-button--background-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-transparent);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled) {
-    --sf-button--background-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-transparent);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) .sf-icon {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) .sf-icon,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) .sf-icon {
     --sf-icon--color: var(--sf-on-surface-icon);
   }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-icon);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-icon);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-icon);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):hover .sf-icon {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):is(:hover, :active) .sf-icon,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):is(:hover, :active) .sf-icon {
     --sf-icon--color: var(--sf-on-surface);
   }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):active .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):active .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):active .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):active .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) .sf-button-text-container {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) .sf-button-text-container {
     --sf-button-text-container--color: var(--sf-on-surface);
   }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) .sf-button-text-container {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled).focus-visible,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled).focus-visible,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover {
+    --sf-button--background-color: transparent;
+    --sf-button--border-color: transparent;
+    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--border-color: transparent;
+    color: var(--sf-on-surface);
+  }
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):focus-visible,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):focus-visible,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover {
+    --sf-button--background-color: transparent;
+    --sf-button--border-color: transparent;
+    --sf-icon-button--background-color: transparent;
+    --sf-icon-button--border-color: transparent;
+    color: var(--sf-on-surface);
+  }
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):is(:hover,.focus-visible) .sf-button-text-container {
     --sf-button-text-container--color: var(--sf-on-surface);
   }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.focus-visible:not(.selected):not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.focus-visible:not(.selected):not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.focus-visible:not(.selected):not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.focus-visible:not(.selected):not(:disabled):not(.disabled) {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled).focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled).focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled).focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled).focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):focus-visible {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover {
-    --sf-button--background-color: transparent;
-    --sf-button--border-color: transparent;
-    --sf-icon-button--background-color: transparent;
-    --sf-icon-button--border-color: transparent;
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover .sf-button-text-container {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):is(:hover, :focus-visible) .sf-button-text-container {
     --sf-button-text-container--color: var(--sf-on-surface);
   }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.focus-visible:not(.selected):not(:disabled):not(.disabled) .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.focus-visible:not(.selected):not(:disabled):not(.disabled) .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled).focus-visible .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):focus-visible .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled).focus-visible .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):focus-visible .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover .sf-icon {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top :is(.sf-button, .sf-icon-button):not(.selected):not(:disabled):not(.disabled):is(:hover,.focus-visible) .sf-icon {
     --sf-icon--color: var(--sf-on-surface);
   }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.focus-visible:not(.selected):not(:disabled):not(.disabled) .sf-icon {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top :is(.sf-button, .sf-icon-button):not(.selected):not(:disabled):not(.disabled):is(:hover, :focus-visible) .sf-icon {
     --sf-icon--color: var(--sf-on-surface);
   }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.focus-visible:not(.selected):not(:disabled):not(.disabled) .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.focus-visible:not(.selected):not(:disabled):not(.disabled) .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.focus-visible:not(.selected):not(:disabled):not(.disabled) .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled).focus-visible .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):focus-visible .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled).focus-visible .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):focus-visible .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled).focus-visible .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):focus-visible .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled).focus-visible .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):focus-visible .sf-icon {
-    --sf-icon--color: var(--sf-on-surface);
-  }
-  .sf-tabs-top .sf-button.focus-visible:not(:disabled):not(.disabled) {
+  .sf-tabs-top :is(.sf-button, .sf-icon-button):not(:disabled):not(.disabled).focus-visible {
     --sf-focus--color: var(--sf-tabs--focus-color, var(--sf-tabs--focus-ink));
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--inset);
   }
-  .sf-tabs-top .sf-icon-button.focus-visible:not(:disabled):not(.disabled) {
+  .sf-tabs-top :is(.sf-button, .sf-icon-button):not(:disabled):not(.disabled):focus-visible {
     --sf-focus--color: var(--sf-tabs--focus-color, var(--sf-tabs--focus-ink));
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--inset);
   }
-  .sf-tabs-top .sf-button:not(:disabled):not(.disabled).focus-visible {
-    --sf-focus--color: var(--sf-tabs--focus-color, var(--sf-tabs--focus-ink));
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--inset);
-  }
-  .sf-tabs-top .sf-button:not(:disabled):not(.disabled):focus-visible {
-    --sf-focus--color: var(--sf-tabs--focus-color, var(--sf-tabs--focus-ink));
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--inset);
-  }
-  .sf-tabs-top .sf-icon-button:not(:disabled):not(.disabled).focus-visible {
-    --sf-focus--color: var(--sf-tabs--focus-color, var(--sf-tabs--focus-ink));
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--inset);
-  }
-  .sf-tabs-top .sf-icon-button:not(:disabled):not(.disabled):focus-visible {
-    --sf-focus--color: var(--sf-tabs--focus-color, var(--sf-tabs--focus-ink));
-    outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
-    outline-offset: var(--sf-focus--inset);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.focus-visible:not(:disabled):not(.disabled) {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top :is(.sf-button, .sf-icon-button):not(:disabled):not(.disabled).focus-visible {
     --sf-tabs--focus-ink: var(--sf-on-surface);
   }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.focus-visible:not(:disabled):not(.disabled) {
-    --sf-tabs--focus-ink: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.focus-visible:not(:disabled):not(.disabled) {
-    --sf-tabs--focus-ink: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.focus-visible:not(:disabled):not(.disabled) {
-    --sf-tabs--focus-ink: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(:disabled):not(.disabled).focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(:disabled):not(.disabled):focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(:disabled):not(.disabled).focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(:disabled):not(.disabled):focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(:disabled):not(.disabled).focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(:disabled):not(.disabled):focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(:disabled):not(.disabled).focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(:disabled):not(.disabled):focus-visible {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top :is(.sf-button, .sf-icon-button):not(:disabled):not(.disabled):focus-visible {
     --sf-tabs--focus-ink: var(--sf-on-surface);
   }
   @media (forced-colors: active) {
-    .sf-tabs-top .sf-button.focus-visible:not(:disabled):not(.disabled) {
+    .sf-tabs-top :is(.sf-button, .sf-icon-button):not(:disabled):not(.disabled).focus-visible {
       outline: var(--sf-focus--width) solid currentColor;
       outline-offset: var(--sf-focus--inset);
     }
-    .sf-tabs-top .sf-icon-button.focus-visible:not(:disabled):not(.disabled) {
-      outline: var(--sf-focus--width) solid currentColor;
-      outline-offset: var(--sf-focus--inset);
-    }
-    .sf-tabs-top .sf-button:not(:disabled):not(.disabled).focus-visible {
-      outline: var(--sf-focus--width) solid currentColor;
-      outline-offset: var(--sf-focus--inset);
-    }
-    .sf-tabs-top .sf-button:not(:disabled):not(.disabled):focus-visible {
-      outline: var(--sf-focus--width) solid currentColor;
-      outline-offset: var(--sf-focus--inset);
-    }
-    .sf-tabs-top .sf-icon-button:not(:disabled):not(.disabled).focus-visible {
-      outline: var(--sf-focus--width) solid currentColor;
-      outline-offset: var(--sf-focus--inset);
-    }
-    .sf-tabs-top .sf-icon-button:not(:disabled):not(.disabled):focus-visible {
+    .sf-tabs-top :is(.sf-button, .sf-icon-button):not(:disabled):not(.disabled):focus-visible {
       outline: var(--sf-focus--width) solid currentColor;
       outline-offset: var(--sf-focus--inset);
     }
@@ -1229,129 +415,58 @@
   /* A tab is a control of its size: its indicator is a border inside that
      height, and the padding gives the border back, so an underlined or full
      tab row is as tall as a plain one (it was taller by its indicator). */
-  .sf-tabs--underline > .sf-tabs-top-container > .sf-tabs-top .sf-button {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
     padding-bottom: calc(var(--sf-button--padding-bottom) - var(--sf-button--border-bottom-width));
     -webkit-padding-after: calc(var(--sf-button--padding-bottom) - var(--sf-button--border-bottom-width));
             padding-block-end: calc(var(--sf-button--padding-bottom) - var(--sf-button--border-bottom-width));
   }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    padding-bottom: calc(var(--sf-button--padding-bottom) - var(--sf-button--border-bottom-width));
-    -webkit-padding-after: calc(var(--sf-button--padding-bottom) - var(--sf-button--border-bottom-width));
-            padding-block-end: calc(var(--sf-button--padding-bottom) - var(--sf-button--border-bottom-width));
-  }
-  .sf-tabs--underline > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
-    padding-bottom: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
-    -webkit-padding-after: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
-            padding-block-end: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
-  }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
     padding-bottom: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
     -webkit-padding-after: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
             padding-block-end: calc(var(--sf-icon-button--padding-bottom) - var(--sf-icon-button--border-bottom-width));
   }
 }
 @layer sf.overrides {
-  .sf-tabs--underline > .sf-tabs-top-container > .sf-tabs-top {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container > .sf-tabs-top {
     --sf-tabs-top--gap: var(--sf-tabs-gap, var(--sf-space-0));
   }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top {
-    --sf-tabs-top--gap: var(--sf-tabs-gap, var(--sf-space-0));
-  }
-  .sf-tabs--underline > .sf-tabs-top-container > .sf-tabs-top .sf-button {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
     --sf-tabs--padding-inline: var(--sf-tabs-padding-inline, var(--sf-ui-1--space-x));
     --sf-button--padding-inline-start: var(--sf-tabs--padding-inline);
     --sf-button--padding-inline-end: var(--sf-tabs--padding-inline);
   }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    --sf-tabs--padding-inline: var(--sf-tabs-padding-inline, var(--sf-ui-1--space-x));
-    --sf-button--padding-inline-start: var(--sf-tabs--padding-inline);
-    --sf-button--padding-inline-end: var(--sf-tabs--padding-inline);
-  }
-  .sf-tabs--underline.sf-tabs--size-1-2 > .sf-tabs-top-container > .sf-tabs-top .sf-button {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))).sf-tabs--size-1-2 > .sf-tabs-top-container > .sf-tabs-top .sf-button {
     --sf-tabs--padding-inline: var(--sf-tabs-padding-inline, var(--sf-ui-1\/2--space-x));
   }
-  .sf-tabs--size-1-2:where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    --sf-tabs--padding-inline: var(--sf-tabs-padding-inline, var(--sf-ui-1\/2--space-x));
-  }
-  .sf-tabs--underline.sf-tabs--size-2 > .sf-tabs-top-container > .sf-tabs-top .sf-button {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))).sf-tabs--size-2 > .sf-tabs-top-container > .sf-tabs-top .sf-button {
     --sf-tabs--padding-inline: var(--sf-tabs-padding-inline, var(--sf-ui-2--space-x));
   }
-  .sf-tabs--size-2:where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    --sf-tabs--padding-inline: var(--sf-tabs-padding-inline, var(--sf-ui-2--space-x));
-  }
-  .sf-tabs--underline > .sf-tabs-top-container > .sf-tabs-top .sf-button .sf-button-text-container {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container > .sf-tabs-top .sf-button .sf-button-text-container {
     padding-left: calc(var(--sf-px) * 0);
     padding-right: calc(var(--sf-px) * 0);
     padding-inline: calc(var(--sf-px) * 0);
     flex: 0 1 auto;
   }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button .sf-button-text-container {
-    padding-left: calc(var(--sf-px) * 0);
-    padding-right: calc(var(--sf-px) * 0);
-    padding-inline: calc(var(--sf-px) * 0);
-    flex: 0 1 auto;
-  }
-  .sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > :first-child > .sf-button {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > :first-child > .sf-button,
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > .sf-button:first-child,
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top .sf-button[data-sf-tabs-lead] {
     --sf-button--padding-inline-start: calc(var(--sf-px) * 0);
   }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > :first-child > .sf-button {
-    --sf-button--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > .sf-button:first-child {
-    --sf-button--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > .sf-button:first-child {
-    --sf-button--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top .sf-button[data-sf-tabs-lead] {
-    --sf-button--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top .sf-button[data-sf-tabs-lead] {
-    --sf-button--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > :last-child > .sf-button {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > :last-child > .sf-button,
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > .sf-button:last-child {
     --sf-button--padding-inline-end: calc(var(--sf-px) * 0);
   }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > :last-child > .sf-button {
-    --sf-button--padding-inline-end: calc(var(--sf-px) * 0);
-  }
-  .sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > .sf-button:last-child {
-    --sf-button--padding-inline-end: calc(var(--sf-px) * 0);
-  }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > .sf-button:last-child {
-    --sf-button--padding-inline-end: calc(var(--sf-px) * 0);
-  }
-  .sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > :first-child > .sf-icon-button {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > :first-child > .sf-icon-button,
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > .sf-icon-button:first-child,
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top .sf-icon-button[data-sf-tabs-lead] {
     --sf-icon-button--padding-inline-start: calc(var(--sf-px) * 0);
   }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > :first-child > .sf-icon-button {
-    --sf-icon-button--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > .sf-icon-button:first-child {
-    --sf-icon-button--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > .sf-icon-button:first-child {
-    --sf-icon-button--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top .sf-icon-button[data-sf-tabs-lead] {
-    --sf-icon-button--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top .sf-icon-button[data-sf-tabs-lead] {
-    --sf-icon-button--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > :last-child > .sf-icon-button {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > :last-child > .sf-icon-button,
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > .sf-icon-button:last-child {
     --sf-icon-button--padding-inline-end: calc(var(--sf-px) * 0);
   }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > :last-child > .sf-icon-button {
-    --sf-icon-button--padding-inline-end: calc(var(--sf-px) * 0);
-  }
-  .sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > .sf-icon-button:last-child {
-    --sf-icon-button--padding-inline-end: calc(var(--sf-px) * 0);
-  }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-fit]) > .sf-tabs-top > .sf-icon-button:last-child {
-    --sf-icon-button--padding-inline-end: calc(var(--sf-px) * 0);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after {
     content: "";
     position: absolute;
     left: 0;
@@ -1359,484 +474,65 @@
     inset-inline: 0;
     bottom: calc(var(--sf-tabs--line-drop) * -1);
     inset-block-end: calc(var(--sf-tabs--line-drop) * -1);
-    border-bottom: calc(var(--sf-px) * 2) solid var(--sf-primary);
-    -webkit-border-after: calc(var(--sf-px) * 2) solid var(--sf-primary);
-            border-block-end: calc(var(--sf-px) * 2) solid var(--sf-primary);
-    border-bottom: calc(var(--sf-px) * 2) solid var(--sf-primary);
     border-bottom: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
     -webkit-border-after: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
             border-block-end: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
     pointer-events: none;
   }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    inset-inline: 0;
-    bottom: calc(var(--sf-tabs--line-drop) * -1);
-    inset-block-end: calc(var(--sf-tabs--line-drop) * -1);
-    border-bottom: calc(var(--sf-px) * 2) solid var(--sf-primary);
-    -webkit-border-after: calc(var(--sf-px) * 2) solid var(--sf-primary);
-            border-block-end: calc(var(--sf-px) * 2) solid var(--sf-primary);
-    border-bottom: calc(var(--sf-px) * 2) solid var(--sf-primary);
-    border-bottom: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
-    -webkit-border-after: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
-            border-block-end: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
-    pointer-events: none;
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    inset-inline: 0;
-    bottom: calc(var(--sf-tabs--line-drop) * -1);
-    inset-block-end: calc(var(--sf-tabs--line-drop) * -1);
-    border-bottom: calc(var(--sf-px) * 2) solid var(--sf-primary);
-    -webkit-border-after: calc(var(--sf-px) * 2) solid var(--sf-primary);
-            border-block-end: calc(var(--sf-px) * 2) solid var(--sf-primary);
-    border-bottom: calc(var(--sf-px) * 2) solid var(--sf-primary);
-    border-bottom: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
-    -webkit-border-after: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
-            border-block-end: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
-    pointer-events: none;
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    inset-inline: 0;
-    bottom: calc(var(--sf-tabs--line-drop) * -1);
-    inset-block-end: calc(var(--sf-tabs--line-drop) * -1);
-    border-bottom: calc(var(--sf-px) * 2) solid var(--sf-primary);
-    -webkit-border-after: calc(var(--sf-px) * 2) solid var(--sf-primary);
-            border-block-end: calc(var(--sf-px) * 2) solid var(--sf-primary);
-    border-bottom: calc(var(--sf-px) * 2) solid var(--sf-primary);
-    border-bottom: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
-    -webkit-border-after: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
-            border-block-end: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
-    pointer-events: none;
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
     --sf-tabs--line-drop: var(--sf-button--padding-bottom);
   }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    --sf-tabs--line-drop: var(--sf-button--padding-bottom);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-button[data-sf-tabs-squeezed] {
     position: relative;
   }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button {
-    position: relative;
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-button[data-sf-tabs-squeezed] {
-    position: relative;
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-button[data-sf-tabs-squeezed] {
-    position: relative;
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button > .sf-button-text-container {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button > .sf-button-text-container,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-button[data-sf-tabs-squeezed] > .sf-button-text-container {
     position: static;
   }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button > .sf-button-text-container {
-    position: static;
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-button[data-sf-tabs-squeezed] > .sf-button-text-container {
-    position: static;
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-button[data-sf-tabs-squeezed] > .sf-button-text-container {
-    position: static;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-start);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-start);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-end);
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-end);
-    }
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after:where(:dir(ltr)){
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after:where(:dir(ltr)), .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-button[data-sf-tabs-squeezed].selected:not(:disabled):not(.disabled) > .sf-button-text-container::after:where(:dir(ltr)){
     left: var(--sf-button--padding-inline-start);
     right: var(--sf-button--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-start);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-start);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-end);
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-end);
-    }
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after:where(:dir(rtl)){
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after:where(:dir(rtl)), .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-button[data-sf-tabs-squeezed].selected:not(:disabled):not(.disabled) > .sf-button-text-container::after:where(:dir(rtl)){
     right: var(--sf-button--padding-inline-start);
     left: var(--sf-button--padding-inline-end);
   }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-button[data-sf-tabs-squeezed].selected:not(:disabled):not(.disabled) > .sf-button-text-container::after {
     inset-inline: var(--sf-button--padding-inline-start) var(--sf-button--padding-inline-end);
     bottom: 0;
     inset-block-end: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-start);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-start);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-end);
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-end);
-    }
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after:where(:dir(ltr)){
-    left: var(--sf-button--padding-inline-start);
-    right: var(--sf-button--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-start);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-start);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-end);
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-end);
-    }
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after:where(:dir(rtl)){
-    right: var(--sf-button--padding-inline-start);
-    left: var(--sf-button--padding-inline-end);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-squeezed > .sf-button.selected:not(:disabled):not(.disabled) > .sf-button-text-container::after {
-    inset-inline: var(--sf-button--padding-inline-start) var(--sf-button--padding-inline-end);
-    bottom: 0;
-    inset-block-end: 0;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-start);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-start);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-end);
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-end);
-    }
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after:where(:dir(ltr)){
-    left: var(--sf-button--padding-inline-start);
-    right: var(--sf-button--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-start);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-start);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-end);
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-end);
-    }
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after:where(:dir(rtl)){
-    right: var(--sf-button--padding-inline-start);
-    left: var(--sf-button--padding-inline-end);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after {
-    inset-inline: var(--sf-button--padding-inline-start) var(--sf-button--padding-inline-end);
-    bottom: 0;
-    inset-block-end: 0;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-start);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-start);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-end);
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-end);
-    }
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after:where(:dir(ltr)){
-    left: var(--sf-button--padding-inline-start);
-    right: var(--sf-button--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-start);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    right: var(--sf-button--padding-inline-start);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-end);
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after{
-    left: var(--sf-button--padding-inline-end);
-    }
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after:where(:dir(rtl)){
-    right: var(--sf-button--padding-inline-start);
-    left: var(--sf-button--padding-inline-end);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top > .sf-button.selected[data-sf-tabs-squeezed]:not(:disabled):not(.disabled) > .sf-button-text-container::after {
-    inset-inline: var(--sf-button--padding-inline-start) var(--sf-button--padding-inline-end);
-    bottom: 0;
-    inset-block-end: 0;
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
     --sf-tabs--line-drop: calc(var(--sf-px) * 0);
     position: relative;
   }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
-    --sf-tabs--line-drop: calc(var(--sf-px) * 0);
-    position: relative;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: calc(var(--sf-px) * 0);
-    left: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0));
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: calc(var(--sf-px) * 0);
-    left: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0));
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: auto;
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: auto;
-    }
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after:where(:dir(ltr)){
-    left: calc(var(--sf-px) * 0);
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after:where(:dir(ltr)){
     left: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0));
     right: auto;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: calc(var(--sf-px) * 0);
-    right: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0));
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: calc(var(--sf-px) * 0);
-    right: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0));
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: auto;
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: auto;
-    }
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after:where(:dir(rtl)){
-    right: calc(var(--sf-px) * 0);
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after:where(:dir(rtl)){
     right: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0));
     left: auto;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: calc(var(--sf-px) * 0);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: calc(var(--sf-px) * 0);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: auto;
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: auto;
-    }
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after:where(:dir(ltr)){
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after:where(:dir(ltr)){
     left: calc(var(--sf-px) * 0);
     right: auto;
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: calc(var(--sf-px) * 0);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: calc(var(--sf-px) * 0);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: auto;
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: auto;
-    }
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after:where(:dir(rtl)){
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after:where(:dir(rtl)){
     right: calc(var(--sf-px) * 0);
     left: auto;
   }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after {
-    inset-inline: calc(var(--sf-px) * 0) auto;
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after {
     inset-inline: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0)) auto;
-    width: var(--sf-text-height-1);
-    inline-size: var(--sf-text-height-1);
-    width: var(--sf-text-height-1);
     width: var(--sf-tabs--icon-line, var(--sf-text-height-1));
     inline-size: var(--sf-tabs--icon-line, var(--sf-text-height-1));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: calc(var(--sf-px) * 0);
-    left: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0));
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: calc(var(--sf-px) * 0);
-    left: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0));
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: auto;
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: auto;
-    }
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after:where(:dir(ltr)){
-    left: calc(var(--sf-px) * 0);
-    left: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0));
-    right: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: calc(var(--sf-px) * 0);
-    right: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0));
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: calc(var(--sf-px) * 0);
-    right: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0));
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: auto;
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: auto;
-    }
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after:where(:dir(rtl)){
-    right: calc(var(--sf-px) * 0);
-    right: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0));
-    left: auto;
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: calc(var(--sf-px) * 0);
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: calc(var(--sf-px) * 0);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: auto;
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: auto;
-    }
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after:where(:dir(ltr)){
-    left: calc(var(--sf-px) * 0);
-    right: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: calc(var(--sf-px) * 0);
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    right: calc(var(--sf-px) * 0);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: auto;
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after{
-    left: auto;
-    }
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after:where(:dir(rtl)){
-    right: calc(var(--sf-px) * 0);
-    left: auto;
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled)::after {
-    inset-inline: calc(var(--sf-px) * 0) auto;
-    inset-inline: var(--sf-icon-button--padding-inline-start, calc(var(--sf-px) * 0)) auto;
-    width: var(--sf-text-height-1);
-    inline-size: var(--sf-text-height-1);
-    width: var(--sf-text-height-1);
-    width: var(--sf-tabs--icon-line, var(--sf-text-height-1));
-    inline-size: var(--sf-tabs--icon-line, var(--sf-text-height-1));
-  }
-  .sf-tabs--underline.sf-tabs--size-1-2 > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))).sf-tabs--size-1-2 > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
     --sf-tabs--icon-line: var(--sf-text-height-1\/2);
   }
-  .sf-tabs--size-1-2:where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
-    --sf-tabs--icon-line: var(--sf-text-height-1\/2);
-  }
-  .sf-tabs--underline.sf-tabs--size-2 > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
-    --sf-tabs--icon-line: var(--sf-text-height-2);
-  }
-  .sf-tabs--size-2:where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))).sf-tabs--size-2 > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
     --sf-tabs--icon-line: var(--sf-text-height-2);
   }
   .sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top {
@@ -1851,46 +547,15 @@
     padding-right: calc(var(--sf-px) * 0);
     padding-inline: calc(var(--sf-px) * 0);
   }
-  .sf-tabs.sf-tabs--underline > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    -webkit-column-gap: var(--sf-ui-1--text-space-x);
-       -moz-column-gap: var(--sf-ui-1--text-space-x);
-            column-gap: var(--sf-ui-1--text-space-x);
+  .sf-tabs:is(.sf-tabs--underline, .sf-tabs--vertical, :not(.sf-tabs--pills)) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
     -webkit-column-gap: var(--sf-tabs--icon-gap, var(--sf-ui-1--text-space-x));
        -moz-column-gap: var(--sf-tabs--icon-gap, var(--sf-ui-1--text-space-x));
             column-gap: var(--sf-tabs--icon-gap, var(--sf-ui-1--text-space-x));
   }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    -webkit-column-gap: var(--sf-ui-1--text-space-x);
-       -moz-column-gap: var(--sf-ui-1--text-space-x);
-            column-gap: var(--sf-ui-1--text-space-x);
-    -webkit-column-gap: var(--sf-tabs--icon-gap, var(--sf-ui-1--text-space-x));
-       -moz-column-gap: var(--sf-tabs--icon-gap, var(--sf-ui-1--text-space-x));
-            column-gap: var(--sf-tabs--icon-gap, var(--sf-ui-1--text-space-x));
-  }
-  .sf-tabs:not(.sf-tabs--pills) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    -webkit-column-gap: var(--sf-ui-1--text-space-x);
-       -moz-column-gap: var(--sf-ui-1--text-space-x);
-            column-gap: var(--sf-ui-1--text-space-x);
-    -webkit-column-gap: var(--sf-tabs--icon-gap, var(--sf-ui-1--text-space-x));
-       -moz-column-gap: var(--sf-tabs--icon-gap, var(--sf-ui-1--text-space-x));
-            column-gap: var(--sf-tabs--icon-gap, var(--sf-ui-1--text-space-x));
-  }
-  .sf-tabs.sf-tabs--size-1-2.sf-tabs--underline > .sf-tabs-top-container > .sf-tabs-top .sf-button {
+  .sf-tabs.sf-tabs--size-1-2:is(.sf-tabs--underline, .sf-tabs--vertical, :not(.sf-tabs--pills)) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
     --sf-tabs--icon-gap: var(--sf-ui-1\/2--text-space-x);
   }
-  .sf-tabs.sf-tabs--size-1-2.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    --sf-tabs--icon-gap: var(--sf-ui-1\/2--text-space-x);
-  }
-  .sf-tabs.sf-tabs--size-1-2:not(.sf-tabs--pills) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    --sf-tabs--icon-gap: var(--sf-ui-1\/2--text-space-x);
-  }
-  .sf-tabs.sf-tabs--size-2.sf-tabs--underline > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    --sf-tabs--icon-gap: var(--sf-ui-2--text-space-x);
-  }
-  .sf-tabs.sf-tabs--size-2.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    --sf-tabs--icon-gap: var(--sf-ui-2--text-space-x);
-  }
-  .sf-tabs.sf-tabs--size-2:not(.sf-tabs--pills) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
+  .sf-tabs.sf-tabs--size-2:is(.sf-tabs--underline, .sf-tabs--vertical, :not(.sf-tabs--pills)) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
     --sf-tabs--icon-gap: var(--sf-ui-2--text-space-x);
   }
   .sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top {
@@ -1905,24 +570,8 @@
   .sf-tabs.sf-tabs--size-2 > .sf-tabs-top-container > .sf-tabs-top .sf-button {
     font-size: var(--sf-text-size-2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs-count{
-    margin-left: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-tabs-count{
-    margin-left: var(--sf-space-1\/4);
-    }
-  }
   .sf-tabs-count:where(:dir(ltr)){
     margin-left: var(--sf-space-1\/4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs-count{
-    margin-right: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-tabs-count{
-    margin-right: var(--sf-space-1\/4);
-    }
   }
   .sf-tabs-count:where(:dir(rtl)){
     margin-right: var(--sf-space-1\/4);
@@ -1974,29 +623,9 @@
     min-width: var(--sf-text-height-2);
     min-inline-size: var(--sf-text-height-2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs-errors,html:not([dir="rtl"])
-  .sf-tabs-more-errors{
-    margin-left: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-tabs-errors,html:not([dir="rtl"])
-  .sf-tabs-more-errors{
-    margin-left: var(--sf-space-1\/4);
-    }
-  }
   .sf-tabs-errors:where(:dir(ltr)),
   .sf-tabs-more-errors:where(:dir(ltr)){
     margin-left: var(--sf-space-1\/4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs-errors,[dir="rtl"]
-  .sf-tabs-more-errors{
-    margin-right: var(--sf-space-1\/4);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-tabs-errors,[dir="rtl"]
-  .sf-tabs-more-errors{
-    margin-right: var(--sf-space-1\/4);
-    }
   }
   .sf-tabs-errors:where(:dir(rtl)),
   .sf-tabs-more-errors:where(:dir(rtl)){
@@ -2022,24 +651,8 @@
   .sf-tabs-more > .sf-button:has(> .sf-tabs-more-errors) > .sf-button-text-container {
     --sf-button-text-container--padding-inline-end: calc(var(--sf-px) * 0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs-more > .sf-button.sf-button--size-1\/2 > .sf-badge.sf-tabs-more-errors{
-    margin-right: var(--sf-ui-1\/2--text-space-x);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs-more > .sf-button.sf-button--size-1\/2 > .sf-badge.sf-tabs-more-errors{
-    margin-right: var(--sf-ui-1\/2--text-space-x);
-    }
-  }
   .sf-tabs-more > .sf-button.sf-button--size-1\/2 > .sf-badge.sf-tabs-more-errors:where(:dir(ltr)){
     margin-right: var(--sf-ui-1\/2--text-space-x);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs-more > .sf-button.sf-button--size-1\/2 > .sf-badge.sf-tabs-more-errors{
-    margin-left: var(--sf-ui-1\/2--text-space-x);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-tabs-more > .sf-button.sf-button--size-1\/2 > .sf-badge.sf-tabs-more-errors{
-    margin-left: var(--sf-ui-1\/2--text-space-x);
-    }
   }
   .sf-tabs-more > .sf-button.sf-button--size-1\/2 > .sf-badge.sf-tabs-more-errors:where(:dir(rtl)){
     margin-left: var(--sf-ui-1\/2--text-space-x);
@@ -2048,24 +661,8 @@
     -webkit-margin-end: var(--sf-ui-1\/2--text-space-x);
             margin-inline-end: var(--sf-ui-1\/2--text-space-x);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs-more > .sf-button.sf-button--size-1 > .sf-badge.sf-tabs-more-errors{
-    margin-right: var(--sf-ui-1--text-space-x);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs-more > .sf-button.sf-button--size-1 > .sf-badge.sf-tabs-more-errors{
-    margin-right: var(--sf-ui-1--text-space-x);
-    }
-  }
   .sf-tabs-more > .sf-button.sf-button--size-1 > .sf-badge.sf-tabs-more-errors:where(:dir(ltr)){
     margin-right: var(--sf-ui-1--text-space-x);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs-more > .sf-button.sf-button--size-1 > .sf-badge.sf-tabs-more-errors{
-    margin-left: var(--sf-ui-1--text-space-x);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-tabs-more > .sf-button.sf-button--size-1 > .sf-badge.sf-tabs-more-errors{
-    margin-left: var(--sf-ui-1--text-space-x);
-    }
   }
   .sf-tabs-more > .sf-button.sf-button--size-1 > .sf-badge.sf-tabs-more-errors:where(:dir(rtl)){
     margin-left: var(--sf-ui-1--text-space-x);
@@ -2074,24 +671,8 @@
     -webkit-margin-end: var(--sf-ui-1--text-space-x);
             margin-inline-end: var(--sf-ui-1--text-space-x);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs-more > .sf-button.sf-button--size-2 > .sf-badge.sf-tabs-more-errors{
-    margin-right: var(--sf-ui-2--text-space-x);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs-more > .sf-button.sf-button--size-2 > .sf-badge.sf-tabs-more-errors{
-    margin-right: var(--sf-ui-2--text-space-x);
-    }
-  }
   .sf-tabs-more > .sf-button.sf-button--size-2 > .sf-badge.sf-tabs-more-errors:where(:dir(ltr)){
     margin-right: var(--sf-ui-2--text-space-x);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs-more > .sf-button.sf-button--size-2 > .sf-badge.sf-tabs-more-errors{
-    margin-left: var(--sf-ui-2--text-space-x);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-tabs-more > .sf-button.sf-button--size-2 > .sf-badge.sf-tabs-more-errors{
-    margin-left: var(--sf-ui-2--text-space-x);
-    }
   }
   .sf-tabs-more > .sf-button.sf-button--size-2 > .sf-badge.sf-tabs-more-errors:where(:dir(rtl)){
     margin-left: var(--sf-ui-2--text-space-x);
@@ -2113,37 +694,8 @@
   .sf-tabs-top-container[data-sf-tabs-fit] > .sf-tabs-top {
     flex: 1 1 auto;
   }
-  .sf-tabs-top-container[data-sf-tabs-fit] > .sf-tabs-top > * > .sf-button {
-    flex: 1 1 0;
-    min-width: -webkit-max-content;
-    min-width: -moz-max-content;
-    min-width: max-content;
-    min-inline-size: -webkit-max-content;
-    min-inline-size: -moz-max-content;
-    min-inline-size: max-content;
-    justify-content: center;
-  }
-  .sf-tabs-top-container[data-sf-tabs-fit] > .sf-tabs-top > * > .sf-icon-button {
-    flex: 1 1 0;
-    min-width: -webkit-max-content;
-    min-width: -moz-max-content;
-    min-width: max-content;
-    min-inline-size: -webkit-max-content;
-    min-inline-size: -moz-max-content;
-    min-inline-size: max-content;
-    justify-content: center;
-  }
-  .sf-tabs-top-container[data-sf-tabs-fit] > .sf-tabs-top > .sf-button {
-    flex: 1 1 0;
-    min-width: -webkit-max-content;
-    min-width: -moz-max-content;
-    min-width: max-content;
-    min-inline-size: -webkit-max-content;
-    min-inline-size: -moz-max-content;
-    min-inline-size: max-content;
-    justify-content: center;
-  }
-  .sf-tabs-top-container[data-sf-tabs-fit] > .sf-tabs-top > .sf-icon-button {
+  .sf-tabs-top-container[data-sf-tabs-fit] > .sf-tabs-top > * > :is(.sf-button, .sf-icon-button),
+  .sf-tabs-top-container[data-sf-tabs-fit] > .sf-tabs-top > :is(.sf-button, .sf-icon-button) {
     flex: 1 1 0;
     min-width: -webkit-max-content;
     min-width: -moz-max-content;
@@ -2163,7 +715,8 @@
     :not([fit=never]) > .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) {
       flex: 1 1 auto;
     }
-    :not([fit=never]) > .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > * > .sf-button {
+    :not([fit=never]) > .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > * > :is(.sf-button, .sf-icon-button),
+    :not([fit=never]) > .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > :is(.sf-button, .sf-icon-button) {
       flex: 1 1 0;
       min-width: -webkit-max-content;
       min-width: -moz-max-content;
@@ -2173,58 +726,12 @@
       min-inline-size: max-content;
       justify-content: center;
     }
-    :not([fit=never]) > .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > * > .sf-icon-button {
-      flex: 1 1 0;
-      min-width: -webkit-max-content;
-      min-width: -moz-max-content;
-      min-width: max-content;
-      min-inline-size: -webkit-max-content;
-      min-inline-size: -moz-max-content;
-      min-inline-size: max-content;
-      justify-content: center;
-    }
-    :not([fit=never]) > .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-button {
-      flex: 1 1 0;
-      min-width: -webkit-max-content;
-      min-width: -moz-max-content;
-      min-width: max-content;
-      min-inline-size: -webkit-max-content;
-      min-inline-size: -moz-max-content;
-      min-inline-size: max-content;
-      justify-content: center;
-    }
-    :not([fit=never]) > .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-icon-button {
-      flex: 1 1 0;
-      min-width: -webkit-max-content;
-      min-width: -moz-max-content;
-      min-width: max-content;
-      min-inline-size: -webkit-max-content;
-      min-inline-size: -moz-max-content;
-      min-inline-size: max-content;
-      justify-content: center;
-    }
-    :not([fit=never]) > .sf-tabs--overflow-more.sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > :first-child > .sf-button {
+    :not([fit=never]) > .sf-tabs--overflow-more:is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > :first-child > .sf-button,
+    :not([fit=never]) > .sf-tabs--overflow-more:is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-button:first-child {
       --sf-button--padding-inline-start: var(--sf-tabs--padding-inline);
     }
-    :not([fit=never]) > .sf-tabs--overflow-more:where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > :first-child > .sf-button {
-      --sf-button--padding-inline-start: var(--sf-tabs--padding-inline);
-    }
-    :not([fit=never]) > .sf-tabs--overflow-more.sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-button:first-child {
-      --sf-button--padding-inline-start: var(--sf-tabs--padding-inline);
-    }
-    :not([fit=never]) > .sf-tabs--overflow-more:where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-button:first-child {
-      --sf-button--padding-inline-start: var(--sf-tabs--padding-inline);
-    }
-    :not([fit=never]) > .sf-tabs--overflow-more.sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > :last-child > .sf-button {
-      --sf-button--padding-inline-end: var(--sf-tabs--padding-inline);
-    }
-    :not([fit=never]) > .sf-tabs--overflow-more:where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > :last-child > .sf-button {
-      --sf-button--padding-inline-end: var(--sf-tabs--padding-inline);
-    }
-    :not([fit=never]) > .sf-tabs--overflow-more.sf-tabs--underline > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-button:last-child {
-      --sf-button--padding-inline-end: var(--sf-tabs--padding-inline);
-    }
-    :not([fit=never]) > .sf-tabs--overflow-more:where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-button:last-child {
+    :not([fit=never]) > .sf-tabs--overflow-more:is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > :last-child > .sf-button,
+    :not([fit=never]) > .sf-tabs--overflow-more:is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container:not([data-sf-tabs-own]) > .sf-tabs-top:has(> :nth-child(2)):not(:has(> :nth-child(5))) > .sf-button:last-child {
       --sf-button--padding-inline-end: var(--sf-tabs--padding-inline);
     }
   }
@@ -2274,20 +781,7 @@
   .sf-tabs-more > button {
     white-space: nowrap;
   }
-  .sf-tabs--underline > .sf-tabs-top-container--tools > .sf-tabs-more > button {
-    margin-bottom: calc(var(--sf-px) * -1);
-    -webkit-margin-after: calc(var(--sf-px) * -1);
-            margin-block-end: calc(var(--sf-px) * -1);
-    margin-bottom: calc(var(--sf-px) * -1);
-    margin-bottom: calc(var(--sf-tabs-border-width, var(--sf-tabs--border-width, var(--sf-px))) * -1);
-    -webkit-margin-after: calc(var(--sf-tabs-border-width, var(--sf-tabs--border-width, var(--sf-px))) * -1);
-            margin-block-end: calc(var(--sf-tabs-border-width, var(--sf-tabs--border-width, var(--sf-px))) * -1);
-  }
-  :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical)):not(.does-not-exist) > .sf-tabs-top-container--tools > .sf-tabs-more > button {
-    margin-bottom: calc(var(--sf-px) * -1);
-    -webkit-margin-after: calc(var(--sf-px) * -1);
-            margin-block-end: calc(var(--sf-px) * -1);
-    margin-bottom: calc(var(--sf-px) * -1);
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container--tools > .sf-tabs-more > button {
     margin-bottom: calc(var(--sf-tabs-border-width, var(--sf-tabs--border-width, var(--sf-px))) * -1);
     -webkit-margin-after: calc(var(--sf-tabs-border-width, var(--sf-tabs--border-width, var(--sf-px))) * -1);
             margin-block-end: calc(var(--sf-tabs-border-width, var(--sf-tabs--border-width, var(--sf-px))) * -1);
@@ -2311,70 +805,22 @@
     flex-direction: column;
     gap: var(--sf-px);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs-settings-row{
-    padding-left: var(--sf-a8);
-    padding-left: var(--sf-context-menu--inset-start, var(--sf-a8));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-tabs-settings-row{
-    padding-left: var(--sf-a8);
-    padding-left: var(--sf-context-menu--inset-start, var(--sf-a8));
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs-settings-row{
-    padding-right: var(--sf-a8);
-    padding-right: var(--sf-context-menu--inset-end, var(--sf-a8));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-tabs-settings-row{
-    padding-right: var(--sf-a8);
-    padding-right: var(--sf-context-menu--inset-end, var(--sf-a8));
-    }
-  }
   .sf-tabs-settings-row:where(:dir(ltr)){
-    padding-left: var(--sf-a8);
     padding-left: var(--sf-context-menu--inset-start, var(--sf-a8));
-    padding-right: var(--sf-a8);
     padding-right: var(--sf-context-menu--inset-end, var(--sf-a8));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs-settings-row{
-    padding-right: var(--sf-a8);
-    padding-right: var(--sf-context-menu--inset-start, var(--sf-a8));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-tabs-settings-row{
-    padding-right: var(--sf-a8);
-    padding-right: var(--sf-context-menu--inset-start, var(--sf-a8));
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs-settings-row{
-    padding-left: var(--sf-a8);
-    padding-left: var(--sf-context-menu--inset-end, var(--sf-a8));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-tabs-settings-row{
-    padding-left: var(--sf-a8);
-    padding-left: var(--sf-context-menu--inset-end, var(--sf-a8));
-    }
   }
   .sf-tabs-settings-row:where(:dir(rtl)){
-    padding-right: var(--sf-a8);
     padding-right: var(--sf-context-menu--inset-start, var(--sf-a8));
-    padding-left: var(--sf-a8);
     padding-left: var(--sf-context-menu--inset-end, var(--sf-a8));
   }
   .sf-tabs-settings-row {
     display: flex;
     align-items: center;
     gap: var(--sf-space-1\/2);
-    min-height: calc(var(--sf-text-height-1\/2) + 2 * var(--sf-a6));
-    min-block-size: calc(var(--sf-text-height-1\/2) + 2 * var(--sf-a6));
-    min-height: calc(var(--sf-text-height-1\/2) + 2 * var(--sf-a6));
     min-height: calc(var(--sf-context-menu--line, var(--sf-text-height-1\/2)) + 2 * var(--sf-context-menu--space-y, var(--sf-a6)));
     min-block-size: calc(var(--sf-context-menu--line, var(--sf-text-height-1\/2)) + 2 * var(--sf-context-menu--space-y, var(--sf-a6)));
     padding-left: var(--sf-a8);
     padding-right: var(--sf-a8);
-    padding-inline: var(--sf-a8) var(--sf-a8);
     padding-inline: var(--sf-context-menu--inset-start, var(--sf-a8)) var(--sf-context-menu--inset-end, var(--sf-a8));
     border-radius: var(--sf-radius--ui);
   }
@@ -2398,122 +844,32 @@
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--primary {
     color: var(--sf-primary);
   }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) {
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--default.sf-button--primary:not(:disabled):not(.disabled),
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top :is(.sf-button, .sf-icon-button).selected:not(:disabled):not(.disabled) {
     color: var(--sf-on-primary);
   }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
-    color: var(--sf-on-primary);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--default.sf-button--primary:not(:disabled):not(.disabled) {
-    color: var(--sf-on-primary);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--outline:not(.selected):not(:disabled):not(.disabled):hover {
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button:is(.sf-button--outline, .sf-button--ghost, .sf-button--link):not(.selected):not(:disabled):not(.disabled):hover {
     color: var(--sf-primary-hover);
   }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--ghost:not(.selected):not(:disabled):not(.disabled):hover {
-    color: var(--sf-primary-hover);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--link:not(.selected):not(:disabled):not(.disabled):hover {
-    color: var(--sf-primary-hover);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--outline:not(.selected):not(:disabled):not(.disabled):active {
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button:is(.sf-button--outline, .sf-button--ghost, .sf-button--link):not(.selected):not(:disabled):not(.disabled):is(:active, .active) {
     color: var(--sf-primary-active);
   }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--outline.active:not(.selected):not(:disabled):not(.disabled) {
-    color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--ghost:not(.selected):not(:disabled):not(.disabled):active {
-    color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--ghost.active:not(.selected):not(:disabled):not(.disabled) {
-    color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--link:not(.selected):not(:disabled):not(.disabled):active {
-    color: var(--sf-primary-active);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.sf-button--link.active:not(.selected):not(:disabled):not(.disabled) {
-    color: var(--sf-primary-active);
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) {
-    color: var(--sf-on-surface-variant);
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top :is(.sf-button, .sf-icon-button):not(.selected):not(:disabled):not(.disabled) {
     color: var(--sf-tabs-color, var(--sf-on-surface-variant));
   }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-tabs-color, var(--sf-on-surface-variant));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-tabs-color, var(--sf-on-surface-variant));
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-tabs-color, var(--sf-on-surface-variant));
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top :is(.sf-button, .sf-icon-button).selected:not(:disabled):not(.disabled) {
     color: var(--sf-on-surface);
   }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) {
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
-    color: var(--sf-on-surface);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled) {
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top :is(.sf-button, .sf-icon-button).selected:not(:disabled):not(.disabled) {
     color: var(--sf-on-primary-container);
   }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button:disabled {
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top :is(.sf-button, .sf-icon-button):is(:disabled, .disabled) {
     color: var(--sf-on-surface-disabled);
   }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled {
-    color: var(--sf-on-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:disabled {
-    color: var(--sf-on-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.disabled {
-    color: var(--sf-on-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled.sf-button--default {
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled:is(.sf-button--default, .sf-button--tonal) {
     --sf-button--background-color: var(--sf-surface-disabled);
   }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled.sf-button--tonal {
-    --sf-button--background-color: var(--sf-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled.sf-button--default .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled.sf-button--default .sf-button-shortcut {
-    --sf-button-text-container--color: var(--sf-on-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled.sf-button--tonal .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled.sf-button--tonal .sf-button-shortcut {
-    --sf-button-text-container--color: var(--sf-on-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled.sf-button--outline .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled.sf-button--outline .sf-button-shortcut {
-    --sf-button-text-container--color: var(--sf-on-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled.sf-button--ghost .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled.sf-button--ghost .sf-button-shortcut {
-    --sf-button-text-container--color: var(--sf-on-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled.sf-button--link .sf-button-text-container {
-    --sf-button-text-container--color: var(--sf-on-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled.sf-button--link .sf-button-shortcut {
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled:is(.sf-button--default, .sf-button--tonal, .sf-button--outline, .sf-button--ghost, .sf-button--link) :is(.sf-button-text-container, .sf-button-shortcut) {
     --sf-button-text-container--color: var(--sf-on-surface-disabled);
   }
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled .sf-icon {
@@ -2522,10 +878,7 @@
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-button.disabled.sf-button--outline.sf-button--primary {
     --sf-button--border-color: var(--sf-outline-disabled);
   }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.disabled.sf-icon-button--default {
-    --sf-icon-button--background-color: var(--sf-surface-disabled);
-  }
-  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.disabled.sf-icon-button--tonal {
+  .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.disabled:is(.sf-icon-button--default, .sf-icon-button--tonal) {
     --sf-icon-button--background-color: var(--sf-surface-disabled);
   }
   .sf-tabs > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.disabled .sf-icon {
@@ -2541,7 +894,6 @@
     --sf-button--border-color: var(--sf-transparent);
     --sf-icon-button--background-color: var(--sf-transparent);
     --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-surface);
     color: var(--sf-tabs-color, var(--sf-on-surface));
   }
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover,
@@ -2559,19 +911,8 @@
     --sf-button--background-color: var(--sf-surface-state-select);
     --sf-icon-button--background-color: var(--sf-surface-state-select);
   }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):active {
-    --sf-button--background-color: var(--sf-surface-state-active);
-    --sf-icon-button--background-color: var(--sf-surface-state-active);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.active:not(.selected):not(:disabled):not(.disabled) {
-    --sf-button--background-color: var(--sf-surface-state-active);
-    --sf-icon-button--background-color: var(--sf-surface-state-active);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):active {
-    --sf-button--background-color: var(--sf-surface-state-active);
-    --sf-icon-button--background-color: var(--sf-surface-state-active);
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.active:not(.selected):not(:disabled):not(.disabled) {
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):is(:active, .active),
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):is(:active, .active) {
     --sf-button--background-color: var(--sf-surface-state-active);
     --sf-icon-button--background-color: var(--sf-surface-state-active);
   }
@@ -2582,22 +923,8 @@
   .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled) .sf-icon {
     --sf-icon--color: var(--sf-tabs-color, var(--sf-on-surface-icon));
   }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-tabs-color, var(--sf-on-surface));
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):active .sf-icon {
-    --sf-icon--color: var(--sf-tabs-color, var(--sf-on-surface));
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button.active:not(.selected):not(:disabled):not(.disabled) .sf-icon {
-    --sf-icon--color: var(--sf-tabs-color, var(--sf-on-surface));
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover .sf-icon {
-    --sf-icon--color: var(--sf-tabs-color, var(--sf-on-surface));
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):active .sf-icon {
-    --sf-icon--color: var(--sf-tabs-color, var(--sf-on-surface));
-  }
-  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.active:not(.selected):not(:disabled):not(.disabled) .sf-icon {
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):is(:hover, :active, .active) .sf-icon,
+  .sf-tabs.sf-tabs--pills > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):is(:hover, :active, .active) .sf-icon {
     --sf-icon--color: var(--sf-tabs-color, var(--sf-on-surface));
   }
 }
@@ -2635,16 +962,7 @@
     font-weight: var(--sf-weight--medium);
     white-space: nowrap;
   }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    transition-property: background-color, box-shadow, color;
-  }
-  .sf-tabs.sf-tabs--underline:not(.does-not-exist) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
-    transition-property: background-color, box-shadow, color;
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-button {
-    transition-property: background-color, box-shadow, color;
-  }
-  .sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical) > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button {
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top :is(.sf-button, .sf-icon-button) {
     transition-property: background-color, box-shadow, color;
   }
   .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled),
@@ -2654,7 +972,6 @@
     --sf-button--border-color: var(--sf-transparent);
     --sf-icon-button--background-color: var(--sf-transparent);
     --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-surface);
     color: var(--sf-tabs-color, var(--sf-on-surface));
   }
   .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):hover,
@@ -2669,47 +986,10 @@
   .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled) .sf-icon {
     --sf-icon--color: var(--sf-on-surface-variant);
   }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):active {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected.focus-visible:not(:disabled):not(.disabled) {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):active {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected.focus-visible:not(:disabled):not(.disabled) {
+  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled),
+  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled),
+  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):is(:hover, :active,.focus-visible),
+  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):is(:hover, :active,.focus-visible) {
     --sf-tabs--focus-ink: var(--sf-on-primary-container);
     --sf-button--background-color: var(--sf-primary-container-active);
     --sf-button--border-color: var(--sf-transparent);
@@ -2718,80 +998,9 @@
     color: var(--sf-on-primary-container);
   }
   .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled),
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):active {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled).focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):hover {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):active {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled).focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):focus-visible {
-    --sf-tabs--focus-ink: var(--sf-on-primary-container);
-    --sf-button--background-color: var(--sf-primary-container-active);
-    --sf-button--border-color: var(--sf-transparent);
-    --sf-icon-button--background-color: var(--sf-primary-container-active);
-    --sf-icon-button--border-color: var(--sf-transparent);
-    color: var(--sf-on-primary-container);
-  }
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled),
-  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled) {
+  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled),
+  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button.selected:not(:disabled):not(.disabled):is(:hover, :active, :focus-visible),
+  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button.selected:not(:disabled):not(.disabled):is(:hover, :active, :focus-visible) {
     --sf-tabs--focus-ink: var(--sf-on-primary-container);
     --sf-button--background-color: var(--sf-primary-container-active);
     --sf-button--border-color: var(--sf-transparent);
@@ -2809,24 +1018,8 @@
   .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button {
     justify-content: flex-start;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button-text-container{
-    text-align: left;
-  }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button-text-container{
-    text-align: left;
-    }
-  }
   .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button-text-container:where(:dir(ltr)){
     text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button-text-container{
-    text-align: right;
-  }
-  @supports not (text-align: start){
-  [dir="rtl"] .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button-text-container{
-    text-align: right;
-    }
   }
   .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button-text-container:where(:dir(rtl)){
     text-align: right;

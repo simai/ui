@@ -135,13 +135,10 @@
     color: var(--sf-on-surface-variant);
   }
   .sf-confirm-change__list .sf-change__before {
-    background-color: transparent;
     background-color: var(--sf-change-confirm--before-fill, var(--sf-confirm-change-before-background-color, var(--sf-change-confirm-before-background-color, transparent)));
   }
   .sf-confirm-change__list .sf-change__after {
-    background-color: transparent;
     background-color: var(--sf-change-confirm--after-fill, var(--sf-confirm-change-after-background-color, var(--sf-change-confirm-after-background-color, transparent)));
-    color: var(--sf-change--after);
     color: var(--sf-change-confirm--after-ink, var(--sf-confirm-change-after-color, var(--sf-change-confirm-after-color, var(--sf-change--after))));
   }
   .sf-confirm-change__status {

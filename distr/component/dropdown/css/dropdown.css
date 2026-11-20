@@ -15,46 +15,14 @@
   /* The row's public variables (standard 1.3.8 §6, sf-list-item): its fill and
      divider, the title's and the supporting line's ink, the handle's ink. */
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item{
-    padding-left: var(--sf-list-item--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-item{
-    padding-left: var(--sf-list-item--padding-inline-start);
-    }
-  }
   .sf-list-item:where(:dir(ltr)){
     padding-left: var(--sf-list-item--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-item{
-    padding-right: var(--sf-list-item--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-list-item{
-    padding-right: var(--sf-list-item--padding-inline-start);
-    }
   }
   .sf-list-item:where(:dir(rtl)){
     padding-right: var(--sf-list-item--padding-inline-start);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item{
-    padding-right: var(--sf-list-item--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-list-item{
-    padding-right: var(--sf-list-item--padding-inline-end);
-    }
-  }
   .sf-list-item:where(:dir(ltr)){
     padding-right: var(--sf-list-item--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-item{
-    padding-left: var(--sf-list-item--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-list-item{
-    padding-left: var(--sf-list-item--padding-inline-end);
-    }
   }
   .sf-list-item:where(:dir(rtl)){
     padding-left: var(--sf-list-item--padding-inline-end);
@@ -67,7 +35,6 @@
             padding-inline-end: var(--sf-list-item--padding-inline-end);
     padding-bottom: calc(var(--sf-list-item--padding-bottom) - var(--sf-list-item--border-bottom-width));
     border-bottom-width: var(--sf-list-item--border-bottom-width);
-    border-style: solid;
     border-style: var(--sf-list-item--border-style, solid);
     box-shadow: var(--sf-list-item--box-shadow);
     /* A row stands on the place it is in (C16, DEV audit 2026-11-10 defect 2):
@@ -99,46 +66,14 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item .sf-list-item-container{
-    padding-right: var(--sf-list-item-container--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-list-item .sf-list-item-container{
-    padding-right: var(--sf-list-item-container--padding-inline-end);
-    }
-  }
   .sf-list-item .sf-list-item-container:where(:dir(ltr)){
     padding-right: var(--sf-list-item-container--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-item .sf-list-item-container{
-    padding-left: var(--sf-list-item-container--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-list-item .sf-list-item-container{
-    padding-left: var(--sf-list-item-container--padding-inline-end);
-    }
   }
   .sf-list-item .sf-list-item-container:where(:dir(rtl)){
     padding-left: var(--sf-list-item-container--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item .sf-list-item-container{
-    padding-left: var(--sf-list-item-container--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list-item .sf-list-item-container{
-    padding-left: var(--sf-list-item-container--padding-inline-start);
-    }
-  }
   .sf-list-item .sf-list-item-container:where(:dir(ltr)){
     padding-left: var(--sf-list-item-container--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list-item .sf-list-item-container{
-    padding-right: var(--sf-list-item-container--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-list-item .sf-list-item-container{
-    padding-right: var(--sf-list-item-container--padding-inline-start);
-    }
   }
   .sf-list-item .sf-list-item-container:where(:dir(rtl)){
     padding-right: var(--sf-list-item-container--padding-inline-start);
@@ -161,11 +96,8 @@
     line-height: var(--sf-tag-container--line-height);
   }
   .sf-list-item .sf-icon {
-    font-size: var(--sf-text-size-3);
     font-size: var(--sf-icon--font-size, var(--sf-text-size-3));
-    height: var(--sf-text-size-3);
     height: var(--sf-icon--height, var(--sf-text-size-3));
-    width: var(--sf-text-size-3);
     width: var(--sf-icon--width, var(--sf-text-size-3));
     flex-shrink: 0;
   }
@@ -399,30 +331,12 @@
      size 1. The same step stands before a row's trailing part (an avatar or a
      colour row's mark). After the size rules above, which set the text block's
      inset at the same weight. */
-  .sf-list-item.sf-list-item--icon .sf-list-item-wrap {
+  .sf-list-item:is(.sf-list-item--icon, .sf-list-item--checkbox, .sf-list-item--avatar, .sf-list-item--color) .sf-list-item-wrap {
     -webkit-column-gap: var(--sf-space-1\/2);
        -moz-column-gap: var(--sf-space-1\/2);
             column-gap: var(--sf-space-1\/2);
   }
-  .sf-list-item.sf-list-item--checkbox .sf-list-item-wrap {
-    -webkit-column-gap: var(--sf-space-1\/2);
-       -moz-column-gap: var(--sf-space-1\/2);
-            column-gap: var(--sf-space-1\/2);
-  }
-  .sf-list-item.sf-list-item--avatar .sf-list-item-wrap {
-    -webkit-column-gap: var(--sf-space-1\/2);
-       -moz-column-gap: var(--sf-space-1\/2);
-            column-gap: var(--sf-space-1\/2);
-  }
-  .sf-list-item.sf-list-item--color .sf-list-item-wrap {
-    -webkit-column-gap: var(--sf-space-1\/2);
-       -moz-column-gap: var(--sf-space-1\/2);
-            column-gap: var(--sf-space-1\/2);
-  }
-  .sf-list-item.sf-list-item--icon .sf-list-item-wrap .sf-list-item-container {
-    --sf-list-item-container--padding-inline-start: 0;
-  }
-  .sf-list-item.sf-list-item--checkbox .sf-list-item-wrap .sf-list-item-container {
+  .sf-list-item:is(.sf-list-item--icon, .sf-list-item--checkbox) .sf-list-item-wrap .sf-list-item-container {
     --sf-list-item-container--padding-inline-start: 0;
   }
   @media (prefers-reduced-motion: reduce) {
@@ -451,15 +365,7 @@
   .sf-list-item.sf-list-item--size-2 {
     --sf-list-item--inset: var(--sf-space-2);
   }
-  .sf-list-item.sf-list-item--size-1\/2 {
-    --sf-list-item--padding-inline-start: var(--sf-list-item--inset);
-    --sf-list-item--padding-inline-end: var(--sf-list-item--inset);
-  }
-  .sf-list-item.sf-list-item--size-1 {
-    --sf-list-item--padding-inline-start: var(--sf-list-item--inset);
-    --sf-list-item--padding-inline-end: var(--sf-list-item--inset);
-  }
-  .sf-list-item.sf-list-item--size-2 {
+  .sf-list-item:is(.sf-list-item--size-1\/2, .sf-list-item--size-1, .sf-list-item--size-2) {
     --sf-list-item--padding-inline-start: var(--sf-list-item--inset);
     --sf-list-item--padding-inline-end: var(--sf-list-item--inset);
   }
@@ -467,7 +373,6 @@
 @layer sf.paint {
   .sf-list-item {
     background-color: var(--sf-list-item--background-color);
-    border-color: transparent;
     border-color: var(--sf-list-item--border-color, transparent);
   }
   .sf-list-item .sf-list-item-wrap {
@@ -481,7 +386,6 @@
     background-color: var(--sf-tag--background-color);
   }
   .sf-list-item .sf-icon {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-icon--color, var(--sf-on-surface-variant));
   }
   .sf-list-item .sf-avatar-label-group-title {
@@ -491,7 +395,6 @@
     background-color: var(--sf-list-item-selected-item--background-color);
   }
   .sf-list-item .sf-checkbox-box {
-    border-color: transparent;
     border-color: var(--sf-checkbox-box--border-color, transparent);
   }
   .sf-list [role=option].sf-list-item:not(:disabled):not(.disabled):hover {
@@ -645,9 +548,7 @@
     white-space: nowrap;
   }
   .sf-list-item--two-line .sf-list-item-supporting {
-    font-size: var(--sf-text-size-1\/2);
     font-size: var(--sf-list-item-supporting--font-size, var(--sf-text-size-1\/2));
-    line-height: var(--sf-text-height-1\/2);
     line-height: var(--sf-list-item-supporting--line-height, var(--sf-text-height-1\/2));
   }
   .sf-list-item--two-line.sf-list-item--size-1\/3,
@@ -713,41 +614,14 @@
      size 1/2 at 36 on a phone, under the 44 a finger needs. Every term is a
      token of the ladder; the two lines stand centred in the row. Size 1/3 has
      no caption step under it and keeps its own. */
-  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-1\/2 {
-    --sf-list-item--caption-step: var(--sf-ui-1\/2--control-height);
-    align-items: center;
-    min-height: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
-    min-block-size: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
-  }
-  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-1 {
-    --sf-list-item--caption-step: var(--sf-ui-1\/2--control-height);
-    align-items: center;
-    min-height: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
-    min-block-size: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
-  }
-  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-2 {
-    --sf-list-item--caption-step: var(--sf-ui-1\/2--control-height);
-    align-items: center;
-    min-height: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
-    min-block-size: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
-  }
-  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-3 {
+  .sf-list-item.sf-list-item--two-line.sf-list-item--two-line:is(.sf-list-item--size-1\/2, .sf-list-item--size-1, .sf-list-item--size-2, .sf-list-item--size-3) {
     --sf-list-item--caption-step: var(--sf-ui-1\/2--control-height);
     align-items: center;
     min-height: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
     min-block-size: calc(var(--sf-list-item--caption-step) + var(--sf-text-height-1\/3));
   }
   @media (pointer: coarse) {
-    .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-1\/2 {
-      --sf-list-item--caption-step: max(var(--sf-ui-1\/2--control-height), var(--sf-d1));
-    }
-    .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-1 {
-      --sf-list-item--caption-step: max(var(--sf-ui-1\/2--control-height), var(--sf-d1));
-    }
-    .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-2 {
-      --sf-list-item--caption-step: max(var(--sf-ui-1\/2--control-height), var(--sf-d1));
-    }
-    .sf-list-item.sf-list-item--two-line.sf-list-item--two-line.sf-list-item--size-3 {
+    .sf-list-item.sf-list-item--two-line.sf-list-item--two-line:is(.sf-list-item--size-1\/2, .sf-list-item--size-1, .sf-list-item--size-2, .sf-list-item--size-3) {
       --sf-list-item--caption-step: max(var(--sf-ui-1\/2--control-height), var(--sf-d1));
     }
   }
@@ -757,10 +631,6 @@
      the wrap ends the divider's width early, inside the supporting line's
      leading, so the row is the step's height with its divider inside (C01). */
   .sf-list-item--two-line .sf-list-item-wrap {
-    margin-bottom: min(var(--sf-px) * 0, calc(var(--sf-px) * 0) - var(--sf-list-item--border-bottom-width));
-    -webkit-margin-after: min(var(--sf-px) * 0, calc(var(--sf-px) * 0) - var(--sf-list-item--border-bottom-width));
-            margin-block-end: min(var(--sf-px) * 0, calc(var(--sf-px) * 0) - var(--sf-list-item--border-bottom-width));
-    margin-bottom: min(var(--sf-px) * 0, calc(var(--sf-px) * 0) - var(--sf-list-item--border-bottom-width));
     margin-bottom: min(var(--sf-px) * 0, var(--sf-list-item--two-line-block, calc(var(--sf-px) * 0)) - var(--sf-list-item--border-bottom-width));
     -webkit-margin-after: min(var(--sf-px) * 0, var(--sf-list-item--two-line-block, calc(var(--sf-px) * 0)) - var(--sf-list-item--border-bottom-width));
             margin-block-end: min(var(--sf-px) * 0, var(--sf-list-item--two-line-block, calc(var(--sf-px) * 0)) - var(--sf-list-item--border-bottom-width));
@@ -771,14 +641,8 @@
     flex: none;
     align-items: center;
     justify-content: center;
-    width: var(--sf-text-height-1);
-    inline-size: var(--sf-text-height-1);
-    width: var(--sf-text-height-1);
     width: var(--sf-list-item-handle--size, var(--sf-text-height-1));
     inline-size: var(--sf-list-item-handle--size, var(--sf-text-height-1));
-    height: var(--sf-text-height-1);
-    block-size: var(--sf-text-height-1);
-    height: var(--sf-text-height-1);
     height: var(--sf-list-item-handle--size, var(--sf-text-height-1));
     block-size: var(--sf-list-item-handle--size, var(--sf-text-height-1));
     --sf-icon--color: var(--sf-list-item-handle-color, var(--sf-on-surface-variant));
@@ -823,211 +687,13 @@
      pinned text row of an sf-sortable list started its text at 40 beside icon
      rows at 76. The list is the row's own: sf-sortable, a list or listbox role,
      or sf-list's body; a dropdown's options keep their own layout. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+  :is(sf-sortable, [role=list], [role=listbox], [data-sf-list]):has(.sf-list-item:is(.sf-list-item--icon, .sf-list-item--avatar)) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
     padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
   }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
+  :is(sf-sortable, [role=list], [role=listbox], [data-sf-list]):has(.sf-list-item:is(.sf-list-item--icon, .sf-list-item--avatar)) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
     padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
   }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
-    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  sf-sortable:not(.does-not-exist):has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
-    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  [role=list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
-    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  [role=list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
-    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  [role=listbox]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
-    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  [role=listbox]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
-    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  [data-sf-list]:has(.sf-list-item.sf-list-item--icon) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
-    -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-            padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(ltr)){
-    padding-left: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap{
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-    }
-  }
-  [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap:where(:dir(rtl)){
-    padding-right: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
-  }
-  [data-sf-list]:has(.sf-list-item.sf-list-item--avatar) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
+  :is(sf-sortable, [role=list], [role=listbox], [data-sf-list]):has(.sf-list-item:is(.sf-list-item--icon, .sf-list-item--avatar)) .sf-list-item.sf-list-item--text:not([role=option]) > .sf-list-item-wrap {
     -webkit-padding-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
             padding-inline-start: calc(var(--sf-list-item--picture) + var(--sf-space-1\/2));
   }
@@ -1089,75 +755,31 @@
       opacity: 0;
       transition: opacity var(--sf-duration-fast) var(--sf-animation);
     }
-    .sf-list-item--sortable:hover .sf-list-item-handle {
+    .sf-list-item--sortable:is(:hover,[focus-within],.focus-visible) .sf-list-item-handle {
       opacity: 1;
     }
-    .sf-list-item--sortable[focus-within] .sf-list-item-handle {
+    .sf-list-item--sortable:is(:hover, :focus-within,.focus-visible) .sf-list-item-handle {
       opacity: 1;
     }
-    .sf-list-item--sortable.focus-visible .sf-list-item-handle {
+    .sf-list-item--sortable:is(:hover,[focus-within],.focus-visible) .sf-list-item-handle {
       opacity: 1;
     }
-    .sf-list-item--sortable:hover .sf-list-item-handle {
+    .sf-list-item--sortable:is(:hover,[focus-within], :focus-visible) .sf-list-item-handle {
       opacity: 1;
     }
-    .sf-list-item--sortable[focus-within] .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable:focus-within .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable.focus-visible .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable:hover .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable[focus-within] .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable.focus-visible .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable:hover .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable[focus-within] .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable.focus-visible .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable:focus-visible .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable:hover .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable[focus-within] .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable:focus-within .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable.focus-visible .sf-list-item-handle {
-      opacity: 1;
-    }
-    .sf-list-item--sortable:focus-visible .sf-list-item-handle {
+    .sf-list-item--sortable:is(:hover, :focus-within, :focus-visible) .sf-list-item-handle {
       opacity: 1;
     }
   }
 }
 @layer sf.paint {
   .sf-list-item--two-line .sf-list-item-supporting {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
   }
   .sf-list-item.disabled .sf-list-item-supporting {
     color: var(--sf-on-surface-disabled);
   }
   .sf-list-item-handle {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-list-item-handle-color, var(--sf-on-surface-variant));
   }
   .sf-list-item-handle .sf-icon {
@@ -1166,13 +788,7 @@
 }
 @layer sf.states {
   /* One row hover for every list and menu (C42 (5), owner 2026-11-10). */
-  .sf-list-item.sf-list-item--interactive:not(.disabled):not(.selected):hover {
-    --sf-list-item--background-color: var(--sf-surface-state-select);
-    /* A translucent fill, as the selected row (C43 D4). */
-    --sf-surface-underlay: var(--sf-surface-place-solid);
-    --sf-surface-place-fill: var(--sf-list-item--background-color);
-  }
-  .sf-list-item.sf-list-item--sortable:not(.disabled):not(.selected):hover {
+  .sf-list-item:is(.sf-list-item--interactive, .sf-list-item--sortable):not(.disabled):not(.selected):hover {
     --sf-list-item--background-color: var(--sf-surface-state-select);
     /* A translucent fill, as the selected row (C43 D4). */
     --sf-surface-underlay: var(--sf-surface-place-solid);
@@ -1200,24 +816,8 @@
     .sf-list-item[data-sf-list-roving]:focus-visible {
       outline-color: Highlight;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list-item.selected[data-sf-list-roving]{
-      border-left: var(--sf-px) solid Highlight;
-    }
-    @supports not (border-inline-start: initial){
-    html:not([dir="rtl"]) .sf-list-item.selected[data-sf-list-roving]{
-      border-left: var(--sf-px) solid Highlight;
-      }
-    }
     .sf-list-item.selected[data-sf-list-roving]:where(:dir(ltr)){
       border-left: var(--sf-px) solid Highlight;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-list-item.selected[data-sf-list-roving]{
-      border-right: var(--sf-px) solid Highlight;
-    }
-    @supports not (border-inline-start: initial){
-    [dir="rtl"] .sf-list-item.selected[data-sf-list-roving]{
-      border-right: var(--sf-px) solid Highlight;
-      }
     }
     .sf-list-item.selected[data-sf-list-roving]:where(:dir(rtl)){
       border-right: var(--sf-px) solid Highlight;
@@ -1293,475 +893,7 @@
      badge, C140) -- so the row keeps its height and its title its width. The
      caption's type and dim ink, figures of one width. A part of buttons stays a
      row of buttons, centred on the row (C148 (3)). */
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(button:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(a[href])) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(input:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(select:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(textarea:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(sf-button:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(sf-button-icon:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(sf-icon-button:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has([role=button]:not(does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(button:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(a[href])) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(input:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(select:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(textarea:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(sf-button:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(sf-button-icon:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(sf-icon-button:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has([role=button]:not(does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(button:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(a[href])) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(input:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(select:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(textarea:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(sf-button:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(sf-button-icon:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(sf-icon-button:not(.does-not-exist))) {
-    display: grid;
-    flex: none;
-    grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
-    align-items: center;
-    align-self: center;
-    justify-content: end;
-    justify-items: end;
-    /* No step between the two lines: they are the title's and the caption's. */
-    grid-gap: 0 var(--sf-space-1\/4);
-    gap: 0 var(--sf-space-1\/4);
-    font-size: var(--sf-list-item-supporting--font-size);
-    -webkit-font-feature-settings: "tnum";
-            font-feature-settings: "tnum";
-    font-variant-numeric: tabular-nums;
-    line-height: var(--sf-list-item-supporting--line-height);
-    white-space: nowrap;
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has([role=button]:not(does-not-exist))) {
+  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > :is(.sf-list-item-trailing, span[slot=trailing], div[slot=trailing]):not(:has(:is(button, a[href], input, select, textarea, sf-button, :is(sf-button-icon, sf-icon-button), [role=button]))) {
     display: grid;
     flex: none;
     grid-template-rows: var(--sf-list-item--title-line) var(--sf-list-item-supporting--line-height);
@@ -1805,10 +937,7 @@
      alone in its li.sf-list__row (or beside its «⋯»), so it is the last child
      of every row: the last row there is the item in the last li. A bare item
      outside an li is last when it is its parent's last child. */
-  :is(:not(li) > sf-list-item:last-child) > .sf-list-item.sf-list-item--divided > .sf-list-item-wrap > .sf-list-item-container::after {
-    content: none;
-  }
-  :is(li:last-child > sf-list-item) > .sf-list-item.sf-list-item--divided > .sf-list-item-wrap > .sf-list-item-container::after {
+  :is(:not(li) > sf-list-item:last-child, li:last-child > sf-list-item) > .sf-list-item.sf-list-item--divided > .sf-list-item-wrap > .sf-list-item-container::after {
     content: none;
   }
   /* C148 (6): a long press on a row under a finger opens its menu (index.js),
@@ -1836,125 +965,13 @@
   }
 }
 @layer sf.paint {
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(button:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
+  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > :is(.sf-list-item-trailing, span[slot=trailing], div[slot=trailing]):not(:has(:is(button, a[href], input, select, textarea, sf-button, :is(sf-button-icon, sf-icon-button), [role=button]))) {
     color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
   }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(a[href])) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(input:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(select:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(textarea:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(sf-button:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(sf-button-icon:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has(sf-icon-button:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist):not(:has([role=button]:not(does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(button:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(a[href])) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(input:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(select:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(textarea:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(sf-button:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(sf-button-icon:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has(sf-icon-button:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing]:not(:has([role=button]:not(does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(button:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(a[href])) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(input:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(select:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(textarea:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(sf-button:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(sf-button-icon:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has(sf-icon-button:not(.does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing]:not(:has([role=button]:not(does-not-exist))) {
-    color: var(--sf-on-surface-variant);
-    color: var(--sf-list-item-supporting-color, var(--sf-on-surface-variant));
-  }
-  .sf-list-item.disabled.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > .sf-list-item-trailing:not(does-not-exist) {
-    color: var(--sf-on-surface-disabled);
-  }
-  .sf-list-item.disabled.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > span[slot=trailing] {
-    color: var(--sf-on-surface-disabled);
-  }
-  .sf-list-item.disabled.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > div[slot=trailing] {
+  .sf-list-item.disabled.sf-list-item--two-line:not([role=option]) > .sf-list-item-wrap > :is(.sf-list-item-trailing, span[slot=trailing], div[slot=trailing]) {
     color: var(--sf-on-surface-disabled);
   }
   .sf-list-item.sf-list-item--divided > .sf-list-item-wrap > .sf-list-item-container::after {
-    background-color: var(--sf-outline-variant);
     background-color: var(--sf-list-item-border-color, var(--sf-outline-variant));
   }
 }
@@ -1963,264 +980,71 @@
   /* A plain list has no fill (C16, DEV audit 2026-11-10 defect 1): it stands on
      its place. It painted the page on every place -- a hole on a dark card or
      popup, white on white on bg-primary. A popup list sets its own. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
-    border-bottom-right-radius: var(--sf-radius--surface);
+  .sf-list:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
   }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-list{
-    border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
-    }
-  }
-  .sf-list:where(:dir(ltr)){
-    border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
-    border-bottom-left-radius: var(--sf-radius--surface);
+  .sf-list:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
   }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-list{
-    border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
-    }
-  }
-  .sf-list:where(:dir(rtl)){
-    border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
-    border-bottom-left-radius: var(--sf-radius--surface);
+  .sf-list:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius--surface));
   }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-list{
-    border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius--surface));
-    }
-  }
-  .sf-list:where(:dir(ltr)){
-    border-bottom-left-radius: var(--sf-radius--surface);
-    border-bottom-left-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius--surface));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
-    border-bottom-right-radius: var(--sf-radius--surface);
+  .sf-list:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius--surface));
   }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-list{
-    border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius--surface));
-    }
-  }
-  .sf-list:where(:dir(rtl)){
-    border-bottom-right-radius: var(--sf-radius--surface);
-    border-bottom-right-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius--surface));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
-    border-right-width: var(--sf-px);
+  .sf-list:where(:dir(ltr)){
     border-right-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
   }
-  @supports not (border-inline-end-width: initial){
-  html:not([dir="rtl"]) .sf-list{
-    border-right-width: var(--sf-px);
-    border-right-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
-    }
-  }
-  .sf-list:where(:dir(ltr)){
-    border-right-width: var(--sf-px);
-    border-right-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
-    border-left-width: var(--sf-px);
+  .sf-list:where(:dir(rtl)){
     border-left-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
   }
-  @supports not (border-inline-end-width: initial){
-  [dir="rtl"] .sf-list{
-    border-left-width: var(--sf-px);
-    border-left-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
-    }
-  }
-  .sf-list:where(:dir(rtl)){
-    border-left-width: var(--sf-px);
-    border-left-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
-    border-left-width: var(--sf-px);
+  .sf-list:where(:dir(ltr)){
     border-left-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
   }
-  @supports not (border-inline-start-width: initial){
-  html:not([dir="rtl"]) .sf-list{
-    border-left-width: var(--sf-px);
-    border-left-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
-    }
-  }
-  .sf-list:where(:dir(ltr)){
-    border-left-width: var(--sf-px);
-    border-left-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
-    border-right-width: var(--sf-px);
+  .sf-list:where(:dir(rtl)){
     border-right-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
   }
-  @supports not (border-inline-start-width: initial){
-  [dir="rtl"] .sf-list{
-    border-right-width: var(--sf-px);
-    border-right-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
-    }
-  }
-  .sf-list:where(:dir(rtl)){
-    border-right-width: var(--sf-px);
-    border-right-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
-    border-top-right-radius: var(--sf-radius--surface);
+  .sf-list:where(:dir(ltr)){
     border-top-right-radius: var(--sf-list--border-top-right-radius, var(--sf-radius--surface));
   }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-list{
-    border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-list--border-top-right-radius, var(--sf-radius--surface));
-    }
-  }
-  .sf-list:where(:dir(ltr)){
-    border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-list--border-top-right-radius, var(--sf-radius--surface));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
-    border-top-left-radius: var(--sf-radius--surface);
+  .sf-list:where(:dir(rtl)){
     border-top-left-radius: var(--sf-list--border-top-right-radius, var(--sf-radius--surface));
   }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-list{
-    border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-list--border-top-right-radius, var(--sf-radius--surface));
-    }
-  }
-  .sf-list:where(:dir(rtl)){
-    border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-list--border-top-right-radius, var(--sf-radius--surface));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
-    border-top-left-radius: var(--sf-radius--surface);
+  .sf-list:where(:dir(ltr)){
     border-top-left-radius: var(--sf-list--border-top-left-radius, var(--sf-radius--surface));
   }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-list{
-    border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-list--border-top-left-radius, var(--sf-radius--surface));
-    }
-  }
-  .sf-list:where(:dir(ltr)){
-    border-top-left-radius: var(--sf-radius--surface);
-    border-top-left-radius: var(--sf-list--border-top-left-radius, var(--sf-radius--surface));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
-    border-top-right-radius: var(--sf-radius--surface);
+  .sf-list:where(:dir(rtl)){
     border-top-right-radius: var(--sf-list--border-top-left-radius, var(--sf-radius--surface));
   }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-list{
-    border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-list--border-top-left-radius, var(--sf-radius--surface));
-    }
+  .sf-list:where(:dir(ltr)){
+    padding-right: var(--sf-list--padding-right, var(--sf-space-1\/3));
   }
   .sf-list:where(:dir(rtl)){
-    border-top-right-radius: var(--sf-radius--surface);
-    border-top-right-radius: var(--sf-list--border-top-left-radius, var(--sf-radius--surface));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
-    padding-right: var(--sf-space-1\/3);
-    padding-right: var(--sf-list--padding-right, var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-list{
-    padding-right: var(--sf-space-1\/3);
-    padding-right: var(--sf-list--padding-right, var(--sf-space-1\/3));
-    }
+    padding-left: var(--sf-list--padding-right, var(--sf-space-1\/3));
   }
   .sf-list:where(:dir(ltr)){
-    padding-right: var(--sf-space-1\/3);
-    padding-right: var(--sf-list--padding-right, var(--sf-space-1\/3));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
-    padding-left: var(--sf-space-1\/3);
-    padding-left: var(--sf-list--padding-right, var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-list{
-    padding-left: var(--sf-space-1\/3);
-    padding-left: var(--sf-list--padding-right, var(--sf-space-1\/3));
-    }
+    padding-left: var(--sf-list--padding-left, var(--sf-space-1\/3));
   }
   .sf-list:where(:dir(rtl)){
-    padding-left: var(--sf-space-1\/3);
-    padding-left: var(--sf-list--padding-right, var(--sf-space-1\/3));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-list{
-    padding-left: var(--sf-space-1\/3);
-    padding-left: var(--sf-list--padding-left, var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-list{
-    padding-left: var(--sf-space-1\/3);
-    padding-left: var(--sf-list--padding-left, var(--sf-space-1\/3));
-    }
-  }
-  .sf-list:where(:dir(ltr)){
-    padding-left: var(--sf-space-1\/3);
-    padding-left: var(--sf-list--padding-left, var(--sf-space-1\/3));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-list{
-    padding-right: var(--sf-space-1\/3);
-    padding-right: var(--sf-list--padding-left, var(--sf-space-1\/3));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-list{
-    padding-right: var(--sf-space-1\/3);
-    padding-right: var(--sf-list--padding-left, var(--sf-space-1\/3));
-    }
-  }
-  .sf-list:where(:dir(rtl)){
-    padding-right: var(--sf-space-1\/3);
     padding-right: var(--sf-list--padding-left, var(--sf-space-1\/3));
   }
   .sf-list {
-    border-width: var(--sf-px);
     border-width: var(--sf-list--border-width, var(--sf-px));
-    border-bottom-width: var(--sf-px);
     border-bottom-width: var(--sf-list--border-bottom-width, var(--sf-list--border-width, var(--sf-px)));
-    border-end-end-radius: var(--sf-radius--surface);
     border-end-end-radius: var(--sf-list--border-bottom-right-radius, var(--sf-radius--surface));
-    border-end-start-radius: var(--sf-radius--surface);
     border-end-start-radius: var(--sf-list--border-bottom-left-radius, var(--sf-radius--surface));
-    border-inline-end-width: var(--sf-px);
     border-inline-end-width: var(--sf-list--border-right-width, var(--sf-list--border-width, var(--sf-px)));
-    border-inline-start-width: var(--sf-px);
     border-inline-start-width: var(--sf-list--border-left-width, var(--sf-list--border-width, var(--sf-px)));
-    border-start-end-radius: var(--sf-radius--surface);
     border-start-end-radius: var(--sf-list--border-top-right-radius, var(--sf-radius--surface));
-    border-start-start-radius: var(--sf-radius--surface);
     border-start-start-radius: var(--sf-list--border-top-left-radius, var(--sf-radius--surface));
-    border-style: solid;
     border-style: var(--sf-list--border-style, solid);
-    border-top-width: var(--sf-px);
     border-top-width: var(--sf-list--border-top-width, var(--sf-list--border-width, var(--sf-px)));
-    gap: var(--sf-space-1\/3);
     gap: var(--sf-list--gap, var(--sf-space-1\/3));
-    padding-bottom: var(--sf-space-1\/3);
     padding-bottom: var(--sf-list--padding-bottom, var(--sf-space-1\/3));
-    -webkit-padding-end: var(--sf-space-1\/3);
-            padding-inline-end: var(--sf-space-1\/3);
     -webkit-padding-end: var(--sf-list--padding-right, var(--sf-space-1\/3));
             padding-inline-end: var(--sf-list--padding-right, var(--sf-space-1\/3));
-    -webkit-padding-start: var(--sf-space-1\/3);
-            padding-inline-start: var(--sf-space-1\/3);
     -webkit-padding-start: var(--sf-list--padding-left, var(--sf-space-1\/3));
             padding-inline-start: var(--sf-list--padding-left, var(--sf-space-1\/3));
-    padding-top: var(--sf-space-1\/3);
     padding-top: var(--sf-list--padding-top, var(--sf-space-1\/3));
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) */
@@ -2234,9 +1058,7 @@
 }
 @layer sf.paint {
   .sf-list {
-    background-color: var(--sf-transparent);
     background-color: var(--sf-list--background-color, var(--sf-transparent));
-    border-color: transparent;
     border-color: var(--sf-list--border-color, var(--sf-outline-variant, transparent));
   }
   .sf-list .sf-list-wrap {
@@ -2341,50 +1163,10 @@
     gap: 0;
     padding: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-container-wrap,html:not([dir="rtl"])
-  .sf-list--menu > .sf-list-container-wrap{
-    padding-left: var(--sf-list--padding-left);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-container-wrap,html:not([dir="rtl"])
-  .sf-list--menu > .sf-list-container-wrap{
-    padding-left: var(--sf-list--padding-left);
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-container-wrap,html:not([dir="rtl"])
-  .sf-list--menu > .sf-list-container-wrap{
-    padding-right: var(--sf-list--padding-right);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-container-wrap,html:not([dir="rtl"])
-  .sf-list--menu > .sf-list-container-wrap{
-    padding-right: var(--sf-list--padding-right);
-    }
-  }
   .sf-dropdown .sf-list > .sf-list-container-wrap:where(:dir(ltr)),
   .sf-list--menu > .sf-list-container-wrap:where(:dir(ltr)){
     padding-left: var(--sf-list--padding-left);
     padding-right: var(--sf-list--padding-right);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-list > .sf-list-container-wrap,[dir="rtl"]
-  .sf-list--menu > .sf-list-container-wrap{
-    padding-right: var(--sf-list--padding-left);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-dropdown .sf-list > .sf-list-container-wrap,[dir="rtl"]
-  .sf-list--menu > .sf-list-container-wrap{
-    padding-right: var(--sf-list--padding-left);
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-list > .sf-list-container-wrap,[dir="rtl"]
-  .sf-list--menu > .sf-list-container-wrap{
-    padding-left: var(--sf-list--padding-right);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-list > .sf-list-container-wrap,[dir="rtl"]
-  .sf-list--menu > .sf-list-container-wrap{
-    padding-left: var(--sf-list--padding-right);
-    }
   }
   .sf-dropdown .sf-list > .sf-list-container-wrap:where(:dir(rtl)),
   .sf-list--menu > .sf-list-container-wrap:where(:dir(rtl)){
@@ -2408,29 +1190,9 @@
     --sf-scroll--gap-edge: var(--sf-list--padding-right);
     --sf-scroll--thumb-min: var(--sf-list--row-height);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-container-wrap.sf-list-container-wrap--scrollbar,html:not([dir="rtl"])
-  .sf-list--menu > .sf-list-container-wrap.sf-list-container-wrap--scrollbar{
-    padding-right: 0;
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-container-wrap.sf-list-container-wrap--scrollbar,html:not([dir="rtl"])
-  .sf-list--menu > .sf-list-container-wrap.sf-list-container-wrap--scrollbar{
-    padding-right: 0;
-    }
-  }
   .sf-dropdown .sf-list > .sf-list-container-wrap.sf-list-container-wrap--scrollbar:where(:dir(ltr)),
   .sf-list--menu > .sf-list-container-wrap.sf-list-container-wrap--scrollbar:where(:dir(ltr)){
     padding-right: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-list > .sf-list-container-wrap.sf-list-container-wrap--scrollbar,[dir="rtl"]
-  .sf-list--menu > .sf-list-container-wrap.sf-list-container-wrap--scrollbar{
-    padding-left: 0;
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-list > .sf-list-container-wrap.sf-list-container-wrap--scrollbar,[dir="rtl"]
-  .sf-list--menu > .sf-list-container-wrap.sf-list-container-wrap--scrollbar{
-    padding-left: 0;
-    }
   }
   .sf-dropdown .sf-list > .sf-list-container-wrap.sf-list-container-wrap--scrollbar:where(:dir(rtl)),
   .sf-list--menu > .sf-list-container-wrap.sf-list-container-wrap--scrollbar:where(:dir(rtl)){
@@ -2445,50 +1207,10 @@
      a search icon over the rows' icons, the text over their text, no frame, no
      fill, a row's height and the inset above and below, a hairline across the
      panel under it. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-search,html:not([dir="rtl"])
-  .sf-list--menu > .sf-list-search{
-    padding-left: calc(var(--sf-list--padding-left) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-search,html:not([dir="rtl"])
-  .sf-list--menu > .sf-list-search{
-    padding-left: calc(var(--sf-list--padding-left) + var(--sf-space-1\/2));
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-search,html:not([dir="rtl"])
-  .sf-list--menu > .sf-list-search{
-    padding-right: calc(var(--sf-list--padding-right) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-list > .sf-list-search,html:not([dir="rtl"])
-  .sf-list--menu > .sf-list-search{
-    padding-right: calc(var(--sf-list--padding-right) + var(--sf-space-1\/2));
-    }
-  }
   .sf-dropdown .sf-list > .sf-list-search:where(:dir(ltr)),
   .sf-list--menu > .sf-list-search:where(:dir(ltr)){
     padding-left: calc(var(--sf-list--padding-left) + var(--sf-space-1\/2));
     padding-right: calc(var(--sf-list--padding-right) + var(--sf-space-1\/2));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-list > .sf-list-search,[dir="rtl"]
-  .sf-list--menu > .sf-list-search{
-    padding-right: calc(var(--sf-list--padding-left) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-dropdown .sf-list > .sf-list-search,[dir="rtl"]
-  .sf-list--menu > .sf-list-search{
-    padding-right: calc(var(--sf-list--padding-left) + var(--sf-space-1\/2));
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-list > .sf-list-search,[dir="rtl"]
-  .sf-list--menu > .sf-list-search{
-    padding-left: calc(var(--sf-list--padding-right) + var(--sf-space-1\/2));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-list > .sf-list-search,[dir="rtl"]
-  .sf-list--menu > .sf-list-search{
-    padding-left: calc(var(--sf-list--padding-right) + var(--sf-space-1\/2));
-    }
   }
   .sf-dropdown .sf-list > .sf-list-search:where(:dir(rtl)),
   .sf-list--menu > .sf-list-search:where(:dir(rtl)){
@@ -2806,7 +1528,6 @@
   .sf-dropdown .sf-list > .sf-list-search[focus-within],
   .sf-list--menu > .sf-list-search[focus-within] {
     border-bottom-color: var(--sf-primary);
-    border-bottom-color: var(--sf-primary);
     border-block-end-color: var(--sf-primary);
   }
   .sf-dropdown .sf-list > .sf-list-search:focus-within,
@@ -2856,12 +1577,7 @@
     padding-top: var(--sf-space-1\/4);
     padding-bottom: var(--sf-space-1\/4);
     padding-block: var(--sf-space-1\/4);
-    padding-left: var(--sf-space-1\/2);
-    padding-right: var(--sf-space-1\/2);
-    padding-inline: var(--sf-space-1\/2);
-    padding-left: var(--sf-space-1\/2);
     padding-left: var(--sf-list-item--padding-inline-start, var(--sf-space-1\/2));
-    padding-right: var(--sf-space-1\/2);
     padding-right: var(--sf-list-item--padding-inline-start, var(--sf-space-1\/2));
     padding-inline: var(--sf-list-item--padding-inline-start, var(--sf-space-1\/2));
     /* The popup group heading (C175 (3)): 12/16 medium, as the menu's and
@@ -2895,7 +1611,6 @@
        through the heading. */
     /* Over moving rows a layer stacks over the solid place (C43 rule 3):
        the place's colour, not the page's. */
-    background-color: var(--sf-surface-place);
     background-color: var(--sf-list--background-color, var(--sf-surface-place));
     color: var(--sf-on-surface-variant);
   }
@@ -2922,7 +1637,6 @@
        under a 32rem field made cells of 125 px, two rows in a grid sized for
        six. Under a field wider than its columns the grid stands at the start;
        the list itself stays as wide as the field (C32). */
-    grid-template-columns: repeat(6, var(--sf-ui-1--control-height));
     grid-template-columns: repeat(var(--sf-list-container--columns, 6), var(--sf-list--cell, var(--sf-ui-1--control-height)));
     justify-content: start;
     grid-gap: var(--sf-px);
@@ -2930,9 +1644,6 @@
     /* A grid asks for the width its columns need: the list otherwise takes the
        width of the control it hangs from, and a chooser narrow enough to hold a
        glyph made six columns of eleven pixels each. */
-    min-width: calc(6 * var(--sf-ui-1--control-height));
-    min-inline-size: calc(6 * var(--sf-ui-1--control-height));
-    min-width: calc(6 * var(--sf-ui-1--control-height));
     min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)));
     min-inline-size: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)));
   }
@@ -2940,9 +1651,6 @@
      the control it hangs from, which for a chooser the width of one glyph left
      six columns two glyphs wide. */
   .sf-list:has(.sf-list-container--grid) {
-    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
-    min-inline-size: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
-    min-width: calc(6 * var(--sf-ui-1--control-height) + var(--sf-space-1));
     min-width: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)) + var(--sf-space-1));
     min-inline-size: calc(var(--sf-list-container--columns, 6) * var(--sf-list--cell, var(--sf-ui-1--control-height)) + var(--sf-space-1));
   }
@@ -2965,9 +1673,6 @@
      rather than running the height of the screen: a hundred and twenty glyphs
      six to a row is twenty rows, and twenty rows is a column again. */
   .sf-list-container-wrap:has(.sf-list-container--grid) {
-    max-height: var(--sf-f6);
-    max-block-size: var(--sf-f6);
-    max-height: var(--sf-f6);
     max-height: var(--sf-dropdown--grid-height, var(--sf-f6));
     max-block-size: var(--sf-dropdown--grid-height, var(--sf-f6));
     overflow-x: hidden;
@@ -2982,27 +1687,13 @@
    and names that do not fit wrap. */
 @layer sf.components {
   .sf-list--free-width {
-    width: var(--sf-f8);
-    inline-size: var(--sf-f8);
-    width: var(--sf-f8);
     width: var(--sf-dropdown--list-width, var(--sf-f8));
     inline-size: var(--sf-dropdown--list-width, var(--sf-f8));
   }
   /* A grid is as wide as its columns: a picker of size-1/2 icons stood in an
      18rem panel with a third of it empty (owner, 2026-10-14). */
   .sf-list--free-width:has(.sf-list-container--grid) {
-    width: -webkit-min-content;
-    width: -moz-min-content;
-    width: min-content;
-    inline-size: -webkit-min-content;
-    inline-size: -moz-min-content;
-    inline-size: min-content;
-    width: min-content;
-    width: var(--sf-dropdown--list-width, -webkit-min-content);
-    width: var(--sf-dropdown--list-width, -moz-min-content);
     width: var(--sf-dropdown--list-width, min-content);
-    inline-size: var(--sf-dropdown--list-width, -webkit-min-content);
-    inline-size: var(--sf-dropdown--list-width, -moz-min-content);
     inline-size: var(--sf-dropdown--list-width, min-content);
   }
   /* Its columns are as wide as a cell, so the search field above them -- which
@@ -3017,162 +1708,41 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/4) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
   .sf-dropdown {
-    gap: var(--sf-space-1\/4);
     gap: var(--sf-dropdown-gap, var(--sf-dropdown--gap, var(--sf-space-1\/4)));
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) gap/var(--sf-dropdown-field--gap) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
-    border-bottom-right-radius: var(--sf-radius--ui);
+  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field{
-    border-bottom-left-radius: var(--sf-radius--ui);
+  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field{
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
-    border-bottom-left-radius: var(--sf-radius--ui);
+  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field{
-    border-bottom-right-radius: var(--sf-radius--ui);
+  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field{
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-    }
+  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
+    border-top-right-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
   .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
-    border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-  }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
-    border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-    }
+    border-top-left-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
   .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
-    border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field{
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-  }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field{
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-    }
+    border-top-left-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
   }
   .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-  }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field{
-    border-top-right-radius: var(--sf-radius--ui);
     border-top-right-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-  }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field{
-    border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-    }
-  }
-  .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
-    border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
-    padding-right: var(--sf-dropdown-field--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
-    padding-right: var(--sf-dropdown-field--padding-inline-end);
-    }
   }
   .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
     padding-right: var(--sf-dropdown-field--padding-inline-end);
   }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field{
-    padding-left: var(--sf-dropdown-field--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field{
-    padding-left: var(--sf-dropdown-field--padding-inline-end);
-    }
-  }
   .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
     padding-left: var(--sf-dropdown-field--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
-    padding-left: var(--sf-dropdown-field--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field{
-    padding-left: var(--sf-dropdown-field--padding-inline-start);
-    }
-  }
   .sf-dropdown .sf-dropdown-field:where(:dir(ltr)){
     padding-left: var(--sf-dropdown-field--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field{
-    padding-right: var(--sf-dropdown-field--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field{
-    padding-right: var(--sf-dropdown-field--padding-inline-start);
-    }
   }
   .sf-dropdown .sf-dropdown-field:where(:dir(rtl)){
     padding-right: var(--sf-dropdown-field--padding-inline-start);
@@ -3181,13 +1751,9 @@
     --sf-dropdown-field--border: var(--sf-px) solid;
     border: var(--sf-dropdown-field--border);
     border-color: revert-layer;
-    border-end-end-radius: var(--sf-radius--ui);
     border-end-end-radius: var(--sf-dropdown-field--border-end-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-    border-end-start-radius: var(--sf-radius--ui);
     border-end-start-radius: var(--sf-dropdown-field--border-end-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-    border-start-end-radius: var(--sf-radius--ui);
     border-start-end-radius: var(--sf-dropdown-field--border-start-end-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
-    border-start-start-radius: var(--sf-radius--ui);
     border-start-start-radius: var(--sf-dropdown-field--border-start-start-radius, var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))));
     box-shadow: var(--sf-dropdown-field--box-shadow);
     gap: var(--sf-dropdown-field--gap);
@@ -3202,46 +1768,14 @@
      label (sf-help-mark) is no part of the field: it keeps the icon button's
      own size, as after sf-input's label (32 / 28 at 1/2), so the «?» of every
      field is one target (1.16.2; it was 28 / 24 here). */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
-    padding-right: var(--sf-icon-button--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
-    padding-right: var(--sf-icon-button--padding-inline-end);
-    }
-  }
   .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)):where(:dir(ltr)){
     padding-right: var(--sf-icon-button--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
-    padding-left: var(--sf-icon-button--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
-    padding-left: var(--sf-icon-button--padding-inline-end);
-    }
   }
   .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)):where(:dir(rtl)){
     padding-left: var(--sf-icon-button--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
-    padding-left: var(--sf-icon-button--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
-    padding-left: var(--sf-icon-button--padding-inline-start);
-    }
-  }
   .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)):where(:dir(ltr)){
     padding-left: var(--sf-icon-button--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
-    padding-right: var(--sf-icon-button--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)){
-    padding-right: var(--sf-icon-button--padding-inline-start);
-    }
   }
   .sf-dropdown .sf-icon-button:where(:not(sf-help-mark *):not(.sf-help-mark *)):where(:dir(rtl)){
     padding-right: var(--sf-icon-button--padding-inline-start);
@@ -3258,46 +1792,14 @@
             padding-inline-start: var(--sf-icon-button--padding-inline-start);
     padding-top: var(--sf-icon-button--padding-top);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown input{
-    padding-right: var(--sf-dropdown-input--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown input{
-    padding-right: var(--sf-dropdown-input--padding-inline-end);
-    }
-  }
   .sf-dropdown input:where(:dir(ltr)){
     padding-right: var(--sf-dropdown-input--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown input{
-    padding-left: var(--sf-dropdown-input--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-dropdown input{
-    padding-left: var(--sf-dropdown-input--padding-inline-end);
-    }
   }
   .sf-dropdown input:where(:dir(rtl)){
     padding-left: var(--sf-dropdown-input--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown input{
-    padding-left: var(--sf-dropdown-input--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown input{
-    padding-left: var(--sf-dropdown-input--padding-inline-start);
-    }
-  }
   .sf-dropdown input:where(:dir(ltr)){
     padding-left: var(--sf-dropdown-input--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown input{
-    padding-right: var(--sf-dropdown-input--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-dropdown input{
-    padding-right: var(--sf-dropdown-input--padding-inline-start);
-    }
   }
   .sf-dropdown input:where(:dir(rtl)){
     padding-right: var(--sf-dropdown-input--padding-inline-start);
@@ -3348,122 +1850,39 @@
     gap: var(--sf-dropdown-tag-container--gap);
   }
   .sf-dropdown .sf-icon {
-    font-size: var(--sf-icon-size-3);
     font-size: var(--sf-icon--font-size, var(--sf-icon-size-3));
-    height: var(--sf-icon-size-3);
     height: var(--sf-icon--height, var(--sf-icon-size-3));
-    width: var(--sf-icon-size-3);
     width: var(--sf-icon--width, var(--sf-icon-size-3));
   }
   .sf-dropdown .sf-list {
     box-shadow: var(--sf-list--box-shadow);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-tag{
-    padding-right: var(--sf-tag--padding-inline-end);
-    padding-right: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-tag{
-    padding-right: var(--sf-tag--padding-inline-end);
-    padding-right: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
-    }
-  }
   .sf-dropdown .sf-tag:where(:dir(ltr)){
-    padding-right: var(--sf-tag--padding-inline-end);
     padding-right: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-tag{
-    padding-left: var(--sf-tag--padding-inline-end);
-    padding-left: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-tag{
-    padding-left: var(--sf-tag--padding-inline-end);
-    padding-left: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
-    }
   }
   .sf-dropdown .sf-tag:where(:dir(rtl)){
-    padding-left: var(--sf-tag--padding-inline-end);
     padding-left: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-tag{
-    padding-left: var(--sf-tag--padding-inline-start);
-    padding-left: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-tag{
-    padding-left: var(--sf-tag--padding-inline-start);
-    padding-left: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
-    }
-  }
   .sf-dropdown .sf-tag:where(:dir(ltr)){
-    padding-left: var(--sf-tag--padding-inline-start);
     padding-left: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-tag{
-    padding-right: var(--sf-tag--padding-inline-start);
-    padding-right: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-dropdown .sf-tag{
-    padding-right: var(--sf-tag--padding-inline-start);
-    padding-right: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
-    }
   }
   .sf-dropdown .sf-tag:where(:dir(rtl)){
-    padding-right: var(--sf-tag--padding-inline-start);
     padding-right: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
   }
   .sf-dropdown .sf-tag {
-    -webkit-padding-end: var(--sf-tag--padding-inline-end);
-            padding-inline-end: var(--sf-tag--padding-inline-end);
     -webkit-padding-end: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
             padding-inline-end: var(--sf-tag--inline-end, var(--sf-tag--padding-inline-end));
-    -webkit-padding-start: var(--sf-tag--padding-inline-start);
-            padding-inline-start: var(--sf-tag--padding-inline-start);
     -webkit-padding-start: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
             padding-inline-start: var(--sf-tag--inline-start, var(--sf-tag--padding-inline-start));
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-tag-alt{
-    padding-right: var(--sf-tag-alt--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-tag-alt{
-    padding-right: var(--sf-tag-alt--padding-inline-end);
-    }
-  }
   .sf-dropdown .sf-tag-alt:where(:dir(ltr)){
     padding-right: var(--sf-tag-alt--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-tag-alt{
-    padding-left: var(--sf-tag-alt--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-tag-alt{
-    padding-left: var(--sf-tag-alt--padding-inline-end);
-    }
   }
   .sf-dropdown .sf-tag-alt:where(:dir(rtl)){
     padding-left: var(--sf-tag-alt--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-tag-alt{
-    padding-left: var(--sf-tag-alt--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-tag-alt{
-    padding-left: var(--sf-tag-alt--padding-inline-start);
-    }
-  }
   .sf-dropdown .sf-tag-alt:where(:dir(ltr)){
     padding-left: var(--sf-tag-alt--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-tag-alt{
-    padding-right: var(--sf-tag-alt--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-dropdown .sf-tag-alt{
-    padding-right: var(--sf-tag-alt--padding-inline-start);
-    }
   }
   .sf-dropdown .sf-tag-alt:where(:dir(rtl)){
     padding-right: var(--sf-tag-alt--padding-inline-start);
@@ -3546,22 +1965,7 @@
   /* A disabled filled field keeps its chevron, pale (C107 (3); RG-NV 20): the
      field's service glyph says what the field is, as on the outlined field. It
      was transparent, and the field read as a text input. */
-  .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined) {
+  .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--filled.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon:not(:defined) {
     --sf-icon--color: var(--sf-on-surface-disabled);
   }
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:not(:has(> .sf-dropdown-field > :disabled)):has(> .sf-dropdown-field:hover) .sf-dropdown-field, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:not(:has(> .sf-dropdown-field > :disabled)):has(> .sf-dropdown-field:hover) .sf-dropdown-field {
@@ -3654,176 +2058,10 @@
   .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag .sf-dropdown-field .sf-dropdown-tag-container .sf-tag {
     --sf-tag--background-color: var(--sf-surface-disabled);
   }
-  .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > .sf-icon {
+  .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon:not(:defined), .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon:not(:defined), .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon:not(:defined) {
     --sf-icon--color: var(--sf-on-surface-disabled);
   }
-  .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--outlined.sf-dropdown--text:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--outlined.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--filled.sf-dropdown--tag:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--color: var(--sf-on-surface-disabled);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon > .sf-icon {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--ghost.sf-icon-button--icon > sf-icon:not(:defined) {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button.sf-icon-button--link.sf-icon-button--icon > sf-icon:not(:defined) {
+  .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon:not(:defined), .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--outlined.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon:not(:defined), .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--text > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon:not(:defined), .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon > .sf-icon, .sf-dropdown.sf-dropdown--size-1\/2.sf-dropdown--filled.sf-dropdown--tag > .sf-dropdown-field > .sf-icon-button:is(.sf-icon-button--ghost, .sf-icon-button--link).sf-icon-button--icon > sf-icon:not(:defined) {
     --sf-icon--font-size: var(--sf-text-height-1\/2);
     --sf-icon--height: var(--sf-text-height-1\/2);
     --sf-icon--width: var(--sf-text-height-1\/2);
@@ -3929,17 +2167,12 @@
 }
 @layer sf.paint {
   .sf-dropdown {
-    background-color: transparent;
     background-color: var(--sf-dropdown--background-color, transparent);
   }
   .sf-dropdown .sf-dropdown-field {
     background-color: var(--sf-dropdown-field--background-color);
     border: var(--sf-dropdown-field--border);
-    border-color: transparent;
     border-color: var(--sf-dropdown-field--border-color, transparent);
-    border-bottom-color: transparent;
-    border-block-end-color: transparent;
-    border-bottom-color: transparent;
     border-bottom-color: var(--sf-dropdown-field--line-color, var(--sf-dropdown-field--border-color, transparent));
     border-block-end-color: var(--sf-dropdown-field--line-color, var(--sf-dropdown-field--border-color, transparent));
   }
@@ -3963,7 +2196,6 @@
     background-color: var(--sf-dropdown-tag-container--background-color);
   }
   .sf-dropdown .sf-icon {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-icon--color, var(--sf-on-surface-variant));
   }
   .sf-dropdown .sf-tag {
@@ -3984,23 +2216,11 @@
 @layer sf.components {
   /* Doubled classes: it has to outrank the hover rule, which also matches while
      the pointer that opened the list is still over the field. */
-  .sf-dropdown.sf-dropdown.sf-dropdown--filled.open:not(.error):not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field.sf-dropdown-field {
+  .sf-dropdown.sf-dropdown.sf-dropdown--filled:not(.error):not(:has(> .sf-dropdown-field > :disabled)):is(.open,[focus-within]) .sf-dropdown-field.sf-dropdown-field {
     --sf-dropdown-field--background-color: var(--sf-transparent);
     --sf-dropdown-field--border-color: var(--sf-outline);
   }
-  .sf-dropdown.sf-dropdown.sf-dropdown--filled[focus-within]:not(.error):not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field.sf-dropdown-field {
-    --sf-dropdown-field--background-color: var(--sf-transparent);
-    --sf-dropdown-field--border-color: var(--sf-outline);
-  }
-  .sf-dropdown.sf-dropdown.sf-dropdown--filled.open:not(.error):not(:has(> .sf-dropdown-field > :disabled)) .sf-dropdown-field.sf-dropdown-field {
-    --sf-dropdown-field--background-color: var(--sf-transparent);
-    --sf-dropdown-field--border-color: var(--sf-outline);
-  }
-  .sf-dropdown.sf-dropdown.sf-dropdown--filled:not(.error):not(:has(> .sf-dropdown-field > :disabled))[focus-within] .sf-dropdown-field.sf-dropdown-field {
-    --sf-dropdown-field--background-color: var(--sf-transparent);
-    --sf-dropdown-field--border-color: var(--sf-outline);
-  }
-  .sf-dropdown.sf-dropdown.sf-dropdown--filled:not(.error):not(:has(> .sf-dropdown-field > :disabled)):focus-within .sf-dropdown-field.sf-dropdown-field {
+  .sf-dropdown.sf-dropdown.sf-dropdown--filled:not(.error):not(:has(> .sf-dropdown-field > :disabled)):is(.open, :focus-within) .sf-dropdown-field.sf-dropdown-field {
     --sf-dropdown-field--background-color: var(--sf-transparent);
     --sf-dropdown-field--border-color: var(--sf-outline);
   }
@@ -4060,116 +2280,28 @@
   .sf-dropdown .sf-dropdown-tag-container {
     flex: 1;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-top-left-radius: var(--sf-radius--ui);
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)){
     border-top-left-radius: var(--sf-tag--border-top-left-radius, var(--sf-radius--ui));
   }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-tag--border-top-left-radius, var(--sf-radius--ui));
-    }
-  }
-  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)){
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-tag--border-top-left-radius, var(--sf-radius--ui));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-top-right-radius: var(--sf-radius--ui);
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)){
     border-top-right-radius: var(--sf-tag--border-top-left-radius, var(--sf-radius--ui));
   }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-tag--border-top-left-radius, var(--sf-radius--ui));
-    }
-  }
-  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)){
-    border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-tag--border-top-left-radius, var(--sf-radius--ui));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-top-right-radius: var(--sf-radius--ui);
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)){
     border-top-right-radius: var(--sf-tag--border-top-right-radius, var(--sf-radius--ui));
   }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-tag--border-top-right-radius, var(--sf-radius--ui));
-    }
-  }
-  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)){
-    border-top-right-radius: var(--sf-radius--ui);
-    border-top-right-radius: var(--sf-tag--border-top-right-radius, var(--sf-radius--ui));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-top-left-radius: var(--sf-radius--ui);
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)){
     border-top-left-radius: var(--sf-tag--border-top-right-radius, var(--sf-radius--ui));
   }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-tag--border-top-right-radius, var(--sf-radius--ui));
-    }
+  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)){
+    border-bottom-left-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
   }
   .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)){
-    border-top-left-radius: var(--sf-radius--ui);
-    border-top-left-radius: var(--sf-tag--border-top-right-radius, var(--sf-radius--ui));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
-  }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
-    }
+    border-bottom-right-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
   }
   .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)){
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
-  }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
-    }
+    border-bottom-right-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
   }
   .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)){
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
-  }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
-    }
-  }
-  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(ltr)){
-    border-bottom-right-radius: var(--sf-radius--ui);
-    border-bottom-right-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
-  }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-tag-container > .sf-tag{
-    border-bottom-left-radius: var(--sf-radius--ui);
-    border-bottom-left-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
-    }
-  }
-  .sf-dropdown .sf-dropdown-tag-container > .sf-tag:where(:dir(rtl)){
-    border-bottom-left-radius: var(--sf-radius--ui);
     border-bottom-left-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
   }
   .sf-dropdown .sf-dropdown-tag-container > .sf-tag {
@@ -4177,13 +2309,9 @@
     min-inline-size: 0;
     max-width: 100%;
     max-inline-size: 100%;
-    border-start-start-radius: var(--sf-radius--ui);
     border-start-start-radius: var(--sf-tag--border-top-left-radius, var(--sf-radius--ui));
-    border-start-end-radius: var(--sf-radius--ui);
     border-start-end-radius: var(--sf-tag--border-top-right-radius, var(--sf-radius--ui));
-    border-end-start-radius: var(--sf-radius--ui);
     border-end-start-radius: var(--sf-tag--border-bottom-left-radius, var(--sf-radius--ui));
-    border-end-end-radius: var(--sf-radius--ui);
     border-end-end-radius: var(--sf-tag--border-bottom-right-radius, var(--sf-radius--ui));
   }
   /* The label row is a flex row whatever the markup says, so its height is its
@@ -4280,16 +2408,7 @@
     --sf-avatar--width: var(--sf-dropdown--tag-picture);
     --sf-avatar--line-height: var(--sf-dropdown--tag-picture);
   }
-  .sf-dropdown .sf-dropdown-tag-container .sf-tag > button:not(.does-not-exist) {
-    flex-shrink: 0;
-  }
-  .sf-dropdown .sf-dropdown-tag-container .sf-tag > .sf-icon {
-    flex-shrink: 0;
-  }
-  .sf-dropdown .sf-dropdown-tag-container .sf-tag > .sf-avatar {
-    flex-shrink: 0;
-  }
-  .sf-dropdown .sf-dropdown-tag-container .sf-tag > .sf-tag-color-icon {
+  .sf-dropdown .sf-dropdown-tag-container .sf-tag > :is(button, .sf-icon, .sf-avatar, .sf-tag-color-icon) {
     flex-shrink: 0;
   }
   /* The chevron is a service mark inside a field (C107 (3), owner 2026-11-12;
@@ -4301,52 +2420,14 @@
   .sf-dropdown .sf-dropdown-field > .sf-icon-button.sf-icon-button--on-surface.sf-icon-button--icon {
     --sf-icon--color: var(--sf-on-surface-variant);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > button{
-    right: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
-    right: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown-field > button{
-    right: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
-    right: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
-    }
-  }
   .sf-dropdown-field > button:where(:dir(ltr)){
-    right: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
     right: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown-field > button{
-    left: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
-    left: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-dropdown-field > button{
-    left: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
-    left: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
-    }
   }
   .sf-dropdown-field > button:where(:dir(rtl)){
-    left: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
     left: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > button{
-    right: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown-field > button{
-    right: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
-    }
   }
   .sf-dropdown-field > button:where(:dir(ltr)){
     right: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown-field > button{
-    left: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-dropdown-field > button{
-    left: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
-    }
   }
   .sf-dropdown-field > button:where(:dir(rtl)){
     left: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
@@ -4355,7 +2436,6 @@
     /* The chevron's glyph, not the button around it, ends at the field's
        padding: that is where an option's check ends in the open list, so the two
        share an axis. The button's own padding is given back. */
-    inset-inline-end: calc(var(--sf-dropdown-field--padding-inline-end) - 0px);
     inset-inline-end: calc(var(--sf-dropdown-field--padding-inline-end) - var(--sf-icon-button--padding-inline-end, 0px));
     position: absolute;
   }
@@ -4382,24 +2462,8 @@
     --sf-field-action--glyph: var(--sf-text-height-2);
     --sf-field-action--height: var(--sf-ui-2--control-height);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field > .sf-field-action{
-    right: var(--sf-dropdown-field--padding-inline-end);
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-dropdown-field > .sf-field-action{
-    right: var(--sf-dropdown-field--padding-inline-end);
-    }
-  }
   .sf-dropdown .sf-dropdown-field > .sf-field-action:where(:dir(ltr)){
     right: var(--sf-dropdown-field--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-dropdown-field > .sf-field-action{
-    left: var(--sf-dropdown-field--padding-inline-end);
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-dropdown-field > .sf-field-action{
-    left: var(--sf-dropdown-field--padding-inline-end);
-    }
   }
   .sf-dropdown .sf-dropdown-field > .sf-field-action:where(:dir(rtl)){
     left: var(--sf-dropdown-field--padding-inline-end);
@@ -4459,24 +2523,8 @@
      the positioning gives the field's width as the list's minimum and keeps the
      list inside the screen. A list without a field (a trigger of its own) keeps
      its own width, and a grid is as wide as its columns. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-list:not([data-sf-portal]):not(.sf-list--free-width){
-    left: 0;
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-list:not([data-sf-portal]):not(.sf-list--free-width){
-    left: 0;
-    }
-  }
   .sf-dropdown .sf-list:not([data-sf-portal]):not(.sf-list--free-width):where(:dir(ltr)){
     left: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-list:not([data-sf-portal]):not(.sf-list--free-width){
-    right: 0;
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-dropdown .sf-list:not([data-sf-portal]):not(.sf-list--free-width){
-    right: 0;
-    }
   }
   .sf-dropdown .sf-list:not([data-sf-portal]):not(.sf-list--free-width):where(:dir(rtl)){
     right: 0;
@@ -4501,46 +2549,14 @@
   }
   /* Near the screen's inline end the list hangs from the field's end; the
      dropdown measures this on opening. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-list[data-sf-align=end]:not([data-sf-portal]):not(.sf-list--free-width){
-    left: auto;
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-list[data-sf-align=end]:not([data-sf-portal]):not(.sf-list--free-width){
-    left: auto;
-    }
-  }
   .sf-dropdown .sf-list[data-sf-align=end]:not([data-sf-portal]):not(.sf-list--free-width):where(:dir(ltr)){
     left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-list[data-sf-align=end]:not([data-sf-portal]):not(.sf-list--free-width){
-    right: auto;
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-dropdown .sf-list[data-sf-align=end]:not([data-sf-portal]):not(.sf-list--free-width){
-    right: auto;
-    }
   }
   .sf-dropdown .sf-list[data-sf-align=end]:not([data-sf-portal]):not(.sf-list--free-width):where(:dir(rtl)){
     right: auto;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown .sf-list[data-sf-align=end]:not([data-sf-portal]):not(.sf-list--free-width){
-    right: 0;
-  }
-  @supports not (inset-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown .sf-list[data-sf-align=end]:not([data-sf-portal]):not(.sf-list--free-width){
-    right: 0;
-    }
-  }
   .sf-dropdown .sf-list[data-sf-align=end]:not([data-sf-portal]):not(.sf-list--free-width):where(:dir(ltr)){
     right: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown .sf-list[data-sf-align=end]:not([data-sf-portal]):not(.sf-list--free-width){
-    left: 0;
-  }
-  @supports not (inset-inline-end: initial){
-  [dir="rtl"] .sf-dropdown .sf-list[data-sf-align=end]:not([data-sf-portal]):not(.sf-list--free-width){
-    left: 0;
-    }
   }
   .sf-dropdown .sf-list[data-sf-align=end]:not([data-sf-portal]):not(.sf-list--free-width):where(:dir(rtl)){
     left: 0;
@@ -4562,6 +2578,28 @@
     width: min(var(--sf-popup-list-max-width), 100vi - var(--sf-space-1));
     inline-size: min(var(--sf-popup-list-max-width), 100vi - var(--sf-space-1));
   }
+  /* list-width="trigger" (FF-10, owner decision C313 (2)): exactly the
+     trigger's width, edges flush with it -- the filter window's condition band
+     opens its menu across the window. Anchored, the positioning writes the
+     trigger's width (SF.Position matchWidth true) and nothing caps it; in place
+     the trigger's box is the list's. A trigger handed in (the free width) is
+     matched the same way. */
+  .sf-dropdown .sf-list[data-sf-list-width=trigger]:not([data-sf-portal]) {
+    left: 0;
+    right: 0;
+    width: auto;
+    inline-size: auto;
+    min-width: 0;
+    min-inline-size: 0;
+    max-width: none;
+    max-inline-size: none;
+  }
+  .sf-list[data-sf-portal][data-sf-list-width=trigger] {
+    min-width: 0;
+    min-inline-size: 0;
+    max-width: none;
+    max-inline-size: none;
+  }
   /* A list in place has the anchored list's height (R171 follow-up,
      2026-11-12): the room the screen gives it, less the panel's edge padding,
      which the dropdown measures on opening (--sf-dropdown-available-block-size,
@@ -4572,9 +2610,6 @@
   .sf-dropdown .sf-list:not([data-sf-portal]) {
     display: flex;
     flex-direction: column;
-    max-height: calc(100dvh - 2 * var(--sf-space-1\/2));
-    max-block-size: calc(100dvh - 2 * var(--sf-space-1\/2));
-    max-height: calc(100dvh - 2 * var(--sf-space-1\/2));
     max-height: var(--sf-dropdown-available-block-size, calc(100dvh - 2 * var(--sf-space-1\/2)));
     max-block-size: var(--sf-dropdown-available-block-size, calc(100dvh - 2 * var(--sf-space-1\/2)));
   }
@@ -4628,18 +2663,7 @@
     word-wrap: anywhere;
   }
   /* A long label wraps; its picture keeps its shape. */
-  .sf-list [role=option] .sf-list-item-wrap > .sf-checkbox {
-    flex-shrink: 0;
-  }
-  .sf-list [role=option] .sf-list-item-wrap > .sf-icon {
-    flex-shrink: 0;
-  }
-  .sf-list [role=option] .sf-list-item-wrap > .sf-avatar {
-    flex-shrink: 0;
-  }
-  .sf-list [role=option] .sf-list-item-wrap > .sf-flag {
-    flex-shrink: 0;
-  }
+  .sf-list [role=option] .sf-list-item-wrap > :is(.sf-checkbox, .sf-icon, .sf-avatar, .sf-flag),
   .sf-list [role=option] .sf-list-item-wrap .sf-tag-color-icon {
     flex-shrink: 0;
   }
@@ -4711,263 +2735,14 @@
        -moz-column-gap: 0;
             column-gap: 0;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > .sf-dropdown-field-visual{
+  .sf-dropdown:is(.sf-dropdown--size-1\/3, .sf-dropdown--size-1\/2, .sf-dropdown--size-1, .sf-dropdown--size-2, .sf-dropdown--size-3) .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)), .sf-dropdown:is(.sf-dropdown--size-1\/3, .sf-dropdown--size-1\/2, .sf-dropdown--size-1, .sf-dropdown--size-2, .sf-dropdown--size-3) .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(ltr)){
     margin-right: var(--sf-space-1\/2);
   }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)){
-    margin-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > .sf-dropdown-field-visual{
+  .sf-dropdown:is(.sf-dropdown--size-1\/3, .sf-dropdown--size-1\/2, .sf-dropdown--size-1, .sf-dropdown--size-2, .sf-dropdown--size-3) .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)), .sf-dropdown:is(.sf-dropdown--size-1\/3, .sf-dropdown--size-1\/2, .sf-dropdown--size-1, .sf-dropdown--size-2, .sf-dropdown--size-3) .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(rtl)){
     margin-left: var(--sf-space-1\/2);
   }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)){
-    margin-left: var(--sf-space-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > .sf-dropdown-field-visual {
-    -webkit-margin-end: var(--sf-space-1\/2);
-            margin-inline-end: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)){
-    margin-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)){
-    margin-left: var(--sf-space-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > .sf-dropdown-field-visual {
-    -webkit-margin-end: var(--sf-space-1\/2);
-            margin-inline-end: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)){
-    margin-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)){
-    margin-left: var(--sf-space-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > .sf-dropdown-field-visual {
-    -webkit-margin-end: var(--sf-space-1\/2);
-            margin-inline-end: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)){
-    margin-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)){
-    margin-left: var(--sf-space-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > .sf-dropdown-field-visual {
-    -webkit-margin-end: var(--sf-space-1\/2);
-            margin-inline-end: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(ltr)){
-    margin-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > .sf-dropdown-field-visual:where(:dir(rtl)){
-    margin-left: var(--sf-space-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > .sf-dropdown-field-visual {
-    -webkit-margin-end: var(--sf-space-1\/2);
-            margin-inline-end: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(ltr)){
-    margin-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(rtl)){
-    margin-left: var(--sf-space-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual {
-    -webkit-margin-end: var(--sf-space-1\/2);
-            margin-inline-end: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(ltr)){
-    margin-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(rtl)){
-    margin-left: var(--sf-space-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual {
-    -webkit-margin-end: var(--sf-space-1\/2);
-            margin-inline-end: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(ltr)){
-    margin-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(rtl)){
-    margin-left: var(--sf-space-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-1 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual {
-    -webkit-margin-end: var(--sf-space-1\/2);
-            margin-inline-end: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(ltr)){
-    margin-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(rtl)){
-    margin-left: var(--sf-space-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-2 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual {
-    -webkit-margin-end: var(--sf-space-1\/2);
-            margin-inline-end: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-right: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(ltr)){
-    margin-right: var(--sf-space-1\/2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual{
-    margin-left: var(--sf-space-1\/2);
-    }
-  }
-  .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual:where(:dir(rtl)){
-    margin-left: var(--sf-space-1\/2);
-  }
-  .sf-dropdown.sf-dropdown--size-3 .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual {
+  .sf-dropdown:is(.sf-dropdown--size-1\/3, .sf-dropdown--size-1\/2, .sf-dropdown--size-1, .sf-dropdown--size-2, .sf-dropdown--size-3) .sf-dropdown-field > .sf-dropdown-field-visual,
+  .sf-dropdown:is(.sf-dropdown--size-1\/3, .sf-dropdown--size-1\/2, .sf-dropdown--size-1, .sf-dropdown--size-2, .sf-dropdown--size-3) .sf-dropdown-field > sf-icon > .sf-dropdown-field-visual {
     -webkit-margin-end: var(--sf-space-1\/2);
             margin-inline-end: var(--sf-space-1\/2);
   }
@@ -5086,10 +2861,8 @@
 @layer sf.components {
   .sf-dropdown .sf-dropdown-message {
     font-family: var(--sf-text--family);
-    font-size: var(--sf-text-size-1\/2);
     font-size: var(--sf-dropdown-message--font-size, var(--sf-text-size-1\/2));
     font-weight: var(--sf-font-weight-regular);
-    line-height: var(--sf-text-height-1\/2);
     line-height: var(--sf-dropdown-message--line-height, var(--sf-text-height-1\/2));
   }
   .sf-dropdown.sf-dropdown--size-1\/2 .sf-dropdown-message {
@@ -5106,7 +2879,6 @@
 }
 @layer sf.paint {
   .sf-dropdown .sf-dropdown-message {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-dropdown-message--color, var(--sf-on-surface-variant));
   }
 }
@@ -5171,69 +2943,14 @@
     --sf-dropdown--inset: max(var(--sf-space-1\/2), var(--sf-b2));
     --sf-dropdown--line-radius: min(var(--sf-dropdown-radius, var(--sf-dropdown--radius, var(--sf-radius--ui))), var(--sf-ui-1\/2--control-height) / 2);
   }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1\/3 .sf-dropdown-field {
+  .sf-dropdown.sf-dropdown--text:is(.sf-dropdown--size-1\/3, .sf-dropdown--size-1\/2, .sf-dropdown--size-1, .sf-dropdown--size-2, .sf-dropdown--size-3) .sf-dropdown-field {
     --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--value-inset) - var(--sf-px));
     --sf-dropdown-field--padding-inline-end: calc(var(--sf-dropdown--inset) - var(--sf-px));
   }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1\/2 .sf-dropdown-field {
-    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--value-inset) - var(--sf-px));
-    --sf-dropdown-field--padding-inline-end: calc(var(--sf-dropdown--inset) - var(--sf-px));
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1 .sf-dropdown-field {
-    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--value-inset) - var(--sf-px));
-    --sf-dropdown-field--padding-inline-end: calc(var(--sf-dropdown--inset) - var(--sf-px));
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-2 .sf-dropdown-field {
-    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--value-inset) - var(--sf-px));
-    --sf-dropdown-field--padding-inline-end: calc(var(--sf-dropdown--inset) - var(--sf-px));
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-3 .sf-dropdown-field {
-    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--value-inset) - var(--sf-px));
-    --sf-dropdown-field--padding-inline-end: calc(var(--sf-dropdown--inset) - var(--sf-px));
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1\/3 .sf-dropdown-field:has(> .sf-dropdown-field-visual, > sf-icon > .sf-dropdown-field-visual) {
+  .sf-dropdown.sf-dropdown--text:is(.sf-dropdown--size-1\/3, .sf-dropdown--size-1\/2, .sf-dropdown--size-1, .sf-dropdown--size-2, .sf-dropdown--size-3) .sf-dropdown-field:has(> .sf-dropdown-field-visual, > sf-icon > .sf-dropdown-field-visual) {
     --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--inset) - var(--sf-px));
   }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1\/2 .sf-dropdown-field:has(> .sf-dropdown-field-visual, > sf-icon > .sf-dropdown-field-visual) {
-    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--inset) - var(--sf-px));
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1 .sf-dropdown-field:has(> .sf-dropdown-field-visual, > sf-icon > .sf-dropdown-field-visual) {
-    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--inset) - var(--sf-px));
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-2 .sf-dropdown-field:has(> .sf-dropdown-field-visual, > sf-icon > .sf-dropdown-field-visual) {
-    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--inset) - var(--sf-px));
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-3 .sf-dropdown-field:has(> .sf-dropdown-field-visual, > sf-icon > .sf-dropdown-field-visual) {
-    --sf-dropdown-field--padding-inline-start: calc(var(--sf-dropdown--inset) - var(--sf-px));
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1\/3.sf-dropdown--outlined .sf-dropdown-field input {
-    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1\/3.sf-dropdown--filled .sf-dropdown-field input {
-    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1\/2.sf-dropdown--outlined .sf-dropdown-field input {
-    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1\/2.sf-dropdown--filled .sf-dropdown-field input {
-    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1.sf-dropdown--outlined .sf-dropdown-field input {
-    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-1.sf-dropdown--filled .sf-dropdown-field input {
-    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-2.sf-dropdown--outlined .sf-dropdown-field input {
-    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-2.sf-dropdown--filled .sf-dropdown-field input {
-    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-3.sf-dropdown--outlined .sf-dropdown-field input {
-    --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
-  }
-  .sf-dropdown.sf-dropdown--text.sf-dropdown--size-3.sf-dropdown--filled .sf-dropdown-field input {
+  .sf-dropdown.sf-dropdown--text:is(.sf-dropdown--size-1\/3, .sf-dropdown--size-1\/2, .sf-dropdown--size-1, .sf-dropdown--size-2, .sf-dropdown--size-3):is(.sf-dropdown--outlined, .sf-dropdown--filled) .sf-dropdown-field input {
     --sf-dropdown-input--padding-inline-start: calc(var(--sf-px) * 0);
   }
   /* A tag inside the field follows its corner, 4 less (at least --sf-radius-1/2,
@@ -5263,41 +2980,9 @@
      -- and compact at 2 -- its text is where the options' text is. It stood
      at the panel's inset and --sf-space-1/2 at every size: 16 over rows at
      12 (1/2) and 20 (2). */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown .sf-list > .sf-list-search{
-    padding-left: calc(var(--sf-list--padding-left) + var(--sf-dropdown--search-padding));
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown .sf-list > .sf-list-search{
-    padding-left: calc(var(--sf-list--padding-left) + var(--sf-dropdown--search-padding));
-    }
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown.sf-dropdown .sf-list > .sf-list-search{
-    padding-right: calc(var(--sf-list--padding-right) + var(--sf-dropdown--search-padding));
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown.sf-dropdown .sf-list > .sf-list-search{
-    padding-right: calc(var(--sf-list--padding-right) + var(--sf-dropdown--search-padding));
-    }
-  }
   .sf-dropdown.sf-dropdown .sf-list > .sf-list-search:where(:dir(ltr)){
     padding-left: calc(var(--sf-list--padding-left) + var(--sf-dropdown--search-padding));
     padding-right: calc(var(--sf-list--padding-right) + var(--sf-dropdown--search-padding));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown .sf-list > .sf-list-search{
-    padding-right: calc(var(--sf-list--padding-left) + var(--sf-dropdown--search-padding));
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown .sf-list > .sf-list-search{
-    padding-right: calc(var(--sf-list--padding-left) + var(--sf-dropdown--search-padding));
-    }
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown.sf-dropdown .sf-list > .sf-list-search{
-    padding-left: calc(var(--sf-list--padding-right) + var(--sf-dropdown--search-padding));
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-dropdown.sf-dropdown .sf-list > .sf-list-search{
-    padding-left: calc(var(--sf-list--padding-right) + var(--sf-dropdown--search-padding));
-    }
   }
   .sf-dropdown.sf-dropdown .sf-list > .sf-list-search:where(:dir(rtl)){
     padding-right: calc(var(--sf-list--padding-left) + var(--sf-dropdown--search-padding));
@@ -5311,7 +2996,7 @@
 /* C123: the field layer's action rules, for the class markup's chevron and
    sf-dropdown's alike (the inputs sheet carries the same rules). */
 @layer sf.components {
-  .sf-dropdown-field {
+  :is(.sf-dropdown-field) {
     --sf-field-action--standout: calc((max(var(--sf-field-action--glyph, var(--sf-text-height-1)) + var(--sf-field-action--inset, var(--sf-space-1)) / 2, var(--sf-c2)) - var(--sf-field-action--glyph, var(--sf-text-height-1))) / 2);
     --sf-field-action--value-space: calc(var(--sf-field-action--inset, var(--sf-space-1)) / 2 - var(--sf-field-action--standout));
     --sf-field-action--pair-space: calc(var(--sf-field-action--inset, var(--sf-space-1)) / 2 - 2 * var(--sf-field-action--standout));
@@ -5356,161 +3041,45 @@
     border-radius: var(--sf-radius--ui);
     pointer-events: none;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > .sf-field-action:last-child{
+  :is(.sf-dropdown-field) .sf-field-action {
+    --sf-field-action--give-back: min(var(--sf-px) * 0, calc(var(--sf-field-action--standout) - (var(--sf-field-action--hit-inline) - var(--sf-field-action--glyph-size)) / 2));
+  }
+  :is(.sf-dropdown-field) > .sf-field-action:not([hidden]):where(:dir(ltr)),
+  :is(.sf-dropdown-field) > * .sf-field-action:not([hidden]):where(:dir(ltr)){
+    margin-left: var(--sf-field-action--give-back);
+  }
+  :is(.sf-dropdown-field) > .sf-field-action:not([hidden]):where(:dir(rtl)),
+  :is(.sf-dropdown-field) > * .sf-field-action:not([hidden]):where(:dir(rtl)){
+    margin-right: var(--sf-field-action--give-back);
+  }
+  :is(.sf-dropdown-field) > .sf-field-action:not([hidden]),
+  :is(.sf-dropdown-field) > * .sf-field-action:not([hidden]) {
+    -webkit-margin-start: var(--sf-field-action--give-back);
+            margin-inline-start: var(--sf-field-action--give-back);
+  }
+  :is(.sf-dropdown-field) > .sf-field-action:last-child:where(:dir(ltr)),
+  :is(.sf-dropdown-field) > :last-child .sf-field-action:where(:dir(ltr)){
     margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
   }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown-field > .sf-field-action:last-child{
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
-  }
-  .sf-dropdown-field > .sf-field-action:last-child:where(:dir(ltr)){
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown-field > .sf-field-action:last-child{
+  :is(.sf-dropdown-field) > .sf-field-action:last-child:where(:dir(rtl)),
+  :is(.sf-dropdown-field) > :last-child .sf-field-action:where(:dir(rtl)){
     margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
   }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown-field > .sf-field-action:last-child{
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
-  }
-  .sf-dropdown-field > .sf-field-action:last-child:where(:dir(rtl)){
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  .sf-dropdown-field > .sf-field-action:last-child {
+  :is(.sf-dropdown-field) > .sf-field-action:last-child,
+  :is(.sf-dropdown-field) > :last-child .sf-field-action {
     -webkit-margin-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
             margin-inline-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > :last-child .sf-field-action{
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
+  :is(.sf-dropdown-field) > :is(.sf-field-action:not([hidden]), :has(.sf-field-action:not([hidden]))) ~ .sf-field-action:not([hidden]):where(:dir(ltr)), :is(.sf-dropdown-field) > :is(.sf-field-action:not([hidden]), :has(.sf-field-action:not([hidden]))) ~ * .sf-field-action:not([hidden]):where(:dir(ltr)){
+    margin-left: calc(var(--sf-field-action--pair-space) + var(--sf-field-action--give-back));
   }
-  @supports not (margin-inline-end: initial){
-  html:not([dir="rtl"]) .sf-dropdown-field > :last-child .sf-field-action{
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
+  :is(.sf-dropdown-field) > :is(.sf-field-action:not([hidden]), :has(.sf-field-action:not([hidden]))) ~ .sf-field-action:not([hidden]):where(:dir(rtl)), :is(.sf-dropdown-field) > :is(.sf-field-action:not([hidden]), :has(.sf-field-action:not([hidden]))) ~ * .sf-field-action:not([hidden]):where(:dir(rtl)){
+    margin-right: calc(var(--sf-field-action--pair-space) + var(--sf-field-action--give-back));
   }
-  .sf-dropdown-field > :last-child .sf-field-action:where(:dir(ltr)){
-    margin-right: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown-field > :last-child .sf-field-action{
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  @supports not (margin-inline-end: initial){
-  [dir="rtl"] .sf-dropdown-field > :last-child .sf-field-action{
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-    }
-  }
-  .sf-dropdown-field > :last-child .sf-field-action:where(:dir(rtl)){
-    margin-left: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  .sf-dropdown-field > :last-child .sf-field-action {
-    -webkit-margin-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-            margin-inline-end: calc((var(--sf-field-action--glyph-size) - var(--sf-field-action--hit-inline)) / 2);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-dropdown-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]):where(:dir(ltr)){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-dropdown-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-dropdown-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]):where(:dir(rtl)){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  .sf-dropdown-field > .sf-field-action:not([hidden]) ~ .sf-field-action:not([hidden]) {
-    -webkit-margin-start: var(--sf-field-action--pair-space);
-            margin-inline-start: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]):where(:dir(ltr)){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]):where(:dir(rtl)){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ .sf-field-action:not([hidden]) {
-    -webkit-margin-start: var(--sf-field-action--pair-space);
-            margin-inline-start: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-dropdown-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]):where(:dir(ltr)){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-dropdown-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-dropdown-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]):where(:dir(rtl)){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  .sf-dropdown-field > .sf-field-action:not([hidden]) ~ * .sf-field-action:not([hidden]) {
-    -webkit-margin-start: var(--sf-field-action--pair-space);
-            margin-inline-start: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
-    margin-left: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]):where(:dir(ltr)){
-    margin-left: var(--sf-field-action--pair-space);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]){
-    margin-right: var(--sf-field-action--pair-space);
-    }
-  }
-  .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]):where(:dir(rtl)){
-    margin-right: var(--sf-field-action--pair-space);
-  }
-  .sf-dropdown-field > :has(.sf-field-action:not([hidden])) ~ * .sf-field-action:not([hidden]) {
-    -webkit-margin-start: var(--sf-field-action--pair-space);
-            margin-inline-start: var(--sf-field-action--pair-space);
+  :is(.sf-dropdown-field) > :is(.sf-field-action:not([hidden]), :has(.sf-field-action:not([hidden]))) ~ .sf-field-action:not([hidden]),
+  :is(.sf-dropdown-field) > :is(.sf-field-action:not([hidden]), :has(.sf-field-action:not([hidden]))) ~ * .sf-field-action:not([hidden]) {
+    -webkit-margin-start: calc(var(--sf-field-action--pair-space) + var(--sf-field-action--give-back));
+            margin-inline-start: calc(var(--sf-field-action--pair-space) + var(--sf-field-action--give-back));
   }
 }
 @layer sf.paint {
@@ -5530,11 +3099,7 @@
   .sf-field-action:not(:disabled):not([aria-disabled=true]):active {
     --sf-field-action--ink: var(--sf-primary);
   }
-  .sf-field-action:disabled {
-    --sf-field-action--ink: var(--sf-on-surface-disabled);
-    cursor: default;
-  }
-  .sf-field-action[aria-disabled=true] {
+  .sf-field-action:is(:disabled, [aria-disabled=true]) {
     --sf-field-action--ink: var(--sf-on-surface-disabled);
     cursor: default;
   }
@@ -5747,5 +3312,130 @@
   }
   .sf-dropdown .sf-list .sf-list-item.sf-list-item--size-3 .sf-list-item-wrap > .sf-flag {
     --sf-flag--size: calc(var(--sf-text-height-3) * 3 / 4);
+  }
+}
+/* appearance="band" (owner decisions C313 (1), C314; FF-11): the field as a
+   band across its place -- the filter field window's condition. No frame and
+   no radius; the height of a dropping panel's search header (a row of the
+   step and the panel's inset above and below: 48 at size 1, 44 on a phone),
+   a hairline under it; the text where the open list's rows put theirs (the
+   panel's inset and the row's padding, 16 / 12) and the chevron's glyph
+   ending there too. The fill is the container grey, the same while the menu
+   is open, under the focus and after a choice; under the pointer the state
+   layer darkens it. A page tints it with the public variable
+   --sf-dropdown-background-color (the fill family: the scheme's
+   -container, 12 % light, 24 % dark); the text keeps the text ink. The
+   ring turns inwards, as every field's. The selectors outrank the open and
+   focus looks of the field (.sf-dropdown.open .sf-dropdown-field). */
+@layer sf.components {
+  .sf-dropdown.sf-dropdown--band {
+    /* --sf-dropdown-band-edge (public): how far the band reaches past its
+       place on either side -- a phone sheet's inset -- its text and chevron
+       moving in by as much, so they stay over the rows. */
+    --sf-dropdown--band-edge: var(--sf-dropdown-band-edge, calc(var(--sf-px) * 0));
+    --sf-dropdown--band-inset: calc(var(--sf-space-1\/4) + var(--sf-space-1\/2) + var(--sf-dropdown--band-edge));
+    --sf-dropdown--band-row: var(--sf-ui-1--control-height);
+    gap: 0;
+    margin-left: calc(-1 * var(--sf-dropdown--band-edge));
+    margin-right: calc(-1 * var(--sf-dropdown--band-edge));
+    margin-inline: calc(-1 * var(--sf-dropdown--band-edge));
+  }
+  .sf-dropdown.sf-dropdown--band.sf-dropdown--size-1\/2 {
+    --sf-dropdown--band-row: var(--sf-ui-1\/2--control-height);
+  }
+  .sf-dropdown.sf-dropdown--band.sf-dropdown--size-2 {
+    --sf-dropdown--band-row: var(--sf-ui-2--control-height);
+  }
+  .sf-dropdown.sf-dropdown--band.sf-dropdown--band > .sf-dropdown-field.sf-dropdown-field {
+    --sf-dropdown-field--border: 0 solid;
+    --sf-dropdown-field--border-start-start-radius: 0;
+    --sf-dropdown-field--border-start-end-radius: 0;
+    --sf-dropdown-field--border-end-start-radius: 0;
+    --sf-dropdown-field--border-end-end-radius: 0;
+    --sf-dropdown-field--padding-top: 0;
+    --sf-dropdown-field--padding-bottom: 0;
+    --sf-dropdown-field--padding-inline-start: var(--sf-dropdown--band-inset);
+    --sf-dropdown-field--padding-inline-end: var(--sf-dropdown--band-inset);
+    --sf-dropdown-field--background-color: var(--sf-dropdown-background-color, var(--sf-surface-container));
+    box-sizing: border-box;
+    min-height: calc(var(--sf-dropdown--band-row) + 2 * var(--sf-space-1\/4) + var(--sf-px));
+    min-block-size: calc(var(--sf-dropdown--band-row) + 2 * var(--sf-space-1\/4) + var(--sf-px));
+    border-bottom-width: var(--sf-px);
+    border-block-end-width: var(--sf-px);
+    border-bottom-style: solid;
+    border-block-end-style: solid;
+  }
+  .sf-dropdown.sf-dropdown--band.sf-dropdown--band:not(:has(> .sf-dropdown-field > :disabled)) > .sf-dropdown-field.sf-dropdown-field:hover {
+    background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover));
+  }
+  .sf-dropdown.sf-dropdown--band .sf-dropdown-field input {
+    --sf-dropdown-input--padding-inline-start: 0;
+    --sf-dropdown-input--font-family: var(--sf-text--family);
+    --sf-dropdown-input--font-weight: var(--sf-font-weight-regular);
+    --sf-dropdown-input--font-size: var(--sf-text-size-1);
+    --sf-dropdown-input--line-height: var(--sf-text-height-1);
+    --sf-dropdown-input--color: var(--sf-on-surface);
+  }
+  .sf-dropdown.sf-dropdown--band.sf-dropdown--size-1\/2 .sf-dropdown-field input {
+    --sf-dropdown-input--font-size: var(--sf-text-size-1\/2);
+    --sf-dropdown-input--line-height: var(--sf-text-height-1\/2);
+  }
+  .sf-dropdown.sf-dropdown--band.sf-dropdown--size-2 .sf-dropdown-field input {
+    --sf-dropdown-input--font-size: var(--sf-text-size-2);
+    --sf-dropdown-input--line-height: var(--sf-text-height-2);
+  }
+  .sf-dropdown.sf-dropdown--band .sf-dropdown-field input::-webkit-input-placeholder {
+    --sf-dropdown-placeholder--font-family: var(--sf-text--family);
+    --sf-dropdown-placeholder--font-size: var(--sf-dropdown-input--font-size);
+    --sf-dropdown-placeholder--line-height: var(--sf-dropdown-input--line-height);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-container-variant);
+  }
+  .sf-dropdown.sf-dropdown--band .sf-dropdown-field input::-moz-placeholder {
+    --sf-dropdown-placeholder--font-family: var(--sf-text--family);
+    --sf-dropdown-placeholder--font-size: var(--sf-dropdown-input--font-size);
+    --sf-dropdown-placeholder--line-height: var(--sf-dropdown-input--line-height);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-container-variant);
+  }
+  .sf-dropdown.sf-dropdown--band .sf-dropdown-field input:-ms-input-placeholder {
+    --sf-dropdown-placeholder--font-family: var(--sf-text--family);
+    --sf-dropdown-placeholder--font-size: var(--sf-dropdown-input--font-size);
+    --sf-dropdown-placeholder--line-height: var(--sf-dropdown-input--line-height);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-container-variant);
+  }
+  .sf-dropdown.sf-dropdown--band .sf-dropdown-field input::-ms-input-placeholder {
+    --sf-dropdown-placeholder--font-family: var(--sf-text--family);
+    --sf-dropdown-placeholder--font-size: var(--sf-dropdown-input--font-size);
+    --sf-dropdown-placeholder--line-height: var(--sf-dropdown-input--line-height);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-container-variant);
+  }
+  .sf-dropdown.sf-dropdown--band .sf-dropdown-field input::placeholder {
+    --sf-dropdown-placeholder--font-family: var(--sf-text--family);
+    --sf-dropdown-placeholder--font-size: var(--sf-dropdown-input--font-size);
+    --sf-dropdown-placeholder--line-height: var(--sf-dropdown-input--line-height);
+    --sf-dropdown-placeholder--color: var(--sf-on-surface-container-variant);
+  }
+  .sf-dropdown.sf-dropdown--band:has(> .sf-dropdown-field > :disabled) .sf-dropdown-field input {
+    --sf-dropdown-input--color: var(--sf-on-surface-disabled);
+  }
+  /* An option's dot (C314 (4)): the status dot (sf-dot, 8) before the
+     option's name, at the dot's own gap from it. The dot's box holds the
+     name's line and stands at the line's top, so the row keeps its height
+     (sf-dot's middle alignment hung it below the line: 42 in a 40 row). */
+  .sf-dropdown-option-dot.sf-dot {
+    vertical-align: top;
+  }
+}
+@layer sf.paint {
+  .sf-dropdown.sf-dropdown--band.sf-dropdown--band > .sf-dropdown-field.sf-dropdown-field {
+    /* The chevron on the fill: the container's variant ink, as on a filled field. */
+    --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+  }
+}
+/* The band's hairline is a divider, not a control's boundary: the area role
+   (outline-variant), as under a panel's search header. */
+@layer sf.paint {
+  .sf-dropdown.sf-dropdown--band.sf-dropdown--band > .sf-dropdown-field.sf-dropdown-field {
+    border-bottom-color: var(--sf-outline-variant);
+    border-block-end-color: var(--sf-outline-variant);
   }
 }

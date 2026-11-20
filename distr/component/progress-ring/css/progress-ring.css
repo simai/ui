@@ -54,7 +54,6 @@
     vertical-align: middle;
     transition-property: --sf-progress-ring--value;
     transition-duration: var(--sf-duration-normal);
-    transition-timing-function: ease;
     transition-timing-function: var(--sf-animation, ease);
   }
   /* The ring: the track and the filled part in one drawing, the line cut out
@@ -119,63 +118,17 @@
      the content box, centred in the ring: the end offset is half the content
      box less the line's middle radius times sin 45 degrees less half the
      point, less the avatar's own ring (the point is placed inside it). */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,html:not([dir="rtl"])
-  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
-    right: calc(var(--sf-progress-ring--point-inset) - 0px);
-    right: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
-  }
-  @supports not (inset-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,html:not([dir="rtl"])
-  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
-    right: calc(var(--sf-progress-ring--point-inset) - 0px);
-    right: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
-    }
-  }
   .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator:where(:dir(ltr)),
   .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator:where(:dir(ltr)) {
-    right: calc(var(--sf-progress-ring--point-inset) - 0px);
     right: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,[dir="rtl"]
-  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
-    left: calc(var(--sf-progress-ring--point-inset) - 0px);
-    left: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
-  }
-  @supports not (inset-inline-end: initial) {
-  [dir="rtl"] .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,[dir="rtl"]
-  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
-    left: calc(var(--sf-progress-ring--point-inset) - 0px);
-    left: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
-    }
   }
   .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator:where(:dir(rtl)),
   .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator:where(:dir(rtl)) {
-    left: calc(var(--sf-progress-ring--point-inset) - 0px);
     left: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
-  }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,html:not([dir="rtl"])
-  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
-    right: calc(var(--sf-progress-ring--point-inset) - 0px);
-  }
-  @supports not (inset-inline-end: initial) {
-  html:not([dir="rtl"]) .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,html:not([dir="rtl"])
-  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
-    right: calc(var(--sf-progress-ring--point-inset) - 0px);
-    }
   }
   .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator:where(:dir(ltr)),
   .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator:where(:dir(ltr)) {
     right: calc(var(--sf-progress-ring--point-inset) - 0px);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,[dir="rtl"]
-  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
-    left: calc(var(--sf-progress-ring--point-inset) - 0px);
-  }
-  @supports not (inset-inline-end: initial) {
-  [dir="rtl"] .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator,[dir="rtl"]
-  .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator {
-    left: calc(var(--sf-progress-ring--point-inset) - 0px);
-    }
   }
   .sf-progress-ring .sf-progress-ring-content > sf-avatar .sf-online-indicator:where(:dir(rtl)),
   .sf-progress-ring .sf-progress-ring-content > .sf-avatar > .sf-online-indicator:where(:dir(rtl)) {
@@ -188,12 +141,8 @@
       - (var(--sf-progress-ring--size) / 2 - var(--sf-progress-ring--line-width) / 2) * sin(45deg)
       - var(--sf-online-indicator--width) / 2
     );
-    bottom: calc(var(--sf-progress-ring--point-inset) - 0px);
-    inset-block-end: calc(var(--sf-progress-ring--point-inset) - 0px);
-    bottom: calc(var(--sf-progress-ring--point-inset) - 0px);
     bottom: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-bottom-width, 0px));
     inset-block-end: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-bottom-width, 0px));
-    inset-inline-end: calc(var(--sf-progress-ring--point-inset) - 0px);
     inset-inline-end: calc(var(--sf-progress-ring--point-inset) - var(--sf-avatar--border-inline-end-width, 0px));
   }
   .sf-progress-ring.sf-progress-ring--size-1\/4 .sf-progress-ring-content > sf-avatar .sf-online-indicator,
@@ -296,13 +245,7 @@
     --sf-progress-ring--font-size: var(--sf-text-size-1);
   }
   /* Below size 1 the middle holds a picture or nothing, never the percentage. */
-  .sf-progress-ring.sf-progress-ring--size-1\/4 .sf-progress-ring-content[aria-hidden=true] {
-    display: none;
-  }
-  .sf-progress-ring.sf-progress-ring--size-1\/3 .sf-progress-ring-content[aria-hidden=true] {
-    display: none;
-  }
-  .sf-progress-ring.sf-progress-ring--size-1\/2 .sf-progress-ring-content[aria-hidden=true] {
+  .sf-progress-ring:is(.sf-progress-ring--size-1\/4, .sf-progress-ring--size-1\/3, .sf-progress-ring--size-1\/2) .sf-progress-ring-content[aria-hidden=true] {
     display: none;
   }
   /* Indeterminate: the spinner's arc -- a fixed 30% of the ring going round
@@ -339,14 +282,12 @@
 }
 @layer sf.paint {
   .sf-progress-ring {
-    color: var(--sf-on-surface);
     color: var(--sf-progress-ring-color, var(--sf-on-surface));
   }
   .sf-progress-ring .sf-progress-ring-indicator {
     background: conic-gradient(var(--sf-progress-ring--fill) calc(var(--sf-progress-ring--value) * 1%), var(--sf-progress-ring--track) 0);
   }
   .sf-progress-ring.sf-progress-ring--indeterminate .sf-progress-ring-indicator {
-    background: conic-gradient(var(--sf-progress-ring--fill) 0,var(--sf-progress-ring--fill) 30%, var(--sf-progress-ring--track) 0);
     background: conic-gradient(var(--sf-progress-ring--fill) 0 30%, var(--sf-progress-ring--track) 0);
   }
   @media (prefers-reduced-motion: reduce) {

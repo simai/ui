@@ -15,7 +15,6 @@
     bottom: 0;
     left: 0;
     inset: 0;
-    z-index: 90;
     z-index: var(--sf-composition-overlay-z-index, var(--sf-layer--popover, 90));
     pointer-events: none;
   }
@@ -108,13 +107,11 @@
     box-sizing: border-box;
     min-width: 0;
     min-inline-size: 0;
-    gap: var(--sf-gap--toolbar);
     gap: var(--sf-composition-overlay-toolbar-gap, var(--sf-gap--toolbar));
     margin-bottom: var(--sf-space-1\/4);
     -webkit-margin-after: var(--sf-space-1\/4);
             margin-block-end: var(--sf-space-1\/4);
     padding: var(--sf-space-1\/4);
-    border-radius: var(--sf-radius-1);
     border-radius: var(--sf-composition-overlay-toolbar-radius, var(--sf-radius-1));
     box-shadow: var(--sf-shadow-overlay);
     pointer-events: auto;
@@ -225,24 +222,8 @@
     min-height: var(--sf-ui-2--control-height);
     min-block-size: var(--sf-ui-2--control-height);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-composition-overlay[data-sf-overlay-phone] [data-sf-overlay-add]{
-    margin-left: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  html:not([dir="rtl"]) .sf-composition-overlay[data-sf-overlay-phone] [data-sf-overlay-add]{
-    margin-left: auto;
-    }
-  }
   .sf-composition-overlay[data-sf-overlay-phone] [data-sf-overlay-add]:where(:dir(ltr)){
     margin-left: auto;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-composition-overlay[data-sf-overlay-phone] [data-sf-overlay-add]{
-    margin-right: auto;
-  }
-  @supports not (margin-inline-start: initial){
-  [dir="rtl"] .sf-composition-overlay[data-sf-overlay-phone] [data-sf-overlay-add]{
-    margin-right: auto;
-    }
   }
   .sf-composition-overlay[data-sf-overlay-phone] [data-sf-overlay-add]:where(:dir(rtl)){
     margin-right: auto;
@@ -295,7 +276,6 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    box-shadow: 0 0 0 var(--sf-space-1\/4) Canvas;
     box-shadow: 0 0 0 var(--sf-space-1\/4) var(--sf-surface-page, Canvas);
   }
   .sf-composition-overlay-insert[data-sf-insert-shown] .sf-composition-overlay-insert-mark,
@@ -340,7 +320,6 @@
   }
   .sf-composition-overlay-toolbar {
     /* A toolbar floats over the page: step 2's surface and shadow. */
-    background: Canvas;
     background: var(--sf-composition-overlay-toolbar-background-color, var(--sf-surface-popup, Canvas));
     --sf-surface-place: var(--sf-composition-overlay-toolbar-background-color, var(--sf-surface-popup, Canvas));
     --sf-surface-place-solid: var(--sf-composition-overlay-toolbar-background-color, var(--sf-surface-popup, Canvas));
@@ -375,7 +354,6 @@
     --sf-code--color: var(--sf-on-surface);
     --sf-code--background: var(--sf-surface-container);
     --sf-place--container-outline: initial;
-    color: CanvasText;
     color: var(--sf-on-surface, CanvasText);
   }
   :where(.bg-primary, .bg-secondary, .bg-tertiary, .bg-info, .bg-success, .bg-warning, .bg-error, .sf-alert-bar--error .sf-alert-bar-row, .sf-alert-bar--error .sf-alert-bar-strip, .sf-alert-bar--danger .sf-alert-bar-row, .sf-alert-bar--danger .sf-alert-bar-strip, .sf-alert-bar--warning .sf-alert-bar-row, .sf-alert-bar--warning .sf-alert-bar-strip, .sf-alert-bar--info .sf-alert-bar-row, .sf-alert-bar--info .sf-alert-bar-strip, .bg-surface-inverse, .bg-surface-inverse-fixed, .gradient-duo, .bg-primary-container, .bg-secondary-container, .bg-tertiary-container, .bg-info-container, .bg-success-container, .bg-warning-container, .bg-error-container, .sf-surface-media) .sf-composition-overlay-toolbar {
@@ -470,7 +448,6 @@
     --sf-on-elevation-3--variant: var(--sf-on-surface-popup-variant);
   }
   .sf-composition-overlay-name {
-    color: CanvasText;
     color: var(--sf-on-surface, CanvasText);
   }
   .sf-composition-overlay-name .sf-icon {

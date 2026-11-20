@@ -890,6 +890,10 @@
       },
       {
         "lazy": true,
+        "name": "icon-buttons"
+      },
+      {
+        "lazy": true,
         "name": "tooltip"
       }
     ],
@@ -1163,6 +1167,10 @@
       {
         "lazy": true,
         "name": "cl-badge"
+      },
+      {
+        "lazy": true,
+        "name": "dot"
       }
     ],
     "tags": [
@@ -1879,6 +1887,12 @@
       },
       {
         "name": "cl-button"
+      },
+      {
+        "name": "cl-button-icon"
+      },
+      {
+        "name": "link"
       },
       {
         "name": "cl-icon"

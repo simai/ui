@@ -2,7 +2,6 @@
 @layer sf.components {
   .sf-tab > nav > ul {
     display: flex;
-    gap: 0;
     gap: var(--sf-tab--gap, 0);
     margin: 0;
     padding: 0;
@@ -23,7 +22,6 @@
   .sf-tab > nav > ul > li > .sf-tab-inactive,
   .sf-tab > nav > ul > li.active > .sf-tab-active {
     display: block;
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-tab--radius, var(--sf-radius--ui));
   }
   .sf-tab > nav > ul > li.active > .sf-tab-inactive,
@@ -36,20 +34,16 @@
     min-inline-size: 0;
   }
   .sf-tab > nav > ul > li.focus-visible {
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-tab--radius, var(--sf-radius--ui));
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--inset);
   }
   .sf-tab > nav > ul > li.focus-visible {
-    border-radius: var(--sf-radius--ui);
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-tab--radius, var(--sf-radius--ui));
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--inset);
   }
   .sf-tab > nav > ul > li:focus-visible {
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-tab--radius, var(--sf-radius--ui));
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--inset);

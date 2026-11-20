@@ -3957,8 +3957,12 @@ SF.RuleLoader['cl-button'] = {
   {
     name: 'cl-menu-context',
     lazy: true
-  }, // The tooltip controller and sheet of a label cut with an ellipsis (overflow="truncate",
-  // C301 (2)): asked for once a label is cut, as sf-button-icon's name tooltip (C160).
+  }, // The name tooltip a shrunk button shows (shrink icon, C370): the icon buttons' shared one, C160.
+  {
+    name: 'icon-buttons',
+    lazy: true
+  }, // The tooltip controller and sheet that name tooltip uses, fetched on the first hover, focus or long press;
+  // also of a label cut with an ellipsis (overflow="truncate", C301 (2)): asked for once a label is cut, as sf-button-icon's name tooltip (C160).
   {
     name: 'tooltip',
     lazy: true
@@ -4315,6 +4319,10 @@ SF.RuleLoader['cl-dropdown'] = {
   }, // An option's colour (owner decision C308 FO-4) draws its name as sf-badge (tonal, tight, line 1) in its row, only when an option carries color.
   {
     name: 'cl-badge',
+    lazy: true
+  }, // An option's dot (owner decision C314 (4)) is sf-dot's class markup before its name, only when an option carries dot.
+  {
+    name: 'dot',
     lazy: true
   }]
 };
@@ -5069,6 +5077,12 @@ SF.RuleLoader['cl-language'] = {
     name: 'cl-segmented'
   }, {
     name: 'cl-button'
+  }, // trigger icon (C369): the glyph alone is sf-button-icon, which shows its own name tooltip (C160 (1)).
+  {
+    name: 'cl-button-icon'
+  }, // trigger name (C381): the trigger is a native button in the link role, drawn by the link sheet.
+  {
+    name: 'link'
   }, {
     name: 'cl-icon'
   }, {

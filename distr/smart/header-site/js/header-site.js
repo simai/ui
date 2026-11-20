@@ -88,6 +88,620 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
+//
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+  }
+
+  return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
+}
+
+/***/ },
+
+/***/ "2db3a835ac11"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   actionEntry: () => (/* binding */ actionEntry),
+/* harmony export */   chooseBeside: () => (/* binding */ chooseBeside),
+/* harmony export */   controlOf: () => (/* binding */ controlOf),
+/* harmony export */   drawnBox: () => (/* binding */ drawnBox),
+/* harmony export */   fitBesideMore: () => (/* binding */ fitBesideMore),
+/* harmony export */   fitByPriority: () => (/* binding */ fitByPriority),
+/* harmony export */   fitInOrder: () => (/* binding */ fitInOrder),
+/* harmony export */   isMainAction: () => (/* binding */ isMainAction),
+/* harmony export */   isPressed: () => (/* binding */ isPressed),
+/* harmony export */   layoutActionRow: () => (/* binding */ layoutActionRow),
+/* harmony export */   layoutHeight: () => (/* binding */ layoutHeight),
+/* harmony export */   layoutRowRoom: () => (/* binding */ layoutRowRoom),
+/* harmony export */   layoutWidth: () => (/* binding */ layoutWidth),
+/* harmony export */   measureShown: () => (/* binding */ measureShown),
+/* harmony export */   openRowMenu: () => (/* binding */ openRowMenu),
+/* harmony export */   readPriority: () => (/* binding */ readPriority),
+/* harmony export */   rowRoom: () => (/* binding */ rowRoom),
+/* harmony export */   spanOf: () => (/* binding */ spanOf),
+/* harmony export */   spanOfUnits: () => (/* binding */ spanOfUnits),
+/* harmony export */   standardMenu: () => (/* binding */ standardMenu),
+/* harmony export */   textWidth: () => (/* binding */ textWidth),
+/* harmony export */   triggerExtra: () => (/* binding */ triggerExtra)
+/* harmony export */ });
+/* harmony import */ var _density_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1412c5875b4d");
+// One row of items that do not all fit, and a trailing «Ещё (n)» that holds
+// the rest (owner decision C54): the items in their order up to the first
+// that does not fit, each whole in the row or in «Ещё»; the items that must
+// stay (the current one, the pinned ones) stay, the last kept others giving
+// way to them; the room is taken with the width «Ещё (n)» will have with its
+// own count. Only the arithmetic and the measuring are here -- the element
+// keeps its markup, its classes and its menu entries.
+//
+// Taken out of sf-tabs (fix/tabs-overflow-more, C54 and its returns D1, D2)
+// so a second row (sf-contents layout="bar", CT-05) lays out by the same
+// rules instead of a copy of them. Every number is a width in CSS pixels,
+// fractional; half a pixel is the tolerance, as the tabs measured it.
+
+const TOLERANCE = 0.5; // The items in their order up to the first that does not fit in available:
+// their indices, or null when every item fits.
+
+function fitInOrder(widths, gap, available) {
+  const kept = [];
+  let used = 0;
+
+  for (let at = 0; at < widths.length; at += 1) {
+    const next = used + (kept.length ? gap : 0) + widths[at];
+    if (next > available + TOLERANCE) break;
+    kept.push(at);
+    used = next;
+  }
+
+  return kept.length === widths.length ? null : kept;
+} // The width of some items laid side by side.
+
+function spanOf(widths, gap, indices) {
+  return indices.reduce((sum, at, n) => sum + widths[at] + (n ? gap : 0), 0);
+} // The row beside «Ещё», in available: the items in order, then the items that
+// must stay put back in -- the last kept items that need not stay give way to
+// them, and when the must-stay items alone do not fit, they give way too, the
+// last first, but never the current one.
+
+function chooseBeside({
+  widths,
+  gap = 0,
+  available,
+  must = [],
+  current = -1
+}) {
+  let chosen = fitInOrder(widths, gap, available) ?? widths.map((_, at) => at);
+  const missing = must.filter(at => !chosen.includes(at));
+  if (!missing.length) return chosen;
+  const next = [...chosen, ...missing];
+
+  while (spanOf(widths, gap, next) > available + TOLERANCE) {
+    const dropAt = next.slice().reverse().find(at => !must.includes(at)) ?? next.slice().reverse().find(at => at !== current);
+    if (dropAt === undefined) break;
+    next.splice(next.indexOf(dropAt), 1);
+  }
+
+  chosen = next.sort((a, b) => a - b);
+  return chosen;
+} // The row beside «Ещё (n)»: room is the row's room with the trigger standing
+// as it is drawn now; extra(count) is how much wider (or narrower) the
+// trigger will be with count in it. Of the rows that fit beside their own
+// count, the one with the most items; when no count agrees with its row, the
+// row that fits beside the widest. squeezed is the current item when it alone
+// is left and still wider than the room (it alone may be shortened), else -1.
+
+function fitBesideMore({
+  widths,
+  gap = 0,
+  room,
+  must = [],
+  current = -1,
+  extra = null
+}) {
+  let kept = null;
+
+  if (typeof extra === 'function') {
+    const besides = [];
+
+    for (let count = 1; count < widths.length && !kept; count += 1) {
+      const more = extra(count);
+      besides.push(more);
+      const chosen = chooseBeside({
+        widths,
+        gap,
+        available: room - more,
+        must,
+        current
+      });
+      if (widths.length - chosen.length === count) kept = chosen;
+    }
+
+    if (!kept && besides.length) kept = chooseBeside({
+      widths,
+      gap,
+      available: room - Math.max(...besides),
+      must,
+      current
+    });
+  }
+
+  kept ??= chooseBeside({
+    widths,
+    gap,
+    available: room,
+    must,
+    current
+  });
+  const squeezed = kept.length === 1 && kept[0] === current && spanOf(widths, gap, kept) > room + TOLERANCE ? current : -1;
+  return {
+    kept,
+    squeezed
+  };
+} // The content box of a row that clips and has no scrollbar, in fractional
+// pixels: clientWidth is a whole pixel, and a row 383.6 px wide read as 383 or
+// 384 laid out differently (C54 return).
+
+function rowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return list.getBoundingClientRect().width - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // The width an element is laid out at, in fractional CSS pixels, before any
+// transform of it or of an ancestor (its border box). getBoundingClientRect is
+// a screen box: inside scale(.7) a 90 px tab reads 63, inside rotate() it reads
+// the width of its rotated bounding box, and a row that compares such widths
+// with its padding, a text measured in canvas or a ResizeObserver size mixes
+// screen and layout pixels (docs hero study 2026-11-19, section 9). The used
+// width of the computed style is the layout's own, with its fractions; a box
+// without one (an inline box, an element not drawn) gives offsetWidth.
+
+function layoutWidth(element) {
+  if (!element) return 0;
+  const style = getComputedStyle(element);
+  const width = parseFloat(style.width);
+  if (!Number.isFinite(width)) return element.offsetWidth || 0;
+  if (style.boxSizing === 'border-box') return width;
+  return ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), width);
+} // The block size of the same box (layoutWidth's other axis).
+
+function layoutHeight(element) {
+  if (!element) return 0;
+  const style = getComputedStyle(element);
+  const height = parseFloat(style.height);
+  if (!Number.isFinite(height)) return element.offsetHeight || 0;
+  if (style.boxSizing === 'border-box') return height;
+  return ['paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), height);
+} // rowRoom in layout pixels: the row's content box before any transform, for a
+// row whose items are measured with layoutWidth.
+
+function layoutRowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return layoutWidth(list) - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // A text measurer in an element's own face, or null without a canvas: the
+// width «Ещё (7)» will have before its button draws it.
+
+let measureCanvas = null;
+function textWidth(element) {
+  const style = getComputedStyle(element);
+  measureCanvas ??= globalThis.document?.createElement('canvas') ?? null;
+  const context = measureCanvas?.getContext?.('2d');
+  if (!context) return null;
+  context.font = style.font;
+  if ('letterSpacing' in context) context.letterSpacing = style.letterSpacing === 'normal' ? '0px' : style.letterSpacing;
+  return text => context.measureText(text).width;
+} // extra(count) for a trigger whose text box shows label(count) now.
+
+function triggerExtra(textBox, label) {
+  const measure = textBox ? textWidth(textBox) : null;
+  if (!measure) return null;
+  const drawn = measure(textBox.textContent.trim());
+  return count => measure(label(count)) - drawn;
+} // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
+// first used (SF.Loader.ensure: asked for, waited for up to 3 s, never
+// thrown), one per owner and field, on the body or in the open dialog. The
+// one copy in core (defect TL-8): the sortable inserter and the handle's move
+// menu place theirs through it too. null when no sf-menu-context came (no
+// Loader, or the relation failed): an element that never upgrades opens
+// nothing. setup(menu) runs once on a new menu, for the listeners an owner
+// adds beside select.
+
+async function standardMenu(owner, field, select, {
+  setup
+} = {}) {
+  await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+  if (owner[field]?.isConnected) return owner[field];
+  if (!globalThis.customElements?.get('sf-menu-context')) return null;
+  const doc = owner.ownerDocument || globalThis.document;
+  const menu = doc.createElement('sf-menu-context');
+  menu.setAttribute('popup', '');
+  if (select) menu.addEventListener('sf-menu-context-select', event => select(event.detail?.id, event));
+  setup?.(menu);
+  (owner.closest('dialog[open]') || doc.body).append(menu);
+  owner[field] = menu;
+  return menu;
+} // ─── Rows of actions and tools (owner decision C155, 2026-11-14) ─────────────
+// The one row engine of the Framework: the navigation rows above (sf-tabs,
+// sf-contents, sf-menu) and the action and tool rows below (sf-header-page's
+// actions, sf-input-rich's toolbar, .sf-button-group) share the measuring and
+// the rule. What does not fit leaves for «Ещё»: from the end by default, by
+// an author's priority where one is given (priority="1" is the most important,
+// a bigger number leaves sooner, an item without one before every numbered
+// item); the main action, a pressed or current item and priority="pin" never
+// leave (C155 (3)). A toolbar's units are its groups: a group leaves whole and
+// takes its separator with it (C155 (4)).
+// An author's priority as the engine reads it: a whole number from 1, pin, or
+// nothing (leaves first, the last first).
+
+function readPriority(value) {
+  if (value === null || value === undefined) return {
+    rank: Infinity,
+    pin: false
+  };
+  const text = String(value).trim().toLowerCase();
+  if (text === 'pin') return {
+    rank: 0,
+    pin: true
+  };
+  const number = Number(text);
+  return Number.isFinite(number) && text !== '' ? {
+    rank: number,
+    pin: false
+  } : {
+    rank: Infinity,
+    pin: false
+  };
+} // The span of some units laid side by side: their widths, the row's gap
+// between neighbours and, where two neighbours belong to different groups, a
+// separator with the gap on each of its sides.
+
+function spanOfUnits(units, gap, separator, indices) {
+  let span = 0;
+  indices.forEach((at, n) => {
+    if (n) {
+      span += gap;
+      if (separator && units[indices[n - 1]].group !== units[at].group) span += separator + gap;
+    }
+
+    span += units[at].width;
+  });
+  return span;
+} // Which units stay in a row that is room wide. units: [{width, rank, pin,
+// group}] in the row's order; more: the width «Ещё» adds when it shows (its
+// own width, the gap before it and, in a toolbar, its separator). Answers the
+// indices that stay, in order, and the ones that left; every unit stays when
+// all fit. The units that leave go by rank, the biggest first, and among equal
+// ranks the last first; a pinned unit never leaves, even when the pinned ones
+// alone do not fit (the row then clips, as a current tab is squeezed).
+
+function fitByPriority({
+  units,
+  gap = 0,
+  separator = 0,
+  room,
+  more = 0
+}) {
+  const all = units.map((_, at) => at);
+  const whole = spanOfUnits(units, gap, separator, all);
+  if (whole <= room + TOLERANCE) return {
+    kept: all,
+    out: [],
+    span: whole,
+    fits: true
+  };
+  const order = all.filter(at => !units[at].pin).sort((a, b) => units[b].rank - units[a].rank || b - a);
+  const kept = all.slice();
+  const out = [];
+
+  const used = () => spanOfUnits(units, gap, separator, kept) + (kept.length ? more : more - gap);
+
+  while (order.length && used() > room + TOLERANCE) {
+    const at = order.shift();
+    kept.splice(kept.indexOf(at), 1);
+    out.push(at);
+  }
+
+  const span = used();
+  return {
+    kept,
+    out: out.sort((a, b) => a - b),
+    span,
+    fits: span <= room + TOLERANCE
+  };
+} // The box an element draws: a Framework host with display: contents (sf-button,
+// sf-button-icon) has none of its own, so its first drawn child's.
+
+function drawnBox(element) {
+  let box = element;
+
+  while (box && getComputedStyle(box).display === 'contents') box = box.firstElementChild;
+
+  return box ? box.getBoundingClientRect() : {
+    width: 0,
+    height: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0
+  };
+} // Every element's drawn width with all of them shown, in one task: the class
+// that takes an element out of the row is lifted for the measure and put back
+// before anything is painted (the row never draws all its items at once).
+
+function measureShown(elements, outClass) {
+  const was = elements.map(element => element.classList.contains(outClass));
+
+  for (const element of elements) element.classList.remove(outClass);
+
+  const widths = elements.map(element => drawnBox(element).width);
+  elements.forEach((element, at) => element.classList.toggle(outClass, was[at]));
+  return widths;
+} // A row of actions or tools laid out by the rule above, in one task.
+// row: the flex row; units: [{element, rank, pin, group}]; more: the «Ещё»
+// element (inside the row, last); moreSeparator: a separator before it (a
+// toolbar's), separators: [{element, after: group}] -- a separator standing
+// after a group, shown only between two groups that keep something; outClass:
+// the row's own class that takes an element out (display: none); room: the
+// room the row has, when it is not the row's own content box (a row sized by
+// its content). Answers {out: the indices that left, fits: whether what
+// stays fits the room}.
+
+function layoutActionRow({
+  row,
+  units,
+  more,
+  moreSeparator = null,
+  separators = [],
+  outClass,
+  room = null
+}) {
+  const style = getComputedStyle(row);
+  const gap = parseFloat(style.columnGap) || 0;
+  const elements = units.map(unit => unit.element);
+  const extra = [more, moreSeparator, ...separators.map(one => one.element)].filter(Boolean);
+  const widths = measureShown([...elements, ...extra], outClass);
+  const moreWidth = widths[elements.length];
+  const separatorWidth = separators.length || moreSeparator ? Math.max(0, ...widths.slice(elements.length + 1)) : 0;
+  const measured = units.map((unit, at) => ({ ...unit,
+    width: widths[at]
+  }));
+  const {
+    out,
+    fits
+  } = fitByPriority({
+    units: measured,
+    gap,
+    separator: separatorWidth,
+    room: room ?? rowRoom(row),
+    more: moreWidth + gap + (moreSeparator ? separatorWidth + gap : 0)
+  });
+  const gone = new Set(out);
+  elements.forEach((element, at) => element.classList.toggle(outClass, gone.has(at))); // A separator stands after its group only while that group and a group
+  // after it both keep something: an emptied group leaves with its separator,
+  // and none stands first or last.
+
+  const keeps = group => units.some((unit, at) => unit.group === group && !gone.has(at));
+
+  const groups = [...new Set(units.map(unit => unit.group))];
+
+  for (const {
+    element,
+    after
+  } of separators) {
+    const later = groups.slice(groups.indexOf(after) + 1);
+    element.classList.toggle(outClass, !(keeps(after) && later.some(keeps)));
+  }
+
+  more?.classList.toggle(outClass, !out.length);
+  moreSeparator?.classList.toggle(outClass, !out.length || gone.size === units.length);
+  return {
+    out,
+    fits
+  };
+} // ─── «Ещё» of an action or tool row ──────────────────────────────────────────
+// Whether an action is the row's main one: a filled sf-button (no appearance,
+// or default) -- one per row (C116, C161 (3)).
+
+function isMainAction(element) {
+  if (!element?.matches?.('sf-button, .sf-button')) return false;
+  const look = element.getAttribute('appearance') ?? element.getAttribute('variant');
+  return look === null || look === '' || look === 'default' || look === 'filled';
+} // Whether a toggle in a row is on: a pressed sf-button or icon button, or a
+// button saying aria-pressed="true".
+
+function isPressed(element) {
+  if (!element) return false;
+  const value = element.getAttribute('pressed');
+  if (value !== null && value !== 'false') return true;
+  return element.getAttribute('aria-pressed') === 'true' || element.querySelector?.(':scope > button[aria-pressed="true"]') != null;
+} // The control a row item is pressed through: its own button or link.
+
+function controlOf(element) {
+  if (!element) return null;
+  if (element.matches('button, a[href]')) return element;
+  return element.querySelector(':scope > button, :scope > a[href], button, a[href]') || element;
+} // The menu row an action of a row becomes in «Ещё»: its words, its icon, and
+// a check when it is a pressed toggle (C155 (6), (7)).
+
+function actionEntry(element, id) {
+  const control = controlOf(element);
+  const text = (element.getAttribute('text') || element.getAttribute('aria-label') || element.getAttribute('title') || control?.getAttribute('aria-label') || element.textContent || '').trim();
+  const icon = element.getAttribute('icon-start') || element.getAttribute('icon') || element.getAttribute('icon-end') || control?.querySelector?.('.sf-icon')?.textContent.trim() || undefined;
+  const entry = {
+    id: String(id),
+    text,
+    icon: icon || undefined
+  };
+  const toggle = element.hasAttribute('pressed') || control?.hasAttribute?.('aria-pressed');
+
+  if (toggle) {
+    entry.kind = 'check';
+    entry.checked = isPressed(element);
+  }
+
+  if (element.hasAttribute('disabled') || control?.disabled || control?.getAttribute?.('aria-disabled') === 'true') entry.disabled = true;
+  return entry;
+} // The «Ещё» menu of a row: the standard sf-menu-context (standardMenu), named
+// «Ещё», on the row's size and density, listing entries; toggled from anchor.
+
+async function openRowMenu(owner, {
+  anchor,
+  entries,
+  select,
+  label,
+  size = '1'
+}) {
+  if (!entries.length) return null;
+  const menu = await standardMenu(owner, '_sfRowMoreMenu', (id, event) => owner._sfRowMoreSelect?.(id, event));
+  if (!menu) return null;
+  owner._sfRowMoreSelect = select;
+  if (label) menu.setAttribute('aria-label', label);
+  menu.setAttribute('size', size);
+  (0,_density_js__WEBPACK_IMPORTED_MODULE_0__.followDensity)(menu, owner);
+  menu.entries = entries;
+  menu.toggleFor(anchor);
+  return menu;
+}
+
+/***/ },
+
 /***/ "060946d394b8"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -99,17 +713,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("1373e294ec38");
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("18003344cff0");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("67b1088f5f56");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("3b2d3ad548e5");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("0ad7db0d1ea2");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("14c6c8c48855");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("32835c4bc572");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2db3a835ac11");
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("18003344cff0");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("67b1088f5f56");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3b2d3ad548e5");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("0ad7db0d1ea2");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("14c6c8c48855");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("32835c4bc572");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__, _js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__);
 // sf-header-site: the top bar of a SIMAI site -- the effects catalogue, the
 // Docara documentation sites and the simai.io hub show one bar, made once
 // here, rather than three copies of a header row and a mobile sheet.
@@ -133,6 +748,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // From its component.json (§3, §4, §8): the settings are made by
 // core/js/element-manifest.js, open, close and toggle are the actions and
 // answer outcomes, the words are the language files'.
+
 
 
 
@@ -203,13 +819,13 @@ function bindSwitches() {
   switchesBound = true;
 }
 
-const SiteHeaderElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
+const SiteHeaderElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_6__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_7__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_8__.files,
   source: 'ru',
   // The events of the former tag name (sf-site-header-*) follow the current
   // ones through the shim until the date in aliases.json.
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_6__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__,
   actions: {
     open() {
       return this.runOpen();
@@ -250,7 +866,20 @@ class SfSiteHeader extends SiteHeaderElement {
 
     this._collapsedNow = undefined;
     this._sizeObserver = null;
-    this._observedHeader = null;
+    this._observedHeader = null; // F-1: the bar's width at which a nav that overflowed fits again (0: it
+    // fits, or it was never measured too wide).
+
+    this._fitNeed = 0;
+    this._fitFrame = 0; // collapse auto (C371, C372): the tools that give way first (sf-button
+    // shrink="icon") and the width each drew whole, read while it was whole,
+    // so the bar knows the row's width with them whole while they are glyphs.
+
+    this._toolsCompact = false;
+    this._wholeWidths = new WeakMap();
+    this._fitting = false;
+
+    this._onFonts = () => this.queueFit();
+
     this._outsideSwitch = false;
     this._switchFrame = 0;
 
@@ -300,11 +929,14 @@ class SfSiteHeader extends SiteHeaderElement {
     this._offSwitches?.();
     this._offSwitches = this.onAfterRender(() => {
       this.observeSize();
-      this.syncCollapsed();
+      if (this.collapsedAnswerStale()) this.syncCollapsed();
       this.syncSwitches();
+      this.queueFit();
     }, {
       once: false
-    });
+    }); // Words that arrive with a face change the nav's width, not the bar's.
+
+    globalThis.document?.fonts?.addEventListener?.('loadingdone', this._onFonts);
   }
 
   disconnectedCallback() {
@@ -318,6 +950,9 @@ class SfSiteHeader extends SiteHeaderElement {
     this._sizeObserver = null;
     this._observedHeader = null;
     this._collapsedNow = undefined;
+    globalThis.document?.fonts?.removeEventListener?.('loadingdone', this._onFonts);
+    if (this._fitFrame) globalThis.cancelAnimationFrame?.(this._fitFrame);
+    this._fitFrame = 0;
     this.unwatchScroll();
     if (typeof globalThis.removeEventListener === 'function') globalThis.removeEventListener('resize', this._onResize);
     if (this._switchFrame) globalThis.cancelAnimationFrame?.(this._switchFrame);
@@ -332,6 +967,7 @@ class SfSiteHeader extends SiteHeaderElement {
 
     if (name === 'collapse' && oldValue !== newValue && this._isMounted) {
       this._collapsedNow = undefined;
+      this.setFit(0);
       this.watchCollapse();
     }
 
@@ -356,6 +992,28 @@ class SfSiteHeader extends SiteHeaderElement {
     }
 
     return this._media ? !this._media.matches : false;
+  } // The sheet's answer is read again only when it can have changed: the row
+  // it was read on was drawn anew, or the step changed. The bar's width is
+  // the observer's (it answers after layout, at no cost). A read after each
+  // drawing made the browser work out the page's styles again every time the
+  // bar drew (DF-9).
+  // Under collapse auto the sheet also answers by whether the nav's sf-menu
+  // has its code yet (the phone's step until it has): its definition changes
+  // the answer without drawing the row again, so it counts as a change too
+  // (group build 14: without it the bar stood open for one frame when the
+  // menu arrived, CLS 1.68 at 390).
+
+
+  collapsedAnswerStale() {
+    return this._collapsedNow === undefined || this._collapsedRow !== this.collapseRow() || this._collapsedStep !== this.collapse || this._collapsedMenusDefined !== this.navMenusDefined();
+  }
+
+  navMenusDefined() {
+    return this.collapse !== 'auto' || this.navMenus().every(menu => menu.matches(':defined'));
+  }
+
+  collapseRow() {
+    return this.header()?.querySelector(':scope > .sf-site-header-row') ?? null;
   }
 
   watchCollapse() {
@@ -373,11 +1031,37 @@ class SfSiteHeader extends SiteHeaderElement {
     const header = this.header();
     if (!header || header === this._observedHeader || typeof ResizeObserver === 'undefined') return;
     this._sizeObserver?.disconnect();
-    this._sizeObserver = new ResizeObserver(() => this.syncCollapsed());
+    this._sizeObserver = new ResizeObserver(() => {
+      if (this.collapse === 'auto') {
+        this.fitRow();
+        return;
+      }
+
+      this.syncCollapsed();
+      this.syncFit();
+    });
 
     this._sizeObserver.observe(header);
 
     this._observedHeader = header;
+    this.observeParts();
+  } // collapse auto: the brand and the tools are watched too -- a face that
+  // arrives, a word that changes, a tool that draws late change the room the
+  // nav has without changing the bar's width.
+
+
+  observeParts() {
+    if (!this._sizeObserver || this.collapse !== 'auto') return;
+    const header = this.header();
+
+    for (const part of header?.querySelectorAll(':scope > .sf-site-header-row > :is(.sf-site-header-brand, .sf-site-header-tools)') ?? []) {
+      if (this._observedParts?.has(part)) continue;
+      this._observedParts ??= new WeakSet();
+
+      this._observedParts.add(part);
+
+      this._sizeObserver.observe(part);
+    }
   } // The bar crossed its step: the host says so, a horizontal sf-menu in the
   // nav turns into a column while it stands in the panel, and an open panel
   // the wide bar no longer has closes. Only a change acts, so the observer,
@@ -386,6 +1070,9 @@ class SfSiteHeader extends SiteHeaderElement {
 
   syncCollapsed() {
     const collapsed = this.collapsed;
+    this._collapsedRow = this.collapseRow();
+    this._collapsedStep = this.collapse;
+    this._collapsedMenusDefined = this.navMenusDefined();
     if (collapsed === this._collapsedNow) return;
     this._collapsedNow = collapsed;
     this.sfHostState('data-collapsed', collapsed); // The settings among the tools stand in the bar or in the panel by the
@@ -406,6 +1093,238 @@ class SfSiteHeader extends SiteHeaderElement {
 
     if (!collapsed && this.isOpen) this.runClose({
       reason: 'api'
+    });
+  } // F-1 (docs header, 2026-11-18): a wide bar whose nav needs more room than
+  // the row leaves it drew the nav over the brand and the tools (the docs'
+  // static class menu of five sections at 1180-1320 px under collapse xl:
+  // up to 60 px over). The bar gives way instead: when the nav's content is
+  // wider than the nav's box, the host says data-nav-overflow and the sheet
+  // collapses the bar as below its step -- the menu button, the nav and the
+  // actions in the side panel -- until the bar is again as wide as the nav
+  // measured it needed. A nav whose sf-menu gives way itself (overflow more
+  // or collapse, its defaults) is left to it; collapse none never collapses
+  // and always already does.
+
+
+  navGivesWay() {
+    return this.navMenus().some(menu => menu.getAttribute('overflow') !== 'none' || menu.getAttribute('collapse') !== 'none');
+  }
+
+  setFit(need) {
+    this._fitNeed = need;
+    this.sfHostState('data-nav-overflow', need > 0);
+  }
+
+  queueFit() {
+    if (this._fitFrame) return;
+    const raf = globalThis.requestAnimationFrame;
+
+    if (typeof raf !== 'function') {
+      this.syncFit();
+      return;
+    }
+
+    this._fitFrame = raf(() => {
+      this._fitFrame = 0;
+      this.syncFit();
+    });
+  }
+
+  syncFit() {
+    if (this.collapse === 'auto') {
+      this.fitRow();
+      return;
+    }
+
+    const header = this.header();
+
+    if (!header || this.collapse === 'none' || this.collapse === 'always' || typeof document === 'undefined') {
+      if (this._fitNeed) this.setFit(0);
+      return;
+    }
+
+    const width = header.getBoundingClientRect().width;
+
+    if (this._fitNeed) {
+      if (width < this._fitNeed) return; // Room again: draw the row and measure it in the next frame.
+
+      this.setFit(0);
+      this.syncCollapsed();
+      this.queueFit();
+      return;
+    }
+
+    if (this.collapsed) return;
+    const nav = header.querySelector('.sf-site-header-nav');
+    if (!nav || !nav.firstElementChild || this.navGivesWay()) return;
+    const room = nav.getBoundingClientRect();
+    const range = document.createRange();
+    range.selectNodeContents(nav);
+    const spread = range.getBoundingClientRect();
+    const over = Math.max(0, room.left - spread.left) + Math.max(0, spread.right - room.right);
+    if (over <= 0.5 || !room.height) return;
+    this.setFit(Math.ceil(width + spread.width - room.width) + 1);
+    this.syncCollapsed();
+  } // collapse auto (owner decisions C371, C372, 2026-11-19): the bar measures
+  // its own row and gives way in one order -- first the tools that can
+  // (sf-button shrink="icon" draws its glyph only), then the nav's sf-menu
+  // moves its sections one by one into «Ещё» (overflow more), and only when
+  // not even one section beside «Ещё» fits, the menu button and the side
+  // panel. Every width change is decided here, in the observer that saw it,
+  // before the paint and in one step: the tools' state is written first, so
+  // the nav has its final room when the menu is asked for its row in the same
+  // task (measureFit({driven: true})); nothing in between is drawn.
+  //
+  // The widths: the row's content box; the brand, the actions and the tools
+  // as they stand; a shrinking tool whole (the width it drew whole, read
+  // while it was) and as a glyph (a square of its own height); the menu's
+  // whole row and its narrowest row (rowNeeds, one item and «Ещё»). A nav
+  // without such a menu asks its content's width and moves whole.
+
+
+  drivesRow(menu) {
+    return this.collapse === 'auto' && !this.collapsed && this.navMenus().includes(menu);
+  }
+
+  shrinkingTools() {
+    const tools = this.header()?.querySelector(':scope > .sf-site-header-row > .sf-site-header-tools');
+    return tools ? Array.from(tools.querySelectorAll('[shrink="icon"]')) : [];
+  }
+
+  setToolsCompact(compact) {
+    for (const tool of this.shrinkingTools()) {
+      if (compact) tool.setAttribute('data-shrunk', 'true');else tool.removeAttribute('data-shrunk');
+    }
+
+    if (compact === this._toolsCompact) return;
+    this._toolsCompact = compact;
+    this.sfHostState('data-tools-compact', compact);
+  } // The nav's needs: the menu's own, else its content measured as it lies.
+  // null while a menu in it is not drawn as a row yet (its code not here,
+  // or a column turning back into a row): the menu asks the bar again once
+  // it has drawn (rowHost), and nothing is decided on a half-drawn nav.
+
+
+  navNeeds(nav) {
+    const menus = this.navMenus();
+    if (menus.some(element => !element.matches(':defined'))) return null;
+    const menu = menus.find(element => typeof element.rowNeeds === 'function' && element.moreActive);
+
+    if (menu) {
+      const needs = menu.rowNeeds();
+      return needs ? { ...needs,
+        menu
+      } : null;
+    }
+
+    const range = document.createRange();
+    range.selectNodeContents(nav);
+    const whole = range.getBoundingClientRect().width;
+    return {
+      whole,
+      least: whole,
+      menu: null
+    };
+  }
+
+  fitRow() {
+    if (this.collapse !== 'auto' || this._fitting || typeof document === 'undefined') return;
+    const header = this.header();
+    const row = header?.querySelector(':scope > .sf-site-header-row');
+    if (!row) return;
+    this._fitting = true;
+
+    try {
+      this.fitRowNow(row);
+    } finally {
+      this._fitting = false;
+    }
+
+    this.sfHostState('data-fitted', true);
+  } // Layout boxes, not screen boxes (layoutWidth, layoutRowRoom; the row
+  // engine's measures under a transformed ancestor, fix/segmented-transform):
+  // a bar in a scaled preview decides as it is laid out.
+
+
+  fitRowNow(row) {
+    const room = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.layoutRowRoom)(row); // Collapsed by this measure: the bar comes back when its row is again as
+    // wide as the narrowest row needed when it collapsed. The menu draws as a
+    // row again, measures and asks the bar back (rowHost), which then decides
+    // the row in full.
+
+    if (this._fitNeed) {
+      if (room + 0.5 < this._fitNeed) return;
+      this.setFit(0);
+      this.syncCollapsed();
+      return;
+    } // Below the floor (the md step, a phone, until the nav's menu has drawn)
+    // the sheet collapses the bar; the floor lifted, the menu turns back into
+    // a row and asks the bar again.
+
+
+    this.syncCollapsed();
+
+    if (this.collapsed) {
+      this.setToolsCompact(this.shrinkingTools().length > 0);
+      return;
+    }
+
+    const nav = row.querySelector('.sf-site-header-nav');
+    const gap = parseFloat(getComputedStyle(row).columnGap) || 0;
+
+    const width = element => element ? (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.layoutWidth)(element) : 0;
+
+    const brand = row.querySelector(':scope > .sf-site-header-brand');
+    const actions = row.querySelector('.sf-site-header-actions');
+    const tools = row.querySelector(':scope > .sf-site-header-tools');
+    const parts = [brand, nav, actions, tools].filter(part => part && part.getClientRects().length);
+    const besides = width(brand) + width(actions) + gap * Math.max(0, parts.length - 1);
+    const toolsNow = width(tools);
+    let whole = 0;
+    let glyph = 0;
+
+    for (const tool of this.shrinkingTools()) {
+      const box = tool.querySelector(':scope > :is(button, a)') ?? tool;
+      const drawn = {
+        width: (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.layoutWidth)(box),
+        height: (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.layoutHeight)(box)
+      };
+      if (!this._toolsCompact) this._wholeWidths.set(tool, drawn.width);
+      whole += this._wholeWidths.get(tool) ?? drawn.width;
+      glyph += this._toolsCompact ? drawn.width : drawn.height;
+    }
+
+    const shrinks = this.shrinkingTools().length > 0;
+    const toolsWhole = this._toolsCompact ? toolsNow - glyph + whole : toolsNow;
+    const toolsGlyph = this._toolsCompact ? toolsNow : toolsNow - whole + glyph;
+
+    if (!nav || !nav.firstElementChild) {
+      this.setToolsCompact(shrinks && besides + toolsWhole > room + 0.5);
+      return;
+    }
+
+    const needs = this.navNeeds(nav);
+    if (!needs) return;
+    const roomWhole = room - besides - toolsWhole;
+    const roomGlyph = room - besides - toolsGlyph;
+
+    if (needs.whole <= roomWhole + 0.5) {
+      this.setToolsCompact(false);
+    } else if (needs.least <= (shrinks ? roomGlyph : roomWhole) + 0.5) {
+      this.setToolsCompact(shrinks);
+    } else {
+      // Not even one section beside «Ещё»: the menu button and the panel,
+      // until the row is as wide as that row needs.
+      this.setToolsCompact(shrinks);
+      this.setFit(Math.ceil(room + needs.least - (shrinks ? roomGlyph : roomWhole)) + 1);
+      this.syncCollapsed();
+      return;
+    } // The nav has its room now (the tools' state is drawn by the sheet at
+    // once): the menu decides its row in the same task.
+
+
+    needs.menu?.measureFit({
+      driven: true
     });
   } // A sticky bar is the flat place while the page is at its top and the raised
   // one while content runs under it (shadow system C20): the host says so with
@@ -506,10 +1425,10 @@ class SfSiteHeader extends SiteHeaderElement {
       cancelable: true
     })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('prevented');
     this._returnTo = document.activeElement;
-    this._returnAncestors = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.landmarksAround)(this._returnTo);
+    this._returnAncestors = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.landmarksAround)(this._returnTo);
     this.isOpen = true;
     this.sfHostState('data-open', true);
-    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.openLayer)(this, {
+    (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.openLayer)(this, {
       kind: 'panel',
       // The stack's default page lock (lockPageScroll), the one every layer takes.
       locksPage: true,
@@ -562,7 +1481,7 @@ class SfSiteHeader extends SiteHeaderElement {
   } = {}) {
     this.isOpen = false;
     this.sfHostState('data-open', false);
-    const wasTop = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.closeLayer)(this, {
+    const wasTop = (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.closeLayer)(this, {
       restoreFocus: false
     });
     this.place('');
@@ -574,7 +1493,7 @@ class SfSiteHeader extends SiteHeaderElement {
       // stack's rule when that is gone.
       const button = this.menuButton() ?? this.outsideSwitch();
       const target = button?.getClientRects().length ? button : this._returnTo;
-      (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.returnLayerFocus)(wasTop, target, this._returnAncestors);
+      (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.returnLayerFocus)(wasTop, target, this._returnAncestors);
     }
 
     if (emit) this.sfEmit('closed', {
@@ -591,7 +1510,7 @@ class SfSiteHeader extends SiteHeaderElement {
   }
 
   focusable() {
-    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.focusablesIn)(this.panel());
+    return (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.focusablesIn)(this.panel());
   } // Focus on open: the current page's link (the last one, as the nav comes
   // before a documentation tree in the sheet slot), else the first link, else
   // the close button.
@@ -610,7 +1529,7 @@ class SfSiteHeader extends SiteHeaderElement {
   }
 
   onEscape(event) {
-    if (event.defaultPrevented || !this.isOpen || !(0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_3__.isTopLayer)(this)) return false;
+    if (event.defaultPrevented || !this.isOpen || !(0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_4__.isTopLayer)(this)) return false;
     this.close({
       reason: 'escape'
     });
@@ -675,7 +1594,7 @@ class SfSiteHeader extends SiteHeaderElement {
   }
 
   templateContext() {
-    const collapsed = this.collapsed;
+    const collapsed = this.collapsedAnswerStale() ? this.collapsed : this._collapsedNow;
     this._drawnCollapsed = collapsed;
     const tools = this.toolParts(collapsed);
     return this.createTemplateContext({ ...this.getPropsContext(),
@@ -700,7 +1619,7 @@ class SfSiteHeader extends SiteHeaderElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderSiteHeaderTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderSiteHeaderTemplate)(this.templateContext());
   }
 
 }
@@ -876,7 +1795,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-heade
 /***/ "3b2d3ad548e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-site","tag":"sf-header-site","version":"1.12.6","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","always"],"default":"lg"},"menu-placement":{"type":"enum","values":["inline-start","inline-end"],"default":"inline-start"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"navigation-align":{"type":"enum","values":["start","center"],"default":"start"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean","data-scrolled":"boolean"},"css-variables":{"--sf-site-header-background-color":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-tools-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-site","tag":"sf-header-site","version":"1.14.1","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","auto","always"],"default":"lg"},"menu-placement":{"type":"enum","values":["inline-start","inline-end"],"default":"inline-start"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"navigation-align":{"type":"enum","values":["start","center"],"default":"start"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean","data-scrolled":"boolean","data-nav-overflow":"boolean","data-tools-compact":"boolean","data-fitted":"boolean"},"css-variables":{"--sf-site-header-background-color":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-tools-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

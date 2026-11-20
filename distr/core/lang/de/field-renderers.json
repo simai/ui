@@ -9,8 +9,8 @@
   "status": "draft",
   "review": "Machine translation by the Framework dispatcher (C278, 2026-11-18): every word, CLDR plural forms, country and language names from CLDR; not yet read by a native speaker.",
   "coverage": {
-    "words": 243,
-    "translated": 243,
+    "words": 247,
+    "translated": 247,
     "share": 100
   },
   "words": {
@@ -269,7 +269,11 @@
       "operatorLessWord": "weniger als",
       "operatorFromTo": "von – bis",
       "operatorMoreOrEqualWord": "mindestens",
-      "operatorLessOrEqualWord": "höchstens"
+      "operatorLessOrEqualWord": "höchstens",
+      "rangeFromWord": "von",
+      "rangeToWord": "bis",
+      "filterTextPlaceholder": "Text",
+      "filterRemoveCondition": "Bedingung entfernen"
     }
   }
 }

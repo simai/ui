@@ -2228,6 +2228,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   VALUELESS_CONDITIONS: () => (/* binding */ VALUELESS_CONDITIONS),
 /* harmony export */   filterActive: () => (/* binding */ filterActive),
 /* harmony export */   filterCondition: () => (/* binding */ filterCondition),
+/* harmony export */   filterConditionTone: () => (/* binding */ filterConditionTone),
 /* harmony export */   filterConditions: () => (/* binding */ filterConditions),
 /* harmony export */   filterCount: () => (/* binding */ filterCount),
 /* harmony export */   filterKindOf: () => (/* binding */ filterKindOf),
@@ -2310,6 +2311,18 @@ function filterCondition(field = {}, value = {}) {
   const asked = value?.operator || field.filter?.defaultCondition || field.filter?.defaultOperator;
   if (asked && (!conditions.length || conditions.includes(asked))) return asked;
   return conditions[0] || asked || '';
+} // The colour of a condition (owner decision C314): only an unusual condition
+// has one. Excluding (ни один из, не равно, не содержит) is error red,
+// presence (не задано, задано) tertiary purple; every other condition is
+// the grey of the band (C313) and a grey dot in its menu.
+
+const EXCLUDING_CONDITIONS = new Set(['not_in', 'ne', 'neq', 'not_eq', 'not_contains', 'notContains']);
+/** A condition's colour (C314): 'error' for an excluding one, 'tertiary' for presence, '' for the rest (grey). */
+
+function filterConditionTone(operator) {
+  if (EXCLUDING_CONDITIONS.has(operator)) return 'error';
+  if (VALUELESS_CONDITIONS.includes(operator)) return 'tertiary';
+  return '';
 }
 /** Whether a condition is answered without a value (не задано / задано). */
 
@@ -2573,7 +2586,8 @@ function filterWindowOpen({
   width = 'panel',
   count,
   kind = '',
-  renderControl
+  renderControl,
+  footer: withFooter = true
 } = {}) {
   if (!anchor?.isConnected || !field?.key) return Promise.resolve(null);
   const open = OPEN.get(anchor);
@@ -2603,10 +2617,17 @@ function filterWindowOpen({
       frame.setAttribute('heading', label);
       frame.setAttribute('data-sf-filter-window', field.key);
       body = doc.createElement('div');
-      body.className = 'sf-filter-window flex flex-col gap-1/2';
-      foot = doc.createElement('div');
-      foot.setAttribute('slot', 'footer');
-      frame.append(body, foot);
+      body.className = 'sf-filter-window flex flex-col'; // The window's list scrolls inside it, under the band and the search
+      // (C313): every box down to it may be shorter than its content.
+
+      body.style.minBlockSize = '0';
+      frame.append(body);
+
+      if (withFooter) {
+        foot = doc.createElement('div');
+        foot.setAttribute('slot', 'footer');
+        frame.append(foot);
+      }
     } else {
       frame = doc.createElement('sf-popover');
       frame.setAttribute('surface-role', 'dialog');
@@ -2614,8 +2635,11 @@ function filterWindowOpen({
       frame.setAttribute('label', label);
       frame.setAttribute('data-sf-filter-window', field.key);
       const surface = doc.createElement('div');
-      surface.setAttribute('slot', 'content');
-      surface.className = 'sf-filter-window flex flex-col gap-1/2 p-1/2'; // The window's width (C157, C310): the panel's step, 20rem; 24rem for
+      surface.setAttribute('slot', 'content'); // The window's parts reach its edges (owner decision C313): the
+      // condition band, the search's and the list's hairlines; each part
+      // keeps its own inset, the footer the panel's.
+
+      surface.className = 'sf-filter-window flex flex-col p-0'; // The window's width (C157, C310): the panel's step, 20rem; 24rem for
       // people and records with a caption.
 
       surface.setAttribute('data-sf-filter-width', width === 'wide' ? 'wide' : 'panel');
@@ -2623,8 +2647,17 @@ function filterWindowOpen({
       surface.style.maxInlineSize = '100%';
       body = doc.createElement('div');
       body.className = 'sf-filter-window-control flex flex-col';
-      foot = doc.createElement('div');
-      surface.append(body, foot);
+      body.style.minBlockSize = '0';
+      surface.append(body);
+
+      if (withFooter) {
+        foot = doc.createElement('div');
+        foot.className = 'sf-filter-window-foot p-1/2'; // The footer's hairline across the window, as the band's and the search's.
+
+        foot.style.borderBlockStart = 'var(--sf-px) solid var(--sf-outline-variant)';
+        surface.append(foot);
+      }
+
       frame.append(surface);
     }
 
@@ -2632,6 +2665,8 @@ function filterWindowOpen({
       size,
       // The single-field window (C308 FO-5): the rows' checks stand at the end.
       filterWindow: true,
+      // In a phone's sheet the band reaches the sheet's edges (C313 (1)).
+      sheet,
       getFieldText: key => word(key, anchor),
       getFilterControlValue: () => temp,
       patchTempFilterValue: (key, patch) => {
@@ -2642,7 +2677,16 @@ function filterWindowOpen({
       },
       getFilterOperatorLabel: operator => filterOperatorLabel(operator, anchor, kind),
       getVisibleFilterOptions: one => Array.isArray(one?.filter?.options) ? one.filter.options : [],
-      getFilterOptionsProvider: one => one?.filter?.provider ?? null
+      getFilterOptionsProvider: one => one?.filter?.provider ?? null,
+      // A single choice applies on a press, as a menu item (C312 (2)).
+      applyTempFilterValue: (key, patch) => {
+        temp = { ...temp,
+          ...patch
+        };
+        finish('apply');
+      },
+      // «Снять условие» (C312 (2)): the filter taken off, as «Сбросить».
+      resetFilter: () => finish('reset')
     };
 
     const finish = action => {
@@ -2658,6 +2702,8 @@ function filterWindowOpen({
     // condition is a list; plain «Применить» otherwise or with none chosen.
 
 
+    const footSize = sheet ? size : '1/2';
+
     const applyText = () => {
       const number = typeof count === 'function' ? count(temp) : Array.isArray(temp?.values) ? temp.values.length : 0;
       return number ? `${word('filterApply', anchor)} (${number})` : word('filterApply', anchor);
@@ -2665,10 +2711,16 @@ function filterWindowOpen({
 
     function draw() {
       (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${renderControl(field, host)}`, body);
+      if (!foot) return; // The popover's footer buttons are a step below the rows (the accepted
+      // study #top3, C313): at size 1 «Применить (N)» and «Сбросить» did not
+      // fit a 20rem window side by side and the main one wrapped onto two
+      // lines. A phone's sheet is the screen's width and keeps the rows' step,
+      // a finger's target.
+
       (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-filter-window-footer flex gap-1/3 items-cross-center">
-          <sf-button size=${size} scheme="primary" text=${applyText()}
+          <sf-button size=${footSize} scheme="primary" text=${applyText()}
                      data-action="apply" @click=${() => finish('apply')}></sf-button>
-          <sf-button size=${size} appearance="outline" scheme="on-surface" text=${word('filterReset', anchor)}
+          <sf-button size=${footSize} appearance="outline" scheme="on-surface" text=${word('filterReset', anchor)}
                      data-action="reset" @click=${() => finish('reset')}></sf-button>
         </div>`, foot);
     }
@@ -2799,6 +2851,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   fieldEditable: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_14__.fieldEditable),
 /* harmony export */   fieldTemplate: () => (/* binding */ fieldTemplate),
 /* harmony export */   filterActive: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterActive),
+/* harmony export */   filterConditionTone: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditionTone),
 /* harmony export */   filterConditions: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditions),
 /* harmony export */   filterCount: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCount),
 /* harmony export */   filterFieldSummary: () => (/* binding */ filterFieldSummary),
@@ -3541,6 +3594,7 @@ function renderChoiceFilterControl(field, host) {
                 ?searchable=${choiceSearchable(field, host, options, pages)}
                 option-look=${optionLookOf(field) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 control-position=${host.filterWindow === true ? 'end' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                ?panel=${host.filterWindow === true}
                 .items=${options}
                 .provider=${pages}
                 .value=${Array.isArray(value.values) ? value.values.map(String) : []}
@@ -5685,6 +5739,11 @@ function renderTimeEdit(field, value, host) {
 // draws the template it names. A switch or a checkbox over an absent value
 // writes nothing until it is pressed. Neither carries `required`: a yes/no
 // with a value is answered, and an unticked box is «Нет».
+// The buttons are the one template that can say «не задано», so they are the
+// one that reads `required` (GB13 note 1): an optional field clears on a
+// second press of the chosen button, as the choice buttons do, and writes
+// null; a required one keeps its answer once given, and sf-form asks for
+// one while it has none (value-missing, the required mark and note).
 
 
 function renderBooleanEdit(field, value, host) {
@@ -5726,6 +5785,7 @@ function renderBooleanEdit(field, value, host) {
     value: 'no',
     label: words.no
   }]);
+  const clearable = field.required !== true && field.readonly !== true && !EDIT_DISABLED;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-segmented
                 appearance="buttons"
@@ -5735,6 +5795,9 @@ function renderBooleanEdit(field, value, host) {
                 aria-label=${field.label || field.key || ''}
                 ?invalid=${Boolean(EDIT_ERROR)}
                 error-message=${EDIT_ERROR || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                @click=${pressAgainClears({
+    clearable
+  })}
                 @change=${event => {
     const next = event.detail?.value;
     host.setFieldValue(field, next === 'yes' ? true : next === 'no' ? false : null);
@@ -5817,6 +5880,37 @@ const CHOOSING_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'
 
 function isChoiceButtons(field) {
   return templateOf(field) === 'buttons';
+} // The capture-phase press of a button group drawn for a field: read-only
+// stops every press; a clearable field clears on a press of the chosen
+// button (the choice buttons, and the boolean's «Да» | «Нет»).
+
+
+function pressAgainClears({
+  locked = false,
+  clearable = false
+} = {}) {
+  return {
+    capture: true,
+
+    handleEvent(event) {
+      const group = event.currentTarget;
+      const segment = event.target?.closest?.('[data-sf-button-group-value]');
+      if (!group || !segment || !group.contains(segment)) return;
+
+      if (locked) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+
+      if (!clearable || segment.disabled) return;
+      if (segment.getAttribute('data-sf-button-group-value') !== group.value) return;
+      event.preventDefault();
+      event.stopPropagation();
+      group.clear?.();
+    }
+
+  };
 }
 
 function renderChoiceButtons(field, value, host) {
@@ -5845,28 +5939,10 @@ function renderChoiceButtons(field, value, host) {
 
   const optionValue = text => options.find(option => String(option.value) === text)?.value ?? text;
 
-  const press = {
-    capture: true,
-
-    handleEvent(event) {
-      const group = event.currentTarget;
-      const segment = event.target?.closest?.('[data-sf-button-group-value]');
-      if (!group || !segment || !group.contains(segment)) return;
-
-      if (locked) {
-        event.preventDefault();
-        event.stopPropagation();
-        return;
-      }
-
-      if (!clearable || segment.disabled) return;
-      if (segment.getAttribute('data-sf-button-group-value') !== group.value) return;
-      event.preventDefault();
-      event.stopPropagation();
-      group.clear?.();
-    }
-
-  };
+  const press = pressAgainClears({
+    locked,
+    clearable
+  });
   const keys = {
     capture: true,
 
@@ -7138,20 +7214,36 @@ function fieldTemplate(field = {}) {
  // The window's content per property type (owner decision C310): the
 // condition first (C293), then only what the condition needs -- the list of
 // a list property, one field of a string, one or two of a number; nothing
-// for не задано / задано. A boolean is three rows, one choice, no condition
-// line. A type with a window of its own (a date) keeps its filter control.
-// Where the condition stands and how quiet it is wait for the owner's answer
-// on the window without repeats (study §11); here it is the set's operator
-// field, as every filter control's.
+// for не задано / задано. A boolean is three rows, one choice, no condition.
+// A type with a window of its own (a date) keeps its filter control.
+//
+// The top of the window (owner decision C313, variant В4): the condition is
+// sf-dropdown's band (appearance band, FF-11) -- grey edge to edge, the
+// height of the search row, its text at the rows' edge, the chevron at the
+// end, a hairline under it -- opening its menu at exactly its own width
+// (list-width trigger, FF-10) in rows of the window's size; a long list (ten
+// and more) keeps its search. Under it the search on the window background,
+// as in sf-dropdown's open list (sf-input-choice panel), or, without a
+// search, the value row in its place. The band is the dropdown's own field:
+// one control, one Tab stop (FF-9).
+// The colour (owner decision C314): only an unusual condition tints the band
+// -- excluding error red, presence tertiary purple, the scheme's -container
+// (the fill family, 12 % light, 24 % dark) through the band's public
+// variable; the text keeps the text ink. Every menu item carries an 8 px dot
+// of its condition's colour, grey for the rest.
 
 function renderConditionControl(field, host, conditions, selected) {
   if (conditions.length < 2) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-dropdown class="sf-filter-window-condition" size=${filterSize(host)} appearance="bordered" mode="select"
-            search="false" list-width="list" aria-label=${setText(host, 'filterCondition')}
+  const tone = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditionTone)(selected);
+  const style = tone ? `--sf-dropdown-background-color: var(--sf-${tone}-container)` : '';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-dropdown class="sf-filter-window-condition" size=${filterSize(host)} appearance="band" mode="select"
+            search=${conditions.length >= 10 ? 'true' : 'false'} list-width="trigger" aria-label=${setText(host, 'filterCondition')}
+            data-tone=${tone || 'neutral'} style=${style || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             .options=${conditions.map(operator => ({
     value: operator,
     text: host.getFilterOperatorLabel(operator),
-    label: host.getFilterOperatorLabel(operator)
+    label: host.getFilterOperatorLabel(operator),
+    dot: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditionTone)(operator) || 'neutral'
   }))}
             value=${selected}
             @change=${event => {
@@ -7174,17 +7266,28 @@ function currencySign(field, host) {
   } catch {
     return code;
   }
+} // The value row (C313 (4)): where the search would stand, at its height, on
+// the window background with no frame -- one field, or two read as words,
+// «от … до …». The row's line turns primary while a field in it has the focus,
+// as the search's does.
+
+
+const VALUE_ROW_STYLE = 'min-block-size: calc(var(--sf-ui-1--control-height) + 2 * var(--sf-space-1\\/4)); padding: var(--sf-space-1\\/4) calc(var(--sf-space-1\\/4) + var(--sf-space-1\\/2)); box-sizing: border-box; color: var(--sf-on-surface-variant)';
+
+function valueRow(content) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-filter-window-value flex items-cross-center gap-1/3" style=${VALUE_ROW_STYLE}>${content}</div>`;
 }
 
 function renderStringWindow(field, host, value, operator) {
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input size=${filterSize(host)} appearance="bordered" aria-label=${host.getFilterOperatorLabel(operator)}
+  return valueRow((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input size=${filterSize(host)} appearance="plain" root-class="flex-1 min-w-0" aria-label=${`${field.label || field.key}: ${host.getFilterOperatorLabel(operator)}`}
+            placeholder=${setText(host, 'filterTextPlaceholder')}
             value=${typeof value.value === 'string' ? value.value : ''} name="sf_filter_${field.key || 'text'}"
             @change=${event => host.patchTempFilterValue(field.key, {
     operator,
     value: event.target?.value || ''
-  })}></sf-input>`;
+  })}></sf-input>`);
 } // A number or an amount (C294: an amount is compared inside its currency,
-// whose sign the fields carry): от – до, or one field.
+// whose sign the fields carry): «от … до …», or one field.
 
 
 function renderNumberWindow(field, host, value, operator) {
@@ -7192,15 +7295,17 @@ function renderNumberWindow(field, host, value, operator) {
 
   const named = text => sign ? `${text}, ${sign}` : text;
 
+  const label = field.label || field.key;
+
   if (operator !== 'between') {
     const one = Array.isArray(value.value) ? value.value[0] : value.value;
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input size=${filterSize(host)} appearance="bordered"
-                aria-label=${named(host.getFilterOperatorLabel(operator))} placeholder=${sign || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    return valueRow((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input size=${filterSize(host)} appearance="plain" root-class="flex-1 min-w-0" inputmode="decimal"
+                aria-label=${named(`${label}: ${host.getFilterOperatorLabel(operator)}`)} placeholder=${sign || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 value=${one ?? ''} name="sf_filter_${field.key || 'number'}"
                 @change=${event => host.patchTempFilterValue(field.key, {
       operator,
       value: event.target?.value || ''
-    })}></sf-input>`;
+    })}></sf-input>`);
   }
 
   const range = Array.isArray(value.value) ? value.value : [value.value ?? '', ''];
@@ -7214,14 +7319,17 @@ function renderNumberWindow(field, host, value, operator) {
     });
   };
 
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-filter-window-range flex gap-1/3 items-cross-end">
-        <sf-input size=${filterSize(host)} appearance="bordered" root-class="flex-1 min-w-0" label=${named(setText(host, 'rangeFrom'))}
-                  value=${range[0] ?? ''} name="sf_filter_${field.key || 'number'}" @change=${event => patch(0, event.target?.value)}></sf-input>
-        <sf-input size=${filterSize(host)} appearance="bordered" root-class="flex-1 min-w-0" label=${named(setText(host, 'rangeTo'))}
-                  value=${range[1] ?? ''} name="sf_filter_${field.key || 'number'}_second" @change=${event => patch(1, event.target?.value)}></sf-input>
-    </div>`;
-} // A boolean (C310): Да / Нет / Не задано, one choice, no condition line and
-// no search. «Не задано» is the empty condition.
+  const from = setText(host, 'rangeFromWord');
+  const to = setText(host, 'rangeToWord');
+  return valueRow((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-filter-window-word" aria-hidden="true">${from}</span>
+        <sf-input size=${filterSize(host)} appearance="plain" root-class="flex-1 min-w-0" inputmode="decimal" placeholder=${sign || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                  aria-label=${named(`${label}: ${from}`)} value=${range[0] ?? ''} name="sf_filter_${field.key || 'number'}" @change=${event => patch(0, event.target?.value)}></sf-input>
+        <span class="sf-filter-window-word" aria-hidden="true">${to}</span>
+        <sf-input size=${filterSize(host)} appearance="plain" root-class="flex-1 min-w-0" inputmode="decimal" placeholder=${sign || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                  aria-label=${named(`${label}: ${to}`)} value=${range[1] ?? ''} name="sf_filter_${field.key || 'number'}_second" @change=${event => patch(1, event.target?.value)}></sf-input>`);
+} // A boolean (C310, C312 (2), C313 (5)): Да / Нет / Не задано, one choice, no
+// condition band and no search; a press applies, as a menu item does, with
+// no footer. While a condition is set, «Снять условие» is the last row.
 
 
 function renderBooleanWindow(field, host, value) {
@@ -7232,9 +7340,7 @@ function renderBooleanWindow(field, host, value) {
   const operator = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCondition)(field, value);
   const one = Array.isArray(value.values) ? value.values[0] : value.value;
   const chosen = operator === 'empty' ? 'empty' : one === true || String(one) === 'true' ? 'true' : one === false || String(one) === 'false' ? 'false' : '';
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input-choice appearance="list" flow="column" aria-label=${field.label || field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-            control-position="end"
-            .items=${[{
+  const items = [{
     value: 'true',
     label: words.yes
   }, {
@@ -7243,11 +7349,18 @@ function renderBooleanWindow(field, host, value) {
   }, {
     value: 'empty',
     label: setText(host, 'filterNotSet')
-  }]}
+  }];
+  if (chosen) items.push({
+    value: 'reset',
+    label: setText(host, 'filterRemoveCondition')
+  });
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input-choice appearance="list" flow="column" panel aria-label=${field.label || field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            control-position="end"
+            .items=${items}
             .value=${chosen}
             @change=${event => {
     const next = event.detail?.value ?? event.detail?.values?.[0] ?? '';
-    host.patchTempFilterValue(field.key, next === 'empty' ? {
+    const patch = next === 'empty' ? {
       operator: 'empty',
       value: undefined,
       values: undefined
@@ -7255,23 +7368,34 @@ function renderBooleanWindow(field, host, value) {
       operator: 'eq',
       value: next === 'true',
       values: undefined
-    });
+    };
+    if (next === 'reset') host.resetFilter?.();else if (typeof host.applyTempFilterValue === 'function') host.applyTempFilterValue(field.key, patch);else host.patchTempFilterValue(field.key, patch);
   }}></sf-input-choice>`;
 }
-/** A filter field's window content (C310): the condition, then what it needs. */
+/** A filter field's window content (C310, C313): the condition band, then what it needs. */
 
 
 function renderFilterWindowField(field = {}, host) {
   const kind = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterKindOf)(field);
   if (kind === 'own') return renderFilterField(field, host);
   const value = host.getFilterControlValue(field.key) || {};
-  if (kind === 'boolean') return renderBooleanWindow(field, host, value);
+  if (kind === 'boolean') return windowFields(host, renderBooleanWindow(field, host, value));
   const conditions = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditions)(field);
   const operator = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCondition)(field, value);
   const control = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterValueless)(operator) ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : kind === 'string' ? renderStringWindow(field, host, value, operator) : kind === 'number' ? renderNumberWindow(field, host, value, operator) : renderChoiceFilterControl(field, host);
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-filter-window-fields flex flex-col gap-1/2">${renderConditionControl(field, host, conditions, operator)}${control}</div>`;
+  return windowFields(host, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${renderConditionControl(field, host, conditions, operator)}${control}`);
+} // The window's parts reach its edges (C313): the band, the search's and the
+// list's hairlines. A phone's sheet pads its body; there they reach past that
+// inset to the sheet's edges, as the popover's do to its own, and the rows
+// stand at the panel's inset from the sheet's edge. The list scrolls inside
+// (min-block-size 0 down to it).
+
+function windowFields(host, content) {
+  const style = host.sheet ? 'min-block-size: 0; margin-inline: calc(-1 * var(--sf-drawer--inset-start)) calc(-1 * var(--sf-drawer--inset-end))' : 'min-block-size: 0';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-filter-window-fields flex flex-col" style=${style}>${content}</div>`;
 }
 /** A filter field's window opened from any control (FO-5, filter-window.js): settles {action: 'apply' | 'reset', value} or null. */
+
 
 function openFilterWindow(options = {}) {
   const field = options.field || {};
@@ -7280,6 +7404,8 @@ function openFilterWindow(options = {}) {
     kind: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterKindOf)(field),
     ...options,
     renderControl: renderFilterWindowField,
+    // A boolean applies on a press and has no footer (C312 (2)).
+    footer: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterKindOf)(field) !== 'boolean',
     // «Применить (N)»: the chosen values of a list condition only (C310).
     count: value => (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterKindOf)(field) === 'own' ? Array.isArray(value?.values) ? value.values.length : 0 : (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCount)(field, value)
   });
@@ -7399,7 +7525,8 @@ if (typeof window !== 'undefined') {
       operatorLabel: _filter_window_js__WEBPACK_IMPORTED_MODULE_15__.filterOperatorLabel,
       summary: filterFieldSummary,
       conditions: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditions,
-      count: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCount
+      count: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCount,
+      tone: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditionTone
     },
     // The universal properties, each with the modes the set draws for it
     // and its templates, the default first (C302).
@@ -9881,7 +10008,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "f050502c25f8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","condition":"Condition","numberOperator_eq":"Equals","numberOperator_neq":"Not equal","numberOperator_gt":"Greater than","numberOperator_gte":"At least","numberOperator_lt":"Less than","numberOperator_lte":"At most","numberOperator_between":"Between","numberOperator_empty":"Empty","numberOperator_not-empty":"Not empty","filterNumber":"Number","filterAmount":"Amount","filterPercent":"Percent","dateCondition":"Condition","dateByDayIn":"Compared by day, time zone {zone}","dateGroup_date":"Date","dateGroup_period":"Period","dateGroup_filled":"Filled","dateGroup_range":"The record\'s period","dateCondition_eq":"Exact date","dateCondition_between":"Between","dateCondition_lt":"Before","dateCondition_gt":"After","dateCondition_gte":"On or after","dateCondition_lte":"On or before","dateCondition_lastDays":"Last N days","dateCondition_nextDays":"Next N days","dateCondition_empty":"Empty","dateCondition_notEmpty":"Not empty","dateCondition_overlaps":"Runs in","dateCondition_within":"Entirely in","dateCondition_starts":"Starts in","dateCondition_ends":"Ends in","dateCondition_contains":"Runs on the day","datePeriod_today":"Today","datePeriod_yesterday":"Yesterday","datePeriod_thisWeek":"This week","datePeriod_lastWeek":"Last week","datePeriod_last7Days":"Last 7 days","datePeriod_thisMonth":"This month","datePeriod_lastMonth":"Last month","datePeriod_thisYear":"This year","datePeriod_tomorrow":"Tomorrow","datePeriod_nextWeek":"Next week","datePeriod_nextMonth":"Next month","datePeriodIn_today":"today","datePeriodIn_yesterday":"yesterday","datePeriodIn_thisWeek":"this week","datePeriodIn_lastWeek":"last week","datePeriodIn_last7Days":"in the last 7 days","datePeriodIn_thisMonth":"this month","datePeriodIn_lastMonth":"last month","datePeriodIn_thisYear":"this year","datePeriodIn_tomorrow":"tomorrow","datePeriodIn_nextWeek":"next week","datePeriodIn_nextMonth":"next month","dateChip":"{field}: {condition}","dateChip_lt":"before {date}","dateChip_gt":"after {date}","dateChip_gte":"on or after {date}","dateChip_lte":"on or before {date}","dateChip_lastDays":{"one":"in the last day","other":"in the last {n} days"},"dateChip_nextDays":{"one":"in the next day","other":"in the next {n} days"},"dateChip_empty":"empty","dateChip_notEmpty":"not empty","dateChip_overlaps":"runs {when}","dateChip_within":"entirely {when}","dateChip_withinDays":"entirely within {when}","dateChip_starts":"starts {when}","dateChip_ends":"ends {when}","dateChip_contains":"runs on {date}","dateCountLast":"Days, today included","dateCountNext":"Days ahead, today included","dateCountUnit":"days","dateValueDate":"Date","dateValueDay":"Day","dateValuePeriod":"Period","dateWhen":"When","dateOwnDays":"Own dates","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","phoneExtension":"ext.","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":{"one":"At most {n} digit after the point","other":"At most {n} digits after the point"},"fractionNone":"A whole amount, no digits after the point","boundBetween":"From {min} to {max}","boundAtLeast":"At least {min}","boundAtMost":"At most {max}","currency":"Currency","chooseCurrency":"Choose a currency","rowCount":{"one":"{n} row","other":"{n} rows"},"filterApply":"Apply","filterReset":"Reset","operatorAny":"Any date","operatorBetween":"Range","operatorContains":"Contains","operatorEq":"Exactly","operatorGt":"Greater than","operatorGte":"Greater or equal","operatorIn":"In the list","operatorLt":"Less than","operatorLte":"Less or equal","operatorMonth":"This month","operatorStartsWith":"Starts with","operatorToday":"Today","operatorWeek":"This week","type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-meter":"Share of a limit","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)","type-phone":"Phone","type-password":"Password","type-complex":"Compound","wholeNumber":"A whole number, no digits after the point","template-string-input":"Input","template-phone-phone_input":"Phone with country code","template-password-input":"Hidden input","template-text-textarea":"Multiline input","template-html-editor":"Editor","template-number-input":"Number input","template-number-stepper":"«−» and «+» buttons","template-number-scale":"Level scale","template-number-meter":"Share of a limit","template-date-datepicker":"Date with a calendar","template-datetime-datepicker":"Date and time","template-time-timepicker":"Time","template-boolean-switch":"Switch","template-boolean-checkbox":"Checkbox","template-boolean-buttons":"«Yes / No» buttons","template-choice-dropdown":"Dropdown","template-choice-buttons":"Buttons","template-choices-dropdown":"Dropdown","template-choices-checklist":"Checklist","template-choices-badges":"Badges","template-user-reference_picker":"User picker","template-record-reference_picker":"Record picker","template-relation-reference_picker":"Record picker","template-lookup-source_picker":"Reference list picker","template-file-upload":"File upload","template-file-image":"Image","template-file-image_card":"Image card","template-file-image_list":"Image list","template-color-color_picker":"Colour picker","template-include-script":"Code","template-money-money_input":"Amount with currency","template-percent-input":"Number input","template-items-rows":"Rows table","template-complex-parts":"Parts","template-ru.requisites-requisites":"Requisites block","type-url":"Web address","type-link":"Link with text","type-ru.inn":"INN (Russian taxpayer number)","template-url-input":"Address input","template-link-link":"Link","template-ru.inn-input":"Digits input","template-percent-stepper":"«−» and «+» buttons","template-percent-scale":"Level scale","template-percent-meter":"Share of a limit","urlInvalid":"Enter a full address: https://…","linkAddress":"Address","linkText":"Link text","linkNeedsAddress":"Enter the address","linkInvalid":"An address is https://…, a site path /… or #anchor","linkTextLong":"No more than 255 characters","innDigits":"An INN is 10 digits (an organisation) or 12 (a person)","innOrganization":"An organisation’s INN is 10 digits","innPerson":"A person’s INN is 12 digits","innChecksum":"The INN check digit does not match","dateGroup_time":"Time","timeCondition_eq":"Equals","timeValue":"Time","operatorAnyOf":"any of","operatorAllOf":"all of","operatorNoneOf":"none of","operatorEmpty":"not set","operatorFilled":"set","filterNotSet":"Not set","filterCondition":"Condition","operatorContainsWord":"contains","operatorStartsWithWord":"starts with","operatorEqualWord":"equals","operatorMoreWord":"more than","operatorLessWord":"less than","operatorFromTo":"from – to","operatorMoreOrEqualWord":"at least","operatorLessOrEqualWord":"at most"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","condition":"Condition","numberOperator_eq":"Equals","numberOperator_neq":"Not equal","numberOperator_gt":"Greater than","numberOperator_gte":"At least","numberOperator_lt":"Less than","numberOperator_lte":"At most","numberOperator_between":"Between","numberOperator_empty":"Empty","numberOperator_not-empty":"Not empty","filterNumber":"Number","filterAmount":"Amount","filterPercent":"Percent","dateCondition":"Condition","dateByDayIn":"Compared by day, time zone {zone}","dateGroup_date":"Date","dateGroup_period":"Period","dateGroup_filled":"Filled","dateGroup_range":"The record\'s period","dateCondition_eq":"Exact date","dateCondition_between":"Between","dateCondition_lt":"Before","dateCondition_gt":"After","dateCondition_gte":"On or after","dateCondition_lte":"On or before","dateCondition_lastDays":"Last N days","dateCondition_nextDays":"Next N days","dateCondition_empty":"Empty","dateCondition_notEmpty":"Not empty","dateCondition_overlaps":"Runs in","dateCondition_within":"Entirely in","dateCondition_starts":"Starts in","dateCondition_ends":"Ends in","dateCondition_contains":"Runs on the day","datePeriod_today":"Today","datePeriod_yesterday":"Yesterday","datePeriod_thisWeek":"This week","datePeriod_lastWeek":"Last week","datePeriod_last7Days":"Last 7 days","datePeriod_thisMonth":"This month","datePeriod_lastMonth":"Last month","datePeriod_thisYear":"This year","datePeriod_tomorrow":"Tomorrow","datePeriod_nextWeek":"Next week","datePeriod_nextMonth":"Next month","datePeriodIn_today":"today","datePeriodIn_yesterday":"yesterday","datePeriodIn_thisWeek":"this week","datePeriodIn_lastWeek":"last week","datePeriodIn_last7Days":"in the last 7 days","datePeriodIn_thisMonth":"this month","datePeriodIn_lastMonth":"last month","datePeriodIn_thisYear":"this year","datePeriodIn_tomorrow":"tomorrow","datePeriodIn_nextWeek":"next week","datePeriodIn_nextMonth":"next month","dateChip":"{field}: {condition}","dateChip_lt":"before {date}","dateChip_gt":"after {date}","dateChip_gte":"on or after {date}","dateChip_lte":"on or before {date}","dateChip_lastDays":{"one":"in the last day","other":"in the last {n} days"},"dateChip_nextDays":{"one":"in the next day","other":"in the next {n} days"},"dateChip_empty":"empty","dateChip_notEmpty":"not empty","dateChip_overlaps":"runs {when}","dateChip_within":"entirely {when}","dateChip_withinDays":"entirely within {when}","dateChip_starts":"starts {when}","dateChip_ends":"ends {when}","dateChip_contains":"runs on {date}","dateCountLast":"Days, today included","dateCountNext":"Days ahead, today included","dateCountUnit":"days","dateValueDate":"Date","dateValueDay":"Day","dateValuePeriod":"Period","dateWhen":"When","dateOwnDays":"Own dates","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","phoneExtension":"ext.","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":{"one":"At most {n} digit after the point","other":"At most {n} digits after the point"},"fractionNone":"A whole amount, no digits after the point","boundBetween":"From {min} to {max}","boundAtLeast":"At least {min}","boundAtMost":"At most {max}","currency":"Currency","chooseCurrency":"Choose a currency","rowCount":{"one":"{n} row","other":"{n} rows"},"filterApply":"Apply","filterReset":"Reset","operatorAny":"Any date","operatorBetween":"Range","operatorContains":"Contains","operatorEq":"Exactly","operatorGt":"Greater than","operatorGte":"Greater or equal","operatorIn":"In the list","operatorLt":"Less than","operatorLte":"Less or equal","operatorMonth":"This month","operatorStartsWith":"Starts with","operatorToday":"Today","operatorWeek":"This week","type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-meter":"Share of a limit","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)","type-phone":"Phone","type-password":"Password","type-complex":"Compound","wholeNumber":"A whole number, no digits after the point","template-string-input":"Input","template-phone-phone_input":"Phone with country code","template-password-input":"Hidden input","template-text-textarea":"Multiline input","template-html-editor":"Editor","template-number-input":"Number input","template-number-stepper":"«−» and «+» buttons","template-number-scale":"Level scale","template-number-meter":"Share of a limit","template-date-datepicker":"Date with a calendar","template-datetime-datepicker":"Date and time","template-time-timepicker":"Time","template-boolean-switch":"Switch","template-boolean-checkbox":"Checkbox","template-boolean-buttons":"«Yes / No» buttons","template-choice-dropdown":"Dropdown","template-choice-buttons":"Buttons","template-choices-dropdown":"Dropdown","template-choices-checklist":"Checklist","template-choices-badges":"Badges","template-user-reference_picker":"User picker","template-record-reference_picker":"Record picker","template-relation-reference_picker":"Record picker","template-lookup-source_picker":"Reference list picker","template-file-upload":"File upload","template-file-image":"Image","template-file-image_card":"Image card","template-file-image_list":"Image list","template-color-color_picker":"Colour picker","template-include-script":"Code","template-money-money_input":"Amount with currency","template-percent-input":"Number input","template-items-rows":"Rows table","template-complex-parts":"Parts","template-ru.requisites-requisites":"Requisites block","type-url":"Web address","type-link":"Link with text","type-ru.inn":"INN (Russian taxpayer number)","template-url-input":"Address input","template-link-link":"Link","template-ru.inn-input":"Digits input","template-percent-stepper":"«−» and «+» buttons","template-percent-scale":"Level scale","template-percent-meter":"Share of a limit","urlInvalid":"Enter a full address: https://…","linkAddress":"Address","linkText":"Link text","linkNeedsAddress":"Enter the address","linkInvalid":"An address is https://…, a site path /… or #anchor","linkTextLong":"No more than 255 characters","innDigits":"An INN is 10 digits (an organisation) or 12 (a person)","innOrganization":"An organisation’s INN is 10 digits","innPerson":"A person’s INN is 12 digits","innChecksum":"The INN check digit does not match","dateGroup_time":"Time","timeCondition_eq":"Equals","timeValue":"Time","operatorAnyOf":"any of","operatorAllOf":"all of","operatorNoneOf":"none of","operatorEmpty":"not set","operatorFilled":"set","filterNotSet":"Not set","filterCondition":"Condition","operatorContainsWord":"contains","operatorStartsWithWord":"starts with","operatorEqualWord":"equals","operatorMoreWord":"more than","operatorLessWord":"less than","operatorFromTo":"from – to","operatorMoreOrEqualWord":"at least","operatorLessOrEqualWord":"at most","rangeFromWord":"from","rangeToWord":"to","filterTextPlaceholder":"Text","filterRemoveCondition":"Remove condition"}}');
 
 /***/ }
 

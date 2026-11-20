@@ -11,7 +11,6 @@
 @layer sf.components {
   /* utility-hint: display/flex (.flex) flex-direction/column (.flex-col) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-space-1\/4) justify-content/flex-start (.justify-start) */
   .sf-country-code {
-    gap: var(--sf-space-1\/4);
     gap: var(--sf-country-code--gap, var(--sf-space-1\/4));
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-country-code-label--gap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
@@ -41,134 +40,38 @@
     line-height: var(--sf-country-code-required--line-height);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field{
-    border-bottom-right-radius: var(--sf-country-code-field--border-end-end-radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field{
-    border-bottom-right-radius: var(--sf-country-code-field--border-end-end-radius);
-    }
-  }
   .sf-country-code .sf-country-code-field:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-country-code-field--border-end-end-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field{
-    border-bottom-left-radius: var(--sf-country-code-field--border-end-end-radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-field{
-    border-bottom-left-radius: var(--sf-country-code-field--border-end-end-radius);
-    }
   }
   .sf-country-code .sf-country-code-field:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-country-code-field--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field{
-    border-bottom-left-radius: var(--sf-country-code-field--border-end-start-radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field{
-    border-bottom-left-radius: var(--sf-country-code-field--border-end-start-radius);
-    }
-  }
   .sf-country-code .sf-country-code-field:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-country-code-field--border-end-start-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field{
-    border-bottom-right-radius: var(--sf-country-code-field--border-end-start-radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-field{
-    border-bottom-right-radius: var(--sf-country-code-field--border-end-start-radius);
-    }
   }
   .sf-country-code .sf-country-code-field:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-country-code-field--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field{
-    border-top-right-radius: var(--sf-country-code-field--border-start-end-radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field{
-    border-top-right-radius: var(--sf-country-code-field--border-start-end-radius);
-    }
-  }
   .sf-country-code .sf-country-code-field:where(:dir(ltr)){
     border-top-right-radius: var(--sf-country-code-field--border-start-end-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field{
-    border-top-left-radius: var(--sf-country-code-field--border-start-end-radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-field{
-    border-top-left-radius: var(--sf-country-code-field--border-start-end-radius);
-    }
   }
   .sf-country-code .sf-country-code-field:where(:dir(rtl)){
     border-top-left-radius: var(--sf-country-code-field--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field{
-    border-top-left-radius: var(--sf-country-code-field--border-start-start-radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field{
-    border-top-left-radius: var(--sf-country-code-field--border-start-start-radius);
-    }
-  }
   .sf-country-code .sf-country-code-field:where(:dir(ltr)){
     border-top-left-radius: var(--sf-country-code-field--border-start-start-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field{
-    border-top-right-radius: var(--sf-country-code-field--border-start-start-radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-field{
-    border-top-right-radius: var(--sf-country-code-field--border-start-start-radius);
-    }
   }
   .sf-country-code .sf-country-code-field:where(:dir(rtl)){
     border-top-right-radius: var(--sf-country-code-field--border-start-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field{
-    padding-right: var(--sf-country-code-field--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field{
-    padding-right: var(--sf-country-code-field--padding-inline-end);
-    }
-  }
   .sf-country-code .sf-country-code-field:where(:dir(ltr)){
     padding-right: var(--sf-country-code-field--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field{
-    padding-left: var(--sf-country-code-field--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-field{
-    padding-left: var(--sf-country-code-field--padding-inline-end);
-    }
   }
   .sf-country-code .sf-country-code-field:where(:dir(rtl)){
     padding-left: var(--sf-country-code-field--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field{
-    padding-left: var(--sf-country-code-field--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field{
-    padding-left: var(--sf-country-code-field--padding-inline-start);
-    }
-  }
   .sf-country-code .sf-country-code-field:where(:dir(ltr)){
     padding-left: var(--sf-country-code-field--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field{
-    padding-right: var(--sf-country-code-field--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-field{
-    padding-right: var(--sf-country-code-field--padding-inline-start);
-    }
   }
   .sf-country-code .sf-country-code-field:where(:dir(rtl)){
     padding-right: var(--sf-country-code-field--padding-inline-start);
@@ -224,46 +127,14 @@
     width: var(--sf-country-code-flag-icon--width);
   }
   /* utility-hint: flex/1 (.flex-1) display/flex (.flex) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field input{
-    padding-right: var(--sf-country-code-input--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field input{
-    padding-right: var(--sf-country-code-input--padding-inline-end);
-    }
-  }
   .sf-country-code .sf-country-code-field input:where(:dir(ltr)){
     padding-right: var(--sf-country-code-input--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field input{
-    padding-left: var(--sf-country-code-input--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-field input{
-    padding-left: var(--sf-country-code-input--padding-inline-end);
-    }
   }
   .sf-country-code .sf-country-code-field input:where(:dir(rtl)){
     padding-left: var(--sf-country-code-input--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-field input{
-    padding-left: var(--sf-country-code-input--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-field input{
-    padding-left: var(--sf-country-code-input--padding-inline-start);
-    }
-  }
   .sf-country-code .sf-country-code-field input:where(:dir(ltr)){
     padding-left: var(--sf-country-code-input--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-field input{
-    padding-right: var(--sf-country-code-input--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-field input{
-    padding-right: var(--sf-country-code-input--padding-inline-start);
-    }
   }
   .sf-country-code .sf-country-code-field input:where(:dir(rtl)){
     padding-right: var(--sf-country-code-input--padding-inline-start);
@@ -328,46 +199,14 @@
     font-weight: var(--sf-country-code-hint--font-weight);
     line-height: var(--sf-country-code-hint--line-height);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-list{
-    padding-right: var(--sf-country-code-list--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-list{
-    padding-right: var(--sf-country-code-list--padding-inline-end);
-    }
-  }
   .sf-country-code .sf-country-code-list:where(:dir(ltr)){
     padding-right: var(--sf-country-code-list--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-list{
-    padding-left: var(--sf-country-code-list--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-list{
-    padding-left: var(--sf-country-code-list--padding-inline-end);
-    }
   }
   .sf-country-code .sf-country-code-list:where(:dir(rtl)){
     padding-left: var(--sf-country-code-list--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-list{
-    padding-left: var(--sf-country-code-list--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-list{
-    padding-left: var(--sf-country-code-list--padding-inline-start);
-    }
-  }
   .sf-country-code .sf-country-code-list:where(:dir(ltr)){
     padding-left: var(--sf-country-code-list--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-list{
-    padding-right: var(--sf-country-code-list--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-list{
-    padding-right: var(--sf-country-code-list--padding-inline-start);
-    }
   }
   .sf-country-code .sf-country-code-list:where(:dir(rtl)){
     padding-right: var(--sf-country-code-list--padding-inline-start);
@@ -382,46 +221,14 @@
     padding-top: var(--sf-country-code-list--padding-top);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-country-code-item--gap) justify-content/flex-start (.justify-start) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-item{
-    padding-right: var(--sf-country-code-item--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-item{
-    padding-right: var(--sf-country-code-item--padding-inline-end);
-    }
-  }
   .sf-country-code .sf-country-code-item:where(:dir(ltr)){
     padding-right: var(--sf-country-code-item--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-item{
-    padding-left: var(--sf-country-code-item--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-item{
-    padding-left: var(--sf-country-code-item--padding-inline-end);
-    }
   }
   .sf-country-code .sf-country-code-item:where(:dir(rtl)){
     padding-left: var(--sf-country-code-item--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-item{
-    padding-left: var(--sf-country-code-item--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-item{
-    padding-left: var(--sf-country-code-item--padding-inline-start);
-    }
-  }
   .sf-country-code .sf-country-code-item:where(:dir(ltr)){
     padding-left: var(--sf-country-code-item--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-item{
-    padding-right: var(--sf-country-code-item--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-item{
-    padding-right: var(--sf-country-code-item--padding-inline-start);
-    }
   }
   .sf-country-code .sf-country-code-item:where(:dir(rtl)){
     padding-right: var(--sf-country-code-item--padding-inline-start);
@@ -454,11 +261,8 @@
     width: var(--sf-country-code-flag--width);
   }
   .sf-country-code .sf-icon {
-    font-size: var(--sf-text-size-3);
     font-size: var(--sf-icon--font-size, var(--sf-text-size-3));
-    height: var(--sf-text-size-3);
     height: var(--sf-icon--height, var(--sf-text-size-3));
-    width: var(--sf-text-size-3);
     width: var(--sf-icon--width, var(--sf-text-size-3));
   }
   .sf-country-code.sf-country-code--size-1 .sf-country-code-text {
@@ -754,23 +558,11 @@
     --sf-country-code--flag-height: var(--sf-country-code--inset);
   }
   @media not all and (min-width: 60rem) {
-    .sf-country-code.sf-country-code--size-1\/2 {
-      --sf-country-code--inset: var(--sf-space-1);
-    }
-    .sf-country-code.sf-country-code--size-1 {
-      --sf-country-code--inset: var(--sf-space-1);
-    }
-    .sf-country-code.sf-country-code--size-2 {
+    .sf-country-code:is(.sf-country-code--size-1\/2, .sf-country-code--size-1, .sf-country-code--size-2) {
       --sf-country-code--inset: var(--sf-space-1);
     }
   }
-  [data-sf-density=compact] .sf-country-code.sf-country-code--size-1\/2 {
-    --sf-country-code--inset: var(--sf-space-1);
-  }
-  [data-sf-density=compact] .sf-country-code.sf-country-code--size-1 {
-    --sf-country-code--inset: var(--sf-space-1);
-  }
-  [data-sf-density=compact] .sf-country-code.sf-country-code--size-2 {
+  [data-sf-density=compact] .sf-country-code:is(.sf-country-code--size-1\/2, .sf-country-code--size-1, .sf-country-code--size-2) {
     --sf-country-code--inset: var(--sf-space-1);
   }
   .sf-country-code .sf-country-code-left {
@@ -826,19 +618,10 @@
     display: flex;
     align-items: center;
     flex: none;
-    gap: var(--sf-ui-1--text-space-x);
     gap: var(--sf-country-code-item--gap, var(--sf-ui-1--text-space-x));
-    height: var(--sf-ui-1--control-height);
-    block-size: var(--sf-ui-1--control-height);
-    height: var(--sf-ui-1--control-height);
     height: var(--sf-country-code-row--block-size, var(--sf-ui-1--control-height));
     block-size: var(--sf-country-code-row--block-size, var(--sf-ui-1--control-height));
-    padding-left: calc(var(--sf-country-code--inset) - 0px);
-    padding-right: calc(var(--sf-country-code--inset) - 0px);
-    padding-inline: calc(var(--sf-country-code--inset) - 0px);
-    padding-left: calc(var(--sf-country-code--inset) - 0px);
     padding-left: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
-    padding-right: calc(var(--sf-country-code--inset) - 0px);
     padding-right: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
     padding-inline: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
     margin-bottom: var(--sf-space-1\/4);
@@ -867,9 +650,7 @@
     border-color: revert-layer;
     outline: 0;
     font: inherit;
-    font-size: var(--sf-text-size-1);
     font-size: var(--sf-country-code-item--font-size, var(--sf-text-size-1));
-    line-height: var(--sf-text-height-1);
     line-height: var(--sf-country-code-item--line-height, var(--sf-text-height-1));
   }
   .sf-country-code .sf-country-code-search input::-webkit-input-placeholder {
@@ -892,12 +673,7 @@
     padding-top: var(--sf-space-1\/4);
     padding-bottom: var(--sf-space-1\/4);
     padding-block: var(--sf-space-1\/4);
-    padding-left: calc(var(--sf-country-code--inset) - 0px);
-    padding-right: calc(var(--sf-country-code--inset) - 0px);
-    padding-inline: calc(var(--sf-country-code--inset) - 0px);
-    padding-left: calc(var(--sf-country-code--inset) - 0px);
     padding-left: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
-    padding-right: calc(var(--sf-country-code--inset) - 0px);
     padding-right: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
     padding-inline: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
     font-size: var(--sf-text-size-1\/2);
@@ -909,17 +685,9 @@
     display: flex;
     align-items: center;
     order: 999;
-    height: var(--sf-ui-1--control-height);
-    block-size: var(--sf-ui-1--control-height);
-    height: var(--sf-ui-1--control-height);
     height: var(--sf-country-code-row--block-size, var(--sf-ui-1--control-height));
     block-size: var(--sf-country-code-row--block-size, var(--sf-ui-1--control-height));
-    padding-left: calc(var(--sf-country-code--inset) - 0px);
-    padding-right: calc(var(--sf-country-code--inset) - 0px);
-    padding-inline: calc(var(--sf-country-code--inset) - 0px);
-    padding-left: calc(var(--sf-country-code--inset) - 0px);
     padding-left: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
-    padding-right: calc(var(--sf-country-code--inset) - 0px);
     padding-right: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
     padding-inline: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
     font-size: var(--sf-text-size-1);
@@ -937,46 +705,14 @@
   /* On a phone a sheet at the bottom of the screen, the screen's width up to
      the md step, almost its height (the sheet of C32); the rows scroll, the
      search stays. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-list[data-sf-sheet]{
-    border-top-left-radius: var(--sf-radius--surface);
-  }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-list[data-sf-sheet]{
-    border-top-left-radius: var(--sf-radius--surface);
-    }
-  }
   .sf-country-code .sf-country-code-list[data-sf-sheet]:where(:dir(ltr)){
     border-top-left-radius: var(--sf-radius--surface);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-list[data-sf-sheet]{
-    border-top-right-radius: var(--sf-radius--surface);
-  }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-list[data-sf-sheet]{
-    border-top-right-radius: var(--sf-radius--surface);
-    }
   }
   .sf-country-code .sf-country-code-list[data-sf-sheet]:where(:dir(rtl)){
     border-top-right-radius: var(--sf-radius--surface);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-list[data-sf-sheet]{
-    border-top-right-radius: var(--sf-radius--surface);
-  }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-list[data-sf-sheet]{
-    border-top-right-radius: var(--sf-radius--surface);
-    }
-  }
   .sf-country-code .sf-country-code-list[data-sf-sheet]:where(:dir(ltr)){
     border-top-right-radius: var(--sf-radius--surface);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-list[data-sf-sheet]{
-    border-top-left-radius: var(--sf-radius--surface);
-  }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-list[data-sf-sheet]{
-    border-top-left-radius: var(--sf-radius--surface);
-    }
   }
   .sf-country-code .sf-country-code-list[data-sf-sheet]:where(:dir(rtl)){
     border-top-left-radius: var(--sf-radius--surface);
@@ -1012,7 +748,6 @@
 }
 @layer sf.paint {
   .sf-country-code {
-    background-color: transparent;
     background-color: var(--sf-country-code--background-color, transparent);
   }
   .sf-country-code .sf-country-code-label {
@@ -1027,7 +762,6 @@
   .sf-country-code .sf-country-code-field {
     background-color: var(--sf-country-code-field--background-color);
     border: var(--sf-country-code-field--border);
-    border-color: transparent;
     border-color: var(--sf-country-code-field--border-color, transparent);
   }
   .sf-country-code .sf-country-code-left {
@@ -1072,7 +806,6 @@
     background-color: var(--sf-country-code-flag--background-color);
   }
   .sf-country-code .sf-icon {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-icon--color, var(--sf-on-surface-variant));
   }
   .sf-country-code.open .sf-country-code-list {
@@ -1263,27 +996,19 @@
    browser's own box on the bare input is held off by a transition that never
    ends, and its text colour by the fill colour of the text. */
 @layer sf.states {
-  .sf-country-code .sf-country-code-field:has(input:-webkit-autofill) {
+  .sf-country-code .sf-country-code-field:has(input:is(:-webkit-autofill, :-webkit-autofill)) {
     background-image: linear-gradient(var(--sf-primary-state-select), var(--sf-primary-state-select));
   }
-  .sf-country-code .sf-country-code-field:has(input:autofill) {
+  .sf-country-code .sf-country-code-field:has(input:is(:autofill, :-webkit-autofill)) {
     background-image: linear-gradient(var(--sf-primary-state-select), var(--sf-primary-state-select));
   }
-  .sf-country-code .sf-country-code-field:has(input:-webkit-autofill) {
-    background-image: linear-gradient(var(--sf-primary-state-select), var(--sf-primary-state-select));
-  }
-  .sf-country-code .sf-country-code-field input:-webkit-autofill {
+  .sf-country-code .sf-country-code-field input:is(:-webkit-autofill, :-webkit-autofill) {
     -webkit-text-fill-color: var(--sf-country-code-input--color);
     caret-color: var(--sf-country-code-input--color);
     -webkit-transition: background-color 0s 2147483647s, color 0s 2147483647s;
     transition: background-color 0s 2147483647s, color 0s 2147483647s;
   }
-  .sf-country-code .sf-country-code-field input:autofill {
-    -webkit-text-fill-color: var(--sf-country-code-input--color);
-    caret-color: var(--sf-country-code-input--color);
-    transition: background-color 0s 2147483647s, color 0s 2147483647s;
-  }
-  .sf-country-code .sf-country-code-field input:-webkit-autofill {
+  .sf-country-code .sf-country-code-field input:is(:autofill, :-webkit-autofill) {
     -webkit-text-fill-color: var(--sf-country-code-input--color);
     caret-color: var(--sf-country-code-input--color);
     -webkit-transition: background-color 0s 2147483647s, color 0s 2147483647s;
@@ -1294,24 +1019,8 @@
   .sf-country-code {
     position: relative;
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-country-code .sf-country-code-list{
-    left: 0;
-  }
-  @supports not (inset-inline-start: initial){
-  html:not([dir="rtl"]) .sf-country-code .sf-country-code-list{
-    left: 0;
-    }
-  }
   .sf-country-code .sf-country-code-list:where(:dir(ltr)){
     left: 0;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-country-code .sf-country-code-list{
-    right: 0;
-  }
-  @supports not (inset-inline-start: initial){
-  [dir="rtl"] .sf-country-code .sf-country-code-list{
-    right: 0;
-    }
   }
   .sf-country-code .sf-country-code-list:where(:dir(rtl)){
     right: 0;
@@ -1365,9 +1074,6 @@
      took that height for good: 9.8k px (docs pre-check 2026-11-10 CC-01). A row
      is the control height of the field's size. */
   .sf-country-code.open .sf-country-code-items {
-    max-height: calc(8 * var(--sf-ui-1--control-height));
-    max-block-size: calc(8 * var(--sf-ui-1--control-height));
-    max-height: calc(8 * var(--sf-ui-1--control-height));
     max-height: calc(8 * var(--sf-country-code-row--block-size, var(--sf-ui-1--control-height)));
     max-block-size: calc(8 * var(--sf-country-code-row--block-size, var(--sf-ui-1--control-height)));
     overflow-x: hidden;
@@ -1420,16 +1126,7 @@
      value inset of C77 from the list's outer edge -- the name at the size's
      text step after it. The option gives back the list's inset. In the states layer, because the generated per-size
      rules mixed rungs (a size 2 row took size 1 spacing) and must not win. */
-  .sf-country-code.sf-country-code--size-1\/2 .sf-country-code-item {
-    --sf-country-code-item--font-size: var(--sf-text-size-1\/2);
-    --sf-country-code-item--line-height: var(--sf-text-height-1\/2);
-    --sf-country-code-item--gap: var(--sf-ui-1\/2--text-space-x);
-    --sf-country-code-item--padding-top: var(--sf-ui-1\/2--space-y-tightness-default);
-    --sf-country-code-item--padding-bottom: var(--sf-ui-1\/2--space-y-tightness-default);
-    --sf-country-code-item--padding-inline-start: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
-    --sf-country-code-item--padding-inline-end: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-end, 0px));
-  }
-  .sf-country-code.sf-country-code--size-1\/2 .sf-country-code-search {
+  .sf-country-code.sf-country-code--size-1\/2 :is(.sf-country-code-item, .sf-country-code-search) {
     --sf-country-code-item--font-size: var(--sf-text-size-1\/2);
     --sf-country-code-item--line-height: var(--sf-text-height-1\/2);
     --sf-country-code-item--gap: var(--sf-ui-1\/2--text-space-x);
@@ -1443,16 +1140,7 @@
     --sf-country-code-flag--width: calc(var(--sf-country-code--flag-height) * 1.4);
     flex-shrink: 0;
   }
-  .sf-country-code.sf-country-code--size-1 .sf-country-code-item {
-    --sf-country-code-item--font-size: var(--sf-text-size-1);
-    --sf-country-code-item--line-height: var(--sf-text-height-1);
-    --sf-country-code-item--gap: var(--sf-ui-1--text-space-x);
-    --sf-country-code-item--padding-top: var(--sf-ui-1--space-y-tightness-default);
-    --sf-country-code-item--padding-bottom: var(--sf-ui-1--space-y-tightness-default);
-    --sf-country-code-item--padding-inline-start: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
-    --sf-country-code-item--padding-inline-end: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-end, 0px));
-  }
-  .sf-country-code.sf-country-code--size-1 .sf-country-code-search {
+  .sf-country-code.sf-country-code--size-1 :is(.sf-country-code-item, .sf-country-code-search) {
     --sf-country-code-item--font-size: var(--sf-text-size-1);
     --sf-country-code-item--line-height: var(--sf-text-height-1);
     --sf-country-code-item--gap: var(--sf-ui-1--text-space-x);
@@ -1466,16 +1154,7 @@
     --sf-country-code-flag--width: calc(var(--sf-country-code--flag-height) * 1.4);
     flex-shrink: 0;
   }
-  .sf-country-code.sf-country-code--size-2 .sf-country-code-item {
-    --sf-country-code-item--font-size: var(--sf-text-size-2);
-    --sf-country-code-item--line-height: var(--sf-text-height-2);
-    --sf-country-code-item--gap: var(--sf-ui-2--text-space-x);
-    --sf-country-code-item--padding-top: var(--sf-ui-2--space-y-tightness-default);
-    --sf-country-code-item--padding-bottom: var(--sf-ui-2--space-y-tightness-default);
-    --sf-country-code-item--padding-inline-start: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
-    --sf-country-code-item--padding-inline-end: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-end, 0px));
-  }
-  .sf-country-code.sf-country-code--size-2 .sf-country-code-search {
+  .sf-country-code.sf-country-code--size-2 :is(.sf-country-code-item, .sf-country-code-search) {
     --sf-country-code-item--font-size: var(--sf-text-size-2);
     --sf-country-code-item--line-height: var(--sf-text-height-2);
     --sf-country-code-item--gap: var(--sf-ui-2--text-space-x);
@@ -1613,18 +1292,7 @@
   }
 }
 @layer sf.states {
-  .sf-country-code.sf-country-code--size-1\/3 .sf-country-code-item {
-    --sf-country-code-item--font-size: var(--sf-text-size-1\/3);
-    --sf-country-code-item--line-height: var(--sf-text-height-1\/3);
-    --sf-country-code-item--font-family: var(--sf-text--family);
-    --sf-country-code-item--font-weight: var(--sf-font-weight-regular);
-    --sf-country-code-item--gap: var(--sf-ui-1\/3--text-space-x);
-    --sf-country-code-item--padding-top: var(--sf-ui-1\/3--space-y-tightness-default);
-    --sf-country-code-item--padding-bottom: var(--sf-ui-1\/3--space-y-tightness-default);
-    --sf-country-code-item--padding-inline-start: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
-    --sf-country-code-item--padding-inline-end: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-end, 0px));
-  }
-  .sf-country-code.sf-country-code--size-1\/3 .sf-country-code-search {
+  .sf-country-code.sf-country-code--size-1\/3 :is(.sf-country-code-item, .sf-country-code-search) {
     --sf-country-code-item--font-size: var(--sf-text-size-1\/3);
     --sf-country-code-item--line-height: var(--sf-text-height-1\/3);
     --sf-country-code-item--font-family: var(--sf-text--family);
@@ -1640,18 +1308,7 @@
     --sf-country-code-flag--width: calc(var(--sf-country-code--flag-height) * 1.4);
     flex-shrink: 0;
   }
-  .sf-country-code.sf-country-code--size-3 .sf-country-code-item {
-    --sf-country-code-item--font-size: var(--sf-text-size-3);
-    --sf-country-code-item--line-height: var(--sf-text-height-3);
-    --sf-country-code-item--font-family: var(--sf-text--family);
-    --sf-country-code-item--font-weight: var(--sf-font-weight-regular);
-    --sf-country-code-item--gap: var(--sf-ui-3--text-space-x);
-    --sf-country-code-item--padding-top: var(--sf-ui-3--space-y-tightness-default);
-    --sf-country-code-item--padding-bottom: var(--sf-ui-3--space-y-tightness-default);
-    --sf-country-code-item--padding-inline-start: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-start, 0px));
-    --sf-country-code-item--padding-inline-end: calc(var(--sf-country-code--inset) - var(--sf-country-code-list--padding-inline-end, 0px));
-  }
-  .sf-country-code.sf-country-code--size-3 .sf-country-code-search {
+  .sf-country-code.sf-country-code--size-3 :is(.sf-country-code-item, .sf-country-code-search) {
     --sf-country-code-item--font-size: var(--sf-text-size-3);
     --sf-country-code-item--line-height: var(--sf-text-height-3);
     --sf-country-code-item--font-family: var(--sf-text--family);

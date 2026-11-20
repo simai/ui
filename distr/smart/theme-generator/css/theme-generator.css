@@ -134,7 +134,6 @@
     grid-template-columns: repeat(6, minmax(0, 1fr));
     border-width: var(--sf-px);
     border-style: solid;
-    border-radius: var(--sf-radius--ui);
     border-radius: var(--sf-theme-generator-swatch-radius, var(--sf-radius--ui));
     overflow: hidden;
   }
@@ -145,20 +144,16 @@
 }
 @layer sf.paint {
   .sf-theme-generator {
-    color: var(--sf-on-surface);
     color: var(--sf-theme-generator-color, var(--sf-on-surface));
   }
   .sf-theme-generator-label,
   .sf-theme-generator-name {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-theme-generator-label-color, var(--sf-on-surface-variant));
   }
   .sf-theme-generator-check {
-    color: var(--sf-on-surface);
     color: var(--sf-theme-generator-color, var(--sf-on-surface));
   }
   .sf-theme-generator-check > sf-icon {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-theme-generator-label-color, var(--sf-on-surface-variant));
   }
   .sf-theme-generator-check[data-level=warning] > sf-icon {
@@ -168,7 +163,6 @@
     color: var(--sf-on-error-container-graphic);
   }
   .sf-theme-generator-swatches {
-    border-color: var(--sf-outline-variant);
     border-color: var(--sf-theme-generator-swatch-border-color, var(--sf-outline-variant));
   }
   .sf-theme-generator-swatch {

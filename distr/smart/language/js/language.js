@@ -1280,8 +1280,10 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const en = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__.files.en;
 (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.useNames)(_data_names_json__WEBPACK_IMPORTED_MODULE_10__); // The parts it draws, found under their current names and their former ones.
 
-const MENU = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-menu-context')}`;
-const TRIGGER = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-button')}`;
+const MENU = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-menu-context')}`; // The trigger: sf-button «文A RU ▾» (trigger code), or sf-button-icon, the
+// glyph alone (trigger icon, owner decision C369).
+
+const TRIGGER = `:scope > .sf-language-parts > :is(${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-button')}, ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-button-icon')}, button.sf-language-name)`;
 const TRACK = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-segmented')}`;
 const FIELD = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-dropdown')}`; // A phone: below the md breakpoint, where core declares --sf-breakpoint-md
 // (sf-menu-context's own test for its sheet).
@@ -1558,9 +1560,10 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
   get menu() {
     return this.querySelector(MENU);
-  }
+  } // The drawn trigger button (the setting trigger is its form: code or icon).
 
-  get trigger() {
+
+  get triggerButton() {
     return this.querySelector(TRIGGER);
   }
   /**
@@ -1574,7 +1577,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
   toggleMenu() {
     const menu = this.menu;
-    const host = this.trigger;
+    const host = this.triggerButton;
     if (!menu || !host || this.disabled) return;
     const anchor = host.querySelector('button') ?? host;
     const reset = Boolean(this._query);
@@ -1756,7 +1759,13 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
       }) : label,
       // The trigger's name tooltip (C160 (1)): its surface's id, from the
       // element's path (§7.1.1).
-      tipId: look === 'menu' || look === 'search' ? (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__.instancePath)(this, {
+      // trigger icon (C369): the glyph alone, sf-button-icon, which shows
+      // its own name tooltip, so no surface is drawn here.
+      // trigger name (C381): the glyph and the current language's own name
+      // in the link role; the name is shown, so no tooltip either.
+      icon: this.getAttribute('trigger') === 'icon',
+      name: this.getAttribute('trigger') === 'name',
+      tipId: (look === 'menu' || look === 'search') && !['icon', 'name'].includes(this.getAttribute('trigger')) ? (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__.instancePath)(this, {
         kind: 'sf-language'
       }), 'tooltip') : '',
       entries: look === 'menu' || look === 'search' ? this.menuEntries(list, current, look === 'search' ? this._query : '') : [],
@@ -2438,10 +2447,50 @@ function renderCode(context) {
         aria-hidden=${own ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : 'true'}
       >${language.short}</span>`;
   })}</span>`;
+} // trigger icon (owner decision C369, docs header 2026-11-19): the glyph
+// alone, a square icon button of the element's size -- ghost on-surface, as
+// the code trigger -- named «Язык: Русский», which shows that name as the
+// Framework's tooltip by itself (C160 (1)); the menu is the same.
+
+
+function renderIconTrigger(context) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon
+      class=${['sf-language', context.rootClass].filter(Boolean).join(' ')}
+      icon="translate"
+      appearance="ghost"
+      scheme="on-surface"
+      size=${context.size}
+      aria-label=${context.triggerLabel}
+      aria-haspopup="menu"
+      ?disabled=${context.disabled}
+      @click=${() => context.component.toggleMenu()}
+    ></sf-button-icon>`;
+} // trigger name (owner decision C381 with C369, the sign-in screen
+// 2026-11-19): the glyph and the current language's own name («Русский»,
+// «Deutsch») in the link role (component link, C186) in its navigation
+// form: the words in the ink and the size of their place, no fill in any
+// state, the line under the name on hover, press, keyboard focus and while
+// the menu is open, the link's focus ring; the glyph a line high (C107 (5)),
+// 4 from the words. A native button: it opens a menu, it goes nowhere. Its
+// width is the name's; the name is shown, so no tooltip. Its accessible name
+// stays «Язык: Русский», the name in the language's own lang.
+
+
+function renderNameTrigger(context) {
+  const current = context.current;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<button
+      type="button"
+      class=${['sf-link', 'sf-link--navigation', 'sf-language-name', context.rootClass].filter(Boolean).join(' ')}
+      aria-label=${context.triggerLabel}
+      aria-haspopup="menu"
+      aria-expanded="false"
+      ?disabled=${context.disabled}
+      @click=${() => context.component.toggleMenu()}
+    ><sf-icon class="sf-link-icon" icon="translate" aria-hidden="true"></sf-icon><span class="sf-link-content" lang=${current?.code || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${current?.native ?? context.label}</span></button>`;
 }
 
 function renderMenu(context) {
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${context.name ? renderNameTrigger(context) : context.icon ? renderIconTrigger(context) : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button
       class=${['sf-language', context.rootClass].filter(Boolean).join(' ')}
       icon-start="translate"
       icon-end="expand_more"
@@ -2453,7 +2502,7 @@ function renderMenu(context) {
       aria-haspopup="menu"
       ?disabled=${context.disabled}
       @click=${() => context.component.toggleMenu()}
-    >${renderCode(context)}</sf-button>
+    >${renderCode(context)}</sf-button>`}
     <sf-menu-context
       popup
       size=${context.menuSize}
@@ -2590,7 +2639,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "11b7e7a66992"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.6.1","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.7.0","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"trigger":{"type":"enum","values":["code","icon","name"],"default":"code"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
 
 /***/ },
 

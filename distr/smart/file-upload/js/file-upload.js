@@ -1035,6 +1035,15 @@ function showFileUploadRejections(root, rejected = []) {
     list.append(line);
   });
   message.append(head, list);
+} // The folder a file was read from, when a folder was dropped: the first part
+// of the path files-drop gives it (sfPath), or of the path a folder pick gives
+// (webkitRelativePath); '' for a file given on its own.
+
+
+function folderOf(file) {
+  const path = String(file?.sfPath || file?.webkitRelativePath || '');
+  const at = path.indexOf('/');
+  return at > 0 ? path.slice(0, at) : '';
 } // What a choice or a drop leaves out, and why: a type the accept list does
 // not name (on a pick too: the dialog's «All files» skipped the filter), a
 // second file on a single area, a file already listed. The drop took the
@@ -1045,7 +1054,43 @@ function showFileUploadRejections(root, rejected = []) {
 
 function takeFiles(root, files = [], source = 'input') {
   const accept = getAccept(root);
-  const multiple = getMultiple(root);
+  const multiple = getMultiple(root); // A folder dropped on a single area (core/js/files-drop.js reads its
+  // entries, FO1-5) is refused whole, however many files it holds (GB13 note
+  // 3, FO-R1 follow-up): the area takes one file, a folder is not one, and
+  // its first file is only the order the browser read the folder in. The file
+  // the area holds stays; one line under the area names the folder, and
+  // reject lists every file of it with reason count. Several loose files keep
+  // FU-6: the first is taken and each other one is named.
+
+  const given = Array.from(files);
+  const folder = multiple ? '' : given.map(folderOf).find(Boolean) || '';
+
+  if (folder) {
+    const message = fileUploadWord(root, 'reject-folder', {
+      vars: {
+        name: folder
+      }
+    });
+    const refused = given.map(file => ({
+      file,
+      name: String(file?.name || ''),
+      reason: 'count',
+      message
+    }));
+    showFileUploadRejections(root, refused.slice(0, 1));
+    root.__sfFileUploadRejected = refused;
+    root.dispatchEvent(new CustomEvent('sf-file-upload:reject', {
+      bubbles: true,
+      detail: {
+        files: given,
+        rejected: refused,
+        accept,
+        source
+      }
+    }));
+    return [];
+  }
+
   const kept = multiple ? Array.from(root.__sfFileUploadItems || []) : [];
   const listed = new Set(kept.map((item, index) => getItemEventKey(item, index)));
   const maxSize = getLimit(root, 'max-size');
@@ -4827,7 +4872,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "d4b3cd9346d9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Remove","uploading":"Uploading","uploading-name":"Uploading {name}","retry":"Try again","remove-name":"Remove {name}","retry-name":"Try {name} again","linkText":"Click to upload","text":"or drag and drop","not-added":"Not added: {n}","reject-type":"“{name}” is not accepted: allowed {formats}","reject-one":"“{name}” was not added: this field takes one file","reject-duplicate":"“{name}” is already in the list","reject-empty":"“{name}” is empty","reject-size":"“{name}” is {size}; the limit is {max}","reject-min-size":"“{name}” is {size}; it must be at least {min}","reject-count":{"one":"“{name}” was not added: up to {n} file","other":"“{name}” was not added: up to {n} files"},"reject-total":"“{name}” was not added: all files together up to {max}","formats-image":"images","formats-video":"video","formats-audio":"audio","done":"Uploaded","done-line":"{size} · uploaded","error":"Not uploaded","error-line":"Not uploaded: {message}","said-added":"“{name}” added","said-added-many":{"one":"{n} file added","other":"{n} files added"},"said-done":"“{name}” uploaded","said-error":"“{name}” was not uploaded","said-error-line":"“{name}” was not uploaded: {message}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"remove":"Remove","uploading":"Uploading","uploading-name":"Uploading {name}","retry":"Try again","remove-name":"Remove {name}","retry-name":"Try {name} again","linkText":"Click to upload","text":"or drag and drop","not-added":"Not added: {n}","reject-type":"“{name}” is not accepted: allowed {formats}","reject-one":"“{name}” was not added: this field takes one file","reject-folder":"Folder “{name}” was not added: this field takes one file","reject-duplicate":"“{name}” is already in the list","reject-empty":"“{name}” is empty","reject-size":"“{name}” is {size}; the limit is {max}","reject-min-size":"“{name}” is {size}; it must be at least {min}","reject-count":{"one":"“{name}” was not added: up to {n} file","other":"“{name}” was not added: up to {n} files"},"reject-total":"“{name}” was not added: all files together up to {max}","formats-image":"images","formats-video":"video","formats-audio":"audio","done":"Uploaded","done-line":"{size} · uploaded","error":"Not uploaded","error-line":"Not uploaded: {message}","said-added":"“{name}” added","said-added-many":{"one":"{n} file added","other":"{n} files added"},"said-done":"“{name}” uploaded","said-error":"“{name}” was not uploaded","said-error-line":"“{name}” was not uploaded: {message}"}}');
 
 /***/ },
 
@@ -4848,14 +4893,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "35944d444d78"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-upload","tag":"sf-file-upload","version":"1.6.3","kind":"leaf","settings":{"name":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default":""},"help":{"type":"string","default":""},"icon":{"type":"icon","default":"upload_file"},"link-text":{"type":"string","default-from":"runtime.link-text"},"text":{"type":"string","default-from":"runtime.text"},"formats":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"accept":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-size":{"type":"number","default":0},"min-size":{"type":"number","default":0},"max-files":{"type":"number","default":0},"max-total-size":{"type":"number","default":0},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"id":"id","name":"string","file-size":{"type":"string","optional":true},"progress":{"type":"number","optional":true},"state":{"type":"enum","values":["ready","process","done","error"]},"error-message":{"type":"string","optional":true},"retry-text":{"type":"string","optional":true},"image-url":{"type":"string","optional":true},"stored":{"type":"boolean","optional":true},"file":{"type":"object","optional":true}}},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"list","default":[]}},"events":{"change":{"carries":{"files":"list","source":{"type":"enum","values":["input","drop"]}}},"attach":{"carries":{"files":{"type":"list","schema":{"items":{"type":"object"}}},"source":{"type":"enum","values":["input","drop"]},"multiple":"boolean"}},"attached":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"source":"string","multiple":"boolean"}},"detach":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"action":{"type":"enum","values":["remove","delete"]}}},"rejected":{"carries":{"files":"list","rejected":{"type":"list"},"accept":"string","source":"string"}},"retry":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"begun":{"carries":{"id":"id","item":"object"}},"chunk":{"carries":{"id":"id","done":"number","total":"number","item":"object"}},"completed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"failed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id","item":"object"}},"finished":{"carries":{"items":{"type":"list","schema":{"items":{"type":"object"}}}}}},"actions":{"remove-item":{"with":{"index":"number"}},"clear":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-file-upload-background-color":{"type":"color","state":"rest"},"--sf-file-upload-border-color":{"type":"color","state":"rest"},"--sf-file-upload-radius":{"type":"length"},"--sf-file-upload-link-color":{"type":"color","state":"rest"},"--sf-file-upload-text-color":{"type":"color","state":"rest"},"--sf-file-upload-dragged-over-background-color":{"type":"color","state":"dragged-over"},"--sf-file-upload-dragged-over-border-color":{"type":"color","state":"dragged-over"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-upload","tag":"sf-file-upload","version":"1.6.4","kind":"leaf","settings":{"name":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default":""},"help":{"type":"string","default":""},"icon":{"type":"icon","default":"upload_file"},"link-text":{"type":"string","default-from":"runtime.link-text"},"text":{"type":"string","default-from":"runtime.text"},"formats":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"accept":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"max-size":{"type":"number","default":0},"min-size":{"type":"number","default":0},"max-files":{"type":"number","default":0},"max-total-size":{"type":"number","default":0},"disabled":{"type":"boolean","default":false},"required":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"id":"id","name":"string","file-size":{"type":"string","optional":true},"progress":{"type":"number","optional":true},"state":{"type":"enum","values":["ready","process","done","error"]},"error-message":{"type":"string","optional":true},"retry-text":{"type":"string","optional":true},"image-url":{"type":"string","optional":true},"stored":{"type":"boolean","optional":true},"file":{"type":"object","optional":true}}},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"list","default":[]}},"events":{"change":{"carries":{"files":"list","source":{"type":"enum","values":["input","drop"]}}},"attach":{"carries":{"files":{"type":"list","schema":{"items":{"type":"object"}}},"source":{"type":"enum","values":["input","drop"]},"multiple":"boolean"}},"attached":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"source":"string","multiple":"boolean"}},"detach":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"action":{"type":"enum","values":["remove","delete"]}}},"rejected":{"carries":{"files":"list","rejected":{"type":"list"},"accept":"string","source":"string"}},"retry":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"begun":{"carries":{"id":"id","item":"object"}},"chunk":{"carries":{"id":"id","done":"number","total":"number","item":"object"}},"completed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}}}},"failed":{"carries":{"id":"id","item":{"type":"object"},"index":"number","items":{"type":"list","schema":{"items":{"type":"object"}}},"reason":"string","message":"string"}},"cancelled":{"carries":{"id":"id","item":"object"}},"finished":{"carries":{"items":{"type":"list","schema":{"items":{"type":"object"}}}}}},"actions":{"remove-item":{"with":{"index":"number"}},"clear":{}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-file-upload-background-color":{"type":"color","state":"rest"},"--sf-file-upload-border-color":{"type":"color","state":"rest"},"--sf-file-upload-radius":{"type":"length"},"--sf-file-upload-link-color":{"type":"color","state":"rest"},"--sf-file-upload-text-color":{"type":"color","state":"rest"},"--sf-file-upload-dragged-over-background-color":{"type":"color","state":"dragged-over"},"--sf-file-upload-dragged-over-border-color":{"type":"color","state":"dragged-over"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
 
 /***/ },
 
 /***/ "8623c4e59417"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"File Upload","runtime":{"done":"Uploaded","done-line":"{size} · uploaded","error":"Not uploaded","error-line":"Not uploaded: {message}","formats-audio":"audio","formats-image":"images","formats-video":"video","link-text":"Click to upload","not-added":"Not added: {n}","reject-count":{"one":"“{name}” was not added: up to {n} file","other":"“{name}” was not added: up to {n} files"},"reject-duplicate":"“{name}” is already in the list","reject-empty":"“{name}” is empty","reject-min-size":"“{name}” is {size}; it must be at least {min}","reject-one":"“{name}” was not added: this field takes one file","reject-size":"“{name}” is {size}; the limit is {max}","reject-total":"“{name}” was not added: all files together up to {max}","reject-type":"“{name}” is not accepted: allowed {formats}","remove":"Remove","remove-failed":"Remove or retry the files that failed","retry":"Try again","text":"or drag and drop","uploading":"Uploading","value-missing":"Add a file","value-missing-many":"Add at least one file","wait-for-uploads":"Wait until the files are uploaded","file-removed":"File removed","undo":"Undo","help":"More about: {label}","said-added":"“{name}” added","said-added-many":{"one":"{n} file added","other":"{n} files added"},"said-done":"“{name}” uploaded","said-error":"“{name}” was not uploaded","said-error-line":"“{name}” was not uploaded: {message}"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"File Upload","runtime":{"done":"Uploaded","done-line":"{size} · uploaded","error":"Not uploaded","error-line":"Not uploaded: {message}","formats-audio":"audio","formats-image":"images","formats-video":"video","link-text":"Click to upload","not-added":"Not added: {n}","reject-count":{"one":"“{name}” was not added: up to {n} file","other":"“{name}” was not added: up to {n} files"},"reject-duplicate":"“{name}” is already in the list","reject-empty":"“{name}” is empty","reject-min-size":"“{name}” is {size}; it must be at least {min}","reject-one":"“{name}” was not added: this field takes one file","reject-folder":"Folder “{name}” was not added: this field takes one file","reject-size":"“{name}” is {size}; the limit is {max}","reject-total":"“{name}” was not added: all files together up to {max}","reject-type":"“{name}” is not accepted: allowed {formats}","remove":"Remove","remove-failed":"Remove or retry the files that failed","retry":"Try again","text":"or drag and drop","uploading":"Uploading","value-missing":"Add a file","value-missing-many":"Add at least one file","wait-for-uploads":"Wait until the files are uploaded","file-removed":"File removed","undo":"Undo","help":"More about: {label}","said-added":"“{name}” added","said-added-many":{"one":"{n} file added","other":"{n} files added"},"said-done":"“{name}” uploaded","said-error":"“{name}” was not uploaded","said-error-line":"“{name}” was not uploaded: {message}"}}');
 
 /***/ }
 

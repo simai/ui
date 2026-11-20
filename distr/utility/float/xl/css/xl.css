@@ -1,9 +1,6 @@
 @layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
 @layer sf.utilities {
   @media (min-width: 72rem) {
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:float-inline-end {
-      float: right;
-    }
     @supports not (float: inline-end) {
     html:not([dir="rtl"]) .xl\:float-inline-end {
       float: right;
@@ -11,9 +8,6 @@
     }
     .xl\:float-inline-end:where(:dir(ltr)) {
       float: right;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:float-inline-end {
-      float: left;
     }
     @supports not (float: inline-end) {
     [dir="rtl"] .xl\:float-inline-end {
@@ -26,9 +20,6 @@
     .xl\:float-inline-end {
       float: inline-end;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .xl\:float-inline-start {
-      float: left;
-    }
     @supports not (float: inline-start) {
     html:not([dir="rtl"]) .xl\:float-inline-start {
       float: left;
@@ -36,9 +27,6 @@
     }
     .xl\:float-inline-start:where(:dir(ltr)) {
       float: left;
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .xl\:float-inline-start {
-      float: right;
     }
     @supports not (float: inline-start) {
     [dir="rtl"] .xl\:float-inline-start {

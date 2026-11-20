@@ -642,7 +642,10 @@ function positionDropdownPortal(root, list) {
       // or the field, whichever is wider, and never stands narrower than the
       // field. A trigger of the consumer's own is not a field: an icon button
       // would make the list the width of a glyph.
-      matchWidth: field.classList.contains('sf-dropdown-field') ? 'min' : false,
+      // list-width="trigger" (FF-10): exactly the trigger's width, whichever
+      // trigger it is -- the field, or a band or a button handed in that is
+      // as wide as the place it stands in (the filter window's condition).
+      matchWidth: list.dataset.sfListWidth === 'trigger' ? true : field.classList.contains('sf-dropdown-field') ? 'min' : false,
       fitHeight: true,
       autoUpdate: false,
       onPosition: ({
@@ -1498,7 +1501,9 @@ function parseOptionNode(node, dropdownSize = '1') {
     ariaLabel: node.getAttribute('aria-label') || '',
     // Where this option comes from. Options carrying the same group, one after
     // another, are drawn under one heading.
-    group: node.getAttribute('group') || ''
+    group: node.getAttribute('group') || '',
+    // A status dot before the name (owner decision C314 (4)).
+    dot: node.getAttribute('dot') || ''
   };
 } // An option may also arrive as data rather than as a child element. The shape is
 // the one parseOptionNode produces, so both paths answer the same questions and
@@ -1544,7 +1549,8 @@ function parseOptionData(option, dropdownSize = '1') {
     avatarTitle: option.avatarTitle ? String(option.avatarTitle) : text,
     value,
     ariaLabel: option.ariaLabel ? String(option.ariaLabel) : '',
-    group: option.group ? String(option.group) : ''
+    group: option.group ? String(option.group) : '',
+    dot: option.dot ? String(option.dot) : ''
   };
 }
 
@@ -1633,10 +1639,13 @@ class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.Fo
       // `type` keeps working: see contracts/public-api-axes.json. The field
       // look is named bordered, as every field's (FM-9, 2026-11-16); outlined
       // is its dated alias until 2027-01-01 (aliases.json, change journal
-      // value-dropdown-appearance-outlined-to-bordered).
+      // value-dropdown-appearance-outlined-to-bordered). band (owner decision
+      // C313, FF-11): the field as a grey band across its place, with no
+      // frame and no radius, the height of a panel's search header, its text
+      // and chevron where the open list's rows put theirs.
       appearance: {
         default: 'bordered',
-        values: ['filled', 'bordered'],
+        values: ['filled', 'bordered', 'band'],
         aliases: ['type'],
         valueAliases: {
           bordered: ['outlined']
@@ -1686,11 +1695,14 @@ class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.Fo
       },
       // How wide the open list is (FF-2): at least the field and up to the
       // list's step by its options (field, C32), or the list's step whatever
-      // the field (list) -- a narrow filter button opened a list as narrow.
+      // the field (list) -- a narrow filter button opened a list as narrow;
+      // or exactly the trigger (trigger, FF-10): a trigger as wide as its
+      // place -- the filter window's condition band -- opens its menu at its
+      // own width, edges flush with it.
       listWidth: {
         attribute: 'list-width',
         default: 'field',
-        values: ['field', 'list']
+        values: ['field', 'list', 'trigger']
       },
       columns: {
         default: '6'
@@ -2099,7 +2111,7 @@ class SfDropdown extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.Fo
       selectedValues: this.selectedValues,
       selectedOptions: this.selectedOptions,
       options: this.visibleOptions,
-      listWidth: this.listWidth === 'list' ? 'list' : 'field',
+      listWidth: ['list', 'trigger'].includes(this.listWidth) ? this.listWidth : 'field',
       nothingFound: String(this._searchValue || '').trim() && !this.visibleOptions.length ? this.sfWord('nothing-found') : '',
       inheritedValue: this.inheritedValue,
       inheritedLabel: this.hasInheritedValue ? this.inheritedDisplayValue() : ''
@@ -2455,8 +2467,22 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // the option's name is a tonal badge in that colour in its row, as in a cell,
 // a view, a checklist and segmented buttons; the badge's text is the row's
 // name.
+//
+// An option's dot (owner decision C314 (4)): `dot` names a status colour --
+// primary, tertiary, info, success, warning, error or neutral (the grey) --
+// and the row draws sf-dot's 8 px disc before the name, at the dot's gap
+// (the filter window's conditions: excluding red, presence purple, the rest
+// grey). The name stays the row's text.
+
+const OPTION_DOTS = new Set(["primary", "tertiary", "info", "success", "warning", "error", "neutral"]);
 
 function optionName(option) {
+  if (option.dot && OPTION_DOTS.has(String(option.dot)) && typeof option.text === "string") {
+    return { ...option,
+      text: (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-dot sf-dot--size-1 sf-dot--${String(option.dot)} sf-dropdown-option-dot"><span class="sf-dot-item" aria-hidden="true"></span>${option.text}</span>`
+    };
+  }
+
   if (!option.color || typeof option.text !== "string") return option;
   const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_4__.optionBadgeProps)({
     color: option.color
@@ -2772,7 +2798,7 @@ function renderDropdownTemplate(context) {
       <div
         class=${`sf-list sf-list--size-${context.size} flex flex-col${context.component?.hasSlotContent?.('trigger') ? " sf-list--free-width" : ""}`}
         style=${`--sf-list--cell: ${CELL[context.size] || CELL["1"]}`}
-        data-sf-list-width=${context.listWidth === "list" ? "list" : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        data-sf-list-width=${context.listWidth === "list" || context.listWidth === "trigger" ? context.listWidth : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ?hidden=${!context.open}
       >
         ${context.search // The search is the panel's header (owner C06, docs review R029):
@@ -4569,7 +4595,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-dropd
 /***/ "b4d28078de6f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.22.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","bordered"],"default":"bordered"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"list-width":{"type":"enum","values":["field","list"],"default":"field"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.23.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","bordered","band"],"default":"bordered"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"list-width":{"type":"enum","values":["field","list","trigger"],"default":"field"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"},"--sf-dropdown-band-edge":{"type":"length","state":"default"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
 
 /***/ },
 

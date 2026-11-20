@@ -6,24 +6,8 @@
   .p-top-a0 {
     padding-top: var(--sf-a0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-a0 {
-    padding-right: var(--sf-a0);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-a0 {
-    padding-right: var(--sf-a0);
-    }
-  }
   .p-inline-end-a0:where(:dir(ltr)) {
     padding-right: var(--sf-a0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-a0 {
-    padding-left: var(--sf-a0);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-a0 {
-    padding-left: var(--sf-a0);
-    }
   }
   .p-inline-end-a0:where(:dir(rtl)) {
     padding-left: var(--sf-a0);
@@ -35,24 +19,8 @@
   .p-bottom-a0 {
     padding-bottom: var(--sf-a0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-a0 {
-    padding-left: var(--sf-a0);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-a0 {
-    padding-left: var(--sf-a0);
-    }
-  }
   .p-inline-start-a0:where(:dir(ltr)) {
     padding-left: var(--sf-a0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-a0 {
-    padding-right: var(--sf-a0);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-a0 {
-    padding-right: var(--sf-a0);
-    }
   }
   .p-inline-start-a0:where(:dir(rtl)) {
     padding-right: var(--sf-a0);
@@ -67,24 +35,8 @@
   .p-top-a1 {
     padding-top: var(--sf-a1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-a1 {
-    padding-right: var(--sf-a1);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-a1 {
-    padding-right: var(--sf-a1);
-    }
-  }
   .p-inline-end-a1:where(:dir(ltr)) {
     padding-right: var(--sf-a1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-a1 {
-    padding-left: var(--sf-a1);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-a1 {
-    padding-left: var(--sf-a1);
-    }
   }
   .p-inline-end-a1:where(:dir(rtl)) {
     padding-left: var(--sf-a1);
@@ -96,24 +48,8 @@
   .p-bottom-a1 {
     padding-bottom: var(--sf-a1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-a1 {
-    padding-left: var(--sf-a1);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-a1 {
-    padding-left: var(--sf-a1);
-    }
-  }
   .p-inline-start-a1:where(:dir(ltr)) {
     padding-left: var(--sf-a1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-a1 {
-    padding-right: var(--sf-a1);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-a1 {
-    padding-right: var(--sf-a1);
-    }
   }
   .p-inline-start-a1:where(:dir(rtl)) {
     padding-right: var(--sf-a1);
@@ -128,24 +64,8 @@
   .p-top-a2 {
     padding-top: var(--sf-a2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-a2 {
-    padding-right: var(--sf-a2);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-a2 {
-    padding-right: var(--sf-a2);
-    }
-  }
   .p-inline-end-a2:where(:dir(ltr)) {
     padding-right: var(--sf-a2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-a2 {
-    padding-left: var(--sf-a2);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-a2 {
-    padding-left: var(--sf-a2);
-    }
   }
   .p-inline-end-a2:where(:dir(rtl)) {
     padding-left: var(--sf-a2);
@@ -157,24 +77,8 @@
   .p-bottom-a2 {
     padding-bottom: var(--sf-a2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-a2 {
-    padding-left: var(--sf-a2);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-a2 {
-    padding-left: var(--sf-a2);
-    }
-  }
   .p-inline-start-a2:where(:dir(ltr)) {
     padding-left: var(--sf-a2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-a2 {
-    padding-right: var(--sf-a2);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-a2 {
-    padding-right: var(--sf-a2);
-    }
   }
   .p-inline-start-a2:where(:dir(rtl)) {
     padding-right: var(--sf-a2);
@@ -189,24 +93,8 @@
   .p-top-a3 {
     padding-top: var(--sf-a3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-a3 {
-    padding-right: var(--sf-a3);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-a3 {
-    padding-right: var(--sf-a3);
-    }
-  }
   .p-inline-end-a3:where(:dir(ltr)) {
     padding-right: var(--sf-a3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-a3 {
-    padding-left: var(--sf-a3);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-a3 {
-    padding-left: var(--sf-a3);
-    }
   }
   .p-inline-end-a3:where(:dir(rtl)) {
     padding-left: var(--sf-a3);
@@ -218,24 +106,8 @@
   .p-bottom-a3 {
     padding-bottom: var(--sf-a3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-a3 {
-    padding-left: var(--sf-a3);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-a3 {
-    padding-left: var(--sf-a3);
-    }
-  }
   .p-inline-start-a3:where(:dir(ltr)) {
     padding-left: var(--sf-a3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-a3 {
-    padding-right: var(--sf-a3);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-a3 {
-    padding-right: var(--sf-a3);
-    }
   }
   .p-inline-start-a3:where(:dir(rtl)) {
     padding-right: var(--sf-a3);
@@ -250,24 +122,8 @@
   .p-top-a4 {
     padding-top: var(--sf-a4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-a4 {
-    padding-right: var(--sf-a4);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-a4 {
-    padding-right: var(--sf-a4);
-    }
-  }
   .p-inline-end-a4:where(:dir(ltr)) {
     padding-right: var(--sf-a4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-a4 {
-    padding-left: var(--sf-a4);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-a4 {
-    padding-left: var(--sf-a4);
-    }
   }
   .p-inline-end-a4:where(:dir(rtl)) {
     padding-left: var(--sf-a4);
@@ -279,24 +135,8 @@
   .p-bottom-a4 {
     padding-bottom: var(--sf-a4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-a4 {
-    padding-left: var(--sf-a4);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-a4 {
-    padding-left: var(--sf-a4);
-    }
-  }
   .p-inline-start-a4:where(:dir(ltr)) {
     padding-left: var(--sf-a4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-a4 {
-    padding-right: var(--sf-a4);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-a4 {
-    padding-right: var(--sf-a4);
-    }
   }
   .p-inline-start-a4:where(:dir(rtl)) {
     padding-right: var(--sf-a4);
@@ -311,24 +151,8 @@
   .p-top-a5 {
     padding-top: var(--sf-a5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-a5 {
-    padding-right: var(--sf-a5);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-a5 {
-    padding-right: var(--sf-a5);
-    }
-  }
   .p-inline-end-a5:where(:dir(ltr)) {
     padding-right: var(--sf-a5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-a5 {
-    padding-left: var(--sf-a5);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-a5 {
-    padding-left: var(--sf-a5);
-    }
   }
   .p-inline-end-a5:where(:dir(rtl)) {
     padding-left: var(--sf-a5);
@@ -340,24 +164,8 @@
   .p-bottom-a5 {
     padding-bottom: var(--sf-a5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-a5 {
-    padding-left: var(--sf-a5);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-a5 {
-    padding-left: var(--sf-a5);
-    }
-  }
   .p-inline-start-a5:where(:dir(ltr)) {
     padding-left: var(--sf-a5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-a5 {
-    padding-right: var(--sf-a5);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-a5 {
-    padding-right: var(--sf-a5);
-    }
   }
   .p-inline-start-a5:where(:dir(rtl)) {
     padding-right: var(--sf-a5);
@@ -372,24 +180,8 @@
   .p-top-a6 {
     padding-top: var(--sf-a6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-a6 {
-    padding-right: var(--sf-a6);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-a6 {
-    padding-right: var(--sf-a6);
-    }
-  }
   .p-inline-end-a6:where(:dir(ltr)) {
     padding-right: var(--sf-a6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-a6 {
-    padding-left: var(--sf-a6);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-a6 {
-    padding-left: var(--sf-a6);
-    }
   }
   .p-inline-end-a6:where(:dir(rtl)) {
     padding-left: var(--sf-a6);
@@ -401,24 +193,8 @@
   .p-bottom-a6 {
     padding-bottom: var(--sf-a6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-a6 {
-    padding-left: var(--sf-a6);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-a6 {
-    padding-left: var(--sf-a6);
-    }
-  }
   .p-inline-start-a6:where(:dir(ltr)) {
     padding-left: var(--sf-a6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-a6 {
-    padding-right: var(--sf-a6);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-a6 {
-    padding-right: var(--sf-a6);
-    }
   }
   .p-inline-start-a6:where(:dir(rtl)) {
     padding-right: var(--sf-a6);
@@ -433,24 +209,8 @@
   .p-top-a7 {
     padding-top: var(--sf-a7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-a7 {
-    padding-right: var(--sf-a7);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-a7 {
-    padding-right: var(--sf-a7);
-    }
-  }
   .p-inline-end-a7:where(:dir(ltr)) {
     padding-right: var(--sf-a7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-a7 {
-    padding-left: var(--sf-a7);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-a7 {
-    padding-left: var(--sf-a7);
-    }
   }
   .p-inline-end-a7:where(:dir(rtl)) {
     padding-left: var(--sf-a7);
@@ -462,24 +222,8 @@
   .p-bottom-a7 {
     padding-bottom: var(--sf-a7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-a7 {
-    padding-left: var(--sf-a7);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-a7 {
-    padding-left: var(--sf-a7);
-    }
-  }
   .p-inline-start-a7:where(:dir(ltr)) {
     padding-left: var(--sf-a7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-a7 {
-    padding-right: var(--sf-a7);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-a7 {
-    padding-right: var(--sf-a7);
-    }
   }
   .p-inline-start-a7:where(:dir(rtl)) {
     padding-right: var(--sf-a7);
@@ -494,24 +238,8 @@
   .p-top-a8 {
     padding-top: var(--sf-a8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-a8 {
-    padding-right: var(--sf-a8);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-a8 {
-    padding-right: var(--sf-a8);
-    }
-  }
   .p-inline-end-a8:where(:dir(ltr)) {
     padding-right: var(--sf-a8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-a8 {
-    padding-left: var(--sf-a8);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-a8 {
-    padding-left: var(--sf-a8);
-    }
   }
   .p-inline-end-a8:where(:dir(rtl)) {
     padding-left: var(--sf-a8);
@@ -523,24 +251,8 @@
   .p-bottom-a8 {
     padding-bottom: var(--sf-a8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-a8 {
-    padding-left: var(--sf-a8);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-a8 {
-    padding-left: var(--sf-a8);
-    }
-  }
   .p-inline-start-a8:where(:dir(ltr)) {
     padding-left: var(--sf-a8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-a8 {
-    padding-right: var(--sf-a8);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-a8 {
-    padding-right: var(--sf-a8);
-    }
   }
   .p-inline-start-a8:where(:dir(rtl)) {
     padding-right: var(--sf-a8);
@@ -555,24 +267,8 @@
   .p-top-a9 {
     padding-top: var(--sf-a9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-a9 {
-    padding-right: var(--sf-a9);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-a9 {
-    padding-right: var(--sf-a9);
-    }
-  }
   .p-inline-end-a9:where(:dir(ltr)) {
     padding-right: var(--sf-a9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-a9 {
-    padding-left: var(--sf-a9);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-a9 {
-    padding-left: var(--sf-a9);
-    }
   }
   .p-inline-end-a9:where(:dir(rtl)) {
     padding-left: var(--sf-a9);
@@ -584,24 +280,8 @@
   .p-bottom-a9 {
     padding-bottom: var(--sf-a9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-a9 {
-    padding-left: var(--sf-a9);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-a9 {
-    padding-left: var(--sf-a9);
-    }
-  }
   .p-inline-start-a9:where(:dir(ltr)) {
     padding-left: var(--sf-a9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-a9 {
-    padding-right: var(--sf-a9);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-a9 {
-    padding-right: var(--sf-a9);
-    }
   }
   .p-inline-start-a9:where(:dir(rtl)) {
     padding-right: var(--sf-a9);
@@ -616,24 +296,8 @@
   .p-top-b0 {
     padding-top: var(--sf-b0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-b0 {
-    padding-right: var(--sf-b0);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-b0 {
-    padding-right: var(--sf-b0);
-    }
-  }
   .p-inline-end-b0:where(:dir(ltr)) {
     padding-right: var(--sf-b0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-b0 {
-    padding-left: var(--sf-b0);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-b0 {
-    padding-left: var(--sf-b0);
-    }
   }
   .p-inline-end-b0:where(:dir(rtl)) {
     padding-left: var(--sf-b0);
@@ -645,24 +309,8 @@
   .p-bottom-b0 {
     padding-bottom: var(--sf-b0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-b0 {
-    padding-left: var(--sf-b0);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-b0 {
-    padding-left: var(--sf-b0);
-    }
-  }
   .p-inline-start-b0:where(:dir(ltr)) {
     padding-left: var(--sf-b0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-b0 {
-    padding-right: var(--sf-b0);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-b0 {
-    padding-right: var(--sf-b0);
-    }
   }
   .p-inline-start-b0:where(:dir(rtl)) {
     padding-right: var(--sf-b0);
@@ -677,24 +325,8 @@
   .p-top-b1 {
     padding-top: var(--sf-b1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-b1 {
-    padding-right: var(--sf-b1);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-b1 {
-    padding-right: var(--sf-b1);
-    }
-  }
   .p-inline-end-b1:where(:dir(ltr)) {
     padding-right: var(--sf-b1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-b1 {
-    padding-left: var(--sf-b1);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-b1 {
-    padding-left: var(--sf-b1);
-    }
   }
   .p-inline-end-b1:where(:dir(rtl)) {
     padding-left: var(--sf-b1);
@@ -706,24 +338,8 @@
   .p-bottom-b1 {
     padding-bottom: var(--sf-b1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-b1 {
-    padding-left: var(--sf-b1);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-b1 {
-    padding-left: var(--sf-b1);
-    }
-  }
   .p-inline-start-b1:where(:dir(ltr)) {
     padding-left: var(--sf-b1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-b1 {
-    padding-right: var(--sf-b1);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-b1 {
-    padding-right: var(--sf-b1);
-    }
   }
   .p-inline-start-b1:where(:dir(rtl)) {
     padding-right: var(--sf-b1);
@@ -738,24 +354,8 @@
   .p-top-b2 {
     padding-top: var(--sf-b2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-b2 {
-    padding-right: var(--sf-b2);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-b2 {
-    padding-right: var(--sf-b2);
-    }
-  }
   .p-inline-end-b2:where(:dir(ltr)) {
     padding-right: var(--sf-b2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-b2 {
-    padding-left: var(--sf-b2);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-b2 {
-    padding-left: var(--sf-b2);
-    }
   }
   .p-inline-end-b2:where(:dir(rtl)) {
     padding-left: var(--sf-b2);
@@ -767,24 +367,8 @@
   .p-bottom-b2 {
     padding-bottom: var(--sf-b2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-b2 {
-    padding-left: var(--sf-b2);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-b2 {
-    padding-left: var(--sf-b2);
-    }
-  }
   .p-inline-start-b2:where(:dir(ltr)) {
     padding-left: var(--sf-b2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-b2 {
-    padding-right: var(--sf-b2);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-b2 {
-    padding-right: var(--sf-b2);
-    }
   }
   .p-inline-start-b2:where(:dir(rtl)) {
     padding-right: var(--sf-b2);
@@ -799,24 +383,8 @@
   .p-top-b3 {
     padding-top: var(--sf-b3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-b3 {
-    padding-right: var(--sf-b3);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-b3 {
-    padding-right: var(--sf-b3);
-    }
-  }
   .p-inline-end-b3:where(:dir(ltr)) {
     padding-right: var(--sf-b3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-b3 {
-    padding-left: var(--sf-b3);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-b3 {
-    padding-left: var(--sf-b3);
-    }
   }
   .p-inline-end-b3:where(:dir(rtl)) {
     padding-left: var(--sf-b3);
@@ -828,24 +396,8 @@
   .p-bottom-b3 {
     padding-bottom: var(--sf-b3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-b3 {
-    padding-left: var(--sf-b3);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-b3 {
-    padding-left: var(--sf-b3);
-    }
-  }
   .p-inline-start-b3:where(:dir(ltr)) {
     padding-left: var(--sf-b3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-b3 {
-    padding-right: var(--sf-b3);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-b3 {
-    padding-right: var(--sf-b3);
-    }
   }
   .p-inline-start-b3:where(:dir(rtl)) {
     padding-right: var(--sf-b3);
@@ -860,24 +412,8 @@
   .p-top-b4 {
     padding-top: var(--sf-b4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-b4 {
-    padding-right: var(--sf-b4);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-b4 {
-    padding-right: var(--sf-b4);
-    }
-  }
   .p-inline-end-b4:where(:dir(ltr)) {
     padding-right: var(--sf-b4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-b4 {
-    padding-left: var(--sf-b4);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-b4 {
-    padding-left: var(--sf-b4);
-    }
   }
   .p-inline-end-b4:where(:dir(rtl)) {
     padding-left: var(--sf-b4);
@@ -889,24 +425,8 @@
   .p-bottom-b4 {
     padding-bottom: var(--sf-b4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-b4 {
-    padding-left: var(--sf-b4);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-b4 {
-    padding-left: var(--sf-b4);
-    }
-  }
   .p-inline-start-b4:where(:dir(ltr)) {
     padding-left: var(--sf-b4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-b4 {
-    padding-right: var(--sf-b4);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-b4 {
-    padding-right: var(--sf-b4);
-    }
   }
   .p-inline-start-b4:where(:dir(rtl)) {
     padding-right: var(--sf-b4);
@@ -921,24 +441,8 @@
   .p-top-b5 {
     padding-top: var(--sf-b5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-b5 {
-    padding-right: var(--sf-b5);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-b5 {
-    padding-right: var(--sf-b5);
-    }
-  }
   .p-inline-end-b5:where(:dir(ltr)) {
     padding-right: var(--sf-b5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-b5 {
-    padding-left: var(--sf-b5);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-b5 {
-    padding-left: var(--sf-b5);
-    }
   }
   .p-inline-end-b5:where(:dir(rtl)) {
     padding-left: var(--sf-b5);
@@ -950,24 +454,8 @@
   .p-bottom-b5 {
     padding-bottom: var(--sf-b5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-b5 {
-    padding-left: var(--sf-b5);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-b5 {
-    padding-left: var(--sf-b5);
-    }
-  }
   .p-inline-start-b5:where(:dir(ltr)) {
     padding-left: var(--sf-b5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-b5 {
-    padding-right: var(--sf-b5);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-b5 {
-    padding-right: var(--sf-b5);
-    }
   }
   .p-inline-start-b5:where(:dir(rtl)) {
     padding-right: var(--sf-b5);
@@ -982,24 +470,8 @@
   .p-top-b6 {
     padding-top: var(--sf-b6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-b6 {
-    padding-right: var(--sf-b6);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-b6 {
-    padding-right: var(--sf-b6);
-    }
-  }
   .p-inline-end-b6:where(:dir(ltr)) {
     padding-right: var(--sf-b6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-b6 {
-    padding-left: var(--sf-b6);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-b6 {
-    padding-left: var(--sf-b6);
-    }
   }
   .p-inline-end-b6:where(:dir(rtl)) {
     padding-left: var(--sf-b6);
@@ -1011,24 +483,8 @@
   .p-bottom-b6 {
     padding-bottom: var(--sf-b6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-b6 {
-    padding-left: var(--sf-b6);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-b6 {
-    padding-left: var(--sf-b6);
-    }
-  }
   .p-inline-start-b6:where(:dir(ltr)) {
     padding-left: var(--sf-b6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-b6 {
-    padding-right: var(--sf-b6);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-b6 {
-    padding-right: var(--sf-b6);
-    }
   }
   .p-inline-start-b6:where(:dir(rtl)) {
     padding-right: var(--sf-b6);
@@ -1043,24 +499,8 @@
   .p-top-b7 {
     padding-top: var(--sf-b7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-b7 {
-    padding-right: var(--sf-b7);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-b7 {
-    padding-right: var(--sf-b7);
-    }
-  }
   .p-inline-end-b7:where(:dir(ltr)) {
     padding-right: var(--sf-b7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-b7 {
-    padding-left: var(--sf-b7);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-b7 {
-    padding-left: var(--sf-b7);
-    }
   }
   .p-inline-end-b7:where(:dir(rtl)) {
     padding-left: var(--sf-b7);
@@ -1072,24 +512,8 @@
   .p-bottom-b7 {
     padding-bottom: var(--sf-b7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-b7 {
-    padding-left: var(--sf-b7);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-b7 {
-    padding-left: var(--sf-b7);
-    }
-  }
   .p-inline-start-b7:where(:dir(ltr)) {
     padding-left: var(--sf-b7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-b7 {
-    padding-right: var(--sf-b7);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-b7 {
-    padding-right: var(--sf-b7);
-    }
   }
   .p-inline-start-b7:where(:dir(rtl)) {
     padding-right: var(--sf-b7);
@@ -1104,24 +528,8 @@
   .p-top-b8 {
     padding-top: var(--sf-b8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-b8 {
-    padding-right: var(--sf-b8);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-b8 {
-    padding-right: var(--sf-b8);
-    }
-  }
   .p-inline-end-b8:where(:dir(ltr)) {
     padding-right: var(--sf-b8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-b8 {
-    padding-left: var(--sf-b8);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-b8 {
-    padding-left: var(--sf-b8);
-    }
   }
   .p-inline-end-b8:where(:dir(rtl)) {
     padding-left: var(--sf-b8);
@@ -1133,24 +541,8 @@
   .p-bottom-b8 {
     padding-bottom: var(--sf-b8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-b8 {
-    padding-left: var(--sf-b8);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-b8 {
-    padding-left: var(--sf-b8);
-    }
-  }
   .p-inline-start-b8:where(:dir(ltr)) {
     padding-left: var(--sf-b8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-b8 {
-    padding-right: var(--sf-b8);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-b8 {
-    padding-right: var(--sf-b8);
-    }
   }
   .p-inline-start-b8:where(:dir(rtl)) {
     padding-right: var(--sf-b8);
@@ -1165,24 +557,8 @@
   .p-top-b9 {
     padding-top: var(--sf-b9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-b9 {
-    padding-right: var(--sf-b9);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-b9 {
-    padding-right: var(--sf-b9);
-    }
-  }
   .p-inline-end-b9:where(:dir(ltr)) {
     padding-right: var(--sf-b9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-b9 {
-    padding-left: var(--sf-b9);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-b9 {
-    padding-left: var(--sf-b9);
-    }
   }
   .p-inline-end-b9:where(:dir(rtl)) {
     padding-left: var(--sf-b9);
@@ -1194,24 +570,8 @@
   .p-bottom-b9 {
     padding-bottom: var(--sf-b9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-b9 {
-    padding-left: var(--sf-b9);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-b9 {
-    padding-left: var(--sf-b9);
-    }
-  }
   .p-inline-start-b9:where(:dir(ltr)) {
     padding-left: var(--sf-b9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-b9 {
-    padding-right: var(--sf-b9);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-b9 {
-    padding-right: var(--sf-b9);
-    }
   }
   .p-inline-start-b9:where(:dir(rtl)) {
     padding-right: var(--sf-b9);
@@ -1226,24 +586,8 @@
   .p-top-c0 {
     padding-top: var(--sf-c0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-c0 {
-    padding-right: var(--sf-c0);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-c0 {
-    padding-right: var(--sf-c0);
-    }
-  }
   .p-inline-end-c0:where(:dir(ltr)) {
     padding-right: var(--sf-c0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-c0 {
-    padding-left: var(--sf-c0);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-c0 {
-    padding-left: var(--sf-c0);
-    }
   }
   .p-inline-end-c0:where(:dir(rtl)) {
     padding-left: var(--sf-c0);
@@ -1255,24 +599,8 @@
   .p-bottom-c0 {
     padding-bottom: var(--sf-c0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-c0 {
-    padding-left: var(--sf-c0);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-c0 {
-    padding-left: var(--sf-c0);
-    }
-  }
   .p-inline-start-c0:where(:dir(ltr)) {
     padding-left: var(--sf-c0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-c0 {
-    padding-right: var(--sf-c0);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-c0 {
-    padding-right: var(--sf-c0);
-    }
   }
   .p-inline-start-c0:where(:dir(rtl)) {
     padding-right: var(--sf-c0);
@@ -1287,24 +615,8 @@
   .p-top-c1 {
     padding-top: var(--sf-c1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-c1 {
-    padding-right: var(--sf-c1);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-c1 {
-    padding-right: var(--sf-c1);
-    }
-  }
   .p-inline-end-c1:where(:dir(ltr)) {
     padding-right: var(--sf-c1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-c1 {
-    padding-left: var(--sf-c1);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-c1 {
-    padding-left: var(--sf-c1);
-    }
   }
   .p-inline-end-c1:where(:dir(rtl)) {
     padding-left: var(--sf-c1);
@@ -1316,24 +628,8 @@
   .p-bottom-c1 {
     padding-bottom: var(--sf-c1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-c1 {
-    padding-left: var(--sf-c1);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-c1 {
-    padding-left: var(--sf-c1);
-    }
-  }
   .p-inline-start-c1:where(:dir(ltr)) {
     padding-left: var(--sf-c1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-c1 {
-    padding-right: var(--sf-c1);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-c1 {
-    padding-right: var(--sf-c1);
-    }
   }
   .p-inline-start-c1:where(:dir(rtl)) {
     padding-right: var(--sf-c1);
@@ -1348,24 +644,8 @@
   .p-top-c2 {
     padding-top: var(--sf-c2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-c2 {
-    padding-right: var(--sf-c2);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-c2 {
-    padding-right: var(--sf-c2);
-    }
-  }
   .p-inline-end-c2:where(:dir(ltr)) {
     padding-right: var(--sf-c2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-c2 {
-    padding-left: var(--sf-c2);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-c2 {
-    padding-left: var(--sf-c2);
-    }
   }
   .p-inline-end-c2:where(:dir(rtl)) {
     padding-left: var(--sf-c2);
@@ -1377,24 +657,8 @@
   .p-bottom-c2 {
     padding-bottom: var(--sf-c2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-c2 {
-    padding-left: var(--sf-c2);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-c2 {
-    padding-left: var(--sf-c2);
-    }
-  }
   .p-inline-start-c2:where(:dir(ltr)) {
     padding-left: var(--sf-c2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-c2 {
-    padding-right: var(--sf-c2);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-c2 {
-    padding-right: var(--sf-c2);
-    }
   }
   .p-inline-start-c2:where(:dir(rtl)) {
     padding-right: var(--sf-c2);
@@ -1409,24 +673,8 @@
   .p-top-c3 {
     padding-top: var(--sf-c3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-c3 {
-    padding-right: var(--sf-c3);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-c3 {
-    padding-right: var(--sf-c3);
-    }
-  }
   .p-inline-end-c3:where(:dir(ltr)) {
     padding-right: var(--sf-c3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-c3 {
-    padding-left: var(--sf-c3);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-c3 {
-    padding-left: var(--sf-c3);
-    }
   }
   .p-inline-end-c3:where(:dir(rtl)) {
     padding-left: var(--sf-c3);
@@ -1438,24 +686,8 @@
   .p-bottom-c3 {
     padding-bottom: var(--sf-c3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-c3 {
-    padding-left: var(--sf-c3);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-c3 {
-    padding-left: var(--sf-c3);
-    }
-  }
   .p-inline-start-c3:where(:dir(ltr)) {
     padding-left: var(--sf-c3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-c3 {
-    padding-right: var(--sf-c3);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-c3 {
-    padding-right: var(--sf-c3);
-    }
   }
   .p-inline-start-c3:where(:dir(rtl)) {
     padding-right: var(--sf-c3);
@@ -1470,24 +702,8 @@
   .p-top-c4 {
     padding-top: var(--sf-c4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-c4 {
-    padding-right: var(--sf-c4);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-c4 {
-    padding-right: var(--sf-c4);
-    }
-  }
   .p-inline-end-c4:where(:dir(ltr)) {
     padding-right: var(--sf-c4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-c4 {
-    padding-left: var(--sf-c4);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-c4 {
-    padding-left: var(--sf-c4);
-    }
   }
   .p-inline-end-c4:where(:dir(rtl)) {
     padding-left: var(--sf-c4);
@@ -1499,24 +715,8 @@
   .p-bottom-c4 {
     padding-bottom: var(--sf-c4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-c4 {
-    padding-left: var(--sf-c4);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-c4 {
-    padding-left: var(--sf-c4);
-    }
-  }
   .p-inline-start-c4:where(:dir(ltr)) {
     padding-left: var(--sf-c4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-c4 {
-    padding-right: var(--sf-c4);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-c4 {
-    padding-right: var(--sf-c4);
-    }
   }
   .p-inline-start-c4:where(:dir(rtl)) {
     padding-right: var(--sf-c4);
@@ -1531,24 +731,8 @@
   .p-top-c5 {
     padding-top: var(--sf-c5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-c5 {
-    padding-right: var(--sf-c5);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-c5 {
-    padding-right: var(--sf-c5);
-    }
-  }
   .p-inline-end-c5:where(:dir(ltr)) {
     padding-right: var(--sf-c5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-c5 {
-    padding-left: var(--sf-c5);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-c5 {
-    padding-left: var(--sf-c5);
-    }
   }
   .p-inline-end-c5:where(:dir(rtl)) {
     padding-left: var(--sf-c5);
@@ -1560,24 +744,8 @@
   .p-bottom-c5 {
     padding-bottom: var(--sf-c5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-c5 {
-    padding-left: var(--sf-c5);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-c5 {
-    padding-left: var(--sf-c5);
-    }
-  }
   .p-inline-start-c5:where(:dir(ltr)) {
     padding-left: var(--sf-c5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-c5 {
-    padding-right: var(--sf-c5);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-c5 {
-    padding-right: var(--sf-c5);
-    }
   }
   .p-inline-start-c5:where(:dir(rtl)) {
     padding-right: var(--sf-c5);
@@ -1592,24 +760,8 @@
   .p-top-c6 {
     padding-top: var(--sf-c6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-c6 {
-    padding-right: var(--sf-c6);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-c6 {
-    padding-right: var(--sf-c6);
-    }
-  }
   .p-inline-end-c6:where(:dir(ltr)) {
     padding-right: var(--sf-c6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-c6 {
-    padding-left: var(--sf-c6);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-c6 {
-    padding-left: var(--sf-c6);
-    }
   }
   .p-inline-end-c6:where(:dir(rtl)) {
     padding-left: var(--sf-c6);
@@ -1621,24 +773,8 @@
   .p-bottom-c6 {
     padding-bottom: var(--sf-c6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-c6 {
-    padding-left: var(--sf-c6);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-c6 {
-    padding-left: var(--sf-c6);
-    }
-  }
   .p-inline-start-c6:where(:dir(ltr)) {
     padding-left: var(--sf-c6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-c6 {
-    padding-right: var(--sf-c6);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-c6 {
-    padding-right: var(--sf-c6);
-    }
   }
   .p-inline-start-c6:where(:dir(rtl)) {
     padding-right: var(--sf-c6);
@@ -1653,24 +789,8 @@
   .p-top-c7 {
     padding-top: var(--sf-c7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-c7 {
-    padding-right: var(--sf-c7);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-c7 {
-    padding-right: var(--sf-c7);
-    }
-  }
   .p-inline-end-c7:where(:dir(ltr)) {
     padding-right: var(--sf-c7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-c7 {
-    padding-left: var(--sf-c7);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-c7 {
-    padding-left: var(--sf-c7);
-    }
   }
   .p-inline-end-c7:where(:dir(rtl)) {
     padding-left: var(--sf-c7);
@@ -1682,24 +802,8 @@
   .p-bottom-c7 {
     padding-bottom: var(--sf-c7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-c7 {
-    padding-left: var(--sf-c7);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-c7 {
-    padding-left: var(--sf-c7);
-    }
-  }
   .p-inline-start-c7:where(:dir(ltr)) {
     padding-left: var(--sf-c7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-c7 {
-    padding-right: var(--sf-c7);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-c7 {
-    padding-right: var(--sf-c7);
-    }
   }
   .p-inline-start-c7:where(:dir(rtl)) {
     padding-right: var(--sf-c7);
@@ -1714,24 +818,8 @@
   .p-top-c8 {
     padding-top: var(--sf-c8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-c8 {
-    padding-right: var(--sf-c8);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-c8 {
-    padding-right: var(--sf-c8);
-    }
-  }
   .p-inline-end-c8:where(:dir(ltr)) {
     padding-right: var(--sf-c8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-c8 {
-    padding-left: var(--sf-c8);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-c8 {
-    padding-left: var(--sf-c8);
-    }
   }
   .p-inline-end-c8:where(:dir(rtl)) {
     padding-left: var(--sf-c8);
@@ -1743,24 +831,8 @@
   .p-bottom-c8 {
     padding-bottom: var(--sf-c8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-c8 {
-    padding-left: var(--sf-c8);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-c8 {
-    padding-left: var(--sf-c8);
-    }
-  }
   .p-inline-start-c8:where(:dir(ltr)) {
     padding-left: var(--sf-c8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-c8 {
-    padding-right: var(--sf-c8);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-c8 {
-    padding-right: var(--sf-c8);
-    }
   }
   .p-inline-start-c8:where(:dir(rtl)) {
     padding-right: var(--sf-c8);
@@ -1775,24 +847,8 @@
   .p-top-c9 {
     padding-top: var(--sf-c9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-c9 {
-    padding-right: var(--sf-c9);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-c9 {
-    padding-right: var(--sf-c9);
-    }
-  }
   .p-inline-end-c9:where(:dir(ltr)) {
     padding-right: var(--sf-c9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-c9 {
-    padding-left: var(--sf-c9);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-c9 {
-    padding-left: var(--sf-c9);
-    }
   }
   .p-inline-end-c9:where(:dir(rtl)) {
     padding-left: var(--sf-c9);
@@ -1804,24 +860,8 @@
   .p-bottom-c9 {
     padding-bottom: var(--sf-c9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-c9 {
-    padding-left: var(--sf-c9);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-c9 {
-    padding-left: var(--sf-c9);
-    }
-  }
   .p-inline-start-c9:where(:dir(ltr)) {
     padding-left: var(--sf-c9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-c9 {
-    padding-right: var(--sf-c9);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-c9 {
-    padding-right: var(--sf-c9);
-    }
   }
   .p-inline-start-c9:where(:dir(rtl)) {
     padding-right: var(--sf-c9);
@@ -1836,24 +876,8 @@
   .p-top-d0 {
     padding-top: var(--sf-d0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-d0 {
-    padding-right: var(--sf-d0);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-d0 {
-    padding-right: var(--sf-d0);
-    }
-  }
   .p-inline-end-d0:where(:dir(ltr)) {
     padding-right: var(--sf-d0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-d0 {
-    padding-left: var(--sf-d0);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-d0 {
-    padding-left: var(--sf-d0);
-    }
   }
   .p-inline-end-d0:where(:dir(rtl)) {
     padding-left: var(--sf-d0);
@@ -1865,24 +889,8 @@
   .p-bottom-d0 {
     padding-bottom: var(--sf-d0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-d0 {
-    padding-left: var(--sf-d0);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-d0 {
-    padding-left: var(--sf-d0);
-    }
-  }
   .p-inline-start-d0:where(:dir(ltr)) {
     padding-left: var(--sf-d0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-d0 {
-    padding-right: var(--sf-d0);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-d0 {
-    padding-right: var(--sf-d0);
-    }
   }
   .p-inline-start-d0:where(:dir(rtl)) {
     padding-right: var(--sf-d0);
@@ -1897,24 +905,8 @@
   .p-top-d1 {
     padding-top: var(--sf-d1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-d1 {
-    padding-right: var(--sf-d1);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-d1 {
-    padding-right: var(--sf-d1);
-    }
-  }
   .p-inline-end-d1:where(:dir(ltr)) {
     padding-right: var(--sf-d1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-d1 {
-    padding-left: var(--sf-d1);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-d1 {
-    padding-left: var(--sf-d1);
-    }
   }
   .p-inline-end-d1:where(:dir(rtl)) {
     padding-left: var(--sf-d1);
@@ -1926,24 +918,8 @@
   .p-bottom-d1 {
     padding-bottom: var(--sf-d1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-d1 {
-    padding-left: var(--sf-d1);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-d1 {
-    padding-left: var(--sf-d1);
-    }
-  }
   .p-inline-start-d1:where(:dir(ltr)) {
     padding-left: var(--sf-d1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-d1 {
-    padding-right: var(--sf-d1);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-d1 {
-    padding-right: var(--sf-d1);
-    }
   }
   .p-inline-start-d1:where(:dir(rtl)) {
     padding-right: var(--sf-d1);
@@ -1958,24 +934,8 @@
   .p-top-d2 {
     padding-top: var(--sf-d2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-d2 {
-    padding-right: var(--sf-d2);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-d2 {
-    padding-right: var(--sf-d2);
-    }
-  }
   .p-inline-end-d2:where(:dir(ltr)) {
     padding-right: var(--sf-d2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-d2 {
-    padding-left: var(--sf-d2);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-d2 {
-    padding-left: var(--sf-d2);
-    }
   }
   .p-inline-end-d2:where(:dir(rtl)) {
     padding-left: var(--sf-d2);
@@ -1987,24 +947,8 @@
   .p-bottom-d2 {
     padding-bottom: var(--sf-d2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-d2 {
-    padding-left: var(--sf-d2);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-d2 {
-    padding-left: var(--sf-d2);
-    }
-  }
   .p-inline-start-d2:where(:dir(ltr)) {
     padding-left: var(--sf-d2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-d2 {
-    padding-right: var(--sf-d2);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-d2 {
-    padding-right: var(--sf-d2);
-    }
   }
   .p-inline-start-d2:where(:dir(rtl)) {
     padding-right: var(--sf-d2);
@@ -2019,24 +963,8 @@
   .p-top-d3 {
     padding-top: var(--sf-d3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-d3 {
-    padding-right: var(--sf-d3);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-d3 {
-    padding-right: var(--sf-d3);
-    }
-  }
   .p-inline-end-d3:where(:dir(ltr)) {
     padding-right: var(--sf-d3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-d3 {
-    padding-left: var(--sf-d3);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-d3 {
-    padding-left: var(--sf-d3);
-    }
   }
   .p-inline-end-d3:where(:dir(rtl)) {
     padding-left: var(--sf-d3);
@@ -2048,24 +976,8 @@
   .p-bottom-d3 {
     padding-bottom: var(--sf-d3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-d3 {
-    padding-left: var(--sf-d3);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-d3 {
-    padding-left: var(--sf-d3);
-    }
-  }
   .p-inline-start-d3:where(:dir(ltr)) {
     padding-left: var(--sf-d3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-d3 {
-    padding-right: var(--sf-d3);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-d3 {
-    padding-right: var(--sf-d3);
-    }
   }
   .p-inline-start-d3:where(:dir(rtl)) {
     padding-right: var(--sf-d3);
@@ -2080,24 +992,8 @@
   .p-top-d4 {
     padding-top: var(--sf-d4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-d4 {
-    padding-right: var(--sf-d4);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-d4 {
-    padding-right: var(--sf-d4);
-    }
-  }
   .p-inline-end-d4:where(:dir(ltr)) {
     padding-right: var(--sf-d4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-d4 {
-    padding-left: var(--sf-d4);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-d4 {
-    padding-left: var(--sf-d4);
-    }
   }
   .p-inline-end-d4:where(:dir(rtl)) {
     padding-left: var(--sf-d4);
@@ -2109,24 +1005,8 @@
   .p-bottom-d4 {
     padding-bottom: var(--sf-d4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-d4 {
-    padding-left: var(--sf-d4);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-d4 {
-    padding-left: var(--sf-d4);
-    }
-  }
   .p-inline-start-d4:where(:dir(ltr)) {
     padding-left: var(--sf-d4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-d4 {
-    padding-right: var(--sf-d4);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-d4 {
-    padding-right: var(--sf-d4);
-    }
   }
   .p-inline-start-d4:where(:dir(rtl)) {
     padding-right: var(--sf-d4);
@@ -2141,24 +1021,8 @@
   .p-top-d5 {
     padding-top: var(--sf-d5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-d5 {
-    padding-right: var(--sf-d5);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-d5 {
-    padding-right: var(--sf-d5);
-    }
-  }
   .p-inline-end-d5:where(:dir(ltr)) {
     padding-right: var(--sf-d5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-d5 {
-    padding-left: var(--sf-d5);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-d5 {
-    padding-left: var(--sf-d5);
-    }
   }
   .p-inline-end-d5:where(:dir(rtl)) {
     padding-left: var(--sf-d5);
@@ -2170,24 +1034,8 @@
   .p-bottom-d5 {
     padding-bottom: var(--sf-d5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-d5 {
-    padding-left: var(--sf-d5);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-d5 {
-    padding-left: var(--sf-d5);
-    }
-  }
   .p-inline-start-d5:where(:dir(ltr)) {
     padding-left: var(--sf-d5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-d5 {
-    padding-right: var(--sf-d5);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-d5 {
-    padding-right: var(--sf-d5);
-    }
   }
   .p-inline-start-d5:where(:dir(rtl)) {
     padding-right: var(--sf-d5);
@@ -2202,24 +1050,8 @@
   .p-top-d6 {
     padding-top: var(--sf-d6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-d6 {
-    padding-right: var(--sf-d6);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-d6 {
-    padding-right: var(--sf-d6);
-    }
-  }
   .p-inline-end-d6:where(:dir(ltr)) {
     padding-right: var(--sf-d6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-d6 {
-    padding-left: var(--sf-d6);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-d6 {
-    padding-left: var(--sf-d6);
-    }
   }
   .p-inline-end-d6:where(:dir(rtl)) {
     padding-left: var(--sf-d6);
@@ -2231,24 +1063,8 @@
   .p-bottom-d6 {
     padding-bottom: var(--sf-d6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-d6 {
-    padding-left: var(--sf-d6);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-d6 {
-    padding-left: var(--sf-d6);
-    }
-  }
   .p-inline-start-d6:where(:dir(ltr)) {
     padding-left: var(--sf-d6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-d6 {
-    padding-right: var(--sf-d6);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-d6 {
-    padding-right: var(--sf-d6);
-    }
   }
   .p-inline-start-d6:where(:dir(rtl)) {
     padding-right: var(--sf-d6);
@@ -2263,24 +1079,8 @@
   .p-top-d7 {
     padding-top: var(--sf-d7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-d7 {
-    padding-right: var(--sf-d7);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-d7 {
-    padding-right: var(--sf-d7);
-    }
-  }
   .p-inline-end-d7:where(:dir(ltr)) {
     padding-right: var(--sf-d7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-d7 {
-    padding-left: var(--sf-d7);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-d7 {
-    padding-left: var(--sf-d7);
-    }
   }
   .p-inline-end-d7:where(:dir(rtl)) {
     padding-left: var(--sf-d7);
@@ -2292,24 +1092,8 @@
   .p-bottom-d7 {
     padding-bottom: var(--sf-d7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-d7 {
-    padding-left: var(--sf-d7);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-d7 {
-    padding-left: var(--sf-d7);
-    }
-  }
   .p-inline-start-d7:where(:dir(ltr)) {
     padding-left: var(--sf-d7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-d7 {
-    padding-right: var(--sf-d7);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-d7 {
-    padding-right: var(--sf-d7);
-    }
   }
   .p-inline-start-d7:where(:dir(rtl)) {
     padding-right: var(--sf-d7);
@@ -2324,24 +1108,8 @@
   .p-top-d8 {
     padding-top: var(--sf-d8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-d8 {
-    padding-right: var(--sf-d8);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-d8 {
-    padding-right: var(--sf-d8);
-    }
-  }
   .p-inline-end-d8:where(:dir(ltr)) {
     padding-right: var(--sf-d8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-d8 {
-    padding-left: var(--sf-d8);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-d8 {
-    padding-left: var(--sf-d8);
-    }
   }
   .p-inline-end-d8:where(:dir(rtl)) {
     padding-left: var(--sf-d8);
@@ -2353,24 +1121,8 @@
   .p-bottom-d8 {
     padding-bottom: var(--sf-d8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-d8 {
-    padding-left: var(--sf-d8);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-d8 {
-    padding-left: var(--sf-d8);
-    }
-  }
   .p-inline-start-d8:where(:dir(ltr)) {
     padding-left: var(--sf-d8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-d8 {
-    padding-right: var(--sf-d8);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-d8 {
-    padding-right: var(--sf-d8);
-    }
   }
   .p-inline-start-d8:where(:dir(rtl)) {
     padding-right: var(--sf-d8);
@@ -2385,24 +1137,8 @@
   .p-top-d9 {
     padding-top: var(--sf-d9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-d9 {
-    padding-right: var(--sf-d9);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-d9 {
-    padding-right: var(--sf-d9);
-    }
-  }
   .p-inline-end-d9:where(:dir(ltr)) {
     padding-right: var(--sf-d9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-d9 {
-    padding-left: var(--sf-d9);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-d9 {
-    padding-left: var(--sf-d9);
-    }
   }
   .p-inline-end-d9:where(:dir(rtl)) {
     padding-left: var(--sf-d9);
@@ -2414,24 +1150,8 @@
   .p-bottom-d9 {
     padding-bottom: var(--sf-d9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-d9 {
-    padding-left: var(--sf-d9);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-d9 {
-    padding-left: var(--sf-d9);
-    }
-  }
   .p-inline-start-d9:where(:dir(ltr)) {
     padding-left: var(--sf-d9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-d9 {
-    padding-right: var(--sf-d9);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-d9 {
-    padding-right: var(--sf-d9);
-    }
   }
   .p-inline-start-d9:where(:dir(rtl)) {
     padding-right: var(--sf-d9);
@@ -2446,24 +1166,8 @@
   .p-top-e0 {
     padding-top: var(--sf-e0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-e0 {
-    padding-right: var(--sf-e0);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-e0 {
-    padding-right: var(--sf-e0);
-    }
-  }
   .p-inline-end-e0:where(:dir(ltr)) {
     padding-right: var(--sf-e0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-e0 {
-    padding-left: var(--sf-e0);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-e0 {
-    padding-left: var(--sf-e0);
-    }
   }
   .p-inline-end-e0:where(:dir(rtl)) {
     padding-left: var(--sf-e0);
@@ -2475,24 +1179,8 @@
   .p-bottom-e0 {
     padding-bottom: var(--sf-e0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-e0 {
-    padding-left: var(--sf-e0);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-e0 {
-    padding-left: var(--sf-e0);
-    }
-  }
   .p-inline-start-e0:where(:dir(ltr)) {
     padding-left: var(--sf-e0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-e0 {
-    padding-right: var(--sf-e0);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-e0 {
-    padding-right: var(--sf-e0);
-    }
   }
   .p-inline-start-e0:where(:dir(rtl)) {
     padding-right: var(--sf-e0);
@@ -2507,24 +1195,8 @@
   .p-top-e1 {
     padding-top: var(--sf-e1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-e1 {
-    padding-right: var(--sf-e1);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-e1 {
-    padding-right: var(--sf-e1);
-    }
-  }
   .p-inline-end-e1:where(:dir(ltr)) {
     padding-right: var(--sf-e1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-e1 {
-    padding-left: var(--sf-e1);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-e1 {
-    padding-left: var(--sf-e1);
-    }
   }
   .p-inline-end-e1:where(:dir(rtl)) {
     padding-left: var(--sf-e1);
@@ -2536,24 +1208,8 @@
   .p-bottom-e1 {
     padding-bottom: var(--sf-e1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-e1 {
-    padding-left: var(--sf-e1);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-e1 {
-    padding-left: var(--sf-e1);
-    }
-  }
   .p-inline-start-e1:where(:dir(ltr)) {
     padding-left: var(--sf-e1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-e1 {
-    padding-right: var(--sf-e1);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-e1 {
-    padding-right: var(--sf-e1);
-    }
   }
   .p-inline-start-e1:where(:dir(rtl)) {
     padding-right: var(--sf-e1);
@@ -2568,24 +1224,8 @@
   .p-top-e2 {
     padding-top: var(--sf-e2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-e2 {
-    padding-right: var(--sf-e2);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-e2 {
-    padding-right: var(--sf-e2);
-    }
-  }
   .p-inline-end-e2:where(:dir(ltr)) {
     padding-right: var(--sf-e2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-e2 {
-    padding-left: var(--sf-e2);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-e2 {
-    padding-left: var(--sf-e2);
-    }
   }
   .p-inline-end-e2:where(:dir(rtl)) {
     padding-left: var(--sf-e2);
@@ -2597,24 +1237,8 @@
   .p-bottom-e2 {
     padding-bottom: var(--sf-e2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-e2 {
-    padding-left: var(--sf-e2);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-e2 {
-    padding-left: var(--sf-e2);
-    }
-  }
   .p-inline-start-e2:where(:dir(ltr)) {
     padding-left: var(--sf-e2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-e2 {
-    padding-right: var(--sf-e2);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-e2 {
-    padding-right: var(--sf-e2);
-    }
   }
   .p-inline-start-e2:where(:dir(rtl)) {
     padding-right: var(--sf-e2);
@@ -2629,24 +1253,8 @@
   .p-top-e3 {
     padding-top: var(--sf-e3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-e3 {
-    padding-right: var(--sf-e3);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-e3 {
-    padding-right: var(--sf-e3);
-    }
-  }
   .p-inline-end-e3:where(:dir(ltr)) {
     padding-right: var(--sf-e3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-e3 {
-    padding-left: var(--sf-e3);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-e3 {
-    padding-left: var(--sf-e3);
-    }
   }
   .p-inline-end-e3:where(:dir(rtl)) {
     padding-left: var(--sf-e3);
@@ -2658,24 +1266,8 @@
   .p-bottom-e3 {
     padding-bottom: var(--sf-e3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-e3 {
-    padding-left: var(--sf-e3);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-e3 {
-    padding-left: var(--sf-e3);
-    }
-  }
   .p-inline-start-e3:where(:dir(ltr)) {
     padding-left: var(--sf-e3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-e3 {
-    padding-right: var(--sf-e3);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-e3 {
-    padding-right: var(--sf-e3);
-    }
   }
   .p-inline-start-e3:where(:dir(rtl)) {
     padding-right: var(--sf-e3);
@@ -2690,24 +1282,8 @@
   .p-top-e4 {
     padding-top: var(--sf-e4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-e4 {
-    padding-right: var(--sf-e4);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-e4 {
-    padding-right: var(--sf-e4);
-    }
-  }
   .p-inline-end-e4:where(:dir(ltr)) {
     padding-right: var(--sf-e4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-e4 {
-    padding-left: var(--sf-e4);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-e4 {
-    padding-left: var(--sf-e4);
-    }
   }
   .p-inline-end-e4:where(:dir(rtl)) {
     padding-left: var(--sf-e4);
@@ -2719,24 +1295,8 @@
   .p-bottom-e4 {
     padding-bottom: var(--sf-e4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-e4 {
-    padding-left: var(--sf-e4);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-e4 {
-    padding-left: var(--sf-e4);
-    }
-  }
   .p-inline-start-e4:where(:dir(ltr)) {
     padding-left: var(--sf-e4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-e4 {
-    padding-right: var(--sf-e4);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-e4 {
-    padding-right: var(--sf-e4);
-    }
   }
   .p-inline-start-e4:where(:dir(rtl)) {
     padding-right: var(--sf-e4);
@@ -2751,24 +1311,8 @@
   .p-top-e5 {
     padding-top: var(--sf-e5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-e5 {
-    padding-right: var(--sf-e5);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-e5 {
-    padding-right: var(--sf-e5);
-    }
-  }
   .p-inline-end-e5:where(:dir(ltr)) {
     padding-right: var(--sf-e5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-e5 {
-    padding-left: var(--sf-e5);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-e5 {
-    padding-left: var(--sf-e5);
-    }
   }
   .p-inline-end-e5:where(:dir(rtl)) {
     padding-left: var(--sf-e5);
@@ -2780,24 +1324,8 @@
   .p-bottom-e5 {
     padding-bottom: var(--sf-e5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-e5 {
-    padding-left: var(--sf-e5);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-e5 {
-    padding-left: var(--sf-e5);
-    }
-  }
   .p-inline-start-e5:where(:dir(ltr)) {
     padding-left: var(--sf-e5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-e5 {
-    padding-right: var(--sf-e5);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-e5 {
-    padding-right: var(--sf-e5);
-    }
   }
   .p-inline-start-e5:where(:dir(rtl)) {
     padding-right: var(--sf-e5);
@@ -2812,24 +1340,8 @@
   .p-top-e6 {
     padding-top: var(--sf-e6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-e6 {
-    padding-right: var(--sf-e6);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-e6 {
-    padding-right: var(--sf-e6);
-    }
-  }
   .p-inline-end-e6:where(:dir(ltr)) {
     padding-right: var(--sf-e6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-e6 {
-    padding-left: var(--sf-e6);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-e6 {
-    padding-left: var(--sf-e6);
-    }
   }
   .p-inline-end-e6:where(:dir(rtl)) {
     padding-left: var(--sf-e6);
@@ -2841,24 +1353,8 @@
   .p-bottom-e6 {
     padding-bottom: var(--sf-e6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-e6 {
-    padding-left: var(--sf-e6);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-e6 {
-    padding-left: var(--sf-e6);
-    }
-  }
   .p-inline-start-e6:where(:dir(ltr)) {
     padding-left: var(--sf-e6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-e6 {
-    padding-right: var(--sf-e6);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-e6 {
-    padding-right: var(--sf-e6);
-    }
   }
   .p-inline-start-e6:where(:dir(rtl)) {
     padding-right: var(--sf-e6);
@@ -2873,24 +1369,8 @@
   .p-top-e7 {
     padding-top: var(--sf-e7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-e7 {
-    padding-right: var(--sf-e7);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-e7 {
-    padding-right: var(--sf-e7);
-    }
-  }
   .p-inline-end-e7:where(:dir(ltr)) {
     padding-right: var(--sf-e7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-e7 {
-    padding-left: var(--sf-e7);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-e7 {
-    padding-left: var(--sf-e7);
-    }
   }
   .p-inline-end-e7:where(:dir(rtl)) {
     padding-left: var(--sf-e7);
@@ -2902,24 +1382,8 @@
   .p-bottom-e7 {
     padding-bottom: var(--sf-e7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-e7 {
-    padding-left: var(--sf-e7);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-e7 {
-    padding-left: var(--sf-e7);
-    }
-  }
   .p-inline-start-e7:where(:dir(ltr)) {
     padding-left: var(--sf-e7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-e7 {
-    padding-right: var(--sf-e7);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-e7 {
-    padding-right: var(--sf-e7);
-    }
   }
   .p-inline-start-e7:where(:dir(rtl)) {
     padding-right: var(--sf-e7);
@@ -2934,24 +1398,8 @@
   .p-top-e8 {
     padding-top: var(--sf-e8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-e8 {
-    padding-right: var(--sf-e8);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-e8 {
-    padding-right: var(--sf-e8);
-    }
-  }
   .p-inline-end-e8:where(:dir(ltr)) {
     padding-right: var(--sf-e8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-e8 {
-    padding-left: var(--sf-e8);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-e8 {
-    padding-left: var(--sf-e8);
-    }
   }
   .p-inline-end-e8:where(:dir(rtl)) {
     padding-left: var(--sf-e8);
@@ -2963,24 +1411,8 @@
   .p-bottom-e8 {
     padding-bottom: var(--sf-e8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-e8 {
-    padding-left: var(--sf-e8);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-e8 {
-    padding-left: var(--sf-e8);
-    }
-  }
   .p-inline-start-e8:where(:dir(ltr)) {
     padding-left: var(--sf-e8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-e8 {
-    padding-right: var(--sf-e8);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-e8 {
-    padding-right: var(--sf-e8);
-    }
   }
   .p-inline-start-e8:where(:dir(rtl)) {
     padding-right: var(--sf-e8);
@@ -2995,24 +1427,8 @@
   .p-top-e9 {
     padding-top: var(--sf-e9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-e9 {
-    padding-right: var(--sf-e9);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-e9 {
-    padding-right: var(--sf-e9);
-    }
-  }
   .p-inline-end-e9:where(:dir(ltr)) {
     padding-right: var(--sf-e9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-e9 {
-    padding-left: var(--sf-e9);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-e9 {
-    padding-left: var(--sf-e9);
-    }
   }
   .p-inline-end-e9:where(:dir(rtl)) {
     padding-left: var(--sf-e9);
@@ -3024,24 +1440,8 @@
   .p-bottom-e9 {
     padding-bottom: var(--sf-e9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-e9 {
-    padding-left: var(--sf-e9);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-e9 {
-    padding-left: var(--sf-e9);
-    }
-  }
   .p-inline-start-e9:where(:dir(ltr)) {
     padding-left: var(--sf-e9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-e9 {
-    padding-right: var(--sf-e9);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-e9 {
-    padding-right: var(--sf-e9);
-    }
   }
   .p-inline-start-e9:where(:dir(rtl)) {
     padding-right: var(--sf-e9);
@@ -3056,24 +1456,8 @@
   .p-top-f0 {
     padding-top: var(--sf-f0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-f0 {
-    padding-right: var(--sf-f0);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-f0 {
-    padding-right: var(--sf-f0);
-    }
-  }
   .p-inline-end-f0:where(:dir(ltr)) {
     padding-right: var(--sf-f0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-f0 {
-    padding-left: var(--sf-f0);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-f0 {
-    padding-left: var(--sf-f0);
-    }
   }
   .p-inline-end-f0:where(:dir(rtl)) {
     padding-left: var(--sf-f0);
@@ -3085,24 +1469,8 @@
   .p-bottom-f0 {
     padding-bottom: var(--sf-f0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-f0 {
-    padding-left: var(--sf-f0);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-f0 {
-    padding-left: var(--sf-f0);
-    }
-  }
   .p-inline-start-f0:where(:dir(ltr)) {
     padding-left: var(--sf-f0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-f0 {
-    padding-right: var(--sf-f0);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-f0 {
-    padding-right: var(--sf-f0);
-    }
   }
   .p-inline-start-f0:where(:dir(rtl)) {
     padding-right: var(--sf-f0);
@@ -3117,24 +1485,8 @@
   .p-top-f1 {
     padding-top: var(--sf-f1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-f1 {
-    padding-right: var(--sf-f1);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-f1 {
-    padding-right: var(--sf-f1);
-    }
-  }
   .p-inline-end-f1:where(:dir(ltr)) {
     padding-right: var(--sf-f1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-f1 {
-    padding-left: var(--sf-f1);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-f1 {
-    padding-left: var(--sf-f1);
-    }
   }
   .p-inline-end-f1:where(:dir(rtl)) {
     padding-left: var(--sf-f1);
@@ -3146,24 +1498,8 @@
   .p-bottom-f1 {
     padding-bottom: var(--sf-f1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-f1 {
-    padding-left: var(--sf-f1);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-f1 {
-    padding-left: var(--sf-f1);
-    }
-  }
   .p-inline-start-f1:where(:dir(ltr)) {
     padding-left: var(--sf-f1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-f1 {
-    padding-right: var(--sf-f1);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-f1 {
-    padding-right: var(--sf-f1);
-    }
   }
   .p-inline-start-f1:where(:dir(rtl)) {
     padding-right: var(--sf-f1);
@@ -3178,24 +1514,8 @@
   .p-top-f2 {
     padding-top: var(--sf-f2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-f2 {
-    padding-right: var(--sf-f2);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-f2 {
-    padding-right: var(--sf-f2);
-    }
-  }
   .p-inline-end-f2:where(:dir(ltr)) {
     padding-right: var(--sf-f2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-f2 {
-    padding-left: var(--sf-f2);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-f2 {
-    padding-left: var(--sf-f2);
-    }
   }
   .p-inline-end-f2:where(:dir(rtl)) {
     padding-left: var(--sf-f2);
@@ -3207,24 +1527,8 @@
   .p-bottom-f2 {
     padding-bottom: var(--sf-f2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-f2 {
-    padding-left: var(--sf-f2);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-f2 {
-    padding-left: var(--sf-f2);
-    }
-  }
   .p-inline-start-f2:where(:dir(ltr)) {
     padding-left: var(--sf-f2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-f2 {
-    padding-right: var(--sf-f2);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-f2 {
-    padding-right: var(--sf-f2);
-    }
   }
   .p-inline-start-f2:where(:dir(rtl)) {
     padding-right: var(--sf-f2);
@@ -3239,24 +1543,8 @@
   .p-top-f3 {
     padding-top: var(--sf-f3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-f3 {
-    padding-right: var(--sf-f3);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-f3 {
-    padding-right: var(--sf-f3);
-    }
-  }
   .p-inline-end-f3:where(:dir(ltr)) {
     padding-right: var(--sf-f3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-f3 {
-    padding-left: var(--sf-f3);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-f3 {
-    padding-left: var(--sf-f3);
-    }
   }
   .p-inline-end-f3:where(:dir(rtl)) {
     padding-left: var(--sf-f3);
@@ -3268,24 +1556,8 @@
   .p-bottom-f3 {
     padding-bottom: var(--sf-f3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-f3 {
-    padding-left: var(--sf-f3);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-f3 {
-    padding-left: var(--sf-f3);
-    }
-  }
   .p-inline-start-f3:where(:dir(ltr)) {
     padding-left: var(--sf-f3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-f3 {
-    padding-right: var(--sf-f3);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-f3 {
-    padding-right: var(--sf-f3);
-    }
   }
   .p-inline-start-f3:where(:dir(rtl)) {
     padding-right: var(--sf-f3);
@@ -3300,24 +1572,8 @@
   .p-top-f4 {
     padding-top: var(--sf-f4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-f4 {
-    padding-right: var(--sf-f4);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-f4 {
-    padding-right: var(--sf-f4);
-    }
-  }
   .p-inline-end-f4:where(:dir(ltr)) {
     padding-right: var(--sf-f4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-f4 {
-    padding-left: var(--sf-f4);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-f4 {
-    padding-left: var(--sf-f4);
-    }
   }
   .p-inline-end-f4:where(:dir(rtl)) {
     padding-left: var(--sf-f4);
@@ -3329,24 +1585,8 @@
   .p-bottom-f4 {
     padding-bottom: var(--sf-f4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-f4 {
-    padding-left: var(--sf-f4);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-f4 {
-    padding-left: var(--sf-f4);
-    }
-  }
   .p-inline-start-f4:where(:dir(ltr)) {
     padding-left: var(--sf-f4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-f4 {
-    padding-right: var(--sf-f4);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-f4 {
-    padding-right: var(--sf-f4);
-    }
   }
   .p-inline-start-f4:where(:dir(rtl)) {
     padding-right: var(--sf-f4);
@@ -3361,24 +1601,8 @@
   .p-top-f5 {
     padding-top: var(--sf-f5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-f5 {
-    padding-right: var(--sf-f5);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-f5 {
-    padding-right: var(--sf-f5);
-    }
-  }
   .p-inline-end-f5:where(:dir(ltr)) {
     padding-right: var(--sf-f5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-f5 {
-    padding-left: var(--sf-f5);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-f5 {
-    padding-left: var(--sf-f5);
-    }
   }
   .p-inline-end-f5:where(:dir(rtl)) {
     padding-left: var(--sf-f5);
@@ -3390,24 +1614,8 @@
   .p-bottom-f5 {
     padding-bottom: var(--sf-f5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-f5 {
-    padding-left: var(--sf-f5);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-f5 {
-    padding-left: var(--sf-f5);
-    }
-  }
   .p-inline-start-f5:where(:dir(ltr)) {
     padding-left: var(--sf-f5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-f5 {
-    padding-right: var(--sf-f5);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-f5 {
-    padding-right: var(--sf-f5);
-    }
   }
   .p-inline-start-f5:where(:dir(rtl)) {
     padding-right: var(--sf-f5);
@@ -3422,24 +1630,8 @@
   .p-top-f6 {
     padding-top: var(--sf-f6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-f6 {
-    padding-right: var(--sf-f6);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-f6 {
-    padding-right: var(--sf-f6);
-    }
-  }
   .p-inline-end-f6:where(:dir(ltr)) {
     padding-right: var(--sf-f6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-f6 {
-    padding-left: var(--sf-f6);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-f6 {
-    padding-left: var(--sf-f6);
-    }
   }
   .p-inline-end-f6:where(:dir(rtl)) {
     padding-left: var(--sf-f6);
@@ -3451,24 +1643,8 @@
   .p-bottom-f6 {
     padding-bottom: var(--sf-f6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-f6 {
-    padding-left: var(--sf-f6);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-f6 {
-    padding-left: var(--sf-f6);
-    }
-  }
   .p-inline-start-f6:where(:dir(ltr)) {
     padding-left: var(--sf-f6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-f6 {
-    padding-right: var(--sf-f6);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-f6 {
-    padding-right: var(--sf-f6);
-    }
   }
   .p-inline-start-f6:where(:dir(rtl)) {
     padding-right: var(--sf-f6);
@@ -3483,24 +1659,8 @@
   .p-top-f7 {
     padding-top: var(--sf-f7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-f7 {
-    padding-right: var(--sf-f7);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-f7 {
-    padding-right: var(--sf-f7);
-    }
-  }
   .p-inline-end-f7:where(:dir(ltr)) {
     padding-right: var(--sf-f7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-f7 {
-    padding-left: var(--sf-f7);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-f7 {
-    padding-left: var(--sf-f7);
-    }
   }
   .p-inline-end-f7:where(:dir(rtl)) {
     padding-left: var(--sf-f7);
@@ -3512,24 +1672,8 @@
   .p-bottom-f7 {
     padding-bottom: var(--sf-f7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-f7 {
-    padding-left: var(--sf-f7);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-f7 {
-    padding-left: var(--sf-f7);
-    }
-  }
   .p-inline-start-f7:where(:dir(ltr)) {
     padding-left: var(--sf-f7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-f7 {
-    padding-right: var(--sf-f7);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-f7 {
-    padding-right: var(--sf-f7);
-    }
   }
   .p-inline-start-f7:where(:dir(rtl)) {
     padding-right: var(--sf-f7);
@@ -3544,24 +1688,8 @@
   .p-top-f8 {
     padding-top: var(--sf-f8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-f8 {
-    padding-right: var(--sf-f8);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-f8 {
-    padding-right: var(--sf-f8);
-    }
-  }
   .p-inline-end-f8:where(:dir(ltr)) {
     padding-right: var(--sf-f8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-f8 {
-    padding-left: var(--sf-f8);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-f8 {
-    padding-left: var(--sf-f8);
-    }
   }
   .p-inline-end-f8:where(:dir(rtl)) {
     padding-left: var(--sf-f8);
@@ -3573,24 +1701,8 @@
   .p-bottom-f8 {
     padding-bottom: var(--sf-f8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-f8 {
-    padding-left: var(--sf-f8);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-f8 {
-    padding-left: var(--sf-f8);
-    }
-  }
   .p-inline-start-f8:where(:dir(ltr)) {
     padding-left: var(--sf-f8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-f8 {
-    padding-right: var(--sf-f8);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-f8 {
-    padding-right: var(--sf-f8);
-    }
   }
   .p-inline-start-f8:where(:dir(rtl)) {
     padding-right: var(--sf-f8);
@@ -3605,24 +1717,8 @@
   .p-top-f9 {
     padding-top: var(--sf-f9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-f9 {
-    padding-right: var(--sf-f9);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-f9 {
-    padding-right: var(--sf-f9);
-    }
-  }
   .p-inline-end-f9:where(:dir(ltr)) {
     padding-right: var(--sf-f9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-f9 {
-    padding-left: var(--sf-f9);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-f9 {
-    padding-left: var(--sf-f9);
-    }
   }
   .p-inline-end-f9:where(:dir(rtl)) {
     padding-left: var(--sf-f9);
@@ -3634,24 +1730,8 @@
   .p-bottom-f9 {
     padding-bottom: var(--sf-f9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-f9 {
-    padding-left: var(--sf-f9);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-f9 {
-    padding-left: var(--sf-f9);
-    }
-  }
   .p-inline-start-f9:where(:dir(ltr)) {
     padding-left: var(--sf-f9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-f9 {
-    padding-right: var(--sf-f9);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-f9 {
-    padding-right: var(--sf-f9);
-    }
   }
   .p-inline-start-f9:where(:dir(rtl)) {
     padding-right: var(--sf-f9);
@@ -3666,24 +1746,8 @@
   .p-top-g0 {
     padding-top: var(--sf-g0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-g0 {
-    padding-right: var(--sf-g0);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-g0 {
-    padding-right: var(--sf-g0);
-    }
-  }
   .p-inline-end-g0:where(:dir(ltr)) {
     padding-right: var(--sf-g0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-g0 {
-    padding-left: var(--sf-g0);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-g0 {
-    padding-left: var(--sf-g0);
-    }
   }
   .p-inline-end-g0:where(:dir(rtl)) {
     padding-left: var(--sf-g0);
@@ -3695,24 +1759,8 @@
   .p-bottom-g0 {
     padding-bottom: var(--sf-g0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-g0 {
-    padding-left: var(--sf-g0);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-g0 {
-    padding-left: var(--sf-g0);
-    }
-  }
   .p-inline-start-g0:where(:dir(ltr)) {
     padding-left: var(--sf-g0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-g0 {
-    padding-right: var(--sf-g0);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-g0 {
-    padding-right: var(--sf-g0);
-    }
   }
   .p-inline-start-g0:where(:dir(rtl)) {
     padding-right: var(--sf-g0);
@@ -3727,24 +1775,8 @@
   .p-top-g1 {
     padding-top: var(--sf-g1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-g1 {
-    padding-right: var(--sf-g1);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-g1 {
-    padding-right: var(--sf-g1);
-    }
-  }
   .p-inline-end-g1:where(:dir(ltr)) {
     padding-right: var(--sf-g1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-g1 {
-    padding-left: var(--sf-g1);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-g1 {
-    padding-left: var(--sf-g1);
-    }
   }
   .p-inline-end-g1:where(:dir(rtl)) {
     padding-left: var(--sf-g1);
@@ -3756,24 +1788,8 @@
   .p-bottom-g1 {
     padding-bottom: var(--sf-g1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-g1 {
-    padding-left: var(--sf-g1);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-g1 {
-    padding-left: var(--sf-g1);
-    }
-  }
   .p-inline-start-g1:where(:dir(ltr)) {
     padding-left: var(--sf-g1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-g1 {
-    padding-right: var(--sf-g1);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-g1 {
-    padding-right: var(--sf-g1);
-    }
   }
   .p-inline-start-g1:where(:dir(rtl)) {
     padding-right: var(--sf-g1);
@@ -3788,24 +1804,8 @@
   .p-top-g2 {
     padding-top: var(--sf-g2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-g2 {
-    padding-right: var(--sf-g2);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-g2 {
-    padding-right: var(--sf-g2);
-    }
-  }
   .p-inline-end-g2:where(:dir(ltr)) {
     padding-right: var(--sf-g2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-g2 {
-    padding-left: var(--sf-g2);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-g2 {
-    padding-left: var(--sf-g2);
-    }
   }
   .p-inline-end-g2:where(:dir(rtl)) {
     padding-left: var(--sf-g2);
@@ -3817,24 +1817,8 @@
   .p-bottom-g2 {
     padding-bottom: var(--sf-g2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-g2 {
-    padding-left: var(--sf-g2);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-g2 {
-    padding-left: var(--sf-g2);
-    }
-  }
   .p-inline-start-g2:where(:dir(ltr)) {
     padding-left: var(--sf-g2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-g2 {
-    padding-right: var(--sf-g2);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-g2 {
-    padding-right: var(--sf-g2);
-    }
   }
   .p-inline-start-g2:where(:dir(rtl)) {
     padding-right: var(--sf-g2);
@@ -3849,24 +1833,8 @@
   .p-top-g3 {
     padding-top: var(--sf-g3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-g3 {
-    padding-right: var(--sf-g3);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-g3 {
-    padding-right: var(--sf-g3);
-    }
-  }
   .p-inline-end-g3:where(:dir(ltr)) {
     padding-right: var(--sf-g3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-g3 {
-    padding-left: var(--sf-g3);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-g3 {
-    padding-left: var(--sf-g3);
-    }
   }
   .p-inline-end-g3:where(:dir(rtl)) {
     padding-left: var(--sf-g3);
@@ -3878,24 +1846,8 @@
   .p-bottom-g3 {
     padding-bottom: var(--sf-g3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-g3 {
-    padding-left: var(--sf-g3);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-g3 {
-    padding-left: var(--sf-g3);
-    }
-  }
   .p-inline-start-g3:where(:dir(ltr)) {
     padding-left: var(--sf-g3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-g3 {
-    padding-right: var(--sf-g3);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-g3 {
-    padding-right: var(--sf-g3);
-    }
   }
   .p-inline-start-g3:where(:dir(rtl)) {
     padding-right: var(--sf-g3);
@@ -3910,24 +1862,8 @@
   .p-top-g4 {
     padding-top: var(--sf-g4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-g4 {
-    padding-right: var(--sf-g4);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-g4 {
-    padding-right: var(--sf-g4);
-    }
-  }
   .p-inline-end-g4:where(:dir(ltr)) {
     padding-right: var(--sf-g4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-g4 {
-    padding-left: var(--sf-g4);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-g4 {
-    padding-left: var(--sf-g4);
-    }
   }
   .p-inline-end-g4:where(:dir(rtl)) {
     padding-left: var(--sf-g4);
@@ -3939,24 +1875,8 @@
   .p-bottom-g4 {
     padding-bottom: var(--sf-g4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-g4 {
-    padding-left: var(--sf-g4);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-g4 {
-    padding-left: var(--sf-g4);
-    }
-  }
   .p-inline-start-g4:where(:dir(ltr)) {
     padding-left: var(--sf-g4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-g4 {
-    padding-right: var(--sf-g4);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-g4 {
-    padding-right: var(--sf-g4);
-    }
   }
   .p-inline-start-g4:where(:dir(rtl)) {
     padding-right: var(--sf-g4);
@@ -3971,24 +1891,8 @@
   .p-top-g5 {
     padding-top: var(--sf-g5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-g5 {
-    padding-right: var(--sf-g5);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-g5 {
-    padding-right: var(--sf-g5);
-    }
-  }
   .p-inline-end-g5:where(:dir(ltr)) {
     padding-right: var(--sf-g5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-g5 {
-    padding-left: var(--sf-g5);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-g5 {
-    padding-left: var(--sf-g5);
-    }
   }
   .p-inline-end-g5:where(:dir(rtl)) {
     padding-left: var(--sf-g5);
@@ -4000,24 +1904,8 @@
   .p-bottom-g5 {
     padding-bottom: var(--sf-g5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-g5 {
-    padding-left: var(--sf-g5);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-g5 {
-    padding-left: var(--sf-g5);
-    }
-  }
   .p-inline-start-g5:where(:dir(ltr)) {
     padding-left: var(--sf-g5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-g5 {
-    padding-right: var(--sf-g5);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-g5 {
-    padding-right: var(--sf-g5);
-    }
   }
   .p-inline-start-g5:where(:dir(rtl)) {
     padding-right: var(--sf-g5);
@@ -4032,24 +1920,8 @@
   .p-top-g6 {
     padding-top: var(--sf-g6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-g6 {
-    padding-right: var(--sf-g6);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-g6 {
-    padding-right: var(--sf-g6);
-    }
-  }
   .p-inline-end-g6:where(:dir(ltr)) {
     padding-right: var(--sf-g6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-g6 {
-    padding-left: var(--sf-g6);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-g6 {
-    padding-left: var(--sf-g6);
-    }
   }
   .p-inline-end-g6:where(:dir(rtl)) {
     padding-left: var(--sf-g6);
@@ -4061,24 +1933,8 @@
   .p-bottom-g6 {
     padding-bottom: var(--sf-g6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-g6 {
-    padding-left: var(--sf-g6);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-g6 {
-    padding-left: var(--sf-g6);
-    }
-  }
   .p-inline-start-g6:where(:dir(ltr)) {
     padding-left: var(--sf-g6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-g6 {
-    padding-right: var(--sf-g6);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-g6 {
-    padding-right: var(--sf-g6);
-    }
   }
   .p-inline-start-g6:where(:dir(rtl)) {
     padding-right: var(--sf-g6);
@@ -4093,24 +1949,8 @@
   .p-top-g7 {
     padding-top: var(--sf-g7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-g7 {
-    padding-right: var(--sf-g7);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-g7 {
-    padding-right: var(--sf-g7);
-    }
-  }
   .p-inline-end-g7:where(:dir(ltr)) {
     padding-right: var(--sf-g7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-g7 {
-    padding-left: var(--sf-g7);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-g7 {
-    padding-left: var(--sf-g7);
-    }
   }
   .p-inline-end-g7:where(:dir(rtl)) {
     padding-left: var(--sf-g7);
@@ -4122,24 +1962,8 @@
   .p-bottom-g7 {
     padding-bottom: var(--sf-g7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-g7 {
-    padding-left: var(--sf-g7);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-g7 {
-    padding-left: var(--sf-g7);
-    }
-  }
   .p-inline-start-g7:where(:dir(ltr)) {
     padding-left: var(--sf-g7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-g7 {
-    padding-right: var(--sf-g7);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-g7 {
-    padding-right: var(--sf-g7);
-    }
   }
   .p-inline-start-g7:where(:dir(rtl)) {
     padding-right: var(--sf-g7);
@@ -4154,24 +1978,8 @@
   .p-top-g8 {
     padding-top: var(--sf-g8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-g8 {
-    padding-right: var(--sf-g8);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-g8 {
-    padding-right: var(--sf-g8);
-    }
-  }
   .p-inline-end-g8:where(:dir(ltr)) {
     padding-right: var(--sf-g8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-g8 {
-    padding-left: var(--sf-g8);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-g8 {
-    padding-left: var(--sf-g8);
-    }
   }
   .p-inline-end-g8:where(:dir(rtl)) {
     padding-left: var(--sf-g8);
@@ -4183,24 +1991,8 @@
   .p-bottom-g8 {
     padding-bottom: var(--sf-g8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-g8 {
-    padding-left: var(--sf-g8);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-g8 {
-    padding-left: var(--sf-g8);
-    }
-  }
   .p-inline-start-g8:where(:dir(ltr)) {
     padding-left: var(--sf-g8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-g8 {
-    padding-right: var(--sf-g8);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-g8 {
-    padding-right: var(--sf-g8);
-    }
   }
   .p-inline-start-g8:where(:dir(rtl)) {
     padding-right: var(--sf-g8);
@@ -4215,24 +2007,8 @@
   .p-top-g9 {
     padding-top: var(--sf-g9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-g9 {
-    padding-right: var(--sf-g9);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-g9 {
-    padding-right: var(--sf-g9);
-    }
-  }
   .p-inline-end-g9:where(:dir(ltr)) {
     padding-right: var(--sf-g9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-g9 {
-    padding-left: var(--sf-g9);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-g9 {
-    padding-left: var(--sf-g9);
-    }
   }
   .p-inline-end-g9:where(:dir(rtl)) {
     padding-left: var(--sf-g9);
@@ -4244,24 +2020,8 @@
   .p-bottom-g9 {
     padding-bottom: var(--sf-g9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-g9 {
-    padding-left: var(--sf-g9);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-g9 {
-    padding-left: var(--sf-g9);
-    }
-  }
   .p-inline-start-g9:where(:dir(ltr)) {
     padding-left: var(--sf-g9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-g9 {
-    padding-right: var(--sf-g9);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-g9 {
-    padding-right: var(--sf-g9);
-    }
   }
   .p-inline-start-g9:where(:dir(rtl)) {
     padding-right: var(--sf-g9);
@@ -4276,24 +2036,8 @@
   .p-top-h0 {
     padding-top: var(--sf-h0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-h0 {
-    padding-right: var(--sf-h0);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-h0 {
-    padding-right: var(--sf-h0);
-    }
-  }
   .p-inline-end-h0:where(:dir(ltr)) {
     padding-right: var(--sf-h0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-h0 {
-    padding-left: var(--sf-h0);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-h0 {
-    padding-left: var(--sf-h0);
-    }
   }
   .p-inline-end-h0:where(:dir(rtl)) {
     padding-left: var(--sf-h0);
@@ -4305,24 +2049,8 @@
   .p-bottom-h0 {
     padding-bottom: var(--sf-h0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-h0 {
-    padding-left: var(--sf-h0);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-h0 {
-    padding-left: var(--sf-h0);
-    }
-  }
   .p-inline-start-h0:where(:dir(ltr)) {
     padding-left: var(--sf-h0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-h0 {
-    padding-right: var(--sf-h0);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-h0 {
-    padding-right: var(--sf-h0);
-    }
   }
   .p-inline-start-h0:where(:dir(rtl)) {
     padding-right: var(--sf-h0);
@@ -4337,24 +2065,8 @@
   .p-top-h1 {
     padding-top: var(--sf-h1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-h1 {
-    padding-right: var(--sf-h1);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-h1 {
-    padding-right: var(--sf-h1);
-    }
-  }
   .p-inline-end-h1:where(:dir(ltr)) {
     padding-right: var(--sf-h1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-h1 {
-    padding-left: var(--sf-h1);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-h1 {
-    padding-left: var(--sf-h1);
-    }
   }
   .p-inline-end-h1:where(:dir(rtl)) {
     padding-left: var(--sf-h1);
@@ -4366,24 +2078,8 @@
   .p-bottom-h1 {
     padding-bottom: var(--sf-h1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-h1 {
-    padding-left: var(--sf-h1);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-h1 {
-    padding-left: var(--sf-h1);
-    }
-  }
   .p-inline-start-h1:where(:dir(ltr)) {
     padding-left: var(--sf-h1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-h1 {
-    padding-right: var(--sf-h1);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-h1 {
-    padding-right: var(--sf-h1);
-    }
   }
   .p-inline-start-h1:where(:dir(rtl)) {
     padding-right: var(--sf-h1);
@@ -4398,24 +2094,8 @@
   .p-top-h2 {
     padding-top: var(--sf-h2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-h2 {
-    padding-right: var(--sf-h2);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-h2 {
-    padding-right: var(--sf-h2);
-    }
-  }
   .p-inline-end-h2:where(:dir(ltr)) {
     padding-right: var(--sf-h2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-h2 {
-    padding-left: var(--sf-h2);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-h2 {
-    padding-left: var(--sf-h2);
-    }
   }
   .p-inline-end-h2:where(:dir(rtl)) {
     padding-left: var(--sf-h2);
@@ -4427,24 +2107,8 @@
   .p-bottom-h2 {
     padding-bottom: var(--sf-h2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-h2 {
-    padding-left: var(--sf-h2);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-h2 {
-    padding-left: var(--sf-h2);
-    }
-  }
   .p-inline-start-h2:where(:dir(ltr)) {
     padding-left: var(--sf-h2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-h2 {
-    padding-right: var(--sf-h2);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-h2 {
-    padding-right: var(--sf-h2);
-    }
   }
   .p-inline-start-h2:where(:dir(rtl)) {
     padding-right: var(--sf-h2);
@@ -4459,24 +2123,8 @@
   .p-top-h3 {
     padding-top: var(--sf-h3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-h3 {
-    padding-right: var(--sf-h3);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-h3 {
-    padding-right: var(--sf-h3);
-    }
-  }
   .p-inline-end-h3:where(:dir(ltr)) {
     padding-right: var(--sf-h3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-h3 {
-    padding-left: var(--sf-h3);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-h3 {
-    padding-left: var(--sf-h3);
-    }
   }
   .p-inline-end-h3:where(:dir(rtl)) {
     padding-left: var(--sf-h3);
@@ -4488,24 +2136,8 @@
   .p-bottom-h3 {
     padding-bottom: var(--sf-h3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-h3 {
-    padding-left: var(--sf-h3);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-h3 {
-    padding-left: var(--sf-h3);
-    }
-  }
   .p-inline-start-h3:where(:dir(ltr)) {
     padding-left: var(--sf-h3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-h3 {
-    padding-right: var(--sf-h3);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-h3 {
-    padding-right: var(--sf-h3);
-    }
   }
   .p-inline-start-h3:where(:dir(rtl)) {
     padding-right: var(--sf-h3);
@@ -4520,24 +2152,8 @@
   .p-top-h4 {
     padding-top: var(--sf-h4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-h4 {
-    padding-right: var(--sf-h4);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-h4 {
-    padding-right: var(--sf-h4);
-    }
-  }
   .p-inline-end-h4:where(:dir(ltr)) {
     padding-right: var(--sf-h4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-h4 {
-    padding-left: var(--sf-h4);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-h4 {
-    padding-left: var(--sf-h4);
-    }
   }
   .p-inline-end-h4:where(:dir(rtl)) {
     padding-left: var(--sf-h4);
@@ -4549,24 +2165,8 @@
   .p-bottom-h4 {
     padding-bottom: var(--sf-h4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-h4 {
-    padding-left: var(--sf-h4);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-h4 {
-    padding-left: var(--sf-h4);
-    }
-  }
   .p-inline-start-h4:where(:dir(ltr)) {
     padding-left: var(--sf-h4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-h4 {
-    padding-right: var(--sf-h4);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-h4 {
-    padding-right: var(--sf-h4);
-    }
   }
   .p-inline-start-h4:where(:dir(rtl)) {
     padding-right: var(--sf-h4);
@@ -4581,24 +2181,8 @@
   .p-top-h5 {
     padding-top: var(--sf-h5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-h5 {
-    padding-right: var(--sf-h5);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-h5 {
-    padding-right: var(--sf-h5);
-    }
-  }
   .p-inline-end-h5:where(:dir(ltr)) {
     padding-right: var(--sf-h5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-h5 {
-    padding-left: var(--sf-h5);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-h5 {
-    padding-left: var(--sf-h5);
-    }
   }
   .p-inline-end-h5:where(:dir(rtl)) {
     padding-left: var(--sf-h5);
@@ -4610,24 +2194,8 @@
   .p-bottom-h5 {
     padding-bottom: var(--sf-h5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-h5 {
-    padding-left: var(--sf-h5);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-h5 {
-    padding-left: var(--sf-h5);
-    }
-  }
   .p-inline-start-h5:where(:dir(ltr)) {
     padding-left: var(--sf-h5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-h5 {
-    padding-right: var(--sf-h5);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-h5 {
-    padding-right: var(--sf-h5);
-    }
   }
   .p-inline-start-h5:where(:dir(rtl)) {
     padding-right: var(--sf-h5);
@@ -4642,24 +2210,8 @@
   .p-top-h6 {
     padding-top: var(--sf-h6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-h6 {
-    padding-right: var(--sf-h6);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-h6 {
-    padding-right: var(--sf-h6);
-    }
-  }
   .p-inline-end-h6:where(:dir(ltr)) {
     padding-right: var(--sf-h6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-h6 {
-    padding-left: var(--sf-h6);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-h6 {
-    padding-left: var(--sf-h6);
-    }
   }
   .p-inline-end-h6:where(:dir(rtl)) {
     padding-left: var(--sf-h6);
@@ -4671,24 +2223,8 @@
   .p-bottom-h6 {
     padding-bottom: var(--sf-h6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-h6 {
-    padding-left: var(--sf-h6);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-h6 {
-    padding-left: var(--sf-h6);
-    }
-  }
   .p-inline-start-h6:where(:dir(ltr)) {
     padding-left: var(--sf-h6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-h6 {
-    padding-right: var(--sf-h6);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-h6 {
-    padding-right: var(--sf-h6);
-    }
   }
   .p-inline-start-h6:where(:dir(rtl)) {
     padding-right: var(--sf-h6);
@@ -4703,24 +2239,8 @@
   .p-top-h7 {
     padding-top: var(--sf-h7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-h7 {
-    padding-right: var(--sf-h7);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-h7 {
-    padding-right: var(--sf-h7);
-    }
-  }
   .p-inline-end-h7:where(:dir(ltr)) {
     padding-right: var(--sf-h7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-h7 {
-    padding-left: var(--sf-h7);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-h7 {
-    padding-left: var(--sf-h7);
-    }
   }
   .p-inline-end-h7:where(:dir(rtl)) {
     padding-left: var(--sf-h7);
@@ -4732,24 +2252,8 @@
   .p-bottom-h7 {
     padding-bottom: var(--sf-h7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-h7 {
-    padding-left: var(--sf-h7);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-h7 {
-    padding-left: var(--sf-h7);
-    }
-  }
   .p-inline-start-h7:where(:dir(ltr)) {
     padding-left: var(--sf-h7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-h7 {
-    padding-right: var(--sf-h7);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-h7 {
-    padding-right: var(--sf-h7);
-    }
   }
   .p-inline-start-h7:where(:dir(rtl)) {
     padding-right: var(--sf-h7);
@@ -4764,24 +2268,8 @@
   .p-top-h8 {
     padding-top: var(--sf-h8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-h8 {
-    padding-right: var(--sf-h8);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-h8 {
-    padding-right: var(--sf-h8);
-    }
-  }
   .p-inline-end-h8:where(:dir(ltr)) {
     padding-right: var(--sf-h8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-h8 {
-    padding-left: var(--sf-h8);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-h8 {
-    padding-left: var(--sf-h8);
-    }
   }
   .p-inline-end-h8:where(:dir(rtl)) {
     padding-left: var(--sf-h8);
@@ -4793,24 +2281,8 @@
   .p-bottom-h8 {
     padding-bottom: var(--sf-h8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-h8 {
-    padding-left: var(--sf-h8);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-h8 {
-    padding-left: var(--sf-h8);
-    }
-  }
   .p-inline-start-h8:where(:dir(ltr)) {
     padding-left: var(--sf-h8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-h8 {
-    padding-right: var(--sf-h8);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-h8 {
-    padding-right: var(--sf-h8);
-    }
   }
   .p-inline-start-h8:where(:dir(rtl)) {
     padding-right: var(--sf-h8);
@@ -4825,24 +2297,8 @@
   .p-top-h9 {
     padding-top: var(--sf-h9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-h9 {
-    padding-right: var(--sf-h9);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-h9 {
-    padding-right: var(--sf-h9);
-    }
-  }
   .p-inline-end-h9:where(:dir(ltr)) {
     padding-right: var(--sf-h9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-h9 {
-    padding-left: var(--sf-h9);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-h9 {
-    padding-left: var(--sf-h9);
-    }
   }
   .p-inline-end-h9:where(:dir(rtl)) {
     padding-left: var(--sf-h9);
@@ -4854,24 +2310,8 @@
   .p-bottom-h9 {
     padding-bottom: var(--sf-h9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-h9 {
-    padding-left: var(--sf-h9);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-h9 {
-    padding-left: var(--sf-h9);
-    }
-  }
   .p-inline-start-h9:where(:dir(ltr)) {
     padding-left: var(--sf-h9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-h9 {
-    padding-right: var(--sf-h9);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-h9 {
-    padding-right: var(--sf-h9);
-    }
   }
   .p-inline-start-h9:where(:dir(rtl)) {
     padding-right: var(--sf-h9);
@@ -4886,24 +2326,8 @@
   .p-top-i0 {
     padding-top: var(--sf-i0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-i0 {
-    padding-right: var(--sf-i0);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-i0 {
-    padding-right: var(--sf-i0);
-    }
-  }
   .p-inline-end-i0:where(:dir(ltr)) {
     padding-right: var(--sf-i0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-i0 {
-    padding-left: var(--sf-i0);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-i0 {
-    padding-left: var(--sf-i0);
-    }
   }
   .p-inline-end-i0:where(:dir(rtl)) {
     padding-left: var(--sf-i0);
@@ -4915,24 +2339,8 @@
   .p-bottom-i0 {
     padding-bottom: var(--sf-i0);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-i0 {
-    padding-left: var(--sf-i0);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-i0 {
-    padding-left: var(--sf-i0);
-    }
-  }
   .p-inline-start-i0:where(:dir(ltr)) {
     padding-left: var(--sf-i0);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-i0 {
-    padding-right: var(--sf-i0);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-i0 {
-    padding-right: var(--sf-i0);
-    }
   }
   .p-inline-start-i0:where(:dir(rtl)) {
     padding-right: var(--sf-i0);
@@ -4947,24 +2355,8 @@
   .p-top-i1 {
     padding-top: var(--sf-i1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-i1 {
-    padding-right: var(--sf-i1);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-i1 {
-    padding-right: var(--sf-i1);
-    }
-  }
   .p-inline-end-i1:where(:dir(ltr)) {
     padding-right: var(--sf-i1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-i1 {
-    padding-left: var(--sf-i1);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-i1 {
-    padding-left: var(--sf-i1);
-    }
   }
   .p-inline-end-i1:where(:dir(rtl)) {
     padding-left: var(--sf-i1);
@@ -4976,24 +2368,8 @@
   .p-bottom-i1 {
     padding-bottom: var(--sf-i1);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-i1 {
-    padding-left: var(--sf-i1);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-i1 {
-    padding-left: var(--sf-i1);
-    }
-  }
   .p-inline-start-i1:where(:dir(ltr)) {
     padding-left: var(--sf-i1);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-i1 {
-    padding-right: var(--sf-i1);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-i1 {
-    padding-right: var(--sf-i1);
-    }
   }
   .p-inline-start-i1:where(:dir(rtl)) {
     padding-right: var(--sf-i1);
@@ -5008,24 +2384,8 @@
   .p-top-i2 {
     padding-top: var(--sf-i2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-i2 {
-    padding-right: var(--sf-i2);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-i2 {
-    padding-right: var(--sf-i2);
-    }
-  }
   .p-inline-end-i2:where(:dir(ltr)) {
     padding-right: var(--sf-i2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-i2 {
-    padding-left: var(--sf-i2);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-i2 {
-    padding-left: var(--sf-i2);
-    }
   }
   .p-inline-end-i2:where(:dir(rtl)) {
     padding-left: var(--sf-i2);
@@ -5037,24 +2397,8 @@
   .p-bottom-i2 {
     padding-bottom: var(--sf-i2);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-i2 {
-    padding-left: var(--sf-i2);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-i2 {
-    padding-left: var(--sf-i2);
-    }
-  }
   .p-inline-start-i2:where(:dir(ltr)) {
     padding-left: var(--sf-i2);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-i2 {
-    padding-right: var(--sf-i2);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-i2 {
-    padding-right: var(--sf-i2);
-    }
   }
   .p-inline-start-i2:where(:dir(rtl)) {
     padding-right: var(--sf-i2);
@@ -5069,24 +2413,8 @@
   .p-top-i3 {
     padding-top: var(--sf-i3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-i3 {
-    padding-right: var(--sf-i3);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-i3 {
-    padding-right: var(--sf-i3);
-    }
-  }
   .p-inline-end-i3:where(:dir(ltr)) {
     padding-right: var(--sf-i3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-i3 {
-    padding-left: var(--sf-i3);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-i3 {
-    padding-left: var(--sf-i3);
-    }
   }
   .p-inline-end-i3:where(:dir(rtl)) {
     padding-left: var(--sf-i3);
@@ -5098,24 +2426,8 @@
   .p-bottom-i3 {
     padding-bottom: var(--sf-i3);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-i3 {
-    padding-left: var(--sf-i3);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-i3 {
-    padding-left: var(--sf-i3);
-    }
-  }
   .p-inline-start-i3:where(:dir(ltr)) {
     padding-left: var(--sf-i3);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-i3 {
-    padding-right: var(--sf-i3);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-i3 {
-    padding-right: var(--sf-i3);
-    }
   }
   .p-inline-start-i3:where(:dir(rtl)) {
     padding-right: var(--sf-i3);
@@ -5130,24 +2442,8 @@
   .p-top-i4 {
     padding-top: var(--sf-i4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-i4 {
-    padding-right: var(--sf-i4);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-i4 {
-    padding-right: var(--sf-i4);
-    }
-  }
   .p-inline-end-i4:where(:dir(ltr)) {
     padding-right: var(--sf-i4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-i4 {
-    padding-left: var(--sf-i4);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-i4 {
-    padding-left: var(--sf-i4);
-    }
   }
   .p-inline-end-i4:where(:dir(rtl)) {
     padding-left: var(--sf-i4);
@@ -5159,24 +2455,8 @@
   .p-bottom-i4 {
     padding-bottom: var(--sf-i4);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-i4 {
-    padding-left: var(--sf-i4);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-i4 {
-    padding-left: var(--sf-i4);
-    }
-  }
   .p-inline-start-i4:where(:dir(ltr)) {
     padding-left: var(--sf-i4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-i4 {
-    padding-right: var(--sf-i4);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-i4 {
-    padding-right: var(--sf-i4);
-    }
   }
   .p-inline-start-i4:where(:dir(rtl)) {
     padding-right: var(--sf-i4);
@@ -5191,24 +2471,8 @@
   .p-top-i5 {
     padding-top: var(--sf-i5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-i5 {
-    padding-right: var(--sf-i5);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-i5 {
-    padding-right: var(--sf-i5);
-    }
-  }
   .p-inline-end-i5:where(:dir(ltr)) {
     padding-right: var(--sf-i5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-i5 {
-    padding-left: var(--sf-i5);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-i5 {
-    padding-left: var(--sf-i5);
-    }
   }
   .p-inline-end-i5:where(:dir(rtl)) {
     padding-left: var(--sf-i5);
@@ -5220,24 +2484,8 @@
   .p-bottom-i5 {
     padding-bottom: var(--sf-i5);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-i5 {
-    padding-left: var(--sf-i5);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-i5 {
-    padding-left: var(--sf-i5);
-    }
-  }
   .p-inline-start-i5:where(:dir(ltr)) {
     padding-left: var(--sf-i5);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-i5 {
-    padding-right: var(--sf-i5);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-i5 {
-    padding-right: var(--sf-i5);
-    }
   }
   .p-inline-start-i5:where(:dir(rtl)) {
     padding-right: var(--sf-i5);
@@ -5252,24 +2500,8 @@
   .p-top-i6 {
     padding-top: var(--sf-i6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-i6 {
-    padding-right: var(--sf-i6);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-i6 {
-    padding-right: var(--sf-i6);
-    }
-  }
   .p-inline-end-i6:where(:dir(ltr)) {
     padding-right: var(--sf-i6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-i6 {
-    padding-left: var(--sf-i6);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-i6 {
-    padding-left: var(--sf-i6);
-    }
   }
   .p-inline-end-i6:where(:dir(rtl)) {
     padding-left: var(--sf-i6);
@@ -5281,24 +2513,8 @@
   .p-bottom-i6 {
     padding-bottom: var(--sf-i6);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-i6 {
-    padding-left: var(--sf-i6);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-i6 {
-    padding-left: var(--sf-i6);
-    }
-  }
   .p-inline-start-i6:where(:dir(ltr)) {
     padding-left: var(--sf-i6);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-i6 {
-    padding-right: var(--sf-i6);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-i6 {
-    padding-right: var(--sf-i6);
-    }
   }
   .p-inline-start-i6:where(:dir(rtl)) {
     padding-right: var(--sf-i6);
@@ -5313,24 +2529,8 @@
   .p-top-i7 {
     padding-top: var(--sf-i7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-i7 {
-    padding-right: var(--sf-i7);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-i7 {
-    padding-right: var(--sf-i7);
-    }
-  }
   .p-inline-end-i7:where(:dir(ltr)) {
     padding-right: var(--sf-i7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-i7 {
-    padding-left: var(--sf-i7);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-i7 {
-    padding-left: var(--sf-i7);
-    }
   }
   .p-inline-end-i7:where(:dir(rtl)) {
     padding-left: var(--sf-i7);
@@ -5342,24 +2542,8 @@
   .p-bottom-i7 {
     padding-bottom: var(--sf-i7);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-i7 {
-    padding-left: var(--sf-i7);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-i7 {
-    padding-left: var(--sf-i7);
-    }
-  }
   .p-inline-start-i7:where(:dir(ltr)) {
     padding-left: var(--sf-i7);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-i7 {
-    padding-right: var(--sf-i7);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-i7 {
-    padding-right: var(--sf-i7);
-    }
   }
   .p-inline-start-i7:where(:dir(rtl)) {
     padding-right: var(--sf-i7);
@@ -5374,24 +2558,8 @@
   .p-top-i8 {
     padding-top: var(--sf-i8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-i8 {
-    padding-right: var(--sf-i8);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-i8 {
-    padding-right: var(--sf-i8);
-    }
-  }
   .p-inline-end-i8:where(:dir(ltr)) {
     padding-right: var(--sf-i8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-i8 {
-    padding-left: var(--sf-i8);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-i8 {
-    padding-left: var(--sf-i8);
-    }
   }
   .p-inline-end-i8:where(:dir(rtl)) {
     padding-left: var(--sf-i8);
@@ -5403,24 +2571,8 @@
   .p-bottom-i8 {
     padding-bottom: var(--sf-i8);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-i8 {
-    padding-left: var(--sf-i8);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-i8 {
-    padding-left: var(--sf-i8);
-    }
-  }
   .p-inline-start-i8:where(:dir(ltr)) {
     padding-left: var(--sf-i8);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-i8 {
-    padding-right: var(--sf-i8);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-i8 {
-    padding-right: var(--sf-i8);
-    }
   }
   .p-inline-start-i8:where(:dir(rtl)) {
     padding-right: var(--sf-i8);
@@ -5435,24 +2587,8 @@
   .p-top-i9 {
     padding-top: var(--sf-i9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-end-i9 {
-    padding-right: var(--sf-i9);
-  }
-  @supports not (padding-inline-end: initial) {
-  html:not([dir="rtl"]) .p-inline-end-i9 {
-    padding-right: var(--sf-i9);
-    }
-  }
   .p-inline-end-i9:where(:dir(ltr)) {
     padding-right: var(--sf-i9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-end-i9 {
-    padding-left: var(--sf-i9);
-  }
-  @supports not (padding-inline-end: initial) {
-  [dir="rtl"] .p-inline-end-i9 {
-    padding-left: var(--sf-i9);
-    }
   }
   .p-inline-end-i9:where(:dir(rtl)) {
     padding-left: var(--sf-i9);
@@ -5464,24 +2600,8 @@
   .p-bottom-i9 {
     padding-bottom: var(--sf-i9);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .p-inline-start-i9 {
-    padding-left: var(--sf-i9);
-  }
-  @supports not (padding-inline-start: initial) {
-  html:not([dir="rtl"]) .p-inline-start-i9 {
-    padding-left: var(--sf-i9);
-    }
-  }
   .p-inline-start-i9:where(:dir(ltr)) {
     padding-left: var(--sf-i9);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .p-inline-start-i9 {
-    padding-right: var(--sf-i9);
-  }
-  @supports not (padding-inline-start: initial) {
-  [dir="rtl"] .p-inline-start-i9 {
-    padding-right: var(--sf-i9);
-    }
   }
   .p-inline-start-i9:where(:dir(rtl)) {
     padding-right: var(--sf-i9);

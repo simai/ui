@@ -23,7 +23,6 @@
     min-inline-size: 0;
     width: 100%;
     inline-size: 100%;
-    gap: var(--sf-space-1\/4);
     gap: var(--sf-quantity--gap, var(--sf-space-1\/4));
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-quantity-label--gap) justify-content/flex-start (.justify-start) align-items/flex-start (.items-start) */
@@ -78,134 +77,38 @@
     line-height: var(--sf-quantity-required--line-height);
   }
   /* utility-hint: display/flex (.flex) flex-direction/row (.flex-row) flex-wrap/nowrap (.flex-nowrap) gap/var(--sf-quantity-wrap--gap) justify-content/center (.justify-center) align-items/center (.items-center) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap{
-    border-bottom-right-radius: var(--sf-quantity-wrap--border-end-end-radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap{
-    border-bottom-right-radius: var(--sf-quantity-wrap--border-end-end-radius);
-    }
-  }
   .sf-quantity .sf-quantity-wrap:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-quantity-wrap--border-end-end-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-wrap{
-    border-bottom-left-radius: var(--sf-quantity-wrap--border-end-end-radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-quantity .sf-quantity-wrap{
-    border-bottom-left-radius: var(--sf-quantity-wrap--border-end-end-radius);
-    }
   }
   .sf-quantity .sf-quantity-wrap:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-quantity-wrap--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap{
-    border-bottom-left-radius: var(--sf-quantity-wrap--border-end-start-radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap{
-    border-bottom-left-radius: var(--sf-quantity-wrap--border-end-start-radius);
-    }
-  }
   .sf-quantity .sf-quantity-wrap:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-quantity-wrap--border-end-start-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-wrap{
-    border-bottom-right-radius: var(--sf-quantity-wrap--border-end-start-radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-quantity .sf-quantity-wrap{
-    border-bottom-right-radius: var(--sf-quantity-wrap--border-end-start-radius);
-    }
   }
   .sf-quantity .sf-quantity-wrap:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-quantity-wrap--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap{
-    border-top-right-radius: var(--sf-quantity-wrap--border-start-end-radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap{
-    border-top-right-radius: var(--sf-quantity-wrap--border-start-end-radius);
-    }
-  }
   .sf-quantity .sf-quantity-wrap:where(:dir(ltr)){
     border-top-right-radius: var(--sf-quantity-wrap--border-start-end-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-wrap{
-    border-top-left-radius: var(--sf-quantity-wrap--border-start-end-radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-quantity .sf-quantity-wrap{
-    border-top-left-radius: var(--sf-quantity-wrap--border-start-end-radius);
-    }
   }
   .sf-quantity .sf-quantity-wrap:where(:dir(rtl)){
     border-top-left-radius: var(--sf-quantity-wrap--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap{
-    border-top-left-radius: var(--sf-quantity-wrap--border-start-start-radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap{
-    border-top-left-radius: var(--sf-quantity-wrap--border-start-start-radius);
-    }
-  }
   .sf-quantity .sf-quantity-wrap:where(:dir(ltr)){
     border-top-left-radius: var(--sf-quantity-wrap--border-start-start-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-wrap{
-    border-top-right-radius: var(--sf-quantity-wrap--border-start-start-radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-quantity .sf-quantity-wrap{
-    border-top-right-radius: var(--sf-quantity-wrap--border-start-start-radius);
-    }
   }
   .sf-quantity .sf-quantity-wrap:where(:dir(rtl)){
     border-top-right-radius: var(--sf-quantity-wrap--border-start-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap{
-    padding-right: var(--sf-quantity-wrap--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap{
-    padding-right: var(--sf-quantity-wrap--padding-inline-end);
-    }
-  }
   .sf-quantity .sf-quantity-wrap:where(:dir(ltr)){
     padding-right: var(--sf-quantity-wrap--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-wrap{
-    padding-left: var(--sf-quantity-wrap--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-quantity .sf-quantity-wrap{
-    padding-left: var(--sf-quantity-wrap--padding-inline-end);
-    }
   }
   .sf-quantity .sf-quantity-wrap:where(:dir(rtl)){
     padding-left: var(--sf-quantity-wrap--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap{
-    padding-left: var(--sf-quantity-wrap--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap{
-    padding-left: var(--sf-quantity-wrap--padding-inline-start);
-    }
-  }
   .sf-quantity .sf-quantity-wrap:where(:dir(ltr)){
     padding-left: var(--sf-quantity-wrap--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-wrap{
-    padding-right: var(--sf-quantity-wrap--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-quantity .sf-quantity-wrap{
-    padding-right: var(--sf-quantity-wrap--padding-inline-start);
-    }
   }
   .sf-quantity .sf-quantity-wrap:where(:dir(rtl)){
     padding-right: var(--sf-quantity-wrap--padding-inline-start);
@@ -240,90 +143,26 @@
     transition-duration: var(--sf-duration-fast);
     transition-timing-function: var(--sf-animation);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-icon-button{
-    border-bottom-right-radius: var(--sf-icon-button--border-end-end-radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  html:not([dir="rtl"]) .sf-quantity .sf-icon-button{
-    border-bottom-right-radius: var(--sf-icon-button--border-end-end-radius);
-    }
-  }
   .sf-quantity .sf-icon-button:where(:dir(ltr)){
     border-bottom-right-radius: var(--sf-icon-button--border-end-end-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-icon-button{
-    border-bottom-left-radius: var(--sf-icon-button--border-end-end-radius);
-  }
-  @supports not (border-end-end-radius: initial){
-  [dir="rtl"] .sf-quantity .sf-icon-button{
-    border-bottom-left-radius: var(--sf-icon-button--border-end-end-radius);
-    }
   }
   .sf-quantity .sf-icon-button:where(:dir(rtl)){
     border-bottom-left-radius: var(--sf-icon-button--border-end-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-icon-button{
-    border-bottom-left-radius: var(--sf-icon-button--border-end-start-radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  html:not([dir="rtl"]) .sf-quantity .sf-icon-button{
-    border-bottom-left-radius: var(--sf-icon-button--border-end-start-radius);
-    }
-  }
   .sf-quantity .sf-icon-button:where(:dir(ltr)){
     border-bottom-left-radius: var(--sf-icon-button--border-end-start-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-icon-button{
-    border-bottom-right-radius: var(--sf-icon-button--border-end-start-radius);
-  }
-  @supports not (border-end-start-radius: initial){
-  [dir="rtl"] .sf-quantity .sf-icon-button{
-    border-bottom-right-radius: var(--sf-icon-button--border-end-start-radius);
-    }
   }
   .sf-quantity .sf-icon-button:where(:dir(rtl)){
     border-bottom-right-radius: var(--sf-icon-button--border-end-start-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-icon-button{
-    border-top-right-radius: var(--sf-icon-button--border-start-end-radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  html:not([dir="rtl"]) .sf-quantity .sf-icon-button{
-    border-top-right-radius: var(--sf-icon-button--border-start-end-radius);
-    }
-  }
   .sf-quantity .sf-icon-button:where(:dir(ltr)){
     border-top-right-radius: var(--sf-icon-button--border-start-end-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-icon-button{
-    border-top-left-radius: var(--sf-icon-button--border-start-end-radius);
-  }
-  @supports not (border-start-end-radius: initial){
-  [dir="rtl"] .sf-quantity .sf-icon-button{
-    border-top-left-radius: var(--sf-icon-button--border-start-end-radius);
-    }
   }
   .sf-quantity .sf-icon-button:where(:dir(rtl)){
     border-top-left-radius: var(--sf-icon-button--border-start-end-radius);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-icon-button{
-    border-top-left-radius: var(--sf-icon-button--border-start-start-radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  html:not([dir="rtl"]) .sf-quantity .sf-icon-button{
-    border-top-left-radius: var(--sf-icon-button--border-start-start-radius);
-    }
-  }
   .sf-quantity .sf-icon-button:where(:dir(ltr)){
     border-top-left-radius: var(--sf-icon-button--border-start-start-radius);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-icon-button{
-    border-top-right-radius: var(--sf-icon-button--border-start-start-radius);
-  }
-  @supports not (border-start-start-radius: initial){
-  [dir="rtl"] .sf-quantity .sf-icon-button{
-    border-top-right-radius: var(--sf-icon-button--border-start-start-radius);
-    }
   }
   .sf-quantity .sf-icon-button:where(:dir(rtl)){
     border-top-right-radius: var(--sf-icon-button--border-start-start-radius);
@@ -352,46 +191,14 @@
     block-size: var(--sf-quantity-wrap--block-size);
   }
   /* utility-hint: display/flex (.flex) */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap input{
-    padding-right: var(--sf-quantity-input--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap input{
-    padding-right: var(--sf-quantity-input--padding-inline-end);
-    }
-  }
   .sf-quantity .sf-quantity-wrap input:where(:dir(ltr)){
     padding-right: var(--sf-quantity-input--padding-inline-end);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-wrap input{
-    padding-left: var(--sf-quantity-input--padding-inline-end);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-quantity .sf-quantity-wrap input{
-    padding-left: var(--sf-quantity-input--padding-inline-end);
-    }
   }
   .sf-quantity .sf-quantity-wrap input:where(:dir(rtl)){
     padding-left: var(--sf-quantity-input--padding-inline-end);
   }
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap input{
-    padding-left: var(--sf-quantity-input--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  html:not([dir="rtl"]) .sf-quantity .sf-quantity-wrap input{
-    padding-left: var(--sf-quantity-input--padding-inline-start);
-    }
-  }
   .sf-quantity .sf-quantity-wrap input:where(:dir(ltr)){
     padding-left: var(--sf-quantity-input--padding-inline-start);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-wrap input{
-    padding-right: var(--sf-quantity-input--padding-inline-start);
-  }
-  @supports not (padding-inline-start: initial){
-  [dir="rtl"] .sf-quantity .sf-quantity-wrap input{
-    padding-right: var(--sf-quantity-input--padding-inline-start);
-    }
   }
   .sf-quantity .sf-quantity-wrap input:where(:dir(rtl)){
     padding-right: var(--sf-quantity-input--padding-inline-start);
@@ -452,11 +259,8 @@
     line-height: var(--sf-quantity-placeholder--line-height);
   }
   .sf-quantity .sf-icon {
-    font-size: var(--sf-text-size-3);
     font-size: var(--sf-icon--font-size, var(--sf-text-size-3));
-    height: var(--sf-text-size-3);
     height: var(--sf-icon--height, var(--sf-text-size-3));
-    width: var(--sf-text-size-3);
     width: var(--sf-icon--width, var(--sf-text-size-3));
   }
   .sf-quantity.sf-quantity--size-1 .sf-quantity-text {
@@ -747,32 +551,17 @@
      (.sf-icon-button.sf-icon-button--size-1/3.sf-icon-button--icon .sf-icon),
      which the ghost look's --icon class brings: one class more, so the glyph
      stays the field's icon (QT-03). */
-  .sf-quantity.sf-quantity--size-1 .sf-icon-button.sf-quantity-count.sf-icon-button--icon .sf-icon:not(does-not-exist) {
+  .sf-quantity.sf-quantity--size-1 .sf-icon-button.sf-quantity-count.sf-icon-button--icon :is(.sf-icon, sf-icon:not(:defined)) {
     --sf-icon--font-size: var(--sf-text-height-1);
     --sf-icon--height: var(--sf-text-height-1);
     --sf-icon--width: var(--sf-text-height-1);
   }
-  .sf-quantity.sf-quantity--size-1 .sf-icon-button.sf-quantity-count.sf-icon-button--icon sf-icon:not(:defined) {
-    --sf-icon--font-size: var(--sf-text-height-1);
-    --sf-icon--height: var(--sf-text-height-1);
-    --sf-icon--width: var(--sf-text-height-1);
-  }
-  .sf-quantity.sf-quantity--size-2 .sf-icon-button.sf-quantity-count.sf-icon-button--icon .sf-icon:not(does-not-exist) {
+  .sf-quantity.sf-quantity--size-2 .sf-icon-button.sf-quantity-count.sf-icon-button--icon :is(.sf-icon, sf-icon:not(:defined)) {
     --sf-icon--font-size: var(--sf-text-height-2);
     --sf-icon--height: var(--sf-text-height-2);
     --sf-icon--width: var(--sf-text-height-2);
   }
-  .sf-quantity.sf-quantity--size-2 .sf-icon-button.sf-quantity-count.sf-icon-button--icon sf-icon:not(:defined) {
-    --sf-icon--font-size: var(--sf-text-height-2);
-    --sf-icon--height: var(--sf-text-height-2);
-    --sf-icon--width: var(--sf-text-height-2);
-  }
-  .sf-quantity.sf-quantity--size-1\/2 .sf-icon-button.sf-quantity-count.sf-icon-button--icon .sf-icon:not(does-not-exist) {
-    --sf-icon--font-size: var(--sf-text-height-1\/2);
-    --sf-icon--height: var(--sf-text-height-1\/2);
-    --sf-icon--width: var(--sf-text-height-1\/2);
-  }
-  .sf-quantity.sf-quantity--size-1\/2 .sf-icon-button.sf-quantity-count.sf-icon-button--icon sf-icon:not(:defined) {
+  .sf-quantity.sf-quantity--size-1\/2 .sf-icon-button.sf-quantity-count.sf-icon-button--icon :is(.sf-icon, sf-icon:not(:defined)) {
     --sf-icon--font-size: var(--sf-text-height-1\/2);
     --sf-icon--height: var(--sf-text-height-1\/2);
     --sf-icon--width: var(--sf-text-height-1\/2);
@@ -794,7 +583,6 @@
 }
 @layer sf.paint {
   .sf-quantity {
-    background-color: transparent;
     background-color: var(--sf-quantity--background-color, transparent);
   }
   .sf-quantity .sf-quantity-label {
@@ -812,13 +600,9 @@
   .sf-quantity .sf-quantity-wrap {
     background-color: var(--sf-quantity-wrap--background-color);
     border: var(--sf-quantity-wrap--border);
-    border-color: transparent;
     border-color: var(--sf-quantity-wrap--border-color, transparent);
     /* The filled look's bottom line (C52, C224): the bordered look has none of
        its own, so the line is the border. */
-    border-bottom-color: transparent;
-    border-block-end-color: transparent;
-    border-bottom-color: transparent;
     border-bottom-color: var(--sf-quantity-wrap--line-color, var(--sf-quantity-wrap--border-color, transparent));
     border-block-end-color: var(--sf-quantity-wrap--line-color, var(--sf-quantity-wrap--border-color, transparent));
   }
@@ -846,7 +630,6 @@
     color: var(--sf-quantity-placeholder--color);
   }
   .sf-quantity .sf-icon {
-    color: var(--sf-on-surface-variant);
     color: var(--sf-icon--color, var(--sf-on-surface-variant));
   }
   .sf-quantity:has(input:disabled) .sf-button .sf-icon {
@@ -911,9 +694,6 @@
   .sf-quantity .sf-quantity-row > .sf-quantity-wrap > input {
     flex: 0 1 auto;
     box-sizing: border-box;
-    width: calc((6 + 0.5) * 1ch + calc(var(--sf-px) * 0) + calc(var(--sf-px) * 0));
-    inline-size: calc((6 + 0.5) * 1ch + calc(var(--sf-px) * 0) + calc(var(--sf-px) * 0));
-    width: calc((6 + 0.5) * 1ch + calc(var(--sf-px) * 0) + calc(var(--sf-px) * 0));
     width: calc((var(--sf-quantity--digits, 6) + 0.5) * 1ch + var(--sf-quantity-input--padding-inline-start, calc(var(--sf-px) * 0)) + var(--sf-quantity-input--padding-inline-end, calc(var(--sf-px) * 0)));
     inline-size: calc((var(--sf-quantity--digits, 6) + 0.5) * 1ch + var(--sf-quantity-input--padding-inline-start, calc(var(--sf-px) * 0)) + var(--sf-quantity-input--padding-inline-end, calc(var(--sf-px) * 0)));
     min-width: 0;
@@ -921,7 +701,6 @@
     height: var(--sf-quantity--number-height);
     block-size: var(--sf-quantity--number-height);
     align-self: center;
-    border-radius: var(--sf-radius-1\/2);
     border-radius: var(--sf-quantity-stepper-radius, var(--sf-radius-1\/2));
     -webkit-font-feature-settings: "tnum";
             font-feature-settings: "tnum";
@@ -958,24 +737,8 @@
     --sf-quantity-input--background-color: var(--sf-surface-state-hover);
   }
   /* The unit after the number, in the quiet ink, the number's own type. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-unit{
-    padding-right: var(--sf-space-1\/4);
-  }
-  @supports not (padding-inline-end: initial){
-  html:not([dir="rtl"]) .sf-quantity .sf-quantity-unit{
-    padding-right: var(--sf-space-1\/4);
-    }
-  }
   .sf-quantity .sf-quantity-unit:where(:dir(ltr)){
     padding-right: var(--sf-space-1\/4);
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-unit{
-    padding-left: var(--sf-space-1\/4);
-  }
-  @supports not (padding-inline-end: initial){
-  [dir="rtl"] .sf-quantity .sf-quantity-unit{
-    padding-left: var(--sf-space-1\/4);
-    }
   }
   .sf-quantity .sf-quantity-unit:where(:dir(rtl)){
     padding-left: var(--sf-space-1\/4);
@@ -1003,24 +766,8 @@
      where sf-input's does (the field's space-x, then the text inset), the
      unit follows the number as sf-input's end text does, and the keys still
      step. */
-  _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity.sf-quantity--steppers-none .sf-quantity-row > .sf-quantity-wrap > input{
-    text-align: left;
-  }
-  @supports not (text-align: start){
-  html:not([dir="rtl"]) .sf-quantity.sf-quantity--steppers-none .sf-quantity-row > .sf-quantity-wrap > input{
-    text-align: left;
-    }
-  }
   .sf-quantity.sf-quantity--steppers-none .sf-quantity-row > .sf-quantity-wrap > input:where(:dir(ltr)){
     text-align: left;
-  }
-  _:-ms-input-placeholder, [dir="rtl"] .sf-quantity.sf-quantity--steppers-none .sf-quantity-row > .sf-quantity-wrap > input{
-    text-align: right;
-  }
-  @supports not (text-align: start){
-  [dir="rtl"] .sf-quantity.sf-quantity--steppers-none .sf-quantity-row > .sf-quantity-wrap > input{
-    text-align: right;
-    }
   }
   .sf-quantity.sf-quantity--steppers-none .sf-quantity-row > .sf-quantity-wrap > input:where(:dir(rtl)){
     text-align: right;
@@ -1064,27 +811,7 @@
       --sf-quantity--inset: var(--sf-space-3);
     }
   }
-  .sf-quantity.sf-quantity--steppers-none.sf-quantity--size-1\/3 .sf-quantity-row > .sf-quantity-wrap {
-    --sf-quantity--value-inset: calc(var(--sf-quantity--inset) + max(calc(var(--sf-px) * 0), var(--sf-quantity--line-radius) - var(--sf-radius-1\/2)) / 2);
-    --sf-quantity-wrap--padding-inline-start: var(--sf-quantity-padding-inline, calc(var(--sf-quantity--value-inset) - var(--sf-px) - var(--sf-space-1\/4)));
-    --sf-quantity-wrap--padding-inline-end: var(--sf-quantity-padding-inline, calc(var(--sf-quantity--value-inset) - var(--sf-px) - var(--sf-space-1\/4)));
-  }
-  .sf-quantity.sf-quantity--steppers-none.sf-quantity--size-1\/2 .sf-quantity-row > .sf-quantity-wrap {
-    --sf-quantity--value-inset: calc(var(--sf-quantity--inset) + max(calc(var(--sf-px) * 0), var(--sf-quantity--line-radius) - var(--sf-radius-1\/2)) / 2);
-    --sf-quantity-wrap--padding-inline-start: var(--sf-quantity-padding-inline, calc(var(--sf-quantity--value-inset) - var(--sf-px) - var(--sf-space-1\/4)));
-    --sf-quantity-wrap--padding-inline-end: var(--sf-quantity-padding-inline, calc(var(--sf-quantity--value-inset) - var(--sf-px) - var(--sf-space-1\/4)));
-  }
-  .sf-quantity.sf-quantity--steppers-none.sf-quantity--size-1 .sf-quantity-row > .sf-quantity-wrap {
-    --sf-quantity--value-inset: calc(var(--sf-quantity--inset) + max(calc(var(--sf-px) * 0), var(--sf-quantity--line-radius) - var(--sf-radius-1\/2)) / 2);
-    --sf-quantity-wrap--padding-inline-start: var(--sf-quantity-padding-inline, calc(var(--sf-quantity--value-inset) - var(--sf-px) - var(--sf-space-1\/4)));
-    --sf-quantity-wrap--padding-inline-end: var(--sf-quantity-padding-inline, calc(var(--sf-quantity--value-inset) - var(--sf-px) - var(--sf-space-1\/4)));
-  }
-  .sf-quantity.sf-quantity--steppers-none.sf-quantity--size-2 .sf-quantity-row > .sf-quantity-wrap {
-    --sf-quantity--value-inset: calc(var(--sf-quantity--inset) + max(calc(var(--sf-px) * 0), var(--sf-quantity--line-radius) - var(--sf-radius-1\/2)) / 2);
-    --sf-quantity-wrap--padding-inline-start: var(--sf-quantity-padding-inline, calc(var(--sf-quantity--value-inset) - var(--sf-px) - var(--sf-space-1\/4)));
-    --sf-quantity-wrap--padding-inline-end: var(--sf-quantity-padding-inline, calc(var(--sf-quantity--value-inset) - var(--sf-px) - var(--sf-space-1\/4)));
-  }
-  .sf-quantity.sf-quantity--steppers-none.sf-quantity--size-3 .sf-quantity-row > .sf-quantity-wrap {
+  .sf-quantity.sf-quantity--steppers-none:is(.sf-quantity--size-1\/3, .sf-quantity--size-1\/2, .sf-quantity--size-1, .sf-quantity--size-2, .sf-quantity--size-3) .sf-quantity-row > .sf-quantity-wrap {
     --sf-quantity--value-inset: calc(var(--sf-quantity--inset) + max(calc(var(--sf-px) * 0), var(--sf-quantity--line-radius) - var(--sf-radius-1\/2)) / 2);
     --sf-quantity-wrap--padding-inline-start: var(--sf-quantity-padding-inline, calc(var(--sf-quantity--value-inset) - var(--sf-px) - var(--sf-space-1\/4)));
     --sf-quantity-wrap--padding-inline-end: var(--sf-quantity-padding-inline, calc(var(--sf-quantity--value-inset) - var(--sf-px) - var(--sf-space-1\/4)));
@@ -1110,24 +837,8 @@
       right: 0;
       inset-inline: 0;
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before{
-      left: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
-    }
-    @supports not (inset-inline-start: initial){
-    html:not([dir="rtl"]) .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before{
-      left: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
-      }
-    }
     .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before:where(:dir(ltr)){
       left: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before{
-      right: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
-    }
-    @supports not (inset-inline-start: initial){
-    [dir="rtl"] .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before{
-      right: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
-      }
     }
     .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before:where(:dir(rtl)){
       right: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
@@ -1135,24 +846,8 @@
     .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:first-child::before {
       inset-inline-start: calc(-1 * (var(--sf-quantity-wrap--padding-inline-start) + var(--sf-px)));
     }
-    _:-ms-input-placeholder, html:not([dir="rtl"]) .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:last-child::before{
-      right: calc(-1 * (var(--sf-quantity-wrap--padding-inline-end) + var(--sf-px)));
-    }
-    @supports not (inset-inline-end: initial){
-    html:not([dir="rtl"]) .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:last-child::before{
-      right: calc(-1 * (var(--sf-quantity-wrap--padding-inline-end) + var(--sf-px)));
-      }
-    }
     .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:last-child::before:where(:dir(ltr)){
       right: calc(-1 * (var(--sf-quantity-wrap--padding-inline-end) + var(--sf-px)));
-    }
-    _:-ms-input-placeholder, [dir="rtl"] .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:last-child::before{
-      left: calc(-1 * (var(--sf-quantity-wrap--padding-inline-end) + var(--sf-px)));
-    }
-    @supports not (inset-inline-end: initial){
-    [dir="rtl"] .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:last-child::before{
-      left: calc(-1 * (var(--sf-quantity-wrap--padding-inline-end) + var(--sf-px)));
-      }
     }
     .sf-quantity .sf-quantity-row > .sf-quantity-wrap > .sf-quantity-count:last-child::before:where(:dir(rtl)){
       left: calc(-1 * (var(--sf-quantity-wrap--padding-inline-end) + var(--sf-px)));
@@ -1269,17 +964,8 @@
   }
   /* The icon of the step, a step down on a phone (field-ladder.icon,
      C151): 28 at 3 there, not the 24 of the text line. */
-  .sf-quantity.sf-quantity--size-1\/3 .sf-icon-button.sf-quantity-count.sf-icon-button--icon .sf-icon:not(does-not-exist) {
-    --sf-icon--font-size: var(--sf-text-height-1\/3);
-    --sf-icon--height: var(--sf-text-height-1\/3);
-    --sf-icon--width: var(--sf-text-height-1\/3);
-  }
-  .sf-quantity.sf-quantity--size-1\/3 .sf-icon-button.sf-quantity-count.sf-icon-button--icon sf-icon:not(:defined) {
-    --sf-icon--font-size: var(--sf-text-height-1\/3);
-    --sf-icon--height: var(--sf-text-height-1\/3);
-    --sf-icon--width: var(--sf-text-height-1\/3);
-  }
-  .sf-quantity.sf-quantity--size-1\/3 .sf-icon {
+  .sf-quantity.sf-quantity--size-1\/3 .sf-icon,
+  .sf-quantity.sf-quantity--size-1\/3 .sf-icon-button.sf-quantity-count.sf-icon-button--icon :is(.sf-icon, sf-icon:not(:defined)) {
     --sf-icon--font-size: var(--sf-text-height-1\/3);
     --sf-icon--height: var(--sf-text-height-1\/3);
     --sf-icon--width: var(--sf-text-height-1\/3);
@@ -1355,33 +1041,15 @@
   }
   /* The icon of the step, a step down on a phone (field-ladder.icon,
      C151): 28 at 3 there, not the 24 of the text line. */
-  .sf-quantity.sf-quantity--size-3 .sf-icon-button.sf-quantity-count.sf-icon-button--icon .sf-icon:not(does-not-exist) {
-    --sf-icon--font-size: var(--sf-text-height-3);
-    --sf-icon--height: var(--sf-text-height-3);
-    --sf-icon--width: var(--sf-text-height-3);
-  }
-  .sf-quantity.sf-quantity--size-3 .sf-icon-button.sf-quantity-count.sf-icon-button--icon sf-icon:not(:defined) {
-    --sf-icon--font-size: var(--sf-text-height-3);
-    --sf-icon--height: var(--sf-text-height-3);
-    --sf-icon--width: var(--sf-text-height-3);
-  }
-  .sf-quantity.sf-quantity--size-3 .sf-icon {
+  .sf-quantity.sf-quantity--size-3 .sf-icon,
+  .sf-quantity.sf-quantity--size-3 .sf-icon-button.sf-quantity-count.sf-icon-button--icon :is(.sf-icon, sf-icon:not(:defined)) {
     --sf-icon--font-size: var(--sf-text-height-3);
     --sf-icon--height: var(--sf-text-height-3);
     --sf-icon--width: var(--sf-text-height-3);
   }
   @media not all and (min-width: 60rem) {
-    .sf-quantity.sf-quantity--size-3 .sf-icon-button.sf-quantity-count.sf-icon-button--icon .sf-icon:not(does-not-exist) {
-      --sf-icon--font-size: var(--sf-icon-size-4);
-      --sf-icon--height: var(--sf-icon-size-4);
-      --sf-icon--width: var(--sf-icon-size-4);
-    }
-    .sf-quantity.sf-quantity--size-3 .sf-icon-button.sf-quantity-count.sf-icon-button--icon sf-icon:not(:defined) {
-      --sf-icon--font-size: var(--sf-icon-size-4);
-      --sf-icon--height: var(--sf-icon-size-4);
-      --sf-icon--width: var(--sf-icon-size-4);
-    }
-    .sf-quantity.sf-quantity--size-3 .sf-icon {
+    .sf-quantity.sf-quantity--size-3 .sf-icon,
+    .sf-quantity.sf-quantity--size-3 .sf-icon-button.sf-quantity-count.sf-icon-button--icon :is(.sf-icon, sf-icon:not(:defined)) {
       --sf-icon--font-size: var(--sf-icon-size-4);
       --sf-icon--height: var(--sf-icon-size-4);
       --sf-icon--width: var(--sf-icon-size-4);
