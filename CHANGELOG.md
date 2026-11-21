@@ -8,6 +8,12 @@
 
 ### Добавлено
 
+- Pair next 17 (group build 15, ui-source integration/pair-next-17 a028930e8: eight branches over ui-b654460cad2a, assembly items A1-A9, returns GB15-1..3 and the ring tooltip; built with ui-builder 0ec5196; accepted by DEV).
+- Components: sf-progress-ring 1.7.2 (size 1 draws no inner text; a ring with no inner text carries its value as a tooltip, the value stays in aria-valuenow/-valuetext; a four-character value one text step down); sf-bulk-actions 1.2.1 (on a phone an action without an icon goes into «⋯» with its label); sf-drawer 1.20.1 (`aside-width` / `--sf-drawer-aside-width` adds to the width step that measures the content); sf-steps 1.5.1 (the 30rem rule written); header-page chat head and the star as the button icon toggle look; width measure (C396) and field width across dropdown, inputs, quantity, textarea; sf-sortable 1.7.6 and Russian words against the site; sf-toast documents SF.notify `silent`; twins level (C251). The view sets sf-view-board, -cards and -calendar are listed as preview.
+- Core: the year keeps its marker: `formatDateText` puts a no-break space between the year and «г.» (core format-intl).
+- Ports: **simai.dataview-port 1.16.0** (view port levels) and **simai.property-view-port 1.22.1** (a save over a moved revision may answer refused or conflict, both with reason `revision_moved`); consumers: Pro pro-93f6675545e2 or newer and @simai-studio/view 1.10.1 or newer. simai.document-port 1.0.0 stays the released files; draft 3 is 1.0.1 (no implementer yet).
+- `core.runtime` 1.65.0, `core.styles` 1.21.0.
+
 - Pair next 16 (group build 14, ui-source integration/pair-next-16 0224027ea: twenty branches over ui-97a0ebb762eb, and fix/sheet-weight bfaf65b77; built with ui-builder 0ec5196; accepted by DEV).
 - Lighter sheets: the builder writes the layered rules without copies a browser never applies (1736 sheets, 21.6 MB, no dead copies). Three readings follow the authored meaning of `:not(:has(:is(...)))`: a figure with a picture and gallery tiles no longer get the cover layers (an empty expressive figure keeps it); the hide-show «show» button is shown for hidden content before the script arrives.
 - **Visible layout change (GB14-2): a two-line list row whose end part holds buttons or links now keeps them in one row** (component.dropdown list-item sheet; before, they were stacked as the two-row text grid). An end part of text keeps the two-row grid. Pro and @simai-studio/view: look at your two-line rows with end buttons after the repin.
