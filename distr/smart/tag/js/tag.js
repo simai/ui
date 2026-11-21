@@ -103,9 +103,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
+/* harmony export */   FIELD_WIDTHS: () => (/* binding */ FIELD_WIDTHS),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
+/* harmony export */   fieldWidth: () => (/* binding */ fieldWidth),
+/* harmony export */   fieldWidthClass: () => (/* binding */ fieldWidthClass),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
 /* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
@@ -196,6 +199,30 @@ function retireFieldSizeClass(root, block) {
     if (!root.classList.contains(name)) continue;
     root.classList.replace(name, `${block}--size-${fieldSize(retired, block)}`);
   }
+} // How wide a field is (owner decision C396, WM-4): the value it is made for,
+// in characters of the width ladder, read from the field's width setting --
+// short (20: a date, a number, a code), medium (28: a name, a phone) and long
+// (44: a path, an e-mail, an address); the roles --sf-field--width-short,
+// -medium and -long stand on the steps --sf-measure-20, -28 and -44 (core
+// figma_measure.scss) and follow the text size, the density and the phone.
+// It is the field's widest: in a narrower container the field is the
+// container's width, as without it. Empty or any other value: the whole
+// width, as every field drew before. The class is core's
+// (core/scss/_sf_css__field_width.scss), so a field whose own sheet has not
+// come yet already stands at its width.
+
+const FIELD_WIDTHS = Object.freeze(['short', 'medium', 'long']);
+/** A field width: short, medium or long, else '' (the whole width). */
+
+function fieldWidth(value) {
+  const width = String(value ?? '').trim().toLowerCase();
+  return FIELD_WIDTHS.includes(width) ? width : '';
+}
+/** The root class of a field width, or '' for the whole width. */
+
+function fieldWidthClass(value) {
+  const width = fieldWidth(value);
+  return width ? `sf-field--width-${width}` : '';
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1804,6 +1831,13 @@ class SfTag extends TagElement {
       '2': '1'
     }[line];
     return super.size;
+  } // The height drawn: height, else the former spacing's step until
+  // 2027-01-01 (tagHeight), so the property says what the template draws
+  // (template-context probe). The base puts its setter back beside it.
+
+
+  get height() {
+    return tagHeight(this);
   } // In a table cell or beside other text the tag takes the text line of a form
   // size, so the row keeps its control height.
 
@@ -2922,7 +2956,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tag f
 /***/ "7eee137ec5ff"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.12.6","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"default"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","outline","ghost","surface"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"href":{"type":"string","default":""},"key":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"color":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.12.7","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"default"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","outline","ghost","surface"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"href":{"type":"string","default":""},"key":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"color":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

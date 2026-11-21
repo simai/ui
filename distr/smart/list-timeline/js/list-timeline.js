@@ -44,7 +44,9 @@ function hasDateStyle(style) {
  * chart's tick, «14:05» with two-digit hours). `timeZone` (an IANA name,
  * Europe/Moscow) writes the moment on that zone's clock instead of the
  * reader's (owner decision C183 (3): a product that knows the person's zone).
- * Anything that is not a date is `gap`, '' by default.
+ * Anything that is not a date is `gap`, '' by default. A marker after the year
+ * («2026 г.», «2026 р.») is held to it by a no-break space, so it never starts
+ * a line alone.
  */
 
 
@@ -69,8 +71,9 @@ function formatDate(value, {
 
   if (knownTimeZone(timeZone)) options = { ...options,
     timeZone
-  };
-  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(moment);
+  }; // The year keeps its marker («2026 г.» never wraps before «г.»): format-intl.js.
+
+  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatDateText)((0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options), moment);
 }
 /**
  * Whether the platform knows an IANA time zone name (Europe/Moscow, UTC). An
@@ -209,6 +212,7 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatDateText: () => (/* binding */ formatDateText),
 /* harmony export */   formatLocale: () => (/* binding */ formatLocale),
 /* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
 /* harmony export */   toDate: () => (/* binding */ toDate)
@@ -279,6 +283,31 @@ function intlFormatter(kind, locale, options) {
   if (cache.size >= 256) cache.delete(cache.keys().next().value);
   cache.set(key, made);
   return made;
+} // A date's year keeps the abbreviation that follows it (A4, group build 15):
+// Russian, Ukrainian, Bulgarian, Belarusian, Kazakh, Lithuanian, Macedonian
+// and Armenian write one after the year -- «19 нояб. 2026 г.», «2026 р.»,
+// «2026 m.», «2026 թ.» -- and the platform joins it with an ordinary space, so
+// a narrow cell or a wrapped line printed «2026» at the end of one line and
+// «г.» alone at the start of the next. Only the space before an abbreviation
+// (letters closed by a full stop: г., гг., m.) becomes a no-break space; a word
+// such as English «at» or German «um», a comma, a slash or a time after the
+// year is left as the platform writes it (DEV answer msg-e6758728).
+
+/** A DateTimeFormat's text of a moment with the year's marker held to the year. */
+
+function formatDateText(formatter, moment) {
+  if (typeof formatter?.formatToParts !== 'function') return formatter.format(moment); // A module-level regular expression is a statement a bundler keeps (core-format test): made here.
+
+  const gap = /^[\s\u00a0\u202f]+(?=\p{L}+\.)/u;
+  let text = '';
+  let afterYear = false;
+
+  for (const part of formatter.formatToParts(moment)) {
+    text += afterYear && part.type === 'literal' ? part.value.replace(gap, '\u00a0') : part.value;
+    afterYear = part.type === 'year';
+  }
+
+  return text;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -419,12 +448,12 @@ function formatRelativeDay(value, {
     const year = moment.getFullYear() === (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now).getFullYear() ? {} : {
       year: 'numeric'
     };
-    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
+    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatDateText)((0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
       day: 'numeric',
       month: 'long',
       ...year,
       ...zone
-    }).format(moment);
+    }), moment);
   }
 
   return capital ? capitalise(text, locale) : text;
@@ -1225,7 +1254,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "39829f681e1c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-timeline","tag":"sf-list-timeline","version":"1.5.5","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"time":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"},"actor":{"anyOf":[{"type":"string"},{"type":"object","properties":{"name":{"type":"string"},"avatar":{"type":"string"},"hue":{"type":"string"},"system":{"type":"boolean"}},"required":["name"]}]},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"icon":{"type":"string"},"href":{"type":"string"},"kind":{"type":"string","enum":["event","comment","sms"]},"state":{"type":"string","enum":["done","current","upcoming"]},"change":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}},"changes":{"type":"array","items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}}},"slot":{"type":"string"},"items":{"type":"array","items":{"type":"object"}}},"required":["id","title"]}},"default":[]},"label":{"type":"string","default":""},"group":{"type":"enum","values":["day","none"],"default":"day"},"time-format":{"type":"enum","values":["auto","relative","exact"],"default":"auto"},"now":{"type":"string","default":""},"collapse":{"type":"number","integer":true,"min":0,"default":5},"sticky-headings":{"type":"boolean","default":false},"density":{"type":"enum","values":["normal","compact"],"default":"normal"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"load-more":{"carries":{"direction":"string","after":"string"}},"expand":{"carries":{"run":"string","ids":"array","count":"number"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean","data-loading":"boolean"},"css-variables":{"--sf-list-timeline-line-color":{"type":"color","state":"default"},"--sf-list-timeline-marker-color":{"type":"color","state":"default"},"--sf-list-timeline-time-color":{"type":"color","state":"default"},"--sf-list-timeline-day-color":{"type":"color","state":"default"},"--sf-list-timeline-gap":{"type":"length","state":"default"},"--sf-list-timeline-padding-inline":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-timeline","tag":"sf-list-timeline","version":"1.5.6","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"time":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"},"actor":{"anyOf":[{"type":"string"},{"type":"object","properties":{"name":{"type":"string"},"avatar":{"type":"string"},"hue":{"type":"string"},"system":{"type":"boolean"}},"required":["name"]}]},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"icon":{"type":"string"},"href":{"type":"string"},"kind":{"type":"string","enum":["event","comment","sms"]},"state":{"type":"string","enum":["done","current","upcoming"]},"change":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}},"changes":{"type":"array","items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}}},"slot":{"type":"string"},"items":{"type":"array","items":{"type":"object"}}},"required":["id","title"]}},"default":[]},"label":{"type":"string","default":""},"group":{"type":"enum","values":["day","none"],"default":"day"},"time-format":{"type":"enum","values":["auto","relative","exact"],"default":"auto"},"now":{"type":"string","default":""},"collapse":{"type":"number","integer":true,"min":0,"default":5},"sticky-headings":{"type":"boolean","default":false},"density":{"type":"enum","values":["normal","compact"],"default":"normal"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"load-more":{"carries":{"direction":"string","after":"string"}},"expand":{"carries":{"run":"string","ids":"array","count":"number"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean","data-loading":"boolean"},"css-variables":{"--sf-list-timeline-line-color":{"type":"color","state":"default"},"--sf-list-timeline-marker-color":{"type":"color","state":"default"},"--sf-list-timeline-time-color":{"type":"color","state":"default"},"--sf-list-timeline-day-color":{"type":"color","state":"default"},"--sf-list-timeline-gap":{"type":"length","state":"default"},"--sf-list-timeline-padding-inline":{"type":"length","state":"default"}}}');
 
 /***/ },
 

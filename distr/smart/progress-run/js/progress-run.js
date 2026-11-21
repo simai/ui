@@ -8,6 +8,7 @@
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatDateText: () => (/* binding */ formatDateText),
 /* harmony export */   formatLocale: () => (/* binding */ formatLocale),
 /* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
 /* harmony export */   toDate: () => (/* binding */ toDate)
@@ -78,6 +79,31 @@ function intlFormatter(kind, locale, options) {
   if (cache.size >= 256) cache.delete(cache.keys().next().value);
   cache.set(key, made);
   return made;
+} // A date's year keeps the abbreviation that follows it (A4, group build 15):
+// Russian, Ukrainian, Bulgarian, Belarusian, Kazakh, Lithuanian, Macedonian
+// and Armenian write one after the year -- «19 нояб. 2026 г.», «2026 р.»,
+// «2026 m.», «2026 թ.» -- and the platform joins it with an ordinary space, so
+// a narrow cell or a wrapped line printed «2026» at the end of one line and
+// «г.» alone at the start of the next. Only the space before an abbreviation
+// (letters closed by a full stop: г., гг., m.) becomes a no-break space; a word
+// such as English «at» or German «um», a comma, a slash or a time after the
+// year is left as the platform writes it (DEV answer msg-e6758728).
+
+/** A DateTimeFormat's text of a moment with the year's marker held to the year. */
+
+function formatDateText(formatter, moment) {
+  if (typeof formatter?.formatToParts !== 'function') return formatter.format(moment); // A module-level regular expression is a statement a bundler keeps (core-format test): made here.
+
+  const gap = /^[\s\u00a0\u202f]+(?=\p{L}+\.)/u;
+  let text = '';
+  let afterYear = false;
+
+  for (const part of formatter.formatToParts(moment)) {
+    text += afterYear && part.type === 'literal' ? part.value.replace(gap, '\u00a0') : part.value;
+    afterYear = part.type === 'year';
+  }
+
+  return text;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -2338,7 +2364,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "d092c5059e25"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-run","tag":"sf-progress-run","version":"1.5.5","kind":"leaf","settings":{"look":{"type":"enum","values":["full","row","notice"],"default":"full"},"label":{"type":"string","default":""},"heading-level":{"type":"enum","values":["1","2","3","4","5","6"],"default":"3"},"caption":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0},"total":{"type":"number","optional":true,"min":0},"unit":{"type":"string","default":""},"remaining":{"type":"number","optional":true,"min":0},"started-at":{"type":"string","default":""},"finished-at":{"type":"string","default":""},"steps":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"state":{"type":"string","enum":["waiting","running","done","failed","skipped"]},"text":{"type":"string"},"started":{"type":"string"},"finished":{"type":"string"},"duration":{"type":"number"},"value":{"type":"number"},"total":{"type":"number"},"unit":{"type":"string"},"log":{"type":"string"}},"required":["id","title"]}},"default":[]},"run-state":{"type":"enum","values":["auto","running","paused","done","partial","failed","cancelled"],"default":"auto"},"result-text":{"type":"string","default":""},"counters":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"number"},"status":{"type":"string","enum":["","error"]},"zero":{"type":"string"}},"required":["id","label"]}},"default":[]},"errors":{"type":"list","schema":{"items":{"type":"object","properties":{"where":{"type":"string"},"key":{"type":"string"},"text":{"type":"string"}},"required":["text"]}},"default":[]},"errors-total":{"type":"number","optional":true,"min":0},"output":{"type":"string","default":""},"output-label":{"type":"string","default-from":"runtime.output-label"},"file-name":{"type":"string","default":"output.txt"},"cancelable":{"type":"boolean","default":false},"pausable":{"type":"boolean","default":false},"retryable":{"type":"boolean","default":false},"hideable":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{"output-open":{"type":"boolean","default":false}},"events":{"cancel":{"carries":{},"cancelable":true},"retry":{"carries":{"scope":{"type":"enum","values":["all","failed"]},"from":{"type":"string","optional":true}}},"close":{"carries":{"reason":{"type":"enum","values":["close"]}},"cancelable":true},"download":{"carries":{"file-name":"string"},"cancelable":true},"toggle":{"carries":{"open":"boolean"}},"pause":{"carries":{}},"resume":{"carries":{}},"minimize":{"carries":{}},"expand":{"carries":{}},"report":{"carries":{},"cancelable":true}},"actions":{"chunk":{"with":{"text":"string","step":{"type":"string","optional":true}}},"clear":{"with":{}},"step":{"with":{"id":"string","state":"string","text":"string","value":"number","total":"number","started":"string","finished":"string","duration":"number"}}},"presentation":{"skeleton":{"late":["steps","counters"]}},"host-states":{"data-state":"string"},"css-variables":{"--sf-progress-run-background-color":{"type":"color","state":"default"},"--sf-progress-run-divider-color":{"type":"color","state":"default"},"--sf-progress-run-output-background-color":{"type":"color","state":"default"},"--sf-progress-run-output-color":{"type":"color","state":"default"},"--sf-progress-run-output-max-height":{"type":"length","state":"default"},"--sf-progress-run-padding-inline":{"type":"length","state":"default"},"--sf-progress-run-gap":{"type":"length","state":"default"},"--sf-progress-run-gap-tight":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-run","tag":"sf-progress-run","version":"1.5.6","kind":"leaf","settings":{"look":{"type":"enum","values":["full","row","notice"],"default":"full"},"label":{"type":"string","default":""},"heading-level":{"type":"enum","values":["1","2","3","4","5","6"],"default":"3"},"caption":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0},"total":{"type":"number","optional":true,"min":0},"unit":{"type":"string","default":""},"remaining":{"type":"number","optional":true,"min":0},"started-at":{"type":"string","default":""},"finished-at":{"type":"string","default":""},"steps":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"state":{"type":"string","enum":["waiting","running","done","failed","skipped"]},"text":{"type":"string"},"started":{"type":"string"},"finished":{"type":"string"},"duration":{"type":"number"},"value":{"type":"number"},"total":{"type":"number"},"unit":{"type":"string"},"log":{"type":"string"}},"required":["id","title"]}},"default":[]},"run-state":{"type":"enum","values":["auto","running","paused","done","partial","failed","cancelled"],"default":"auto"},"result-text":{"type":"string","default":""},"counters":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"label":{"type":"string"},"value":{"type":"number"},"status":{"type":"string","enum":["","error"]},"zero":{"type":"string"}},"required":["id","label"]}},"default":[]},"errors":{"type":"list","schema":{"items":{"type":"object","properties":{"where":{"type":"string"},"key":{"type":"string"},"text":{"type":"string"}},"required":["text"]}},"default":[]},"errors-total":{"type":"number","optional":true,"min":0},"output":{"type":"string","default":""},"output-label":{"type":"string","default-from":"runtime.output-label"},"file-name":{"type":"string","default":"output.txt"},"cancelable":{"type":"boolean","default":false},"pausable":{"type":"boolean","default":false},"retryable":{"type":"boolean","default":false},"hideable":{"type":"boolean","default":false},"minimizable":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"}},"values":{"output-open":{"type":"boolean","default":false}},"events":{"cancel":{"carries":{},"cancelable":true},"retry":{"carries":{"scope":{"type":"enum","values":["all","failed"]},"from":{"type":"string","optional":true}}},"close":{"carries":{"reason":{"type":"enum","values":["close"]}},"cancelable":true},"download":{"carries":{"file-name":"string"},"cancelable":true},"toggle":{"carries":{"open":"boolean"}},"pause":{"carries":{}},"resume":{"carries":{}},"minimize":{"carries":{}},"expand":{"carries":{}},"report":{"carries":{},"cancelable":true}},"actions":{"chunk":{"with":{"text":"string","step":{"type":"string","optional":true}}},"clear":{"with":{}},"step":{"with":{"id":"string","state":"string","text":"string","value":"number","total":"number","started":"string","finished":"string","duration":"number"}}},"presentation":{"skeleton":{"late":["steps","counters"]}},"host-states":{"data-state":"string"},"css-variables":{"--sf-progress-run-background-color":{"type":"color","state":"default"},"--sf-progress-run-divider-color":{"type":"color","state":"default"},"--sf-progress-run-output-background-color":{"type":"color","state":"default"},"--sf-progress-run-output-color":{"type":"color","state":"default"},"--sf-progress-run-output-max-height":{"type":"length","state":"default"},"--sf-progress-run-padding-inline":{"type":"length","state":"default"},"--sf-progress-run-gap":{"type":"length","state":"default"},"--sf-progress-run-gap-tight":{"type":"length","state":"default"}}}');
 
 /***/ },
 

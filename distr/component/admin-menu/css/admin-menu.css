@@ -21,8 +21,8 @@
     overflow: hidden;
   }
   .sf-admin-menu-panel:not(.small) {
-    width: var(--sf-admin-menu-panel--inline-size, var(--sf-g0));
-    inline-size: var(--sf-admin-menu-panel--inline-size, var(--sf-g0));
+    width: var(--sf-admin-menu-panel--inline-size, var(--sf-measure-44));
+    inline-size: var(--sf-admin-menu-panel--inline-size, var(--sf-measure-44));
   }
   .sf-admin-menu-panel.small {
     width: var(--sf-admin-menu-panel-compact--inline-size, var(--sf-e1));

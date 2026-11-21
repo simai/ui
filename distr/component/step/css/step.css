@@ -488,8 +488,9 @@
      after it; no pills, no «›».
 
      layout="auto" draws the row while it fits its own width, the column
-     otherwise, and the count line under twenty rem (sf-steps measures, the classes
-     below draw). While it measures, data-sf-measure lays the list out as a row
+     otherwise and always below thirty rem (the sheet's container query draws it
+     before the code measures), and the count line under twenty rem (sf-steps
+     measures, the classes below draw). While it measures, data-sf-measure lays the list out as a row
      at its one-line width for a moment, in the same task, never painted. */
   .sf-steps {
     display: block;
@@ -658,6 +659,124 @@
   .sf-steps.sf-steps--layout-column:not([data-sf-measure]) .sf-step-control {
     border-radius: var(--sf-radius--ui);
   }
+  /* --------------------------------------------- auto in a narrow place */
+  /* An automatic list is a column below thirty rem of its own width (DEV look answer
+     2026-11-20): the sheet draws it so before the code has measured anything,
+     so the first paint of a narrow place no longer draws a row the code then
+     folds into a column (sf-steps 1.5.0 agrees: COLUMN_BELOW_REM). The list is
+     its own inline-size container; its width is its place's (display block,
+     at most 100%), never its content's. Above thirty rem the code decides as before.
+     The list still carries sf-steps--layout-row until the code has measured: the
+     row's declarations are taken back here, then the column's are the column's
+     above, under this selector. */
+  .sf-steps.sf-steps--auto {
+    container: sf-steps/inline-size;
+  }
+  @container sf-steps (not (min-width: 30rem)) {
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-steps-container {
+      align-items: normal;
+      gap: normal;
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step,
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step:not(:last-child) {
+      align-items: normal;
+      gap: normal;
+      flex: 0 1 auto;
+      padding-top: 0;
+      -webkit-padding-before: 0;
+              padding-block-start: 0;
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step .sf-step-container {
+      white-space: normal;
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step .sf-step-text {
+      display: inline;
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step:not(:last-child)::after {
+      content: none;
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step-control {
+      min-height: auto;
+      min-block-size: auto;
+      padding-left: 0;
+      padding-right: 0;
+      padding-inline: 0;
+      margin-left: 0;
+      margin-right: 0;
+      margin-inline: 0;
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-steps-container {
+      display: flex;
+      flex-direction: column;
+      /* Room for the first and the last ring. */
+      padding-top: calc(var(--sf-step--ring, calc(var(--sf-px) * 2)) * 2);
+      padding-bottom: calc(var(--sf-step--ring, calc(var(--sf-px) * 2)) * 2);
+      padding-block: calc(var(--sf-step--ring, calc(var(--sf-px) * 2)) * 2);
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step {
+      display: block;
+      padding-bottom: var(--sf-space-1);
+      -webkit-padding-after: var(--sf-space-1);
+              padding-block-end: var(--sf-space-1);
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step:last-child {
+      padding-bottom: 0;
+      -webkit-padding-after: 0;
+              padding-block-end: 0;
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step .sf-step-body {
+      display: grid;
+      grid-template-columns: var(--sf-step--marker) minmax(0, 1fr);
+      /* The marker → label gap is the body's own (_css__step.scss, C105 H2). */
+      align-items: start;
+      width: 100%;
+      inline-size: 100%;
+    }
+    /* The marker stands on the label's first line. */
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step .sf-step-marker {
+      height: var(--sf-step--line-height);
+      block-size: var(--sf-step--line-height);
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]).sf-steps--marker-number .sf-step .sf-step-marker {
+      height: var(--sf-step--marker);
+      block-size: var(--sf-step--marker);
+      margin-top: calc((var(--sf-step--line-height) - var(--sf-step--marker)) / 2);
+      margin-bottom: calc((var(--sf-step--line-height) - var(--sf-step--marker)) / 2);
+      margin-block: calc((var(--sf-step--line-height) - var(--sf-step--marker)) / 2);
+    }
+    /* The line down the rail, from under this marker to the next one. */
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step:not(:last-child)::before:where(:dir(ltr)){
+      left: calc((var(--sf-step--marker) - var(--sf-px)) / 2);
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step:not(:last-child)::before:where(:dir(rtl)){
+      right: calc((var(--sf-step--marker) - var(--sf-px)) / 2);
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step:not(:last-child)::before {
+      content: "";
+      position: absolute;
+      top: calc((var(--sf-step--line-height) + var(--sf-step--marker-reach)) / 2 + var(--sf-space-1\/4));
+      inset-block-start: calc((var(--sf-step--line-height) + var(--sf-step--marker-reach)) / 2 + var(--sf-space-1\/4));
+      bottom: calc(var(--sf-space-1\/4) - (var(--sf-step--line-height) - var(--sf-step--marker-reach)) / 2);
+      inset-block-end: calc(var(--sf-space-1\/4) - (var(--sf-step--line-height) - var(--sf-step--marker-reach)) / 2);
+      inset-inline-start: calc((var(--sf-step--marker) - var(--sf-px)) / 2);
+      width: var(--sf-px);
+      inline-size: var(--sf-px);
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step.sf-step--passed:not(:last-child)::before:where(:dir(ltr)){
+      left: calc((var(--sf-step--marker) - var(--sf-px) * 2) / 2);
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step.sf-step--passed:not(:last-child)::before:where(:dir(rtl)){
+      right: calc((var(--sf-step--marker) - var(--sf-px) * 2) / 2);
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step.sf-step--passed:not(:last-child)::before {
+      width: calc(var(--sf-px) * 2);
+      inline-size: calc(var(--sf-px) * 2);
+      inset-inline-start: calc((var(--sf-step--marker) - var(--sf-px) * 2) / 2);
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step-control {
+      border-radius: var(--sf-radius--ui);
+    }
+  }
   /* -------------------------------------------------------------- count */
   .sf-steps.sf-steps--layout-count:not([data-sf-measure]) .sf-steps-container {
     display: none;
@@ -714,6 +833,14 @@
   }
   .sf-steps.sf-steps--layout-column:not([data-sf-measure]) .sf-step.sf-step--passed:not(:last-child)::before {
     background-color: var(--sf-step--progress);
+  }
+  @container sf-steps (not (min-width: 30rem)) {
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step:not(:last-child)::before {
+      background-color: var(--sf-steps-separator-color, var(--sf-outline-variant));
+    }
+    .sf-steps.sf-steps--auto.sf-steps--layout-row:not([data-sf-measure]) .sf-step.sf-step--passed:not(:last-child)::before {
+      background-color: var(--sf-step--progress);
+    }
   }
   .sf-steps .sf-steps-count-line {
     color: var(--sf-on-surface);

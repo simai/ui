@@ -10,9 +10,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
+/* harmony export */   FIELD_WIDTHS: () => (/* binding */ FIELD_WIDTHS),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
+/* harmony export */   fieldWidth: () => (/* binding */ fieldWidth),
+/* harmony export */   fieldWidthClass: () => (/* binding */ fieldWidthClass),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
 /* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
@@ -103,6 +106,30 @@ function retireFieldSizeClass(root, block) {
     if (!root.classList.contains(name)) continue;
     root.classList.replace(name, `${block}--size-${fieldSize(retired, block)}`);
   }
+} // How wide a field is (owner decision C396, WM-4): the value it is made for,
+// in characters of the width ladder, read from the field's width setting --
+// short (20: a date, a number, a code), medium (28: a name, a phone) and long
+// (44: a path, an e-mail, an address); the roles --sf-field--width-short,
+// -medium and -long stand on the steps --sf-measure-20, -28 and -44 (core
+// figma_measure.scss) and follow the text size, the density and the phone.
+// It is the field's widest: in a narrower container the field is the
+// container's width, as without it. Empty or any other value: the whole
+// width, as every field drew before. The class is core's
+// (core/scss/_sf_css__field_width.scss), so a field whose own sheet has not
+// come yet already stands at its width.
+
+const FIELD_WIDTHS = Object.freeze(['short', 'medium', 'long']);
+/** A field width: short, medium or long, else '' (the whole width). */
+
+function fieldWidth(value) {
+  const width = String(value ?? '').trim().toLowerCase();
+  return FIELD_WIDTHS.includes(width) ? width : '';
+}
+/** The root class of a field width, or '' for the whole width. */
+
+function fieldWidthClass(value) {
+  const width = fieldWidth(value);
+  return width ? `sf-field--width-${width}` : '';
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1606,12 +1633,15 @@ class SfRangeSlider extends RangeSliderElement {
       handleLabel: valueDisplay === 'tooltip' ? 'tooltip' : 'none',
       outputText: this.outputText(),
       scaleMarks: scaleMarks(this),
-      field: this.hasAttribute('field') && this.getAttribute('field') !== 'false',
+      // field and ticks: the properties' reading (the base's: present and
+      // empty, or a word for true), so the template and the property agree
+      // (template-context probe).
+      field: this.field,
       fieldLabels: this.fieldLabels(),
       fieldWords: [this.sfWord('from'), this.sfWord('to')],
       fieldUnit: [this.prefixText, this.suffix].map(unit => String(unit ?? '').trim()).filter(Boolean).join(' '),
       fieldDecimal: String(this.step ?? '').includes('.') || Number(this.getAttribute('precision')) > 0,
-      ticks: this.hasAttribute('ticks') && this.getAttribute('ticks') !== 'false'
+      ticks: this.ticks
     });
   } // Each number of the from/to field is named as its handle is: lower-label and
   // upper-label, else one phrase of the language with the field's name or the
@@ -2419,7 +2449,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "c73b7ddd1da4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.7.3","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"page-step":{"type":"number","nullable":true},"ticks":{"type":"boolean","default":false},"scale":{"type":"boolean","default":false},"marks":{"type":"string","default":""},"field":{"type":"boolean","default":false},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"value-display":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true,"default":null},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled"},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.7.4","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"page-step":{"type":"number","nullable":true},"ticks":{"type":"boolean","default":false},"scale":{"type":"boolean","default":false},"marks":{"type":"string","default":""},"field":{"type":"boolean","default":false},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"value-display":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true,"default":null},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled"},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

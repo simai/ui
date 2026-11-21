@@ -352,7 +352,8 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
             "tonal",
             "outline",
             "ghost",
-            "plain"
+            "plain",
+            "toggle"
           ],
           "type": "string"
         },
@@ -519,7 +520,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.13.11"
+    "version": "1.14.0"
   },
   "sf-checkbox": {
     "inputs": {
@@ -731,13 +732,23 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
         "value": {
           "default": "",
           "type": "string"
+        },
+        "width": {
+          "default": "",
+          "enum": [
+            "",
+            "short",
+            "medium",
+            "long"
+          ],
+          "type": "string"
         }
       },
       "type": "object"
     },
     "kind": "custom-element",
     "manifest": "smart.dropdown",
-    "version": "1.23.0"
+    "version": "1.24.0"
   },
   "sf-icon": {
     "inputs": {
@@ -1033,13 +1044,23 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
         "value": {
           "default": "",
           "type": "string"
+        },
+        "width": {
+          "default": "",
+          "enum": [
+            "",
+            "short",
+            "medium",
+            "long"
+          ],
+          "type": "string"
         }
       },
       "type": "object"
     },
     "kind": "custom-element",
     "manifest": "smart.input",
-    "version": "1.16.1"
+    "version": "1.17.0"
   },
   "sf-input-textarea": {
     "inputs": {
@@ -1202,6 +1223,16 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
           "default": "",
           "type": "string"
         },
+        "width": {
+          "default": "",
+          "enum": [
+            "",
+            "short",
+            "medium",
+            "long"
+          ],
+          "type": "string"
+        },
         "wrap": {
           "default": "soft",
           "enum": [
@@ -1215,7 +1246,7 @@ export const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.input-textarea",
-    "version": "1.13.3"
+    "version": "1.14.0"
   },
   "sf-switch": {
     "inputs": {

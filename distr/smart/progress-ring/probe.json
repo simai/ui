@@ -25,17 +25,19 @@
       "  <sf-progress-ring id=\"r9\" label=\"Диск\" value=\"83\" warning-at=\"80\" error-at=\"95\" meter></sf-progress-ring>",
       "  <sf-progress-ring id=\"r10\" label=\"Серое\" value=\"50\" status=\"neutral\"></sf-progress-ring>",
       "  <sf-progress-ring id=\"r11\" label=\"Прежнее\" value=\"50\" status=\"primary\"></sf-progress-ring>",
+      "  <div id=\"r-full\"><sf-progress-ring id=\"r-full-2\" label=\"Готово\" value=\"100\" size=\"2\" show-text></sf-progress-ring><sf-progress-ring id=\"r-full-3\" label=\"Готово\" value=\"100\" size=\"3\" show-text></sf-progress-ring><sf-progress-ring id=\"r-part-2\" label=\"Загрузка\" value=\"62\" size=\"2\" show-text></sf-progress-ring></div>",
+      "  <div id=\"r-compact\" data-sf-density=\"compact\"><sf-progress-ring id=\"rc-full-2\" label=\"Готово\" value=\"100\" size=\"2\" show-text></sf-progress-ring><sf-progress-ring id=\"rc-full-3\" label=\"Готово\" value=\"100\" size=\"3\" show-text></sf-progress-ring><sf-progress-ring id=\"rc-part-2\" label=\"Загрузка\" value=\"62\" size=\"2\" show-text></sf-progress-ring></div>",
       "</main>"
     ]
   },
   "probes": [
     {
       "id": "r1-role-and-value",
-      "title": "the ring is a progressbar named by label, its valuenow the value; the percentage is shown and hidden from the reader",
+      "title": "the ring is a progressbar named by label, its valuenow the value; at size 1 no percentage inside (DEV msg-1c3a4f0b): the value is the ring's tooltip, «62 %»",
       "covers": "accessibility (role, name, valuenow), settings.value, settings.show-text",
       "steps": [
         {
-          "check": "(() => { const r = document.querySelector('#r1 .sf-progress-ring-indicator'); const c = document.querySelector('#r1 .sf-progress-ring-content'); return r.getAttribute('role') === 'progressbar' && r.getAttribute('aria-label') === 'Загрузка файлов' && r.getAttribute('aria-valuenow') === '62' && r.getAttribute('aria-valuemin') === '0' && r.getAttribute('aria-valuemax') === '100' && !r.hasAttribute('tabindex') && c.textContent.trim() === '62\\u00a0%' && c.getAttribute('aria-hidden') === 'true'; })()",
+          "check": "(() => { const r = document.querySelector('#r1 .sf-progress-ring-indicator'); const c = document.querySelector('#r1 .sf-progress-ring-content[aria-hidden]'); return r.getAttribute('role') === 'progressbar' && r.getAttribute('aria-label') === 'Загрузка файлов' && r.getAttribute('aria-valuenow') === '62' && r.getAttribute('aria-valuemin') === '0' && r.getAttribute('aria-valuemax') === '100' && !r.hasAttribute('tabindex') && !c && r.getAttribute('aria-valuetext') === '62\\u00a0%' && (() => { const root = document.querySelector('#r1 .sf-progress-ring'); const tip = document.getElementById(root.getAttribute('data-tooltip') || '-'); return Boolean(tip) && tip.textContent.trim() === '62\\u00a0%' && tip.closest('.sf-progress-ring') === root; })(); })()",
           "expect": {
             "values": {
               "#r1.value": 62
@@ -88,7 +90,7 @@
         {
           "script": "(document.getElementById('r1').value = 150, true)",
           "wait": 300,
-          "check": "document.querySelector('#r1 .sf-progress-ring-indicator').getAttribute('aria-valuenow') === '100' && document.querySelector('#r1 .sf-progress-ring-content').textContent.trim() === '100\\u00a0%'"
+          "check": "document.querySelector('#r1 .sf-progress-ring-indicator').getAttribute('aria-valuenow') === '100' && document.querySelector('#r1 .sf-progress-ring .sf-tooltip-text').textContent.trim() === '100\\u00a0%'"
         }
       ]
     },
@@ -151,11 +153,34 @@
     },
     {
       "id": "r6-size-3",
-      "title": "size 3 is the control height of 3 (the featured icon of size 3), and «100 %» fits inside the line",
+      "title": "size 3 is the control height of 3 (the featured icon of size 3), and «100%» fits inside the line (DEV look answer 2026-11-20: no space inside the ring)",
       "covers": "settings.size (3)",
       "steps": [
         {
-          "check": "(() => { const root = document.querySelector('#r6 .sf-progress-ring'); const c = document.querySelector('#r6 .sf-progress-ring-content'); const probe = document.createElement('div'); probe.style.width = 'var(--sf-ui-3--control-height)'; document.body.append(probe); const want = probe.getBoundingClientRect().width; probe.remove(); return root.classList.contains('sf-progress-ring--size-3') && root.getBoundingClientRect().width === want && root.getBoundingClientRect().height === want && c.textContent.trim() === '100\\u00a0%' && c.scrollWidth <= c.clientWidth; })()"
+          "check": "(() => { const root = document.querySelector('#r6 .sf-progress-ring'); const c = document.querySelector('#r6 .sf-progress-ring-content'); const probe = document.createElement('div'); probe.style.width = 'var(--sf-ui-3--control-height)'; document.body.append(probe); const want = probe.getBoundingClientRect().width; probe.remove(); return root.classList.contains('sf-progress-ring--size-3') && root.getBoundingClientRect().width === want && root.getBoundingClientRect().height === want && c.textContent.trim() === '100%' && c.scrollWidth <= c.clientWidth; })()"
+        }
+      ]
+    },
+    {
+      "id": "r6-four-characters",
+      "title": "«100%» at sizes 2 and 3 takes the next smaller text step and fits the middle; «62%» keeps its step; in a compact region on a wide screen «100%» at size 2 is not drawn inside (12 px is the floor), at size 3 it fits; tabular figures keep the width",
+      "covers": "settings.showText with a four-character value at sizes 2 and 3 (1.7.1, DEV GB15-2)",
+      "steps": [
+        {
+          "check": "(() => { const fits = (id) => { const c = document.querySelector(`#${id} .sf-progress-ring-content`); if (!c) return false; const r = document.createRange(); r.selectNodeContents(c); return r.getBoundingClientRect().width <= parseFloat(getComputedStyle(c).maxInlineSize) && c.scrollWidth <= c.clientWidth; }; const long = (id) => document.querySelector(`#${id} .sf-progress-ring-content`)?.classList.contains('sf-progress-ring-content--long'); const shown = (id) => getComputedStyle(document.querySelector(`#${id} .sf-progress-ring-content`)).display !== 'none'; const c = document.querySelector('#r-full-2 .sf-progress-ring-content'); const w = (t) => { const s = document.createElement('span'); s.textContent = t; c.append(s); const x = s.getBoundingClientRect().width; s.remove(); return x; }; const tabular = getComputedStyle(c).fontVariantNumeric.includes('tabular-nums') && w('100%') === w('188%') && w('100%') === w('111%'); const wide = window.innerWidth >= 960; const size = (id) => getComputedStyle(document.querySelector(`#${id} .sf-progress-ring-content`)).fontSize; return tabular && long('r-full-2') && long('r-full-3') && !long('r-part-2') && fits('r-full-2') && fits('r-full-3') && fits('r-part-2') && size('r-full-2') !== size('r-part-2') && document.querySelector('#r-full-2 .sf-progress-ring-content').textContent.trim() === '100%' && (wide ? !shown('rc-full-2') : shown('rc-full-2') && fits('rc-full-2')) && fits('rc-full-3') && fits('rc-part-2') && shown('rc-part-2') && document.querySelector('#rc-full-2 [role]').getAttribute('aria-valuetext') === '100\\u00a0%'; })()"
+        }
+      ]
+    },
+    {
+      "id": "r6-hidden-text-tooltip",
+      "title": "a ring whose value fits no text step («100%» at size 2 of a compact region on a wide screen) draws no inner text and names the A1 tooltip with the spoken value; a ring that draws its text names none",
+      "covers": "settings.showText, the tooltip of a ring without inner text (1.7.2, DEV msg-8e6b1330)",
+      "steps": [
+        {
+          "wait": 400
+        },
+        {
+          "check": "(() => { const ring = (id) => document.querySelector(`#${id} .sf-progress-ring`); const tipOf = (id) => { const t = ring(id).getAttribute('data-tooltip'); return t ? document.getElementById(t) : null; }; const wide = window.innerWidth >= 960; const hiddenOk = wide ? Boolean(tipOf('rc-full-2')) && tipOf('rc-full-2').textContent.trim() === '100\\u00a0%' && getComputedStyle(ring('rc-full-2').querySelector('.sf-progress-ring-content')).display === 'none' : !ring('rc-full-2').hasAttribute('data-tooltip'); return hiddenOk && !ring('r-full-2').hasAttribute('data-tooltip') && !ring('r-full-3').hasAttribute('data-tooltip') && !ring('rc-full-3').hasAttribute('data-tooltip') && !ring('rc-part-2').hasAttribute('data-tooltip') && document.querySelector('#rc-full-2 [role]').getAttribute('aria-valuetext') === '100\\u00a0%'; })()"
         }
       ]
     },

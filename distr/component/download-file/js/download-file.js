@@ -1256,6 +1256,7 @@ function formatFileSize(size, options = {}, legacyLocale) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatDateText: () => (/* binding */ formatDateText),
 /* harmony export */   formatLocale: () => (/* binding */ formatLocale),
 /* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
 /* harmony export */   toDate: () => (/* binding */ toDate)
@@ -1322,6 +1323,31 @@ function intlFormatter(kind, locale, options) {
   if (cache.size >= 256) cache.delete(cache.keys().next().value);
   cache.set(key, made);
   return made;
+} // A date's year keeps the abbreviation that follows it (A4, group build 15):
+// Russian, Ukrainian, Bulgarian, Belarusian, Kazakh, Lithuanian, Macedonian
+// and Armenian write one after the year -- «19 нояб. 2026 г.», «2026 р.»,
+// «2026 m.», «2026 թ.» -- and the platform joins it with an ordinary space, so
+// a narrow cell or a wrapped line printed «2026» at the end of one line and
+// «г.» alone at the start of the next. Only the space before an abbreviation
+// (letters closed by a full stop: г., гг., m.) becomes a no-break space; a word
+// such as English «at» or German «um», a comma, a slash or a time after the
+// year is left as the platform writes it (DEV answer msg-e6758728).
+
+/** A DateTimeFormat's text of a moment with the year's marker held to the year. */
+
+function formatDateText(formatter, moment) {
+  if (typeof formatter?.formatToParts !== 'function') return formatter.format(moment); // A module-level regular expression is a statement a bundler keeps (core-format test): made here.
+
+  const gap = /^[\s\u00a0\u202f]+(?=\p{L}+\.)/u;
+  let text = '';
+  let afterYear = false;
+
+  for (const part of formatter.formatToParts(moment)) {
+    text += afterYear && part.type === 'literal' ? part.value.replace(gap, '\u00a0') : part.value;
+    afterYear = part.type === 'year';
+  }
+
+  return text;
 }
 
 /***/ },

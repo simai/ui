@@ -121,5 +121,29 @@
     .md\:w-0 {
       width: 0;
     }
+    .md\:w-measure-20 {
+      width: var(--sf-measure-20);
+    }
+    .md\:w-measure-28 {
+      width: var(--sf-measure-28);
+    }
+    .md\:w-measure-36 {
+      width: var(--sf-measure-36);
+    }
+    .md\:w-measure-44 {
+      width: var(--sf-measure-44);
+    }
+    .md\:w-measure-52 {
+      width: var(--sf-measure-52);
+    }
+    .md\:w-measure-64 {
+      width: var(--sf-measure-64);
+    }
+    .md\:w-measure-80 {
+      width: var(--sf-measure-80);
+    }
+    .md\:w-measure-96 {
+      width: var(--sf-measure-96);
+    }
   }
 }

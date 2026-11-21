@@ -4422,12 +4422,22 @@ function swallowNextClick() {
 // (a control inside a button is not reachable) -- and every item says it can be
 // moved, in the page's language. A host's own role and description stay.
 const GENERIC = new Set(['DIV', 'SPAN', 'SECTION', 'ARTICLE', 'P']);
+// The description this module wrote is remembered on the item (a shared
+// symbol: every bundle carries this module), so a later language -- the page's
+// pack arriving after the list was drawn, SF.language.use(), a changed lang --
+// replaces its own word and never a host's (VS-SITE-4: the board kept
+// «draggable» on a Russian page when the pack came after the list).
+const SAID_ROLE = Symbol.for('simai.sf.sortable.roledescription');
 function describeItem(item) {
   if (!item.hasAttribute('role') && GENERIC.has(item.tagName)) {
     const holdsControl = item.querySelector(`${INTERACTIVE},${HANDLE},[tabindex]`);
     item.setAttribute('role', holdsControl ? 'group' : 'button');
   }
-  if (!item.hasAttribute('aria-roledescription')) item.setAttribute('aria-roledescription', messages().roledescription);
+  const current = item.getAttribute('aria-roledescription');
+  if (current !== null && current !== item[SAID_ROLE]) return;
+  const word = messages().roledescription;
+  if (current !== word) item.setAttribute('aria-roledescription', word);
+  item[SAID_ROLE] = word;
 }
 
 /**
@@ -4543,6 +4553,16 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
       }
       this.append(this.live, this.instructions);
       this.writeInstructions();
+      // The words are the page's language when they are read, not when the
+      // list was drawn: the language file may arrive later (a Smart bundle
+      // before core.js, a slow network), the page may choose another language
+      // or change a lang. The instructions and the items' description follow.
+      const offLanguage = _page_language_js__WEBPACK_IMPORTED_MODULE_0__.language.onChange(() => this.refreshWords());
+      // Followed through the instructions node: followLanguage keeps one
+      // redraw per element, and the list itself may be a Smart element with
+      // its own.
+      const unwatch = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.followLanguage)(this.instructions, () => this.refreshWords());
+      this.connection.signal.addEventListener('abort', () => { offLanguage(); unwatch(); }, { once: true });
       this.addEventListener('pointerdown', (event) => this.onPointerDown(event), options);
       this.addEventListener('keydown', (event) => this.onKeyDown(event), options);
       this.addEventListener('focusin', (event) => {
@@ -4606,6 +4626,12 @@ function defineSortable(registry = globalThis.customElements, { base = null } = 
         if (item.getAttribute('tabindex') !== want) item.setAttribute('tabindex', want);
       }
       this.writeInstructions();
+    }
+
+    refreshWords() {
+      if (!this.connection) return;
+      this.writeInstructions();
+      for (const item of items(this)) if (item.closest('sf-sortable') === this) describeItem(item);
     }
 
     // On a list of selectable items the instructions say Space selects (BV-8).
@@ -5105,6 +5131,16 @@ function attachSortable(container, options = {}) {
     doc.body.append(help);
   }
   const abort = new AbortController();
+  // The keys' words follow the page's language, as a list's do (VS-SITE-4).
+  if (help) {
+    const rewrite = () => {
+      const text = messages().instructions;
+      if (help.textContent !== text) help.textContent = text;
+    };
+    const offLanguage = _page_language_js__WEBPACK_IMPORTED_MODULE_0__.language.onChange(rewrite);
+    const unwatch = (0,_page_language_js__WEBPACK_IMPORTED_MODULE_0__.followLanguage)(help, rewrite);
+    abort.signal.addEventListener('abort', () => { offLanguage(); unwatch(); }, { once: true });
+  }
   let session = null;
 
   const members = (group) => [...container.querySelectorAll(options.items)].filter((item) => groupOf(item) === group);
@@ -5459,7 +5495,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-edito
 /***/ "7e115d411c69"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-overlay","tag":"sf-editor-overlay","version":"1.12.8","kind":"leaf","settings":{"for":{"type":"string","default":""},"frame":{"type":"string","default":""},"accepts":{"type":"string","default":""},"label":{"type":"string","default":""},"placement":{"type":"enum","values":["top","side"],"default":"top"},"passive":{"type":"boolean","default":false},"actions":{"type":"list","default":[],"of":{"id":"string","label":"string","icon":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"tone":{"type":"enum","values":["danger"],"optional":true},"priority":{"type":"number|string","optional":true}}},"messages":{"type":"object","default":{}},"insertion-target":{"type":"object","default":{}}},"values":{},"events":{"select":{"carries":{"ids":"list","id":{"type":"id","nullable":true},"node_id":{"type":"id","nullable":true}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"insert":{"carries":{"parent":"id","slot":"string","index":{"type":"number","integer":true},"item":{"type":"string","optional":true},"from":{"type":"string","optional":true},"mode":{"type":"enum","values":["move","copy"],"optional":true},"parent_id":{"type":"id"}},"own-verb":true},"move":{"carries":{"ids":"list","id":"id","parent":"id","position":"number","slot":"string","node_id":{"type":"id"},"parent_id":{"type":"id"},"index":{"type":"number","integer":true}}},"change":{"carries":{"id":"id","value":"string","previous":"string"},"cancelable":true,"x-native":false},"open":{"carries":{"ids":"list","id":"id","node":{"type":"id"},"point":{"type":"object","nullable":true},"trigger":{"type":"enum","values":["click","dblclick","enter"]}}}},"actions":{"attach":{"with":{"canvas":"object"}},"attach-frame":{"with":{"iframe":"object"}},"set-document":{"with":{"document":"object","options":"object"}},"set-nodes":{"with":{"nodes":{"type":"list","of":{"id":"id","kind":"string","label":"string","parent":"id","editable":"boolean","rect":"object","element":"object"}},"options":"object"}},"set-drop-filter":{"with":{"filter":{"type":"object"}}},"set-actions":{"with":{"actions":"list"}},"set-messages":{"with":{"messages":"object"}},"set-insertion-target":{"with":{"target":{"type":"object","nullable":true}}},"select":{"with":{"id":{"type":"id","nullable":true},"options":"object"}},"edit":{"with":{"id":"string"}},"refresh":{}},"css-variables":{"--sf-composition-overlay-frame-color":{"type":"color","state":"default"},"--sf-composition-overlay-z-index":{"type":"number","state":"default"},"--sf-composition-overlay-toolbar-background-color":{"type":"color","state":"selected"},"--sf-composition-overlay-toolbar-radius":{"type":"length","state":"selected"},"--sf-composition-overlay-toolbar-gap":{"type":"length","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.editor-overlay","tag":"sf-editor-overlay","version":"1.12.9","kind":"leaf","settings":{"for":{"type":"string","default":""},"frame":{"type":"string","default":""},"accepts":{"type":"string","default":""},"label":{"type":"string","default":""},"placement":{"type":"enum","values":["top","side"],"default":"top"},"passive":{"type":"boolean","default":false},"actions":{"type":"list","default":[],"of":{"id":"string","label":"string","icon":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"tone":{"type":"enum","values":["danger"],"optional":true},"priority":{"type":"number|string","optional":true}}},"messages":{"type":"object","default":{}},"insertion-target":{"type":"object","default":{}}},"values":{},"events":{"select":{"carries":{"ids":"list","id":{"type":"id","nullable":true},"node_id":{"type":"id","nullable":true}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"insert":{"carries":{"parent":"id","slot":"string","index":{"type":"number","integer":true},"item":{"type":"string","optional":true},"from":{"type":"string","optional":true},"mode":{"type":"enum","values":["move","copy"],"optional":true},"parent_id":{"type":"id"}},"own-verb":true},"move":{"carries":{"ids":"list","id":"id","parent":"id","position":"number","slot":"string","node_id":{"type":"id"},"parent_id":{"type":"id"},"index":{"type":"number","integer":true}}},"change":{"carries":{"id":"id","value":"string","previous":"string"},"cancelable":true,"x-native":false},"open":{"carries":{"ids":"list","id":"id","node":{"type":"id"},"point":{"type":"object","nullable":true},"trigger":{"type":"enum","values":["click","dblclick","enter"]}}}},"actions":{"attach":{"with":{"canvas":"object"}},"attach-frame":{"with":{"iframe":"object"}},"set-document":{"with":{"document":"object","options":"object"}},"set-nodes":{"with":{"nodes":{"type":"list","of":{"id":"id","kind":"string","label":"string","parent":"id","editable":"boolean","rect":"object","element":"object"}},"options":"object"}},"set-drop-filter":{"with":{"filter":{"type":"object"}}},"set-actions":{"with":{"actions":"list"}},"set-messages":{"with":{"messages":"object"}},"set-insertion-target":{"with":{"target":{"type":"object","nullable":true}}},"select":{"with":{"id":{"type":"id","nullable":true},"options":"object"}},"edit":{"with":{"id":"string"}},"refresh":{}},"css-variables":{"--sf-composition-overlay-frame-color":{"type":"color","state":"default"},"--sf-composition-overlay-z-index":{"type":"number","state":"default"},"--sf-composition-overlay-toolbar-background-color":{"type":"color","state":"selected"},"--sf-composition-overlay-toolbar-radius":{"type":"length","state":"selected"},"--sf-composition-overlay-toolbar-gap":{"type":"length","state":"selected"}}}');
 
 /***/ },
 

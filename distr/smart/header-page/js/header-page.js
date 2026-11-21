@@ -680,7 +680,7 @@ const PageHeaderElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
 }); // The header's slots. A child naming one of them is the page's content for it.
 
-const HOST_SLOTS = new Set(['path', 'start', 'actions', 'tabs']); // The nearest box that scrolls the header (overflow auto or scroll on the
+const HOST_SLOTS = new Set(['path', 'start', 'media', 'heading', 'actions', 'tabs']); // The nearest box that scrolls the header (overflow auto or scroll on the
 // block axis), or null for the window: the work area a sticky header stays
 // at the top of.
 
@@ -892,13 +892,17 @@ class SfPageHeader extends PageHeaderElement {
       if (child === row) continue;
 
       if (child.classList.contains('sf-page-header-title')) {
-        const heading = child.querySelector(':scope > .sf-page-header-heading');
+        // With a description (1.10.0) the heading and its line stand in a
+        // column (sf-page-header-name) that gives way as the heading does;
+        // its words are the wider of the two lines.
+        const heading = child.querySelector(':scope > .sf-page-header-heading, :scope > .sf-page-header-name');
         const titleGap = parseFloat(getComputedStyle(child).columnGap) || 0; // The star is counted at the actions' rung, the size it takes when
         // the actions keep the line beside it (C103): the room is the same
         // whichever size it has now, so the row never moves for the star.
 
         const parts = [...child.children].filter(part => part !== heading).map(part => part.classList.contains('sf-page-header-star') ? Math.max((0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.drawnBox)(part).width, this.actionsRungSide(row)) : (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_4__.drawnBox)(part).width);
-        const words = (heading?.scrollWidth || 0) + parts.reduce((sum, width) => sum + width + titleGap, 0);
+        const named = heading?.classList.contains('sf-page-header-name') ? Math.max(0, ...[...heading.children].map(line => line.scrollWidth)) : heading?.scrollWidth;
+        const words = (named || 0) + parts.reduce((sum, width) => sum + width + titleGap, 0);
         const basis = parseFloat(getComputedStyle(child).flexBasis);
         room -= Math.min(words, Number.isFinite(basis) ? basis : words) + gap;
       } else {
@@ -1107,6 +1111,30 @@ class SfPageHeader extends PageHeaderElement {
 
   set star(value) {
     if (value === undefined || value === null) this.removeAttribute('star');else this.setAttribute('star', value ? 'true' : 'false');
+  } // VS-10 (views study, owner decision C393): where the Framework's icon
+  // button has the toggle look (sf-button-icon appearance="toggle",
+  // component.icon-buttons 1.20.0), the star is that toggle -- off a quiet
+  // ghost, on the soft primary plate with its ring, the glyph kept outline,
+  // aria-pressed its state and one name, «В избранное», so the state is said
+  // once (C12). Where it has not, the star keeps the filled glyph in the
+  // favourite's colour and says its state by its name (1.2.2). Checked on the
+  // element sf-button-icon defines: until it is defined the star draws the
+  // former look and is drawn again once it is.
+
+
+  starLook() {
+    const Button = globalThis.customElements?.get?.('sf-button-icon');
+
+    if (!Button) {
+      if (!this._starToggleWait && globalThis.customElements?.whenDefined) {
+        this._starToggleWait = globalThis.customElements.whenDefined('sf-button-icon').then(() => this.requestComponentUpdate('star-look'));
+      }
+
+      return null;
+    }
+
+    const values = Button.sfInterface?.settings?.appearance?.values;
+    return Array.isArray(values) && values.includes('toggle') ? 'toggle' : null;
   } // The template's press: the request toggle {on}; not cancelled, the header
   // writes the star itself.
 
@@ -1156,9 +1184,12 @@ class SfPageHeader extends PageHeaderElement {
       sticky: this.sticky,
       actions: () => this.orderedActions(),
       heading: this.heading,
+      headingLevel: this.headingLevelValue(),
+      description: this.description || '',
       count: this.count,
       level: this.level,
       star: this.star,
+      starLook: this.star === undefined ? null : this.starLook(),
       rootClass: this.getRootClass(),
       overflow: this.overflowMore ? 'more' : 'wrap',
       moreSize: this.actionMoreSize(),
@@ -1188,9 +1219,49 @@ class SfPageHeader extends PageHeaderElement {
     }
 
     return '1/2';
+  } // The heading element's level (1.10.0): 1 to 6, 1 when the attribute says
+  // anything else. Only the tag changes; the look stays the fourth heading
+  // step. A head inside a page that has its own h1 (a conversation embedded
+  // in a page) says 2.
+
+
+  headingLevelValue() {
+    const value = Number(this.getAttribute('heading-level'));
+    return Number.isInteger(value) && value >= 1 && value <= 6 ? value : 1;
+  } // The media slot (1.10.0): an avatar before the title stands on the line's
+  // rung, as the star does before the line is laid: the size the page gave
+  // its first action, else its start control's, else 1 beside a description
+  // (the heading and its line are that tall) and the half step alone with
+  // the heading. A size the page writes itself stays; the header writes only
+  // a size it chose (data-sf-page-header-size marks it, so it follows a rung
+  // that changes).
+
+
+  sizeMedia() {
+    const media = (this._liveSlotNodes?.get?.('media') || []).filter(node => node.nodeType === 1);
+    if (!media.length) return;
+    let rung = '';
+
+    for (const name of ['actions', 'start']) {
+      const first = (this._liveSlotNodes?.get?.(name) || []).find(node => node.nodeType === 1);
+
+      if (first) {
+        rung = first.getAttribute('size') || '1';
+        break;
+      }
+    }
+
+    if (!rung) rung = this.description ? '1' : '1/2';
+
+    for (const node of media) {
+      if (node.hasAttribute('size') && !node.hasAttribute('data-sf-page-header-size')) continue;
+      if (node.getAttribute('size') !== rung) node.setAttribute('size', rung);
+      node.setAttribute('data-sf-page-header-size', '');
+    }
   }
 
   template() {
+    this.sizeMedia();
     return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderPageHeaderTemplate)(this.templateContext());
   }
 
@@ -1212,10 +1283,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderPageHeaderTemplate: () => (/* binding */ renderPageHeaderTemplate)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
+/* harmony import */ var lit_static_html_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ee5035470810");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__]);
 var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
  // Framework utilities and the header's own sheet (scss/: the gaps and colours
 // are its public variables): a column for the path above the line, and a line
 // holding the title -- the heading, its count, the install mark and the star --
@@ -1226,6 +1299,15 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // (HD-12); the count and the marks stay right after the words. The actions
 // come in the header's order, the main one last (C161 (3)); the tabs slot
 // ends the header, its line the header's lower edge (C161 (5)).
+//
+// The head of a conversation (C161, 1.10.0) adds three optional parts, each
+// drawn only when the page gives it, so a head without them is the markup it
+// always was: the media slot (an avatar) first in the title, so that it moves
+// with the name when a narrow line wraps the title under «назад», a
+// heading slot (a control, such as a picker of whom to talk to) inside the
+// heading element in place of the heading's words, and a description line
+// under the heading (whether the person is online). heading-level changes the
+// heading element's tag only; its look stays the fourth heading step.
 
 function renderPageHeaderTemplate(context) {
   const {
@@ -1239,6 +1321,14 @@ function renderPageHeaderTemplate(context) {
     hasHostSlot,
     rootClass
   } = context;
+  const headingLevel = context.headingLevel || 1;
+  const tag = (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_1__.unsafeStatic)(`h${headingLevel}`);
+  const slotted = hasHostSlot('heading');
+  const headingBody = slotted ? hostSlot('heading') : heading;
+  const headingClass = slotted ? 'sf-page-header-heading sf-page-header-heading--slot sf-h-4 m-0 min-w-0 flex items-cross-center' : 'sf-page-header-heading sf-h-4 m-0 min-w-0 truncate';
+  const headingElement = headingLevel === 1 && !slotted ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<h1 class="sf-page-header-heading sf-h-4 m-0 min-w-0 truncate">${heading}</h1>` : (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_1__.html)`<${tag} class=${headingClass}>${headingBody}</${tag}>`;
+  const description = context.description;
+  const name = description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-page-header-name flex flex-col min-w-0">${headingElement}<p class="sf-page-header-description m-0 min-w-0 truncate">${description}</p></div>` : headingElement;
   const classes = ['sf-page-header', 'flex', 'flex-col', 'min-w-0', context.expressive ? 'sf-page-header--expressive' : '', context.sticky ? 'sf-page-header--sticky' : '', rootClass].filter(Boolean).join(' ');
   const on = star === true;
   const actions = context.actions ? context.actions() : {
@@ -1250,7 +1340,7 @@ function renderPageHeaderTemplate(context) {
     <div class="sf-page-header-line flex items-cross-center flex-wrap min-w-0">
       ${hasHostSlot('start') ? hostSlot('start') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       <div class="sf-page-header-title flex items-cross-center min-w-0">
-        <h1 class="sf-page-header-heading sf-h-4 m-0 min-w-0 truncate">${heading}</h1>
+        ${hasHostSlot('media') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-page-header-media flex items-cross-center">${hostSlot('media')}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${name}
         ${count !== '' && count !== null && count !== undefined ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge appearance="tonal" scheme="neutral" size="1/2" text=${String(count)}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${level === 'install' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge appearance="outline" scheme="tertiary" size="1/2" text=${text('all-sites')}></sf-badge>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         ${star === true || star === false // The star's name says what pressing it does («В избранное», «Убрать
@@ -1260,13 +1350,22 @@ function renderPageHeaderTemplate(context) {
   // It stands on its row's rung (C103, 1.7.0): the actions' size while
   // they keep the line beside it, else the start control's, else the
   // half step (index.js syncStarRung).
-  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon size=${context.starSize || '1/2'} appearance="ghost" scheme="on-surface"
-              class=${on ? 'sf-page-header-star sf-page-header-star--on' : 'sf-page-header-star'}
-              icon="star"
-              ?filled=${on}
-              aria-label=${on ? text('unstar') : text('star')}
-              title=${on ? text('unstar') : text('star')}
-              @click=${() => component.toggleStar()}></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  ? context.starLook // The toggle look (VS-10, C393): one name and aria-pressed, the
+  // state on the plate, the glyph outline. The look is the one
+  // index.js starLook found the icon button to declare.
+  ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon size=${context.starSize || '1/2'} appearance=${context.starLook}
+                class=${on ? 'sf-page-header-star sf-page-header-star--toggle sf-page-header-star--on' : 'sf-page-header-star sf-page-header-star--toggle'}
+                icon="star"
+                pressed=${on ? 'true' : 'false'}
+                aria-label=${text('star')}
+                title=${text('star')}
+                @click=${() => component.toggleStar()}></sf-button-icon>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon size=${context.starSize || '1/2'} appearance="ghost" scheme="on-surface"
+                class=${on ? 'sf-page-header-star sf-page-header-star--on' : 'sf-page-header-star'}
+                icon="star"
+                ?filled=${on}
+                aria-label=${on ? text('unstar') : text('star')}
+                title=${on ? text('unstar') : text('star')}
+                @click=${() => component.toggleStar()}></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       </div>
       ${hasHostSlot('actions') // overflow more (owner decision C155 (7), C161 (3), (4)): one row,
   // and ⋯ for what does not fit, right before the main action, which
@@ -1316,6 +1415,74 @@ module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.r
 
 /***/ },
 
+/***/ "f550d360fd36"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   _$LH: () => (/* binding */ j),
+/* harmony export */   html: () => (/* binding */ b),
+/* harmony export */   mathml: () => (/* binding */ T),
+/* harmony export */   noChange: () => (/* binding */ E),
+/* harmony export */   nothing: () => (/* binding */ A),
+/* harmony export */   render: () => (/* binding */ D),
+/* harmony export */   svg: () => (/* binding */ w)
+/* harmony export */ });
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+const t=globalThis,i=t=>t,s=t.trustedTypes,e=s?s.createPolicy("lit-html",{createHTML:t=>t}):void 0,h="$lit$",o=`lit$${Math.random().toFixed(9).slice(2)}$`,n="?"+o,r=`<${n}>`,l=document,c=()=>l.createComment(""),a=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,d=t=>u(t)||"function"==typeof t?.[Symbol.iterator],f="[ \t\n\f\r]",v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${f}(?:([^\\s"'>=/]+)(${f}*=${f}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,x=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),b=x(1),w=x(2),T=x(3),E=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),C=new WeakMap,P=l.createTreeWalker(l,129);function V(t,i){if(!u(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e?e.createHTML(i):i}const N=(t,i)=>{const s=t.length-1,e=[];let n,l=2===i?"<svg>":3===i?"<math>":"",c=v;for(let i=0;i<s;i++){const s=t[i];let a,u,d=-1,f=0;for(;f<s.length&&(c.lastIndex=f,u=c.exec(s),null!==u);)f=c.lastIndex,c===v?"!--"===u[1]?c=_:void 0!==u[1]?c=m:void 0!==u[2]?(y.test(u[2])&&(n=RegExp("</"+u[2],"g")),c=p):void 0!==u[3]&&(c=p):c===p?">"===u[0]?(c=n??v,d=-1):void 0===u[1]?d=-2:(d=c.lastIndex-u[2].length,a=u[1],c=void 0===u[3]?p:'"'===u[3]?$:g):c===$||c===g?c=p:c===_||c===m?c=v:(c=p,n=void 0);const x=c===p&&t[i+1].startsWith("/>")?" ":"";l+=c===v?s+r:d>=0?(e.push(a),s.slice(0,d)+h+s.slice(d)+o+x):s+o+(-2===d?i:x)}return[V(t,l+(t[s]||"<?>")+(2===i?"</svg>":3===i?"</math>":"")),e]};class S{constructor({strings:t,_$litType$:i},e){let r;this.parts=[];let l=0,a=0;const u=t.length-1,d=this.parts,[f,v]=N(t,i);if(this.el=S.createElement(f,e),P.currentNode=this.el.content,2===i||3===i){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes)}for(;null!==(r=P.nextNode())&&d.length<u;){if(1===r.nodeType){if(r.hasAttributes())for(const t of r.getAttributeNames())if(t.endsWith(h)){const i=v[a++],s=r.getAttribute(t).split(o),e=/([.?@])?(.*)/.exec(i);d.push({type:1,index:l,name:e[2],strings:s,ctor:"."===e[1]?I:"?"===e[1]?L:"@"===e[1]?z:H}),r.removeAttribute(t)}else t.startsWith(o)&&(d.push({type:6,index:l}),r.removeAttribute(t));if(y.test(r.tagName)){const t=r.textContent.split(o),i=t.length-1;if(i>0){r.textContent=s?s.emptyScript:"";for(let s=0;s<i;s++)r.append(t[s],c()),P.nextNode(),d.push({type:2,index:++l});r.append(t[i],c())}}}else if(8===r.nodeType)if(r.data===n)d.push({type:2,index:l});else{let t=-1;for(;-1!==(t=r.data.indexOf(o,t+1));)d.push({type:7,index:l}),t+=o.length-1}l++}}static createElement(t,i){const s=l.createElement("template");return s.innerHTML=t,s}}function M(t,i,s=t,e){if(i===E)return i;let h=void 0!==e?s._$Co?.[e]:s._$Cl;const o=a(i)?void 0:i._$litDirective$;return h?.constructor!==o&&(h?._$AO?.(!1),void 0===o?h=void 0:(h=new o(t),h._$AT(t,s,e)),void 0!==e?(s._$Co??=[])[e]=h:s._$Cl=h),void 0!==h&&(i=M(t,h._$AS(t,i.values),h,e)),i}class R{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:i},parts:s}=this._$AD,e=(t?.creationScope??l).importNode(i,!0);P.currentNode=e;let h=P.nextNode(),o=0,n=0,r=s[0];for(;void 0!==r;){if(o===r.index){let i;2===r.type?i=new k(h,h.nextSibling,this,t):1===r.type?i=new r.ctor(h,r.name,r.strings,this,t):6===r.type&&(i=new Z(h,this,t)),this._$AV.push(i),r=s[++n]}o!==r?.index&&(h=P.nextNode(),o++)}return P.currentNode=l,e}p(t){let i=0;for(const s of this._$AV)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++}}class k{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,i,s,e){this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cv=e?.isConnected??!0}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t?.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=M(this,t,i),a(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==E&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):d(t)?this.k(t):this._(t)}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t))}_(t){this._$AH!==A&&a(this._$AH)?this._$AA.nextSibling.data=t:this.T(l.createTextNode(t)),this._$AH=t}$(t){const{values:i,_$litType$:s}=t,e="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=S.createElement(V(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===e)this._$AH.p(i);else{const t=new R(e,this),s=t.u(this.options);t.p(i),this.T(s),this._$AH=t}}_$AC(t){let i=C.get(t.strings);return void 0===i&&C.set(t.strings,i=new S(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const h of t)e===i.length?i.push(s=new k(this.O(c()),this.O(c()),this,this.options)):s=i[e],s._$AI(h),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e)}_$AR(t=this._$AA.nextSibling,s){for(this._$AP?.(!1,!0,s);t!==this._$AB;){const s=i(t).nextSibling;i(t).remove(),t=s}}setConnected(t){void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t))}}class H{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,i,s,e,h){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=h,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A}_$AI(t,i=this,s,e){const h=this.strings;let o=!1;if(void 0===h)t=M(this,t,i,0),o=!a(t)||t!==this._$AH&&t!==E,o&&(this._$AH=t);else{const e=t;let n,r;for(t=h[0],n=0;n<h.length-1;n++)r=M(this,e[s+n],i,n),r===E&&(r=this._$AH[n]),o||=!a(r)||r!==this._$AH[n],r===A?t=A:t!==A&&(t+=(r??"")+h[n+1]),this._$AH[n]=r}o&&!e&&this.j(t)}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"")}}class I extends H{constructor(){super(...arguments),this.type=3}j(t){this.element[this.name]=t===A?void 0:t}}class L extends H{constructor(){super(...arguments),this.type=4}j(t){this.element.toggleAttribute(this.name,!!t&&t!==A)}}class z extends H{constructor(t,i,s,e,h){super(t,i,s,e,h),this.type=5}_$AI(t,i=this){if((t=M(this,t,i,0)??A)===E)return;const s=this._$AH,e=t===A&&s!==A||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,h=t!==A&&(s===A||e);e&&this.element.removeEventListener(this.name,this,s),h&&this.element.addEventListener(this.name,this,t),this._$AH=t}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t)}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s}get _$AU(){return this._$AM._$AU}_$AI(t){M(this,t)}}const j={M:h,P:o,A:n,C:1,L:N,R,D:d,V:M,I:k,H,N:L,U:z,B:I,F:Z},B=t.litHtmlPolyfillSupport;B?.(S,k),(t.litHtmlVersions??=[]).push("3.3.3");const D=(t,i,s)=>{const e=s?.renderBefore??i;let h=e._$litPart$;if(void 0===h){const t=s?.renderBefore??null;e._$litPart$=h=new k(i.insertBefore(c(),t),t,void 0,s??{})}return h._$AI(t),h};
+//# sourceMappingURL=lit-html.js.map
+
+
+/***/ },
+
+/***/ "ba5a8db95d92"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   html: () => (/* binding */ u),
+/* harmony export */   literal: () => (/* binding */ i),
+/* harmony export */   mathml: () => (/* binding */ $),
+/* harmony export */   svg: () => (/* binding */ c),
+/* harmony export */   unsafeStatic: () => (/* binding */ s),
+/* harmony export */   withStatic: () => (/* binding */ n)
+/* harmony export */ });
+/* harmony import */ var _lit_html_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f550d360fd36");
+
+/**
+ * @license
+ * Copyright 2020 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+const a=Symbol.for(""),o=t=>{if(t?.r===a)return t?._$litStatic$},s=t=>({_$litStatic$:t,r:a}),i=(t,...r)=>({_$litStatic$:r.reduce((r,e,a)=>r+(t=>{if(void 0!==t._$litStatic$)return t._$litStatic$;throw Error(`Value passed to 'literal' function must be a 'literal' result: ${t}. Use 'unsafeStatic' to pass non-literal values, but\n            take care to ensure page security.`)})(e)+t[a+1],t[0]),r:a}),l=new Map,n=t=>(r,...e)=>{const a=e.length;let s,i;const n=[],u=[];let c,$=0,f=!1;for(;$<a;){for(c=r[$];$<a&&void 0!==(i=e[$],s=o(i));)c+=s+r[++$],f=!0;$!==a&&u.push(i),n.push(c),$++}if($===a&&n.push(r[a]),f){const t=n.join("$$lit$$");void 0===(r=l.get(t))&&(n.raw=n,l.set(t,r=n)),e=u}return t(r,...e)},u=n(_lit_html_js__WEBPACK_IMPORTED_MODULE_0__.html),c=n(_lit_html_js__WEBPACK_IMPORTED_MODULE_0__.svg),$=n(_lit_html_js__WEBPACK_IMPORTED_MODULE_0__.mathml);
+//# sourceMappingURL=static.js.map
+
+
+/***/ },
+
+/***/ "ee5035470810"
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   html: () => (/* reexport safe */ lit_html_static_js__WEBPACK_IMPORTED_MODULE_0__.html),
+/* harmony export */   literal: () => (/* reexport safe */ lit_html_static_js__WEBPACK_IMPORTED_MODULE_0__.literal),
+/* harmony export */   mathml: () => (/* reexport safe */ lit_html_static_js__WEBPACK_IMPORTED_MODULE_0__.mathml),
+/* harmony export */   svg: () => (/* reexport safe */ lit_html_static_js__WEBPACK_IMPORTED_MODULE_0__.svg),
+/* harmony export */   unsafeStatic: () => (/* reexport safe */ lit_html_static_js__WEBPACK_IMPORTED_MODULE_0__.unsafeStatic),
+/* harmony export */   withStatic: () => (/* reexport safe */ lit_html_static_js__WEBPACK_IMPORTED_MODULE_0__.withStatic)
+/* harmony export */ });
+/* harmony import */ var lit_html_static_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ba5a8db95d92");
+
+//# sourceMappingURL=static-html.js.map
+
+
+/***/ },
+
 /***/ "d1d35d196e05"
 (__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
@@ -1348,7 +1515,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-heade
 /***/ "96b1e08482fd"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-page","tag":"sf-header-page","version":"1.9.4","kind":"leaf","settings":{"heading":{"type":"string","default":""},"count":{"type":"string","default":""},"level":{"type":"enum","values":["site","install"],"default":"site"},"expressive":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["more","wrap"],"default":"more"},"sticky":{"type":"boolean","default":false},"star":{"type":"boolean","optional":true}},"values":{},"events":{"toggle":{"carries":{"on":"boolean"},"cancelable":true}},"actions":{},"host-states":{"data-scrolled":"boolean"},"css-variables":{"--sf-page-header-gap":{"type":"length","state":"default"},"--sf-page-header-line-gap":{"type":"length","state":"default"},"--sf-page-header-actions-gap":{"type":"length","state":"default"},"--sf-page-header-heading-color":{"type":"color","state":"default"},"--sf-page-header-star-color":{"type":"color","state":"on"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-page","tag":"sf-header-page","version":"1.11.2","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"number","integer":true,"min":1,"max":6,"default":1},"description":{"type":"string","default":""},"count":{"type":"string","default":""},"level":{"type":"enum","values":["site","install"],"default":"site"},"expressive":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["more","wrap"],"default":"more"},"sticky":{"type":"boolean","default":false},"star":{"type":"boolean","optional":true}},"values":{},"events":{"toggle":{"carries":{"on":"boolean"},"cancelable":true}},"actions":{},"host-states":{"data-scrolled":"boolean"},"css-variables":{"--sf-page-header-gap":{"type":"length","state":"default"},"--sf-page-header-line-gap":{"type":"length","state":"default"},"--sf-page-header-actions-gap":{"type":"length","state":"default"},"--sf-page-header-heading-color":{"type":"color","state":"default"},"--sf-page-header-star-color":{"type":"color","state":"on"}}}');
 
 /***/ },
 

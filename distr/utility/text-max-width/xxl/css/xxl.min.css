@@ -1,2 +1,2 @@
 @layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
-@layer sf.utilities{@media(min-width: 80rem){.xxl\:measure{max-width:var(--sf-text--measure)}.xxl\:measure-wide{max-width:var(--sf-text--measure-wide)}.xxl\:measure-narrow{max-width:var(--sf-text--measure-narrow)}}}
+@layer sf.utilities{@media(min-width: 80rem){.xxl\:measure{max-width:var(--sf-measure-80)}.xxl\:measure-wide{max-width:var(--sf-measure-96)}.xxl\:measure-narrow{max-width:var(--sf-measure-52)}}}

@@ -23,13 +23,37 @@
       max-width: fit-content;
     }
     .xxl\:max-w-prose {
-      max-width: 65ch;
+      max-width: var(--sf-measure-80);
     }
     .xxl\:max-w-0 {
       max-width: 0;
     }
     .xxl\:max-w-none {
       max-width: none;
+    }
+    .xxl\:max-w-measure-20 {
+      max-width: var(--sf-measure-20);
+    }
+    .xxl\:max-w-measure-28 {
+      max-width: var(--sf-measure-28);
+    }
+    .xxl\:max-w-measure-36 {
+      max-width: var(--sf-measure-36);
+    }
+    .xxl\:max-w-measure-44 {
+      max-width: var(--sf-measure-44);
+    }
+    .xxl\:max-w-measure-52 {
+      max-width: var(--sf-measure-52);
+    }
+    .xxl\:max-w-measure-64 {
+      max-width: var(--sf-measure-64);
+    }
+    .xxl\:max-w-measure-80 {
+      max-width: var(--sf-measure-80);
+    }
+    .xxl\:max-w-measure-96 {
+      max-width: var(--sf-measure-96);
     }
     .xxl\:max-w-sm {
       max-width: var(--sf-g6);

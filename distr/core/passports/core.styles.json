@@ -3,7 +3,7 @@
   "schema_version": 1,
   "id": "core.styles",
   "kind": "core",
-  "version": "1.20.0",
+  "version": "1.21.0",
   "owner": "simai/ui-source",
   "summary": "The core sheet around the token sets: the entry, the layer order, the base, presets, scrollbars, the loader, the logo, composition regions and the workspace layout, placeholders, touch fields, sr-only and not-sr-only (C212 (6)) and the display settings (the five colour schemes, text size and spacing, images, motion, the skip link, prefers-contrast and prefers-reduced-transparency).",
   "includes": [
@@ -19,6 +19,7 @@
     "src/core/scss/_sf_css__composition.scss",
     "src/core/scss/_sf_css__density.scss",
     "src/core/scss/_sf_css__display.scss",
+    "src/core/scss/_sf_css__field_width.scss",
     "src/core/scss/_sf_css__hide.scss",
     "src/core/scss/_sf_css__loader.scss",
     "src/core/scss/_sf_css__logo.scss",
@@ -36,7 +37,7 @@
     "src/core/scss/mix/_mix__window-footer.scss",
     "src/core/scss/vars/_sf_var__display.scss"
   ],
-  "content_sha256": "09a57de27d6a71cf65fde88b1111f636c65b266f428c875f55f7d5fad2631d79",
+  "content_sha256": "5f5f864e2abb4b33a1493ddd93b5689dfb7eef48eb18086fa905481269a4e1f0",
   "dependencies": [
     {
       "id": "font.inter",

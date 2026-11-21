@@ -140,9 +140,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
+/* harmony export */   FIELD_WIDTHS: () => (/* binding */ FIELD_WIDTHS),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
+/* harmony export */   fieldWidth: () => (/* binding */ fieldWidth),
+/* harmony export */   fieldWidthClass: () => (/* binding */ fieldWidthClass),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
 /* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
@@ -233,6 +236,30 @@ function retireFieldSizeClass(root, block) {
     if (!root.classList.contains(name)) continue;
     root.classList.replace(name, `${block}--size-${fieldSize(retired, block)}`);
   }
+} // How wide a field is (owner decision C396, WM-4): the value it is made for,
+// in characters of the width ladder, read from the field's width setting --
+// short (20: a date, a number, a code), medium (28: a name, a phone) and long
+// (44: a path, an e-mail, an address); the roles --sf-field--width-short,
+// -medium and -long stand on the steps --sf-measure-20, -28 and -44 (core
+// figma_measure.scss) and follow the text size, the density and the phone.
+// It is the field's widest: in a narrower container the field is the
+// container's width, as without it. Empty or any other value: the whole
+// width, as every field drew before. The class is core's
+// (core/scss/_sf_css__field_width.scss), so a field whose own sheet has not
+// come yet already stands at its width.
+
+const FIELD_WIDTHS = Object.freeze(['short', 'medium', 'long']);
+/** A field width: short, medium or long, else '' (the whole width). */
+
+function fieldWidth(value) {
+  const width = String(value ?? '').trim().toLowerCase();
+  return FIELD_WIDTHS.includes(width) ? width : '';
+}
+/** The root class of a field width, or '' for the whole width. */
+
+function fieldWidthClass(value) {
+  const width = fieldWidth(value);
+  return width ? `sf-field--width-${width}` : '';
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -2878,11 +2905,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f39dc444b059");
 /* harmony import */ var lit_directives_live_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("2d6390ae26b0");
 /* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e138a730fd7c");
-/* harmony import */ var _lookup_model_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("91c9715ba00a");
-/* harmony import */ var _avatar_js_picture__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c69a3dc158df");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_5__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _lookup_model_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("91c9715ba00a");
+/* harmony import */ var _avatar_js_picture__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("c69a3dc158df");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_6__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_3__, _component_field_size__WEBPACK_IMPORTED_MODULE_4__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 
@@ -2929,7 +2958,7 @@ const CHIP_TAG_SIZE = {
 
 function avatar(item, size, extraClass = '') {
   if (!item.avatar) return item.icon ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon class=${`${extraClass} sf-lookup-icon flex-none`} icon=${item.icon} aria-hidden="true"></sf-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  return (0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_5__.avatarPicture)({
+  return (0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_6__.avatarPicture)({
     size,
     imageUrl: item.avatar.src,
     text: item.avatar.initials,
@@ -3013,13 +3042,13 @@ function moreChips(context) {
 
 function marked(text, ranges) {
   if (!ranges?.length) return text;
-  return (0,_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_4__.splitByRanges)(text, ranges).map(part => part.match ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-lookup-match">${part.text}</span>` : part.text);
+  return (0,_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_5__.splitByRanges)(text, ranges).map(part => part.match ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-lookup-match">${part.text}</span>` : part.text);
 }
 
 function rangesOf(context, item, part) {
   if (item.match?.[part]) return item.match[part];
   const text = part === 'label' ? item.label : item.caption;
-  return context.localQuery ? (0,_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_4__.matchRanges)(text, context.localQuery, context.locale) : [];
+  return context.localQuery ? (0,_lookup_model_mjs__WEBPACK_IMPORTED_MODULE_5__.matchRanges)(text, context.localQuery, context.locale) : [];
 }
 
 function row(context, item, index) {
@@ -3284,7 +3313,8 @@ function renderLookupTemplate(context) {
 
   const stateShown = Boolean(refusal) || (searching || loadingMore ? waitShown : !['closed', 'results'].includes(listState) && !(listState === 'empty' && offer));
   const blank = listOpen && !sheet && !showList && !stateShown && listState !== 'error';
-  const rootClasses = ['sf-lookup', `sf-lookup--size-${size}`, `sf-lookup--${appearance}`, multiple ? 'sf-lookup--multiple' : 'sf-lookup--single', multiple && chipsMode === 'row' ? 'sf-lookup--chips-row' : '', context.chipsCollapsed ? 'sf-lookup--chips-collapsed' : '', context.chipsCollapsed && chipsShown === 1 && chosen.length > 1 ? 'sf-lookup--chips-one' : '', listOpen ? 'sf-lookup--open' : '', sheet ? 'sf-lookup--sheet' : '', field.invalid ? 'error' : '', fieldDisabled ? 'sf-lookup--disabled' : '', readonly ? 'sf-lookup--readonly' : '', 'flex', 'flex-col', context.rootClass].filter(Boolean);
+  const rootClasses = ['sf-lookup', `sf-lookup--size-${size}`, `sf-lookup--${appearance}`, multiple ? 'sf-lookup--multiple' : 'sf-lookup--single', multiple && chipsMode === 'row' ? 'sf-lookup--chips-row' : '', context.chipsCollapsed ? 'sf-lookup--chips-collapsed' : '', context.chipsCollapsed && chipsShown === 1 && chosen.length > 1 ? 'sf-lookup--chips-one' : '', listOpen ? 'sf-lookup--open' : '', sheet ? 'sf-lookup--sheet' : '', field.invalid ? 'error' : '', fieldDisabled ? 'sf-lookup--disabled' : '', readonly ? 'sf-lookup--readonly' : '', 'flex', 'flex-col', context.rootClass, // The field's width (C396, WM-4); none without the setting.
+  (0,_component_field_size__WEBPACK_IMPORTED_MODULE_4__.fieldWidthClass)(context.width)].filter(Boolean);
   const panelClasses = ['sf-lookup-panel', blank ? 'sf-lookup-panel--blank' : '', sheet ? 'sf-lookup-panel--sheet' : ''].filter(Boolean);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div class=${rootClasses.join(' ')} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -4102,7 +4132,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "8bb18691f333"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-lookup","tag":"sf-input-lookup","version":"1.17.5","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"chips":{"type":"enum","values":["wrap","row"],"default":"wrap"},"max-items":{"type":"number","default":0},"min-length":{"type":"number","default":2},"suggest":{"type":"boolean","default":false},"max-results":{"type":"number","default":20},"debounce":{"type":"number","default":120},"maxlength":{"type":"number","default":0},"options":{"type":"list","default":[]},"exclude":{"type":"list","default":[]},"provider":{"type":"object","default":null},"create":{"type":"string","default":null},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"input":{"carries":"native"},"change":{"carries":"native"},"create":{"carries":{"text":{"type":"string"},"kind":{"type":"enum","values":["item","email"]},"respond":{"type":"function"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-lookup-background-color":{"type":"color","state":"default"},"--sf-lookup-border-color":{"type":"color","state":"default"},"--sf-lookup-color":{"type":"color","state":"default"},"--sf-lookup-radius":{"type":"length","state":"default"},"--sf-lookup-padding-inline":{"type":"length","state":"default"},"--sf-lookup-padding-block":{"type":"length","state":"default"},"--sf-lookup-invalid-border-color":{"type":"color","state":"invalid"},"--sf-lookup-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-lookup","tag":"sf-input-lookup","version":"1.19.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"width":{"type":"enum","values":["","short","medium","long"],"default":""},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"chips":{"type":"enum","values":["wrap","row"],"default":"wrap"},"max-items":{"type":"number","default":0},"min-length":{"type":"number","default":2},"suggest":{"type":"boolean","default":false},"max-results":{"type":"number","default":20},"debounce":{"type":"number","default":120},"maxlength":{"type":"number","default":0},"options":{"type":"list","default":[]},"exclude":{"type":"list","default":[]},"provider":{"type":"object","default":null},"create":{"type":"string","default":null},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"input":{"carries":"native"},"change":{"carries":"native"},"create":{"carries":{"text":{"type":"string"},"kind":{"type":"enum","values":["item","email"]},"respond":{"type":"function"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"css-variables":{"--sf-lookup-background-color":{"type":"color","state":"default"},"--sf-lookup-border-color":{"type":"color","state":"default"},"--sf-lookup-color":{"type":"color","state":"default"},"--sf-lookup-radius":{"type":"length","state":"default"},"--sf-lookup-padding-inline":{"type":"length","state":"default"},"--sf-lookup-padding-block":{"type":"length","state":"default"},"--sf-lookup-invalid-border-color":{"type":"color","state":"invalid"},"--sf-lookup-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 

@@ -121,5 +121,29 @@
     .xl\:w-0 {
       width: 0;
     }
+    .xl\:w-measure-20 {
+      width: var(--sf-measure-20);
+    }
+    .xl\:w-measure-28 {
+      width: var(--sf-measure-28);
+    }
+    .xl\:w-measure-36 {
+      width: var(--sf-measure-36);
+    }
+    .xl\:w-measure-44 {
+      width: var(--sf-measure-44);
+    }
+    .xl\:w-measure-52 {
+      width: var(--sf-measure-52);
+    }
+    .xl\:w-measure-64 {
+      width: var(--sf-measure-64);
+    }
+    .xl\:w-measure-80 {
+      width: var(--sf-measure-80);
+    }
+    .xl\:w-measure-96 {
+      width: var(--sf-measure-96);
+    }
   }
 }

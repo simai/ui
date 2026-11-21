@@ -44,7 +44,9 @@ function hasDateStyle(style) {
  * chart's tick, «14:05» with two-digit hours). `timeZone` (an IANA name,
  * Europe/Moscow) writes the moment on that zone's clock instead of the
  * reader's (owner decision C183 (3): a product that knows the person's zone).
- * Anything that is not a date is `gap`, '' by default.
+ * Anything that is not a date is `gap`, '' by default. A marker after the year
+ * («2026 г.», «2026 р.») is held to it by a no-break space, so it never starts
+ * a line alone.
  */
 
 
@@ -69,8 +71,9 @@ function formatDate(value, {
 
   if (knownTimeZone(timeZone)) options = { ...options,
     timeZone
-  };
-  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(moment);
+  }; // The year keeps its marker («2026 г.» never wraps before «г.»): format-intl.js.
+
+  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatDateText)((0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options), moment);
 }
 /**
  * Whether the platform knows an IANA time zone name (Europe/Moscow, UTC). An
@@ -209,6 +212,7 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatDateText: () => (/* binding */ formatDateText),
 /* harmony export */   formatLocale: () => (/* binding */ formatLocale),
 /* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
 /* harmony export */   toDate: () => (/* binding */ toDate)
@@ -279,6 +283,31 @@ function intlFormatter(kind, locale, options) {
   if (cache.size >= 256) cache.delete(cache.keys().next().value);
   cache.set(key, made);
   return made;
+} // A date's year keeps the abbreviation that follows it (A4, group build 15):
+// Russian, Ukrainian, Bulgarian, Belarusian, Kazakh, Lithuanian, Macedonian
+// and Armenian write one after the year -- «19 нояб. 2026 г.», «2026 р.»,
+// «2026 m.», «2026 թ.» -- and the platform joins it with an ordinary space, so
+// a narrow cell or a wrapped line printed «2026» at the end of one line and
+// «г.» alone at the start of the next. Only the space before an abbreviation
+// (letters closed by a full stop: г., гг., m.) becomes a no-break space; a word
+// such as English «at» or German «um», a comma, a slash or a time after the
+// year is left as the platform writes it (DEV answer msg-e6758728).
+
+/** A DateTimeFormat's text of a moment with the year's marker held to the year. */
+
+function formatDateText(formatter, moment) {
+  if (typeof formatter?.formatToParts !== 'function') return formatter.format(moment); // A module-level regular expression is a statement a bundler keeps (core-format test): made here.
+
+  const gap = /^[\s\u00a0\u202f]+(?=\p{L}+\.)/u;
+  let text = '';
+  let afterYear = false;
+
+  for (const part of formatter.formatToParts(moment)) {
+    text += afterYear && part.type === 'literal' ? part.value.replace(gap, '\u00a0') : part.value;
+    afterYear = part.type === 'year';
+  }
+
+  return text;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -419,12 +448,12 @@ function formatRelativeDay(value, {
     const year = moment.getFullYear() === (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.toDate)(now).getFullYear() ? {} : {
       year: 'numeric'
     };
-    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
+    text = (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatDateText)((0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', locale, {
       day: 'numeric',
       month: 'long',
       ...year,
       ...zone
-    }).format(moment);
+    }), moment);
   }
 
   return capital ? capitalise(text, locale) : text;
@@ -1212,7 +1241,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "b033fb83f193"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.time","tag":"sf-time","version":"1.8.3","kind":"leaf","settings":{"datetime":{"type":"string","default":""},"format":{"type":"enum","values":["auto","time","date","datetime","relative"],"default":"auto"},"now":{"type":"string","default":""},"threshold":{"type":"string","default":"PT1H"},"time-zone":{"type":"string","default":""},"tooltip":{"type":"enum","values":["auto","none"],"default":"auto"}},"values":{},"events":{},"actions":{},"host-states":{"data-empty":"boolean","data-relative":"boolean"},"css-variables":{"--sf-time-color":{"type":"color","state":"default"},"--sf-time-focus-ring-color":{"type":"color","state":"default"},"--sf-time-radius":{"type":"length","state":"default"},"--sf-time-font-variant-numeric":{"type":"keyword","state":"default"},"--sf-time-white-space":{"type":"keyword","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.time","tag":"sf-time","version":"1.8.4","kind":"leaf","settings":{"datetime":{"type":"string","default":""},"format":{"type":"enum","values":["auto","time","date","datetime","relative"],"default":"auto"},"now":{"type":"string","default":""},"threshold":{"type":"string","default":"PT1H"},"time-zone":{"type":"string","default":""},"tooltip":{"type":"enum","values":["auto","none"],"default":"auto"}},"values":{},"events":{},"actions":{},"host-states":{"data-empty":"boolean","data-relative":"boolean"},"css-variables":{"--sf-time-color":{"type":"color","state":"default"},"--sf-time-focus-ring-color":{"type":"color","state":"default"},"--sf-time-radius":{"type":"length","state":"default"},"--sf-time-font-variant-numeric":{"type":"keyword","state":"default"},"--sf-time-white-space":{"type":"keyword","state":"default"}}}');
 
 /***/ },
 

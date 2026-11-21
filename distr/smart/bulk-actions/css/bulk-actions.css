@@ -123,10 +123,36 @@
     font-size: var(--sf-text-size-2);
     line-height: var(--sf-text-height-2);
   }
-  .sf-bulk-actions__say--warning {
+  .sf-bulk-actions__say--warning,
+  .sf-bulk-actions__say--done {
     display: inline-flex;
     align-items: center;
     gap: var(--sf-gap--icon-inline);
+  }
+  /* The done line (C387) beside the actions: where they do not fit the row
+     wraps, as the count row does; a line too long for a row of its own is cut
+     with an ellipsis (its whole text in the tooltip and the live region). */
+  .sf-bulk-actions__lead[data-sf-bulk-done] {
+    flex: 1 1 0;
+    flex-wrap: nowrap;
+    min-width: -webkit-min-content;
+    min-width: -moz-min-content;
+    min-width: min-content;
+    min-inline-size: -webkit-min-content;
+    min-inline-size: -moz-min-content;
+    min-inline-size: min-content;
+  }
+  .sf-bulk-actions__say--done {
+    min-width: 0;
+    min-inline-size: 0;
+  }
+  .sf-bulk-actions__say--done .sf-bulk-actions__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sf-bulk-actions__lead[data-sf-bulk-done] .sf-bulk-actions__offer > button {
+    flex-shrink: 0;
+    white-space: nowrap;
   }
   .sf-bulk-actions__progress {
     flex: 1 1 var(--sf-f0);
@@ -191,6 +217,12 @@
   }
   .sf-bulk-actions__warning {
     color: var(--sf-warning);
+  }
+  .sf-bulk-actions__done--done {
+    color: var(--sf-success);
+  }
+  .sf-bulk-actions__done--background {
+    color: var(--sf-on-surface-icon);
   }
   @media (forced-colors: active) {
     .sf-bulk-actions {

@@ -283,8 +283,8 @@
   .sf-lookup .sf-lookup-more-chips > .sf-tag {
     min-width: 0;
     min-inline-size: 0;
-    max-width: min(100%, var(--sf-g0));
-    max-inline-size: min(100%, var(--sf-g0));
+    max-width: min(100%, var(--sf-measure-44));
+    max-inline-size: min(100%, var(--sf-measure-44));
   }
   .sf-lookup .sf-lookup-chip > .sf-tag > .sf-tag-container {
     overflow: hidden;

@@ -810,9 +810,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
+/* harmony export */   FIELD_WIDTHS: () => (/* binding */ FIELD_WIDTHS),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
+/* harmony export */   fieldWidth: () => (/* binding */ fieldWidth),
+/* harmony export */   fieldWidthClass: () => (/* binding */ fieldWidthClass),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
 /* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
@@ -903,6 +906,30 @@ function retireFieldSizeClass(root, block) {
     if (!root.classList.contains(name)) continue;
     root.classList.replace(name, `${block}--size-${fieldSize(retired, block)}`);
   }
+} // How wide a field is (owner decision C396, WM-4): the value it is made for,
+// in characters of the width ladder, read from the field's width setting --
+// short (20: a date, a number, a code), medium (28: a name, a phone) and long
+// (44: a path, an e-mail, an address); the roles --sf-field--width-short,
+// -medium and -long stand on the steps --sf-measure-20, -28 and -44 (core
+// figma_measure.scss) and follow the text size, the density and the phone.
+// It is the field's widest: in a narrower container the field is the
+// container's width, as without it. Empty or any other value: the whole
+// width, as every field drew before. The class is core's
+// (core/scss/_sf_css__field_width.scss), so a field whose own sheet has not
+// come yet already stands at its width.
+
+const FIELD_WIDTHS = Object.freeze(['short', 'medium', 'long']);
+/** A field width: short, medium or long, else '' (the whole width). */
+
+function fieldWidth(value) {
+  const width = String(value ?? '').trim().toLowerCase();
+  return FIELD_WIDTHS.includes(width) ? width : '';
+}
+/** The root class of a field width, or '' for the whole width. */
+
+function fieldWidthClass(value) {
+  const width = fieldWidth(value);
+  return width ? `sf-field--width-${width}` : '';
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -2453,12 +2480,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f39dc444b059");
 /* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("778671c79fa6");
-/* harmony import */ var _avatar_js_picture__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c69a3dc158df");
-/* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("b30ec5bc0edb");
-/* harmony import */ var _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c22590307c6c");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_3__, _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_5__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_3__, _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_5__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _avatar_js_picture__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("c69a3dc158df");
+/* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("b30ec5bc0edb");
+/* harmony import */ var _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("c22590307c6c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_4__, _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_6__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_4__, _list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_6__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 
@@ -2484,7 +2513,7 @@ function optionName(option) {
   }
 
   if (!option.color || typeof option.text !== "string") return option;
-  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_4__.optionBadgeProps)({
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_5__.optionBadgeProps)({
     color: option.color
   });
   return { ...option,
@@ -2512,7 +2541,7 @@ function renderOptions(options = [], multiple = false) {
 
     if (next !== group) {
       group = next;
-      if (next) parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderListItemHeading)(next, option.size));
+      if (next) parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderListItemHeading)(next, option.size));
     } // Where several options may be chosen, each one carries the box that says
     // so: a plain row said it was chosen with a class and aria-selected alone,
     // so on a long list nothing on screen told the person what they had picked
@@ -2527,7 +2556,7 @@ function renderOptions(options = [], multiple = false) {
 
     const withBox = multiple && (!option.type || option.type === "text" || option.type === "icon");
     const named = optionName(option);
-    parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_5__.renderListItemOption)(withBox ? { ...named,
+    parts.push((0,_list_item_js_templates_default__WEBPACK_IMPORTED_MODULE_6__.renderListItemOption)(withBox ? { ...named,
       checkEnd: true
     } : named, {
       multiple
@@ -2587,7 +2616,7 @@ function renderFieldVisual(context) {
 
 
   if (option.type === "avatar") {
-    return (0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_3__.avatarPicture)({
+    return (0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_4__.avatarPicture)({
       size: "1/2",
       imageUrl: option.avatarImageUrl,
       name: option.avatarTitle || option.text,
@@ -2614,7 +2643,7 @@ function renderTag(context, option) {
     >
       ${option.type === "color" ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tag-color-icon ${option.colorClass}" aria-hidden="true"></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       ${option.type === "icon" ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-icon icon=${option.icon} root-class="sf-tag-icon" aria-hidden="true"></sf-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-      ${option.type === "avatar" ? (0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_3__.avatarPicture)({
+      ${option.type === "avatar" ? (0,_avatar_js_picture__WEBPACK_IMPORTED_MODULE_4__.avatarPicture)({
     size: tagSize,
     imageUrl: option.avatarImageUrl,
     name: option.avatarTitle || option.text
@@ -2660,7 +2689,8 @@ const LOOK_CLASS = Object.freeze({
 function renderDropdownTemplate(context) {
   const look = context.appearance ?? context.type;
   const rootClasses = ["sf-dropdown", context.rootClass, context.open ? "open" : "", context.open ? "sf-dropdown--open" : "", `sf-dropdown--size-${context.size}`, `sf-dropdown--${LOOK_CLASS[look] || look}`, context.mode === "tag" ? "sf-dropdown--tag" : "", context.layout === "grid" ? "sf-dropdown--grid" : "", context.mode !== "tag" ? "sf-dropdown--text" : "", context.disabled ? "disabled" : "", // The error look, as sf-input's root carries it (owner C55).
-  context.invalid ? "error" : "", "flex", "flex-col"].filter(Boolean);
+  context.invalid ? "error" : "", "flex", "flex-col", // The field's width (C396, WM-4); none without the setting.
+  (0,_component_field_size__WEBPACK_IMPORTED_MODULE_3__.fieldWidthClass)(context.width)].filter(Boolean);
   const fieldClasses = ["sf-dropdown-field", !context.disabled ? "cursor-pointer" : "", "items-cross-center", "relative", "transition", "flex"].filter(Boolean); // The chevron is the field's indicator (owner decision C123 (3)): the field
   // layer's .sf-field-action, a glyph without a plate the size of the field's
   // leading picture, quiet at rest and the text's ink while the field is
@@ -4595,7 +4625,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-dropd
 /***/ "b4d28078de6f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.23.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","bordered","band"],"default":"bordered"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"list-width":{"type":"enum","values":["field","list","trigger"],"default":"field"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"},"--sf-dropdown-band-edge":{"type":"length","state":"default"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.24.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","bordered","band"],"default":"bordered"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"list-width":{"type":"enum","values":["field","list","trigger"],"default":"field"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"width":{"type":"enum","values":["","short","medium","long"],"default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"},"--sf-dropdown-band-edge":{"type":"length","state":"default"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
 
 /***/ },
 

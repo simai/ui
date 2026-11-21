@@ -2,12 +2,99 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "1373e294ec38"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BREAKPOINTS: () => (/* binding */ BREAKPOINTS),
+/* harmony export */   breakpointMedia: () => (/* binding */ breakpointMedia),
+/* harmony export */   breakpointQuery: () => (/* binding */ breakpointQuery),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   matchesBreakpoint: () => (/* binding */ matchesBreakpoint)
+/* harmony export */ });
+// The Framework's breakpoints for scripts (reuse audit 2026-11-02, finding 6).
+// The sheets switch at the steps of core/scss/vars/_sf_var__breakpoint.scss;
+// a component that also decides in script (sf-contents, sf-site-header,
+// sf-search) had copied the steps by hand, word for word, and nine such
+// constants (48rem, 60rem, 1023px, 1024) had drifted apart elsewhere, so one
+// admin screen switched at two points. The same values here, and
+// tests/breakpoint-ladder.contract.test.mjs holds the two files equal.
+
+/** The ladder: each name is the width it starts at, in rem as the sheets write it. */
+const BREAKPOINTS = Object.freeze({
+  xs: '0rem',
+  sm: '32rem',
+  // g6, 512px
+  md: '44rem',
+  // h1, 704px
+  lg: '60rem',
+  // h5, 960px
+  xl: '72rem',
+  // h8, 1152px
+  xxl: '80rem' // i0, 1280px
+
+}); // The step under a threshold, as the sheets' media-breakpoint-down writes it:
+// one pixel less, in rem (_mix__breakpoint.scss breakpoint-max).
+
+const PIXEL_REM = 1 / 16;
+/**
+ * The media query of a breakpoint: from its width up, or with `below: true`
+ * the widths under it -- the two sides the sheets switch on. An unknown name
+ * is null, so a typo is not a query that always matches.
+ *
+ *   breakpointQuery('md')                  (min-width: 44rem)
+ *   breakpointQuery('md', {below: true})   (max-width: 43.9375rem)
+ */
+
+function breakpointQuery(name, {
+  below = false
+} = {}) {
+  if (!Object.hasOwn(BREAKPOINTS, name)) return null;
+  const rem = Number.parseFloat(BREAKPOINTS[name]);
+  if (below) return rem > 0 ? `(max-width: ${rem - PIXEL_REM}rem)` : 'not all';
+  return `(min-width: ${rem}rem)`;
+}
+/** The page's MediaQueryList for a breakpoint, to read and to follow; null without matchMedia or for an unknown name. */
+
+function breakpointMedia(name, {
+  below = false,
+  view = globalThis
+} = {}) {
+  const query = breakpointQuery(name, {
+    below
+  });
+  return query && typeof view?.matchMedia === 'function' ? view.matchMedia(query) : null;
+}
+/** Whether the page is at least as wide as the breakpoint now (or under it, with `below`). */
+
+function matchesBreakpoint(name, options = {}) {
+  return breakpointMedia(name, options)?.matches === true;
+}
+const Breakpoints = Object.freeze({
+  ladder: BREAKPOINTS,
+  query: breakpointQuery,
+  media: breakpointMedia,
+  matches: matchesBreakpoint
+}); // Core publishes the helper; component bundles that carry their own copy reuse
+// an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.breakpoints) globalThis.SF.breakpoints = Breakpoints;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Breakpoints);
+
+/***/ },
+
 /***/ "15b4e93ff6ed"
 (module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatDateText: () => (/* binding */ formatDateText),
 /* harmony export */   formatLocale: () => (/* binding */ formatLocale),
 /* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
 /* harmony export */   toDate: () => (/* binding */ toDate)
@@ -78,6 +165,31 @@ function intlFormatter(kind, locale, options) {
   if (cache.size >= 256) cache.delete(cache.keys().next().value);
   cache.set(key, made);
   return made;
+} // A date's year keeps the abbreviation that follows it (A4, group build 15):
+// Russian, Ukrainian, Bulgarian, Belarusian, Kazakh, Lithuanian, Macedonian
+// and Armenian write one after the year -- «19 нояб. 2026 г.», «2026 р.»,
+// «2026 m.», «2026 թ.» -- and the platform joins it with an ordinary space, so
+// a narrow cell or a wrapped line printed «2026» at the end of one line and
+// «г.» alone at the start of the next. Only the space before an abbreviation
+// (letters closed by a full stop: г., гг., m.) becomes a no-break space; a word
+// such as English «at» or German «um», a comma, a slash or a time after the
+// year is left as the platform writes it (DEV answer msg-e6758728).
+
+/** A DateTimeFormat's text of a moment with the year's marker held to the year. */
+
+function formatDateText(formatter, moment) {
+  if (typeof formatter?.formatToParts !== 'function') return formatter.format(moment); // A module-level regular expression is a statement a bundler keeps (core-format test): made here.
+
+  const gap = /^[\s\u00a0\u202f]+(?=\p{L}+\.)/u;
+  let text = '';
+  let afterYear = false;
+
+  for (const part of formatter.formatToParts(moment)) {
+    text += afterYear && part.type === 'literal' ? part.value.replace(gap, '\u00a0') : part.value;
+    afterYear = part.type === 'year';
+  }
+
+  return text;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -245,14 +357,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("bba1a166d803");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("084d7e69277d");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("15b6f80ad2ae");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("bba1a166d803");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("084d7e69277d");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("15b6f80ad2ae");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -270,9 +384,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // is the class component progress-ring's: the value is a custom property on
 // the root, the ring carries the role, the slot content stands beside it.
 
-const ProgressRingElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_4__, {
+const ProgressRingElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_5__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_5__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_6__.files,
   source: 'ru',
   actions: {
     chunk({
@@ -309,7 +423,9 @@ function showChunk(element, done, total) {
 const RANK = {
   warning: 1,
   error: 2
-};
+}; // The tooltips' ids, one per element on the page (stable across renders).
+
+let tipSequence = 0;
 function drawnStatus(status, value, warningAt, errorAt) {
   const number = Number(value);
   let reached = '';
@@ -404,15 +520,32 @@ class SfProgressRing extends ProgressRingElement {
       configurable: true
     });
     globalThis.console?.warn?.(`[SIMAI Framework] sf-progress-ring${this.id ? ` #${this.id}` : ''}: an sf-avatar inside the ring beside other content is drawn beside the ring, not in it. Give the sf-avatar slot="content" (decision C152 (8)).`);
+  } // The tooltip's id, one per element on the page (stable across renders),
+  // asked for only where the ring shows its value as a tooltip (show-text up to
+  // size 1, DEV msg-1c3a4f0b); the tooltip relation is lazy.
+
+
+  tooltipId(props) {
+    const shown = props.showText === true || props.showText === '' || props.showText === 'true';
+
+    const textless = ['1/4', '1/3', '1/2', '1'].includes(String(props.size ?? '1')) || this._textHidden;
+
+    if (!shown || !textless || this.hasSlotContent?.('content')) return '';
+    if (!this._tipId) this._tipId = this.id ? `${this.id}--tooltip` : `sf-progress-ring-tip-${++tipSequence}`;
+    globalThis.SF?.Loader?.ensurePlugin?.('tooltip');
+    return this._tipId;
   }
 
   templateContext() {
     this.noteUnslottedAvatar();
     const status = this.drawnStatus;
     this.sfHostState('data-status', status);
-    return this.createTemplateContext({ ...this.getPropsContext(),
+    const props = this.getPropsContext();
+    return this.createTemplateContext({ ...props,
       drawnStatus: status,
       label: this.accessibleLabel,
+      tipId: this.tooltipId(props),
+      textHidden: Boolean(this._textHidden),
       content: this.hasSlotContent?.('content') ? this.getSlotContent('content') : null,
       rootClass: this.getRootClass(),
       component: this
@@ -420,7 +553,44 @@ class SfProgressRing extends ProgressRingElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_3__.renderProgressRingTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_4__.renderProgressRingTemplate)(this.templateContext());
+  } // A value that fits no text step is not drawn inside (1.7.1: «100%» at
+  // size 2 of a compact region on a wide screen, where 12 px is the floor of
+  // the text ladder); then it carries the same tooltip as a ring of size 1
+  // (1.7.2, DEV look answer msg-8e6b1330). The sheet decides, so the ring
+  // reads what it drew after each draw and when the screen crosses 60rem, the
+  // width the sheet's rule starts at (lg).
+
+
+  afterRender() {
+    const view = this.ownerDocument?.defaultView;
+
+    if (!this._wideQuery && view?.matchMedia) {
+      // lg, the step the sheet's @media (min-width: 60rem) is written at.
+      this._wideQuery = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_3__.breakpointMedia)('lg', {
+        view
+      });
+
+      this._onWide = () => this.readTextHidden();
+
+      this._wideQuery.addEventListener?.('change', this._onWide);
+    }
+
+    this.readTextHidden();
+  }
+
+  readTextHidden() {
+    const text = this.querySelector('.sf-progress-ring-content--long[aria-hidden="true"]');
+    const hidden = Boolean(text) && this.ownerDocument.defaultView.getComputedStyle(text).display === 'none';
+    if (hidden === Boolean(this._textHidden)) return;
+    this._textHidden = hidden;
+    this.requestComponentUpdate('text-hidden');
+  }
+
+  disconnectedCallback() {
+    this._wideQuery?.removeEventListener?.('change', this._onWide);
+    this._wideQuery = null;
+    super.disconnectedCallback?.();
   }
 
 }
@@ -438,7 +608,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   normalizeValue: () => (/* binding */ normalizeValue),
-/* harmony export */   renderProgressRingTemplate: () => (/* binding */ renderProgressRingTemplate)
+/* harmony export */   renderProgressRingTemplate: () => (/* binding */ renderProgressRingTemplate),
+/* harmony export */   ringPercent: () => (/* binding */ ringPercent)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c9ce0852ac73");
@@ -451,9 +622,12 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 const SIZES = ['1/4', '1/3', '1/2', '1', '2', '3']; // No status (empty) is the theme's primary and carries no class; neutral is
 // grey (C131 (1)).
 
-const STATUSES = ['neutral', 'info', 'success', 'warning', 'error']; // Below size 1 the box leaves no room for a percentage on the text ladder.
+const STATUSES = ['neutral', 'info', 'success', 'warning', 'error']; // Up to size 1 the middle holds no percentage (DEV look answer 2026-11-20,
+// msg-1c3a4f0b: below 1 the letters fall off the text ladder; at 1 «100%» ran
+// 1-3 px past the 32 px middle and a smaller step would fall off it too). The
+// value stays in the ring's name and in its tooltip; text from size 2 up.
 
-const TEXTLESS = new Set(['1/4', '1/3', '1/2']); // A number from 0 to 100; anything else reads 0.
+const TEXTLESS = new Set(['1/4', '1/3', '1/2', '1']); // A number from 0 to 100; anything else reads 0.
 
 function normalizeValue(value) {
   const parsed = Number(value);
@@ -461,11 +635,17 @@ function normalizeValue(value) {
   return Math.max(0, Math.min(100, parsed));
 }
 
-const on = value => value === true || value === '' || value === 'true'; // The class markup of the ring (src/component/progress-ring): the root holds
+const on = value => value === true || value === '' || value === 'true'; // The percentage as the middle draws it: no space of any kind between the
+// number and the sign, on either side (a language that writes the sign first,
+// «%72», keeps its order); the direction marks of a right-to-left language stay.
+
+
+function ringPercent(text) {
+  return String(text).replace(/[\s\u00a0\u202f]+(?=[\u200e\u200f\u061c]*[%\u066a])|(?<=[%\u066a][\u200e\u200f\u061c]*)[\s\u00a0\u202f]+/gu, '');
+} // The class markup of the ring (src/component/progress-ring): the root holds
 // the value as --sf-progress-ring--value, the ring (.sf-progress-ring-indicator)
 // carries the role and the value, and the middle holds the slot content or the
 // percentage, which is aria-hidden: the ring says the value once.
-
 
 function renderProgressRingTemplate(context) {
   const size = SIZES.includes(String(context.size)) ? String(context.size) : '1';
@@ -479,9 +659,29 @@ function renderProgressRingTemplate(context) {
   const unknown = indeterminate && !meter; // Below size 1 no percentage is shown (PG-10, C131 (5)): the box leaves
   // 8 px letters, below the text ladder. The value stays the ring's
   // (aria-valuenow), so a screen reader still says it; the eye reads the arc.
+  // Inside the ring the sign stands against the number, «100%» (DEV look
+  // answer 2026-11-20, (c)): the middle holds four characters at most, and the
+  // no-break space the progress family writes elsewhere («100 %», C203 (3))
+  // ran «100 %» past the middle of size 3. The ring's spoken value keeps it
+  // (aria-valuetext below), as every other place does.
 
-  const text = on(context.showText) && !unknown && !TEXTLESS.has(size) ? (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__.percentText)(value, context.component ?? null) : '';
-  const content = context.content && context.content !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? context.content : null; // A ring around a picture is about something of the person's own -- a
+  const text = on(context.showText) && !unknown && !TEXTLESS.has(size) ? ringPercent((0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__.percentText)(value, context.component ?? null)) : ''; // At sizes 2 and 3 a value of four characters («100%») takes the next
+  // smaller text step (1.7.1, DEV GB15-2): at size 2 it ran 41 px in the 40 px
+  // middle, at size 3 of a compact region 41 in 40. Counted without the
+  // direction marks of a right-to-left language.
+
+  const long = (size === '2' || size === '3') && [...text.replace(/[\u200e\u200f\u061c]/gu, '')].length >= 4;
+  const content = context.content && context.content !== lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? context.content : null; // Where the percentage asked for has no room (show-text up to size 1), it is
+  // the ring's tooltip: the Framework's tooltip composition (component.tooltip),
+  // the root its trigger (the ring line takes no pointer), a dark tooltip of
+  // size 1/3 the controller shows on hover and hides on Escape and a press; the
+  // text is the spoken one, «100 %». A ring with content or an unknown value
+  // has none.
+  // A value that fits no text step (the sheet hides it, 1.7.1) takes the same
+  // tooltip (1.7.2, DEV look answer msg-8e6b1330); the host says when.
+
+  const hiddenText = Boolean(context.textHidden) && Boolean(text);
+  const tip = on(context.showText) && !unknown && !content && (TEXTLESS.has(size) || hiddenText) && context.tipId ? (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__.percentText)(value, context.component ?? null) : ''; // A ring around a picture is about something of the person's own -- a
   // profile filled in, a photo being sent (owner decision C191 (4)). At 100 %
   // nothing is left to do, so the ring goes away (C191 (7) #q-ar-done): no
   // line and no value to say, the picture alone, in the same box so nothing
@@ -492,7 +692,8 @@ function renderProgressRingTemplate(context) {
   const rootClasses = ['sf-progress-ring', `sf-progress-ring--size-${size}`, status ? `sf-progress-ring--${status}` : '', unknown ? 'sf-progress-ring--indeterminate' : '', context.rootClass].filter(Boolean).join(' ');
   const style = [`--sf-progress-ring--value: ${unknown ? 0 : value}`, context.rootStyle].filter(Boolean).join('; ');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-    <div class=${rootClasses} style=${style} data-value=${String(value)} data-status=${status}>
+    <div class=${rootClasses} style=${style} data-value=${String(value)} data-status=${status}
+      data-tooltip=${tip ? context.tipId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
       ${done ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span
         class="sf-progress-ring-indicator"
         role=${role}
@@ -502,7 +703,9 @@ function renderProgressRingTemplate(context) {
         aria-valuenow=${unknown ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : String(value)}
         aria-valuetext=${unknown ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.valueText || (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_1__.percentText)(value, context.component ?? null)}
       ></span>`}
-      ${content ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-progress-ring-content">${content}</span>` : text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-progress-ring-content" aria-hidden="true">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${content ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-progress-ring-content">${content}</span>` : text ? long ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-progress-ring-content sf-progress-ring-content--long" aria-hidden="true">${text}</span>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-progress-ring-content" aria-hidden="true">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+      ${tip ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-tooltip sf-tooltip--dark sf-tooltip--size-1/3 sf-progress-ring-tooltip" id=${context.tipId}
+        hidden><span class="sf-tooltip-content"><span class="sf-tooltip-text">${tip}</span></span></span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </div>
   `;
 }
@@ -571,7 +774,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "084d7e69277d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-ring","tag":"sf-progress-ring","version":"1.6.4","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"show-text":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-ring-size":{"type":"length","state":"default"},"--sf-progress-ring-line-width":{"type":"length","state":"default"},"--sf-progress-ring-gap":{"type":"length","state":"default"},"--sf-progress-ring-fill-color":{"type":"color","state":"default"},"--sf-progress-ring-track-color":{"type":"color","state":"default"},"--sf-progress-ring-color":{"type":"color","state":"default"}},"host-states":{"data-status":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-ring","tag":"sf-progress-ring","version":"1.7.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"show-text":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-ring-size":{"type":"length","state":"default"},"--sf-progress-ring-line-width":{"type":"length","state":"default"},"--sf-progress-ring-gap":{"type":"length","state":"default"},"--sf-progress-ring-fill-color":{"type":"color","state":"default"},"--sf-progress-ring-track-color":{"type":"color","state":"default"},"--sf-progress-ring-color":{"type":"color","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 

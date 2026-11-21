@@ -207,8 +207,8 @@
     inline-size: -webkit-max-content;
     inline-size: -moz-max-content;
     inline-size: max-content;
-    max-width: min(var(--sf-tooltip--max-inline-size, var(--sf-g0)), 100vw - var(--sf-space-2));
-    max-inline-size: min(var(--sf-tooltip--max-inline-size, var(--sf-g0)), 100vw - var(--sf-space-2));
+    max-width: min(var(--sf-tooltip--max-inline-size, var(--sf-measure-44)), 100vw - var(--sf-space-2));
+    max-inline-size: min(var(--sf-tooltip--max-inline-size, var(--sf-measure-44)), 100vw - var(--sf-space-2));
     pointer-events: none;
     z-index: var(--sf-layer--message);
   }

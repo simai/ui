@@ -449,8 +449,8 @@
       inset: auto var(--sf-0) var(--sf-0);
       width: 100%;
       inline-size: 100%;
-      max-width: var(--sf-h1);
-      max-inline-size: var(--sf-h1);
+      max-width: var(--sf-measure-96);
+      max-inline-size: var(--sf-measure-96);
       max-height: 70dvh;
       max-block-size: 70dvh;
       margin: var(--sf-0) auto;
@@ -943,8 +943,8 @@
         inset: auto var(--sf-0) var(--sf-0);
         width: 100%;
         inline-size: 100%;
-        max-width: var(--sf-h1);
-        max-inline-size: var(--sf-h1);
+        max-width: var(--sf-measure-96);
+        max-inline-size: var(--sf-measure-96);
         max-height: 70dvh;
         max-block-size: 70dvh;
         margin: var(--sf-0) auto;
@@ -1242,8 +1242,8 @@
       inset: auto var(--sf-0) var(--sf-0);
       width: 100%;
       inline-size: 100%;
-      max-width: var(--sf-h1);
-      max-inline-size: var(--sf-h1);
+      max-width: var(--sf-measure-96);
+      max-inline-size: var(--sf-measure-96);
       max-height: 70dvh;
       max-block-size: 70dvh;
       margin: var(--sf-0) auto;
@@ -1539,8 +1539,8 @@
         inset: auto var(--sf-0) var(--sf-0);
         width: 100%;
         inline-size: 100%;
-        max-width: var(--sf-h1);
-        max-inline-size: var(--sf-h1);
+        max-width: var(--sf-measure-96);
+        max-inline-size: var(--sf-measure-96);
         max-height: 70dvh;
         max-block-size: 70dvh;
         margin: var(--sf-0) auto;
@@ -1837,8 +1837,8 @@
         inset: auto var(--sf-0) var(--sf-0);
         width: 100%;
         inline-size: 100%;
-        max-width: var(--sf-h1);
-        max-inline-size: var(--sf-h1);
+        max-width: var(--sf-measure-96);
+        max-inline-size: var(--sf-measure-96);
         max-height: 70dvh;
         max-block-size: 70dvh;
         margin: var(--sf-0) auto;

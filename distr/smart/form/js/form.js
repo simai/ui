@@ -95,6 +95,140 @@ function normalizeBadgeContract({
 
 /***/ },
 
+/***/ "e6d86f2cd058"
+(module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
+/* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
+/* harmony export */   FIELD_WIDTHS: () => (/* binding */ FIELD_WIDTHS),
+/* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
+/* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
+/* harmony export */   fieldSize: () => (/* binding */ fieldSize),
+/* harmony export */   fieldWidth: () => (/* binding */ fieldWidth),
+/* harmony export */   fieldWidthClass: () => (/* binding */ fieldWidthClass),
+/* harmony export */   inputSize: () => (/* binding */ inputSize),
+/* harmony export */   ladderSize: () => (/* binding */ ladderSize),
+/* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
+/* harmony export */   retireFieldSizeClass: () => (/* binding */ retireFieldSizeClass)
+/* harmony export */ });
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d3818183b14c");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__]);
+var __webpack_async_dependencies_result__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__);
+// Form fields come in three sizes. 1/3 and 3 were retired: no consumer used
+// them, and they could not hold a field's own pictures, tags and targets. A
+// page written for a retired size keeps rendering at the nearest kept size, and
+// says so once in the console so the markup can be updated.
+//
+// The fields of the field ladder below are the exception: they stand on all
+// five steps, as sf-input does.
+
+const FIELD_SIZES = Object.freeze(['1/2', '1', '2']);
+const RETIRED_FIELD_SIZES = Object.freeze({
+  '1/3': '1/2',
+  '3': '2'
+});
+const warned = new Set(); // A control placed inside something with the whole scale (a list item, say)
+// takes the nearest form size, quietly: the list is not wrong to be 1/3.
+
+function nearestFieldSize(value) {
+  const size = String(value ?? '').trim().toLowerCase();
+  if (FIELD_SIZES.includes(size)) return size;
+  return Object.hasOwn(RETIRED_FIELD_SIZES, size) ? RETIRED_FIELD_SIZES[size] : '1';
+}
+function fieldSize(value, component = 'field', fallback = '1') {
+  const size = String(value ?? '').trim().toLowerCase();
+  if (FIELD_SIZES.includes(size)) return size;
+
+  if (Object.hasOwn(RETIRED_FIELD_SIZES, size)) {
+    const kept = RETIRED_FIELD_SIZES[size];
+    (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_0__.noteDeprecated)({
+      component,
+      kind: 'value',
+      attribute: 'size',
+      from: size,
+      to: kept
+    });
+    const key = `${component}:${size}`;
+
+    if (!warned.has(key) && typeof console !== 'undefined') {
+      warned.add(key);
+      console.warn(`[SIMAI Framework] ${component}: size ${size} is retired for form fields; rendering size ${kept}.`);
+    }
+
+    return kept;
+  }
+
+  return fallback;
+} // The field ladder (fields ladder, 2026-11-14): one height per step for every
+// field that stands on it, the control ladder sf-button and sf-button-icon
+// stand on (--sf-ui-<size>--control-height: 28 / 32 / 40 / 48 / 56 on a
+// desktop). A text field kept the outer steps first (actions block item 4,
+// 2026-11-08: a toolbar search or a hero search stands beside buttons of 1/3
+// and 3); sf-input-lookup, -quantity, -date, -code, -color and -country drew
+// 32 / 48 or 40 at 1/3 and 3 beside it, so they take the same five steps and
+// the stylesheets size their parts from the same steps
+// (component/inputs/scss/_field-ladder.scss). The textarea and the rich text
+// followed (2026-11-14), then the dropdown, the file upload area and the image
+// field (queue #70, 2026-11-16): every field of the family stands on the
+// ladder. FIELD_SIZES, fieldSize and retireFieldSizeClass stay for the lines
+// of tags, badges and avatars and for a file's row, which keep three sizes.
+
+const FIELD_LADDER = Object.freeze(['1/3', ...FIELD_SIZES, '3']);
+const INPUT_SIZES = FIELD_LADDER;
+/** A size on the field ladder: one of the five steps, else the fallback. */
+
+function ladderSize(value, fallback = '1') {
+  const size = String(value ?? '').trim().toLowerCase();
+  return FIELD_LADDER.includes(size) ? size : fallback;
+}
+function inputSize(value, fallback = '1') {
+  return ladderSize(value, fallback);
+} // Markup written by hand carries its size as a class, so the binder moves a
+// retired size class to the kept one before anything measures the field.
+
+function retireFieldSizeClass(root, block) {
+  if (!root?.classList) return;
+
+  for (const [retired, kept] of Object.entries(RETIRED_FIELD_SIZES)) {
+    const name = `${block}--size-${retired}`;
+    if (!root.classList.contains(name)) continue;
+    root.classList.replace(name, `${block}--size-${fieldSize(retired, block)}`);
+  }
+} // How wide a field is (owner decision C396, WM-4): the value it is made for,
+// in characters of the width ladder, read from the field's width setting --
+// short (20: a date, a number, a code), medium (28: a name, a phone) and long
+// (44: a path, an e-mail, an address); the roles --sf-field--width-short,
+// -medium and -long stand on the steps --sf-measure-20, -28 and -44 (core
+// figma_measure.scss) and follow the text size, the density and the phone.
+// It is the field's widest: in a narrower container the field is the
+// container's width, as without it. Empty or any other value: the whole
+// width, as every field drew before. The class is core's
+// (core/scss/_sf_css__field_width.scss), so a field whose own sheet has not
+// come yet already stands at its width.
+
+const FIELD_WIDTHS = Object.freeze(['short', 'medium', 'long']);
+/** A field width: short, medium or long, else '' (the whole width). */
+
+function fieldWidth(value) {
+  const width = String(value ?? '').trim().toLowerCase();
+  return FIELD_WIDTHS.includes(width) ? width : '';
+}
+/** The root class of a field width, or '' for the whole width. */
+
+function fieldWidthClass(value) {
+  const width = fieldWidth(value);
+  return width ? `sf-field--width-${width}` : '';
+}
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } });
+
+/***/ },
+
 /***/ "1412c5875b4d"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -284,7 +418,9 @@ function hasDateStyle(style) {
  * chart's tick, «14:05» with two-digit hours). `timeZone` (an IANA name,
  * Europe/Moscow) writes the moment on that zone's clock instead of the
  * reader's (owner decision C183 (3): a product that knows the person's zone).
- * Anything that is not a date is `gap`, '' by default.
+ * Anything that is not a date is `gap`, '' by default. A marker after the year
+ * («2026 г.», «2026 р.») is held to it by a no-break space, so it never starts
+ * a line alone.
  */
 
 
@@ -309,8 +445,9 @@ function formatDate(value, {
 
   if (knownTimeZone(timeZone)) options = { ...options,
     timeZone
-  };
-  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options).format(moment);
+  }; // The year keeps its marker («2026 г.» never wraps before «г.»): format-intl.js.
+
+  return (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatDateText)((0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.intlFormatter)('DateTimeFormat', (0,_format_intl_js__WEBPACK_IMPORTED_MODULE_0__.formatLocale)(where), options), moment);
 }
 /**
  * Whether the platform knows an IANA time zone name (Europe/Moscow, UTC). An
@@ -449,6 +586,7 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatDateText: () => (/* binding */ formatDateText),
 /* harmony export */   formatLocale: () => (/* binding */ formatLocale),
 /* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
 /* harmony export */   toDate: () => (/* binding */ toDate)
@@ -519,6 +657,31 @@ function intlFormatter(kind, locale, options) {
   if (cache.size >= 256) cache.delete(cache.keys().next().value);
   cache.set(key, made);
   return made;
+} // A date's year keeps the abbreviation that follows it (A4, group build 15):
+// Russian, Ukrainian, Bulgarian, Belarusian, Kazakh, Lithuanian, Macedonian
+// and Armenian write one after the year -- «19 нояб. 2026 г.», «2026 р.»,
+// «2026 m.», «2026 թ.» -- and the platform joins it with an ordinary space, so
+// a narrow cell or a wrapped line printed «2026» at the end of one line and
+// «г.» alone at the start of the next. Only the space before an abbreviation
+// (letters closed by a full stop: г., гг., m.) becomes a no-break space; a word
+// such as English «at» or German «um», a comma, a slash or a time after the
+// year is left as the platform writes it (DEV answer msg-e6758728).
+
+/** A DateTimeFormat's text of a moment with the year's marker held to the year. */
+
+function formatDateText(formatter, moment) {
+  if (typeof formatter?.formatToParts !== 'function') return formatter.format(moment); // A module-level regular expression is a statement a bundler keeps (core-format test): made here.
+
+  const gap = /^[\s\u00a0\u202f]+(?=\p{L}+\.)/u;
+  let text = '';
+  let afterYear = false;
+
+  for (const part of formatter.formatToParts(moment)) {
+    text += afterYear && part.type === 'literal' ? part.value.replace(gap, '\u00a0') : part.value;
+    afterYear = part.type === 'year';
+  }
+
+  return text;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -2834,34 +2997,34 @@ function htmlText(value) {
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   CONDITION_OPS: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_14__.CONDITION_OPS),
-/* harmony export */   DATE_FUTURE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_FUTURE_PERIODS),
-/* harmony export */   DATE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_PERIODS),
+/* harmony export */   CONDITION_OPS: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_15__.CONDITION_OPS),
+/* harmony export */   DATE_FUTURE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_FUTURE_PERIODS),
+/* harmony export */   DATE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_PERIODS),
 /* harmony export */   FILTER_RENDERERS: () => (/* binding */ FILTER_RENDERERS),
 /* harmony export */   NUMBER_FILTER_OPERATORS: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_5__.NUMBER_FILTER_OPERATORS),
 /* harmony export */   OWN_ERROR_CONTROLS: () => (/* binding */ OWN_ERROR_CONTROLS),
 /* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES),
-/* harmony export */   buildFilterRequest: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.buildFilterRequest),
-/* harmony export */   conditionFields: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_14__.conditionFields),
-/* harmony export */   dateFilterChipText: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateFilterChipText),
-/* harmony export */   dateFilterConditions: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateFilterConditions),
+/* harmony export */   buildFilterRequest: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.buildFilterRequest),
+/* harmony export */   conditionFields: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_15__.conditionFields),
+/* harmony export */   dateFilterChipText: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateFilterChipText),
+/* harmony export */   dateFilterConditions: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateFilterConditions),
 /* harmony export */   dateTimeAttribute: () => (/* binding */ dateTimeAttribute),
-/* harmony export */   evaluateCondition: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_14__.evaluateCondition),
-/* harmony export */   fieldConditions: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_14__.fieldConditions),
-/* harmony export */   fieldEditable: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_14__.fieldEditable),
+/* harmony export */   evaluateCondition: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_15__.evaluateCondition),
+/* harmony export */   fieldConditions: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_15__.fieldConditions),
+/* harmony export */   fieldEditable: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_15__.fieldEditable),
 /* harmony export */   fieldTemplate: () => (/* binding */ fieldTemplate),
-/* harmony export */   filterActive: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterActive),
-/* harmony export */   filterConditionTone: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditionTone),
-/* harmony export */   filterConditions: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditions),
-/* harmony export */   filterCount: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCount),
+/* harmony export */   filterActive: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterActive),
+/* harmony export */   filterConditionTone: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditionTone),
+/* harmony export */   filterConditions: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditions),
+/* harmony export */   filterCount: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterCount),
 /* harmony export */   filterFieldSummary: () => (/* binding */ filterFieldSummary),
-/* harmony export */   filterOperatorLabel: () => (/* reexport safe */ _filter_window_js__WEBPACK_IMPORTED_MODULE_15__.filterOperatorLabel),
-/* harmony export */   filterRequestContext: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.filterRequestContext),
-/* harmony export */   filterWidth: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterWidth),
-/* harmony export */   isEmptyFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.isEmptyFilterEntry),
+/* harmony export */   filterOperatorLabel: () => (/* reexport safe */ _filter_window_js__WEBPACK_IMPORTED_MODULE_16__.filterOperatorLabel),
+/* harmony export */   filterRequestContext: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.filterRequestContext),
+/* harmony export */   filterWidth: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterWidth),
+/* harmony export */   isEmptyFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.isEmptyFilterEntry),
 /* harmony export */   isNumericType: () => (/* binding */ isNumericType),
 /* harmony export */   meterStatus: () => (/* binding */ meterStatus),
-/* harmony export */   normalizeFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.normalizeFilterEntry),
+/* harmony export */   normalizeFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.normalizeFilterEntry),
 /* harmony export */   openFilterWindow: () => (/* binding */ openFilterWindow),
 /* harmony export */   propertyModes: () => (/* binding */ propertyModes),
 /* harmony export */   renderCellField: () => (/* binding */ renderCellField),
@@ -2870,7 +3033,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderFilterWindowField: () => (/* binding */ renderFilterWindowField),
 /* harmony export */   renderTotalField: () => (/* binding */ renderTotalField),
 /* harmony export */   renderViewField: () => (/* binding */ renderViewField),
-/* harmony export */   resolveDatePeriod: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.resolveDatePeriod)
+/* harmony export */   resolveDatePeriod: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.resolveDatePeriod)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("073f05ff1a81");
@@ -2880,23 +3043,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fc654eb7fab0");
 /* harmony import */ var _text_types_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("f8901823ea4f");
 /* harmony import */ var _templates_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("22825a8607d0");
-/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("9ce1a42b2a85");
-/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("dd6973f77245");
-/* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("01ae054f01b4");
-/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _decimal_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("ab3947ea3647");
-/* harmony import */ var _phone_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("25be1c2df717");
-/* harmony import */ var _conditions_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("db080b4bfc2b");
-/* harmony import */ var _filter_window_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("5e0f4b4ddd3f");
-/* harmony import */ var _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("16fc79105455");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("354525e80715");
-/* harmony import */ var _date_filter_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("c11c730f061a");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _templates_js__WEBPACK_IMPORTED_MODULE_7__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_11__, _decimal_js__WEBPACK_IMPORTED_MODULE_12__, _filter_window_js__WEBPACK_IMPORTED_MODULE_15__, _date_filter_js__WEBPACK_IMPORTED_MODULE_18__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _templates_js__WEBPACK_IMPORTED_MODULE_7__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_11__, _decimal_js__WEBPACK_IMPORTED_MODULE_12__, _filter_window_js__WEBPACK_IMPORTED_MODULE_15__, _date_filter_js__WEBPACK_IMPORTED_MODULE_18__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("9ce1a42b2a85");
+/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("dd6973f77245");
+/* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("01ae054f01b4");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _decimal_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("ab3947ea3647");
+/* harmony import */ var _phone_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("25be1c2df717");
+/* harmony import */ var _conditions_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("db080b4bfc2b");
+/* harmony import */ var _filter_window_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("5e0f4b4ddd3f");
+/* harmony import */ var _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("16fc79105455");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("354525e80715");
+/* harmony import */ var _date_filter_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("c11c730f061a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _templates_js__WEBPACK_IMPORTED_MODULE_7__, _component_field_size__WEBPACK_IMPORTED_MODULE_8__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_12__, _decimal_js__WEBPACK_IMPORTED_MODULE_13__, _filter_window_js__WEBPACK_IMPORTED_MODULE_16__, _date_filter_js__WEBPACK_IMPORTED_MODULE_19__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _templates_js__WEBPACK_IMPORTED_MODULE_7__, _component_field_size__WEBPACK_IMPORTED_MODULE_8__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_12__, _decimal_js__WEBPACK_IMPORTED_MODULE_13__, _filter_window_js__WEBPACK_IMPORTED_MODULE_16__, _date_filter_js__WEBPACK_IMPORTED_MODULE_19__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_12__);
+
 
 
 
@@ -2982,7 +3147,7 @@ function renderTextFilterControl(field, host) {
 
 
 function phoneFilterShown(sent) {
-  return String(sent || '').startsWith('+') ? (0,_phone_js__WEBPACK_IMPORTED_MODULE_13__.formatPhone)(sent) : String(sent || '');
+  return String(sent || '').startsWith('+') ? (0,_phone_js__WEBPACK_IMPORTED_MODULE_14__.formatPhone)(sent) : String(sent || '');
 }
 
 function renderPhoneFilterControl(field, host) {
@@ -2997,7 +3162,7 @@ function renderPhoneFilterControl(field, host) {
                 inputmode="tel"
                 @change=${event => {
     const input = event.currentTarget ?? event.target;
-    const sent = (0,_phone_js__WEBPACK_IMPORTED_MODULE_13__.phoneSearchText)(input?.value ?? '');
+    const sent = (0,_phone_js__WEBPACK_IMPORTED_MODULE_14__.phoneSearchText)(input?.value ?? '');
     const shown = phoneFilterShown(sent);
     if (input && input.value !== shown) input.value = shown;
     host.patchTempFilterValue(field.key, {
@@ -3094,12 +3259,12 @@ function renderNumberFilterControl(field, host, look = {}) {
   const rangeValue = Array.isArray(rawValue) ? rawValue : [rawValue ?? '', ''];
   const currencies = look.currencies || null;
   const currency = currencies ? currencies.includes(control.currency) ? control.currency : currencies[0] : look.currency || null;
-  const sign = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(currency, locale, (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyDisplayOf)(field)) : null;
+  const sign = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(currency, locale, (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyDisplayOf)(field)) : null;
   const textStart = isolatedSign(sign?.before ? sign.sign : '', locale);
   const textEnd = look.percent ? '%' : isolatedSign(sign && !sign.before ? sign.sign : '', locale) || (look.money ? '' : fieldUnit(field));
-  const minDigits = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(currency, locale).minor : 0;
+  const minDigits = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(currency, locale).minor : 0;
 
-  const shown = value => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.restingDecimal)(value, locale, value === '' || value === null || value === undefined ? 0 : minDigits);
+  const shown = value => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.restingDecimal)(value, locale, value === '' || value === null || value === undefined ? 0 : minDigits);
 
   const withCurrency = patch => currencies ? { ...patch,
     currency
@@ -3113,7 +3278,7 @@ function renderNumberFilterControl(field, host, look = {}) {
   const typed = (index, event) => {
     const input = event.currentTarget ?? event.target;
     const text = String(input?.value ?? '');
-    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(text, {
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(text, {
       locale,
       currency
     });
@@ -3270,7 +3435,7 @@ function dateFilterPresets(field) {
   const presets = field.filter?.presets;
 
   if (presets === undefined || presets === null) {
-    return [..._date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_FUTURE_PERIODS : [])].join(',');
+    return [..._date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_FUTURE_PERIODS : [])].join(',');
   }
 
   return Array.isArray(presets) ? presets : String(presets);
@@ -3280,9 +3445,9 @@ function defaultDateCondition(field, list) {
   const asked = field.filter?.defaultOperator;
 
   if (asked) {
-    const one = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateConditionOf)(field, {
+    const one = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateConditionOf)(field, {
       operator: asked,
-      value: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.LEGACY_DATE_OPERATORS[asked] || asked
+      value: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.LEGACY_DATE_OPERATORS[asked] || asked
     });
     const named = list.find(item => item.key === asked);
     if (named || one) return named || one;
@@ -3290,19 +3455,19 @@ function defaultDateCondition(field, list) {
   // field: «Идёт в».
 
 
-  return list.find(item => item.operator === ((0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateFilterKind)(field) === 'period' ? 'overlaps' : 'between')) ?? list[0];
+  return list.find(item => item.operator === ((0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateFilterKind)(field) === 'period' ? 'overlaps' : 'between')) ?? list[0];
 }
 
 function dateFilterContext(host) {
-  return (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.filterRequestContext)(host ?? null, host?.getFilterContext?.() || {});
+  return (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.filterRequestContext)(host ?? null, host?.getFilterContext?.() || {});
 }
 
 function renderDateFilterControl(field, host) {
   const control = host.getFilterControlValue(field.key) || {};
-  const list = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateFilterConditions)(field);
-  const asked = control.operator ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateConditionOf)(field, control) : null;
+  const list = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateFilterConditions)(field);
+  const asked = control.operator ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateConditionOf)(field, control) : null;
   const current = asked ?? defaultDateCondition(field, list);
-  const value = asked ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.normalizeFilterEntry)(control).value : control.value;
+  const value = asked ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.normalizeFilterEntry)(control).value : control.value;
   const size = filterSize(host);
 
   const patch = next => host.patchTempFilterValue(field.key, next);
@@ -3329,7 +3494,7 @@ function renderDateFilterControl(field, host) {
     if (!next || asked && next.key === current.key) return;
     patch({
       operator: next.operator,
-      value: (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateConditionValue)(next, {
+      value: (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateConditionValue)(next, {
         value
       })
     });
@@ -3339,8 +3504,8 @@ function renderDateFilterControl(field, host) {
                     <sf-list-item
                             kind="text"
                             size=${size}
-                            group=${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateGroupLabel)(host, item.group)}
-                            text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateConditionLabel)(host, item)}"
+                            group=${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateGroupLabel)(host, item.group)}
+                            text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateConditionLabel)(host, item)}"
                             value="${item.key}"
                             ?selected=${item.key === current.key}
                     ></sf-list-item>
@@ -3398,7 +3563,7 @@ function renderDateConditionValue(field, host, current, value, patch) {
   if (current.need === 'time' || current.need === 'times') return renderTimeConditionValue(field, host, current, value, patch); // «when» (a period field): a period by name, or two days of one's own.
 
   const own = Array.isArray(value);
-  const periods = [..._date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_FUTURE_PERIODS : [])];
+  const periods = [..._date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_FUTURE_PERIODS : [])];
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-dropdown
                 size=${size}
@@ -3427,7 +3592,7 @@ function renderDateConditionValue(field, host, current, value, patch) {
   }}
         >
             ${periods.map(period => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                <sf-list-item kind="text" size=${size} text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateConditionLabel)(host, {
+                <sf-list-item kind="text" size=${size} text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateConditionLabel)(host, {
     period
   })}" value="${period}"
                         ?selected=${!own && value === period}></sf-list-item>
@@ -3452,12 +3617,12 @@ function renderTimeConditionValue(field, host, current, value, patch) {
                 size=${size}
                 root-class=${two ? 'flex-1 min-w-0' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 label="${label}"
-                .value=${(0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitTime)(times[index]).time}
+                .value=${(0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitTime)(times[index]).time}
                 minute-step=${minuteStepOf(field) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 name="${name}${index ? '_second' : ''}"
                 @change=${event => {
     if (event.target !== event.currentTarget) return;
-    const time = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.normalizeTime)(String(event.detail?.value ?? ''));
+    const time = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.normalizeTime)(String(event.detail?.value ?? ''));
     if (time === null) return;
 
     if (!two) {
@@ -3502,7 +3667,7 @@ function renderDateRangeValue(field, host, current, value, patch) {
     if (event.target !== event.currentTarget) return;
     const preset = event.detail?.preset?.id;
 
-    if (preset && (_date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_PERIODS.includes(preset) || _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_FUTURE_PERIODS.includes(preset))) {
+    if (preset && (_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_PERIODS.includes(preset) || _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_FUTURE_PERIODS.includes(preset))) {
       patch(current.operator === 'between' ? {
         operator: 'period',
         value: preset
@@ -4127,7 +4292,7 @@ function renderHostFormattedCell(field, value, host) {
 function renderMoneyCell(field, value, host) {
   const formatted = renderHostFormattedCell(field, value, host);
   if (formatted !== null) return formatted;
-  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
   return text || null;
 }
 
@@ -4136,7 +4301,7 @@ function renderPercentCell(field, value, host) {
   if (level) return level;
   const formatted = renderHostFormattedCell(field, value, host);
   if (formatted !== null) return formatted;
-  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
   return text || null;
 }
 
@@ -4249,7 +4414,7 @@ function renderNumericCell(field, value, host) {
     // field's unit follows it as it does in the view (cards study CV-7:
     // a card's stock read a bare «13» where the record said «13 шт»).
     const formatted = renderHostFormattedCell(field, value, host);
-    const text = formatted !== null ? formatted : carriesText(value) ? value.text || null : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || null;
+    const text = formatted !== null ? formatted : carriesText(value) ? value.text || null : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || null;
     return text && field.unit ? `${text} ${field.unit}` : text;
   }
 
@@ -4326,7 +4491,7 @@ function renderLookupCell(field, value) {
 
 
 function renderHtmlCell(field, value) {
-  return (0,_html_js__WEBPACK_IMPORTED_MODULE_10__.htmlText)(value) || null;
+  return (0,_html_js__WEBPACK_IMPORTED_MODULE_11__.htmlText)(value) || null;
 } // What a cell should hold for a field, in the same shape a host would pass: a
 // string, an object with a component, or a list of those. Null means the value
 // is better off as itself. Returning the host's own shape is deliberate -- the
@@ -4368,7 +4533,15 @@ function renderCellField(field = {}, value, host) {
 // 1/2 read a step larger than it (owner, 2026-10-14). Set for the duration of
 // one synchronous render.
 
-let EDIT_SIZE = '1';
+let EDIT_SIZE = '1'; // The width a field's control is drawn at (owner decision C396, WM-4): the
+// template parameter `width` (templateParams.width: short, medium or long,
+// 20 / 28 / 44 characters of the width ladder) passed to the control's own
+// width setting; empty, the control takes the whole column as before. The
+// field key `width` (half or full, the column a property view lays the field
+// in) is another thing and is not read here. Set for one synchronous render,
+// as EDIT_SIZE is.
+
+let EDIT_WIDTH = '';
 const EDIT_RENDERERS = {
   record: renderRecordLookup,
   relation: renderRecordLookup,
@@ -4421,12 +4594,13 @@ function renderPhoneEdit(field, value, host) {
   const {
     number: stored,
     extension
-  } = (0,_phone_js__WEBPACK_IMPORTED_MODULE_13__.splitPhone)(scalarValue(value) ?? '');
+  } = (0,_phone_js__WEBPACK_IMPORTED_MODULE_14__.splitPhone)(scalarValue(value) ?? '');
   const preferred = String(field.defaultCountry ?? '').trim().toUpperCase();
   const iso2 = /^[A-Z]{2}$/u.test(preferred) && !String(stored).trim() ? preferred : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input-country
                 size=${EDIT_SIZE}
+                width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 name=${fieldName(field)}
                 value=${stored}
                 iso2=${iso2}
@@ -4444,7 +4618,7 @@ function renderPhoneEdit(field, value, host) {
 
 function phoneWritten(event, extension = '') {
   const control = event.currentTarget;
-  const number = typeof control?.sfFormValue === 'function' ? control.sfFormValue() ?? '' : (0,_phone_js__WEBPACK_IMPORTED_MODULE_13__.phoneE164)(event.detail?.value ?? event.target?.value ?? '');
+  const number = typeof control?.sfFormValue === 'function' ? control.sfFormValue() ?? '' : (0,_phone_js__WEBPACK_IMPORTED_MODULE_14__.phoneE164)(event.detail?.value ?? event.target?.value ?? '');
   return number && extension ? `${number};ext=${extension}` : number;
 } // A phone shown: the host's text first (formatFieldValue, or {value, text}),
 // as for any string; else the number
@@ -4456,7 +4630,7 @@ function phoneText(field, value, host) {
   const formatted = host?.formatFieldValue?.(field, value);
   if (typeof formatted === 'string') return formatted;
   if (carriesText(value)) return value.text;
-  return (0,_phone_js__WEBPACK_IMPORTED_MODULE_13__.formatPhone)(scalarValue(value), setText(host, 'phoneExtension'));
+  return (0,_phone_js__WEBPACK_IMPORTED_MODULE_14__.formatPhone)(scalarValue(value), setText(host, 'phoneExtension'));
 } // A password is a type the set never shows (owner, 2026-10-19; a type of its
 // own since C302 (1), a string with variant `password` before, read as it
 // until 2027-01-01). The host never sends one: the value of a `password`
@@ -4503,6 +4677,7 @@ function renderPasswordEdit(field, value, host) {
         <span class="sf-field-password flex items-cross-center gap-1/3 min-w-0" spellcheck="false">
             <sf-input
                     size=${EDIT_SIZE}
+                    width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     appearance="bordered"
                     root-class="flex-1 min-w-0"
                     input-type="password"
@@ -4572,6 +4747,7 @@ function checkedTextEdit(field, value, host, {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input
                 size=${EDIT_SIZE}
+                width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 appearance="bordered"
                 name=${fieldName(field)}
                 value=${shown === null || shown === undefined ? '' : String(shown)}
@@ -4728,6 +4904,7 @@ function renderLinkEdit(field, value, host) {
         <span class="sf-field-link flex flex-col gap-1/3 min-w-0">
             <sf-input
                     size=${EDIT_SIZE}
+                    width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     appearance="bordered"
                     data-sf-link-part="href"
                     name="${fieldName(field)}_href"
@@ -4741,6 +4918,7 @@ function renderLinkEdit(field, value, host) {
             ></sf-input>
             <sf-input
                     size=${EDIT_SIZE}
+                    width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     appearance="bordered"
                     data-sf-link-part="text"
                     name="${fieldName(field)}_text"
@@ -4918,12 +5096,13 @@ function renderIncludeCell(field, value) {
 }
 
 function renderTextEdit(field, value, host) {
-  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_9__.maskPattern)(field);
+  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_10__.maskPattern)(field);
   if (mask) return renderMaskedEdit(field, value, host, mask);
   value = scalarValue(value);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input
                 size=${EDIT_SIZE}
+                width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 appearance="bordered"
                 name=${fieldName(field)}
                 value=${value ?? ''}
@@ -4970,7 +5149,7 @@ function renderMaskedEdit(field, value, host, mask) {
   const write = (event, left) => {
     const input = event.currentTarget;
     const text = String(input?.value ?? '');
-    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_9__.maskState)(text, mask);
+    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_10__.maskState)(text, mask);
 
     if (state === 'incomplete') {
       const message = setText(host, 'maskIncomplete');
@@ -5002,6 +5181,7 @@ function renderMaskedEdit(field, value, host, mask) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input
                 size=${EDIT_SIZE}
+                width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 appearance="bordered"
                 name=${fieldName(field)}
                 value=${value ?? ''}
@@ -5022,6 +5202,7 @@ function renderTextAreaEdit(field, value, host) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input-textarea
                 size=${EDIT_SIZE}
+                width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 appearance="bordered"
                 name=${fieldName(field)}
                 value=${value ?? ''}
@@ -5097,7 +5278,7 @@ function renderStepperEdit(field, value, host, {
 
   const written = raw => {
     if (!percent || raw === null || raw === undefined || raw === '') return raw ?? null;
-    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readDecimal)(String(raw));
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readDecimal)(String(raw));
     return read.ok ? read.value : null;
   };
 
@@ -5106,6 +5287,7 @@ function renderStepperEdit(field, value, host, {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input-quantity
                 size=${EDIT_SIZE}
+                width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 name=${fieldName(field)}
                 value=${stepperNumber(scalarValue(value))}
                 min=${stepperNumber(field.min) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -5163,9 +5345,9 @@ function renderNumberEdit(field, value, host) {
   const write = (event, left) => {
     const input = event.currentTarget ?? event.target;
     const text = String(input?.value ?? '');
-    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readDecimal)(text);
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readDecimal)(text);
     let message = null;
-    if (!read.ok) message = setText(host, 'notNumber');else if (read.value !== null && decimals !== null && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.fractionDigits)(read.value) > decimals) {
+    if (!read.ok) message = setText(host, 'notNumber');else if (read.value !== null && decimals !== null && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.fractionDigits)(read.value) > decimals) {
       message = decimals === 0 ? setText(host, 'wholeNumber') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, 'precisionMax', host ?? null, {
         component: SET_NAME,
         count: decimals
@@ -5200,6 +5382,7 @@ function renderNumberEdit(field, value, host) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input
                 size=${EDIT_SIZE}
+                width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 appearance="bordered"
                 name=${fieldName(field)}
                 value=${value ?? ''}
@@ -5245,7 +5428,7 @@ const OFFERED_CURRENCIES = ['RUB', 'USD', 'EUR', 'CNY', 'KZT', 'BYN', 'AED', 'TR
 function fieldCurrencies(field) {
   const asked = Array.isArray(field?.currencies) ? field.currencies : typeof field?.currencies === 'string' ? field.currencies.split(',') : [];
   const codes = asked.map(code => String(code).trim().toUpperCase()).filter(code => /^[A-Z]{3}$/u.test(code));
-  return codes.length ? [...new Set(codes)] : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyCodes)(OFFERED_CURRENCIES);
+  return codes.length ? [...new Set(codes)] : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyCodes)(OFFERED_CURRENCIES);
 } // What a person is typing, per host and field: the value written is
 // canonical («12.5»), and drawn back as such it would move the caret under
 // «12,50» or swallow the comma of «12,». The typed text is shown while it
@@ -5278,7 +5461,7 @@ function decimalShown(host, key, value, {
 } = {}) {
   if (value === null || value === undefined || value === '') return '';
   const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
-  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(value, {
+  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(value, {
     locale: 'en',
     currency
   });
@@ -5286,17 +5469,17 @@ function decimalShown(host, key, value, {
   const draft = draftOf(host, key);
 
   if (typeof draft === 'string') {
-    const typed = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(draft, {
+    const typed = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(draft, {
       locale,
       currency
     });
     if (typed.ok && typed.value === read.value) return draft;
   }
 
-  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.restingDecimal)(read.value, locale, minDigits);
+  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.restingDecimal)(read.value, locale, minDigits);
 }
 
-const hasBound = bound => bound !== null && bound !== undefined && bound !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readDecimal)(bound).ok; // What is wrong with a typed decimal, or '': not a number, more digits after
+const hasBound = bound => bound !== null && bound !== undefined && bound !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readDecimal)(bound).ok; // What is wrong with a typed decimal, or '': not a number, more digits after
 // the point than `digits` (never rounded away: «1500,555» is an error, while
 // «1500,500» is 1500.5), outside min..max.
 
@@ -5307,27 +5490,27 @@ function decimalError(host, text, {
   max = null,
   currency = null
 } = {}) {
-  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(text, {
+  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(text, {
     locale: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null),
     currency
   });
   if (!read.ok) return setText(host, 'notNumber');
   if (read.value === null) return '';
 
-  if (Number.isInteger(digits) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.fractionDigits)(read.value) > digits) {
+  if (Number.isInteger(digits) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.fractionDigits)(read.value) > digits) {
     return digits === 0 ? setText(host, 'fractionNone') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, 'precisionMax', host ?? null, {
       component: SET_NAME,
       count: digits
     });
   }
 
-  const low = hasBound(min) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.compareDecimal)(read.value, min) === -1;
-  const high = hasBound(max) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.compareDecimal)(read.value, max) === 1;
+  const low = hasBound(min) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.compareDecimal)(read.value, min) === -1;
+  const high = hasBound(max) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.compareDecimal)(read.value, max) === 1;
   if (!low && !high) return '';
   const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
   const vars = {
-    min: hasBound(min) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatDecimal)(min, locale) : '',
-    max: hasBound(max) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatDecimal)(max, locale) : ''
+    min: hasBound(min) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatDecimal)(min, locale) : '',
+    max: hasBound(max) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatDecimal)(max, locale) : ''
   };
   if (hasBound(min) && hasBound(max)) return setWord(host, 'boundBetween', vars);
   return low ? setWord(host, 'boundAtLeast', vars) : setWord(host, 'boundAtMost', vars);
@@ -5380,7 +5563,7 @@ function decimalInput(field, value, host, {
       }
     }
 
-    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(text, {
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(text, {
       locale,
       currency
     });
@@ -5391,6 +5574,7 @@ function decimalInput(field, value, host, {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input
                 size=${EDIT_SIZE}
+                width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 appearance="bordered"
                 name=${fieldName(field)}
                 value=${decimalShown(host, key, value, {
@@ -5417,7 +5601,7 @@ function decimalInput(field, value, host, {
 
 
 function isolatedSign(sign, locale) {
-  if (!sign || !(0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.isRtlLocale)(locale) || !/[A-Za-z]/u.test(sign)) return sign;
+  if (!sign || !(0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.isRtlLocale)(locale) || !/[A-Za-z]/u.test(sign)) return sign;
   return `\u2066${sign}\u2069`;
 }
 
@@ -5432,8 +5616,8 @@ function percentDigits(field) {
     decimals
   } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field);
   if (decimals !== null) return decimals;
-  const step = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readDecimal)(field.step);
-  return step.ok && step.value !== null && Number(step.value) > 0 ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.fractionDigits)(step.value) : null;
+  const step = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readDecimal)(field.step);
+  return step.ok && step.value !== null && Number(step.value) > 0 ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.fractionDigits)(step.value) : null;
 } // A percent is the percent itself, «12.5» is 12,5 % (C294); it is bounded
 // only by the field's min and max -- a growth of 150 % or a change of −5 % is
 // a percent too (MP-11: the View set bounded it 0..100 without saying why).
@@ -5463,8 +5647,8 @@ function renderMoneyEdit(field, value, host) {
   const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
   const key = String(field.key ?? '');
   const fixed = fixedCurrency(field);
-  const display = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyDisplayOf)(field);
-  const parts = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.moneyParts)(scalarValue(value), fixed); // A currency chosen before an amount is typed waits here: a value is an
+  const display = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyDisplayOf)(field);
+  const parts = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.moneyParts)(scalarValue(value), fixed); // A currency chosen before an amount is typed waits here: a value is an
   // amount and its currency, never a currency alone.
 
   const currencyKey = `${key}#currency`;
@@ -5474,13 +5658,13 @@ function renderMoneyEdit(field, value, host) {
 
   const check = (text, code) => {
     const message = decimalError(host, text, {
-      digits: code ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(code, locale).minor : null,
+      digits: code ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(code, locale).minor : null,
       min,
       max,
       currency: code
     });
     if (message) return message;
-    return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(text, {
+    return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(text, {
       locale,
       currency: code
     }).value !== null && !code ? setText(host, 'chooseCurrency') : '';
@@ -5491,17 +5675,24 @@ function renderMoneyEdit(field, value, host) {
     currency: code ?? null
   }, message);
 
-  const sign = fixed ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(fixed, locale, display) : null;
+  const sign = fixed ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(fixed, locale, display) : null; // The width (C396, WM-4): a fixed currency's amount is the field and takes
+  // it; with a currency to choose, the row of the two does, and the amount
+  // fills the row as before.
+
+  const rowWidth = fixed ? '' : (0,_component_field_size__WEBPACK_IMPORTED_MODULE_8__.fieldWidthClass)(EDIT_WIDTH);
+  const fieldWidthOuter = EDIT_WIDTH;
+  if (!fixed) EDIT_WIDTH = '';
   const amount = decimalInput(field, parts.amount, host, {
     key,
     currency,
-    minDigits: currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(currency, locale).minor : 0,
+    minDigits: currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(currency, locale).minor : 0,
     textStart: sign?.before ? sign.sign : '',
     textEnd: sign && !sign.before ? sign.sign : '',
     rootClass: fixed ? '' : 'flex-1 min-w-0',
     check: text => check(text, currency),
     write: (next, message) => write(next, message, currency)
   });
+  EDIT_WIDTH = fieldWidthOuter;
   if (fixed) return amount; // The field's `currencies`, the value's own currency first when the list
   // lacks it; without a list, every ISO 4217 code with a search.
 
@@ -5512,7 +5703,7 @@ function renderMoneyEdit(field, value, host) {
   const optionText = code => {
     const {
       sign: mark
-    } = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(code, locale, display);
+    } = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(code, locale, display);
     return mark === code ? code : `${code} ${mark}`;
   }; // C294 (b): the choice is a third of the row but never narrower than its
   // longest option and the field's own chrome -- the chevron's square (the
@@ -5524,7 +5715,7 @@ function renderMoneyEdit(field, value, host) {
   const sizeName = String(EDIT_SIZE).replace('/', '\\/');
   const currencyMin = `min-inline-size: calc(${longest + 1}ch + var(--sf-ui-${sizeName}--control-height) + var(--sf-space-1))`;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class="flex gap-1/3 items-cross-start min-w-0 w-full">
+        <div class=${['flex gap-1/3 items-cross-start min-w-0 w-full', rowWidth].filter(Boolean).join(' ')}>
             ${amount}
             <sf-dropdown
                     size=${EDIT_SIZE}
@@ -5551,7 +5742,7 @@ function renderMoneyEdit(field, value, host) {
     // only with an amount.
     // The stored amount is checked as the page would show it.
 
-    if (typed !== null && typed !== undefined && typed !== '') write(typed, check((0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.restingDecimal)(typed, locale), code), code);
+    if (typed !== null && typed !== undefined && typed !== '') write(typed, check((0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.restingDecimal)(typed, locale), code), code);
   }}
             ></sf-dropdown>
         </div>
@@ -5562,13 +5753,13 @@ function renderPercentView(field, value, host) {
   const level = levelView(field, value);
   if (level) return level;
   const formatted = host?.formatFieldValue?.(field, value);
-  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || viewText(field, value, null);
+  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || viewText(field, value, null);
   return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 }
 
 function renderMoneyView(field, value, host) {
   const formatted = host?.formatFieldValue?.(field, value);
-  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
   return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // A date control has no clock. `sf-input-date` declares a format and a date,
 // and its parser is anchored (`^\d{4}-\d{2}-\d{2}$`), so a datetime value
@@ -5619,6 +5810,7 @@ function renderDateEdit(field, value, host) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-input-date
                 size=${EDIT_SIZE}
+                width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 name=${fieldName(field)}
                 value=${date ?? ''}
                 min-date=${min || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -5663,7 +5855,7 @@ function minuteStepOf(field) {
 }
 
 function renderDateTimeEdit(field, value, host) {
-  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitDateTime)(value);
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitDateTime)(value);
   const shown = stored.date ? `${stored.date}${stored.time ? `T${stored.time}` : ''}` : '';
   const min = typeof field.min === 'string' ? field.min : '';
   const max = typeof field.max === 'string' ? field.max : '';
@@ -5673,6 +5865,7 @@ function renderDateTimeEdit(field, value, host) {
                 class="sf-field-datetime"
                 mode="datetime"
                 size=${EDIT_SIZE}
+                width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 name=${fieldName(field)}
                 .value=${shown}
                 min-date=${min || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -5686,7 +5879,7 @@ function renderDateTimeEdit(field, value, host) {
     // The picker's own change, not a native one from its field.
     if (event.target !== event.currentTarget) return;
     const [date = '', time = ''] = String(event.detail?.value ?? '').split('T');
-    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.composeDateTime)(stored, {
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.composeDateTime)(stored, {
       date,
       time
     });
@@ -5703,7 +5896,7 @@ function renderDateTimeEdit(field, value, host) {
 
 
 function renderTimeEdit(field, value, host) {
-  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitTime)(value);
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitTime)(value);
   const min = typeof field.min === 'string' ? field.min : '';
   const max = typeof field.max === 'string' ? field.max : '';
   const step = minuteStepOf(field);
@@ -5712,6 +5905,7 @@ function renderTimeEdit(field, value, host) {
                 class="sf-field-time"
                 mode="time"
                 size=${EDIT_SIZE}
+                width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 name=${fieldName(field)}
                 .value=${stored.time}
                 min-time=${min || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -5723,7 +5917,7 @@ function renderTimeEdit(field, value, host) {
                 error-message=${EDIT_ERROR || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 @change=${event => {
     if (event.target !== event.currentTarget) return;
-    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.composeTime)(stored, String(event.detail?.value ?? ''));
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.composeTime)(stored, String(event.detail?.value ?? ''));
     if (result.error) return;
     const same = result.value === null ? stored.known && !stored.time : result.value === stored.raw;
     host.setFieldValue(field, same ? undefined : result.value);
@@ -5981,6 +6175,7 @@ function renderChoiceEdit(field, value, host) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-dropdown
                 size=${EDIT_SIZE}
+                width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 appearance="bordered"
                 mode="select"
                 search="false"
@@ -6041,6 +6236,7 @@ function renderChoicesEdit(field, value, host) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-dropdown
                 size=${EDIT_SIZE}
+                width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 appearance="bordered"
                 mode="select"
                 multiple
@@ -6085,7 +6281,7 @@ function renderChoicesEdit(field, value, host) {
 // keeps exactly what was published.
 
 
-const SET_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_17__["default"]; // The host's word wins, as it always did; the set's own fallback now follows
+const SET_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_18__["default"]; // The host's word wins, as it always did; the set's own fallback now follows
 // the page's language instead of being Russian whatever the page is. `host` is
 // the component that called the set, which is the node the rule reads from.
 // The set is not an element, so it is named here rather than taken from the
@@ -6124,7 +6320,7 @@ let EDIT_PICKER = '';
 
 function dropdownPicker() {
   if (EDIT_PICKER !== 'dropdown') return false;
-  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_11__.noteDeprecated)({
+  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_12__.noteDeprecated)({
     component: 'sf-field-renderers',
     kind: 'value',
     attribute: 'picker',
@@ -6247,6 +6443,7 @@ function renderHostLookup(field, value, host, {
         <div class="sf-field-picker flex flex-col gap-1/3" data-field-picker=${field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
             <sf-input-lookup
                     size=${EDIT_SIZE}
+                    width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     ?multiple=${multiple}
                     suggest
                     min-length="1"
@@ -6323,6 +6520,7 @@ function renderRecordPicker(field, value, host) {
         <div class="sf-field-picker flex flex-col gap-1/3" data-field-picker=${field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
             <sf-dropdown
                     size=${EDIT_SIZE}
+                    width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     appearance="bordered"
                     mode="select"
                     search="true"
@@ -6468,6 +6666,7 @@ function renderLookupEdit(field, value, host) {
         <div class="sf-field-picker flex flex-col gap-1/3" data-field-picker=${field.key || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
             <sf-dropdown
                     size=${EDIT_SIZE}
+                    width=${EDIT_WIDTH || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     appearance="bordered"
                     mode="select"
                     ?multiple=${multiple}
@@ -6740,7 +6939,7 @@ function renderEditField(field = {}, value, host, options = {}) {
   // there as in a form (FO3-4) -- hidden, nothing is drawn; not enabled,
   // its value as text; required as they say.
   if (field?.when && options?.values && typeof options.values === "object") {
-    const decided = (0,_conditions_js__WEBPACK_IMPORTED_MODULE_14__.fieldConditions)(field, options.values);
+    const decided = (0,_conditions_js__WEBPACK_IMPORTED_MODULE_15__.fieldConditions)(field, options.values);
     if (!decided.visible) return null;
     field = { ...field,
       required: decided.required,
@@ -6764,7 +6963,9 @@ function renderEditField(field = {}, value, host, options = {}) {
   const outerPicker = EDIT_PICKER;
   const outerAlign = EDIT_ALIGN_END;
   const outerError = EDIT_ERROR;
+  const outerWidth = EDIT_WIDTH;
   EDIT_SIZE = sizeOption(options);
+  EDIT_WIDTH = (0,_component_field_size__WEBPACK_IMPORTED_MODULE_8__.fieldWidth)((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'width'));
   EDIT_ERROR = typeof options?.error === 'string' ? options.error.trim() : '';
   EDIT_DISABLED = disabled; // `options.picker: 'dropdown'`: the record, relation, user and paged lookup
   // fields drawn as before C139, a searchable sf-dropdown (until 2027-01-01).
@@ -6780,6 +6981,7 @@ function renderEditField(field = {}, value, host, options = {}) {
     EDIT_PICKER = outerPicker;
     EDIT_ALIGN_END = outerAlign;
     EDIT_ERROR = outerError;
+    EDIT_WIDTH = outerWidth;
   }
 } // A density asked for one field is a region around it that draws no box of its
 // own: the variables of the density rules (core/scss/_sf_css__density.scss)
@@ -6843,7 +7045,7 @@ function renderTextView(field, value, host) {
 
 
 function renderHtmlView(field, value) {
-  const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_10__.cleanHtml)(value);
+  const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_11__.cleanHtml)(value);
   return clean ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-field-view sf-field-html">${(0,lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__.unsafeHTML)(clean)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // A number in the page's language (set boundary study, 2026-11-17): «12,5 кг»
 // on a Russian page, «12.5 kg» on an English one, through Intl with every
@@ -6856,7 +7058,7 @@ function numberText(field, value, host) {
   const formatted = host?.formatFieldValue?.(field, value);
   if (typeof formatted === 'string') return formatted;
   if (carriesText(value)) return value.text;
-  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || viewText(field, value, null);
+  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || viewText(field, value, null);
 } // A percent as the number's scale or meter (step 5), 0..100; else null.
 
 
@@ -6926,7 +7128,7 @@ function dateFormatOf(field) {
 
 function defaultDateText(field, value, host) {
   if (carriesText(value)) return null;
-  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitDateTime)(value);
+  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitDateTime)(value);
   if (!parts.known || !parts.date) return null;
   const [year, month, day] = parts.date.split('-').map(Number);
   const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
@@ -6971,7 +7173,7 @@ function dateText(field, value, host) {
 
 
 function dateTimeAttribute(field, value) {
-  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitDateTime)(value);
+  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitDateTime)(value);
   if (!parts.known || !parts.date) return '';
   const type = field?.propertyType || field?.type || field?.dataType;
   return type === 'datetime' && parts.time ? `${parts.date}T${parts.time}` : parts.date;
@@ -7163,19 +7365,19 @@ function renderTotalField(field = {}, values = [], host) {
   const list = (Array.isArray(values) ? values : []).map(value => scalarValue(value));
 
   if (type === 'money') {
-    const totals = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.moneyTotals)(list, field, locale);
+    const totals = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.moneyTotals)(list, field, locale);
     return totals.length ? totals.map(total => total.text) : null;
   }
 
   if (type !== 'number') return null;
-  const numbers = list.filter(value => value !== null && value !== undefined && value !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(value).ok);
+  const numbers = list.filter(value => value !== null && value !== undefined && value !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(value).ok);
   if (!numbers.length) return null;
-  const sum = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.addDecimal)(numbers);
+  const sum = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.addDecimal)(numbers);
   if (sum === null) return null; // The total keeps the field's unit as the cells print it («13 шт»): a
   // number keeps its unit in every place (cards study CV-7; DEV, group build
   // 12 acceptance: the table footer printed a bare «26»).
 
-  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatDecimal)(sum, locale);
+  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatDecimal)(sum, locale);
   const unit = fieldUnit(field);
   return [unit ? `${text} ${unit}` : text];
 } // Whether a type is a number a table aligns to the end of the line with
@@ -7234,7 +7436,7 @@ function fieldTemplate(field = {}) {
 
 function renderConditionControl(field, host, conditions, selected) {
   if (conditions.length < 2) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const tone = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditionTone)(selected);
+  const tone = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditionTone)(selected);
   const style = tone ? `--sf-dropdown-background-color: var(--sf-${tone}-container)` : '';
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-dropdown class="sf-filter-window-condition" size=${filterSize(host)} appearance="band" mode="select"
             search=${conditions.length >= 10 ? 'true' : 'false'} list-width="trigger" aria-label=${setText(host, 'filterCondition')}
@@ -7243,7 +7445,7 @@ function renderConditionControl(field, host, conditions, selected) {
     value: operator,
     text: host.getFilterOperatorLabel(operator),
     label: host.getFilterOperatorLabel(operator),
-    dot: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditionTone)(operator) || 'neutral'
+    dot: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditionTone)(operator) || 'neutral'
   }))}
             value=${selected}
             @change=${event => {
@@ -7337,7 +7539,7 @@ function renderBooleanWindow(field, host, value) {
     yes: field.trueText ?? field.labels?.true ?? setText(host, 'yes'),
     no: field.falseText ?? field.labels?.false ?? setText(host, 'no')
   };
-  const operator = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCondition)(field, value);
+  const operator = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterCondition)(field, value);
   const one = Array.isArray(value.values) ? value.values[0] : value.value;
   const chosen = operator === 'empty' ? 'empty' : one === true || String(one) === 'true' ? 'true' : one === false || String(one) === 'false' ? 'false' : '';
   const items = [{
@@ -7376,13 +7578,13 @@ function renderBooleanWindow(field, host, value) {
 
 
 function renderFilterWindowField(field = {}, host) {
-  const kind = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterKindOf)(field);
+  const kind = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterKindOf)(field);
   if (kind === 'own') return renderFilterField(field, host);
   const value = host.getFilterControlValue(field.key) || {};
   if (kind === 'boolean') return windowFields(host, renderBooleanWindow(field, host, value));
-  const conditions = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditions)(field);
-  const operator = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCondition)(field, value);
-  const control = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterValueless)(operator) ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : kind === 'string' ? renderStringWindow(field, host, value, operator) : kind === 'number' ? renderNumberWindow(field, host, value, operator) : renderChoiceFilterControl(field, host);
+  const conditions = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditions)(field);
+  const operator = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterCondition)(field, value);
+  const control = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterValueless)(operator) ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : kind === 'string' ? renderStringWindow(field, host, value, operator) : kind === 'number' ? renderNumberWindow(field, host, value, operator) : renderChoiceFilterControl(field, host);
   return windowFields(host, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${renderConditionControl(field, host, conditions, operator)}${control}`);
 } // The window's parts reach its edges (C313): the band, the search's and the
 // list's hairlines. A phone's sheet pads its body; there they reach past that
@@ -7399,15 +7601,15 @@ function windowFields(host, content) {
 
 function openFilterWindow(options = {}) {
   const field = options.field || {};
-  return (0,_filter_window_js__WEBPACK_IMPORTED_MODULE_15__.filterWindowOpen)({
-    width: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterWidth)(field),
-    kind: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterKindOf)(field),
+  return (0,_filter_window_js__WEBPACK_IMPORTED_MODULE_16__.filterWindowOpen)({
+    width: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterWidth)(field),
+    kind: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterKindOf)(field),
     ...options,
     renderControl: renderFilterWindowField,
     // A boolean applies on a press and has no footer (C312 (2)).
-    footer: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterKindOf)(field) !== 'boolean',
+    footer: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterKindOf)(field) !== 'boolean',
     // «Применить (N)»: the chosen values of a list condition only (C310).
-    count: value => (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterKindOf)(field) === 'own' ? Array.isArray(value?.values) ? value.values.length : 0 : (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCount)(field, value)
+    count: value => (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterKindOf)(field) === 'own' ? Array.isArray(value?.values) ? value.values.length : 0 : (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterCount)(field, value)
   });
 }
 /**
@@ -7419,8 +7621,8 @@ function openFilterWindow(options = {}) {
 function filterFieldSummary(field = {}, value = {}, node = null) {
   const options = Array.isArray(field.filter?.options) ? field.filter.options : [];
   const names = new Map(options.map(option => [String(option.value ?? option.id ?? option.key ?? option.label), option.label || option.title || String(option.value ?? '')]));
-  return (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterSummary)(field, value, {
-    label: operator => (0,_filter_window_js__WEBPACK_IMPORTED_MODULE_15__.filterOperatorLabel)(operator, node, (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterKindOf)(field)),
+  return (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterSummary)(field, value, {
+    label: operator => (0,_filter_window_js__WEBPACK_IMPORTED_MODULE_16__.filterOperatorLabel)(operator, node, (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterKindOf)(field)),
     name: one => names.get(one) ?? one,
     yes: field.trueText ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SET_TEXT, 'yes', node, SET_NAME),
     no: field.falseText ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SET_TEXT, 'no', node, SET_NAME)
@@ -7470,51 +7672,51 @@ if (typeof window !== 'undefined') {
     // compare(a, b) work by the digits; totals(values, field) sums money
     // per currency; currency(code, locale, display) is {sign, before, minor}.
     decimal: {
-      format: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatDecimal)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
-      money: (value, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatMoney)(value, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
-      percent: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.formatPercent)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
-      read: (text, options = {}) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.readTypedDecimal)(text, {
+      format: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatDecimal)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
+      money: (value, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatMoney)(value, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
+      percent: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatPercent)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
+      read: (text, options = {}) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(text, {
         locale: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null),
         ...options
       }),
-      add: _decimal_js__WEBPACK_IMPORTED_MODULE_12__.addDecimal,
-      compare: _decimal_js__WEBPACK_IMPORTED_MODULE_12__.compareDecimal,
-      totals: (values, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.moneyTotals)(values, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
-      currency: (code, locale, display) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_12__.currencyOf)(code, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null), display)
+      add: _decimal_js__WEBPACK_IMPORTED_MODULE_13__.addDecimal,
+      compare: _decimal_js__WEBPACK_IMPORTED_MODULE_13__.compareDecimal,
+      totals: (values, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.moneyTotals)(values, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
+      currency: (code, locale, display) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(code, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null), display)
     },
     // The date filter's rules (C293): the chip's words, when an entry is
     // empty, the request with its context, a period's days.
     dateFilter: {
-      conditions: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateFilterConditions,
-      chipText: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.dateFilterChipText,
-      isEmptyEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.isEmptyFilterEntry,
-      normalizeEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.normalizeFilterEntry,
-      requestContext: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.filterRequestContext,
-      buildRequest: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.buildFilterRequest,
-      resolvePeriod: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.resolveDatePeriod,
-      periods: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_PERIODS,
-      futurePeriods: _date_filter_js__WEBPACK_IMPORTED_MODULE_18__.DATE_FUTURE_PERIODS
+      conditions: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateFilterConditions,
+      chipText: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateFilterChipText,
+      isEmptyEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.isEmptyFilterEntry,
+      normalizeEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.normalizeFilterEntry,
+      requestContext: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.filterRequestContext,
+      buildRequest: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.buildFilterRequest,
+      resolvePeriod: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.resolveDatePeriod,
+      periods: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_PERIODS,
+      futurePeriods: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_FUTURE_PERIODS
     },
     // A datetime's value read and written back, for a host that draws its
     // own control: split(value), compose(stored, {date, time}),
     // normalizeTime(text); and a time of day's: splitTime(value),
     // composeTime(stored, text).
     dateTime: {
-      split: _datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitDateTime,
-      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_8__.composeDateTime,
-      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_8__.normalizeTime,
-      splitTime: _datetime_js__WEBPACK_IMPORTED_MODULE_8__.splitTime,
-      composeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_8__.composeTime
+      split: _datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitDateTime,
+      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_9__.composeDateTime,
+      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_9__.normalizeTime,
+      splitTime: _datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitTime,
+      composeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_9__.composeTime
     },
     // A field's when (FO-3): fieldConditions(field, values) answers
     // {visible, required, enabled} over the values on screen;
     // editable(field, values) whether a single-field edit opens (FO3-4).
     conditions: {
-      evaluate: _conditions_js__WEBPACK_IMPORTED_MODULE_14__.evaluateCondition,
-      field: _conditions_js__WEBPACK_IMPORTED_MODULE_14__.fieldConditions,
-      fields: _conditions_js__WEBPACK_IMPORTED_MODULE_14__.conditionFields,
-      ops: _conditions_js__WEBPACK_IMPORTED_MODULE_14__.CONDITION_OPS,
-      editable: _conditions_js__WEBPACK_IMPORTED_MODULE_14__.fieldEditable
+      evaluate: _conditions_js__WEBPACK_IMPORTED_MODULE_15__.evaluateCondition,
+      field: _conditions_js__WEBPACK_IMPORTED_MODULE_15__.fieldConditions,
+      fields: _conditions_js__WEBPACK_IMPORTED_MODULE_15__.conditionFields,
+      ops: _conditions_js__WEBPACK_IMPORTED_MODULE_15__.CONDITION_OPS,
+      editable: _conditions_js__WEBPACK_IMPORTED_MODULE_15__.fieldEditable
     },
     // A filter field's window from any control (FO-5): open({anchor,
     // field, value, size, placement}) settles {action, value} or null.
@@ -7522,11 +7724,11 @@ if (typeof window !== 'undefined') {
     // field button shows (C300, C310); conditions(field) what a window offers.
     filterWindow: {
       open: openFilterWindow,
-      operatorLabel: _filter_window_js__WEBPACK_IMPORTED_MODULE_15__.filterOperatorLabel,
+      operatorLabel: _filter_window_js__WEBPACK_IMPORTED_MODULE_16__.filterOperatorLabel,
       summary: filterFieldSummary,
-      conditions: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditions,
-      count: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterCount,
-      tone: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_16__.filterConditionTone
+      conditions: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditions,
+      count: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterCount,
+      tone: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditionTone
     },
     // The universal properties, each with the modes the set draws for it
     // and its templates, the default first (C302).
@@ -7883,6 +8085,13 @@ const typeLabel = key => Object.freeze(Object.defineProperties({}, {
 // non-default templates under their former ids, kept for hosts that read it
 // until 2027-01-01.
 //
+// The template parameter `width` (owner decision C396, WM-4; module
+// smart-field-renderers 1.27.0): short, medium or long, how wide the edit
+// control is by the value it holds -- 20, 28 or 44 characters of the width
+// ladder, the control's own width setting; absent, the whole column. Every
+// template that draws a text box in the edit place takes it; it is not the
+// field key `width` (half or full), which places the field in a view's column.
+//
 // C303: a type of its own only where storage, checking or filter conditions
 // differ; a setting fixed when the field is created is part of the type
 // (`decimals` of a number, 0 for a whole one; `multiple`). integer is read as
@@ -7967,7 +8176,9 @@ const PROPERTY_TYPES = Object.freeze([// mask (property-view port 1.16.0): the F
 entry({
   type: 'string',
   label: typeLabel('type-string'),
-  templates: [byDefault('string', 'input')],
+  templates: [byDefault('string', 'input', {
+    params: ['width']
+  })],
   params: ['placeholder', 'mask', 'nullable', 'required', 'readonly']
 }), // phone (C302 (1)): the number in E.164, «+79161234567», an extension
 // after «;ext=». defaultCountry (FL-7): the country an empty field starts
@@ -7975,7 +8186,9 @@ entry({
 entry({
   type: 'phone',
   label: typeLabel('type-phone'),
-  templates: [byDefault('phone', 'phone_input')],
+  templates: [byDefault('phone', 'phone_input', {
+    params: ['width']
+  })],
   params: ['defaultCountry', 'required', 'readonly']
 }), // password (C302 (1)): write-only. The host never sends the password; the
 // value it sends is {set: true} or {set: false} (null reads as not set),
@@ -7985,7 +8198,9 @@ entry({
   type: 'password',
   label: typeLabel('type-password'),
   writeOnly: true,
-  templates: [byDefault('password', 'input')],
+  templates: [byDefault('password', 'input', {
+    params: ['width']
+  })],
   conditions: conditions(Object.freeze(['not-empty', 'empty']), 'not-empty'),
   params: ['placeholder', 'required', 'readonly']
 }), // url, link and ru.inn (catalogue step 3): types Larena stores and checks
@@ -7999,23 +8214,29 @@ entry({
 entry({
   type: 'url',
   label: typeLabel('type-url'),
-  templates: [byDefault('url', 'input')],
+  templates: [byDefault('url', 'input', {
+    params: ['width']
+  })],
   params: ['placeholder', 'required', 'readonly']
 }), entry({
   type: 'link',
   label: typeLabel('type-link'),
-  templates: [byDefault('link', 'link')],
+  templates: [byDefault('link', 'link', {
+    params: ['width']
+  })],
   params: ['required', 'readonly']
 }), entry({
   type: 'ru.inn',
   label: typeLabel('type-ru.inn'),
-  templates: [byDefault('ru.inn', 'input')],
+  templates: [byDefault('ru.inn', 'input', {
+    params: ['width']
+  })],
   params: ['holder', 'placeholder', 'required', 'readonly']
 }), entry({
   type: 'text',
   label: typeLabel('type-text'),
   templates: [byDefault('text', 'textarea', {
-    params: ['rows']
+    params: ['rows', 'width']
   })],
   params: ['placeholder', 'required', 'readonly']
 }), // html (property-view port 1.17.0): formatted text, an HTML string of
@@ -8038,8 +8259,11 @@ entry({
   type: 'number',
   label: typeLabel('type-number'),
   numeric: true,
-  templates: [byDefault('number', 'input'), template('number', 'stepper', {
-    places: ['edit']
+  templates: [byDefault('number', 'input', {
+    params: ['width']
+  }), template('number', 'stepper', {
+    places: ['edit'],
+    params: ['width']
   }), template('number', 'scale', {
     places: ['view', 'compact'],
     fits: 'bounds-0-100'
@@ -8057,7 +8281,9 @@ entry({
 entry({
   type: 'date',
   label: typeLabel('type-date'),
-  templates: [byDefault('date', 'datepicker')],
+  templates: [byDefault('date', 'datepicker', {
+    params: ['width']
+  })],
   conditions: DATE_CONDITIONS,
   params: ['min', 'max', 'format', 'required', 'readonly']
 }), // datetime and time: sf-input-date in mode datetime and time (1.4.0). min
@@ -8067,7 +8293,9 @@ entry({
 entry({
   type: 'datetime',
   label: typeLabel('type-datetime'),
-  templates: [byDefault('datetime', 'datepicker')],
+  templates: [byDefault('datetime', 'datepicker', {
+    params: ['width']
+  })],
   conditions: DATE_CONDITIONS,
   params: ['min', 'max', 'step', 'format', 'required', 'readonly']
 }), // time (step 4): its own conditions, not a text search -- «Равно»,
@@ -8075,7 +8303,9 @@ entry({
 entry({
   type: 'time',
   label: typeLabel('type-time'),
-  templates: [byDefault('time', 'timepicker')],
+  templates: [byDefault('time', 'timepicker', {
+    params: ['width']
+  })],
   conditions: conditions(TIME_FILTER_OPERATORS, 'between'),
   params: ['min', 'max', 'step', 'required', 'readonly']
 }), // boolean (C303 (4)): the switch is the default; the checkbox, and the
@@ -8103,7 +8333,7 @@ entry({
   type: 'choice',
   label: typeLabel('type-choice'),
   templates: [byDefault('choice', 'dropdown', {
-    params: ['badge']
+    params: ['badge', 'width']
   }), template('choice', 'buttons', {
     places: ['edit'],
     params: ['size']
@@ -8116,7 +8346,7 @@ entry({
   type: 'choices',
   label: typeLabel('type-choices'),
   templates: [byDefault('choices', 'dropdown', {
-    params: ['badge'],
+    params: ['badge', 'width'],
     legacy: 'select'
   }), template('choices', 'checklist', {
     places: ['edit']
@@ -8138,17 +8368,23 @@ entry({
 }), entry({
   type: 'user',
   label: typeLabel('type-user'),
-  templates: [byDefault('user', 'reference_picker')],
+  templates: [byDefault('user', 'reference_picker', {
+    params: ['width']
+  })],
   params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
 }), entry({
   type: 'record',
   label: typeLabel('type-record'),
-  templates: [byDefault('record', 'reference_picker')],
+  templates: [byDefault('record', 'reference_picker', {
+    params: ['width']
+  })],
   params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
 }), entry({
   type: 'relation',
   label: typeLabel('type-relation'),
-  templates: [byDefault('relation', 'reference_picker')],
+  templates: [byDefault('relation', 'reference_picker', {
+    params: ['width']
+  })],
   params: ['placeholder', 'searchPlaceholder', 'required', 'readonly']
 }), // lookup: a value chosen from a reference list the host keeps -- a country,
 // a status, a contract type (Larena, 2026-10-23). It is not a record: the
@@ -8159,7 +8395,9 @@ entry({
 entry({
   type: 'lookup',
   label: typeLabel('type-lookup'),
-  templates: [byDefault('lookup', 'source_picker')],
+  templates: [byDefault('lookup', 'source_picker', {
+    params: ['width']
+  })],
   params: ['options', 'multiple', 'placeholder', 'searchPlaceholder', 'required', 'readonly']
 }), // file: image, image_card and image_list are the same stored file drawn as
 // a picture (image-card and image-list are their former ids until
@@ -8210,7 +8448,9 @@ entry({
   type: 'money',
   label: typeLabel('type-money'),
   numeric: true,
-  templates: [byDefault('money', 'money_input')],
+  templates: [byDefault('money', 'money_input', {
+    params: ['width']
+  })],
   conditions: NUMBER_CONDITIONS,
   params: ['currency', 'currencies', 'currencyDisplay', 'min', 'max', 'placeholder', 'required', 'readonly']
 }), // percent (step 5): the number's templates -- stepper, scale and meter,
@@ -8220,8 +8460,11 @@ entry({
   type: 'percent',
   label: typeLabel('type-percent'),
   numeric: true,
-  templates: [byDefault('percent', 'input'), template('percent', 'stepper', {
-    places: ['edit']
+  templates: [byDefault('percent', 'input', {
+    params: ['width']
+  }), template('percent', 'stepper', {
+    places: ['edit'],
+    params: ['width']
   }), template('percent', 'scale', {
     places: ['view', 'compact'],
     fits: 'bounds-0-100'
@@ -8719,8 +8962,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   SPEAKING_TAGS: () => (/* binding */ SPEAKING_TAGS),
 /* harmony export */   SfForm: () => (/* binding */ SfForm),
 /* harmony export */   WIDTHS: () => (/* binding */ WIDTHS),
+/* harmony export */   WIDTH_ALIASES: () => (/* binding */ WIDTH_ALIASES),
 /* harmony export */   answeredByValue: () => (/* binding */ answeredByValue),
 /* harmony export */   chosenFiles: () => (/* binding */ chosenFiles),
+/* harmony export */   fieldWidth: () => (/* binding */ fieldWidth),
 /* harmony export */   groupFields: () => (/* binding */ groupFields),
 /* harmony export */   hasValue: () => (/* binding */ hasValue),
 /* harmony export */   normalizeFields: () => (/* binding */ normalizeFields),
@@ -8728,23 +8973,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   speaksError: () => (/* binding */ speaksError)
 /* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
-/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("5b7d7695b41b");
-/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e92fd2d1a38c");
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("2a080a730149");
-/* harmony import */ var _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e5483002f3ea");
-/* harmony import */ var _helpers_form_field_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("adbddb2f4d35");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("219db2ce051d");
-/* harmony import */ var _js_choice_list_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("20014fad50c0");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("ae2fca904cab");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("75937516ef9b");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("db3a39d580e9");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_8__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, lit__WEBPACK_IMPORTED_MODULE_3__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_7__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5b7d7695b41b");
+/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e92fd2d1a38c");
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("2a080a730149");
+/* harmony import */ var _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e5483002f3ea");
+/* harmony import */ var _helpers_form_field_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("adbddb2f4d35");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("219db2ce051d");
+/* harmony import */ var _js_choice_list_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("20014fad50c0");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ae2fca904cab");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("75937516ef9b");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("db3a39d580e9");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, lit__WEBPACK_IMPORTED_MODULE_4__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_9__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, lit__WEBPACK_IMPORTED_MODULE_4__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_4__);
 // sf-form: a form drawn from field descriptions (owner decision C182,
 // 2026-11-14; study control/research/2026-11-14-form.md, prototype
 // prototypes/form-study.html).
@@ -8775,6 +9022,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // Only the words on screen ship in the bundle, English only (owner decision
 // C282): Russian and every other language come from a language file. The
 // title, settings and events stay in the language files for the Studio and the
@@ -8790,7 +9038,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const FIELD_HOST_METHODS = Object.freeze(['getFieldOptionsPage', 'getFieldOptionSearch', 'setFieldOptionSearch', 'loadFieldOptions', 'getFieldUploads', 'startFieldUpload', 'retryFieldUpload', 'getFieldText', 'formatFieldValue']);
 const PICKED_TYPES = new Set(['record', 'relation', 'user']); // The types a component set draws (the registry's `set`): the host draws them.
 
-const SET_TYPES = new Set(_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__.PROPERTY_TYPES.filter(entry => entry.set).map(entry => entry.type).concat('compound'));
+const SET_TYPES = new Set(_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES.filter(entry => entry.set).map(entry => entry.type).concat('compound'));
 /**
  * A page of a reference picker over a field's own `options` (1.7.0): a form
  * without a host that pages candidates still offers a short list of records or
@@ -8823,8 +9071,29 @@ function chosenFiles(items) {
       file
     };
   }).filter(one => one && one.name);
-}
-const WIDTHS = ['s', 'm', 'full']; // apply answer (owner decision C291 (3), FO-8): the states of the confirm
+} // The field widths are the field width steps (DEV look answer 2026-11-20,
+// C396): short (20 characters, 160 px at text 16) and medium (28, 224), the
+// roles --sf-field--width-short / -medium the fields' own width setting takes,
+// or full. s and m, the former names (8rem and 16rem), draw short and medium
+// until WIDTH_ALIASES_UNTIL and are said once (change journal
+// value-form-field-width-s-m).
+
+const WIDTHS = ['short', 'medium', 'full'];
+const WIDTH_ALIASES = {
+  s: 'short',
+  m: 'medium'
+};
+const WIDTH_ALIASES_SINCE = '2026-11-20';
+const WIDTH_ALIASES_UNTIL = '2027-01-01';
+/** A field's width as drawn: a step, full, or '' (none); s and m read as short and medium, told to note(from, to). */
+
+function fieldWidth(width, note = null) {
+  if (WIDTHS.includes(width)) return width;
+  const to = WIDTH_ALIASES[width];
+  if (!to) return '';
+  note?.(width, to);
+  return to;
+} // apply answer (owner decision C291 (3), FO-8): the states of the confirm
 // surface, of which open and pending draw the fields to answer.
 
 const ANSWERING = new Set(['open', 'pending']); // The property types already reported as unknown, once per page for each.
@@ -8834,7 +9103,7 @@ const UNKNOWN_TYPES_TOLD = new Set();
 function warnUnknownType(field, hostDraws = false) {
   const type = String(field?.propertyType ?? '');
   if (UNKNOWN_TYPES_TOLD.has(type) || hostDraws) return;
-  const modes = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__.propertyModes)(type);
+  const modes = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.propertyModes)(type);
   if (modes.view || modes.edit) return;
   UNKNOWN_TYPES_TOLD.add(type);
   console.warn(`sf-form: the field «${field?.key ?? ''}» is left out: the Framework's field renderers draw no property type «${type}»`);
@@ -8854,7 +9123,7 @@ const SPEAKING_TAGS = new Set(['sf-input', 'sf-input-choice', 'sf-input-code', '
 // whose error is the form's line under the list).
 
 function speaksError(control) {
-  if (!control || !(SPEAKING_TAGS.has(control.localName) || _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__.OWN_ERROR_CONTROLS.includes(control.localName))) return false;
+  if (!control || !(SPEAKING_TAGS.has(control.localName) || _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.OWN_ERROR_CONTROLS.includes(control.localName))) return false;
   return !(control.localName === 'sf-checkbox' && control.closest?.('.sf-field-checklist'));
 } // The element a screen reader reads a field's description with: a group of
 // choices as a whole, else the control's own focus target, else its first
@@ -8904,12 +9173,12 @@ function hasValue(value) {
 
 function answeredByValue(field) {
   if ((field?.propertyType || field?.type || field?.dataType) !== 'boolean') return false;
-  const drawn = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__.fieldTemplate)(field);
+  const drawn = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.fieldTemplate)(field);
   return drawn.type === 'boolean' && drawn.template !== 'buttons';
 }
-/** The fields as given, made safe: objects with a key and a type, each key once, width one of s, m, full or none. */
+/** The fields as given, made safe: objects with a key and a type, each key once, width one of short, medium, full or none (s, m read as short, medium). */
 
-function normalizeFields(list) {
+function normalizeFields(list, noteWidth = null) {
   const seen = new Set();
   const fields = [];
 
@@ -8919,7 +9188,7 @@ function normalizeFields(list) {
     const type = text(item.propertyType || item.type || item.dataType);
     if (!key || !type || seen.has(key)) continue;
     seen.add(key);
-    const width = WIDTHS.includes(item.width) ? item.width : '';
+    const width = fieldWidth(item.width, noteWidth);
     fields.push({ ...item,
       key,
       label: text(item.label) || key,
@@ -8954,28 +9223,28 @@ function groupFields(fields, groups) {
   });
   return out;
 }
-const FormElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_9__, {
+const FormElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_10__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__.files,
   source: 'ru',
   actions: {
     'check-validity'() {
       return this.checkFields({
         focus: false,
         submit: false
-      }) ? (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)() : (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('invalid');
+      }) ? (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)() : (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('invalid');
     },
 
     reset() {
       this.restore();
-      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)();
     },
 
     // The field host's answers changed (a page, an upload's progress): the
     // fields are drawn again with what it answers now (1.7.0).
     'refresh-fields'() {
       this.requestComponentUpdate('field-host');
-      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)();
     },
 
     'set-errors'(args = {}) {
@@ -9039,7 +9308,7 @@ class SfForm extends FormElement {
 
 
   get _id() {
-    return (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__.instancePath)(this, {
+    return (0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__.partId)((0,_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__.instancePath)(this, {
       kind: 'sf-form'
     }));
   } // ---------------------------------------------------------------- value
@@ -9058,7 +9327,7 @@ class SfForm extends FormElement {
     const out = clone(values);
 
     for (const field of this.list) {
-      if (field.when && (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__.fieldConditions)(field, values).visible === false) delete out[field.key];
+      if (field.when && (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.fieldConditions)(field, values).visible === false) delete out[field.key];
     }
 
     return out;
@@ -9092,7 +9361,16 @@ class SfForm extends FormElement {
   }
 
   get list() {
-    return normalizeFields(this.fields);
+    return normalizeFields(this.fields, (from, to) => (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__.noteDeprecated)({
+      component: 'sf-form',
+      tag: 'sf-form',
+      kind: 'value',
+      attribute: 'fields[].width',
+      from,
+      to,
+      since: WIDTH_ALIASES_SINCE,
+      remove_after: WIDTH_ALIASES_UNTIL
+    }));
   } // The fields the form shows now: every field the renderers draw whose
   // conditions show it, as its conditions make it. A field of a type the
   // renderers do not know at all (items or compound, which a component set
@@ -9123,7 +9401,7 @@ class SfForm extends FormElement {
       visible,
       required,
       enabled
-    } = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__.fieldConditions)(field, this._values);
+    } = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.fieldConditions)(field, this._values);
     return { ...field,
       visible,
       required,
@@ -9141,12 +9419,12 @@ class SfForm extends FormElement {
 
   drawsEdit(field) {
     if (this.hostDraws(field)) return true;
-    const modes = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__.propertyModes)(field.propertyType);
+    const modes = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.propertyModes)(field.propertyType);
     return modes.edit || field.readonly === true && modes.view;
   }
 
   drawsView(field) {
-    return this.hostDraws(field) || (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__.propertyModes)(field.propertyType).view;
+    return this.hostDraws(field) || (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.propertyModes)(field.propertyType).view;
   } // The field host draws the types a component set draws (items, complex,
   // ru.requisites; 1.7.0): renderField(field, value, host, {editing, size}).
 
@@ -9166,7 +9444,7 @@ class SfForm extends FormElement {
   }
 
   get answerState() {
-    return _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_6__.CONFIRM_STATES.includes(this.state) ? this.state : 'open';
+    return _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_7__.CONFIRM_STATES.includes(this.state) ? this.state : 'open';
   }
 
   get isInstant() {
@@ -9341,7 +9619,7 @@ class SfForm extends FormElement {
           label: field.label
         }
       }) : '';
-      return (0,_helpers_form_field_js__WEBPACK_IMPORTED_MODULE_5__.validityWords)(control) || control.validationMessage || '';
+      return (0,_helpers_form_field_js__WEBPACK_IMPORTED_MODULE_6__.validityWords)(control) || control.validationMessage || '';
     }
 
     return '';
@@ -9404,11 +9682,11 @@ class SfForm extends FormElement {
   applyHostErrors(errors) {
     const shown = new Set(this.list.map(field => field.key));
     const entries = Object.entries(errors).map(([key, message]) => [text(key), text(message)]).filter(([key, message]) => key && message);
-    if (entries.length && !entries.some(([key]) => shown.has(key))) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('missing'); // apply answer: the host's errors answer a Send that could not be taken;
+    if (entries.length && !entries.some(([key]) => shown.has(key))) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('missing'); // apply answer: the host's errors answer a Send that could not be taken;
     // the form is open again with them. An answer settled is not reopened.
 
     if (this.isAnswer) {
-      if (!ANSWERING.has(this.answerState)) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('closed');
+      if (!ANSWERING.has(this.answerState)) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('closed');
       if (this.answerState === 'pending') this.state = 'open';
     }
 
@@ -9417,7 +9695,7 @@ class SfForm extends FormElement {
     if (!this._hostErrors.size) {
       for (const key of [...this._errors.keys()]) this.recheck(key);
 
-      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)();
     }
 
     if (!this.isEditing) {
@@ -9428,7 +9706,7 @@ class SfForm extends FormElement {
     this.checkFields({
       focus: true
     });
-    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)();
   } // ---------------------------------------------------------------- presses
 
 
@@ -9440,20 +9718,20 @@ class SfForm extends FormElement {
 
   submit() {
     if (this.isAnswer) return this.answer(true);
-    if (!this.isEditing || this.isInstant) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('mode');
+    if (!this.isEditing || this.isInstant) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('mode');
     if (!this.checkFields({
       focus: true
-    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('invalid');
+    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('invalid');
     const value = this.value;
     if (!this.sfEmit('submit', {
       value
     }, {
       cancelable: true
-    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('prevented');
+    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('prevented');
     this._saved = clone(this._values);
     this.forget();
     if (this._fromView) this.toView();else this.requestComponentUpdate('saved');
-    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)();
   }
 
   cancel() {
@@ -9470,10 +9748,10 @@ class SfForm extends FormElement {
 
 
   answer(accepted) {
-    if (this.answerState !== 'open') return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('closed');
+    if (this.answerState !== 'open') return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('closed');
     if (accepted && !this.checkFields({
       focus: true
-    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('invalid');
+    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('invalid');
     const focusWasInside = this.contains(this.ownerDocument.activeElement);
     this._pressed = accepted;
     this.state = 'pending';
@@ -9489,7 +9767,7 @@ class SfForm extends FormElement {
     })) {
       this._pressed = null;
       this.state = 'open';
-      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('prevented');
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('prevented');
     } // The values sent are what the read view shows after the answer.
 
 
@@ -9504,7 +9782,7 @@ class SfForm extends FormElement {
       preventScroll: true
     }));
     this.requestComponentUpdate('answer');
-    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.applied)();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)();
   }
 
   restore() {
@@ -9749,7 +10027,7 @@ class SfForm extends FormElement {
       pending: state === 'pending',
       pressed: state === 'pending' ? this._pressed : null,
       text: line ? this.sfWord(line) : '',
-      icon: line ? _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_6__.CONFIRM_ICON[state] : ''
+      icon: line ? _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_7__.CONFIRM_ICON[state] : ''
     };
   } // The value in the read view; an empty one says the quiet word of
   // sf-list-description (C33: «Не указан», en «Not set»; one word in both
@@ -9759,13 +10037,13 @@ class SfForm extends FormElement {
 
 
   viewControl(field, value, host) {
-    const control = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__.renderViewField)(field, value, host, this.size === '1/2' ? {
+    const control = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.renderViewField)(field, value, host, this.size === '1/2' ? {
       size: '1/2'
     } : {});
     const blank = value === undefined || value === null || value === '' || Array.isArray(value) && !value.length;
 
-    if (control === lit__WEBPACK_IMPORTED_MODULE_3__.nothing || (control === null || control === undefined) && blank) {
-      return (0,lit__WEBPACK_IMPORTED_MODULE_3__.html)`<span class="sf-field-view sf-form-empty">${this.sfWord('empty-value')}</span>`;
+    if (control === lit__WEBPACK_IMPORTED_MODULE_4__.nothing || (control === null || control === undefined) && blank) {
+      return (0,lit__WEBPACK_IMPORTED_MODULE_4__.html)`<span class="sf-field-view sf-form-empty">${this.sfWord('empty-value')}</span>`;
     }
 
     return control;
@@ -9779,7 +10057,7 @@ class SfForm extends FormElement {
 
   buttonSaved(field, editing) {
     if (!editing || this.isInstant) return field;
-    const drawn = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__.fieldTemplate)(field);
+    const drawn = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.fieldTemplate)(field);
     return drawn.type === 'boolean' && drawn.template === 'switch' ? { ...field,
       template: 'checkbox'
     } : field;
@@ -9802,10 +10080,10 @@ class SfForm extends FormElement {
         size
       }) ?? null;
     } else if (editing) {
-      control = (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_8__.isListChoice)(field) ? (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_8__.renderChoiceList)(field, value, host) : (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__.renderEditField)(field, value, host, this.renderOptions()); // A control the renderers cannot build here (a picker nobody pages)
+      control = (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_9__.isListChoice)(field) ? (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_9__.renderChoiceList)(field, value, host) : (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.renderEditField)(field, value, host, this.renderOptions()); // A control the renderers cannot build here (a picker nobody pages)
       // shows the value it holds, read-only, as the renderers' own fallback.
 
-      if (control === null || control === undefined) control = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__.renderViewField)(field, value, host, size === '1/2' ? {
+      if (control === null || control === undefined) control = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.renderViewField)(field, value, host, size === '1/2' ? {
         size
       } : {});
     } else {
@@ -9815,7 +10093,7 @@ class SfForm extends FormElement {
     // (C303 (4)); the form no longer picks it from required and apply.
 
 
-    const drawn = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_4__.fieldTemplate)(field);
+    const drawn = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.fieldTemplate)(field);
     const checkbox = editing && drawn.type === 'boolean' && drawn.template === 'checkbox' && field.readonly !== true;
     const error = editing ? this._errors.get(field.key) || '' : '';
     const element = this.controlOf(field.key);
@@ -9845,7 +10123,7 @@ class SfForm extends FormElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_7__.renderFormTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_8__.renderFormTemplate)(this.templateContext());
   }
 
 }
@@ -12554,7 +12832,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","sea
 /***/ "ae2fca904cab"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.form","tag":"sf-form","version":"1.12.3","kind":"leaf","settings":{"fields":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"propertyType":{"type":"string"},"variant":{"type":"string"},"template":{"type":"string"},"templateParams":{"type":"object"},"required":{"type":"boolean"},"readonly":{"type":"boolean"},"hint":{"type":"string"},"help":{"type":"string"},"width":{"type":"string","enum":["s","m","full"]},"group":{"type":"string"},"placeholder":{"type":"string"},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"decimals":{"type":"number"},"currency":{"type":"string"},"currencies":{"type":"array"},"currencyDisplay":{"type":"string","enum":["symbol","code","name"]},"holder":{"type":"string","enum":["any","organization","person"]},"defaultCountry":{"type":"string","pattern":"^[A-Za-z]{2}$"}},"required":["key","label","propertyType"]}},"default":[]},"groups":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"}},"required":["key"]}},"default":[]},"field-host":{"type":"object","default":null},"apply":{"type":"enum","values":["submit","instant","answer"],"default":"submit"},"size":{"type":"enum","values":["1","1/2"],"default":"1"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"labels":{"type":"enum","values":["top","start"],"default":"top"},"footer":{"type":"enum","values":["static","sticky"],"default":"static"},"label":{"type":"string","default":""}},"values":{"value":{"type":"object","default":{}},"mode":{"type":"enum","values":["edit","view"],"default":"edit"},"valid":{"type":"boolean"},"dirty":{"type":"boolean"}},"events":{"input":{"carries":{"key":"string","value":"any"},"x-native":false},"change":{"carries":{"key":"string","value":"any"},"x-native":false},"submit":{"carries":{"value":"object"},"cancelable":true},"answer":{"carries":{"accepted":"boolean","value":{"type":"object","optional":true}},"cancelable":true},"invalid":{"carries":{"fields":"list"}},"cancel":{"carries":{"value":"object"}}},"actions":{"check-validity":{},"reset":{},"refresh-fields":{},"set-errors":{"with":{"errors":"object"}}},"presentation":{"skeleton":{"late":["fields","groups"]}},"host-states":{"data-dirty":"boolean","data-invalid":"boolean","data-mode":"string","data-state":"string"},"css-variables":{"--sf-form-field-gap":{"type":"length","state":"default"},"--sf-form-group-gap":{"type":"length","state":"default"},"--sf-form-label-color":{"type":"color","state":"default"},"--sf-form-summary-background-color":{"type":"color","state":"default"},"--sf-form-footer-background-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.form","tag":"sf-form","version":"1.13.0","kind":"leaf","settings":{"fields":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"propertyType":{"type":"string"},"variant":{"type":"string"},"template":{"type":"string"},"templateParams":{"type":"object"},"required":{"type":"boolean"},"readonly":{"type":"boolean"},"hint":{"type":"string"},"help":{"type":"string"},"width":{"type":"string","enum":["short","medium","full","s","m"]},"group":{"type":"string"},"placeholder":{"type":"string"},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"decimals":{"type":"number"},"currency":{"type":"string"},"currencies":{"type":"array"},"currencyDisplay":{"type":"string","enum":["symbol","code","name"]},"holder":{"type":"string","enum":["any","organization","person"]},"defaultCountry":{"type":"string","pattern":"^[A-Za-z]{2}$"}},"required":["key","label","propertyType"]}},"default":[]},"groups":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"}},"required":["key"]}},"default":[]},"field-host":{"type":"object","default":null},"apply":{"type":"enum","values":["submit","instant","answer"],"default":"submit"},"size":{"type":"enum","values":["1","1/2"],"default":"1"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"labels":{"type":"enum","values":["top","start"],"default":"top"},"footer":{"type":"enum","values":["static","sticky"],"default":"static"},"label":{"type":"string","default":""}},"values":{"value":{"type":"object","default":{}},"mode":{"type":"enum","values":["edit","view"],"default":"edit"},"valid":{"type":"boolean"},"dirty":{"type":"boolean"}},"events":{"input":{"carries":{"key":"string","value":"any"},"x-native":false},"change":{"carries":{"key":"string","value":"any"},"x-native":false},"submit":{"carries":{"value":"object"},"cancelable":true},"answer":{"carries":{"accepted":"boolean","value":{"type":"object","optional":true}},"cancelable":true},"invalid":{"carries":{"fields":"list"}},"cancel":{"carries":{"value":"object"}}},"actions":{"check-validity":{},"reset":{},"refresh-fields":{},"set-errors":{"with":{"errors":"object"}}},"presentation":{"skeleton":{"late":["fields","groups"]}},"host-states":{"data-dirty":"boolean","data-invalid":"boolean","data-mode":"string","data-state":"string"},"css-variables":{"--sf-form-field-gap":{"type":"length","state":"default"},"--sf-form-group-gap":{"type":"length","state":"default"},"--sf-form-label-color":{"type":"color","state":"default"},"--sf-form-summary-background-color":{"type":"color","state":"default"},"--sf-form-footer-background-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

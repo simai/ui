@@ -5541,6 +5541,10 @@ SF.RuleLoader['cl-progress-ring'] = {
   {
     name: 'cl-avatar',
     lazy: true
+  }, // The value as a tooltip where the middle holds no percentage (show-text up to size 1, DEV msg-1c3a4f0b): the tooltip composition, fetched when such a ring draws.
+  {
+    name: 'tooltip',
+    lazy: true
   }]
 };
 
@@ -9395,42 +9399,42 @@ SF.RuleLoader['max-width-ext/xxl'] = new RegExp("^(?:xxl:max-w-(?:a(?:0|1|2|3|4|
 /***/ "8d9da71479a5"
 () {
 
-SF.RuleLoader['max-width/default'] = new RegExp("^(?:max-w-(?:0|f(?:it|ull)|lg|m(?:ax|d|in)|none|prose|s(?:creen|m)|x(?:l|xl)))(?![\\s\\S])");
+SF.RuleLoader['max-width/default'] = new RegExp("^(?:max-w-(?:0|f(?:it|ull)|lg|m(?:ax|d|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)|none|prose|s(?:creen|m)|x(?:l|xl)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "15a86da3e6b7"
 () {
 
-SF.RuleLoader['max-width/lg'] = new RegExp("^(?:lg:max-w-(?:0|f(?:it|ull)|lg|m(?:ax|d|in)|none|prose|s(?:creen|m)|x(?:l|xl)))(?![\\s\\S])");
+SF.RuleLoader['max-width/lg'] = new RegExp("^(?:lg:max-w-(?:0|f(?:it|ull)|lg|m(?:ax|d|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)|none|prose|s(?:creen|m)|x(?:l|xl)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "5fba542f9c68"
 () {
 
-SF.RuleLoader['max-width/md'] = new RegExp("^(?:md:max-w-(?:0|f(?:it|ull)|lg|m(?:ax|d|in)|none|prose|s(?:creen|m)|x(?:l|xl)))(?![\\s\\S])");
+SF.RuleLoader['max-width/md'] = new RegExp("^(?:md:max-w-(?:0|f(?:it|ull)|lg|m(?:ax|d|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)|none|prose|s(?:creen|m)|x(?:l|xl)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "35331f8f8845"
 () {
 
-SF.RuleLoader['max-width/sm'] = new RegExp("^(?:sm:max-w-(?:0|f(?:it|ull)|lg|m(?:ax|d|in)|none|prose|s(?:creen|m)|x(?:l|xl)))(?![\\s\\S])");
+SF.RuleLoader['max-width/sm'] = new RegExp("^(?:sm:max-w-(?:0|f(?:it|ull)|lg|m(?:ax|d|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)|none|prose|s(?:creen|m)|x(?:l|xl)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "94a72085a7b0"
 () {
 
-SF.RuleLoader['max-width/xl'] = new RegExp("^(?:xl:max-w-(?:0|f(?:it|ull)|lg|m(?:ax|d|in)|none|prose|s(?:creen|m)|x(?:l|xl)))(?![\\s\\S])");
+SF.RuleLoader['max-width/xl'] = new RegExp("^(?:xl:max-w-(?:0|f(?:it|ull)|lg|m(?:ax|d|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)|none|prose|s(?:creen|m)|x(?:l|xl)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "6c67cbf7de27"
 () {
 
-SF.RuleLoader['max-width/xxl'] = new RegExp("^(?:xxl:max-w-(?:0|f(?:it|ull)|lg|m(?:ax|d|in)|none|prose|s(?:creen|m)|x(?:l|xl)))(?![\\s\\S])");
+SF.RuleLoader['max-width/xxl'] = new RegExp("^(?:xxl:max-w-(?:0|f(?:it|ull)|lg|m(?:ax|d|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)|none|prose|s(?:creen|m)|x(?:l|xl)))(?![\\s\\S])");
 
 /***/ },
 
@@ -9479,42 +9483,42 @@ SF.RuleLoader['min-height/xxl'] = new RegExp("^(?:xxl:min-h-(?:0|f(?:it|ull)|m(?
 /***/ "6a65b12b8205"
 () {
 
-SF.RuleLoader['min-width/default'] = new RegExp("^(?:min-w-(?:0|f(?:it|ull)|m(?:ax|in)))(?![\\s\\S])");
+SF.RuleLoader['min-width/default'] = new RegExp("^(?:min-w-(?:0|f(?:it|ull)|m(?:ax|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "8d8810c990b5"
 () {
 
-SF.RuleLoader['min-width/lg'] = new RegExp("^(?:lg:min-w-(?:0|f(?:it|ull)|m(?:ax|in)))(?![\\s\\S])");
+SF.RuleLoader['min-width/lg'] = new RegExp("^(?:lg:min-w-(?:0|f(?:it|ull)|m(?:ax|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "d2d18ca144df"
 () {
 
-SF.RuleLoader['min-width/md'] = new RegExp("^(?:md:min-w-(?:0|f(?:it|ull)|m(?:ax|in)))(?![\\s\\S])");
+SF.RuleLoader['min-width/md'] = new RegExp("^(?:md:min-w-(?:0|f(?:it|ull)|m(?:ax|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "512a4180a0c6"
 () {
 
-SF.RuleLoader['min-width/sm'] = new RegExp("^(?:sm:min-w-(?:0|f(?:it|ull)|m(?:ax|in)))(?![\\s\\S])");
+SF.RuleLoader['min-width/sm'] = new RegExp("^(?:sm:min-w-(?:0|f(?:it|ull)|m(?:ax|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "3c08e03cc082"
 () {
 
-SF.RuleLoader['min-width/xl'] = new RegExp("^(?:xl:min-w-(?:0|f(?:it|ull)|m(?:ax|in)))(?![\\s\\S])");
+SF.RuleLoader['min-width/xl'] = new RegExp("^(?:xl:min-w-(?:0|f(?:it|ull)|m(?:ax|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "da3a9d2378b9"
 () {
 
-SF.RuleLoader['min-width/xxl'] = new RegExp("^(?:xxl:min-w-(?:0|f(?:it|ull)|m(?:ax|in)))(?![\\s\\S])");
+SF.RuleLoader['min-width/xxl'] = new RegExp("^(?:xxl:min-w-(?:0|f(?:it|ull)|m(?:ax|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)))(?![\\s\\S])");
 
 /***/ },
 
@@ -11289,42 +11293,42 @@ SF.RuleLoader['width-ext/xxl'] = new RegExp("^(?:xxl:w-(?:1(?:(?:0|1|2|3|4|5|6|7
 /***/ "49d148529fc7"
 () {
 
-SF.RuleLoader['width/default'] = new RegExp("^(?:w-(?:0|1(?:\\/(?:1(?:2)?|2|3|4|5|6)|0\\/12|1\\/12)|2\\/(?:12|3|4|5|6)|3\\/(?:12|4|5|6)|4\\/(?:12|5|6)|5\\/(?:12|6)|6\\/12|7\\/12|8\\/12|9\\/12|auto|f(?:it|ull)|m(?:ax|in)|px|screen(?:-(?:dynamic|large|small))?))(?![\\s\\S])");
+SF.RuleLoader['width/default'] = new RegExp("^(?:w-(?:0|1(?:\\/(?:1(?:2)?|2|3|4|5|6)|0\\/12|1\\/12)|2\\/(?:12|3|4|5|6)|3\\/(?:12|4|5|6)|4\\/(?:12|5|6)|5\\/(?:12|6)|6\\/12|7\\/12|8\\/12|9\\/12|auto|f(?:it|ull)|m(?:ax|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)|px|screen(?:-(?:dynamic|large|small))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "74d19de73e52"
 () {
 
-SF.RuleLoader['width/lg'] = new RegExp("^(?:lg:w-(?:0|1(?:\\/(?:1(?:2)?|2|3|4|5|6)|0\\/12|1\\/12)|2\\/(?:12|3|4|5|6)|3\\/(?:12|4|5|6)|4\\/(?:12|5|6)|5\\/(?:12|6)|6\\/12|7\\/12|8\\/12|9\\/12|auto|f(?:it|ull)|m(?:ax|in)|px|screen(?:-(?:dynamic|large|small))?))(?![\\s\\S])");
+SF.RuleLoader['width/lg'] = new RegExp("^(?:lg:w-(?:0|1(?:\\/(?:1(?:2)?|2|3|4|5|6)|0\\/12|1\\/12)|2\\/(?:12|3|4|5|6)|3\\/(?:12|4|5|6)|4\\/(?:12|5|6)|5\\/(?:12|6)|6\\/12|7\\/12|8\\/12|9\\/12|auto|f(?:it|ull)|m(?:ax|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)|px|screen(?:-(?:dynamic|large|small))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "77d32867e837"
 () {
 
-SF.RuleLoader['width/md'] = new RegExp("^(?:md:w-(?:0|1(?:\\/(?:1(?:2)?|2|3|4|5|6)|0\\/12|1\\/12)|2\\/(?:12|3|4|5|6)|3\\/(?:12|4|5|6)|4\\/(?:12|5|6)|5\\/(?:12|6)|6\\/12|7\\/12|8\\/12|9\\/12|auto|f(?:it|ull)|m(?:ax|in)|px|screen(?:-(?:dynamic|large|small))?))(?![\\s\\S])");
+SF.RuleLoader['width/md'] = new RegExp("^(?:md:w-(?:0|1(?:\\/(?:1(?:2)?|2|3|4|5|6)|0\\/12|1\\/12)|2\\/(?:12|3|4|5|6)|3\\/(?:12|4|5|6)|4\\/(?:12|5|6)|5\\/(?:12|6)|6\\/12|7\\/12|8\\/12|9\\/12|auto|f(?:it|ull)|m(?:ax|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)|px|screen(?:-(?:dynamic|large|small))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "a616dc541848"
 () {
 
-SF.RuleLoader['width/sm'] = new RegExp("^(?:sm:w-(?:0|1(?:\\/(?:1(?:2)?|2|3|4|5|6)|0\\/12|1\\/12)|2\\/(?:12|3|4|5|6)|3\\/(?:12|4|5|6)|4\\/(?:12|5|6)|5\\/(?:12|6)|6\\/12|7\\/12|8\\/12|9\\/12|auto|f(?:it|ull)|m(?:ax|in)|px|screen(?:-(?:dynamic|large|small))?))(?![\\s\\S])");
+SF.RuleLoader['width/sm'] = new RegExp("^(?:sm:w-(?:0|1(?:\\/(?:1(?:2)?|2|3|4|5|6)|0\\/12|1\\/12)|2\\/(?:12|3|4|5|6)|3\\/(?:12|4|5|6)|4\\/(?:12|5|6)|5\\/(?:12|6)|6\\/12|7\\/12|8\\/12|9\\/12|auto|f(?:it|ull)|m(?:ax|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)|px|screen(?:-(?:dynamic|large|small))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "ed15b626f4e6"
 () {
 
-SF.RuleLoader['width/xl'] = new RegExp("^(?:xl:w-(?:0|1(?:\\/(?:1(?:2)?|2|3|4|5|6)|0\\/12|1\\/12)|2\\/(?:12|3|4|5|6)|3\\/(?:12|4|5|6)|4\\/(?:12|5|6)|5\\/(?:12|6)|6\\/12|7\\/12|8\\/12|9\\/12|auto|f(?:it|ull)|m(?:ax|in)|px|screen(?:-(?:dynamic|large|small))?))(?![\\s\\S])");
+SF.RuleLoader['width/xl'] = new RegExp("^(?:xl:w-(?:0|1(?:\\/(?:1(?:2)?|2|3|4|5|6)|0\\/12|1\\/12)|2\\/(?:12|3|4|5|6)|3\\/(?:12|4|5|6)|4\\/(?:12|5|6)|5\\/(?:12|6)|6\\/12|7\\/12|8\\/12|9\\/12|auto|f(?:it|ull)|m(?:ax|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)|px|screen(?:-(?:dynamic|large|small))?))(?![\\s\\S])");
 
 /***/ },
 
 /***/ "49c8cef5e55b"
 () {
 
-SF.RuleLoader['width/xxl'] = new RegExp("^(?:xxl:w-(?:0|1(?:\\/(?:1(?:2)?|2|3|4|5|6)|0\\/12|1\\/12)|2\\/(?:12|3|4|5|6)|3\\/(?:12|4|5|6)|4\\/(?:12|5|6)|5\\/(?:12|6)|6\\/12|7\\/12|8\\/12|9\\/12|auto|f(?:it|ull)|m(?:ax|in)|px|screen(?:-(?:dynamic|large|small))?))(?![\\s\\S])");
+SF.RuleLoader['width/xxl'] = new RegExp("^(?:xxl:w-(?:0|1(?:\\/(?:1(?:2)?|2|3|4|5|6)|0\\/12|1\\/12)|2\\/(?:12|3|4|5|6)|3\\/(?:12|4|5|6)|4\\/(?:12|5|6)|5\\/(?:12|6)|6\\/12|7\\/12|8\\/12|9\\/12|auto|f(?:it|ull)|m(?:ax|easure-(?:2(?:0|8)|36|44|52|64|80|96)|in)|px|screen(?:-(?:dynamic|large|small))?))(?![\\s\\S])");
 
 /***/ },
 

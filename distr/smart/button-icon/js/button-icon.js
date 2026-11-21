@@ -1261,7 +1261,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 const ICON_BUTTON_SIZES = new Set(['1/3', '1/2', '1', '2', '3']); // The drawing class of each appearance; surface is resolved to tonal by the
 // element (C15), a value off the list draws the default. Ghost is drawn by
 // sf-icon-button--ghost (component.icon-buttons 1.14.0, RG-IB-2); plain is
-// the plate-less look (C201). The former
+// the plate-less look (C201), toggle the quiet on/off look whose state is
+// the plate and a ring, never the glyph (C393). The former
 // --link is an alias the runtime notes, so the element never writes it.
 
 const ICON_BUTTON_LOOK = {
@@ -1271,7 +1272,8 @@ const ICON_BUTTON_LOOK = {
   ghost: 'ghost',
   link: 'ghost',
   surface: 'tonal',
-  plain: 'plain'
+  plain: 'plain',
+  toggle: 'toggle'
 };
 
 function statusClasses(status, scheme) {
@@ -1329,14 +1331,17 @@ function renderIconButtonTemplate(context) {
   // so aria-pressed is not written as well (docs review R028, rule C12).
 
   const name = context.cycleView ? context.cycleView.name : context.pressed === true && context.labelPressed ? context.labelPressed : ariaLabel;
-  const announcesPressed = context.pressed !== undefined && !context.labelPressed; // Loading shows the spinner in place of the icon, at the icon's size
+  const announcesPressed = context.pressed !== undefined && !context.labelPressed; // The toggle look keeps the glyph's outline weight in both states (owner
+  // decision C393): its state is the plate and the ring.
+
+  const toggleLook = ICON_BUTTON_LOOK[appearance || type] === 'toggle'; // Loading shows the spinner in place of the icon, at the icon's size
   // (simai/ui-source#10); the button keeps its name and says aria-busy.
 
   const iconContent = loading ? (0,_component_spinner_js_spinner_draw__WEBPACK_IMPORTED_MODULE_2__.createInlineSpinner)({
     className: 'sf-icon-button-spinner'
   }) : context.component?.hasSlotContent?.('icon') ? context.component.getSlotContent('icon') : (kind ?? variant) === 'close' ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
                             <sf-button-close root-class="pointer-events-none" size="${size || '1'}"></sf-button-close>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                            <sf-icon filled="${filled || context.pressed === true || Boolean(context.cycleView?.pressedLook)}" root-class="pointer-events-none" icon="${context.cycleView?.icon || icon}" weight="400" aria-hidden="true"></sf-icon>`; // href (1.9.0, decision C51): a link with the icon button's look, as
+                            <sf-icon filled="${filled || !toggleLook && (context.pressed === true || Boolean(context.cycleView?.pressedLook))}" root-class="pointer-events-none" icon="${context.cycleView?.icon || icon}" weight="400" aria-hidden="true"></sf-icon>`; // href (1.9.0, decision C51): a link with the icon button's look, as
   // sf-button's -- the quiet «Скачать <name>» of a table row. Disabled or
   // loading, the link has no href, so it is not reached or followed, and
   // says aria-disabled; pressed and native-type do not apply to a link.
@@ -2172,7 +2177,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-butto
 /***/ "79f8b9b70d88"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.13.11","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost","plain"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"download":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"},"pressed":{"type":"boolean","optional":true},"label-pressed":{"type":"string","default":""},"tooltip":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"value":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"},"--sf-icon-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-icon-button-pressed-color":{"type":"color","state":"pressed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.button-icon","tag":"sf-button-icon","version":"1.14.0","kind":"leaf","settings":{"kind":{"type":"enum","values":["icon","close"],"default":"icon"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"appearance":{"type":"enum","values":["default","tonal","outline","ghost","plain","toggle"],"default":"default"},"scheme":{"type":"enum","values":["primary","on-surface","on-surface-variant"],"default":"primary"},"status":{"type":"enum","values":["","danger"],"default":""},"segment":{"type":"enum","values":["","start","middle","end"],"default":""},"icon":{"type":"icon","default":"add"},"filled":{"type":"boolean","default":false},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"loading":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"native-type":{"type":"enum","values":["button","submit","reset"],"default":"button"},"href":{"type":"string","default":""},"target":{"type":"string","default":""},"rel":{"type":"string","default":""},"download":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""},"button-attributes":{"type":"object"},"pressed":{"type":"boolean","optional":true},"label-pressed":{"type":"string","default":""},"tooltip":{"type":"string","default":""},"cycle":{"type":"list","default":[],"of":{"value":"string","label":"string","icon":{"type":"icon","optional":true},"lang":{"type":"string","optional":true},"pressed":{"type":"boolean","optional":true}}},"theme-cycle":{"type":"string","optional":true},"value":{"type":"string","default":""}},"values":{},"events":{"change":{"carries":{"previous":"string","value":"string","item":{"type":"object","nullable":true}}}},"actions":{},"css-variables":{"--sf-icon-button-background-color":{"type":"color","state":"default"},"--sf-icon-button-color":{"type":"color","state":"default"},"--sf-icon-button-border-color":{"type":"color","state":"default"},"--sf-icon-button-border-width":{"type":"length","state":"default"},"--sf-icon-button-radius":{"type":"length","state":"default"},"--sf-icon-button-padding-inline":{"type":"length","state":"default"},"--sf-icon-button-padding-block":{"type":"length","state":"default"},"--sf-icon-button-pressed-background-color":{"type":"color","state":"pressed"},"--sf-icon-button-pressed-color":{"type":"color","state":"pressed"}}}');
 
 /***/ },
 

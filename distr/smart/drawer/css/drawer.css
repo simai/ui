@@ -82,7 +82,10 @@
     inset-block: var(--sf-drawer-block-start, 0) 0;
     display: flex;
     flex-direction: column;
-    width: min(var(--sf-drawer-width, var(--sf-g2)), 100vi);
+    /* A9 (DEV msg-6aead3f3): the step (or width) is the content's panel, its
+       content inside the window inset (H6); an announced aside (aside-width,
+       e.g. a sections column) is added on top of it, never taken from it. */
+    width: min(var(--sf-drawer-width, var(--sf-measure-52)) + var(--sf-drawer-aside-width, calc(var(--sf-px) * 0)), 100vi);
     max-width: 100vi;
     /* The block size is the containing block's, from inset-block: 0: the
        viewport on a page, and the box of an ancestor that contains its fixed
@@ -135,12 +138,15 @@
   /* A floating panel is the modal place (C20): the popup surface, the modal
      shadow, the scrim; a column of the page takes the page's (below). */
   /* The drawer is on the shared size ladder. The words small, large and medium
-     are legacy values the component still accepts; it renders the step. */
+     are legacy values the component still accepts; it renders the step. The
+     widths are steps of the width ladder in characters (owner decision C396,
+     2026-11-19): 1/2, 1 and 2 take 44, 52 and 64 characters (352, 416, 512px
+     at text 16; 20, 24 and 30rem before), following the text. */
   .sf-drawer[data-sf-drawer-size="1/2"] {
-    --sf-drawer-width: var(--sf-g0);
+    --sf-drawer-width: var(--sf-measure-44);
   }
   .sf-drawer[data-sf-drawer-size="2"] {
-    --sf-drawer-width: var(--sf-g5);
+    --sf-drawer-width: var(--sf-measure-64);
   }
   .sf-drawer[data-sf-drawer-size=full] {
     --sf-drawer-width: 100vi;
@@ -512,6 +518,78 @@
               margin-inline-start: 0;
     }
   }
+  /* D-SCROLL (Larena audit, DEV 2026-11-20): the answers the content writes at
+     its end -- an sf-confirm question's, a form's last row of buttons, the
+     body's own last row of buttons (or its one wrapper's) -- stay
+     at the panel's foot while the body scrolls under them, at every width; a
+     panel with its own foot (slot footer) keeps that one alone. Core
+     mix/_mix__window-footer.scss content-actions, shared with sf-modal's side
+     window. */
+  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body .sf-confirm--window > .sf-confirm__footer {
+    position: sticky;
+    bottom: 0;
+    inset-block-end: 0;
+    z-index: 1;
+    padding-top: var(--sf-space-1);
+    padding-bottom: var(--sf-drawer--inset);
+    padding-block: var(--sf-space-1) var(--sf-drawer--inset);
+    margin-bottom: calc(-1 * var(--sf-drawer--inset));
+    -webkit-margin-after: calc(-1 * var(--sf-drawer--inset));
+            margin-block-end: calc(-1 * var(--sf-drawer--inset));
+  }
+  .sf-drawer[data-sf-drawer-more-end] .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body .sf-confirm--window > .sf-confirm__footer {
+    box-shadow: 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
+  }
+  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+    position: sticky;
+    bottom: 0;
+    inset-block-end: 0;
+    z-index: 1;
+    padding-top: var(--sf-space-1);
+    padding-bottom: var(--sf-drawer--inset);
+    padding-block: var(--sf-space-1) var(--sf-drawer--inset);
+    margin-bottom: calc(-1 * var(--sf-drawer--inset));
+    -webkit-margin-after: calc(-1 * var(--sf-drawer--inset));
+            margin-block-end: calc(-1 * var(--sf-drawer--inset));
+  }
+  .sf-drawer[data-sf-drawer-more-end] .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+    box-shadow: 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
+  }
+  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+    position: sticky;
+    bottom: 0;
+    inset-block-end: 0;
+    z-index: 1;
+    padding-top: var(--sf-space-1);
+    padding-bottom: var(--sf-drawer--inset);
+    padding-block: var(--sf-space-1) var(--sf-drawer--inset);
+    margin-bottom: calc(-1 * var(--sf-drawer--inset));
+    -webkit-margin-after: calc(-1 * var(--sf-drawer--inset));
+            margin-block-end: calc(-1 * var(--sf-drawer--inset));
+  }
+  .sf-drawer[data-sf-drawer-more-end] .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+    box-shadow: 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
+  }
+  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+    position: sticky;
+    bottom: 0;
+    inset-block-end: 0;
+    z-index: 1;
+    padding-top: var(--sf-space-1);
+    padding-bottom: var(--sf-drawer--inset);
+    padding-block: var(--sf-space-1) var(--sf-drawer--inset);
+    margin-bottom: calc(-1 * var(--sf-drawer--inset));
+    -webkit-margin-after: calc(-1 * var(--sf-drawer--inset));
+            margin-block-end: calc(-1 * var(--sf-drawer--inset));
+  }
+  .sf-drawer[data-sf-drawer-more-end] .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+    box-shadow: 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
+  }
+  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body .sf-confirm--window > * + .sf-confirm__footer {
+    margin-top: calc(var(--sf-space-3) - var(--sf-space-1));
+    -webkit-margin-before: calc(var(--sf-space-3) - var(--sf-space-1));
+            margin-block-start: calc(var(--sf-space-3) - var(--sf-space-1));
+  }
   /* A wrapper the page writes around its buttons (<div slot="footer">) draws
      no box: its buttons are the foot's items, so the gap, the order and the
      halves on a phone are the foot's. */
@@ -602,7 +680,7 @@
        far side of the window. */
     --sf-drawer-edge-inset: calc(
       var(--sf-drawer-stack-depth, 0) * var(--sf-drawer-stack-offset)
-      + min(var(--sf-drawer-width, var(--sf-g2)), 100vi)
+      + min(calc(var(--sf-drawer-width, var(--sf-measure-52)) + var(--sf-drawer-aside-width, calc(var(--sf-px) * 0))), 100vi)
       + var(--sf-space-1\/2)
     );
     position: absolute;
@@ -693,6 +771,7 @@
   @media not all and (min-width: 44rem) {
     .sf-drawer:not([data-sf-drawer-placement=bottom]):not([data-sf-drawer-column=true]) .sf-drawer-panel {
       --sf-drawer-width: 100%;
+      --sf-drawer-aside-width: calc(var(--sf-px) * 0);
       --sf-drawer--edge-start: calc(var(--sf-px) * 0);
       --sf-drawer--edge-end: calc(var(--sf-px) * 0);
       width: 100%;
@@ -853,10 +932,11 @@
     right: 0;
     inset-inline: 0;
     width: 100%;
-    /* The sheet's width stops at 44rem (--sf-h1, the md step), centred, as
+    /* The sheet's width stops at 96 characters (--sf-measure-96, C396; 44rem,
+       the md step, before), centred, as
        sf-settings' phone sheet (C106 (8), C32); on a desktop it stretched to
        the window's width (study DR-10). The screen's width below that. */
-    max-width: var(--sf-h1);
+    max-width: var(--sf-measure-96);
     margin-left: auto;
     margin-right: auto;
     margin-inline: auto;
@@ -1165,6 +1245,18 @@
   }
   .sf-drawer-foot {
     background: inherit;
+  }
+  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body .sf-confirm--window > .sf-confirm__footer {
+    background-color: var(--sf-surface-place);
+  }
+  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+    background-color: var(--sf-surface-place);
+  }
+  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+    background-color: var(--sf-surface-place);
+  }
+  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+    background-color: var(--sf-surface-place);
   }
   .sf-drawer:not([data-sf-drawer-column=true]):not([data-sf-drawer-edge-in-head]) .sf-drawer-edge {
     --sf-primary: var(--sf-white);

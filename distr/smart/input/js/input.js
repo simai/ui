@@ -140,9 +140,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
+/* harmony export */   FIELD_WIDTHS: () => (/* binding */ FIELD_WIDTHS),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
+/* harmony export */   fieldWidth: () => (/* binding */ fieldWidth),
+/* harmony export */   fieldWidthClass: () => (/* binding */ fieldWidthClass),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
 /* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
@@ -233,6 +236,30 @@ function retireFieldSizeClass(root, block) {
     if (!root.classList.contains(name)) continue;
     root.classList.replace(name, `${block}--size-${fieldSize(retired, block)}`);
   }
+} // How wide a field is (owner decision C396, WM-4): the value it is made for,
+// in characters of the width ladder, read from the field's width setting --
+// short (20: a date, a number, a code), medium (28: a name, a phone) and long
+// (44: a path, an e-mail, an address); the roles --sf-field--width-short,
+// -medium and -long stand on the steps --sf-measure-20, -28 and -44 (core
+// figma_measure.scss) and follow the text size, the density and the phone.
+// It is the field's widest: in a narrower container the field is the
+// container's width, as without it. Empty or any other value: the whole
+// width, as every field drew before. The class is core's
+// (core/scss/_sf_css__field_width.scss), so a field whose own sheet has not
+// come yet already stands at its width.
+
+const FIELD_WIDTHS = Object.freeze(['short', 'medium', 'long']);
+/** A field width: short, medium or long, else '' (the whole width). */
+
+function fieldWidth(value) {
+  const width = String(value ?? '').trim().toLowerCase();
+  return FIELD_WIDTHS.includes(width) ? width : '';
+}
+/** The root class of a field width, or '' for the whole width. */
+
+function fieldWidthClass(value) {
+  const width = fieldWidth(value);
+  return width ? `sf-field--width-${width}` : '';
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -3213,12 +3240,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f39dc444b059");
 /* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e138a730fd7c");
-/* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("778671c79fa6");
-/* harmony import */ var _component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("151a293c8c90");
-/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("38b38b744888");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_3__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("778671c79fa6");
+/* harmony import */ var _component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("151a293c8c90");
+/* harmony import */ var _default_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38b38b744888");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 
@@ -3298,8 +3327,8 @@ function renderInputTemplate(context) {
   const {
     keys: shortcutKeys,
     join: shortcutJoin
-  } = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_4__.shortcutView)(shortcut);
-  const keyShortcuts = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_4__.ariaKeyShortcuts)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_4__.parseShortcut)(shortcut));
+  } = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.shortcutView)(shortcut);
+  const keyShortcuts = (0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.ariaKeyShortcuts)((0,_component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_5__.parseShortcut)(shortcut));
   const maskLazyValue = maskLazy === '' ? '' : String(maskLazy); // A number field (1.5.0) takes the native range and step; other types do
   // not carry them.
 
@@ -3310,7 +3339,7 @@ function renderInputTemplate(context) {
   // empty field shows, in the placeholder's ink -- never as its value.
 
   const shownPlaceholder = context.inheritedValue || placeholder;
-  const inheritedSlot = (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_3__.renderInheritedSlot)(context.component, {
+  const inheritedSlot = (0,_helpers_inherited_value__WEBPACK_IMPORTED_MODULE_4__.renderInheritedSlot)(context.component, {
     size,
     disabled: disabled || readonly
   });
@@ -3363,7 +3392,9 @@ function renderInputTemplate(context) {
   });
   const rootClasses = ['sf-input', field.invalid ? 'error' : '', `sf-input--size-${size}`, // plain (C313 (4)) is drawn on the bordered look, which gives it its
   // type and states; its own class takes the frame away.
-  `sf-input--${appearance === 'plain' ? 'bordered sf-input--plain' : appearance ?? type}`, countOver ? 'sf-input--over' : '', radius && radius !== 'default' ? `sf-input--radius-${radius}` : '', rootClass, 'flex', 'flex-col'];
+  `sf-input--${appearance === 'plain' ? 'bordered sf-input--plain' : appearance ?? type}`, countOver ? 'sf-input--over' : '', radius && radius !== 'default' ? `sf-input--radius-${radius}` : '', rootClass, 'flex', 'flex-col', // The field's width (C396, WM-4): its class only when it has one, so a
+  // field without the setting draws the same markup as before.
+  ...[(0,_component_field_size__WEBPACK_IMPORTED_MODULE_3__.fieldWidthClass)(context.width)].filter(Boolean)];
 
   if (type === 'hidden') {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<input
@@ -3619,7 +3650,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "fc92d2bbc3ce"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.16.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"appearance":{"type":"enum","values":["bordered","filled","hidden","plain"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url","number"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"counter":{"type":"boolean","default":false},"pattern":{"type":"string","default":""},"min":{"type":"string","default":""},"max":{"type":"string","default":""},"step":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-start":{"type":"string","optional":true},"text-end":{"type":"string","optional":true},"shortcut":{"type":"string","default":""},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input","tag":"sf-input","version":"1.17.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"width":{"type":"enum","values":["","short","medium","long"],"default":""},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"appearance":{"type":"enum","values":["bordered","filled","hidden","plain"],"default":"bordered"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"input-type":{"type":"enum","values":["text","email","password","search","tel","url","number"],"default":"text"},"autocomplete":{"type":"string","default":""},"inputmode":{"type":"enum","values":["","none","text","tel","url","email","numeric","decimal","search"],"default":""},"minlength":{"type":"string","default":""},"maxlength":{"type":"string","default":""},"counter":{"type":"boolean","default":false},"pattern":{"type":"string","default":""},"min":{"type":"string","default":""},"max":{"type":"string","default":""},"step":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"default-value":{"type":"string","default":""},"name":{"type":"string","default":""},"icon-start":{"type":"icon","optional":true},"text-start":{"type":"string","optional":true},"text-end":{"type":"string","optional":true},"shortcut":{"type":"string","default":""},"hint-icon":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"mask":{"type":"boolean","default":false},"mask-pattern":{"type":"string","default":""},"mask-lazy":{"type":"string","default":""},"mask-placeholder-char":{"type":"string","default":""},"mask-options":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","type-mismatch","pattern-mismatch","too-short","too-long","custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-input-background-color":{"type":"color","state":"default"},"--sf-input-border-color":{"type":"color","state":"default"},"--sf-input-color":{"type":"color","state":"default"},"--sf-input-radius":{"type":"length","state":"default"},"--sf-input-padding-inline":{"type":"length","state":"default"},"--sf-input-padding-block":{"type":"length","state":"default"},"--sf-input-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

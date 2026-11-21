@@ -22,5 +22,29 @@
     .md\:min-w-0 {
       min-width: 0;
     }
+    .md\:min-w-measure-20 {
+      min-width: var(--sf-measure-20);
+    }
+    .md\:min-w-measure-28 {
+      min-width: var(--sf-measure-28);
+    }
+    .md\:min-w-measure-36 {
+      min-width: var(--sf-measure-36);
+    }
+    .md\:min-w-measure-44 {
+      min-width: var(--sf-measure-44);
+    }
+    .md\:min-w-measure-52 {
+      min-width: var(--sf-measure-52);
+    }
+    .md\:min-w-measure-64 {
+      min-width: var(--sf-measure-64);
+    }
+    .md\:min-w-measure-80 {
+      min-width: var(--sf-measure-80);
+    }
+    .md\:min-w-measure-96 {
+      min-width: var(--sf-measure-96);
+    }
   }
 }

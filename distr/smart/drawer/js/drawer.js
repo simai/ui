@@ -326,10 +326,11 @@ const DRAWER_SELECTOR = 'sf-drawer'; // The edge beside the panel and the foot u
 // record), filled the same way.
 
 const DRAWER_AREAS = ['edge', 'footer', 'header-action']; // The width ladder (owner decision C157 (2)): size, the token the sheet gives
-// the step, the step in words. A host width that is none of them is still
+// the step, the step in words. The steps are widths in characters since owner
+// decision C396 (2026-11-19): 44, 52 and 64 (20, 24 and 30rem before). A host width that is none of them is still
 // drawn until the date and said once (noteOffLadderWidth).
 
-const LADDER_WIDTHS = [['1/2', 'var(--sf-g0)', '20rem'], ['1', 'var(--sf-g2)', '24rem'], ['2', 'var(--sf-g5)', '30rem']];
+const LADDER_WIDTHS = [['1/2', 'var(--sf-measure-44)', '44 characters'], ['1', 'var(--sf-measure-52)', '52 characters'], ['2', 'var(--sf-measure-64)', '64 characters']];
 const OFF_LADDER_SINCE = '2026-11-15';
 const OFF_LADDER_UNTIL = '2027-01-01';
 const AREA_SELECTORS = [['edge', '[data-sf-drawer-edge]'], ['footer', '[data-sf-drawer-foot]'], ['header-action', '[data-sf-drawer-action]']];
@@ -711,6 +712,10 @@ class SfDrawer extends DrawerElement {
         default: ''
       },
       width: {
+        default: ''
+      },
+      asideWidth: {
+        attribute: 'aside-width',
         default: ''
       },
       stackOffset: {
@@ -1267,6 +1272,9 @@ class SfDrawer extends DrawerElement {
       label: this.getAttribute('label') || '',
       closeLabel: this.getAttribute('close-label') || this.defaultCloseLabel,
       width: this.getAttribute('width') || '',
+      // A9 (DEV msg-6aead3f3): an announced aside column, added on top of the
+      // step that measures the content, never taken from it.
+      asideWidth: (this.getAttribute('aside-width') || '').trim(),
       stackOffset: this.stackOffset,
       gutter: this.gutter,
       zIndex: this.drawerZIndex,
@@ -1550,7 +1558,7 @@ class SfDrawer extends DrawerElement {
         ></sf-button-close>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div
       class=${joinClasses('sf-drawer', context.open && 'is-open', context.rootClass)}
-      style=${`z-index:${context.zIndex};${context.width ? `--sf-drawer-width:${context.width};` : ''}${context.stackOffset ? `--sf-drawer-stack-offset:${context.stackOffset};` : ''}${context.blockStart ? `--sf-drawer-block-start:${context.blockStart};` : ''}${context.rootStyle || ''}`}
+      style=${`z-index:${context.zIndex};${context.width ? `--sf-drawer-width:${context.width};` : ''}${context.asideWidth ? `--sf-drawer-aside-width:${context.asideWidth};` : ''}${context.stackOffset ? `--sf-drawer-stack-offset:${context.stackOffset};` : ''}${context.blockStart ? `--sf-drawer-block-start:${context.blockStart};` : ''}${context.rootStyle || ''}`}
       data-sf-drawer-root
       data-sf-drawer-id=${context.drawerId}
       data-sf-drawer-placement=${context.placement}
@@ -1564,7 +1572,7 @@ class SfDrawer extends DrawerElement {
       <div class=${joinClasses('sf-drawer-overlay', context.overlayClass)} data-sf-drawer-overlay ?hidden=${!context.modal || !context.overlay}></div>
       <section
         class=${joinClasses('sf-drawer-panel', context.panelClass)}
-        style=${`${context.width ? `--sf-drawer-width:${context.width};` : ''}${context.stackOffset ? `--sf-drawer-stack-offset:${context.stackOffset};` : ''}${context.gutter ? `--sf-drawer-gutter:${context.gutter};` : ''}${context.panelStyle || ''}`}
+        style=${`${context.width ? `--sf-drawer-width:${context.width};` : ''}${context.asideWidth ? `--sf-drawer-aside-width:${context.asideWidth};` : ''}${context.stackOffset ? `--sf-drawer-stack-offset:${context.stackOffset};` : ''}${context.gutter ? `--sf-drawer-gutter:${context.gutter};` : ''}${context.panelStyle || ''}`}
         role=${context.docked && !context.modal ? 'region' : 'dialog'}
         aria-modal=${context.modal ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         aria-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -2006,8 +2014,8 @@ class SfDrawer extends DrawerElement {
     const box = panel.getBoundingClientRect();
     const rtl = getComputedStyle(root).direction === 'rtl';
     return Math.max(0, Math.round(rtl ? box.left - frame.left : frame.right - box.right));
-  } // A host width off the ladder (owner decision C157 (2): 20 · 24 · 30rem
-  // and the whole screen, a width of its own only through sf-resizer within
+  } // A host width off the ladder (owner decision C157 (2): 44 · 52 · 64
+  // characters since C396, and the whole screen, a width of its own only through sf-resizer within
   // 1/2...2) is still drawn -- an old width keeps working until 2027-01-01,
   // as C157's old names do -- and said once per element in the console and
   // in SF.deprecations.list(), naming the steps. The width and the steps are
@@ -2358,7 +2366,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-drawe
 /***/ "0dc7c163a2e8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.drawer","tag":"sf-drawer","version":"1.18.1","kind":"leaf","settings":{"placement":{"type":"enum","values":["left","right","inline-start","inline-end","bottom"],"default":"right"},"snap":{"type":"enum","values":["auto","half","full"],"default":"auto"},"overlay":{"type":"boolean","default":true},"modal":{"type":"boolean","default":true},"docked":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2","full"],"default":"1","x-scale":"width"},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"controlled":{"type":"boolean","default":false},"close-placement":{"type":"enum","values":["inside","outside"],"default":"inside"},"heading":{"type":"string","default":""},"label":{"type":"string","default":""},"close-label":{"type":"string","default-from":"runtime.close-label"},"width":{"type":"string","default":""},"stack-offset":{"type":"string","default":""},"dock-breakpoint":{"type":"string","default":""},"block-start":{"type":"string","default":""},"gutter":{"type":"string","default":""},"z-index":{"type":"string","default":""},"overlay-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"panel-style":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false}},"events":{"open":{"carries":{"drawer-id":"string"},"cancelable":true},"opened":{"carries":{"drawer-id":"string"}},"close":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"snapped":{"carries":{"drawer-id":"string","snap":{"type":"enum","values":["auto","half","full"]}}}},"actions":{"open":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"css-variables":{"--sf-drawer-background":{"type":"color","state":"default"},"--sf-drawer-color":{"type":"color","state":"default"},"--sf-drawer-overlay-background":{"type":"color","state":"overlay"},"--sf-drawer-gutter":{"type":"length","state":"default"},"--sf-drawer-block-start":{"type":"length","state":"default"},"--sf-drawer-dock-breakpoint":{"type":"length","state":"docked"},"--sf-drawer-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.drawer","tag":"sf-drawer","version":"1.20.1","kind":"leaf","settings":{"placement":{"type":"enum","values":["left","right","inline-start","inline-end","bottom"],"default":"right"},"snap":{"type":"enum","values":["auto","half","full"],"default":"auto"},"overlay":{"type":"boolean","default":true},"modal":{"type":"boolean","default":true},"docked":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1","2","full"],"default":"1","x-scale":"width"},"close-on-esc":{"type":"boolean","default":true},"close-on-overlay":{"type":"boolean","default":true},"preserve-scroll-gap":{"type":"boolean","default":true},"show-close":{"type":"boolean","default":true},"controlled":{"type":"boolean","default":false},"close-placement":{"type":"enum","values":["inside","outside"],"default":"inside"},"heading":{"type":"string","default":""},"label":{"type":"string","default":""},"close-label":{"type":"string","default-from":"runtime.close-label"},"width":{"type":"string","default":""},"aside-width":{"type":"string","default":""},"stack-offset":{"type":"string","default":""},"dock-breakpoint":{"type":"string","default":""},"block-start":{"type":"string","default":""},"gutter":{"type":"string","default":""},"z-index":{"type":"string","default":""},"overlay-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"panel-style":{"type":"string","default":""},"header-class":{"type":"string","default":""},"body-class":{"type":"string","default":""},"close-class":{"type":"string","default":""},"unsaved":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true}},"values":{"open":{"type":"boolean","default":false}},"events":{"open":{"carries":{"drawer-id":"string"},"cancelable":true},"opened":{"carries":{"drawer-id":"string"}},"close":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"drawer-id":"string","reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"snapped":{"carries":{"drawer-id":"string","snap":{"type":"enum","values":["auto","half","full"]}}}},"actions":{"open":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"css-variables":{"--sf-drawer-background":{"type":"color","state":"default"},"--sf-drawer-color":{"type":"color","state":"default"},"--sf-drawer-overlay-background":{"type":"color","state":"overlay"},"--sf-drawer-gutter":{"type":"length","state":"default"},"--sf-drawer-block-start":{"type":"length","state":"default"},"--sf-drawer-dock-breakpoint":{"type":"length","state":"docked"},"--sf-drawer-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

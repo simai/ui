@@ -150,13 +150,18 @@
     min-width: 0;
     min-inline-size: 0;
   }
-  .sf-form-field[data-width=s] > .sf-form-control {
-    max-width: 8rem;
-    max-inline-size: 8rem;
+  /* The field width steps (DEV look answer 2026-11-20, C396): short 20 and
+     medium 28 characters of the width ladder (160 / 224 at text 16, 140 / 196
+     in compact density and on a phone), the roles a field's own width setting
+     takes. s and m (8rem, 16rem) were the former names; the code reads them as
+     short and medium until 2027-01-01. */
+  .sf-form-field[data-width=short] > .sf-form-control {
+    max-width: var(--sf-field--width-short);
+    max-inline-size: var(--sf-field--width-short);
   }
-  .sf-form-field[data-width=m] > .sf-form-control {
-    max-width: 16rem;
-    max-inline-size: 16rem;
+  .sf-form-field[data-width=medium] > .sf-form-control {
+    max-width: var(--sf-field--width-medium);
+    max-inline-size: var(--sf-field--width-medium);
   }
   /* C153 (1), (2): the label in the text colour, one step under the value
      (14), 14 on a phone too (below 60rem the 1 step, as sf-input's label);

@@ -219,8 +219,8 @@ class SfSteps extends StepsElement {
       running: this.word('running-label', 'running-label')
     };
   } // The layout drawn: an explicit one, or for auto what the list's own width
-  // allows (checkFit, after each drawing): a row while it fits, else a column,
-  // and under 20rem the count line.
+  // allows (checkFit, after each drawing): under 20rem the count line, under
+  // 30rem a column, above that a row while it fits, else a column.
 
 
   get drawnLayout() {
@@ -460,7 +460,8 @@ class SfSteps extends StepsElement {
 
     if (!fit || !fit.room) return;
     let next = 'row';
-    if (fit.room < _js_items__WEBPACK_IMPORTED_MODULE_3__.COUNT_BELOW_REM * fit.rem) next = 'count'; // A pixel of slack: a row that fits exactly is a row.
+    if (fit.room < _js_items__WEBPACK_IMPORTED_MODULE_3__.COUNT_BELOW_REM * fit.rem) next = 'count'; // Under 30rem a column, as the sheet draws it before this measure.
+    else if (fit.room < _js_items__WEBPACK_IMPORTED_MODULE_3__.COLUMN_BELOW_REM * fit.rem) next = 'column'; // A pixel of slack: a row that fits exactly is a row.
     else if (fit.need > fit.room + 1) next = 'column';
     if (next === (this._fit || 'row')) return;
     this._fit = next;
@@ -481,6 +482,7 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   COLUMN_BELOW_REM: () => (/* binding */ COLUMN_BELOW_REM),
 /* harmony export */   COUNT_BELOW_REM: () => (/* binding */ COUNT_BELOW_REM),
 /* harmony export */   LAYOUTS: () => (/* binding */ LAYOUTS),
 /* harmony export */   MARKERS: () => (/* binding */ MARKERS),
@@ -511,7 +513,11 @@ const MARKERS = ['number', 'dot'];
 const LAYOUTS = ['auto', 'row', 'column', 'count'];
 const NAVIGATION = ['', 'visited', 'free']; // Under this many rem of its own width an automatic list is the count line.
 
-const COUNT_BELOW_REM = 20; // The old forms (sf-steps 1.3 and before) are read until 2027-01-01 and each
+const COUNT_BELOW_REM = 20; // Under this many rem of its own width an automatic list is a column (DEV look
+// answer 2026-11-20): the sheet draws it so before the code measures (a container
+// query of _css__steps.scss), and the code agrees; above it a row while it fits.
+
+const COLUMN_BELOW_REM = 30; // The old forms (sf-steps 1.3 and before) are read until 2027-01-01 and each
 // use is noted in SF.deprecations with its dates: the item state words
 // completed and default, the string form label::flag|label, error-step and
 // separator-icon.
@@ -805,7 +811,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-steps
 /***/ "fce42b338f4d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.steps","tag":"sf-steps","version":"1.4.6","kind":"leaf","settings":{"size":{"type":"enum","values":["1","1/2"],"default":"1"},"items":{"type":"list","default":[],"of":{"label":"string","text":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"state":{"type":"enum","values":["done","ahead","skipped","running","error","completed","default"],"optional":true}}},"marker":{"type":"enum","values":["number","dot"],"default":"number"},"layout":{"type":"enum","values":["auto","row","column","count"],"default":"auto"},"navigation":{"type":"enum","values":["","visited","free"],"default":""},"error-step":{"type":"number","integer":true,"min":0,"nullable":true,"default":null},"separator-icon":{"type":"icon","default":""},"completed-label":{"type":"string","default-from":"runtime.completed-label"},"current-label":{"type":"string","default-from":"runtime.current-label"},"ahead-label":{"type":"string","default-from":"runtime.ahead-label"},"error-label":{"type":"string","default-from":"runtime.error-label"},"skipped-label":{"type":"string","default-from":"runtime.skipped-label"},"running-label":{"type":"string","default-from":"runtime.running-label"},"count-label":{"type":"string","default-from":"runtime.count-label"}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","item":"object","items":"list"}}},"actions":{"go-to-step":{"with":{"index":"number"}}},"css-variables":{"--sf-steps-gap":{"type":"length","state":"default"},"--sf-steps-separator-color":{"type":"color","state":"default"},"--sf-steps-step-color":{"type":"color","state":"default"},"--sf-steps-step-border-color":{"type":"color","state":"default"},"--sf-steps-step-radius":{"type":"length","state":"default"},"--sf-steps-current-border-color":{"type":"color","state":"current"},"--sf-steps-completed-icon-color":{"type":"color","state":"completed"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.steps","tag":"sf-steps","version":"1.5.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1","1/2"],"default":"1"},"items":{"type":"list","default":[],"of":{"label":"string","text":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"state":{"type":"enum","values":["done","ahead","skipped","running","error","completed","default"],"optional":true}}},"marker":{"type":"enum","values":["number","dot"],"default":"number"},"layout":{"type":"enum","values":["auto","row","column","count"],"default":"auto"},"navigation":{"type":"enum","values":["","visited","free"],"default":""},"error-step":{"type":"number","integer":true,"min":0,"nullable":true,"default":null},"separator-icon":{"type":"icon","default":""},"completed-label":{"type":"string","default-from":"runtime.completed-label"},"current-label":{"type":"string","default-from":"runtime.current-label"},"ahead-label":{"type":"string","default-from":"runtime.ahead-label"},"error-label":{"type":"string","default-from":"runtime.error-label"},"skipped-label":{"type":"string","default-from":"runtime.skipped-label"},"running-label":{"type":"string","default-from":"runtime.running-label"},"count-label":{"type":"string","default-from":"runtime.count-label"}},"values":{"current":{"type":"number","integer":true,"min":0,"default":0}},"events":{"change":{"x-native":false,"carries":{"previous":"number","current":"number","item":"object","items":"list"}}},"actions":{"go-to-step":{"with":{"index":"number"}}},"css-variables":{"--sf-steps-gap":{"type":"length","state":"default"},"--sf-steps-separator-color":{"type":"color","state":"default"},"--sf-steps-step-color":{"type":"color","state":"default"},"--sf-steps-step-border-color":{"type":"color","state":"default"},"--sf-steps-step-radius":{"type":"length","state":"default"},"--sf-steps-current-border-color":{"type":"color","state":"current"},"--sf-steps-completed-icon-color":{"type":"color","state":"completed"}}}');
 
 /***/ },
 

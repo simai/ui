@@ -182,7 +182,7 @@
     border-color: var(--sf-tabs-top-container--border-color, var(--sf-tabs-border-color, var(--sf-outline-variant)));
   }
   .sf-tabs.sf-tabs--sticky > .sf-tabs-top-container {
-    background-color: var(--sf-surface-page);
+    background-color: var(--sf-surface-place-ground, var(--sf-surface-page));
   }
 }
 @layer sf.overrides {

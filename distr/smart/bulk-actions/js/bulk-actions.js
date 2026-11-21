@@ -96,8 +96,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SfBulkActions: () => (/* binding */ SfBulkActions),
 /* harmony export */   isDestructiveAction: () => (/* reexport safe */ _js_danger_js__WEBPACK_IMPORTED_MODULE_6__.isDestructiveAction),
+/* harmony export */   isLongAction: () => (/* reexport safe */ _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.isLongAction),
 /* harmony export */   normalizeAction: () => (/* reexport safe */ _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.normalizeAction),
 /* harmony export */   orderActions: () => (/* reexport safe */ _js_danger_js__WEBPACK_IMPORTED_MODULE_6__.orderActions),
+/* harmony export */   resultRoute: () => (/* reexport safe */ _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.resultRoute),
 /* harmony export */   splitActions: () => (/* reexport safe */ _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.splitActions)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
@@ -138,9 +140,13 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // action runs at once and the notice offers «Отменить» (SF.notify, C25).
 // After the page is selected, «Выбрать все N» takes all under the filter
 // (all-selected, «Только эта страница» back). A short run shows in the bar
-// (progress()), its result says which failed (result()); a long job is the
-// host's sf-progress-run (C34). The focus is never moved into the bar; Esc
-// in the list or the bar clears the selection.
+// (progress()). Where a result goes (owner decision C387, 2026-11-19, refining
+// C295 and C331): a fast action's result is said in the bar in place of the
+// count («Удалено: 5», then back), or which failed; a long one (more than 100
+// items, or long: true) goes in the background and ends with a notice
+// (SF.notify); a failure is written to «Уведомления» too (the notice's
+// sf-notification record). The focus is never moved into the bar; Esc in the
+// list or the bar clears the selection.
 //
 // The host list owns the selection, what «all under the filter» means, doing
 // an action, undoing it and which items failed: the bar only says and asks.
@@ -164,7 +170,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 const SIZES = ['1/2', '1', '2'];
 const PLACES = ['dock', 'top', 'float', 'inline']; // A run longer than this many items is a job: the host's sf-progress-run (C34).
 
-const SHORT_RUN = 100; // The live region speaks after the selection settles (Carbon, Shopify).
+const SHORT_RUN = _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.LONG_OVER; // How long a fast action's result stays in the bar before it goes back (C387).
+
+const DONE_FOR = 4000; // The failed items a notice names before «и ещё N».
+
+const NAMED_FAILURES = 3; // The live region speaks after the selection settles (Carbon, Shopify).
 
 const SAY_AFTER = 300; // The «⋯» row of the folded offer (C309 (1)): an id no action of a host takes.
 
@@ -187,11 +197,13 @@ const BulkActionsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE
     },
 
     result({
+      id,
       ok,
       failed,
       text
     } = {}) {
       return this.showResult({
+        id,
         ok,
         failed,
         text
@@ -210,7 +222,12 @@ class SfBulkActions extends BulkActionsElement {
   constructor() {
     super();
     this._run = null;
-    this._result = null;
+    this._result = null; // A fast action's result said in place of the count, or a long one's
+    // start (C387): {text, kind: done | background}, for DONE_FOR.
+
+    this._done = null; // The actions sent and not answered yet, by id: what result() reports on.
+
+    this._sent = new Map();
     this._announcement = '';
     this._compact = false; // C309 (1): on a phone the offer «Выбрать все N» goes into «⋯» when the
     // row would take a second line; _offerFold is the bar's width it was
@@ -234,6 +251,7 @@ class SfBulkActions extends BulkActionsElement {
     this._rowObserver?.disconnect();
     this._rowObserver = null;
     clearTimeout(this._sayTimer);
+    clearTimeout(this._doneTimer);
     super.disconnectedCallback?.();
   }
 
@@ -254,9 +272,15 @@ class SfBulkActions extends BulkActionsElement {
       return;
     }
 
-    if (this._result && count !== this._result.failed.length) this._result = null;
+    if (this._result && count !== this._result.failed.length) this._result = null; // A new selection takes the place of a said result; the selection going
+    // to none after the action (the rows it deleted) leaves it said.
+
+    if (this._done && count > 0 && name === 'count') this.endDone({
+      update: false
+    });
     if (this._run) return;
     const before = name === 'count' ? (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_7__.number)(oldValue) : count;
+    if (this._done && count === 0) return;
     if (count > 0) this.say(this.allSelected && this.total ? this.word('all-text', this.total) : this.word('count-text', count));else if (before > 0) this.say(this.sfWord('cleared-text'));
   } // The size the host gives, or the nearest sized element's around it (the
   // list that places it), or 1.
@@ -296,12 +320,13 @@ class SfBulkActions extends BulkActionsElement {
   get effectiveCount() {
     return this.allSelected && this.total ? this.total : this.selectedCount;
   }
-  /** What the bar does now: idle, running a short run, or showing a result. */
+  /** What the bar does now: idle, running a short run, showing a result or a done line. */
 
 
   get runState() {
     if (this._run) return 'running';
     if (this._result) return 'result';
+    if (this._done) return 'done';
     return this.selectedCount > 0 ? 'shown' : 'hidden';
   }
 
@@ -451,6 +476,9 @@ class SfBulkActions extends BulkActionsElement {
 
   clear(reason = 'button') {
     this._result = null;
+    this.endDone({
+      update: false
+    });
     const count = this.selectedCount;
     const all = this.allSelected;
     if (all) this.removeAttribute('all-selected');
@@ -558,11 +586,18 @@ class SfBulkActions extends BulkActionsElement {
     }
 
     this._result = null;
-    this._lastAction = action.id;
+    this.endDone({
+      update: false
+    });
+    this._lastAction = action.id; // C387: long (more than 100 items, or the author's long) goes in the
+    // background and ends with a notice; the host reads it here too.
+
+    const long = (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_7__.isLongAction)(action, count);
     const detail = {
       id: action.id,
       scope,
-      count
+      count,
+      long
     };
     const allowed = this.sfEmit('action', detail);
     this.requestComponentUpdate('action');
@@ -570,10 +605,97 @@ class SfBulkActions extends BulkActionsElement {
       outcome: 'refused',
       reason: 'prevented'
     };
-    if (action.undo) this.offerUndo(action, detail);
+
+    this._sent.set(action.id, {
+      action,
+      detail
+    });
+
+    if (action.undo) this.offerUndo(action, detail);else if (long) this.showDone(this.sfWord('background-text', {
+      vars: {
+        action: action.text
+      }
+    }), 'background');
     return {
       outcome: 'applied'
     };
+  } // A line in place of the count for DONE_FOR, then back (C387): a fast
+  // action's «Удалено: 5», or a long one's start in the background.
+
+
+  showDone(text, kind = 'done') {
+    clearTimeout(this._doneTimer);
+    this._done = {
+      text,
+      kind
+    };
+    this.say(text);
+    this.requestComponentUpdate('done');
+    this._doneTimer = setTimeout(() => this.endDone(), DONE_FOR);
+  }
+
+  endDone({
+    update = true
+  } = {}) {
+    clearTimeout(this._doneTimer);
+    if (!this._done) return;
+    this._done = null;
+    if (update) this.requestComponentUpdate('done');
+  } // What a done action says: its own word («Удалено: 5») or «Готово: 5».
+
+
+  doneLine(action, ok) {
+    const n = this.formatNumber(ok);
+    return action?.doneText ? this.sfWord('done-own-text', {
+      count: ok,
+      vars: {
+        done: action.doneText,
+        n
+      }
+    }) : this.word('done-text', ok);
+  } // «Опубликовать: не удалось 2 из 12».
+
+
+  failureLine(action, shown) {
+    return this.sfWord('failure-text', {
+      count: shown.failed.length,
+      vars: {
+        action: action?.text ?? '',
+        failed: this.formatNumber(shown.failed.length),
+        total: this.formatNumber(shown.total)
+      }
+    });
+  } // A failure for «Уведомления» (C331, C332, C341): one record with the
+  // action, how many of how many, the first failed items and why. A long
+  // action's is shown as an error notice that stays until closed (C339); a
+  // fast one's only recorded (the bar shows it): SF.notify's sf-notification
+  // event is what a notification centre writes down.
+
+
+  noticeFailure({
+    action,
+    shown,
+    show
+  }) {
+    const notify = globalThis.SF?.notify;
+    if (typeof notify !== 'function') return;
+    const fallback = this.sfWord('failed-reason');
+    const named = shown.failed.slice(0, NAMED_FAILURES).map(item => `${item.text || item.id} — ${item.reason || fallback}`);
+    const more = shown.failed.length - named.length;
+    if (more > 0) named.push(this.word('more-failed-text', more));
+    const title = show ? shown.text : this.failureLine(action, shown);
+    notify({
+      status: 'error',
+      title,
+      text: named.join('; '),
+      source: 'sf-bulk-actions',
+      key: `sf-bulk-actions|${action?.id ?? ''}|${title}`,
+      silent: !show,
+      actions: show ? [{
+        label: this.sfWord('details-text'),
+        onSelect: () => this.showDetails(shown)
+      }] : undefined
+    });
   }
 
   offerUndo(action, detail) {
@@ -697,11 +819,16 @@ class SfBulkActions extends BulkActionsElement {
     return text ? `${text}: ${vars.done} / ${vars.total}` : this.sfWord('progress-text', {
       vars
     });
-  } // The result in place: «Готово 10 из 12 · 2 не удалось», «Подробнее» and
-  // «Повторить для 2»; the host keeps the failed items selected.
+  } // How an action went (C387). id names the action (the last one sent when
+  // not given). A fast one's result is in place: «Удалено: 5» for a while and
+  // back, or «Готово 10 из 12 · 2 не удалось» with «Подробнее» and «Повторить
+  // для 2» (the host keeps the failed items selected). A long one's is a
+  // notice: success, or an error that stays with «Подробнее». A failure is
+  // written to «Уведомления» either way.
 
 
   showResult({
+    id,
     ok = 0,
     failed = [],
     text = ''
@@ -715,27 +842,60 @@ class SfBulkActions extends BulkActionsElement {
     }));
     const done = (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_7__.number)(ok);
     const total = done + refusals.length;
-    this._run = null;
-    const line = text || [this.sfWord('result-text', {
+    const actionId = id === undefined || id === null || id === '' ? this._lastAction ?? null : String(id);
+    const sent = actionId !== null ? this._sent.get(actionId) : null;
+    if (sent) this._sent.delete(actionId);
+    const action = sent?.action ?? (actionId !== null ? this.findAction(actionId) : null);
+    const long = sent?.detail.long ?? false;
+    const route = (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_7__.resultRoute)({
+      long,
+      failed: refusals.length,
+      undo: Boolean(action?.undo)
+    });
+    const line = refusals.length ? text || (long ? this.failureLine(action, {
+      failed: refusals,
+      total
+    }) : [this.sfWord('result-text', {
       vars: {
         ok: this.formatNumber(done),
         total: this.formatNumber(total)
       }
-    }), refusals.length ? this.word('failed-text', refusals.length) : ''].filter(Boolean).join(' · ');
-    this._result = refusals.length ? {
+    }), this.word('failed-text', refusals.length)].join(' · ')) : text || this.doneLine(action, done);
+    const shown = {
       ok: done,
       total,
       failed: refusals,
       text: line,
-      action: this._lastAction ?? null
-    } : null;
-    this.say(line);
-    this.requestComponentUpdate('result');
+      action: actionId
+    };
+
+    if (!long) {
+      this._run = null;
+      this._result = route.bar === 'failed' ? shown : null;
+      if (route.bar === 'done') this.showDone(line, 'done');else {
+        this.endDone({
+          update: false
+        });
+        this.say(line);
+      }
+      this.requestComponentUpdate('result');
+    } else if (route.notice === 'success') {
+      globalThis.SF?.notify?.({
+        status: 'success',
+        title: line,
+        source: 'sf-bulk-actions'
+      });
+    }
+
+    if (route.record) this.noticeFailure({
+      action,
+      shown,
+      show: long
+    });
     return undefined;
   }
 
-  showDetails() {
-    const shown = this._result;
+  showDetails(shown = this._result) {
     if (!shown) return;
     const doc = this.ownerDocument;
     const modal = doc.createElement('sf-modal');
@@ -774,10 +934,12 @@ class SfBulkActions extends BulkActionsElement {
   }
 
   split() {
-    return (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_7__.splitActions)(this.actionList, this._compact ? _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.VISIBLE_COMPACT : _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.VISIBLE);
+    return this._compact ? (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_7__.splitActions)(this.actionList, _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.VISIBLE_COMPACT, {
+      iconOnly: true
+    }) : (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_7__.splitActions)(this.actionList, _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.VISIBLE);
   } // «Выбрать все N» once the whole page is selected and the total is larger;
   // «Только эта страница (N)» while all are; nothing while a run or a result
-  // holds the start.
+  // holds the start (a done line keeps it beside it while items are selected).
 
 
   currentOffer() {
@@ -800,7 +962,6 @@ class SfBulkActions extends BulkActionsElement {
     const count = this.selectedCount;
     const effective = this.effectiveCount;
     const total = this.total;
-    const pageCount = this.pageCount;
     const all = this.allSelected && total > 0;
     const {
       visible,
@@ -827,8 +988,13 @@ class SfBulkActions extends BulkActionsElement {
       failed: this._result.failed.length,
       details: this.sfWord('details-text'),
       retry: this._result.action ? this.word('retry-text', this._result.failed.length) : ''
+    } : null; // A done line in place of the count (C387); the actions stay while items
+    // are still selected (an action that keeps them, «В архив»).
+
+    const done = this._done && !this._run && !this._result ? { ...this._done,
+      actions: count > 0
     } : null;
-    const shown = count > 0 || Boolean(this._run) || Boolean(this._result);
+    const shown = count > 0 || Boolean(this._run) || Boolean(this._result) || Boolean(done);
     this.sfHostState('data-state', this.runState);
     this.sfHostState('data-place', this.place);
     return this.createTemplateContext({ ...this.getPropsContext(),
@@ -845,6 +1011,7 @@ class SfBulkActions extends BulkActionsElement {
       rest,
       run,
       result,
+      done,
       start: this.hasSlotContent('start') ? this.getSlotContent('start') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
       end: this.hasSlotContent('end') ? this.getSlotContent('end') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
       announcement: this._announcement,
@@ -875,10 +1042,13 @@ __webpack_async_result__();
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   LONG_OVER: () => (/* binding */ LONG_OVER),
 /* harmony export */   VISIBLE: () => (/* binding */ VISIBLE),
 /* harmony export */   VISIBLE_COMPACT: () => (/* binding */ VISIBLE_COMPACT),
+/* harmony export */   isLongAction: () => (/* binding */ isLongAction),
 /* harmony export */   normalizeAction: () => (/* binding */ normalizeAction),
 /* harmony export */   number: () => (/* binding */ number),
+/* harmony export */   resultRoute: () => (/* binding */ resultRoute),
 /* harmony export */   splitActions: () => (/* binding */ splitActions)
 /* harmony export */ });
 /* harmony import */ var _danger_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d26573af0eef");
@@ -888,14 +1058,18 @@ __webpack_require__.r(__webpack_exports__);
 // as an icon button with its name in the tooltip.
 
 const VISIBLE = 3;
-const VISIBLE_COMPACT = 1;
+const VISIBLE_COMPACT = 1; // An action on more items than this is long (C34's limit, C387): it goes in
+// the background and its result comes in a notice, not in the bar.
+
+const LONG_OVER = 100;
 const number = value => {
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed > 0 ? Math.trunc(parsed) : 0;
 };
 /**
  * One action as the bar reads it. Takes the bar's own shape {id, text, icon,
- * status, confirm, undo, min, max, reason, priority, disabled} and the shapes
+ * status, confirm, undo, long, done-text, min, max, reason, priority,
+ * disabled} and the shapes
  * of the copies it replaces: sf-pagination's {value, text, danger, disabled}
  * and sf-view-table's {id, name}.
  */
@@ -919,6 +1093,9 @@ function normalizeAction(item, index = 0) {
     danger,
     confirm,
     undo: item.undo === true,
+    // true or false as the author says; null: long over LONG_OVER items.
+    long: typeof item.long === 'boolean' ? item.long : null,
+    doneText: String(item['done-text'] ?? item.doneText ?? '').trim(),
     min: number(item.min),
     max: number(item.max),
     reason: String(item.reason ?? '').trim(),
@@ -928,17 +1105,65 @@ function normalizeAction(item, index = 0) {
     order: index
   };
 }
-/** The visible actions and the ones for «⋯»: by priority, the dangerous ones always in «⋯», last. */
+/**
+ * The visible actions and the ones for «⋯»: by priority, the dangerous ones
+ * always in «⋯», last. With iconOnly (a phone, where an action is an icon
+ * button) an action without an icon never stands in the row: it would draw
+ * as a second «⋯»; it goes in «⋯» with its label (GB15 A7).
+ */
 
-function splitActions(actions, cap = VISIBLE) {
+function splitActions(actions, cap = VISIBLE, {
+  iconOnly = false
+} = {}) {
   const list = (Array.isArray(actions) ? actions : []).map(normalizeAction).filter(Boolean);
   const safe = list.filter(action => !action.danger).sort((a, b) => a.priority - b.priority || a.order - b.order);
   const danger = list.filter(action => action.danger);
-  const visible = safe.length <= cap && !danger.length ? safe : safe.slice(0, cap);
+  const visible = (iconOnly ? safe.filter(action => action.icon) : safe).slice(0, cap);
   const rest = [...safe.filter(action => !visible.includes(action)), ...(0,_danger_js__WEBPACK_IMPORTED_MODULE_0__.orderActions)(danger)];
   return {
     visible,
     rest
+  };
+}
+/**
+ * Whether an action on count items is long (owner decision C387): what the
+ * author says (long true or false), else more than LONG_OVER items. A long
+ * one goes in the background and ends with a notice; a fast one says its
+ * result in the bar.
+ */
+
+function isLongAction(action, count) {
+  if (action?.long === true || action?.long === false) return action.long;
+  return number(count) > LONG_OVER;
+}
+/**
+ * Where a result goes (C387, C331, C332): a fast action's in the bar (done
+ * or the failed ones), a long one's in a notice; a failure is also written to
+ * «Уведомления» (the sf-notification record) -- a long one's shown as an
+ * error notice that stays, a fast one's only recorded, the bar shows it.
+ */
+
+function resultRoute({
+  long = false,
+  failed = 0,
+  undo = false
+} = {}) {
+  const failures = number(failed) > 0;
+  if (long) return {
+    bar: null,
+    notice: failures ? 'error' : 'success',
+    record: failures
+  };
+  if (failures) return {
+    bar: 'failed',
+    notice: null,
+    record: true
+  }; // A reversible action's notice already said it, with «Отменить» (C25).
+
+  return {
+    bar: undo ? null : 'done',
+    notice: null,
+    record: false
   };
 }
 
@@ -1004,7 +1229,9 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // when the row would take a second line: C309 (1)); the actions, «⋯» and
 // the clear cross at the end. While a short run goes the start says «Выполняем:
 // 4 из 12» over a bar; a result with refusals says «Готово 10 из 12 · 2 не
-// удалось» with «Подробнее» and «Повторить для 2». The row is a plain row of
+// удалось» with «Подробнее» and «Повторить для 2»; a fast action's result
+// says «Удалено: 5» in place of the count for a while, a long action's start
+// «Экспорт: идёт в фоне» (C387). The row is a plain row of
 // buttons in Tab order, 8 apart (C184: roving is for icon rows), the focus is
 // never moved into it.
 //
@@ -1025,7 +1252,7 @@ function actionButton(context, action) {
 
   if (compact) {
     return (0,lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__.keyed)(`${action.id}|icon|${action.status}`, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-bulk-actions__action" data-sf-bulk-action=${action.id}
-      size=${size} appearance="ghost" scheme="on-surface" status=${action.status || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} icon=${action.icon || 'more_horiz'}
+      size=${size} appearance="ghost" scheme="on-surface" status=${action.status || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} icon=${action.icon}
       aria-label=${action.text} title=${action.reason ? `${action.text} — ${action.reason}` : action.text}
       aria-disabled=${unavailable} aria-description=${description} @click=${press}></sf-button-icon>`);
   }
@@ -1084,6 +1311,19 @@ function result(context) {
         text=${shown.retry} @click=${() => component.retry()}></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
   </div>`;
+} // A fast action's result, or a long one's start, in place of the count (C387).
+
+
+function done(context) {
+  const {
+    done: shown
+  } = context;
+  const icon = shown.kind === 'background' ? 'schedule' : 'check_circle';
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-bulk-actions__lead" data-sf-bulk-done=${shown.kind}>
+    <span class="sf-bulk-actions__say sf-bulk-actions__say--done"><sf-icon class=${`sf-bulk-actions__done sf-bulk-actions__done--${shown.kind}`}
+      icon=${icon} size="1/2" aria-hidden="true"></sf-icon><span class="sf-bulk-actions__text" title=${shown.text}>${shown.text}</span></span>
+    ${shown.actions ? offer(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  </div>`;
 }
 
 function renderBulkActionsTemplate(context) {
@@ -1094,15 +1334,20 @@ function renderBulkActionsTemplate(context) {
   } = context;
   const classes = ['sf-bulk-actions', `sf-bulk-actions--${context.place}`, `sf-bulk-actions--size-${size}`, context.compact ? 'sf-bulk-actions--compact' : '', context.rootClass].filter(Boolean).join(' ');
   const busy = Boolean(context.run || context.result);
+  const quiet = busy || Boolean(context.done && !context.done.actions);
+  let lead;
+  if (busy) lead = context.run ? run(context) : result(context);else if (context.done) lead = done(context);else {
+    lead = (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-bulk-actions__lead">
+            <span class="sf-bulk-actions__count">${context.countText}</span>
+            ${offer(context)}
+          </div>`;
+  }
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${classes} role="region" aria-label=${context.label} ?hidden=${!context.shown}
       aria-busy=${context.run ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-sf-bulk-actions>
       ${context.start}
-      ${busy ? context.run ? run(context) : result(context) : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-bulk-actions__lead">
-            <span class="sf-bulk-actions__count">${context.countText}</span>
-            ${offer(context)}
-          </div>`}
+      ${lead}
       <div class="sf-bulk-actions__end">
-        ${busy ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-bulk-actions__actions">
+        ${quiet ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-bulk-actions__actions">
           ${context.visible.map(action => actionButton(context, action))}
           ${context.rest.length || context.offerFolded ? moreButton(context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
         </div>`}
@@ -1194,14 +1439,14 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "461b17ac357b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.bulk-actions","tag":"sf-bulk-actions","version":"1.1.0","kind":"leaf","settings":{"count":{"type":"number","integer":true,"min":0,"default":0},"page-count":{"type":"number","integer":true,"min":0,"default":0},"total":{"type":"number","optional":true,"min":0},"all-selected":{"type":"boolean","default":false},"count-text":{"type":"string","default":""},"place":{"type":"enum","values":["dock","top","float","inline"],"default":"dock"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default-from":"runtime.label-text"},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"status":{"type":"enum","values":["","danger"],"optional":true},"confirm":{"type":"object","optional":true},"undo":{"type":"boolean","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"reason":{"type":"string","optional":true},"priority":{"type":"number|string","optional":true},"disabled":{"type":"boolean","optional":true}}}},"events":{"action":{"own-verb":true,"cancelable":true,"carries":{"id":{"type":"id"},"scope":{"type":"enum","values":["selection","all"]},"count":{"type":"number"}}},"undo":{"own-verb":true,"carries":{"id":{"type":"id"},"scope":{"type":"enum","values":["selection","all"]},"count":"number"}},"select-all":{"own-verb":true,"carries":{"total":"number","count":"number"}},"select-page":{"own-verb":true,"carries":{"count":"number"}},"clear":{"own-verb":true,"carries":{"count":"number","scope":{"type":"enum","values":["selection","all"]},"reason":{"type":"enum","values":["button","escape","api"]}}}},"actions":{"progress":{"with":{"done":"number","total":"number","text":{"type":"string","optional":true}}},"result":{"with":{"ok":"number","failed":"list","text":{"type":"string","optional":true}}},"clear":{"with":{}}},"host-states":{"data-state":"string","data-place":"string"},"css-variables":{"--sf-bulk-actions-background":{"type":"color","state":"default"},"--sf-bulk-actions-border-color":{"type":"color","state":"default"},"--sf-bulk-actions-color":{"type":"color","state":"default"},"--sf-bulk-actions-gap":{"type":"length","state":"default"},"--sf-bulk-actions-radius":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.bulk-actions","tag":"sf-bulk-actions","version":"1.2.1","kind":"leaf","settings":{"count":{"type":"number","integer":true,"min":0,"default":0},"page-count":{"type":"number","integer":true,"min":0,"default":0},"total":{"type":"number","optional":true,"min":0},"all-selected":{"type":"boolean","default":false},"count-text":{"type":"string","default":""},"place":{"type":"enum","values":["dock","top","float","inline"],"default":"dock"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default-from":"runtime.label-text"},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"status":{"type":"enum","values":["","danger"],"optional":true},"confirm":{"type":"object","optional":true},"undo":{"type":"boolean","optional":true},"long":{"type":"boolean","optional":true},"done-text":{"type":"string","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"reason":{"type":"string","optional":true},"priority":{"type":"number|string","optional":true},"disabled":{"type":"boolean","optional":true}}}},"events":{"action":{"own-verb":true,"cancelable":true,"carries":{"id":{"type":"id"},"scope":{"type":"enum","values":["selection","all"]},"count":{"type":"number"},"long":{"type":"boolean"}}},"undo":{"own-verb":true,"carries":{"id":{"type":"id"},"scope":{"type":"enum","values":["selection","all"]},"count":"number"}},"select-all":{"own-verb":true,"carries":{"total":"number","count":"number"}},"select-page":{"own-verb":true,"carries":{"count":"number"}},"clear":{"own-verb":true,"carries":{"count":"number","scope":{"type":"enum","values":["selection","all"]},"reason":{"type":"enum","values":["button","escape","api"]}}}},"actions":{"progress":{"with":{"done":"number","total":"number","text":{"type":"string","optional":true}}},"result":{"with":{"id":{"type":"id","optional":true},"ok":"number","failed":"list","text":{"type":"string","optional":true}}},"clear":{"with":{}}},"host-states":{"data-state":"string","data-place":"string"},"css-variables":{"--sf-bulk-actions-background":{"type":"color","state":"default"},"--sf-bulk-actions-border-color":{"type":"color","state":"default"},"--sf-bulk-actions-color":{"type":"color","state":"default"},"--sf-bulk-actions-gap":{"type":"length","state":"default"},"--sf-bulk-actions-radius":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "98c962f987cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Group actions","runtime":{"label-text":"Actions on the selected","count-text":{"one":"{n} selected","other":"{n} selected"},"all-text":"All {n} selected","select-all-text":"Select all {n}","select-page-text":"Only this page ({n})","more-text":"More actions","clear-text":"Clear selection","clear-hint":"Clear selection (Esc)","cleared-text":"Selection cleared","min-reason":"Select at least {min}","max-reason":"Select at most {max}","question-text":{"one":"{action} {n} item?","other":"{action} {n} items?"},"accept-text":"{action} {n}","consequence-text":"This cannot be undone.","all-scope-text":"All {n} under the current filter.","notice-text":"{action}: {n}","undo-text":"Undo","progress-text":"Working: {done} of {total}","result-text":"Done {ok} of {total}","failed-text":{"one":"{n} failed","other":"{n} failed"},"details-text":"Details","details-heading":"Failed: {failed} of {total}","retry-text":"Retry for {n}","failed-reason":"Refused by the server"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Group actions","runtime":{"label-text":"Actions on the selected","count-text":{"one":"{n} selected","other":"{n} selected"},"all-text":"All {n} selected","select-all-text":"Select all {n}","select-page-text":"Only this page ({n})","more-text":"More actions","clear-text":"Clear selection","clear-hint":"Clear selection (Esc)","cleared-text":"Selection cleared","min-reason":"Select at least {min}","max-reason":"Select at most {max}","question-text":{"one":"{action} {n} item?","other":"{action} {n} items?"},"accept-text":"{action} {n}","consequence-text":"This cannot be undone.","all-scope-text":"All {n} under the current filter.","notice-text":"{action}: {n}","undo-text":"Undo","progress-text":"Working: {done} of {total}","result-text":"Done {ok} of {total}","failed-text":{"one":"{n} failed","other":"{n} failed"},"details-text":"Details","details-heading":"Failed: {failed} of {total}","retry-text":"Retry for {n}","failed-reason":"Refused by the server","done-text":"Done: {n}","done-own-text":"{done}: {n}","background-text":"{action}: running in the background","failure-text":"{action}: {failed} of {total} failed","more-failed-text":{"one":"{n} more","other":"{n} more"}}}');
 
 /***/ }
 

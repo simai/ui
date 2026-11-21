@@ -140,9 +140,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
+/* harmony export */   FIELD_WIDTHS: () => (/* binding */ FIELD_WIDTHS),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
+/* harmony export */   fieldWidth: () => (/* binding */ fieldWidth),
+/* harmony export */   fieldWidthClass: () => (/* binding */ fieldWidthClass),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
 /* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
@@ -233,6 +236,30 @@ function retireFieldSizeClass(root, block) {
     if (!root.classList.contains(name)) continue;
     root.classList.replace(name, `${block}--size-${fieldSize(retired, block)}`);
   }
+} // How wide a field is (owner decision C396, WM-4): the value it is made for,
+// in characters of the width ladder, read from the field's width setting --
+// short (20: a date, a number, a code), medium (28: a name, a phone) and long
+// (44: a path, an e-mail, an address); the roles --sf-field--width-short,
+// -medium and -long stand on the steps --sf-measure-20, -28 and -44 (core
+// figma_measure.scss) and follow the text size, the density and the phone.
+// It is the field's widest: in a narrower container the field is the
+// container's width, as without it. Empty or any other value: the whole
+// width, as every field drew before. The class is core's
+// (core/scss/_sf_css__field_width.scss), so a field whose own sheet has not
+// come yet already stands at its width.
+
+const FIELD_WIDTHS = Object.freeze(['short', 'medium', 'long']);
+/** A field width: short, medium or long, else '' (the whole width). */
+
+function fieldWidth(value) {
+  const width = String(value ?? '').trim().toLowerCase();
+  return FIELD_WIDTHS.includes(width) ? width : '';
+}
+/** The root class of a field width, or '' for the whole width. */
+
+function fieldWidthClass(value) {
+  const width = fieldWidth(value);
+  return width ? `sf-field--width-${width}` : '';
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -329,6 +356,7 @@ function bindFormReset(input, synchronize) {
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatDateText: () => (/* binding */ formatDateText),
 /* harmony export */   formatLocale: () => (/* binding */ formatLocale),
 /* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
 /* harmony export */   toDate: () => (/* binding */ toDate)
@@ -399,6 +427,31 @@ function intlFormatter(kind, locale, options) {
   if (cache.size >= 256) cache.delete(cache.keys().next().value);
   cache.set(key, made);
   return made;
+} // A date's year keeps the abbreviation that follows it (A4, group build 15):
+// Russian, Ukrainian, Bulgarian, Belarusian, Kazakh, Lithuanian, Macedonian
+// and Armenian write one after the year -- «19 нояб. 2026 г.», «2026 р.»,
+// «2026 m.», «2026 թ.» -- and the platform joins it with an ordinary space, so
+// a narrow cell or a wrapped line printed «2026» at the end of one line and
+// «г.» alone at the start of the next. Only the space before an abbreviation
+// (letters closed by a full stop: г., гг., m.) becomes a no-break space; a word
+// such as English «at» or German «um», a comma, a slash or a time after the
+// year is left as the platform writes it (DEV answer msg-e6758728).
+
+/** A DateTimeFormat's text of a moment with the year's marker held to the year. */
+
+function formatDateText(formatter, moment) {
+  if (typeof formatter?.formatToParts !== 'function') return formatter.format(moment); // A module-level regular expression is a statement a bundler keeps (core-format test): made here.
+
+  const gap = /^[\s\u00a0\u202f]+(?=\p{L}+\.)/u;
+  let text = '';
+  let afterYear = false;
+
+  for (const part of formatter.formatToParts(moment)) {
+    text += afterYear && part.type === 'literal' ? part.value.replace(gap, '\u00a0') : part.value;
+    afterYear = part.type === 'year';
+  }
+
+  return text;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -2539,9 +2592,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f39dc444b059");
 /* harmony import */ var _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("778671c79fa6");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e6d86f2cd058");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _helpers_inherited_value__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
  // The class component's markup (component/quantity), so its sheet draws the
@@ -2600,7 +2655,8 @@ function renderQuantityTemplate(context) {
   const labelId = `${context.id}--label`;
   const steppers = context.steppers !== 'none';
   const rootClasses = ['sf-quantity', `sf-quantity--size-${context.size}`, steppers ? '' : 'sf-quantity--steppers-none', // C283: the filled look is the class component's own modifier.
-  context.appearance === 'filled' ? 'sf-quantity--filled' : '', field.invalid ? 'error' : '', context.rootClass, LAYOUT.root].filter(Boolean);
+  context.appearance === 'filled' ? 'sf-quantity--filled' : '', field.invalid ? 'error' : '', context.rootClass, LAYOUT.root, // The field's width (C396, WM-4); none without the setting.
+  (0,_component_field_size__WEBPACK_IMPORTED_MODULE_3__.fieldWidthClass)(context.width)].filter(Boolean);
   const labelContent = component?.hasSlotContent?.('label') ? component.getSlotContent('label') : context.label ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-quantity-text" id=${labelId}>${context.label}</span>${field.required ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-quantity-required" aria-hidden="true">*</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${(0,_helpers_field_help__WEBPACK_IMPORTED_MODULE_1__.renderFieldHelp)({
     help: context.help,
     label: context.label,
@@ -2931,7 +2987,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-input
 /***/ "bd1940663dd9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.12.3","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"steppers":{"type":"enum","values":["sides","none"],"default":"sides"},"unit":{"type":"string","default":""},"digits":{"type":"number","integer":true,"min":1,"max":20,"nullable":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"},"removable":{"type":"boolean","default":false},"remove-label":{"type":"string","default-from":"runtime.remove"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}},"remove":{"carries":{"value":{"type":"number"},"name":"string","source":{"type":"enum","values":["button","typing"]}},"cancelable":true,"own-verb":true}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-quantity","tag":"sf-input-quantity","version":"1.13.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"min":{"type":"number","nullable":true},"max":{"type":"number","nullable":true},"step":{"type":"number","default":1},"page-step":{"type":"number","nullable":true},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true},"grouping":{"type":"boolean","default":true},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"steppers":{"type":"enum","values":["sides","none"],"default":"sides"},"unit":{"type":"string","default":""},"digits":{"type":"number","integer":true,"min":1,"max":20,"nullable":true},"locale":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"width":{"type":"enum","values":["","short","medium","long"],"default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"decrement-label":{"type":"string","default-from":"runtime.decrement"},"increment-label":{"type":"string","default-from":"runtime.increment"},"removable":{"type":"boolean","default":false},"remove-label":{"type":"string","default-from":"runtime.remove"}},"values":{"value":{"type":"number","nullable":true}},"events":{"change":{"carries":"native"},"input":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}},"remove":{"carries":{"value":{"type":"number"},"name":"string","source":{"type":"enum","values":["button","typing"]}},"cancelable":true,"own-verb":true}},"actions":{"clear":{},"step-up":{"with":{"count":{"type":"number","optional":true}}},"step-down":{"with":{"count":{"type":"number","optional":true}}},"set-error":{"with":{"message":{"type":"string"}}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","range-underflow","range-overflow","step-mismatch","custom-error"]},"host-states":{"data-at-min":"boolean","data-at-max":"boolean","data-inherited":"boolean"},"css-variables":{"--sf-quantity-background-color":{"type":"color","state":"default"},"--sf-quantity-border-color":{"type":"color","state":"default"},"--sf-quantity-border-width":{"type":"length","state":"default"},"--sf-quantity-radius":{"type":"length","state":"default"},"--sf-quantity-color":{"type":"color","state":"default"},"--sf-quantity-padding-inline":{"type":"length","state":"default"},"--sf-quantity-padding-block":{"type":"length","state":"default"},"--sf-quantity-gap":{"type":"length","state":"default"},"--sf-quantity-stepper-radius":{"type":"length","state":"default"},"--sf-quantity-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

@@ -1083,6 +1083,7 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatDateText: () => (/* binding */ formatDateText),
 /* harmony export */   formatLocale: () => (/* binding */ formatLocale),
 /* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
 /* harmony export */   toDate: () => (/* binding */ toDate)
@@ -1153,6 +1154,31 @@ function intlFormatter(kind, locale, options) {
   if (cache.size >= 256) cache.delete(cache.keys().next().value);
   cache.set(key, made);
   return made;
+} // A date's year keeps the abbreviation that follows it (A4, group build 15):
+// Russian, Ukrainian, Bulgarian, Belarusian, Kazakh, Lithuanian, Macedonian
+// and Armenian write one after the year -- «19 нояб. 2026 г.», «2026 р.»,
+// «2026 m.», «2026 թ.» -- and the platform joins it with an ordinary space, so
+// a narrow cell or a wrapped line printed «2026» at the end of one line and
+// «г.» alone at the start of the next. Only the space before an abbreviation
+// (letters closed by a full stop: г., гг., m.) becomes a no-break space; a word
+// such as English «at» or German «um», a comma, a slash or a time after the
+// year is left as the platform writes it (DEV answer msg-e6758728).
+
+/** A DateTimeFormat's text of a moment with the year's marker held to the year. */
+
+function formatDateText(formatter, moment) {
+  if (typeof formatter?.formatToParts !== 'function') return formatter.format(moment); // A module-level regular expression is a statement a bundler keeps (core-format test): made here.
+
+  const gap = /^[\s\u00a0\u202f]+(?=\p{L}+\.)/u;
+  let text = '';
+  let afterYear = false;
+
+  for (const part of formatter.formatToParts(moment)) {
+    text += afterYear && part.type === 'literal' ? part.value.replace(gap, '\u00a0') : part.value;
+    afterYear = part.type === 'year';
+  }
+
+  return text;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -1545,7 +1571,9 @@ class SfDownloadFile extends DownloadFileElement {
       // A file link downloads where the person is (decision C25): the
       // download semantics are the default, a tab opened to view has none.
       download: this.download,
-      fullWidth: this.hasAttribute('full-width') && this.getAttribute('full-width') !== 'false',
+      // The property's reading (the base's: present and empty, or a word for
+      // true), so the template and the property agree (template-context probe).
+      fullWidth: this.fullWidth,
       value,
       cancelable: this.hasAttribute('cancelable') && this.getAttribute('cancelable') !== 'false',
       errorText: this.getAttribute('error-text') || '',
@@ -2423,7 +2451,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-file-
 /***/ "312445577dad"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-download","tag":"sf-file-download","version":"1.6.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"full-width":{"type":"boolean","default":false},"file-name":{"type":"string","default":""},"file-size":{"type":"string","default":""},"file-type":{"type":"string","default":""},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","preparing","error"],"default":"ready"},"error-text":{"type":"string","default":""},"target":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0,"max":100},"cancelable":{"type":"boolean","default":false}},"values":{},"events":{"request":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true},"retry":{"carries":{"href":"string","file-name":"string"}},"cancel":{"carries":{"href":"string","file-name":"string"},"cancelable":true}},"actions":{},"css-variables":{"--sf-file-download-background-color":{"type":"color","state":"default"},"--sf-file-download-border-color":{"type":"color","state":"default"},"--sf-file-download-radius":{"type":"length","state":"default"},"--sf-file-download-padding":{"type":"length","state":"default"},"--sf-file-download-gap":{"type":"length","state":"default"},"--sf-file-download-icon-size":{"type":"length","state":"default"},"--sf-file-download-icon-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.file-download","tag":"sf-file-download","version":"1.6.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"full-width":{"type":"boolean","default":false},"file-name":{"type":"string","default":""},"file-size":{"type":"string","default":""},"file-type":{"type":"string","default":""},"icon":{"type":"icon","default":"download"},"href":{"type":"string","default":""},"download":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"state":{"type":"enum","values":["ready","preparing","error"],"default":"ready"},"error-text":{"type":"string","default":""},"target":{"type":"string","default":""},"value":{"type":"number","optional":true,"min":0,"max":100},"cancelable":{"type":"boolean","default":false}},"values":{},"events":{"request":{"carries":{"href":"string","file-name":"string","download":"boolean"},"cancelable":true},"retry":{"carries":{"href":"string","file-name":"string"}},"cancel":{"carries":{"href":"string","file-name":"string"},"cancelable":true}},"actions":{},"css-variables":{"--sf-file-download-background-color":{"type":"color","state":"default"},"--sf-file-download-border-color":{"type":"color","state":"default"},"--sf-file-download-radius":{"type":"length","state":"default"},"--sf-file-download-padding":{"type":"length","state":"default"},"--sf-file-download-gap":{"type":"length","state":"default"},"--sf-file-download-icon-size":{"type":"length","state":"default"},"--sf-file-download-icon-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

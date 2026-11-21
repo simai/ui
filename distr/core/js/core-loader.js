@@ -1478,7 +1478,7 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
       type,
       family: fallbackFont.family
     });
-    return `@font-face {\n` + `  font-family: '${fallbackFont.family}';\n` + `  src: url('${url}') format('${fallbackFont.format}');\n` + `  font-style: normal;\n` + `  font-weight: ${fallbackFont.weight};\n` + `  font-display: block;\n` + `}\n\n` + `${selector} {\n` + `  --sf-icon--font-family: '${fallbackFont.family}';\n` + `  font-family: '${fallbackFont.family}';\n` + `  font-feature-settings: 'liga';\n` + `  font-variation-settings: ` + `'FILL' var(--sf-icon--fill, 0), ` + `'GRAD' var(--sf-icon--grade, 0), ` + `'opsz' var(--sf-icon--optical-size, 24);\n` + `}\n`;
+    return `@font-face {\n` + `  font-family: '${fallbackFont.family}';\n` + `  src: url('${url}') format('${fallbackFont.format}');\n` + `  font-style: normal;\n` + `  font-weight: ${fallbackFont.weight};\n` + `  font-display: block;\n` + `}\n\n` + `${selector} {\n` + `  --sf-icon--font-family: '${fallbackFont.family}';\n` + `  font-family: '${fallbackFont.family}';\n` + `  font-feature-settings: 'liga';\n` + `  font-variation-settings: ` + `${_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.ICON_FILL_AXIS}, ` + `'GRAD' var(--sf-icon--grade, 0), ` + `'opsz' var(--sf-icon--optical-size, 24);\n` + `}\n`;
   }; // R074 D-A: the full font is loaded off to the side before its stylesheet
   // goes in. The fallback rule sets every icon of the family in the full
   // face; put in while that face was still on its way, it blanked every icon
@@ -1654,8 +1654,9 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     const {
       cssText: builtCssText,
       weights
-    } = this.buildIconSubsetCssFromManifest(manifest);
-    const cssText = options.cssText || builtCssText;
+    } = this.buildIconSubsetCssFromManifest(manifest); // A stylesheet handed in reads the public fill first too (DEV TG-2).
+
+    const cssText = (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.publicIconFillAxis)(options.cssText || builtCssText);
     if (!cssText) return false;
     const icons = Array.isArray(manifest.icons) ? manifest.icons : [];
     const type = this.getIconManifestType(manifest);
@@ -2269,15 +2270,18 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
 
 
   SFLoaderPlugin.prototype.iconSubsetSheetText = function (cssText = "", manifest = null) {
+    // The service's rule outranks the sheet's .sf-icon and names only the
+    // private --sf-icon--fill: the public --sf-icon-fill is put first in it,
+    // whichever stylesheet goes in (DEV TG-2).
     if (!manifest || !Array.isArray(manifest.fonts) || !manifest.fonts.length) {
-      return cssText;
+      return (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.publicIconFillAxis)(cssText);
     }
 
     const family = this.getIconManifestFontFamily(manifest);
     const text = String(cssText || "");
 
     if (text.includes(`'${family}'`) || text.includes(`"${family}"`)) {
-      return cssText;
+      return (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.publicIconFillAxis)(cssText);
     }
 
     const rebuilt = (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_1__.iconSubsetCssFromManifest)(manifest).cssText;

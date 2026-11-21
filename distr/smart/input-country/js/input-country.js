@@ -2389,9 +2389,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FIELD_LADDER: () => (/* binding */ FIELD_LADDER),
 /* harmony export */   FIELD_SIZES: () => (/* binding */ FIELD_SIZES),
+/* harmony export */   FIELD_WIDTHS: () => (/* binding */ FIELD_WIDTHS),
 /* harmony export */   INPUT_SIZES: () => (/* binding */ INPUT_SIZES),
 /* harmony export */   RETIRED_FIELD_SIZES: () => (/* binding */ RETIRED_FIELD_SIZES),
 /* harmony export */   fieldSize: () => (/* binding */ fieldSize),
+/* harmony export */   fieldWidth: () => (/* binding */ fieldWidth),
+/* harmony export */   fieldWidthClass: () => (/* binding */ fieldWidthClass),
 /* harmony export */   inputSize: () => (/* binding */ inputSize),
 /* harmony export */   ladderSize: () => (/* binding */ ladderSize),
 /* harmony export */   nearestFieldSize: () => (/* binding */ nearestFieldSize),
@@ -2482,6 +2485,30 @@ function retireFieldSizeClass(root, block) {
     if (!root.classList.contains(name)) continue;
     root.classList.replace(name, `${block}--size-${fieldSize(retired, block)}`);
   }
+} // How wide a field is (owner decision C396, WM-4): the value it is made for,
+// in characters of the width ladder, read from the field's width setting --
+// short (20: a date, a number, a code), medium (28: a name, a phone) and long
+// (44: a path, an e-mail, an address); the roles --sf-field--width-short,
+// -medium and -long stand on the steps --sf-measure-20, -28 and -44 (core
+// figma_measure.scss) and follow the text size, the density and the phone.
+// It is the field's widest: in a narrower container the field is the
+// container's width, as without it. Empty or any other value: the whole
+// width, as every field drew before. The class is core's
+// (core/scss/_sf_css__field_width.scss), so a field whose own sheet has not
+// come yet already stands at its width.
+
+const FIELD_WIDTHS = Object.freeze(['short', 'medium', 'long']);
+/** A field width: short, medium or long, else '' (the whole width). */
+
+function fieldWidth(value) {
+  const width = String(value ?? '').trim().toLowerCase();
+  return FIELD_WIDTHS.includes(width) ? width : '';
+}
+/** The root class of a field width, or '' for the whole width. */
+
+function fieldWidthClass(value) {
+  const width = fieldWidth(value);
+  return width ? `sf-field--width-${width}` : '';
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -4106,10 +4133,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f39dc444b059");
 /* harmony import */ var _component_field_contract__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e138a730fd7c");
-/* harmony import */ var _component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c0450586011d");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__, _component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_3__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__, _component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("c0450586011d");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_4__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _helpers_field_help__WEBPACK_IMPORTED_MODULE_1__, _component_field_contract__WEBPACK_IMPORTED_MODULE_2__, _component_field_size__WEBPACK_IMPORTED_MODULE_3__, _component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_4__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 
@@ -4187,7 +4216,9 @@ function renderCountryCodeTemplate(context) {
   });
   const messageIsError = Boolean(field.invalid && context.errorMessage);
   const rootClasses = ['sf-country-code', `sf-country-code--size-${size}`, 'flex', 'flex-col'];
-  if (context.rootClass) rootClasses.push(context.rootClass);
+  if (context.rootClass) rootClasses.push(context.rootClass); // The field's width (C396, WM-4); none without the setting.
+
+  if ((0,_component_field_size__WEBPACK_IMPORTED_MODULE_3__.fieldWidthClass)(context.width)) rootClasses.push((0,_component_field_size__WEBPACK_IMPORTED_MODULE_3__.fieldWidthClass)(context.width));
   if (field.invalid) rootClasses.push('error');
   if (disabled) rootClasses.push('disabled');
   if (open) rootClasses.push('open');
@@ -4263,7 +4294,7 @@ function renderCountryCodeTemplate(context) {
                         ${flagTemplate(country, flagBase, lazyFlags !== false)}
                       </div>
                       <span>
-                        ${country.label || `${(0,_component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_3__.countryName)(country, locale)} (${country.dialCode || country.code || ''})`}
+                        ${country.label || `${(0,_component_country_code_js_country_code__WEBPACK_IMPORTED_MODULE_4__.countryName)(country, locale)} (${country.dialCode || country.code || ''})`}
                       </span>
                     </span>
                   `)}
@@ -4419,7 +4450,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "1870676d0d14"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-country","tag":"sf-input-country","version":"1.10.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"disabled":{"type":"boolean","default":false},"locale":{"type":"string","default":""},"use-mask":{"type":"boolean","default":false},"use-country-masks":{"type":"boolean","default":true},"fixed-mask":{"type":"boolean","default":false},"show-code":{"type":"boolean","default":true},"hide-code":{"type":"boolean","default":false},"mask-style":{"type":"string","default":"native"},"multi-country":{"type":"boolean","default":true},"fixed-country":{"type":"boolean","default":false},"iso2":{"type":"string","default":""},"dial-code":{"type":"string","default":""},"mask-pattern":{"type":"string","default":""},"flag-base":{"type":"string","default":""},"lazy-flags":{"type":"boolean","default":true},"eager-flags":{"type":"boolean","default":false},"show-mask-placeholder":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"max-items":{"type":"number","default":0},"preferred":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"},"input":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-country-code-background-color":{"type":"color","state":"rest"},"--sf-country-code-border-color":{"type":"color","state":"rest"},"--sf-country-code-radius":{"type":"length"},"--sf-country-code-color":{"type":"color","state":"rest"},"--sf-country-code-list-background-color":{"type":"color","state":"open"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-country","tag":"sf-input-country","version":"1.11.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"width":{"type":"enum","values":["","short","medium","long"],"default":""},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"placeholder":{"type":"string","default-from":"runtime.placeholder"},"disabled":{"type":"boolean","default":false},"locale":{"type":"string","default":""},"use-mask":{"type":"boolean","default":false},"use-country-masks":{"type":"boolean","default":true},"fixed-mask":{"type":"boolean","default":false},"show-code":{"type":"boolean","default":true},"hide-code":{"type":"boolean","default":false},"mask-style":{"type":"string","default":"native"},"multi-country":{"type":"boolean","default":true},"fixed-country":{"type":"boolean","default":false},"iso2":{"type":"string","default":""},"dial-code":{"type":"string","default":""},"mask-pattern":{"type":"string","default":""},"flag-base":{"type":"string","default":""},"lazy-flags":{"type":"boolean","default":true},"eager-flags":{"type":"boolean","default":false},"show-mask-placeholder":{"type":"boolean","default":false},"mask-placeholder-char":{"type":"string","default":"_"},"max-items":{"type":"number","default":0},"preferred":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""},"open":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"},"input":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-country-code-background-color":{"type":"color","state":"rest"},"--sf-country-code-border-color":{"type":"color","state":"rest"},"--sf-country-code-radius":{"type":"length"},"--sf-country-code-color":{"type":"color","state":"rest"},"--sf-country-code-list-background-color":{"type":"color","state":"open"}}}');
 
 /***/ },
 

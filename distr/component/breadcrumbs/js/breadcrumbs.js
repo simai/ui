@@ -702,7 +702,30 @@ function bindBreadcrumbs(root) {
   root[BOUND_KEY] = true;
   collapseBreadcrumbs(root);
   observeRoom(root);
+} // «…» and its menu are named in the page's language when it is read, not when
+// the trail folded: the language file may arrive after the trail was drawn
+// (a bundle before core.js, a slow network), the page may choose another
+// language or change a lang (VS-SITE-4: «Show hidden breadcrumbs» stayed on a
+// Russian page). One listener for the page; aria-label is not an attribute
+// the trail's observer folds again for.
+
+
+function relabel(root) {
+  if (!root?.isConnected || !root[BOUND_KEY]) return;
+  const label = getExpandLabel(root);
+  root.querySelectorAll('[data-sf-breadcrumb-index="ellipsis"]').forEach(ellipsis => {
+    if (ellipsis.getAttribute('aria-label') !== label) ellipsis.setAttribute('aria-label', label);
+  });
+  const menu = root.__sfBreadcrumbsMenu;
+  if (menu?.isConnected && menu.getAttribute('aria-label') !== label) menu.setAttribute('aria-label', label);
 }
+
+function relabelAll() {
+  document.querySelectorAll(ROOT_SELECTOR).forEach(relabel);
+}
+
+_core_js_page_language__WEBPACK_IMPORTED_MODULE_0__.language.onChange(relabelAll);
+if (document.documentElement) (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_0__.followLanguage)(document.documentElement, relabelAll);
 
 function initBreadcrumbs(target = document) {
   if (target instanceof HTMLElement && target.matches(ROOT_SELECTOR)) {

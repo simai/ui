@@ -2,13 +2,13 @@
 @layer sf.utilities {
   @media (min-width: 32rem) {
     .sm\:measure {
-      max-width: var(--sf-text--measure);
+      max-width: var(--sf-measure-80);
     }
     .sm\:measure-wide {
-      max-width: var(--sf-text--measure-wide);
+      max-width: var(--sf-measure-96);
     }
     .sm\:measure-narrow {
-      max-width: var(--sf-text--measure-narrow);
+      max-width: var(--sf-measure-52);
     }
   }
 }

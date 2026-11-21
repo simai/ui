@@ -1,2 +1,2 @@
 @layer sf.reset, sf.tokens, sf.base, sf.paint, sf.utilities, sf.components, sf.overrides, sf.states;
-@layer sf.utilities{.measure{max-width:var(--sf-text--measure)}.measure-wide{max-width:var(--sf-text--measure-wide)}.measure-narrow{max-width:var(--sf-text--measure-narrow)}}
+@layer sf.utilities{.measure{max-width:var(--sf-measure-80)}.measure-wide{max-width:var(--sf-measure-96)}.measure-narrow{max-width:var(--sf-measure-52)}}

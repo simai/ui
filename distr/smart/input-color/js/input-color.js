@@ -138,6 +138,7 @@ __webpack_async_result__();
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   formatDateText: () => (/* binding */ formatDateText),
 /* harmony export */   formatLocale: () => (/* binding */ formatLocale),
 /* harmony export */   intlFormatter: () => (/* binding */ intlFormatter),
 /* harmony export */   toDate: () => (/* binding */ toDate)
@@ -208,6 +209,31 @@ function intlFormatter(kind, locale, options) {
   if (cache.size >= 256) cache.delete(cache.keys().next().value);
   cache.set(key, made);
   return made;
+} // A date's year keeps the abbreviation that follows it (A4, group build 15):
+// Russian, Ukrainian, Bulgarian, Belarusian, Kazakh, Lithuanian, Macedonian
+// and Armenian write one after the year -- «19 нояб. 2026 г.», «2026 р.»,
+// «2026 m.», «2026 թ.» -- and the platform joins it with an ordinary space, so
+// a narrow cell or a wrapped line printed «2026» at the end of one line and
+// «г.» alone at the start of the next. Only the space before an abbreviation
+// (letters closed by a full stop: г., гг., m.) becomes a no-break space; a word
+// such as English «at» or German «um», a comma, a slash or a time after the
+// year is left as the platform writes it (DEV answer msg-e6758728).
+
+/** A DateTimeFormat's text of a moment with the year's marker held to the year. */
+
+function formatDateText(formatter, moment) {
+  if (typeof formatter?.formatToParts !== 'function') return formatter.format(moment); // A module-level regular expression is a statement a bundler keeps (core-format test): made here.
+
+  const gap = /^[\s\u00a0\u202f]+(?=\p{L}+\.)/u;
+  let text = '';
+  let afterYear = false;
+
+  for (const part of formatter.formatToParts(moment)) {
+    text += afterYear && part.type === 'literal' ? part.value.replace(gap, '\u00a0') : part.value;
+    afterYear = part.type === 'year';
+  }
+
+  return text;
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -3752,7 +3778,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "8a9b84fc1bd6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.19.6","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme","brand"],"default":"field"},"target":{"type":"string","default":""},"swatches":{"type":"string","default":""},"palette":{"type":"boolean","default":true},"custom":{"type":"boolean","default":true},"alpha":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"},"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"input":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.20.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme","brand"],"default":"field"},"target":{"type":"string","default":""},"swatches":{"type":"string","default":""},"palette":{"type":"boolean","default":true},"custom":{"type":"boolean","default":true},"alpha":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"},"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"input":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
 
 /***/ },
 
