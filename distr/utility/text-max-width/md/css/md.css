@@ -10,5 +10,29 @@
     .md\:measure-narrow {
       max-width: var(--sf-measure-52);
     }
+    .md\:measure-20 {
+      max-width: var(--sf-measure-20);
+    }
+    .md\:measure-28 {
+      max-width: var(--sf-measure-28);
+    }
+    .md\:measure-36 {
+      max-width: var(--sf-measure-36);
+    }
+    .md\:measure-44 {
+      max-width: var(--sf-measure-44);
+    }
+    .md\:measure-52 {
+      max-width: var(--sf-measure-52);
+    }
+    .md\:measure-64 {
+      max-width: var(--sf-measure-64);
+    }
+    .md\:measure-80 {
+      max-width: var(--sf-measure-80);
+    }
+    .md\:measure-96 {
+      max-width: var(--sf-measure-96);
+    }
   }
 }

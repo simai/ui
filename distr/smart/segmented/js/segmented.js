@@ -569,6 +569,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   rowRoom: () => (/* binding */ rowRoom),
 /* harmony export */   spanOf: () => (/* binding */ spanOf),
 /* harmony export */   spanOfUnits: () => (/* binding */ spanOfUnits),
+/* harmony export */   squeezeStep: () => (/* binding */ squeezeStep),
 /* harmony export */   standardMenu: () => (/* binding */ standardMenu),
 /* harmony export */   textWidth: () => (/* binding */ textWidth),
 /* harmony export */   triggerExtra: () => (/* binding */ triggerExtra)
@@ -684,6 +685,57 @@ function fitBesideMore({
   return {
     kept,
     squeezed
+  };
+} // The current tab alone beside «Ещё» and still wider than the row (squeezed
+// above): how it gives way (group build 16 returns GB16-1 and GB16-2, DEV's
+// answer to question 1, 2026-11-22). It is shortened with an ellipsis while at
+// least two letters stay before it; below that a tab with an icon draws its
+// icon alone -- the whole glyph and the tab's padding, never a cut glyph or a
+// one-letter stub -- and a tab of words keeps two letters and the ellipsis.
+// When even that does not stand beside «Ещё (n)», the trigger gives way: it
+// draws its glyph alone as a square (its words stay its name, as shrink="icon"
+// does, C370). The current tab never goes into «Ещё».
+//   tabRoom: the width the tab can have beside the trigger as it will be;
+//   textRoom: the label's own width there; twoLetters: the label's width with
+//   two letters and the ellipsis; iconOnly: the tab's width with its icon
+//   alone, or null for a tab without one; moreGain: how much narrower the
+//   trigger is with its glyph alone; compactTextRoom: the label's width
+//   beside the trigger drawn as its glyph alone (measured; else textRoom and
+//   the gain).
+// The label is decided again beside the glyph-alone trigger before the tab
+// gives up its words (group build 16 return GB16-5, 2026-11-22): the trigger
+// keeps its name out of sight and as a tooltip, the current tab's name is the
+// row's content -- an icon beside a bare chevron with 40-96 px empty and the
+// whole name fitting there read as a fault. So: two letters or more beside
+// «Ещё (n)»; else two letters or more (up to the whole word) beside the
+// glyph alone; else the icon alone, the trigger keeping its words while the
+// icon stands beside them; a tab of words keeps two letters.
+// Answers {icon, compact}: the tab draws its icon alone; the trigger its glyph.
+
+function squeezeStep({
+  tabRoom,
+  textRoom,
+  twoLetters,
+  iconOnly = null,
+  moreGain = 0,
+  compactTextRoom = null
+}) {
+  if (textRoom + TOLERANCE >= twoLetters) return {
+    icon: false,
+    compact: false
+  };
+  const besideGlyph = compactTextRoom ?? textRoom + moreGain;
+  if (moreGain > 0 && besideGlyph + TOLERANCE >= twoLetters) return {
+    icon: false,
+    compact: true
+  };
+  if (iconOnly !== null) return {
+    icon: true,
+    compact: tabRoom + TOLERANCE < iconOnly && moreGain > 0
+  };
+  return {
+    icon: false,
+    compact: moreGain > 0
   };
 } // The content box of a row that clips and has no scrollbar, in fractional
 // pixels: clientWidth is a whole pixel, and a row 383.6 px wide read as 383 or

@@ -2777,15 +2777,15 @@
         {
           "name": "--sf-slider-arrow-offset-inline",
           "role": "inset-inline",
-          "summary": "How far the arrows stand in from the edges.",
-          "default": "var(--sf-space-1)",
+          "summary": "How far the arrows over a picture stand in from its edges (--sf-space-2 since component.slider 2.0.0).",
+          "default": "var(--sf-space-2)",
           "since": "2026-10-27"
         },
         {
           "name": "--sf-slider-dots-offset-block",
-          "role": "inset-block-end",
-          "summary": "How far the dots stand up from the bottom edge.",
-          "default": "var(--sf-space-1)",
+          "role": "margin-block-end",
+          "summary": "How far the position and the pause button stand above the picture's bottom edge when they stand inside it (data-indicator=\"inside\", owner decision C398; component.slider 2.2.0). Under the picture the block's gap, --sf-slider-gap, is that distance.",
+          "default": "var(--sf-space-2)",
           "since": "2026-10-27"
         },
         {
@@ -2801,6 +2801,17 @@
           "summary": "The corners of a thumbnail.",
           "default": "var(--sf-radius--ui)",
           "since": "2026-10-27"
+        },
+        {
+          "name": "--sf-slider-indicator-ink",
+          "role": "background",
+          "summary": "The ink of the position inside the picture (data-indicator=\"inside\", owner decision C398), set by hand; unset, the slider measures the picture and takes --sf-on-surface-media or --sf-surface-media-active (component.slider 2.1.0).",
+          "default": "var(--sf-on-surface-media)",
+          "since": "2026-11-21",
+          "varies_with": [
+            "indicator-ink",
+            "the measured picture"
+          ]
         }
       ]
     },

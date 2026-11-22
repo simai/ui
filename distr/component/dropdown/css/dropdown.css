@@ -2130,14 +2130,22 @@
     --sf-dropdown-field--padding-inline-start: var(--sf-ui-2--space-x);
     --sf-dropdown-field--padding-top: calc(var(--sf-ui-2--space-y-tightness-default) - var(--sf-px));
   }
-  /* The field fills the control, so its ring turns inwards. */
-  .sf-dropdown:has(> .sf-dropdown-field input:enabled:not(:disabled):not(.disabled).focus-visible) .sf-dropdown-field {
+  /* The field fills the control, so its ring turns inwards. A read-only value
+     (a choice field: the text the trigger shows, out of the tab order) is
+     focused only by a press, and a browser calls any text input focus-visible
+     then: the ring stood on every mouse click (popup head round 2, PH-1). The
+     keyboard reaches the trigger, whose ring is the field's (sf.states). */
+  .sf-dropdown:has(> .sf-dropdown-field input:enabled:not(:disabled):not(.disabled):not([readonly]).focus-visible) .sf-dropdown-field {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--inset);
   }
-  .sf-dropdown:has(> .sf-dropdown-field input:enabled:not(:disabled):not(.disabled):focus-visible) .sf-dropdown-field {
+  .sf-dropdown:has(> .sf-dropdown-field input:enabled:not(:disabled):not(.disabled):not([readonly]):focus-visible) .sf-dropdown-field {
     outline: var(--sf-focus--width) var(--sf-focus--style) var(--sf-focus--color);
     outline-offset: var(--sf-focus--inset);
+  }
+  /* A choice field's value is read-only: no caret blinks in it (PH-2). */
+  .sf-dropdown .sf-dropdown-field input[readonly] {
+    caret-color: transparent;
   }
   .sf-dropdown.open .sf-dropdown-field {
     --sf-dropdown-field--background-color: var(--sf-transparent);
@@ -3335,6 +3343,26 @@
     --sf-dropdown--band-edge: var(--sf-dropdown-band-edge, calc(var(--sf-px) * 0));
     --sf-dropdown--band-inset: calc(var(--sf-space-1\/4) + var(--sf-space-1\/2) + var(--sf-dropdown--band-edge));
     --sf-dropdown--band-row: var(--sf-ui-1--control-height);
+    /* --sf-dropdown-band-end (public): room the band's end gives beside a
+       list whose scrollbar takes room -- the track's width -- so the
+       chevron's glyph stays in the rows' end column, as the rows' checks
+       move in by the track (the filter window writes it, VR11-4). */
+    --sf-dropdown--band-end: var(--sf-dropdown-band-end, calc(var(--sf-px) * 0));
+    /* --sf-dropdown-band-radius (public): the radius of the window whose top
+       the band stands at, on the band's two top corners, so its inward focus
+       ring follows the window's corners instead of being cut by them (PH-3;
+       the filter window writes its surface's radius). No radius by default. */
+    --sf-dropdown--band-radius: var(--sf-dropdown-band-radius, calc(var(--sf-px) * 0));
+    /* --sf-dropdown-band-caption (public): a caption before the value, one
+       text with it -- «Условие: любой из» (owner decision C397, PH-10; the
+       filter window writes its word). A CSS string; none by default. */
+    /* --sf-dropdown-band-color (public): the value's ink -- an excluding
+       condition's words in the error ink (C397); the text ink by default.
+       The caption keeps the text ink. */
+    /* --sf-dropdown-band-hover-color (public): the value's ink under the
+       pointer -- the error ink's hover step for an excluding condition, so
+       the words keep their contrast over the state layer (C397: 4.5:1 in
+       dark with the rest ink). The rest ink by default. */
     gap: 0;
     margin-left: calc(-1 * var(--sf-dropdown--band-edge));
     margin-right: calc(-1 * var(--sf-dropdown--band-edge));
@@ -3348,18 +3376,20 @@
   }
   .sf-dropdown.sf-dropdown--band.sf-dropdown--band > .sf-dropdown-field.sf-dropdown-field {
     --sf-dropdown-field--border: 0 solid;
-    --sf-dropdown-field--border-start-start-radius: 0;
-    --sf-dropdown-field--border-start-end-radius: 0;
+    --sf-dropdown-field--border-start-start-radius: var(--sf-dropdown--band-radius);
+    --sf-dropdown-field--border-start-end-radius: var(--sf-dropdown--band-radius);
     --sf-dropdown-field--border-end-start-radius: 0;
     --sf-dropdown-field--border-end-end-radius: 0;
     --sf-dropdown-field--padding-top: 0;
     --sf-dropdown-field--padding-bottom: 0;
     --sf-dropdown-field--padding-inline-start: var(--sf-dropdown--band-inset);
-    --sf-dropdown-field--padding-inline-end: var(--sf-dropdown--band-inset);
+    --sf-dropdown-field--padding-inline-end: calc(var(--sf-dropdown--band-inset) + var(--sf-dropdown--band-end));
     --sf-dropdown-field--background-color: var(--sf-dropdown-background-color, var(--sf-surface-container));
     box-sizing: border-box;
-    min-height: calc(var(--sf-dropdown--band-row) + 2 * var(--sf-space-1\/4) + var(--sf-px));
-    min-block-size: calc(var(--sf-dropdown--band-row) + 2 * var(--sf-space-1\/4) + var(--sf-px));
+    /* The search header's height, its hairline inside (VR11-4: one pixel
+       more stood the band at 49 over a 48 search, 41 over 40). */
+    min-height: calc(var(--sf-dropdown--band-row) + 2 * var(--sf-space-1\/4));
+    min-block-size: calc(var(--sf-dropdown--band-row) + 2 * var(--sf-space-1\/4));
     border-bottom-width: var(--sf-px);
     border-block-end-width: var(--sf-px);
     border-bottom-style: solid;
@@ -3368,13 +3398,18 @@
   .sf-dropdown.sf-dropdown--band.sf-dropdown--band:not(:has(> .sf-dropdown-field > :disabled)) > .sf-dropdown-field.sf-dropdown-field:hover {
     background-image: linear-gradient(var(--sf-surface-state-hover), var(--sf-surface-state-hover));
   }
+  .sf-dropdown.sf-dropdown--band:not(:has(> .sf-dropdown-field > :disabled)) > .sf-dropdown-field:hover input {
+    --sf-dropdown-input--color: var(--sf-dropdown-band-hover-color, var(--sf-dropdown-band-color, var(--sf-on-surface)));
+  }
+  /* The band's text is a head's (owner decision C397): the medium weight,
+     as a window's title, the caption and the value one text. */
   .sf-dropdown.sf-dropdown--band .sf-dropdown-field input {
     --sf-dropdown-input--padding-inline-start: 0;
     --sf-dropdown-input--font-family: var(--sf-text--family);
-    --sf-dropdown-input--font-weight: var(--sf-font-weight-regular);
+    --sf-dropdown-input--font-weight: var(--sf-weight--medium);
     --sf-dropdown-input--font-size: var(--sf-text-size-1);
     --sf-dropdown-input--line-height: var(--sf-text-height-1);
-    --sf-dropdown-input--color: var(--sf-on-surface);
+    --sf-dropdown-input--color: var(--sf-dropdown-band-color, var(--sf-on-surface));
   }
   .sf-dropdown.sf-dropdown--band.sf-dropdown--size-1\/2 .sf-dropdown-field input {
     --sf-dropdown-input--font-size: var(--sf-text-size-1\/2);
@@ -3383,6 +3418,25 @@
   .sf-dropdown.sf-dropdown--band.sf-dropdown--size-2 .sf-dropdown-field input {
     --sf-dropdown-input--font-size: var(--sf-text-size-2);
     --sf-dropdown-input--line-height: var(--sf-text-height-2);
+  }
+  /* The caption (C397): before the value, in its font and the text ink; its
+     own word space keeps the two one text. */
+  .sf-dropdown.sf-dropdown--band > .sf-dropdown-field::before {
+    content: var(--sf-dropdown-band-caption, none);
+    flex: none;
+    white-space: pre;
+    font-family: var(--sf-text--family);
+    font-weight: var(--sf-weight--medium);
+    font-size: var(--sf-text-size-1);
+    line-height: var(--sf-text-height-1);
+  }
+  .sf-dropdown.sf-dropdown--band.sf-dropdown--size-1\/2 > .sf-dropdown-field::before {
+    font-size: var(--sf-text-size-1\/2);
+    line-height: var(--sf-text-height-1\/2);
+  }
+  .sf-dropdown.sf-dropdown--band.sf-dropdown--size-2 > .sf-dropdown-field::before {
+    font-size: var(--sf-text-size-2);
+    line-height: var(--sf-text-height-2);
   }
   .sf-dropdown.sf-dropdown--band .sf-dropdown-field input::-webkit-input-placeholder {
     --sf-dropdown-placeholder--font-family: var(--sf-text--family);
@@ -3429,6 +3483,20 @@
   .sf-dropdown.sf-dropdown--band.sf-dropdown--band > .sf-dropdown-field.sf-dropdown-field {
     /* The chevron on the fill: the container's variant ink, as on a filled field. */
     --sf-on-surface-variant: var(--sf-on-surface-container-variant);
+  }
+}
+/* The band's caption in the text ink (C397), whatever ink the value takes;
+   an option's ink: the name in a status ink -- the filter window's excluding
+   conditions in the error ink, the menu without dots. */
+@layer sf.paint {
+  .sf-dropdown.sf-dropdown--band > .sf-dropdown-field::before {
+    color: var(--sf-on-surface);
+  }
+  .sf-dropdown.sf-dropdown--band:has(> .sf-dropdown-field > :disabled) > .sf-dropdown-field::before {
+    color: var(--sf-on-surface-disabled);
+  }
+  .sf-dropdown-option-ink--error {
+    color: var(--sf-error);
   }
 }
 /* The band's hairline is a divider, not a control's boundary: the area role

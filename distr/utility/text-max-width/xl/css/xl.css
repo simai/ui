@@ -10,5 +10,29 @@
     .xl\:measure-narrow {
       max-width: var(--sf-measure-52);
     }
+    .xl\:measure-20 {
+      max-width: var(--sf-measure-20);
+    }
+    .xl\:measure-28 {
+      max-width: var(--sf-measure-28);
+    }
+    .xl\:measure-36 {
+      max-width: var(--sf-measure-36);
+    }
+    .xl\:measure-44 {
+      max-width: var(--sf-measure-44);
+    }
+    .xl\:measure-52 {
+      max-width: var(--sf-measure-52);
+    }
+    .xl\:measure-64 {
+      max-width: var(--sf-measure-64);
+    }
+    .xl\:measure-80 {
+      max-width: var(--sf-measure-80);
+    }
+    .xl\:measure-96 {
+      max-width: var(--sf-measure-96);
+    }
   }
 }

@@ -744,6 +744,18 @@
     height: calc(var(--sf-ui-1--control-height) - var(--sf-px));
     block-size: calc(var(--sf-ui-1--control-height) - var(--sf-px));
   }
+  /* Outside a panel the search's end follows the rows' scrollbar (PH-6): the
+     track's room. A panel's rows give that room instead (variant B, below). */
+  .sf-choice--list:not([data-panel])[data-sf-choice-track] .sf-choice-search:where(:dir(ltr)){
+    padding-right: var(--sf-scroll-bg-width);
+  }
+  .sf-choice--list:not([data-panel])[data-sf-choice-track] .sf-choice-search:where(:dir(rtl)){
+    padding-left: var(--sf-scroll-bg-width);
+  }
+  .sf-choice--list:not([data-panel])[data-sf-choice-track] .sf-choice-search {
+    -webkit-padding-end: var(--sf-scroll-bg-width);
+            padding-inline-end: var(--sf-scroll-bg-width);
+  }
   .sf-choice--list .sf-choice-search-input::-webkit-search-cancel-button {
     -webkit-appearance: none;
             appearance: none;
@@ -1036,16 +1048,33 @@
     min-height: 0;
     min-block-size: 0;
   }
+  /* The rows scroll up and down only: a row a pixel wider than the area
+     (the scrollbar taking more than the rows' end padding, compact) drew a
+     horizontal bar under the list. */
   .sf-choice--list[data-panel] .sf-choice-scroll {
     display: flex;
     flex-direction: column;
     min-height: 0;
     min-block-size: 0;
+    overflow-x: hidden;
     overflow-y: auto;
     scroll-padding: var(--sf-focus-room);
   }
+  /* The first and the last row's text stand from the head's and the
+     footer's lines as the rows' text stands from the side (owner decision
+     C397, PH-8; the study's «side» inset): the start column, 16 (12
+     compact), less the row's own padding above its text. */
   .sf-choice--list[data-panel] .sf-choice-options {
+    --sf-choice--list-row-pad: calc((var(--sf-ui-1--control-height) - var(--sf-text-height-1)) / 2);
     align-items: stretch;
+    padding-top: max(var(--sf-px) * 0, var(--sf-choice--panel-inset) - var(--sf-choice--list-row-pad));
+    padding-bottom: max(var(--sf-px) * 0, var(--sf-choice--panel-inset) - var(--sf-choice--list-row-pad));
+    padding-block: max(var(--sf-px) * 0, var(--sf-choice--panel-inset) - var(--sf-choice--list-row-pad));
+  }
+  @media (pointer: coarse) {
+    .sf-choice--list[data-panel] .sf-choice-options {
+      --sf-choice--list-row-pad: calc((max(var(--sf-ui-1--control-height), var(--sf-d1)) - var(--sf-text-height-1)) / 2);
+    }
   }
   .sf-choice--list[data-panel] .sf-choice-row {
     width: 100%;
@@ -1055,6 +1084,21 @@
     padding-left: var(--sf-choice--panel-inset);
     padding-right: var(--sf-choice--panel-inset);
     padding-inline: var(--sf-choice--panel-inset);
+  }
+  /* While the rows scroll, nothing shifts (popup head round 3, the owner's
+     scroll variant B): the scrollbar's track stands in the rows' end
+     padding, so the checks keep the column they have without it, under the
+     search's icon and the window band's chevron (the list marks itself,
+     data-sf-choice-track). A track wider than the padding leaves none. */
+  .sf-choice--list[data-panel][data-sf-choice-track] :is(.sf-choice-row, .sf-choice-status, .sf-choice-message):where(:dir(ltr)){
+    padding-right: max(var(--sf-px) * 0, var(--sf-choice--panel-inset) - var(--sf-scroll-bg-width));
+  }
+  .sf-choice--list[data-panel][data-sf-choice-track] :is(.sf-choice-row, .sf-choice-status, .sf-choice-message):where(:dir(rtl)){
+    padding-left: max(var(--sf-px) * 0, var(--sf-choice--panel-inset) - var(--sf-scroll-bg-width));
+  }
+  .sf-choice--list[data-panel][data-sf-choice-track] :is(.sf-choice-row, .sf-choice-status, .sf-choice-message) {
+    -webkit-padding-end: max(var(--sf-px) * 0, var(--sf-choice--panel-inset) - var(--sf-scroll-bg-width));
+            padding-inline-end: max(var(--sf-px) * 0, var(--sf-choice--panel-inset) - var(--sf-scroll-bg-width));
   }
   .sf-choice--list[data-panel] :is(.sf-checkbox-top, .sf-radio-button-top) {
     gap: var(--sf-space-1\/2);

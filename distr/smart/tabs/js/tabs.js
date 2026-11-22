@@ -482,6 +482,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   rowRoom: () => (/* binding */ rowRoom),
 /* harmony export */   spanOf: () => (/* binding */ spanOf),
 /* harmony export */   spanOfUnits: () => (/* binding */ spanOfUnits),
+/* harmony export */   squeezeStep: () => (/* binding */ squeezeStep),
 /* harmony export */   standardMenu: () => (/* binding */ standardMenu),
 /* harmony export */   textWidth: () => (/* binding */ textWidth),
 /* harmony export */   triggerExtra: () => (/* binding */ triggerExtra)
@@ -597,6 +598,57 @@ function fitBesideMore({
   return {
     kept,
     squeezed
+  };
+} // The current tab alone beside «Ещё» and still wider than the row (squeezed
+// above): how it gives way (group build 16 returns GB16-1 and GB16-2, DEV's
+// answer to question 1, 2026-11-22). It is shortened with an ellipsis while at
+// least two letters stay before it; below that a tab with an icon draws its
+// icon alone -- the whole glyph and the tab's padding, never a cut glyph or a
+// one-letter stub -- and a tab of words keeps two letters and the ellipsis.
+// When even that does not stand beside «Ещё (n)», the trigger gives way: it
+// draws its glyph alone as a square (its words stay its name, as shrink="icon"
+// does, C370). The current tab never goes into «Ещё».
+//   tabRoom: the width the tab can have beside the trigger as it will be;
+//   textRoom: the label's own width there; twoLetters: the label's width with
+//   two letters and the ellipsis; iconOnly: the tab's width with its icon
+//   alone, or null for a tab without one; moreGain: how much narrower the
+//   trigger is with its glyph alone; compactTextRoom: the label's width
+//   beside the trigger drawn as its glyph alone (measured; else textRoom and
+//   the gain).
+// The label is decided again beside the glyph-alone trigger before the tab
+// gives up its words (group build 16 return GB16-5, 2026-11-22): the trigger
+// keeps its name out of sight and as a tooltip, the current tab's name is the
+// row's content -- an icon beside a bare chevron with 40-96 px empty and the
+// whole name fitting there read as a fault. So: two letters or more beside
+// «Ещё (n)»; else two letters or more (up to the whole word) beside the
+// glyph alone; else the icon alone, the trigger keeping its words while the
+// icon stands beside them; a tab of words keeps two letters.
+// Answers {icon, compact}: the tab draws its icon alone; the trigger its glyph.
+
+function squeezeStep({
+  tabRoom,
+  textRoom,
+  twoLetters,
+  iconOnly = null,
+  moreGain = 0,
+  compactTextRoom = null
+}) {
+  if (textRoom + TOLERANCE >= twoLetters) return {
+    icon: false,
+    compact: false
+  };
+  const besideGlyph = compactTextRoom ?? textRoom + moreGain;
+  if (moreGain > 0 && besideGlyph + TOLERANCE >= twoLetters) return {
+    icon: false,
+    compact: true
+  };
+  if (iconOnly !== null) return {
+    icon: true,
+    compact: tabRoom + TOLERANCE < iconOnly && moreGain > 0
+  };
+  return {
+    icon: false,
+    compact: moreGain > 0
   };
 } // The content box of a row that clips and has no scrollbar, in fractional
 // pixels: clientWidth is a whole pixel, and a row 383.6 px wide read as 383 or
@@ -1398,7 +1450,9 @@ const RETIRED = {
   since: '2026-11-12',
   remove_after: '2027-01-01'
 }; // A field that says it is wrong, inside a panel (goToError).
+// The tooltip controller asked for by a row that hides a name (GB16-6).
 
+let rowTipsAsked = false;
 const INVALID = '[aria-invalid="true"], [invalid]:not([invalid="false"]), :invalid'; // What takes the focus inside a panel: a panel holding one is not a tab stop
 // of its own (APG tabs; R184 T8).
 
@@ -1562,6 +1616,14 @@ class SfTabs extends TabsElement {
       },
       fit: {
         default: 'auto'
+      },
+      // fold (owner remark VR11-1, group build 16): auto -- vertical tabs turn
+      // into the line with «Ещё» on a narrow place (C181 (2)); never -- the
+      // vertical list stays at any width of its place (a host that sizes the
+      // column itself, as sf-view-properties' section column does).
+      fold: {
+        default: 'auto',
+        values: ['auto', 'never']
       },
       // A gear at the end of the tabs: the person orders and hides them; the
       // host keeps the choice (sf-tabs-settings-change, setSettings).
@@ -1784,7 +1846,7 @@ class SfTabs extends TabsElement {
     const expected = new WeakMap();
     hosts.forEach((host, at) => {
       const box = tabBox(host);
-      if (!box || host.classList.contains('sf-tabs-squeezed')) return;
+      if (!box || host.classList.contains('sf-tabs-squeezed') || host.classList.contains('sf-tabs-icon-only')) return;
       expected.set(box, kept && !kept.includes(at) ? 0 : widths[at]);
     });
     this._expectedTabSizes = expected;
@@ -2325,14 +2387,16 @@ class SfTabs extends TabsElement {
     if (place) this._placeObserver.observe(place);
     if (root && root !== place) this._placeObserver.observe(root);
   } // The look drawn (C96 item 1): line unless pills or vertical; vertical on a
-  // narrow place is the line with «Ещё» (item 5). type="full" is the line with fit
+  // narrow place is the line with «Ещё» (item 5) unless fold="never" (VR11-1;
+  // an unknown value is auto). The place is still watched and read under
+  // never, so fold back to auto folds a list on a narrow place at once. type="full" is the line with fit
   // always; no type and the scheme fills draw the line.
 
 
   get look() {
     const type = this.getAttribute('type');
     if (type === 'pills') return 'pills';
-    if (type === 'vertical') return this._narrow ? 'underline' : 'vertical';
+    if (type === 'vertical') return this._narrow && this.getAttribute('fold') !== 'never' ? 'underline' : 'vertical';
     return 'underline';
   }
 
@@ -2627,7 +2691,8 @@ class SfTabs extends TabsElement {
   }
 
   layoutOverflow() {
-    this.layoutRow(); // The sheet shares a narrow row of two to four tabs by itself, so the
+    this.layoutRow();
+    this.syncRowTips(); // The sheet shares a narrow row of two to four tabs by itself, so the
     // printed first frame is the laid row (C96 item 7 by C181 (2)); a narrow
     // row whose tabs keep their own widths says so with data-sf-tabs-own.
 
@@ -2649,10 +2714,16 @@ class SfTabs extends TabsElement {
     if (!list) return;
     const hosts = Array.from(list.children).filter(element => Number.isInteger(tabIndexOf(element)));
 
-    for (const host of hosts) host.classList.remove('sf-tabs-overflowed', 'sf-tabs-squeezed');
+    for (const host of hosts) {
+      host.classList.remove('sf-tabs-overflowed', 'sf-tabs-squeezed', 'sf-tabs-icon-only'); // The floor stands on the label box itself: sf-button hands its host's
+      // style to its button, so a floor left on the host outlived the layout.
+
+      tabBox(host)?.querySelector(':scope > .sf-button-text-container')?.style.removeProperty('--sf-tabs--squeezed-min');
+    }
 
     this._overflowed = [];
-    const container = list.parentElement; // The tabs are measured at their own widths; fit shares the row after.
+    const container = list.parentElement;
+    container?.removeAttribute('data-sf-tabs-more-compact'); // The tabs are measured at their own widths; fit shares the row after.
 
     container?.removeAttribute('data-sf-tabs-fit');
     container?.setAttribute('data-sf-tabs-own', '');
@@ -2673,7 +2744,19 @@ class SfTabs extends TabsElement {
 
     const width = host => (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.layoutWidth)(tabBox(host));
 
-    const widths = hosts.map(width);
+    const widths = hosts.map(width); // A tab's own width, the label it cuts included (1.5.0, group build 16
+    // G12, view record study VRS-2): a tab is at most as wide as the row
+    // (max-inline-size 100 %), so a row narrower than the current tab measured
+    // it at the row's width -- it "fitted", stayed unshortened, and its label
+    // was cut hard («Зака»). With the cut added back it does not fit: it is
+    // the shortened one, with an ellipsis, or the row takes others instead.
+
+    const cut = host => {
+      const text = tabBox(host)?.querySelector(':scope > .sf-button-text-container');
+      return text ? Math.max(0, text.scrollWidth - text.clientWidth) : 0;
+    };
+
+    const own = widths.map((value, at) => value + cut(hosts[at]));
     const gap = parseFloat(getComputedStyle(list).columnGap) || 0; // The row's arithmetic is the shared row engine (core/js/overflow-row.js,
     // taken out of these tabs for sf-contents' bar): the tabs in their order
     // up to the first that does not fit, each whole in the row or in «Ещё»
@@ -2685,7 +2768,7 @@ class SfTabs extends TabsElement {
 
     showMore(false);
     this.syncMoreErrors(more, 0);
-    let kept = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.fitInOrder)(widths, gap, room()); // A shared row gives the first and the last tab back the padding of their
+    let kept = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.fitInOrder)(own, gap, room()); // A shared row gives the first and the last tab back the padding of their
     // outer edges, which a row of their own widths leaves off (owner decision
     // C99, TS-5 and TS-7): the tabs share the row only when they fit with it.
 
@@ -2701,7 +2784,7 @@ class SfTabs extends TabsElement {
       return back(start, 'paddingInlineStart', 'paddingInlineEnd') + back(end, 'paddingInlineEnd', 'paddingInlineStart');
     };
 
-    if (!kept && this.fitsEqually(hosts.length) && !(0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.fitInOrder)(widths, gap, room() - edgesBack())) {
+    if (!kept && this.fitsEqually(hosts.length) && !(0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.fitInOrder)(own, gap, room() - edgesBack())) {
       // Every tab fits: they share the row, each at least its own width. The
       // shared widths are what the observer will report, not a change.
       container?.setAttribute('data-sf-tabs-fit', '');
@@ -2728,7 +2811,7 @@ class SfTabs extends TabsElement {
 
       const place = () => {
         const laid = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.fitBesideMore)({
-          widths,
+          widths: own,
           gap,
           room: room(),
           must,
@@ -2753,12 +2836,20 @@ class SfTabs extends TabsElement {
       kept = laid.kept; // The current tab alone is wider than the row: it alone may be
       // shortened, with an ellipsis; every other tab is whole or in «Ещё».
 
-      if (laid.squeezed >= 0) hosts[laid.squeezed].classList.add('sf-tabs-squeezed');
       hosts.forEach((host, at) => {
         // A class, not a data attribute: sf-button moves its data attributes
         // to the button inside it, and only class and style stay on the host.
         if (!kept.includes(at)) host.classList.add('sf-tabs-overflowed');
-      });
+      }); // Measured once the tabs «Ещё» holds have left the row (GB16-5): with
+      // them still in it, the label's room read the room of four tabs, and
+      // the current one went to its icon with its whole name fitting.
+
+      if (laid.squeezed >= 0) {
+        hosts[laid.squeezed].classList.add('sf-tabs-squeezed');
+        const extraFor = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.triggerExtra)(textBox, label);
+        this.squeezeCurrent(hosts[laid.squeezed], list, more, extraFor ? extraFor(this._overflowed.length) : 0);
+      }
+
       this.expectTabSizes(hosts, widths, kept);
 
       if (more) {
@@ -2769,6 +2860,155 @@ class SfTabs extends TabsElement {
 
         more.setAttribute('aria-label', errors ? `${text}, ${this.errorWords(errors)}` : text);
       }
+    }
+  } // The current tab alone beside «Ещё» and wider than the row gives way by
+  // the tightest-row rule (squeezeStep, group build 16 returns GB16-1 and
+  // GB16-2): at least two letters before the ellipsis, else its icon alone,
+  // else «Ещё» draws its glyph alone too; a tab of words keeps two letters.
+  // Measured in this task, before the trigger draws its new count: extra is
+  // how much wider the trigger will be.
+
+
+  squeezeCurrent(host, list, more, extra = 0) {
+    const box = tabBox(host);
+    const text = box?.querySelector(':scope > .sf-button-text-container');
+    if (!box || !text) return;
+    const name = Array.from(((text.querySelector('.sf-tabs-name') ?? text).textContent || '').trim());
+    const widthOfText = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.textWidth)(text);
+    if (!widthOfText || !name.length) return;
+    const twoLetters = widthOfText(name.length > 2 ? `${name.slice(0, 2).join('')}\u2026` : name.join('')); // The label's own width as laid out now (its content box).
+
+    const labelWidth = () => {
+      const style = getComputedStyle(text);
+      const inner = parseFloat(style.width) || 0;
+      const sides = ['paddingInlineStart', 'paddingInlineEnd', 'borderInlineStartWidth', 'borderInlineEndWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+      return style.boxSizing === 'border-box' ? inner - sides : inner;
+    };
+
+    const textRoom = labelWidth() - extra;
+    const tabRoom = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.layoutRowRoom)(list) - extra;
+    let iconOnly = null;
+
+    if (box.querySelector(':scope > sf-icon, :scope > .sf-icon')) {
+      host.classList.replace('sf-tabs-squeezed', 'sf-tabs-icon-only');
+      iconOnly = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.layoutWidth)(box);
+      host.classList.replace('sf-tabs-icon-only', 'sf-tabs-squeezed');
+    }
+
+    const container = list.parentElement;
+    const trigger = more?.querySelector(':scope > button');
+    let moreGain = 0;
+    let compactTextRoom = null;
+
+    if (container && trigger) {
+      const full = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.layoutWidth)(trigger) + extra;
+      container.setAttribute('data-sf-tabs-more-compact', '');
+      moreGain = full - (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.layoutWidth)(trigger); // The label beside the glyph-alone trigger, as it will stand (GB16-5):
+      // the room the trigger gives back is decided on, not left empty.
+
+      compactTextRoom = labelWidth();
+      container.removeAttribute('data-sf-tabs-more-compact');
+    }
+
+    const step = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__.squeezeStep)({
+      tabRoom,
+      textRoom,
+      twoLetters,
+      iconOnly,
+      moreGain,
+      compactTextRoom
+    });
+    if (step.icon) host.classList.replace('sf-tabs-squeezed', 'sf-tabs-icon-only');else text.style.setProperty('--sf-tabs--squeezed-min', `${twoLetters}px`);
+    if (step.compact) container?.setAttribute('data-sf-tabs-more-compact', '');
+  } // The names the tightest row hides (group build 16 return GB16-6): the
+  // trigger drawn as its glyph alone and the current tab drawn as its icon
+  // alone keep their words out of sight, as their accessible names; a mouse
+  // and a keyboard get them as the Framework's tooltip (component.tooltip,
+  // C59, C160 (1)), not a browser title -- the surface is a .sf-tooltip in
+  // the row's container that the button names by data-tooltip, and the
+  // tooltip controller, asked for here only when a name is hidden, links it
+  // and shows it on hover, keyboard focus and a long press. A name the row
+  // draws again loses its tooltip. The controller does not describe the
+  // button with a tooltip that repeats its name.
+
+
+  syncRowTips() {
+    const container = this.tabList?.parentElement;
+    const wanted = new Map();
+
+    if (container) {
+      const trigger = container.hasAttribute('data-sf-tabs-more-compact') ? container.querySelector(':scope > .sf-tabs-more > button') : null;
+      const words = trigger ? String(trigger.closest('.sf-tabs-more')?.getAttribute('aria-label') || trigger.getAttribute('aria-label') || '').trim() : '';
+      if (trigger && words) wanted.set('more', {
+        button: trigger,
+        words
+      });
+      const host = Array.from(this.tabList.children).find(element => element.classList.contains('sf-tabs-icon-only'));
+      const button = host && !(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__.isTag)(host, 'sf-button-icon') ? tabBox(host) : null;
+      const label = button ? String(this.computedItems[tabIndexOf(host)]?.label ?? '').trim() : '';
+      if (button && label) wanted.set('tab', {
+        button,
+        words: label
+      });
+    }
+
+    this._rowTips ??= new Map();
+
+    for (const [part, tip] of this._rowTips) {
+      const next = wanted.get(part); // A surface still standing in the row is kept, even when the button
+      // that names it was drawn anew: a surface put in again is a new node
+      // the Loader scans, and that scan woke every row again (step-0 probe).
+
+      if (next && tip.surface.isConnected && tip.surface.parentElement === container) {
+        if (next.button !== tip.button && tip.button.getAttribute('data-tooltip') === tip.surface.id) tip.button.removeAttribute('data-tooltip');
+        tip.button = next.button;
+        continue;
+      }
+
+      if (tip.button.getAttribute('data-tooltip') === tip.surface.id) tip.button.removeAttribute('data-tooltip');
+      tip.surface.remove();
+
+      this._rowTips.delete(part);
+    }
+
+    if (!wanted.size) return; // Asked for once a page: the Loader's ensurePlugin rescans the page until
+    // the plugin is there, and a row laid out on every rescan asked again --
+    // a 248-row page laid every row out for ever (step-0 probe). A Loader not
+    // ready yet (false) is asked again by the next layout.
+
+    if (!rowTipsAsked) rowTipsAsked = globalThis.SF?.Loader?.ensurePlugin?.('tooltip') === true;
+
+    for (const [part, next] of wanted) {
+      // A tooltip the page linked itself stays its own.
+      const linked = next.button.getAttribute('data-tooltip');
+
+      let tip = this._rowTips.get(part);
+
+      if (linked && linked !== tip?.surface.id) continue;
+
+      if (!tip) {
+        const surface = document.createElement('span');
+        surface.className = 'sf-tooltip sf-tooltip--dark sf-tooltip--size-1/3 sf-tabs-tooltip';
+        surface.id = `${this.tabsId}--${part}-tooltip`;
+        surface.hidden = true;
+        const content = document.createElement('span');
+        content.className = 'sf-tooltip-content';
+        const text = document.createElement('span');
+        text.className = 'sf-tooltip-text';
+        content.append(text);
+        surface.append(content);
+        container.append(surface);
+        tip = {
+          button: next.button,
+          surface
+        };
+
+        this._rowTips.set(part, tip);
+      }
+
+      const text = tip.surface.querySelector('.sf-tooltip-text');
+      if (text && text.textContent !== next.words) text.textContent = next.words;
+      if (next.button.getAttribute('data-tooltip') !== tip.surface.id) next.button.setAttribute('data-tooltip', tip.surface.id);
     }
   } // The errors of some tabs, by index: what «Ещё» sums.
 
@@ -3692,7 +3932,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs 
 /***/ "84d032c55810"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.4.8","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.5.2","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"fold":{"type":"enum","values":["auto","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

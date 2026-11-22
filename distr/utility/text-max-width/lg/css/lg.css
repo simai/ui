@@ -10,5 +10,29 @@
     .lg\:measure-narrow {
       max-width: var(--sf-measure-52);
     }
+    .lg\:measure-20 {
+      max-width: var(--sf-measure-20);
+    }
+    .lg\:measure-28 {
+      max-width: var(--sf-measure-28);
+    }
+    .lg\:measure-36 {
+      max-width: var(--sf-measure-36);
+    }
+    .lg\:measure-44 {
+      max-width: var(--sf-measure-44);
+    }
+    .lg\:measure-52 {
+      max-width: var(--sf-measure-52);
+    }
+    .lg\:measure-64 {
+      max-width: var(--sf-measure-64);
+    }
+    .lg\:measure-80 {
+      max-width: var(--sf-measure-80);
+    }
+    .lg\:measure-96 {
+      max-width: var(--sf-measure-96);
+    }
   }
 }

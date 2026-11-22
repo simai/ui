@@ -320,6 +320,138 @@
     -webkit-padding-end: 0;
             padding-inline-end: 0;
   }
+  /* Inside the picture (owner decision C398): the bare dots take the slider's
+     ink (--sf-slider-indicator--ink, light or dark by the picture; the page's
+     --sf-slider-indicator-ink wins), the current one full, the others at
+     --sf-slider-indicator--dot-opacity (--sf-opacity-80) -- the weakest dot keeps 3:1 against an even picture
+     whichever ink is chosen. With data-ink="outline" every dot is the light
+     ink at full strength with a 1 px ring of the dark ink
+     (--sf-surface-media-active): one of the two reads at 3:1 or more against
+     any pixel, fine stripes too (CAR-2); the current dot is told by its
+     length, not by strength. The ink changes over
+     --sf-duration-normal; under reduced motion at once. */
+  .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) .sf-slider-dots.sf-slider-dots--bare {
+    --sf-slider-dots-dot--color: var(--sf-slider-indicator-ink, var(--sf-slider-indicator--ink));
+    --sf-slider-dots-dot--active-color: var(--sf-slider-indicator-ink, var(--sf-slider-indicator--ink));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) .sf-slider-dots.sf-slider-dots--bare :is(.sf-slider-dots-dot, .sf-slider-dots-current, .sf-slider-dots-total) {
+      transition-duration: var(--sf-duration-normal);
+      transition-property: width, background-color, border-color, box-shadow, color, opacity, text-shadow;
+    }
+    .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) .sf-slider-dots.sf-slider-dots--bare.sf-slider-dots--count {
+      transition: color var(--sf-duration-normal), text-shadow var(--sf-duration-normal);
+    }
+  }
+  .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) .sf-slider-dots.sf-slider-dots--bare .sf-slider-dots-dot:not(.active) {
+    opacity: var(--sf-slider-indicator--dot-opacity);
+  }
+  .sf-slider[data-indicator=inside][data-ink=outline]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) .sf-slider-dots.sf-slider-dots--bare .sf-slider-dots-dot {
+    box-shadow: 0 0 0 var(--sf-px) var(--sf-slider-indicator--ring);
+  }
+  .sf-slider[data-indicator=inside][data-ink=outline]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) .sf-slider-dots.sf-slider-dots--bare .sf-slider-dots-dot:not(.active) {
+    opacity: 1;
+  }
+  .sf-slider[data-indicator=inside][data-ink=outline]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) .sf-slider-dots.sf-slider-dots--bare.sf-slider-dots--count {
+    text-shadow: 0 0 var(--sf-px) var(--sf-slider-indicator--ring), 0 0 calc(2 * var(--sf-px)) var(--sf-slider-indicator--ring);
+  }
+  /* The timed pill inside: its track is the ink at --sf-opacity-40, the fill
+     the full ink, as the study's media look (#inside). */
+  .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails))[data-rotation=playing] .sf-slider-dots--timed.sf-slider-dots--bare .sf-slider-dots-dot.active {
+    --sf-slider-dots-dot--active-color: color-mix(in srgb, var(--sf-slider-indicator-ink, var(--sf-slider-indicator--ink)) var(--sf-opacity-40), transparent);
+  }
+  .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) .sf-slider-dots--timed.sf-slider-dots--bare {
+    --sf-slider-dots--fill-color: var(--sf-slider-indicator-ink, var(--sf-slider-indicator--ink));
+  }
+  /* The timed position (sf-slider-dots--timed, owner decision 2026-11-21, as
+     Apple's dotnav-timed): only while the slides turn by themselves, beside
+     the pause button. The current dot is a longer pill (--sf-c6, 32) that
+     fills in the current colour for the slide's time (the slider writes
+     --sf-slider-dots--delay); a pointer over the slider or a hidden tab
+     freezes the fill where it is, as it freezes the turn; stopped, the pill
+     stays full. Under reduced motion nothing turns, so nothing fills. */
+  .sf-slider-dots.sf-slider-dots--timed {
+    --sf-slider-dots--fill-color: var(--sf-slider-dots-dot--active-color, var(--sf-slider-dots-dot--color));
+    --sf-slider-dots-dot--active-width: var(--sf-c6);
+  }
+  .sf-slider[data-rotation=playing] .sf-slider-dots--timed .sf-slider-dots-dot.active {
+    /* The pill's track is a dot's own colour; the fill runs over it. */
+    --sf-slider-dots-dot--active-color: var(--sf-slider-dots-dot--color);
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after:where(:dir(ltr)){
+    border-bottom-right-radius: inherit;
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after:where(:dir(rtl)){
+    border-bottom-left-radius: inherit;
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after:where(:dir(ltr)){
+    border-bottom-left-radius: inherit;
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after:where(:dir(rtl)){
+    border-bottom-right-radius: inherit;
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after:where(:dir(ltr)){
+    border-top-right-radius: inherit;
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after:where(:dir(rtl)){
+    border-top-left-radius: inherit;
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after:where(:dir(ltr)){
+    border-top-left-radius: inherit;
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after:where(:dir(rtl)){
+    border-top-right-radius: inherit;
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after:where(:dir(ltr)){
+    left: calc(-1 * var(--sf-slider-dots-dot--stroke-width, var(--sf-px)));
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after:where(:dir(rtl)){
+    right: calc(-1 * var(--sf-slider-dots-dot--stroke-width, var(--sf-px)));
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after:where(:dir(ltr)){
+    left: calc(-1 * var(--sf-px));
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after:where(:dir(rtl)){
+    right: calc(-1 * var(--sf-px));
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after {
+    border-end-end-radius: inherit;
+    border-end-start-radius: inherit;
+    border-start-end-radius: inherit;
+    border-start-start-radius: inherit;
+    content: "";
+    width: calc(100% + 2 * var(--sf-slider-dots-dot--stroke-width, var(--sf-px)));
+    inline-size: calc(100% + 2 * var(--sf-slider-dots-dot--stroke-width, var(--sf-px)));
+    top: calc(-1 * var(--sf-slider-dots-dot--stroke-width, var(--sf-px)));
+    bottom: calc(-1 * var(--sf-slider-dots-dot--stroke-width, var(--sf-px)));
+    inset-block: calc(-1 * var(--sf-slider-dots-dot--stroke-width, var(--sf-px)));
+    inset-inline-start: calc(-1 * var(--sf-slider-dots-dot--stroke-width, var(--sf-px)));
+    position: absolute;
+  }
+  .sf-slider[data-rotation=playing] .sf-slider-dots--timed .sf-slider-dots-dot.active::after {
+    -webkit-animation: sf-slider-dots-fill var(--sf-slider-dots--delay) linear both;
+            animation: sf-slider-dots-fill var(--sf-slider-dots--delay) linear both;
+  }
+  .sf-slider[data-rotation=playing][data-rotation-held] .sf-slider-dots--timed .sf-slider-dots-dot.active::after {
+    -webkit-animation-play-state: paused;
+            animation-play-state: paused;
+  }
+  @-webkit-keyframes sf-slider-dots-fill {
+    from {
+      inline-size: var(--sf-slider-dots-dot--height);
+    }
+  }
+  @keyframes sf-slider-dots-fill {
+    from {
+      inline-size: var(--sf-slider-dots-dot--height);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sf-slider .sf-slider-dots--timed .sf-slider-dots-dot.active::after {
+      -webkit-animation: none;
+              animation: none;
+    }
+  }
 }
 @layer sf.paint {
   .sf-slider-dots {
@@ -332,6 +464,9 @@
   }
   .sf-slider-dots .sf-slider-dots-dot.active {
     color: var(--sf-slider-dots-dot--active-color, var(--sf-slider-dots-dot--color));
+  }
+  .sf-slider-dots.sf-slider-dots--timed .sf-slider-dots-dot.active::after {
+    background-color: var(--sf-slider-dots--fill-color);
   }
   @media (forced-colors: active) {
     .sf-slider-dots .sf-slider-dots-dot {
@@ -581,84 +716,188 @@
     -o-object-fit: cover;
        object-fit: cover;
   }
-  .sf-slider .sf-slider-controls {
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    inset: 0;
+  /* Pictures (owner decision 2026-11-21, carousel study): the strip, the
+     arrows over it and the bar under it. The arrows stand in the strip's own
+     row, centred on it, a space step inside each edge (--sf-space-2, 20 / 16),
+     never on the edge; the position (dots or «2 / 12») and the pause button
+     stand under the strip, the block's gap below it (--sf-space-1, 16 / 12),
+     never over the picture. The controls box lends its parts to the block's
+     grid: the arrows to the strip's row, the bar parts to a row of their own,
+     centred as one group, the pause button a space step after the dots. */
+  .sf-slider:not(.sf-slider--content) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto minmax(0, 1fr);
+    grid-column-gap: 0;
+    -webkit-column-gap: 0;
+       -moz-column-gap: 0;
+            column-gap: 0;
+  }
+  .sf-slider:not(.sf-slider--content) > * {
+    grid-column: 1/-1;
+  }
+  .sf-slider:not(.sf-slider--content) > .sf-slider-main {
+    grid-row: 1;
+  }
+  .sf-slider:not(.sf-slider--content) > .sf-slider-controls {
+    display: contents;
+  }
+  .sf-slider:not(.sf-slider--content) > .sf-slider-controls > .sf-slider-arrows {
+    align-self: center;
+    display: flex;
+    grid-column: 1/-1;
+    grid-row: 1;
+    justify-content: space-between;
+    padding-left: var(--sf-slider-arrow-offset-inline, var(--sf-space-2));
+    padding-right: var(--sf-slider-arrow-offset-inline, var(--sf-space-2));
+    padding-inline: var(--sf-slider-arrow-offset-inline, var(--sf-space-2));
+    /* A swipe over the arrows' row is the strip's; only the buttons take a press. */
     pointer-events: none;
-    position: absolute;
     z-index: 2;
   }
-  .sf-slider .sf-slider-controls .sf-slider-arrows {
-    top: 50%;
-    inset-block-start: 50%;
-    left: 0;
-    right: 0;
-    inset-inline: 0;
-    pointer-events: none;
-    position: absolute;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
-  }
-  .sf-slider .sf-slider-controls .sf-slider-arrows .sf-icon-button {
-    top: 50%;
-    inset-block-start: 50%;
+  .sf-slider:not(.sf-slider--content) > .sf-slider-controls > .sf-slider-arrows .sf-icon-button {
     pointer-events: auto;
-    position: absolute;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
   }
-  .sf-slider .sf-slider-controls .sf-slider-button-prev:where(:dir(ltr)){
-    left: var(--sf-slider-arrow-offset-inline, var(--sf-space-1));
+  /* The bar stands the block's gap under the strip (--sf-slider-gap, by
+     default --sf-space-1). --sf-slider-dots-offset-block is the position's
+     distance from the picture's bottom edge inside it (C398, below; 2.2.0,
+     group build 16 returns): under the picture the block's gap is that
+     distance, and a second variable for it moved nothing a page could see. */
+  .sf-slider:not(.sf-slider--content) > .sf-slider-controls > :is(.sf-slider-dots, .sf-slider-pagination, .sf-slider-rotation-place) {
+    align-self: center;
   }
-  .sf-slider .sf-slider-controls .sf-slider-button-prev:where(:dir(rtl)){
-    right: var(--sf-slider-arrow-offset-inline, var(--sf-space-1));
+  .sf-slider:not(.sf-slider--content) > .sf-slider-controls > :is(.sf-slider-dots, .sf-slider-pagination) {
+    grid-column: 2;
+    justify-self: center;
+    order: 1;
   }
-  .sf-slider .sf-slider-controls .sf-slider-button-prev {
-    inset-inline-start: var(--sf-slider-arrow-offset-inline, var(--sf-space-1));
+  .sf-slider:not(.sf-slider--content) > .sf-slider-controls > .sf-slider-rotation-place {
+    grid-column: 3;
+    order: 2;
   }
-  .sf-slider .sf-slider-controls .sf-slider-button-next:where(:dir(ltr)){
-    right: var(--sf-slider-arrow-offset-inline, var(--sf-space-1));
+  .sf-slider:not(.sf-slider--content) > .sf-slider-controls > :is(.sf-slider-dots, .sf-slider-pagination) ~ .sf-slider-rotation-place:where(:dir(ltr)), .sf-slider:not(.sf-slider--content) > .sf-slider-controls > .sf-slider-rotation-place:has(~ :is(.sf-slider-dots, .sf-slider-pagination)):where(:dir(ltr)){
+    margin-left: var(--sf-space-1);
   }
-  .sf-slider .sf-slider-controls .sf-slider-button-next:where(:dir(rtl)){
-    left: var(--sf-slider-arrow-offset-inline, var(--sf-space-1));
+  .sf-slider:not(.sf-slider--content) > .sf-slider-controls > :is(.sf-slider-dots, .sf-slider-pagination) ~ .sf-slider-rotation-place:where(:dir(rtl)), .sf-slider:not(.sf-slider--content) > .sf-slider-controls > .sf-slider-rotation-place:has(~ :is(.sf-slider-dots, .sf-slider-pagination)):where(:dir(rtl)){
+    margin-right: var(--sf-space-1);
   }
-  .sf-slider .sf-slider-controls .sf-slider-button-next {
-    inset-inline-end: var(--sf-slider-arrow-offset-inline, var(--sf-space-1));
+  .sf-slider:not(.sf-slider--content) > .sf-slider-controls > :is(.sf-slider-dots, .sf-slider-pagination) ~ .sf-slider-rotation-place,
+  .sf-slider:not(.sf-slider--content) > .sf-slider-controls > .sf-slider-rotation-place:has(~ :is(.sf-slider-dots, .sf-slider-pagination)) {
+    -webkit-margin-start: var(--sf-space-1);
+            margin-inline-start: var(--sf-space-1);
   }
-  .sf-slider .sf-slider-controls .sf-slider-dots:where(:dir(ltr)),
-  .sf-slider .sf-slider-controls .sf-slider-pagination:where(:dir(ltr)){
-    left: 50%;
+  /* The position inside the picture (owner decision C398, 2026-11-21; carousel
+     study #inside-r3): data-indicator="inside" on a picture slider or a hero
+     (not a card row, not with thumbnails) stands the bare dots, or «2 / 12»,
+     over the bottom of the picture, a space step above its edge
+     (--sf-space-2, 20 / 16, the arrows' step from the sides), with no plate
+     and no veil; the pause button keeps its place after the dots, its centre
+     on theirs. The counter stands in the end corner, as in a photo gallery.
+     The default stays under the picture. The ink: light or dark by the
+     picture's strip behind the row (the slider measures it and writes
+     data-ink), or a light dot with a 1 px dark ring where it cannot or where
+     the strip is of high variance (data-ink="outline", also before the first
+     measure). */
+  .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) {
+    --sf-slider-indicator--ink-light: var(--sf-on-surface-media);
+    --sf-slider-indicator--ink-dark: var(--sf-surface-media-active);
+    /* The ring of the outline dots: the dark ink itself (black at 80, the top
+       of the ink family), so that the light fill or the ring reads at 3:1 or
+       more against any part of the picture (CAR-2). */
+    --sf-slider-indicator--ring: var(--sf-slider-indicator--ink-dark);
+    --sf-slider-indicator--ink: var(--sf-slider-indicator--ink-light);
+    /* The dots that are not the current one (read by the slider's measure too). */
+    --sf-slider-indicator--dot-opacity: var(--sf-opacity-80);
   }
-  .sf-slider .sf-slider-controls .sf-slider-dots:where(:dir(rtl)),
-  .sf-slider .sf-slider-controls .sf-slider-pagination:where(:dir(rtl)){
-    right: 50%;
+  .sf-slider[data-indicator=inside][data-ink=dark]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) {
+    --sf-slider-indicator--ink: var(--sf-slider-indicator--ink-dark);
   }
-  .sf-slider .sf-slider-controls .sf-slider-dots,
-  .sf-slider .sf-slider-controls .sf-slider-pagination {
-    bottom: var(--sf-slider-dots-offset-block, var(--sf-space-1));
-    inset-block-end: var(--sf-slider-dots-offset-block, var(--sf-space-1));
-    inset-inline-start: 50%;
-    pointer-events: auto;
-    position: absolute;
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+  .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) > .sf-slider-controls > :is(.sf-slider-dots, .sf-slider-pagination, .sf-slider-rotation-place) {
+    align-self: end;
+    grid-row: 1;
+    margin-top: 0;
+    margin-top: 0;
+    margin-bottom: var(--sf-slider-dots-offset-block, var(--sf-space-2));
+    margin-block: 0 var(--sf-slider-dots-offset-block, var(--sf-space-2));
+    position: relative;
+    z-index: 2;
   }
-  /* The pause button over a picture: the top end corner, on its plate. */
-  .sf-slider .sf-slider-controls .sf-slider-rotation-place:where(:dir(ltr)){
-    right: var(--sf-slider-arrow-offset-inline, var(--sf-space-1));
+  /* The dots' row is a dot's target high, the pause button a button high: the
+     dots stand up by half the difference, so both share one centre line. */
+  /* Two rules, not one list: a :has() inside :has() is no selector, and one
+     such part drops the whole list. */
+  .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) > .sf-slider-controls > .sf-slider-rotation-place:not([hidden]):not(:has(> [hidden])) ~ :is(.sf-slider-dots, .sf-slider-pagination) {
+    margin-bottom: calc(var(--sf-slider-dots-offset-block, var(--sf-space-2)) + (var(--sf-ui-1--control-height) - var(--sf-slider-dots-dot--target-size)) / 2);
+    -webkit-margin-after: calc(var(--sf-slider-dots-offset-block, var(--sf-space-2)) + (var(--sf-ui-1--control-height) - var(--sf-slider-dots-dot--target-size)) / 2);
+            margin-block-end: calc(var(--sf-slider-dots-offset-block, var(--sf-space-2)) + (var(--sf-ui-1--control-height) - var(--sf-slider-dots-dot--target-size)) / 2);
   }
-  .sf-slider .sf-slider-controls .sf-slider-rotation-place:where(:dir(rtl)){
-    left: var(--sf-slider-arrow-offset-inline, var(--sf-space-1));
+  .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) > .sf-slider-controls > :is(.sf-slider-dots, .sf-slider-pagination):has(~ .sf-slider-rotation-place:not([hidden])) {
+    margin-bottom: calc(var(--sf-slider-dots-offset-block, var(--sf-space-2)) + (var(--sf-ui-1--control-height) - var(--sf-slider-dots-dot--target-size)) / 2);
+    -webkit-margin-after: calc(var(--sf-slider-dots-offset-block, var(--sf-space-2)) + (var(--sf-ui-1--control-height) - var(--sf-slider-dots-dot--target-size)) / 2);
+            margin-block-end: calc(var(--sf-slider-dots-offset-block, var(--sf-space-2)) + (var(--sf-ui-1--control-height) - var(--sf-slider-dots-dot--target-size)) / 2);
   }
-  .sf-slider .sf-slider-controls .sf-slider-rotation-place {
-    top: var(--sf-slider-arrow-offset-inline, var(--sf-space-1));
-    inset-block-start: var(--sf-slider-arrow-offset-inline, var(--sf-space-1));
-    inset-inline-end: var(--sf-slider-arrow-offset-inline, var(--sf-space-1));
-    pointer-events: auto;
-    position: absolute;
+  .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) > .sf-slider-controls > .sf-slider-dots--count:where(:dir(ltr)){
+    margin-right: var(--sf-space-2);
+  }
+  .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) > .sf-slider-controls > .sf-slider-dots--count:where(:dir(rtl)){
+    margin-left: var(--sf-space-2);
+  }
+  .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) > .sf-slider-controls > .sf-slider-dots--count {
+    grid-column: 4;
+    justify-self: end;
+    -webkit-margin-end: var(--sf-space-2);
+            margin-inline-end: var(--sf-space-2);
+  }
+  /* The pause button over the picture stands on the arrows' plate (C143 (2)):
+     the popup surface and the overlay shadow, its own fill over it. */
+  .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) > .sf-slider-controls > .sf-slider-rotation-place .sf-icon-button {
+    box-shadow: var(--sf-shadow-overlay);
+  }
+  /* Over a picture the arrows show where a pointer that can hover is (a
+     mouse, a trackpad) and while the keyboard is in the slider
+     (:focus-visible: a mouse press on an arrow does not keep them shown);
+     on a touch screen they are always there. They come in over
+     --sf-duration-normal (0.3 s) with --sf-ease-move: a fade, a --sf-a4 (4 px)
+     slide in from their edge and a scale from 0.9 (DEV msg-0bea9d3c); under
+     reduced motion only the fade. An arrow with nowhere to go is not shown
+     there. */
+  @media (hover: hover) and (pointer: fine) {
+    .sf-slider:not(.sf-slider--content) > .sf-slider-controls > .sf-slider-arrows .sf-icon-button {
+      opacity: 0;
+      scale: 0.9;
+      transition-duration: var(--sf-duration-normal);
+      transition-property: opacity, scale, translate;
+      transition-timing-function: var(--sf-ease-move);
+    }
+    .sf-slider:not(.sf-slider--content) > .sf-slider-controls > .sf-slider-arrows .sf-slider-button-prev {
+      translate: calc(-1 * var(--sf-a4)) 0;
+    }
+    .sf-slider:not(.sf-slider--content) > .sf-slider-controls > .sf-slider-arrows .sf-slider-button-next {
+      translate: var(--sf-a4) 0;
+    }
+    .sf-slider:not(.sf-slider--content):dir(rtl) > .sf-slider-controls > .sf-slider-arrows .sf-slider-button-prev {
+      translate: var(--sf-a4) 0;
+    }
+    .sf-slider:not(.sf-slider--content):dir(rtl) > .sf-slider-controls > .sf-slider-arrows .sf-slider-button-next {
+      translate: calc(-1 * var(--sf-a4)) 0;
+    }
+    .sf-slider:not(.sf-slider--content):is(:hover, :has(.focus-visible)) > .sf-slider-controls > .sf-slider-arrows .sf-icon-button:not(:disabled):not(.swiper-button-disabled) {
+      opacity: 1;
+      scale: 1;
+      translate: 0 0;
+    }
+    .sf-slider:not(.sf-slider--content):is(:hover, :has(:focus-visible)) > .sf-slider-controls > .sf-slider-arrows .sf-icon-button:not(:disabled):not(.swiper-button-disabled) {
+      opacity: 1;
+      scale: 1;
+      translate: 0 0;
+    }
+  }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) {
+    .sf-slider:not(.sf-slider--content) > .sf-slider-controls > .sf-slider-arrows .sf-icon-button,
+    .sf-slider:not(.sf-slider--content) > .sf-slider-controls > .sf-slider-arrows :is(.sf-slider-button-prev, .sf-slider-button-next) {
+      scale: none;
+      transition-property: opacity;
+      translate: none;
+    }
   }
   .sf-slider .sf-slider-dots.swiper-pagination-lock,
   .sf-slider .sf-slider-arrows .sf-icon-button.swiper-button-lock {
@@ -761,6 +1000,15 @@
   }
   .sf-slider .sf-slider-thumbnails .swiper-slide-thumb-active {
     opacity: var(--sf-slider-thumbnails-slide-active--opacity, 1);
+    /* The shown thumbnail is ringed, as sf-gallery's (C150), the ring drawn
+       inside its edge (DEV msg-0bea9d3c), so the strip cannot cut it. */
+    outline: var(--sf-focus--width) solid var(--sf-slider-thumbnails-ring--color, var(--sf-primary));
+    outline-offset: calc(-1 * var(--sf-focus--width));
+  }
+  /* A strip longer than its place starts at its start, not centred past it
+     (the shown thumbnail is scrolled into view by the slider). */
+  .sf-slider .sf-slider-thumbnails > .swiper-wrapper {
+    justify-content: safe center;
   }
   /* A thumbnail is a button (GL-2): it has the thumbnail's radius, so its focus
      ring follows the picture's corners, and the ring is drawn inside it -- the
@@ -774,13 +1022,8 @@
   .sf-slider .sf-slider-thumbnails .swiper-slide:focus-visible {
     outline-offset: var(--sf-focus--inset);
   }
-  /* With thumbnails the controls over a picture stand on the slides only: the
-     arrows centred on the picture, the place at its bottom, not over the
-     thumbnails under it (GL-3). */
-  .sf-slider:not(.sf-slider--content):has(> .sf-slider-thumbnails) > .sf-slider-controls {
-    bottom: calc(var(--sf-slider-gap, var(--sf-slider--gap, var(--sf-space-1))) + var(--sf-slider-thumbnail--block-size, var(--sf-slider-thumbnail-size, var(--sf-d2))));
-    inset-block-end: calc(var(--sf-slider-gap, var(--sf-slider--gap, var(--sf-space-1))) + var(--sf-slider-thumbnail--block-size, var(--sf-slider-thumbnail-size, var(--sf-d2))));
-  }
+  /* With thumbnails the arrows still stand on the slides only (GL-3): they
+     take the strip's row, the thumbnails and the bar their own rows. */
 }
 @layer sf.paint {
   .sf-slider-dots.sf-slider-dots--count {
@@ -791,6 +1034,10 @@
   }
 }
 @layer sf.states {
+  .sf-slider[data-indicator=inside]:not(.sf-slider--content):not(:has(> .sf-slider-thumbnails)) > .sf-slider-controls > .sf-slider-rotation-place .sf-icon-button {
+    background-color: var(--sf-surface-popup);
+    background-image: linear-gradient(var(--sf-icon-button--background-color), var(--sf-icon-button--background-color));
+  }
   .sf-slider .sf-slider-arrows--plate .sf-icon-button {
     background-color: var(--sf-surface-popup);
     background-image: linear-gradient(var(--sf-icon-button--background-color), var(--sf-icon-button--background-color));

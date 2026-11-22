@@ -5764,6 +5764,10 @@ SF.RuleLoader['cl-settings'] = {
   }, {
     name: 'cl-button-icon',
     lazy: true
+  }, // The drop line of a drag by the handle: SF.Sortable's .sf-sortable-indicator (owner remark VR11-5).
+  {
+    name: 'cl-sortable',
+    lazy: true
   }, // The panel look's groups as tabs.
   {
     name: 'cl-tabs',
@@ -10194,7 +10198,7 @@ SF.RuleLoader['query-container/default'] = new RegExp("^(?:query-container(?:\\/
 () {
 
 // Generated from core/contracts/container-conditions.v1.json; do not edit.
-SF.RuleLoader['query-layout/default'] = new RegExp("^(?:cq-(?:lg(?:\\/sidebar:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|md(?:\\/sidebar:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|sm(?:\\/sidebar:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|xl(?:\\/sidebar:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|span-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))))(?![\\s\\S])");
+SF.RuleLoader['query-layout/default'] = new RegExp("^(?:cq-(?:lg(?:\\/sidebar:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|s(?:pan-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full)|tart-(?:1(?:(?:0|1|2|3))?|2|3|4|5|6|7|8|9|auto)))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|order-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|first|last|none)|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|s(?:pan-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full)|tart-(?:1(?:(?:0|1|2|3))?|2|3|4|5|6|7|8|9|auto)))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|order-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|first|last|none)|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|md(?:\\/sidebar:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|s(?:pan-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full)|tart-(?:1(?:(?:0|1|2|3))?|2|3|4|5|6|7|8|9|auto)))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|order-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|first|last|none)|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|s(?:pan-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full)|tart-(?:1(?:(?:0|1|2|3))?|2|3|4|5|6|7|8|9|auto)))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|order-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|first|last|none)|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|sm(?:\\/sidebar:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|s(?:pan-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full)|tart-(?:1(?:(?:0|1|2|3))?|2|3|4|5|6|7|8|9|auto)))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|order-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|first|last|none)|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|s(?:pan-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full)|tart-(?:1(?:(?:0|1|2|3))?|2|3|4|5|6|7|8|9|auto)))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|order-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|first|last|none)|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))|xl(?:\\/sidebar:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|s(?:pan-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full)|tart-(?:1(?:(?:0|1|2|3))?|2|3|4|5|6|7|8|9|auto)))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|order-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|first|last|none)|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8))|:(?:block|co(?:l-(?:auto|gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|s(?:pan-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|full)|tart-(?:1(?:(?:0|1|2|3))?|2|3|4|5|6|7|8|9|auto)))|ntent-main-(?:around|between|center|e(?:nd|venly)|start))|flex(?:-(?:col(?:-reverse)?|nowrap|row(?:-reverse)?|wrap(?:-reverse)?))?|g(?:ap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)|rid(?:-col-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|none|subgrid))?)|hidden|i(?:nline-(?:block|flex)|tems-cross-(?:baseline|center|end|st(?:art|retch)))|order-(?:1(?:(?:0|1|2))?|2|3|4|5|6|7|8|9|first|last|none)|row-gap-(?:0|1(?:\\/(?:2|3|4))?|2|3|4|5|6|7|8)))))(?![\\s\\S])");
 
 /***/ },
 
@@ -10943,42 +10947,42 @@ SF.RuleLoader['text-indent/default'] = new RegExp("^(?:indent-(?:0|1|2|3|4|5))(?
 /***/ "87ad96f68be8"
 () {
 
-SF.RuleLoader['text-max-width/default'] = new RegExp("^(?:measure(?:-(?:narrow|wide))?)(?![\\s\\S])");
+SF.RuleLoader['text-max-width/default'] = new RegExp("^(?:measure(?:-(?:2(?:0|8)|36|44|52|64|80|96|narrow|wide))?)(?![\\s\\S])");
 
 /***/ },
 
 /***/ "c3c44c6146c5"
 () {
 
-SF.RuleLoader['text-max-width/lg'] = new RegExp("^(?:lg:measure(?:-(?:narrow|wide))?)(?![\\s\\S])");
+SF.RuleLoader['text-max-width/lg'] = new RegExp("^(?:lg:measure(?:-(?:2(?:0|8)|36|44|52|64|80|96|narrow|wide))?)(?![\\s\\S])");
 
 /***/ },
 
 /***/ "14a5345fdf16"
 () {
 
-SF.RuleLoader['text-max-width/md'] = new RegExp("^(?:md:measure(?:-(?:narrow|wide))?)(?![\\s\\S])");
+SF.RuleLoader['text-max-width/md'] = new RegExp("^(?:md:measure(?:-(?:2(?:0|8)|36|44|52|64|80|96|narrow|wide))?)(?![\\s\\S])");
 
 /***/ },
 
 /***/ "807d035de5a2"
 () {
 
-SF.RuleLoader['text-max-width/sm'] = new RegExp("^(?:sm:measure(?:-(?:narrow|wide))?)(?![\\s\\S])");
+SF.RuleLoader['text-max-width/sm'] = new RegExp("^(?:sm:measure(?:-(?:2(?:0|8)|36|44|52|64|80|96|narrow|wide))?)(?![\\s\\S])");
 
 /***/ },
 
 /***/ "da99c9bbd10a"
 () {
 
-SF.RuleLoader['text-max-width/xl'] = new RegExp("^(?:xl:measure(?:-(?:narrow|wide))?)(?![\\s\\S])");
+SF.RuleLoader['text-max-width/xl'] = new RegExp("^(?:xl:measure(?:-(?:2(?:0|8)|36|44|52|64|80|96|narrow|wide))?)(?![\\s\\S])");
 
 /***/ },
 
 /***/ "717cb280942d"
 () {
 
-SF.RuleLoader['text-max-width/xxl'] = new RegExp("^(?:xxl:measure(?:-(?:narrow|wide))?)(?![\\s\\S])");
+SF.RuleLoader['text-max-width/xxl'] = new RegExp("^(?:xxl:measure(?:-(?:2(?:0|8)|36|44|52|64|80|96|narrow|wide))?)(?![\\s\\S])");
 
 /***/ },
 

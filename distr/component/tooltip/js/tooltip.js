@@ -934,7 +934,12 @@ class SfTooltipController {
       return;
     }
 
-    if (!this.surface || !this.surface.hidden) return;
+    if (!this.surface || !this.surface.hidden) return; // A trigger whose menu or panel is open (aria-expanded="true") shows no
+    // tooltip: it stood over the open menu and covered its first item when
+    // the pointer stayed on «⋯» after the press (group builds 14 and 15,
+    // sf-bulk-actions; the link the first press made had not seen it).
+
+    if (expandedTrigger(this.trigger)) return;
     clearTimeout(this.openTimer);
     this.openTimer = 0;
     this.syncDescription();
@@ -1047,6 +1052,11 @@ class SfTooltipController {
     this.trigger.ownerDocument.removeEventListener('keydown', this.onDocumentKeydown);
   }
 
+} // The trigger has opened what it controls: a menu, a list, a panel.
+
+
+function expandedTrigger(trigger) {
+  return trigger?.getAttribute?.('aria-expanded') === 'true';
 } // A trigger linked again: its old link (listeners, aria-describedby, the
 // cached surface) undone, and a new one made if it still names a surface.
 
@@ -1065,7 +1075,9 @@ function relinkTrigger(trigger) {
 
 function syncTooltipAttribute(trigger) {
   if (!(trigger instanceof HTMLElement)) return;
-  const instance = tooltipInstances.get(trigger);
+  const instance = tooltipInstances.get(trigger); // Its menu opened while the tooltip showed: the tooltip goes.
+
+  if (expandedTrigger(trigger)) instance?.close();
 
   if (!trigger.hasAttribute('data-tooltip')) {
     instance?.destroy();
@@ -1123,7 +1135,7 @@ if (typeof MutationObserver !== 'undefined') {
     childList: true,
     subtree: true,
     attributes: true,
-    attributeFilter: ['data-tooltip']
+    attributeFilter: ['data-tooltip', 'aria-expanded']
   });
 }
 

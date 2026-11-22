@@ -70,6 +70,9 @@
       padding-right: var(--sf-space-1\/4);
       padding-inline: var(--sf-space-1\/4);
     }
+    .sf-bulk-actions[data-sf-static] .sf-bulk-actions__offer > button {
+      display: none;
+    }
   }
   .sf-bulk-actions__lead,
   .sf-bulk-actions__end,

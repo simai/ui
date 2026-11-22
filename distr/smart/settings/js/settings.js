@@ -1257,6 +1257,62 @@ function choiceFits(row) {
   const options = [...choice.querySelectorAll('.sf-context-menu-choice-option')];
   if (new Set(options.map(option => Math.round(option.getBoundingClientRect().top))).size > 1) return false;
   return options.every(option => option.scrollWidth <= option.clientWidth + 1 && lineCount(option) <= 1);
+} // The drop line of a drag by the handle (owner remark VR11-5, group build 16):
+// SF.Sortable's one line (SORTABLE_DROP_LINE, 2 px, .sf-sortable-indicator in
+// sf-sortable's sheet), owned by the panel so the drag module never takes it.
+// It stands in the panel (the panel may be in the top layer, over anything on
+// the body) at the place the row lands: the top of the row it goes before, or
+// the bottom of the last row, across the list -- the rect of SF.Sortable's
+// line preview (listIndicatorRect).
+
+
+const DROP_LINE = 2; // The line's look is sf-sortable's sheet, a lazy relation: asked for when a
+// panel with a handle opens and when a drag starts (a lazy relation is fetched
+// when it is first used; the Loader asks once).
+
+function askDropLineSheet(panel) {
+  if (!panel?.querySelector?.('.sf-settings-row-handle') || globalThis.customElements?.get('sf-sortable')) return;
+
+  try {
+    globalThis.SF?.Loader?.ensure?.(['sf-sortable'])?.catch?.(() => {});
+  } catch {// No Loader on the page: the line keeps the panel's place, unstyled.
+  }
+}
+
+function dropLine(panel) {
+  const line = document.createElement('div');
+  line.className = 'sf-sortable-indicator';
+  line.setAttribute('aria-hidden', 'true');
+  line.setAttribute('data-sf-drop-line-owner', 'sf-settings');
+  line.hidden = true;
+  panel?.append(line);
+  return line;
+}
+
+function placeDropLine(line, list, before, after) {
+  if (!before && !after) {
+    line.hidden = true;
+    return;
+  }
+
+  const box = list.getBoundingClientRect();
+  const y = before ? before.getBoundingClientRect().top : after.getBoundingClientRect().bottom;
+  line.hidden = false;
+  Object.assign(line.style, {
+    left: `${box.left}px`,
+    top: `${y - DROP_LINE / 2}px`,
+    width: `${box.width}px`,
+    height: `${DROP_LINE}px`
+  }); // position: fixed is the viewport's unless a box round the panel makes its
+  // own containing block (a transform); the line is moved by what it missed.
+
+  const drawn = line.getBoundingClientRect();
+  const dx = box.left - drawn.left;
+  const dy = y - DROP_LINE / 2 - drawn.top;
+  if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) Object.assign(line.style, {
+    left: `${box.left + dx}px`,
+    top: `${y - DROP_LINE / 2 + dy}px`
+  });
 }
 
 class SfSettings extends SettingsElement {
@@ -2437,12 +2493,15 @@ class SfSettings extends SettingsElement {
     event.preventDefault();
     const id = main.dataset.sfSetting;
     const option = main.dataset.sfOption;
-    row.classList.add('sf-settings-row--dragging'); // The rows stay where the drawing put them (lit owns their order); a line
-    // shows where the row will land.
+    row.classList.add('sf-settings-row--dragging'); // The rows stay where the drawing put them (lit owns their order); the
+    // drop line of SF.Sortable shows where the row will land (owner remark
+    // VR11-5): one straight 2 px line across the list, .sf-sortable-indicator
+    // of sf-sortable's sheet (the cl-sortable relation), never a look of the
+    // panel's own -- the row's inset shadow bent at the row's corners.
 
     let before = undefined;
-
-    const marks = () => list.querySelectorAll(':scope > .sf-settings-row--drop-before, :scope > .sf-settings-row--drop-after');
+    askDropLineSheet(this.panel);
+    const line = dropLine(this.panel);
 
     const move = moved => {
       const rows = [...list.querySelectorAll(':scope > .sf-settings-row:not([hidden])')].filter(one => one !== row);
@@ -2451,10 +2510,7 @@ class SfSettings extends SettingsElement {
         return moved.clientY < box.top + box.height / 2;
       });
       before = over ? rowKey(over.querySelector(`:scope > ${ROW}`)) : null;
-
-      for (const one of marks()) one.classList.remove('sf-settings-row--drop-before', 'sf-settings-row--drop-after');
-
-      if (over) over.classList.add('sf-settings-row--drop-before');else rows[rows.length - 1]?.classList.add('sf-settings-row--drop-after');
+      placeDropLine(line, list, over ?? null, over ? null : rows[rows.length - 1] ?? null);
     };
 
     const up = async () => {
@@ -2462,9 +2518,7 @@ class SfSettings extends SettingsElement {
       document.removeEventListener('pointerup', up);
       document.removeEventListener('pointercancel', up);
       row.classList.remove('sf-settings-row--dragging');
-
-      for (const one of marks()) one.classList.remove('sf-settings-row--drop-before', 'sf-settings-row--drop-after');
-
+      line.remove();
       const item = (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.findItem)(this.shownItems(), id);
       const value = before === undefined || !item ? null : (0,_js_settings__WEBPACK_IMPORTED_MODULE_12__.placedField)(item, option, before);
       if (!value) return;
@@ -2501,6 +2555,7 @@ class SfSettings extends SettingsElement {
     const panel = this.panel;
     const owned = this._open;
     if (!panel || !owned) return false;
+    askDropLineSheet(panel);
     anchor.setAttribute('aria-expanded', 'true'); // The density of the control that opened it (C22), where the panel draws.
 
     owned.density = panel.getAttribute('data-sf-density');
@@ -3945,7 +4000,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-setti
 /***/ "72cabd0f91e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.10.0","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","color","heading","separator","group","fields"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"custom":{"type":"boolean"},"disabled":{"type":"boolean"},"sortable":{"type":"boolean"},"pinnable":{"type":"boolean"},"keywords":{"type":"array"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","panel"],"default":"drill"},"apply":{"type":"enum","values":["instant","button"],"default":"instant"},"search":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"apply-count":{"type":"number","optional":true},"close-label":{"type":"string","default-from":"runtime.close"},"search-placeholder":{"type":"string","default-from":"runtime.search"},"empty-text":{"type":"string","default-from":"runtime.empty"},"pin-label":{"type":"string","default-from":"runtime.pin"},"unpin-label":{"type":"string","default-from":"runtime.unpin"},"move-label":{"type":"string","default-from":"runtime.move-hint"}},"values":{"values":{"type":"object"},"tab":{"type":"number"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"arrange":{"carries":{"id":{"type":"string"},"order":{"type":"list"},"previous":{"type":"list"},"value":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"arranged":{"carries":{"id":{"type":"string"},"order":{"type":"list"},"previous":{"type":"list"},"value":{"type":"id"},"item":{"type":"object"}}}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"},"open":{"with":{"tab":{"type":"number","optional":true}},"waits":true},"close":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.10.2","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","color","heading","separator","group","fields"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"custom":{"type":"boolean"},"disabled":{"type":"boolean"},"sortable":{"type":"boolean"},"pinnable":{"type":"boolean"},"keywords":{"type":"array"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","panel"],"default":"drill"},"apply":{"type":"enum","values":["instant","button"],"default":"instant"},"search":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"apply-count":{"type":"number","optional":true},"close-label":{"type":"string","default-from":"runtime.close"},"search-placeholder":{"type":"string","default-from":"runtime.search"},"empty-text":{"type":"string","default-from":"runtime.empty"},"pin-label":{"type":"string","default-from":"runtime.pin"},"unpin-label":{"type":"string","default-from":"runtime.unpin"},"move-label":{"type":"string","default-from":"runtime.move-hint"}},"values":{"values":{"type":"object"},"tab":{"type":"number"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"arrange":{"carries":{"id":{"type":"string"},"order":{"type":"list"},"previous":{"type":"list"},"value":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"arranged":{"carries":{"id":{"type":"string"},"order":{"type":"list"},"previous":{"type":"list"},"value":{"type":"id"},"item":{"type":"object"}}}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"},"open":{"with":{"tab":{"type":"number","optional":true}},"waits":true},"close":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"}}');
 
 /***/ },
 

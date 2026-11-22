@@ -743,7 +743,7 @@
     --sf-textarea-textarea--padding-bottom: var(--sf-textarea-padding-block, calc(var(--sf-ui-1\/3--space-y-tightness-default) - var(--sf-px)));
     --sf-textarea-textarea--padding-top: var(--sf-textarea-padding-block, calc(var(--sf-ui-1\/3--space-y-tightness-default) - var(--sf-px)));
   }
-  .sf-textarea.sf-textarea--size-1\/3 textarea[rows="1"] {
+  .sf-textarea.sf-textarea--size-1\/3:not(.sf-textarea--auto-grow) textarea[rows="1"] {
     height: var(--sf-ui-1\/3--control-height);
     block-size: var(--sf-ui-1\/3--control-height);
   }
@@ -808,7 +808,7 @@
     --sf-textarea-textarea--padding-bottom: var(--sf-textarea-padding-block, calc(var(--sf-ui-3--space-y-tightness-default) - var(--sf-px)));
     --sf-textarea-textarea--padding-top: var(--sf-textarea-padding-block, calc(var(--sf-ui-3--space-y-tightness-default) - var(--sf-px)));
   }
-  .sf-textarea.sf-textarea--size-3 textarea[rows="1"] {
+  .sf-textarea.sf-textarea--size-3:not(.sf-textarea--auto-grow) textarea[rows="1"] {
     height: var(--sf-ui-3--control-height);
     block-size: var(--sf-ui-3--control-height);
   }

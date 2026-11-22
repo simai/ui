@@ -1406,7 +1406,48 @@ class SfInputChoice extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_3__.
     if (typeof callback === 'function') return super.afterRender(callback);
     this.sfSyncFormState();
     this.watchMore();
+    this.watchTrack();
     return undefined;
+  } // The list's scrollbar: while the rows scroll the list marks itself
+  // (data-sf-choice-track). In a panel the rows give the track's room from
+  // their end padding, so nothing shifts (popup head round 3, the owner's
+  // variant B); outside one the search's icon moves in by the track with the
+  // checks (round 2, PH-6), so the two keep one column.
+
+
+  watchTrack() {
+    const scroll = this.querySelector('.sf-choice-scroll');
+    const root = scroll?.closest('.sf-choice') ?? null;
+
+    if (scroll !== this._trackWatched) {
+      this._trackWatch?.disconnect();
+      this._trackWatched = scroll;
+      const Observer = this.ownerDocument?.defaultView?.ResizeObserver ?? globalThis.ResizeObserver;
+
+      if (scroll && typeof Observer === 'function') {
+        this._trackWatch ??= new Observer(() => this.markTrack());
+
+        this._trackWatch.observe(scroll);
+
+        if (scroll.firstElementChild) this._trackWatch.observe(scroll.firstElementChild);
+      }
+    }
+
+    if (root) this.markTrack();
+  }
+
+  markTrack() {
+    const scroll = this._trackWatched;
+    const root = scroll?.closest('.sf-choice');
+    if (!root) return;
+    root.toggleAttribute('data-sf-choice-track', scroll.offsetWidth - scroll.clientWidth > 0);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback?.();
+    this._trackWatch?.disconnect();
+    this._trackWatch = null;
+    this._trackWatched = null;
   } // FO4-4: the host's next page loads when the list is scrolled to its end
   // (the mark after «Показать ещё» comes into view, in the window or the
   // box that scrolls the list); the button stays the last row, for the keyboard and for a
@@ -2086,7 +2127,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "0c1826bbbeb3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-choice","tag":"sf-input-choice","version":"1.11.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"value":"string","label":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"price":{"type":"string","optional":true},"term":{"type":"string","optional":true},"image":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"avatar":{"type":"object","optional":true},"swatch":{"type":"string","optional":true},"scheme":{"type":"string","optional":true}}},"searchable":{"type":"boolean","default":false},"provider":{"type":"object","default":null},"option-look":{"type":"enum","values":["badge","dot"]},"control-position":{"type":"enum","values":["start","end"],"default":"start"},"panel":{"type":"boolean","default":false},"multiple":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["cards","list"],"default":"cards"},"layout":{"type":"enum","values":["tile","list","picture"],"default":"tile"},"flow":{"type":"enum","values":["auto","row","column"],"default":"auto"},"columns":{"type":"enum","values":["auto","1","2","3","4"],"default":"auto"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-choice-gap":{"type":"length","state":"default"},"--sf-choice-min-inline-size":{"type":"length","state":"default"},"--sf-choice-padding":{"type":"length","state":"default"},"--sf-choice-radius":{"type":"length","state":"default"},"--sf-choice-background-color":{"type":"color","state":"default"},"--sf-choice-border-color":{"type":"color","state":"default"},"--sf-choice-selected-background-color":{"type":"color","state":"selected"},"--sf-choice-selected-border-color":{"type":"color","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-choice","tag":"sf-input-choice","version":"1.11.2","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"value":"string","label":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"price":{"type":"string","optional":true},"term":{"type":"string","optional":true},"image":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"avatar":{"type":"object","optional":true},"swatch":{"type":"string","optional":true},"scheme":{"type":"string","optional":true}}},"searchable":{"type":"boolean","default":false},"provider":{"type":"object","default":null},"option-look":{"type":"enum","values":["badge","dot"]},"control-position":{"type":"enum","values":["start","end"],"default":"start"},"panel":{"type":"boolean","default":false},"multiple":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["cards","list"],"default":"cards"},"layout":{"type":"enum","values":["tile","list","picture"],"default":"tile"},"flow":{"type":"enum","values":["auto","row","column"],"default":"auto"},"columns":{"type":"enum","values":["auto","1","2","3","4"],"default":"auto"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-choice-gap":{"type":"length","state":"default"},"--sf-choice-min-inline-size":{"type":"length","state":"default"},"--sf-choice-padding":{"type":"length","state":"default"},"--sf-choice-radius":{"type":"length","state":"default"},"--sf-choice-background-color":{"type":"color","state":"default"},"--sf-choice-border-color":{"type":"color","state":"default"},"--sf-choice-selected-background-color":{"type":"color","state":"selected"},"--sf-choice-selected-border-color":{"type":"color","state":"selected"}}}');
 
 /***/ },
 

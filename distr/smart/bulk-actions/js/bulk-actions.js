@@ -281,7 +281,8 @@ class SfBulkActions extends BulkActionsElement {
     if (this._run) return;
     const before = name === 'count' ? (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_7__.number)(oldValue) : count;
     if (this._done && count === 0) return;
-    if (count > 0) this.say(this.allSelected && this.total ? this.word('all-text', this.total) : this.word('count-text', count));else if (before > 0) this.say(this.sfWord('cleared-text'));
+    const all = this.allSelected && this.total ? this.total : 0;
+    if (count > 0) this.say(() => all ? this.word('all-text', all) : this.word('count-text', count));else if (before > 0) this.say(() => this.sfWord('cleared-text'));
   } // The size the host gives, or the nearest sized element's around it (the
   // list that places it), or 1.
 
@@ -343,7 +344,12 @@ class SfBulkActions extends BulkActionsElement {
     } catch {
       return String(value);
     }
-  } // The live region, after the selection settles.
+  } // The live region, after the selection settles. A line made of the
+  // element's own words is passed as a function and made when it is spoken
+  // and at every drawing after, so it is in the page's language even when the
+  // language part arrives after the mark that asked for it (view round 10,
+  // V10-1: the first mark spoke «1 selected» on a Russian page while the
+  // part was 400 ms late). The function holds the numbers of its moment.
 
 
   say(text) {
@@ -352,6 +358,17 @@ class SfBulkActions extends BulkActionsElement {
       this._announcement = text;
       this.requestComponentUpdate('announcement');
     }, SAY_AFTER);
+  }
+
+  get announcement() {
+    const said = this._announcement;
+    if (typeof said !== 'function') return said ?? '';
+
+    try {
+      return String(said() ?? '');
+    } catch {
+      return '';
+    }
   } // Compact below the Framework's sm step, measured on the box the bar
   // stands in (a narrow panel is a phone too).
 
@@ -497,7 +514,8 @@ class SfBulkActions extends BulkActionsElement {
       total: this.total,
       count: this.selectedCount
     });
-    this.say(this.word('all-text', this.total));
+    const total = this.total;
+    this.say(() => this.word('all-text', total));
   }
 
   selectPage() {
@@ -505,7 +523,8 @@ class SfBulkActions extends BulkActionsElement {
     this.sfEmit('select-page', {
       count: this.selectedCount
     });
-    this.say(this.word('count-text', this.selectedCount));
+    const count = this.selectedCount;
+    this.say(() => this.word('count-text', count));
   }
 
   pressAction(id, event) {
@@ -806,7 +825,7 @@ class SfBulkActions extends BulkActionsElement {
       total: all,
       text: String(text || '')
     };
-    this.say(this.progressText(made, all, text));
+    this.say(() => this.progressText(made, all, text));
     this.requestComponentUpdate('progress');
     return undefined;
   }
@@ -1014,7 +1033,7 @@ class SfBulkActions extends BulkActionsElement {
       done,
       start: this.hasSlotContent('start') ? this.getSlotContent('start') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
       end: this.hasSlotContent('end') ? this.getSlotContent('end') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing,
-      announcement: this._announcement,
+      announcement: this.announcement,
       words: {
         more: this.sfWord('more-text'),
         clear: this.sfWord('clear-text'),
@@ -1439,7 +1458,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "461b17ac357b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.bulk-actions","tag":"sf-bulk-actions","version":"1.2.1","kind":"leaf","settings":{"count":{"type":"number","integer":true,"min":0,"default":0},"page-count":{"type":"number","integer":true,"min":0,"default":0},"total":{"type":"number","optional":true,"min":0},"all-selected":{"type":"boolean","default":false},"count-text":{"type":"string","default":""},"place":{"type":"enum","values":["dock","top","float","inline"],"default":"dock"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default-from":"runtime.label-text"},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"status":{"type":"enum","values":["","danger"],"optional":true},"confirm":{"type":"object","optional":true},"undo":{"type":"boolean","optional":true},"long":{"type":"boolean","optional":true},"done-text":{"type":"string","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"reason":{"type":"string","optional":true},"priority":{"type":"number|string","optional":true},"disabled":{"type":"boolean","optional":true}}}},"events":{"action":{"own-verb":true,"cancelable":true,"carries":{"id":{"type":"id"},"scope":{"type":"enum","values":["selection","all"]},"count":{"type":"number"},"long":{"type":"boolean"}}},"undo":{"own-verb":true,"carries":{"id":{"type":"id"},"scope":{"type":"enum","values":["selection","all"]},"count":"number"}},"select-all":{"own-verb":true,"carries":{"total":"number","count":"number"}},"select-page":{"own-verb":true,"carries":{"count":"number"}},"clear":{"own-verb":true,"carries":{"count":"number","scope":{"type":"enum","values":["selection","all"]},"reason":{"type":"enum","values":["button","escape","api"]}}}},"actions":{"progress":{"with":{"done":"number","total":"number","text":{"type":"string","optional":true}}},"result":{"with":{"id":{"type":"id","optional":true},"ok":"number","failed":"list","text":{"type":"string","optional":true}}},"clear":{"with":{}}},"host-states":{"data-state":"string","data-place":"string"},"css-variables":{"--sf-bulk-actions-background":{"type":"color","state":"default"},"--sf-bulk-actions-border-color":{"type":"color","state":"default"},"--sf-bulk-actions-color":{"type":"color","state":"default"},"--sf-bulk-actions-gap":{"type":"length","state":"default"},"--sf-bulk-actions-radius":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.bulk-actions","tag":"sf-bulk-actions","version":"1.2.3","kind":"leaf","settings":{"count":{"type":"number","integer":true,"min":0,"default":0},"page-count":{"type":"number","integer":true,"min":0,"default":0},"total":{"type":"number","optional":true,"min":0},"all-selected":{"type":"boolean","default":false},"count-text":{"type":"string","default":""},"place":{"type":"enum","values":["dock","top","float","inline"],"default":"dock"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default-from":"runtime.label-text"},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"status":{"type":"enum","values":["","danger"],"optional":true},"confirm":{"type":"object","optional":true},"undo":{"type":"boolean","optional":true},"long":{"type":"boolean","optional":true},"done-text":{"type":"string","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"reason":{"type":"string","optional":true},"priority":{"type":"number|string","optional":true},"disabled":{"type":"boolean","optional":true}}}},"events":{"action":{"own-verb":true,"cancelable":true,"carries":{"id":{"type":"id"},"scope":{"type":"enum","values":["selection","all"]},"count":{"type":"number"},"long":{"type":"boolean"}}},"undo":{"own-verb":true,"carries":{"id":{"type":"id"},"scope":{"type":"enum","values":["selection","all"]},"count":"number"}},"select-all":{"own-verb":true,"carries":{"total":"number","count":"number"}},"select-page":{"own-verb":true,"carries":{"count":"number"}},"clear":{"own-verb":true,"carries":{"count":"number","scope":{"type":"enum","values":["selection","all"]},"reason":{"type":"enum","values":["button","escape","api"]}}}},"actions":{"progress":{"with":{"done":"number","total":"number","text":{"type":"string","optional":true}}},"result":{"with":{"id":{"type":"id","optional":true},"ok":"number","failed":"list","text":{"type":"string","optional":true}}},"clear":{"with":{}}},"host-states":{"data-state":"string","data-place":"string"},"css-variables":{"--sf-bulk-actions-background":{"type":"color","state":"default"},"--sf-bulk-actions-border-color":{"type":"color","state":"default"},"--sf-bulk-actions-color":{"type":"color","state":"default"},"--sf-bulk-actions-gap":{"type":"length","state":"default"},"--sf-bulk-actions-radius":{"type":"length","state":"default"}}}');
 
 /***/ },
 

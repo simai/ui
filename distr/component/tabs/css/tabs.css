@@ -705,6 +705,20 @@
     min-inline-size: max-content;
     justify-content: center;
   }
+  .sf-tabs-top-container[data-sf-tabs-fit] > .sf-tabs-top > span[role=tab] {
+    display: flex;
+    flex: 1 1 0;
+    min-width: -webkit-max-content;
+    min-width: -moz-max-content;
+    min-width: max-content;
+    min-inline-size: -webkit-max-content;
+    min-inline-size: -moz-max-content;
+    min-inline-size: max-content;
+  }
+  .sf-tabs-top-container[data-sf-tabs-fit] > .sf-tabs-top > span[role=tab] > [inert] :is(.sf-button, .sf-icon-button) {
+    flex: 1 1 0;
+    justify-content: center;
+  }
   .sf-tabs--overflow-more:not(.sf-tabs--vertical) > .sf-tabs-top-container {
     container: sf-tabs-row/inline-size;
   }
@@ -777,6 +791,61 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .sf-tabs-top > .sf-tabs-squeezed .sf-button-text-container,
+  .sf-tabs-top > .sf-button[data-sf-tabs-squeezed] > .sf-button-text-container {
+    min-width: var(--sf-tabs--squeezed-min, calc(var(--sf-px) * 0));
+    min-inline-size: var(--sf-tabs--squeezed-min, calc(var(--sf-px) * 0));
+  }
+  .sf-tabs-top > .sf-tabs-icon-only > button,
+  .sf-tabs-top > .sf-button[data-sf-tabs-icon-only] {
+    flex: none;
+    max-width: none;
+    max-inline-size: none;
+  }
+  .sf-tabs-top > .sf-tabs-icon-only > button > .sf-button-text-container,
+  .sf-tabs-top > .sf-button[data-sf-tabs-icon-only] > .sf-button-text-container,
+  .sf-tabs-top-container[data-sf-tabs-more-compact] > .sf-tabs-more > button > .sf-button-text-container {
+    position: absolute;
+    width: var(--sf-px);
+    inline-size: var(--sf-px);
+    height: var(--sf-px);
+    block-size: var(--sf-px);
+    padding: 0;
+    margin: calc(-1 * var(--sf-px));
+    overflow: hidden;
+    -webkit-clip-path: inset(50%);
+            clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .sf-tabs-top-container[data-sf-tabs-more-compact] > .sf-tabs-more > button {
+    --sf-button--padding-inline-start: var(--sf-button--padding-top);
+    --sf-button--padding-inline-end: var(--sf-button--padding-top);
+    justify-content: center;
+  }
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-icon-only > .sf-button,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-button[data-sf-tabs-icon-only] {
+    position: relative;
+  }
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-icon-only > .sf-button.selected:not(:disabled):not(.disabled)::after:where(:dir(ltr)), .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-button[data-sf-tabs-icon-only].selected:not(:disabled):not(.disabled)::after:where(:dir(ltr)){
+    left: var(--sf-button--padding-inline-start);
+    right: var(--sf-button--padding-inline-end);
+  }
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-icon-only > .sf-button.selected:not(:disabled):not(.disabled)::after:where(:dir(rtl)), .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-button[data-sf-tabs-icon-only].selected:not(:disabled):not(.disabled)::after:where(:dir(rtl)){
+    right: var(--sf-button--padding-inline-start);
+    left: var(--sf-button--padding-inline-end);
+  }
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-tabs-icon-only > .sf-button.selected:not(:disabled):not(.disabled)::after,
+  .sf-tabs:is(.sf-tabs--underline, :not(.sf-tabs--pills):not(.sf-tabs--vertical)) > .sf-tabs-top-container > .sf-tabs-top > .sf-button[data-sf-tabs-icon-only].selected:not(:disabled):not(.disabled)::after {
+    content: "";
+    position: absolute;
+    inset-inline: var(--sf-button--padding-inline-start) var(--sf-button--padding-inline-end);
+    bottom: 0;
+    inset-block-end: 0;
+    border-bottom: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
+    -webkit-border-after: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
+            border-block-end: var(--sf-tabs-indicator-width, calc(var(--sf-tabs--border-width, var(--sf-px)) * 2)) solid var(--sf-tabs-indicator-color, var(--sf-primary));
+    pointer-events: none;
   }
   .sf-tabs-more > button {
     white-space: nowrap;

@@ -2585,6 +2585,7 @@ function filterSummary(field = {}, value = {}, {
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   FILTER_WINDOW_STEP: () => (/* binding */ FILTER_WINDOW_STEP),
 /* harmony export */   filterOperatorLabel: () => (/* binding */ filterOperatorLabel),
 /* harmony export */   filterWindowOpen: () => (/* binding */ filterWindowOpen)
 /* harmony export */ });
@@ -2608,7 +2609,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 //     anchor,                  the control it opens from (required)
 //     field,                   the Framework field descriptor with its filter
 //     value,                   the filter's value now: {value?, values?, operator?}
-//     size,                    the step of the controls ('1' or '1/2'), the list's own
+//     size,                    accepted and not used: the window has one step of its own,
+//                              FILTER_WINDOW_STEP, for every part (VR11-4, PH-7)
 //     placement,               sf-popover's (bottom-start)
 //   });
 //   answer: {action: 'apply', value} -- the value the person set
@@ -2738,13 +2740,21 @@ function holdReopen(anchor) {
 
   doc.addEventListener('pointerdown', clear, true);
   doc.addEventListener('keydown', clear, true);
-}
+} // The window's one step (popup head round 3, PH-7, group build 16): set once
+// here and given to every part -- the condition band, the value fields, the
+// search, the rows and the footer's buttons -- in every condition state, with
+// rows or without. The rows' own step, the choice list's panel step 1, which
+// the opener's density brings down (C22, C79). The band and the footer took
+// the list's size (size=, filterSize) while the rows kept theirs, so at 1/2
+// the window had two steps, and which parts were drawn decided its look.
+// The size option stays for callers; it no longer changes the window.
 
+
+const FILTER_WINDOW_STEP = '1';
 function filterWindowOpen({
   anchor,
   field = {},
   value = {},
-  size = '1',
   placement = 'bottom-start',
   width = 'panel',
   count,
@@ -2783,7 +2793,18 @@ function filterWindowOpen({
       body.className = 'sf-filter-window flex flex-col'; // The window's list scrolls inside it, under the band and the search
       // (C313): every box down to it may be shorter than its content.
 
-      body.style.minBlockSize = '0';
+      body.style.minBlockSize = '0'; // Only the rows scroll (group build 16 return GB16-3): the window fills
+      // the sheet under its head and over its foot (sf-drawer 1.21.0,
+      // data-sf-drawer-fill), so the band and the search stay put, and the
+      // last row's text stands from the foot's line as the first from the
+      // search's (C397, PH-8).
+
+      body.setAttribute('data-sf-drawer-fill', ''); // The sheet's title and its footer's buttons stand on the rows' text
+      // (C397, PH-9): the drawer's inset is the list's start column, the
+      // panel's inset and the row's padding (12 on a phone), as the popover's
+      // footer pads.
+
+      frame.style.setProperty('--sf-drawer-gutter', 'calc(var(--sf-space-1\\/4) + var(--sf-space-1\\/2))');
       frame.append(body);
 
       if (withFooter) {
@@ -2807,7 +2828,10 @@ function filterWindowOpen({
 
       surface.setAttribute('data-sf-filter-width', width === 'wide' ? 'wide' : 'panel');
       surface.style.inlineSize = width === 'wide' ? 'var(--sf-popup-form-wide-width)' : 'var(--sf-popup-panel-width)';
-      surface.style.maxInlineSize = '100%';
+      surface.style.maxInlineSize = '100%'; // The band at the window's top takes the window's corners, so its
+      // inward focus ring is not cut by them (popup head round 2, PH-3).
+
+      surface.style.setProperty('--sf-dropdown-band-radius', 'var(--sf-popover-radius, var(--sf-radius--surface))');
       body = doc.createElement('div');
       body.className = 'sf-filter-window-control flex flex-col';
       body.style.minBlockSize = '0';
@@ -2815,7 +2839,11 @@ function filterWindowOpen({
 
       if (withFooter) {
         foot = doc.createElement('div');
-        foot.className = 'sf-filter-window-foot p-1/2'; // The footer's hairline across the window, as the band's and the search's.
+        foot.className = 'sf-filter-window-foot'; // The footer stands as the start column (owner decision C397, PH-9):
+        // the panel's inset and the row's padding, 16 (12 compact), the
+        // rows' text and the buttons on one line.
+
+        foot.style.padding = 'calc(var(--sf-space-1\\/4) + var(--sf-space-1\\/2))'; // The footer's hairline across the window, as the band's and the search's.
 
         foot.style.borderBlockStart = 'var(--sf-px) solid var(--sf-outline-variant)';
         surface.append(foot);
@@ -2825,7 +2853,7 @@ function filterWindowOpen({
     }
 
     const host = {
-      size,
+      size: FILTER_WINDOW_STEP,
       // The single-field window (C308 FO-5): the rows' checks stand at the end.
       filterWindow: true,
       // In a phone's sheet the band reaches the sheet's edges (C313 (1)).
@@ -2865,20 +2893,20 @@ function filterWindowOpen({
     // condition is a list; plain «Применить» otherwise or with none chosen.
 
 
-    const footSize = sheet ? size : '1/2';
+    const footSize = FILTER_WINDOW_STEP;
 
     const applyText = () => {
       const number = typeof count === 'function' ? count(temp) : Array.isArray(temp?.values) ? temp.values.length : 0;
       return number ? `${word('filterApply', anchor)} (${number})` : word('filterApply', anchor);
-    };
+    }; // The rows' scrollbar shifts nothing (popup head round 3, owner's scroll
+    // variant B): the rows give its room from their own end padding
+    // (sf-input-choice, data-sf-choice-track), so the band's chevron, the
+    // search's icon and the checks keep one column with or without it.
+
 
     function draw() {
       (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${renderControl(field, host)}`, body);
-      if (!foot) return; // The popover's footer buttons are a step below the rows (the accepted
-      // study #top3, C313): at size 1 «Применить (N)» and «Сбросить» did not
-      // fit a 20rem window side by side and the main one wrapped onto two
-      // lines. A phone's sheet is the screen's width and keeps the rows' step,
-      // a finger's target.
+      if (!foot) return; // The footer's buttons stand on the window's step (PH-7), as the rows.
 
       (0,lit__WEBPACK_IMPORTED_MODULE_0__.render)((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-filter-window-footer flex gap-1/3 items-cross-center">
           <sf-button size=${footSize} scheme="primary" text=${applyText()}
@@ -7433,19 +7461,38 @@ function fieldTemplate(field = {}) {
 // (the fill family, 12 % light, 24 % dark) through the band's public
 // variable; the text keeps the text ink. Every menu item carries an 8 px dot
 // of its condition's colour, grey for the rest.
+// The window is one step (VR11-4, group build 16 G8): its condition band,
+// its value fields and its rows stand on the rows' step, the choice list's
+// own -- the panel's, 1, which the opener's density brings down (C22, C79:
+// 40 rows and a 48 band, compact 32 and 40). The band took the list's size
+// (filterSize), so in a size 1/2 list it was 41 with 14 px text over a 48
+// search and 40 rows of 16 px text.
+// One step, set once on the window (PH-7): FILTER_WINDOW_STEP.
+
+function windowStep() {
+  return _filter_window_js__WEBPACK_IMPORTED_MODULE_16__.FILTER_WINDOW_STEP;
+}
 
 function renderConditionControl(field, host, conditions, selected) {
-  if (conditions.length < 2) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const tone = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditionTone)(selected);
-  const style = tone ? `--sf-dropdown-background-color: var(--sf-${tone}-container)` : '';
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-dropdown class="sf-filter-window-condition" size=${filterSize(host)} appearance="band" mode="select"
+  if (conditions.length < 2) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing; // The condition head (owner decision C397, refines C314): one medium text
+  // «Условие: любой из» on the band's grey in every state; an excluding
+  // condition's words in the error ink; «задано» / «не задано» without a
+  // colour; the menu without dots, the excluding rows in the same ink.
+
+  const excluding = operator => (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditionTone)(operator) === 'error';
+
+  const caption = JSON.stringify(`${setText(host, 'filterCondition')}: `);
+  const style = `--sf-dropdown-band-caption: ${caption}${excluding(selected) ? '; --sf-dropdown-band-color: var(--sf-error); --sf-dropdown-band-hover-color: var(--sf-error-hover)' : ''}`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-dropdown class="sf-filter-window-condition" size=${windowStep()} appearance="band" mode="select"
             search=${conditions.length >= 10 ? 'true' : 'false'} list-width="trigger" aria-label=${setText(host, 'filterCondition')}
-            data-tone=${tone || 'neutral'} style=${style || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+            data-tone=${excluding(selected) ? 'error' : 'neutral'} style=${style}
             .options=${conditions.map(operator => ({
     value: operator,
     text: host.getFilterOperatorLabel(operator),
     label: host.getFilterOperatorLabel(operator),
-    dot: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditionTone)(operator) || 'neutral'
+    ...(excluding(operator) ? {
+      ink: 'error'
+    } : {})
   }))}
             value=${selected}
             @change=${event => {
@@ -7481,7 +7528,7 @@ function valueRow(content) {
 }
 
 function renderStringWindow(field, host, value, operator) {
-  return valueRow((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input size=${filterSize(host)} appearance="plain" root-class="flex-1 min-w-0" aria-label=${`${field.label || field.key}: ${host.getFilterOperatorLabel(operator)}`}
+  return valueRow((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input size=${windowStep()} appearance="plain" root-class="flex-1 min-w-0" aria-label=${`${field.label || field.key}: ${host.getFilterOperatorLabel(operator)}`}
             placeholder=${setText(host, 'filterTextPlaceholder')}
             value=${typeof value.value === 'string' ? value.value : ''} name="sf_filter_${field.key || 'text'}"
             @change=${event => host.patchTempFilterValue(field.key, {
@@ -7501,7 +7548,7 @@ function renderNumberWindow(field, host, value, operator) {
 
   if (operator !== 'between') {
     const one = Array.isArray(value.value) ? value.value[0] : value.value;
-    return valueRow((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input size=${filterSize(host)} appearance="plain" root-class="flex-1 min-w-0" inputmode="decimal"
+    return valueRow((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-input size=${windowStep()} appearance="plain" root-class="flex-1 min-w-0" inputmode="decimal"
                 aria-label=${named(`${label}: ${host.getFilterOperatorLabel(operator)}`)} placeholder=${sign || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 value=${one ?? ''} name="sf_filter_${field.key || 'number'}"
                 @change=${event => host.patchTempFilterValue(field.key, {
@@ -7524,10 +7571,10 @@ function renderNumberWindow(field, host, value, operator) {
   const from = setText(host, 'rangeFromWord');
   const to = setText(host, 'rangeToWord');
   return valueRow((0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-filter-window-word" aria-hidden="true">${from}</span>
-        <sf-input size=${filterSize(host)} appearance="plain" root-class="flex-1 min-w-0" inputmode="decimal" placeholder=${sign || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        <sf-input size=${windowStep()} appearance="plain" root-class="flex-1 min-w-0" inputmode="decimal" placeholder=${sign || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                   aria-label=${named(`${label}: ${from}`)} value=${range[0] ?? ''} name="sf_filter_${field.key || 'number'}" @change=${event => patch(0, event.target?.value)}></sf-input>
         <span class="sf-filter-window-word" aria-hidden="true">${to}</span>
-        <sf-input size=${filterSize(host)} appearance="plain" root-class="flex-1 min-w-0" inputmode="decimal" placeholder=${sign || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        <sf-input size=${windowStep()} appearance="plain" root-class="flex-1 min-w-0" inputmode="decimal" placeholder=${sign || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                   aria-label=${named(`${label}: ${to}`)} value=${range[1] ?? ''} name="sf_filter_${field.key || 'number'}_second" @change=${event => patch(1, event.target?.value)}></sf-input>`);
 } // A boolean (C310, C312 (2), C313 (5)): Да / Нет / Не задано, one choice, no
 // condition band and no search; a press applies, as a menu item does, with

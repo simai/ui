@@ -1577,7 +1577,8 @@ function parseOptionData(option, dropdownSize = '1') {
     value,
     ariaLabel: option.ariaLabel ? String(option.ariaLabel) : '',
     group: option.group ? String(option.group) : '',
-    dot: option.dot ? String(option.dot) : ''
+    dot: option.dot ? String(option.dot) : '',
+    ink: option.ink ? String(option.ink) : ''
   };
 }
 
@@ -2503,9 +2504,18 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // (the filter window's conditions: excluding red, presence purple, the rest
 // grey). The name stays the row's text.
 
-const OPTION_DOTS = new Set(["primary", "tertiary", "info", "success", "warning", "error", "neutral"]);
+const OPTION_DOTS = new Set(["primary", "tertiary", "info", "success", "warning", "error", "neutral"]); // An option's ink (owner decision C397): `ink: "error"` draws the name in
+// the error ink -- the filter window's excluding conditions, without a dot.
+
+const OPTION_INKS = new Set(["error"]);
 
 function optionName(option) {
+  if (option.ink && OPTION_INKS.has(String(option.ink)) && typeof option.text === "string") {
+    return { ...option,
+      text: (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-dropdown-option-ink--${String(option.ink)}">${option.text}</span>`
+    };
+  }
+
   if (option.dot && OPTION_DOTS.has(String(option.dot)) && typeof option.text === "string") {
     return { ...option,
       text: (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-dot sf-dot--size-1 sf-dot--${String(option.dot)} sf-dropdown-option-dot"><span class="sf-dot-item" aria-hidden="true"></span>${option.text}</span>`
@@ -4625,7 +4635,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-dropd
 /***/ "b4d28078de6f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.24.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","bordered","band"],"default":"bordered"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"list-width":{"type":"enum","values":["field","list","trigger"],"default":"field"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"width":{"type":"enum","values":["","short","medium","long"],"default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"},"--sf-dropdown-band-edge":{"type":"length","state":"default"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.dropdown","tag":"sf-dropdown","version":"1.25.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"appearance":{"type":"enum","values":["filled","bordered","band"],"default":"bordered"},"columns":{"type":"number","default":6},"disabled":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"layout":{"type":"enum","values":["list","grid"],"default":"list"},"list-width":{"type":"enum","values":["field","list","trigger"],"default":"field"},"mode":{"type":"enum","values":["tag","select"],"default":"select"},"multiple":{"type":"boolean","default":false},"name":{"type":"string","default":""},"options":{"type":"list","default":[],"of":{"value":"string","text":"string","icon":{"type":"icon","optional":true},"disabled":{"type":"boolean","optional":true},"group":{"type":"string","optional":true}}},"placeholder":{"type":"string","default-from":"runtime.empty"},"portal":{"type":"boolean","default":true},"required":{"type":"boolean","default":false},"search":{"type":"boolean","default":true},"search-placeholder":{"type":"string","default-from":"runtime.search"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"width":{"type":"enum","values":["","short","medium","long"],"default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"open-dropdown":{},"close-dropdown":{},"toggle-dropdown":{},"set-error":{"with":{"message":{"type":"string"}}}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-dropdown-background-color":{"type":"color","state":"default"},"--sf-dropdown-border-color":{"type":"color","state":"default"},"--sf-dropdown-radius":{"type":"length","state":"default"},"--sf-dropdown-gap":{"type":"length","state":"default"},"--sf-dropdown-list-background-color":{"type":"color","state":"open"},"--sf-dropdown-band-edge":{"type":"length","state":"default"},"--sf-dropdown-band-end":{"type":"length","state":"default"},"--sf-dropdown-band-radius":{"type":"length","state":"default"},"--sf-dropdown-band-caption":{"type":"string","state":"default"},"--sf-dropdown-band-color":{"type":"color","state":"default"},"--sf-dropdown-band-hover-color":{"type":"color","state":"hover"}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]}}');
 
 /***/ },
 
