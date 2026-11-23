@@ -520,6 +520,13 @@ class SfTagGroup extends GroupElement {
         default: 'default'
       }
     };
+  } // selected-ids is a list, which the manifest base reads as an attribute
+  // only once, on the first connect; observed here (1.2.1, FF-1), a write of
+  // the attribute after the row connected chooses too, as selected does.
+
+
+  static get observedAttributes() {
+    return [...new Set([...super.observedAttributes, 'selected', 'selected-ids'])];
   }
 
   constructor() {
@@ -578,9 +585,20 @@ class SfTagGroup extends GroupElement {
 
     this._change = event => this.onTagChange(event);
 
+    this._close = event => this.onTagClose(event); // The tag a pointer pressed: a browser that does not focus a pressed
+    // button (Safari) still has the cross's tag stood on.
+
+
+    this._press = event => {
+      this._pressed = event.target?.closest?.('sf-tag') ?? null;
+    };
+
+    this.addEventListener('pointerdown', this._press);
     this.addEventListener('keydown', this._keydown);
     this.addEventListener('focusin', this._focusin);
-    this.addEventListener('change', this._change);
+    this.addEventListener('change', this._change); // Heard on the way down, before the page's own listener removes the tag.
+
+    this.addEventListener('sf-tag-close', this._close, true);
 
     if (typeof MutationObserver === 'function') {
       this._mutations = new MutationObserver(records => {
@@ -614,6 +632,8 @@ class SfTagGroup extends GroupElement {
     this.removeEventListener('keydown', this._keydown);
     this.removeEventListener('focusin', this._focusin);
     this.removeEventListener('change', this._change);
+    this.removeEventListener('sf-tag-close', this._close, true);
+    this.removeEventListener('pointerdown', this._press);
     this._mutations?.disconnect();
     this._resize?.disconnect();
     if (this._frame) cancelAnimationFrame(this._frame);
@@ -642,7 +662,7 @@ class SfTagGroup extends GroupElement {
   }
 
   set selected(value) {
-    this.choose(value === null || value === undefined || value === '' ? [] : [String(value)]);
+    this.chooseEarly(value === null || value === undefined || value === '' ? [] : [String(value)]);
   }
   /** §18.2: the keys of the chosen tags, in the row's order. */
 
@@ -652,7 +672,26 @@ class SfTagGroup extends GroupElement {
   }
 
   set selectedIds(value) {
-    this.choose(listOf(value));
+    this.chooseEarly(listOf(value));
+  } // A choice written before the row first settles (the attribute or the
+  // property of a host whose tags the parser has not reached yet) is made
+  // again once they are there.
+
+
+  chooseEarly(keys) {
+    if (!this._settled) this._chosen = keys;
+    this.choose(keys);
+  } // selected and selected-ids are settings too (1.2.0, TG-3): written on the
+  // host they choose, as the properties do, once the tags are there.
+
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    super.attributeChangedCallback(name, oldValue, newValue);
+
+    if ((name === 'selected' || name === 'selected-ids') && newValue !== null && oldValue !== newValue) {
+      this._chosen = name === 'selected' ? newValue === '' ? [] : [newValue] : listOf(newValue);
+      this.schedule();
+    }
   } // Chooses the tags of the keys given and no other (one: the first only).
 
 
@@ -701,6 +740,14 @@ class SfTagGroup extends GroupElement {
 
   settle() {
     if (!this.isConnected) return;
+    const chosen = this._chosen;
+    this._settled = true;
+
+    if (chosen) {
+      this._chosen = null;
+      this.choose(chosen);
+    }
+
     this._busy = true;
 
     try {
@@ -1029,11 +1076,30 @@ class SfTagGroup extends GroupElement {
     const tag = items[index];
     if (tag === this._more || !tag.closable) return;
     event.preventDefault();
-    tag.onClose?.(); // The page removes the tag (sf-tag-close); the focus then goes to the
-    // neighbour that took its place, or the one before the last.
+    tag.onClose?.();
+  } // A tag of the row asked to be removed -- its cross pressed (a click, Enter
+  // or Space) or Delete on it (1.2.0, TG-2): the page removes the tag on
+  // sf-tag-close; when the focus stood in it, it goes to the neighbour that
+  // took its place, or the one before the last, as Delete always did, never
+  // to the page's body.
+
+
+  onTagClose(event) {
+    const tag = event.target;
+    if (!isTag(tag) || tag.parentElement !== this) return;
+    const index = this.items().indexOf(tag);
+    if (index < 0) return;
+    const doc = this.ownerDocument;
+    const pressed = this._pressed === tag;
+    this._pressed = null;
+    if (!tag.contains(doc.activeElement) && !pressed) return; // Removed, the focused cross leaves the focus on the body; a focus the
+    // person moved elsewhere meanwhile stays where it went.
+
+    const held = () => tag.contains(doc.activeElement) || doc.activeElement === doc.body || !doc.activeElement;
 
     requestAnimationFrame(() => requestAnimationFrame(() => {
       if (tag.isConnected && tag.parentElement === this) return;
+      if (!held()) return;
       this.settle();
       const left = this.items();
       if (left.length) this.focusAt(Math.min(index, left.length - 1));
@@ -1612,7 +1678,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "ed7222252ccc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag-group","tag":"sf-tag-group","version":"1.1.0","kind":"leaf","settings":{"layout":{"type":"enum","values":["row","wrap"],"default":"row"},"selection":{"type":"enum","values":["none","one","many"],"default":"none"}},"values":{"selected":{"type":"id"},"selected-ids":{"type":"list","of":{"id":"id"}}},"events":{"select":{"carries":{"ids":"list","id":"id","selected":"boolean"}}},"actions":{},"css-variables":{}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag-group","tag":"sf-tag-group","version":"1.2.1","kind":"leaf","settings":{"layout":{"type":"enum","values":["row","wrap"],"default":"row"},"selection":{"type":"enum","values":["none","one","many"],"default":"none"}},"values":{"selected":{"type":"id","default":""},"selected-ids":{"type":"list","default":[],"of":{"id":"id"}}},"events":{"select":{"carries":{"ids":"list","id":"id","selected":"boolean"}}},"actions":{},"css-variables":{}}');
 
 /***/ },
 

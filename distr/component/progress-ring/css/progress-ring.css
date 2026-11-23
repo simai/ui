@@ -22,6 +22,7 @@
 }
 @layer sf.components {
   .sf-progress-ring {
+    --sf-progress-ring--value: var(--sf-progress-ring-value, 0);
     --sf-progress-ring--size: var(--sf-progress-ring-size, var(--sf-progress-ring--step-size));
     --sf-progress-ring--line-width: var(--sf-progress-ring-line-width, var(--sf-progress-ring--step-line-width));
     --sf-progress-ring--gap: var(--sf-progress-ring-gap, var(--sf-a2));

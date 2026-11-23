@@ -7,12 +7,14 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BADGE_HUES: () => (/* binding */ BADGE_HUES),
 /* harmony export */   BADGE_MAIN_TONAL: () => (/* binding */ BADGE_MAIN_TONAL),
 /* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
 /* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
 /* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
 /* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
 /* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
+/* harmony export */   canonicalBadgeHue: () => (/* binding */ canonicalBadgeHue),
 /* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
 /* harmony export */   isRetiredMain: () => (/* binding */ isRetiredMain),
 /* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
@@ -27,7 +29,18 @@ const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiar
 const BADGE_SCHEME_ALIASES = Object.freeze({
   danger: 'error'
 });
-const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The default look is tonal (owner decision C140 (1), badges study BG-1): a
+const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The hues of the static palette a badge takes as a class, sf-badge--<hue>
+// (owner decision C411): the sixteen names of src/core/scss/vars/_sf_var__hue.scss
+// ($sf-static-hues), in its order. The class draws tone 50 at the fill step 24
+// under --sf-on-surface in both themes; status colours stay with the status
+// classes, so a hue is never a status.
+
+const BADGE_HUES = Object.freeze(['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'pink', 'brown', 'gray']); // The hue for a name, '' when it is not one of BADGE_HUES.
+
+function canonicalBadgeHue(value) {
+  const name = String(value ?? '').trim().toLowerCase();
+  return BADGE_HUES.includes(name) ? name : '';
+} // The default look is tonal (owner decision C140 (1), badges study BG-1): a
 // badge without an appearance is the calm grey mark. It was main, the dark
 // grey fill nobody chose.
 
@@ -3053,6 +3066,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isNumericType: () => (/* binding */ isNumericType),
 /* harmony export */   meterStatus: () => (/* binding */ meterStatus),
 /* harmony export */   normalizeFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.normalizeFilterEntry),
+/* harmony export */   numberValue: () => (/* binding */ numberValue),
 /* harmony export */   openFilterWindow: () => (/* binding */ openFilterWindow),
 /* harmony export */   propertyModes: () => (/* binding */ propertyModes),
 /* harmony export */   renderCellField: () => (/* binding */ renderCellField),
@@ -4003,7 +4017,16 @@ function renderFilterField(field = {}, host) {
 // with size-1/2 components a default row went from 57 to 61 on desktop and 45 to
 // 51 on mobile.
 
-const CELL_LINE = '1/2'; // A choice badge in a cell is tonal (sf-badge's default since 1.6.0, C140; it
+const CELL_LINE = '1/2'; // A value's badge in a row is the row's text (owner remark LV4-11, View list
+// register VL-54: «Tags small» -- 12 beside a row's 16). sf-badge's line of
+// the text beside it (line="text", C95 (6)): the badge inherits the cell's
+// size and line, so it is the row's text at every density and in every table
+// size, its height the text's line, no block padding. That mode keeps a
+// count's quarter at the sides; a word keeps the badge's own room, the space
+// system's half step (12, 8 on a phone), through its public variable.
+
+const CELL_BADGE_LINE = 'text';
+const CELL_BADGE_ROOM = '--sf-badge-padding-inline: var(--sf-space-1\\/2)'; // A choice badge in a cell is tonal (sf-badge's default since 1.6.0, C140; it
 // was main, so the cells shipped filled and the consumer's owner asked for the
 // calmer one) -- and a table row is the place for it: a column of
 // filled badges reads as a column of buttons. A field may still ask for another
@@ -4192,21 +4215,22 @@ function renderChoicesBadgesCell(field, value) {
   return value.map(item => {
     const key = item && typeof item === 'object' ? item.value : item;
     const option = Array.isArray(options) ? options.find(candidate => String(candidate?.value) === String(key)) : null;
-    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option) : null;
+    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option) : null;
     const text = item && typeof item === 'object' && item.text !== undefined ? String(item.text) : String(option?.label ?? option?.text ?? key);
     return {
       component: {
         type: 'badge',
         props: {
-          line: CELL_LINE,
+          line: CELL_BADGE_LINE,
           text,
           appearance: badgeAppearanceOf(field),
           ...(badge?.scheme ? {
             scheme: badge.scheme
           } : {}),
-          ...(badge?.rootStyle ? {
-            rootStyle: badge.rootStyle
-          } : {})
+          ...(badge?.hue ? {
+            hue: badge.hue
+          } : {}),
+          rootStyle: CELL_BADGE_ROOM
         }
       }
     };
@@ -4272,20 +4296,21 @@ function renderChoiceCell(field, value) {
   if (!Array.isArray(options)) return null;
   const option = options.find(item => String(item?.value) === String(value));
   if (!option) return null;
-  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option);
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option);
   return {
     component: {
       type: 'badge',
       props: {
-        line: CELL_LINE,
+        line: CELL_BADGE_LINE,
         text: option.label ?? option.text ?? String(value),
         appearance: badgeAppearanceOf(field),
         ...(badge?.scheme ? {
           scheme: badge.scheme
         } : {}),
-        ...(badge?.rootStyle ? {
-          rootStyle: badge.rootStyle
-        } : {})
+        ...(badge?.hue ? {
+          hue: badge.hue
+        } : {}),
+        rootStyle: CELL_BADGE_ROOM
       }
     }
   };
@@ -5336,10 +5361,11 @@ function renderStepperEdit(field, value, host, {
 // is created, is how many digits it keeps after the point, 0 for a whole
 // number (an integer field reads as decimals 0); more is a field error,
 // never rounded, and a whole number has the digit keyboard. A number field
-// whose value arrives as a string, or that declares its decimals, is a
-// decimal-string field: it writes the canonical decimal string («1500.50»),
-// never a float. Any other number field -- an integer field among them --
-// writes a number, as before. Text that is not a number is reported as a
+// whose value arrives as a string, or that declares its decimals above 0, is
+// a decimal-string field: it writes the canonical decimal string («1500.50»),
+// never a float. A whole number (decimals 0, an integer field) writes a
+// number, or null when emptied, whatever its value came as (FS-9,
+// numberValue below); any other number field writes a number, as before. Text that is not a number is reported as a
 // masked string's incomplete entry is: through setFieldError, which holds the
 // save, and under the field once the person leaves it.
 
@@ -5349,14 +5375,38 @@ function declaresDecimals(field) {
 }
 
 function isDecimalStringField(field, value) {
+  if ((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field, {
+    quiet: true
+  }).decimals === 0) return false;
   return typeof value === 'string' || declaresDecimals(field);
+} // A whole number (decimals 0, an integer field) is one type wherever its value
+// comes from (FS-9, C303 (2): number and integer are one type): a number, or
+// null when it is empty. It was a decimal string when typed («30») and a
+// number when set from code (50), so a form's value changed type with the
+// first keystroke. A whole number past Number.MAX_SAFE_INTEGER stays its
+// decimal string: a float would change its digits. A number with digits
+// after the point keeps the decimal string of the property-view port
+// («12.30», never a float); any other field, its value as it came.
+
+
+function numberValue(field, value) {
+  const resolved = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field, {
+    quiet: true
+  });
+  if (resolved.type !== 'number' || resolved.decimals !== 0 || typeof value !== 'string') return value;
+  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readDecimal)(value); // Text that is not a whole number is the field's error, kept as typed.
+
+  if (!read.ok) return value;
+  if (read.value === null) return null;
+  if ((0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.fractionDigits)(read.value) > 0) return value;
+  const number = Number(read.value);
+  return Number.isSafeInteger(number) ? number : read.value;
 } // A number's unit (`unit`, «шт», «кг») in every place the field is drawn
 // (C302 (2): the template knows every place; cards study CV-7): after the
 // number in the view and the compact place, inside the box after the value
 // when it is edited or filtered -- in the hint's ink, not part of the value.
 // It was only the view's: the edit box and the filter box showed a bare
 // «13» where the record said «13 шт». A field with no unit draws none.
-
 
 function fieldUnit(field) {
   return typeof field?.unit === 'string' ? field.unit.trim() : '';
@@ -5404,7 +5454,7 @@ function renderNumberEdit(field, value, host) {
     }
 
     host.setFieldError?.(field, null);
-    if (read.value === null) host.setFieldValue(field, null);else host.setFieldValue(field, asString ? read.value : Number(read.value));
+    if (read.value === null) host.setFieldValue(field, null);else host.setFieldValue(field, asString ? read.value : decimals === 0 ? numberValue(field, read.value) : Number(read.value));
   };
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -7224,7 +7274,7 @@ function renderChoiceView(field, value) {
   const options = field.options || field.filter?.options || field.constraints?.options;
   const option = Array.isArray(options) ? options.find(item => String(item?.value) === String(value)) : null;
   if (!option) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option); // A table cell is a dense place: the badge keeps the tight side room
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option); // A table cell is a dense place: the badge keeps the tight side room
   // (sf-badge tight), as it had before sf-badge 1.3.0 widened the default.
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -7233,7 +7283,7 @@ function renderChoiceView(field, value) {
                 tight
                 appearance=${badgeAppearanceOf(field)}
                 scheme=${badge.scheme}
-                style=${badge.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                hue=${badge.hue || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 text=${String(option.label ?? option.text ?? value)}
         ></sf-badge>
     `;
@@ -7267,9 +7317,9 @@ function renderChoicesView(field, value) {
             ${value.map(item => {
     if (!badges) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" line=${VIEW_LINE} kind="default" text=${label(item)}></sf-tag>`;
     const option = optionOf(item);
-    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option) : null;
+    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option) : null;
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge line=${VIEW_LINE} tight appearance=${badgeAppearanceOf(field)}
-                        scheme=${badge?.scheme || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} style=${badge?.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${label(item)}></sf-badge>`;
+                        scheme=${badge?.scheme || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} hue=${badge?.hue || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${label(item)}></sf-badge>`;
   })}
         </span>
     `;
@@ -9017,7 +9067,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   hasValue: () => (/* binding */ hasValue),
 /* harmony export */   normalizeFields: () => (/* binding */ normalizeFields),
 /* harmony export */   optionsPage: () => (/* binding */ optionsPage),
-/* harmony export */   speaksError: () => (/* binding */ speaksError)
+/* harmony export */   speaksError: () => (/* binding */ speaksError),
+/* harmony export */   ticksToAnswer: () => (/* binding */ ticksToAnswer)
 /* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d3818183b14c");
@@ -9197,7 +9248,11 @@ const clone = value => {
     return { ...value
     };
   }
-};
+}; // FO-4: what ends a press, and how long a press may hold a field's check.
+
+
+const PRESS_ENDS = ['pointerup', 'pointercancel', 'mouseup', 'dragend'];
+const PRESS_HOLD_MS = 4000;
 
 const same = (a, b) => {
   try {
@@ -9222,6 +9277,17 @@ function answeredByValue(field) {
   if ((field?.propertyType || field?.type || field?.dataType) !== 'boolean') return false;
   const drawn = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.fieldTemplate)(field);
   return drawn.type === 'boolean' && drawn.template !== 'buttons';
+} // A required yes/no drawn as a checkbox by its own template is a consent
+// («Я согласен с условиями»): it is answered only when ticked, as a native
+// required checkbox is (DEV msg-f27d2e7a, group build 17 F2). The switch is
+// a setting answered by its value, and the switch template a form saved by a
+// button draws as a checkbox (buttonSaved) stays so: only a field whose own
+// template is the checkbox asks for the tick.
+
+function ticksToAnswer(field) {
+  if ((field?.propertyType || field?.type || field?.dataType) !== 'boolean') return false;
+  const drawn = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.fieldTemplate)(field);
+  return drawn.type === 'boolean' && drawn.template === 'checkbox';
 }
 /** The fields as given, made safe: objects with a key and a type, each key once, width one of short, medium, full or none (s, m read as short, medium). */
 
@@ -9321,9 +9387,30 @@ class SfForm extends FormElement {
     // (Отмена); null when the host set pending itself.
 
     this._pressed = null;
-    this._hosts = new Map();
+    this._hosts = new Map(); // apply instant (1.13.1, FO-1): what each field last applied (sent as
+    // sf-form-change), by key, as JSON; a key not in it applied the saved
+    // state. The input events on their way through the form: a value written
+    // while one is dispatched is typed, not yet applied.
+
+    this._applied = new Map();
+    this._typing = new Set(); // FO-4: a press that began on the form while a field was left holds that
+    // field's check until the press is over.
+
+    this._pressing = false;
+    this._held = new Set();
 
     this._onSubmit = event => this.onNativeSubmit(event);
+
+    this._onPress = event => this.onSubmitPress(event);
+
+    this._onTyping = event => {
+      if (!this.isInstant) return;
+      this.typing();
+
+      this._typing.add(event);
+    };
+
+    this._onPressStart = () => this.holdChecks();
 
     this._onFocusOut = event => this.onFieldLeave(event);
 
@@ -9332,24 +9419,36 @@ class SfForm extends FormElement {
 
 
     this._onControlDrawn = event => {
-      if (event.target !== this && event.target?.closest?.('.sf-form-control')) this.linkMessages();
+      if (event.target !== this && event.target?.closest?.('.sf-form-control')) {
+        this.markConsents();
+        this.linkMessages();
+      }
     };
   }
 
   onConnected() {
     super.onConnected?.();
     this.addEventListener('submit', this._onSubmit);
+    this.addEventListener('click', this._onPress);
     this.addEventListener('focusout', this._onFocusOut);
+    this.addEventListener('input', this._onTyping, true);
     this.addEventListener('input', this._onInput);
+    this.addEventListener('pointerdown', this._onPressStart, true);
+    this.addEventListener('mousedown', this._onPressStart, true);
     this.addEventListener('sf-after-render', this._onControlDrawn);
   }
 
   onDisconnected() {
     super.onDisconnected?.();
     this.removeEventListener('submit', this._onSubmit);
+    this.removeEventListener('click', this._onPress);
     this.removeEventListener('focusout', this._onFocusOut);
+    this.removeEventListener('input', this._onTyping, true);
     this.removeEventListener('input', this._onInput);
+    this.removeEventListener('pointerdown', this._onPressStart, true);
+    this.removeEventListener('mousedown', this._onPressStart, true);
     this.removeEventListener('sf-after-render', this._onControlDrawn);
+    this.releaseChecks();
   } // The ids the template writes come from the instance path (§7.1.1), never
   // from a counter.
 
@@ -9371,10 +9470,24 @@ class SfForm extends FormElement {
   }
 
   sendable(values) {
-    const out = clone(values);
+    const out = this.typed(values);
 
     for (const field of this.list) {
       if (field.when && (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.fieldConditions)(field, values).visible === false) delete out[field.key];
+    }
+
+    return out;
+  } // The values in the types their fields write (FS-9): a whole number set
+  // from code as «30» is sent, and compared for dirty, as the number 30 the
+  // field writes once typed (field renderers numberValue).
+
+
+  typed(values) {
+    const out = clone(values);
+    if (!out || typeof out !== 'object') return out;
+
+    for (const field of this.list) {
+      if (field?.key in out) out[field.key] = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.numberValue)(field, out[field.key]);
     }
 
     return out;
@@ -9395,6 +9508,9 @@ class SfForm extends FormElement {
   set value(next) {
     this._saved = clone(next);
     this._values = clone(next);
+
+    this._applied.clear();
+
     this.forget();
     this.requestComponentUpdate('value');
   }
@@ -9601,15 +9717,18 @@ class SfForm extends FormElement {
 
     this._hostErrors.delete(key);
 
-    this.setDirty(!same(this._values, this._saved));
+    this.setDirty(!same(this.typed(this._values), this.typed(this._saved)));
     this.sfEmit('input', {
       key,
       value
-    });
-    if (this.isInstant) this.sfEmit('change', {
-      key,
-      value
-    }); // A shown error goes the moment the value is right, and keeps the words
+    }); // apply instant: one sf-form-change per commit of the field (FO-1). A
+    // value typed (written while an input event is on its way) is applied
+    // when the control commits it -- its change, which writes it again -- or
+    // when the person leaves the field; a value written any other way (a
+    // choice, a box, a file) is applied at once. Either way only a value
+    // that differs from the one last applied is sent.
+
+    if (this.isInstant && !this.typing()) this.applyField(key); // A shown error goes the moment the value is right, and keeps the words
     // of what is wrong now (C153 (3)).
 
     if (this._errors.has(key)) {
@@ -9627,6 +9746,31 @@ class SfForm extends FormElement {
     for (const other of [...this._errors.keys()]) if (other !== key && this.list.find(one => one.key === other)?.when) this.recheck(other);
 
     this.requestComponentUpdate('value');
+  } // Whether an input event is being dispatched through the form now (the
+  // events done are let go: eventPhase is NONE once the dispatch is over).
+
+
+  typing() {
+    for (const event of this._typing) if (event.eventPhase === 0) this._typing.delete(event);
+
+    return this._typing.size > 0;
+  } // apply instant: the field's value is applied, sent once as sf-form-change
+  // when it differs from what it last applied (the saved state before).
+
+
+  applyField(key) {
+    if (!this.isInstant) return;
+    const value = this._values[key];
+    const now = JSON.stringify(value);
+    const before = this._applied.has(key) ? this._applied.get(key) : JSON.stringify(this._saved[key]);
+    if (now === before) return;
+
+    this._applied.set(key, now);
+
+    this.sfEmit('change', {
+      key,
+      value
+    });
   }
 
   writeRendererError(key, message) {
@@ -9648,6 +9792,15 @@ class SfForm extends FormElement {
     // its buttons are answered by a press (answeredByValue).
 
     if (field.required === true && !answeredByValue(field) && !hasValue(value)) {
+      return this.sfWord('value-missing', {
+        vars: {
+          label: field.label
+        }
+      });
+    } // A required checkbox of its own template is answered by the tick (F2).
+
+
+    if (field.required === true && ticksToAnswer(field) && value !== true) {
       return this.sfWord('value-missing', {
         vars: {
           label: field.label
@@ -9761,6 +9914,66 @@ class SfForm extends FormElement {
     if (!event.target?.classList?.contains('sf-form')) return;
     event.preventDefault();
     this.submit();
+  } // The form's own submit button pressed -- a click, or Enter in a one-line
+  // field, which the browser turns into a click on it (1.13.1, FO-2): the
+  // form submits without the browser's form submission, which a sandboxed
+  // frame without allow-forms blocks (no submit, no invalid, «Blocked form
+  // submission»). The press is the form's; the browser submits nothing.
+
+
+  onSubmitPress(event) {
+    if (event.defaultPrevented) return;
+    const button = event.target?.closest?.('button[type="submit"], input[type="submit"]');
+    const root = button?.form;
+    if (!root || !root.classList?.contains('sf-form') || root.closest('sf-form') !== this) return;
+    if (button.disabled) return;
+    event.preventDefault();
+    this.submit();
+  } // FO-4: a pointer pressed on the form. A field it leaves keeps its check
+  // until the press is over, so an error line drawn under that field does
+  // not move «Сохранить» from under the pointer before the click lands (at
+  // 390 the line moved it 20 px down and the save was lost). The press's own
+  // click checks every field when it is «Сохранить»; the held checks run
+  // after it.
+
+
+  holdChecks() {
+    if (this._pressing) return;
+    this._pressing = true;
+    const doc = this.ownerDocument;
+
+    const done = () => {
+      for (const type of PRESS_ENDS) doc.removeEventListener(type, done, true);
+
+      clearTimeout(this._pressTimer); // After the click the release starts (a task later), not before it.
+
+      setTimeout(() => this.releaseChecks(), 0);
+    };
+
+    this._pressDone = done;
+
+    for (const type of PRESS_ENDS) doc.addEventListener(type, done, true); // A release the page never hears (outside the window) ends the hold too.
+
+
+    this._pressTimer = setTimeout(done, PRESS_HOLD_MS);
+  }
+
+  releaseChecks() {
+    const doc = this.ownerDocument;
+    if (this._pressDone) for (const type of PRESS_ENDS) doc?.removeEventListener(type, this._pressDone, true);
+    this._pressDone = null;
+    clearTimeout(this._pressTimer);
+    this._pressing = false;
+    const held = [...this._held];
+
+    this._held.clear();
+
+    if (!this.isConnected || !this.isEditing) return;
+
+    for (const key of held) {
+      if (!this._touched.has(key) && !this._submitted && !this._errors.has(key)) continue;
+      this.recheck(key);
+    }
   }
 
   submit() {
@@ -9834,6 +10047,9 @@ class SfForm extends FormElement {
 
   restore() {
     this._values = clone(this._saved);
+
+    this._applied.clear();
+
     this._rendererErrors = {};
     this.forget();
     this.sfHostState('data-invalid', false);
@@ -9868,8 +10084,17 @@ class SfForm extends FormElement {
     if (!key || !this.isEditing) return; // A layer of the field (a list, a picker) holds the focus for it.
 
     queueMicrotask(() => {
-      if (box.matches(':focus-within')) return;
+      if (box.matches(':focus-within')) return; // apply instant: leaving the field applies what was typed (FO-1).
+
+      if (this.isInstant) this.applyField(key);
       if (!this._touched.has(key) && !this._submitted && !this._errors.has(key)) return;
+
+      if (this._pressing) {
+        this._held.add(key);
+
+        return;
+      }
+
       this.recheck(key);
     });
   } // Typing into a field that shows an error takes the error away the moment
@@ -9884,7 +10109,11 @@ class SfForm extends FormElement {
 
     this._touched.add(key);
 
-    if (!this._errors.has(key) || this._hostErrors.has(key)) return;
+    if (!this._errors.has(key) || this._hostErrors.has(key)) return; // A consent box is answered by its value, which its change writes: its
+    // input event comes first, and clearing the error then redrew the box
+    // under the click, so the change never came and the tick was lost (F2).
+
+    if (ticksToAnswer(this.fieldOf(key))) return;
     const control = this.controlOf(key);
 
     if (control?.validity?.valid && control.validity.valueMissing === false) {
@@ -9954,6 +10183,54 @@ class SfForm extends FormElement {
     const result = super.renderTemplateResult(templateResult);
     this.syncControls();
     return result;
+  } // A yes/no drawn as a checkbox has no label row (C165 (4)), and its «?»
+  // went with the row (FS-6): the form hands the checkbox the same mark it
+  // draws after a text field's label -- sf-help-mark size 1/2, the field's
+  // help and «Подробнее: <label>» -- through the checkbox's help slot, so it
+  // stands after the name beside the box (C59) at the size of every other
+  // «?» in the form. Set again only when the words change.
+
+
+  syncCheckboxHelp(control, field) {
+    if (typeof control.setSlot !== 'function') {
+      // Not upgraded yet: once it is.
+      if (control.__sfFormHelpWait || !globalThis.customElements) return;
+      control.__sfFormHelpWait = true;
+      globalThis.customElements.whenDefined(control.localName).then(() => {
+        control.__sfFormHelpWait = false;
+        if (control.isConnected) this.syncCheckboxHelp(control, field);
+      });
+      return;
+    }
+
+    const help = text(field.help);
+    const held = control.__sfFormHelp;
+
+    if (!help) {
+      if (held) {
+        control.__sfFormHelp = null;
+        control.setSlot('help');
+      }
+
+      return;
+    }
+
+    const label = this.sfWord('help-label', {
+      vars: {
+        label: field.label
+      }
+    });
+    if (held && held.help === help && held.label === label) return;
+    const mark = this.ownerDocument.createElement('sf-help-mark');
+    mark.className = 'sf-form-help';
+    mark.setAttribute('size', '1/2');
+    mark.setAttribute('text', help);
+    mark.setAttribute('label', label);
+    control.__sfFormHelp = {
+      help,
+      label
+    };
+    control.setSlot('help', mark);
   }
 
   syncControls() {
@@ -9964,6 +10241,7 @@ class SfForm extends FormElement {
       const speaks = speaksError(control); // A yes/no checkbox carries its label (a box beside its name, not under it).
 
       if (speaks && control.localName === 'sf-checkbox' && control.getAttribute('label') !== field.label) control.setAttribute('label', field.label);
+      if (speaks && control.localName === 'sf-checkbox') this.syncCheckboxHelp(control, field);
 
       if (speaks) {
         if (message) {
@@ -9978,7 +10256,21 @@ class SfForm extends FormElement {
       }
     }
 
+    this.markConsents();
     this.linkMessages();
+  } // A consent box (a required checkbox of its own template, F2) says it is
+  // required to a screen reader. Run after the form's drawing and after the
+  // box's own, which draws a new input when its error comes or goes.
+
+
+  markConsents() {
+    for (const field of this.list) {
+      if (!ticksToAnswer(field)) continue;
+      const box = this.controlOf(field.key)?.querySelector?.('input[type="checkbox"]');
+      if (!box) continue;
+      const asks = this.isEditing && field.required === true && field.readonly !== true;
+      if (asks && box.getAttribute('aria-required') !== 'true') box.setAttribute('aria-required', 'true');else if (!asks && box.hasAttribute('aria-required')) box.removeAttribute('aria-required');
+    }
   } // The hint or the error line the form draws under a control is read with
   // that control: its id joins the aria-describedby of the control's native
   // focus target, and leaves it once the line is gone (the error gives the
@@ -10993,6 +11285,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ShownValidity: () => (/* binding */ ShownValidity),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
 /* harmony export */   VALIDITY_WORDS: () => (/* binding */ VALIDITY_WORDS),
+/* harmony export */   afterPress: () => (/* binding */ afterPress),
 /* harmony export */   claimFirstInvalid: () => (/* binding */ claimFirstInvalid),
 /* harmony export */   forgetFormTried: () => (/* binding */ forgetFormTried),
 /* harmony export */   formTried: () => (/* binding */ formTried),
@@ -11261,13 +11554,72 @@ function fieldCheck() {
   }
 
   return shared;
+} // A pointer pressed on the page (FO-4, module.smart-helpers 1.20.0): a field
+// it leaves holds its leave check until the press is over and a task after
+// it, so the error line drawn under that field does not move the button the
+// pointer is on before the click lands (at 390 a cleared required field's
+// line moved «Сохранить» 20 px down and the save was lost). The press's own
+// click checks every field when it submits. A release the page never hears
+// ends the hold after PRESS_HOLD_MS. One record for every bundle's copy.
+
+
+const PRESS_KEY = Symbol.for('simai.framework.field-press');
+const PRESS_HOLD_MS = 4000;
+
+function fieldPress() {
+  const shared = globalThis[PRESS_KEY] || (globalThis[PRESS_KEY] = {
+    down: false,
+    queue: [],
+    timer: 0
+  });
+
+  if (!shared.listening && typeof document !== 'undefined') {
+    shared.listening = true;
+
+    const end = () => {
+      if (!shared.down) return;
+      shared.down = false;
+      clearTimeout(shared.timer);
+      setTimeout(() => {
+        if (shared.down) return;
+
+        for (const run of shared.queue.splice(0)) {
+          try {
+            run();
+          } catch {
+            /* a field taken out of the page while the press lasted */
+          }
+        }
+      }, 0);
+    };
+
+    const start = () => {
+      if (shared.down) return;
+      shared.down = true;
+      clearTimeout(shared.timer);
+      shared.timer = setTimeout(end, PRESS_HOLD_MS);
+    };
+
+    document.addEventListener('pointerdown', start, true);
+    document.addEventListener('mousedown', start, true);
+
+    for (const type of ['pointerup', 'pointercancel', 'mouseup', 'dragend']) document.addEventListener(type, end, true);
+  }
+
+  return shared;
+}
+/** Runs `check` now, or once a pointer press in progress is over (FO-4). */
+
+
+function afterPress(check) {
+  const shared = fieldPress();
+  if (shared.down) shared.queue.push(check);else check();
 }
 /**
  * Says that `element` failed a check now. Returns true when it is the first
  * wrong field of a pass the person started, the one that takes the focus.
  * Every member of the field family calls it from its `invalid` listener.
  */
-
 
 function claimFirstInvalid(element) {
   const check = fieldCheck();
@@ -11399,9 +11751,10 @@ const ShownValidity = Base => class extends Base {
     super();
     this.__sfErrorShown = false;
     this.__sfTouched = false; // The page-wide pass listens from the first field on, so the press that
-    // submits is seen before the check it starts.
+    // submits is seen before the check it starts; so does the press record.
 
-    fieldCheck(); // Capture: the host's own `invalid` and its native control's, which
+    fieldCheck();
+    fieldPress(); // Capture: the host's own `invalid` and its native control's, which
     // would draw a second bubble; neither bubbles, so only capture sees both.
 
     this.addEventListener('invalid', event => {
@@ -11428,16 +11781,21 @@ const ShownValidity = Base => class extends Base {
       if (event.relatedTarget && this.contains(event.relatedTarget)) return; // A layer of the field (a list, a picker) holds the focus for it.
 
       if (this.matches?.(':focus-within')) return;
-      if (!this.__sfTouched && !formTried(this)) return;
-      this.sfSyncValidity?.();
-      const wrong = this.validity ? !this.validity.valid : false;
+      if (!this.__sfTouched && !formTried(this)) return; // A press that left the field holds the check until it is over (FO-4);
+      // what the press did meanwhile (a reset, a submit) is read then.
 
-      if (wrong !== this.__sfErrorShown) {
-        this.__sfErrorShown = wrong;
-        this.requestComponentUpdate?.('validity');
-      } else if (wrong) {
-        this.requestComponentUpdate?.('validity');
-      }
+      afterPress(() => {
+        if (!this.isConnected || !this.__sfTouched && !formTried(this)) return;
+        this.sfSyncValidity?.();
+        const wrong = this.validity ? !this.validity.valid : false;
+
+        if (wrong !== this.__sfErrorShown) {
+          this.__sfErrorShown = wrong;
+          this.requestComponentUpdate?.('validity');
+        } else if (wrong) {
+          this.requestComponentUpdate?.('validity');
+        }
+      });
     });
   }
   /** The first wrong field of a submit takes the focus, as the browser's check did. */
@@ -11529,6 +11887,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   OPTION_BADGE_HUES: () => (/* binding */ OPTION_BADGE_HUES),
 /* harmony export */   OPTION_BADGE_PALETTE: () => (/* binding */ OPTION_BADGE_PALETTE),
 /* harmony export */   nearestPaletteHue: () => (/* binding */ nearestPaletteHue),
+/* harmony export */   optionBadgeClass: () => (/* binding */ optionBadgeClass),
+/* harmony export */   optionBadgeLook: () => (/* binding */ optionBadgeLook),
 /* harmony export */   optionBadgeProps: () => (/* binding */ optionBadgeProps),
 /* harmony export */   optionDotColor: () => (/* binding */ optionDotColor)
 /* harmony export */ });
@@ -11623,6 +11983,11 @@ const paletteStyle = hue => `--sf-badge-background-color: var(--sf-${hue}-50--al
 // The data view port names the badge look `scheme` on a column's options; a
 // filter option has always said `color`. Both are read: reading only `color`
 // left every port column's scheme unread and its badges neutral.
+//
+// optionBadgeProps is the former form: the hue written as the badge's two
+// public variables in a style. The Framework's own parts draw a hue through
+// optionBadgeLook and the badge's hue class (C411); this one stays for hosts
+// until 2027-01-01 (journal class-option-badge-hue-class).
 
 
 function optionBadgeProps(option = {}) {
@@ -11666,6 +12031,47 @@ function optionDotColor(option = {}) {
   if (OPTION_BADGE_PALETTE.includes(name)) return `var(--sf-${name}-50)`;
   return color;
 }
+/**
+ * The badge look of an option as the badge's own settings (owner decision
+ * C411): {scheme, hue}. scheme is a Framework badge scheme (a former name read
+ * as its canonical one), else neutral; hue is a name of the static palette
+ * (red, teal, gray...; C17), a hex drawn in the palette hue nearest it, else
+ * ''. A part gives the hue to sf-badge as hue="<name>", or to class markup as
+ * the class sf-badge--<name>: the class sets the fill (tone 50 at the fill
+ * step 24) and the text --sf-on-surface in both themes, so nothing is written
+ * in a style.
+ */
+
+function optionBadgeLook(option = {}) {
+  const raw = option?.scheme ?? option?.color;
+  const color = typeof raw === "string" ? raw.trim() : "";
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return {
+    scheme,
+    hue: ""
+  };
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return {
+    scheme: "neutral",
+    hue: name
+  };
+  if (HEX_COLOR.test(color)) return {
+    scheme: "neutral",
+    hue: nearestPaletteHue(color)
+  };
+  return {
+    scheme: "neutral",
+    hue: ""
+  };
+}
+/** The hue class of an option's badge for class markup ('' without a hue): sf-badge--<hue> (C411). */
+
+const optionBadgeClass = (option = {}) => {
+  const {
+    hue
+  } = optionBadgeLook(option);
+  return hue ? `sf-badge--${hue}` : "";
+};
 
 /***/ },
 
@@ -12879,7 +13285,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","sea
 /***/ "ae2fca904cab"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.form","tag":"sf-form","version":"1.13.0","kind":"leaf","settings":{"fields":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"propertyType":{"type":"string"},"variant":{"type":"string"},"template":{"type":"string"},"templateParams":{"type":"object"},"required":{"type":"boolean"},"readonly":{"type":"boolean"},"hint":{"type":"string"},"help":{"type":"string"},"width":{"type":"string","enum":["short","medium","full","s","m"]},"group":{"type":"string"},"placeholder":{"type":"string"},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"decimals":{"type":"number"},"currency":{"type":"string"},"currencies":{"type":"array"},"currencyDisplay":{"type":"string","enum":["symbol","code","name"]},"holder":{"type":"string","enum":["any","organization","person"]},"defaultCountry":{"type":"string","pattern":"^[A-Za-z]{2}$"}},"required":["key","label","propertyType"]}},"default":[]},"groups":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"}},"required":["key"]}},"default":[]},"field-host":{"type":"object","default":null},"apply":{"type":"enum","values":["submit","instant","answer"],"default":"submit"},"size":{"type":"enum","values":["1","1/2"],"default":"1"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"labels":{"type":"enum","values":["top","start"],"default":"top"},"footer":{"type":"enum","values":["static","sticky"],"default":"static"},"label":{"type":"string","default":""}},"values":{"value":{"type":"object","default":{}},"mode":{"type":"enum","values":["edit","view"],"default":"edit"},"valid":{"type":"boolean"},"dirty":{"type":"boolean"}},"events":{"input":{"carries":{"key":"string","value":"any"},"x-native":false},"change":{"carries":{"key":"string","value":"any"},"x-native":false},"submit":{"carries":{"value":"object"},"cancelable":true},"answer":{"carries":{"accepted":"boolean","value":{"type":"object","optional":true}},"cancelable":true},"invalid":{"carries":{"fields":"list"}},"cancel":{"carries":{"value":"object"}}},"actions":{"check-validity":{},"reset":{},"refresh-fields":{},"set-errors":{"with":{"errors":"object"}}},"presentation":{"skeleton":{"late":["fields","groups"]}},"host-states":{"data-dirty":"boolean","data-invalid":"boolean","data-mode":"string","data-state":"string"},"css-variables":{"--sf-form-field-gap":{"type":"length","state":"default"},"--sf-form-group-gap":{"type":"length","state":"default"},"--sf-form-label-color":{"type":"color","state":"default"},"--sf-form-summary-background-color":{"type":"color","state":"default"},"--sf-form-footer-background-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.form","tag":"sf-form","version":"1.14.2","kind":"leaf","settings":{"fields":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"propertyType":{"type":"string"},"variant":{"type":"string"},"template":{"type":"string"},"templateParams":{"type":"object"},"required":{"type":"boolean"},"readonly":{"type":"boolean"},"hint":{"type":"string"},"help":{"type":"string"},"width":{"type":"string","enum":["short","medium","full","s","m"]},"group":{"type":"string"},"placeholder":{"type":"string"},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"decimals":{"type":"number"},"currency":{"type":"string"},"currencies":{"type":"array"},"currencyDisplay":{"type":"string","enum":["symbol","code","name"]},"holder":{"type":"string","enum":["any","organization","person"]},"defaultCountry":{"type":"string","pattern":"^[A-Za-z]{2}$"}},"required":["key","label","propertyType"]}},"default":[]},"groups":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"}},"required":["key"]}},"default":[]},"field-host":{"type":"object","default":null},"apply":{"type":"enum","values":["submit","instant","answer"],"default":"submit"},"size":{"type":"enum","values":["1","1/2"],"default":"1"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"labels":{"type":"enum","values":["top","start"],"default":"top"},"footer":{"type":"enum","values":["static","sticky"],"default":"static"},"label":{"type":"string","default":""}},"values":{"value":{"type":"object","default":{}},"mode":{"type":"enum","values":["edit","view"],"default":"edit"},"valid":{"type":"boolean"},"dirty":{"type":"boolean"}},"events":{"input":{"carries":{"key":"string","value":"any"},"x-native":false},"change":{"carries":{"key":"string","value":"any"},"x-native":false},"submit":{"carries":{"value":"object"},"cancelable":true},"answer":{"carries":{"accepted":"boolean","value":{"type":"object","optional":true}},"cancelable":true},"invalid":{"carries":{"fields":"list"}},"cancel":{"carries":{"value":"object"}}},"actions":{"check-validity":{},"reset":{},"refresh-fields":{},"set-errors":{"with":{"errors":"object"}}},"presentation":{"skeleton":{"late":["fields","groups"]}},"host-states":{"data-dirty":"boolean","data-invalid":"boolean","data-mode":"string","data-state":"string"},"css-variables":{"--sf-form-field-gap":{"type":"length","state":"default"},"--sf-form-group-gap":{"type":"length","state":"default"},"--sf-form-label-color":{"type":"color","state":"default"},"--sf-form-summary-background-color":{"type":"color","state":"default"},"--sf-form-footer-background-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

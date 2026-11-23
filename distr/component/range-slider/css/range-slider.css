@@ -19,8 +19,11 @@
   }
   .sf-range-slider .sf-range-slider-base {
     height: var(--sf-thumb-handle--height, var(--sf-icon-size-3));
+    margin-left: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / 2);
+    margin-right: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / 2);
+    margin-inline: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / 2);
     position: relative;
-    width: 100%;
+    width: auto;
   }
   .sf-range-slider .sf-range-slider-track {
     left: 0;
@@ -626,10 +629,28 @@
     padding-right: calc(var(--sf-range-slider--space-x, var(--sf-ui-1--space-x)) - var(--sf-px));
     padding-inline: calc(var(--sf-range-slider--space-x, var(--sf-ui-1--space-x)) - var(--sf-px));
   }
+  .sf-range-slider-group.readonly .sf-range-slider .sf-range-slider-base {
+    margin-left: 0;
+    margin-right: 0;
+    margin-inline: 0;
+  }
   .sf-range-slider-group.readonly .sf-range-slider-scale {
+    margin-left: 0;
+    margin-right: 0;
+    margin-inline: 0;
     padding-left: calc(var(--sf-range-slider--space-x, var(--sf-ui-1--space-x)) - var(--sf-px));
     padding-right: calc(var(--sf-range-slider--space-x, var(--sf-ui-1--space-x)) - var(--sf-px));
     padding-inline: calc(var(--sf-range-slider--space-x, var(--sf-ui-1--space-x)) - var(--sf-px));
+  }
+  .sf-range-slider-group.readonly :is(.sf-range-slider-scale-mark--start, .sf-range-slider-scale-mark--end):where(:dir(ltr)) {
+    margin-left: 0;
+  }
+  .sf-range-slider-group.readonly :is(.sf-range-slider-scale-mark--start, .sf-range-slider-scale-mark--end):where(:dir(rtl)) {
+    margin-right: 0;
+  }
+  .sf-range-slider-group.readonly :is(.sf-range-slider-scale-mark--start, .sf-range-slider-scale-mark--end) {
+    -webkit-margin-start: 0;
+            margin-inline-start: 0;
   }
   .sf-range-slider.readonly .sf-thumb-handle,
   .sf-range-slider[data-readonly=true] .sf-thumb-handle {
@@ -678,6 +699,9 @@
   .sf-range-slider-scale {
     height: var(--sf-range-slider--label-height, var(--sf-text-height-1\/2));
     block-size: var(--sf-range-slider--label-height, var(--sf-text-height-1\/2));
+    margin-left: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / 2);
+    margin-right: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / 2);
+    margin-inline: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / 2);
     font-family: var(--sf-text--family);
     font-size: var(--sf-range-slider--label-size, var(--sf-text-size-1\/2));
     -webkit-font-feature-settings: "tnum";
@@ -696,11 +720,39 @@
     position: absolute;
     white-space: nowrap;
   }
+  .sf-range-slider-scale-mark--start:where(:dir(ltr)) {
+    margin-left: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / -2);
+  }
+  .sf-range-slider-scale-mark--start:where(:dir(rtl)) {
+    margin-right: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / -2);
+  }
+  .sf-range-slider-scale-mark--start:where(:dir(ltr)) {
+    margin-left: calc(var(--sf-icon-size-3) / -2);
+  }
+  .sf-range-slider-scale-mark--start:where(:dir(rtl)) {
+    margin-right: calc(var(--sf-icon-size-3) / -2);
+  }
   .sf-range-slider-scale-mark--start {
     justify-content: flex-start;
+    -webkit-margin-start: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / -2);
+            margin-inline-start: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / -2);
+  }
+  .sf-range-slider-scale-mark--end:where(:dir(ltr)) {
+    margin-left: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / 2);
+  }
+  .sf-range-slider-scale-mark--end:where(:dir(rtl)) {
+    margin-right: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / 2);
+  }
+  .sf-range-slider-scale-mark--end:where(:dir(ltr)) {
+    margin-left: calc(var(--sf-icon-size-3) / 2);
+  }
+  .sf-range-slider-scale-mark--end:where(:dir(rtl)) {
+    margin-right: calc(var(--sf-icon-size-3) / 2);
   }
   .sf-range-slider-scale-mark--end {
     justify-content: flex-end;
+    -webkit-margin-start: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / 2);
+            margin-inline-start: calc(var(--sf-thumb-handle--width, var(--sf-icon-size-3)) / 2);
   }
   .sf-range-slider-field {
     align-items: center;

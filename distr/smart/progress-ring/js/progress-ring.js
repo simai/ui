@@ -643,7 +643,7 @@ const on = value => value === true || value === '' || value === 'true'; // The p
 function ringPercent(text) {
   return String(text).replace(/[\s\u00a0\u202f]+(?=[\u200e\u200f\u061c]*[%\u066a])|(?<=[%\u066a][\u200e\u200f\u061c]*)[\s\u00a0\u202f]+/gu, '');
 } // The class markup of the ring (src/component/progress-ring): the root holds
-// the value as --sf-progress-ring--value, the ring (.sf-progress-ring-indicator)
+// the value as --sf-progress-ring-value (public, 1.8.0), the ring (.sf-progress-ring-indicator)
 // carries the role and the value, and the middle holds the slot content or the
 // percentage, which is aria-hidden: the ring says the value once.
 
@@ -690,7 +690,7 @@ function renderProgressRingTemplate(context) {
 
   const done = Boolean(content) && !meter && !unknown && value >= 100;
   const rootClasses = ['sf-progress-ring', `sf-progress-ring--size-${size}`, status ? `sf-progress-ring--${status}` : '', unknown ? 'sf-progress-ring--indeterminate' : '', context.rootClass].filter(Boolean).join(' ');
-  const style = [`--sf-progress-ring--value: ${unknown ? 0 : value}`, context.rootStyle].filter(Boolean).join('; ');
+  const style = [`--sf-progress-ring-value: ${unknown ? 0 : value}`, context.rootStyle].filter(Boolean).join('; ');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
     <div class=${rootClasses} style=${style} data-value=${String(value)} data-status=${status}
       data-tooltip=${tip ? context.tipId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
@@ -774,7 +774,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "084d7e69277d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-ring","tag":"sf-progress-ring","version":"1.7.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"show-text":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-ring-size":{"type":"length","state":"default"},"--sf-progress-ring-line-width":{"type":"length","state":"default"},"--sf-progress-ring-gap":{"type":"length","state":"default"},"--sf-progress-ring-fill-color":{"type":"color","state":"default"},"--sf-progress-ring-track-color":{"type":"color","state":"default"},"--sf-progress-ring-color":{"type":"color","state":"default"}},"host-states":{"data-status":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-ring","tag":"sf-progress-ring","version":"1.8.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/4","1/3","1/2","1","2","3"],"default":"1"},"value":{"type":"number","default":0,"min":0,"max":100},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"indeterminate":{"type":"boolean","default":false},"meter":{"type":"boolean","default":false},"show-text":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-ring-value":{"type":"number","state":"default"},"--sf-progress-ring-size":{"type":"length","state":"default"},"--sf-progress-ring-line-width":{"type":"length","state":"default"},"--sf-progress-ring-gap":{"type":"length","state":"default"},"--sf-progress-ring-fill-color":{"type":"color","state":"default"},"--sf-progress-ring-track-color":{"type":"color","state":"default"},"--sf-progress-ring-color":{"type":"color","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 

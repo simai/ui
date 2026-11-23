@@ -1192,10 +1192,12 @@ class SfPopover extends PopoverElement {
       } // An outside press is the top layer's (standard 1.3.8 §19.3): a
       // press inside a drawer or a window opened from this popover is
       // theirs, and the popover under them stays. A list opened from it
-      // closes with it, as before.
+      // closes with it, as before. A press on a layer opened from it --
+      // a menu or a list drawn beside the page -- is that layer's, and
+      // the popover under it stays (GB17 Y1).
 
 
-      if ((0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.hasLayerAbove)(this)) return;
+      if ((0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.hasLayerAbove)(this) || (0,_core_js_layer_stack__WEBPACK_IMPORTED_MODULE_5__.pressInLayerAbove)(this, event)) return;
       this.close({
         reason: 'outside'
       });
@@ -1549,7 +1551,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-popov
 /***/ "fcb18992f3bb"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.popover","tag":"sf-popover","version":"1.10.3","kind":"leaf","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end","bottom","top","start","start-start","start-end","end","end-start","end-end"],"default":"bottom-end"},"anchor":{"type":"object","default":null},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"offset":{"type":"string","default":""},"arrow":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}}},"show":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"return-focus":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.popover","tag":"sf-popover","version":"1.11.0","kind":"leaf","settings":{"placement":{"type":"enum","values":["bottom-start","bottom-end","top-start","top-end","inline-start","inline-end","bottom","top","start","start-start","start-end","end","end-start","end-end"],"default":"bottom-end"},"anchor":{"type":"object","default":null},"label":{"type":"string","default":""},"width":{"type":"string","default":""},"offset":{"type":"string","default":""},"arrow":{"type":"boolean","default":false},"dismissible":{"type":"boolean","default":true},"surface-role":{"type":"enum","values":["dialog","menu","listbox","group"],"default":"dialog"},"unsaved":{"type":"boolean","default":false}},"values":{"open":{"type":"boolean","default":false,"reflect":true}},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"toggle":{"with":{"force":{"type":"boolean","optional":true}}},"show":{"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"],"optional":true}},"emits":"close"},"return-focus":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-popover-background-color":{"type":"color","state":"default"},"--sf-popover-color":{"type":"color","state":"default"},"--sf-popover-radius":{"type":"length","state":"default"},"--sf-popover-shadow":{"type":"shadow","state":"default"},"--sf-popover-max-width":{"type":"length","state":"default"},"--sf-popover-max-height":{"type":"length","state":"default"}}}');
 
 /***/ },
 

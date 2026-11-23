@@ -29,7 +29,13 @@
        token-component-background-color-names); the new one wins. */
     --sf-alert-bar--error-background: var(--sf-alert-bar-error-background-color, var(--sf-alert-bar-danger-background, var(--sf-error)));
     --sf-alert-bar--warning-background: var(--sf-alert-bar-warning-background-color, var(--sf-alert-bar-warning-background, var(--sf-warning)));
-    --sf-alert-bar--info-background: var(--sf-alert-bar-info-background-color, var(--sf-alert-bar-info-background, var(--sf-info)));
+    /* Info in the dark theme is a container (owner decision C420, an
+       exception to C16 for this level and theme only): the info container
+       (info 50 at 24, --sf-info-container) laid on the page surface, so the
+       sticky bar stays opaque. The light theme keeps the strong fill. The
+       value, --sf-alert-bar--info-container, is written on the info bar by
+       places.sf-place-container-dark-tones (mix/_mix__places.scss). */
+    --sf-alert-bar--info-background: var(--sf-alert-bar-info-background-color, var(--sf-alert-bar-info-background, var(--sf-alert-bar--info-container)));
     --sf-alert-bar--list-background: var(--sf-alert-bar-list-background-color, var(--sf-alert-bar-list-background, var(--sf-surface-area)));
     /* The rung: 1/2. */
     --sf-alert-bar--line: var(--sf-text-height-1\/2);
@@ -117,7 +123,40 @@
   }
   .sf-alert-bar.sf-alert-bar--info {
     --sf-alert-bar--fill: var(--sf-alert-bar--info-background);
-    --sf-alert-bar--ink: var(--sf-on-info);
+    --sf-alert-bar--ink: var(--sf-on-alert-bar--info);
+    /* The info level's place (owner decision C420): in the light theme the
+       strong info place, tone for tone; in the dark a container -- the fill
+       above, the container's ink (--sf-on-info-container, info 90) -- read by
+       the same strong-place rules through these private tones, so what stands
+       on the bar takes the container's ink on the alpha scale (states 4/8/12,
+       fill 12/16/20, line 24, boundary 64, dim ink 80). Each dark tone is the
+       one the strong place's rule asks for, seen from a dark place with a
+       light ink: the ink 20 is 90, hover and press away from the place 15/10
+       are 95/98, a link's hover and press towards it 25/30 are 85/80, a raised
+       plate 90 is 30. The light halves are the info tones, so the light bar is
+       unchanged. Warning and error stay strong in both themes. The tones are
+       written by places.sf-place-container-dark-tones, so the palette is read
+       in the places layer, not here. */
+    --sf-alert-bar--info-container: light-dark(var(--sf-info), color-mix(in srgb, var(--sf-info-50) 24%, var(--sf-surface-page)));
+    --sf-on-alert-bar--info: light-dark(var(--sf-on-info), var(--sf-on-info-container));
+    --sf-alert-bar--info-20: light-dark(var(--sf-info-20), var(--sf-info-90));
+    --sf-alert-bar--info-15: light-dark(var(--sf-info-15), var(--sf-info-95));
+    --sf-alert-bar--info-10: light-dark(var(--sf-info-10), var(--sf-info-98));
+    --sf-alert-bar--info-25: light-dark(var(--sf-info-25), var(--sf-info-85));
+    --sf-alert-bar--info-30: light-dark(var(--sf-info-30), var(--sf-info-80));
+    --sf-alert-bar--info-40: var(--sf-info-40);
+    --sf-alert-bar--info-80: light-dark(var(--sf-info-80), var(--sf-info-20));
+    --sf-alert-bar--info-90: light-dark(var(--sf-info-90), var(--sf-info-30));
+    --sf-alert-bar--info-95: var(--sf-info-95);
+    --sf-alert-bar--info-20--alfa-4: color-mix(in srgb, var(--sf-transparent), var(--sf-alert-bar--info-20) 4%);
+    --sf-alert-bar--info-20--alfa-8: color-mix(in srgb, var(--sf-transparent), var(--sf-alert-bar--info-20) 8%);
+    --sf-alert-bar--info-20--alfa-12: color-mix(in srgb, var(--sf-transparent), var(--sf-alert-bar--info-20) 12%);
+    --sf-alert-bar--info-20--alfa-16: color-mix(in srgb, var(--sf-transparent), var(--sf-alert-bar--info-20) 16%);
+    --sf-alert-bar--info-20--alfa-20: color-mix(in srgb, var(--sf-transparent), var(--sf-alert-bar--info-20) 20%);
+    --sf-alert-bar--info-20--alfa-24: color-mix(in srgb, var(--sf-transparent), var(--sf-alert-bar--info-20) 24%);
+    --sf-alert-bar--info-20--alfa-64: color-mix(in srgb, var(--sf-transparent), var(--sf-alert-bar--info-20) 64%);
+    --sf-alert-bar--info-20--alfa-80: color-mix(in srgb, var(--sf-transparent), var(--sf-alert-bar--info-20) 80%);
+    --sf-alert-bar--info: var(--sf-alert-bar--fill);
   }
   /* The bar is a strong coloured place of its level (C16; core
      mix/_mix__places.scss, the place bg-error, bg-warning and bg-info are):
@@ -170,7 +209,7 @@
      (C107 (4)) below. The glyph stays the bar's line, the size of its status
      icon (C112 (1)). */
   .sf-alert-bar.sf-alert-bar--info .sf-alert-bar-row > :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > .sf-icon-button .sf-icon {
-    --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
+    --sf-icon--color: light-dark(var(--sf-white--alfa-64), var(--sf-alert-bar--info-20--alfa-64));
   }
   .sf-alert-bar-row > :is(.sf-alert-bar-close, .sf-alert-bar-minimize) > .sf-icon-button:not(:disabled):is(:hover, :active) .sf-icon {
     --sf-icon--color: var(--sf-alert-bar--ink);
@@ -683,6 +722,7 @@
     --sf-on-surface-hover: var(--sf-on-error);
     --sf-on-surface-active: var(--sf-on-error);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
+    --sf-on-surface-not-set: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
     --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-error-20--alfa-80));
     --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-error-20--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-white--alfa-8), var(--sf-error-20--alfa-8));
@@ -795,6 +835,7 @@
     --sf-on-surface-hover: var(--sf-on-warning);
     --sf-on-surface-active: var(--sf-on-warning);
     --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
+    --sf-on-surface-not-set: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
     --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-warning-20--alfa-80));
     --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-warning-20--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-white--alfa-8), var(--sf-warning-20--alfa-8));
@@ -894,33 +935,34 @@
     --sf-focus--color: var(--sf-focus);
   }
   .sf-alert-bar.sf-alert-bar--info :is(.sf-alert-bar-row, .sf-alert-bar-strip) {
-    --sf-surface-place: var(--sf-info);
-    --sf-surface-place-solid: var(--sf-info);
-    --sf-surface-place-ground: var(--sf-info);
+    --sf-surface-place: var(--sf-alert-bar--info);
+    --sf-surface-place-solid: var(--sf-alert-bar--info);
+    --sf-surface-place-ground: var(--sf-alert-bar--info);
     --sf-surface-underlay: initial;
     --sf-surface-place-fill: initial;
-    --sf-place--ink-variant: var(--sf-on-info);
-    --sf-place--ink: var(--sf-on-info);
+    --sf-place--ink-variant: var(--sf-on-alert-bar--info);
+    --sf-place--ink: var(--sf-on-alert-bar--info);
     --sf-place--fill-surface: initial;
-    --sf-on-surface: var(--sf-on-info);
-    --sf-on-surface-icon: var(--sf-on-info);
-    --sf-on-surface-hover: var(--sf-on-info);
-    --sf-on-surface-active: var(--sf-on-info);
-    --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
-    --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
-    --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-info-20--alfa-4));
-    --sf-surface-state-select: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-8));
-    --sf-surface-state-active: light-dark(var(--sf-white--alfa-12), var(--sf-info-20--alfa-12));
-    --sf-surface-container: light-dark(var(--sf-white--alfa-12), var(--sf-info-20--alfa-12));
-    --sf-surface-container-hover: light-dark(var(--sf-white--alfa-16), var(--sf-info-20--alfa-16));
-    --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-info-20--alfa-20));
-    --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
-    --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-info-20--alfa-24));
+    --sf-on-surface: var(--sf-on-alert-bar--info);
+    --sf-on-surface-icon: var(--sf-on-alert-bar--info);
+    --sf-on-surface-hover: var(--sf-on-alert-bar--info);
+    --sf-on-surface-active: var(--sf-on-alert-bar--info);
+    --sf-on-surface-variant: light-dark(var(--sf-white--alfa-80), var(--sf-alert-bar--info-20--alfa-80));
+    --sf-on-surface-not-set: light-dark(var(--sf-white--alfa-80), var(--sf-alert-bar--info-20--alfa-80));
+    --sf-on-surface-container-variant: light-dark(var(--sf-white--alfa-80), var(--sf-alert-bar--info-20--alfa-80));
+    --sf-surface-state-hover: light-dark(var(--sf-white--alfa-4), var(--sf-alert-bar--info-20--alfa-4));
+    --sf-surface-state-select: light-dark(var(--sf-white--alfa-8), var(--sf-alert-bar--info-20--alfa-8));
+    --sf-surface-state-active: light-dark(var(--sf-white--alfa-12), var(--sf-alert-bar--info-20--alfa-12));
+    --sf-surface-container: light-dark(var(--sf-white--alfa-12), var(--sf-alert-bar--info-20--alfa-12));
+    --sf-surface-container-hover: light-dark(var(--sf-white--alfa-16), var(--sf-alert-bar--info-20--alfa-16));
+    --sf-surface-container-active: light-dark(var(--sf-white--alfa-20), var(--sf-alert-bar--info-20--alfa-20));
+    --sf-outline: light-dark(var(--sf-white--alfa-64), var(--sf-alert-bar--info-20--alfa-64));
+    --sf-outline-variant: light-dark(var(--sf-white--alfa-24), var(--sf-alert-bar--info-20--alfa-24));
     --sf-place--container-outline: var(--sf-outline);
-    --sf-code--color: var(--sf-on-info);
-    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-info-20--alfa-12));
-    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-8));
-    --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-info-20--alfa-64));
+    --sf-code--color: var(--sf-on-alert-bar--info);
+    --sf-code--background: light-dark(var(--sf-white--alfa-12), var(--sf-alert-bar--info-20--alfa-12));
+    --sf-surface-disabled: light-dark(var(--sf-white--alfa-8), var(--sf-alert-bar--info-20--alfa-8));
+    --sf-on-surface-disabled: light-dark(var(--sf-white--alfa-64), var(--sf-alert-bar--info-20--alfa-64));
     --sf-on-surface-muted: var(--sf-on-surface-disabled);
     --sf-disable: var(--sf-surface-disabled);
     --sf-on-disable: var(--sf-on-surface-disabled);
@@ -970,39 +1012,39 @@
     --sf-link-active: var(--sf-place--found-link-active);
   }
   .sf-alert-bar.sf-alert-bar--info :is(.sf-alert-bar-row, .sf-alert-bar-strip) > * {
-    --sf-primary: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-primary-hover: light-dark(var(--sf-info-95), var(--sf-info-15));
-    --sf-primary-active: light-dark(var(--sf-info-90), var(--sf-info-10));
-    --sf-on-primary: var(--sf-surface-place-solid, light-dark(var(--sf-info-40), var(--sf-info-80)));
-    --sf-primary-container: light-dark(var(--sf-white--alfa-12), var(--sf-info-20--alfa-12));
-    --sf-primary-container-hover: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-16));
-    --sf-primary-container-active: light-dark(var(--sf-white--alfa-4), var(--sf-info-20--alfa-20));
-    --sf-on-primary-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-place--plate: light-dark(var(--sf-white), var(--sf-info-90));
-    --sf-place--on-plate: light-dark(var(--sf-info-40), var(--sf-info-20));
-    --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-info-20--alfa-16));
-    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-info-20--alfa-20));
-    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-link: light-dark(var(--sf-white), var(--sf-info-20));
-    --sf-link-hover: light-dark(var(--sf-info-95), var(--sf-info-25));
-    --sf-link-active: light-dark(var(--sf-info-90), var(--sf-info-30));
-    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-info-20--alfa-80));
-    --sf-focus: light-dark(var(--sf-white), var(--sf-info-20));
+    --sf-primary: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-primary-hover: light-dark(var(--sf-alert-bar--info-95), var(--sf-alert-bar--info-15));
+    --sf-primary-active: light-dark(var(--sf-alert-bar--info-90), var(--sf-alert-bar--info-10));
+    --sf-on-primary: var(--sf-surface-place-solid, light-dark(var(--sf-alert-bar--info-40), var(--sf-alert-bar--info-80)));
+    --sf-primary-container: light-dark(var(--sf-white--alfa-12), var(--sf-alert-bar--info-20--alfa-12));
+    --sf-primary-container-hover: light-dark(var(--sf-white--alfa-8), var(--sf-alert-bar--info-20--alfa-16));
+    --sf-primary-container-active: light-dark(var(--sf-white--alfa-4), var(--sf-alert-bar--info-20--alfa-20));
+    --sf-on-primary-container: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-place--plate: light-dark(var(--sf-white), var(--sf-alert-bar--info-90));
+    --sf-place--on-plate: light-dark(var(--sf-alert-bar--info-40), var(--sf-alert-bar--info-20));
+    --sf-place--fill-placeholder: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-place--control-hover: light-dark(var(--sf-white--alfa-8), var(--sf-alert-bar--info-20--alfa-16));
+    --sf-place--control-active: light-dark(var(--sf-white--alfa-4), var(--sf-alert-bar--info-20--alfa-20));
+    --sf-on-primary-container-graphic: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-secondary-container: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-secondary-container-graphic: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-tertiary-container: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-tertiary-container-graphic: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-info-container: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-info-container-graphic: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-success-container: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-success-container-graphic: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-warning-container: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-warning-container-graphic: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-error-container: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-error-container-graphic: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-neutral-container: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-on-neutral-container-graphic: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-link: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
+    --sf-link-hover: light-dark(var(--sf-alert-bar--info-95), var(--sf-alert-bar--info-25));
+    --sf-link-active: light-dark(var(--sf-alert-bar--info-90), var(--sf-alert-bar--info-30));
+    --sf-link-visited: light-dark(var(--sf-white--alfa-80), var(--sf-alert-bar--info-20--alfa-80));
+    --sf-focus: light-dark(var(--sf-white), var(--sf-alert-bar--info-20));
     --sf-focus--color: var(--sf-focus);
   }
   .sf-alert-bar-row,
@@ -1040,6 +1082,7 @@
     --sf-on-surface-active: light-dark(var(--sf-neutral-20), var(--sf-neutral-85));
     --sf-on-surface-icon: light-dark(var(--sf-neutral-25), var(--sf-neutral-80));
     --sf-on-surface-variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
+    --sf-on-surface-not-set: light-dark(var(--sf-neutral-10--alfa-64), var(--sf-neutral-90--alfa-64));
     --sf-on-surface-container-variant: light-dark(var(--sf-neutral-35), var(--sf-neutral-85));
     --sf-surface-state-hover: light-dark(var(--sf-neutral-50--alfa-4), var(--sf-neutral-90--alfa-4));
     --sf-surface-state-select: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));

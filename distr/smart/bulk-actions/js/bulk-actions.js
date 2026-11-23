@@ -95,6 +95,8 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SfBulkActions: () => (/* binding */ SfBulkActions),
+/* harmony export */   actionsThatFit: () => (/* reexport safe */ _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.actionsThatFit),
+/* harmony export */   foldActions: () => (/* reexport safe */ _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.foldActions),
 /* harmony export */   isDestructiveAction: () => (/* reexport safe */ _js_danger_js__WEBPACK_IMPORTED_MODULE_6__.isDestructiveAction),
 /* harmony export */   isLongAction: () => (/* reexport safe */ _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.isLongAction),
 /* harmony export */   normalizeAction: () => (/* reexport safe */ _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.normalizeAction),
@@ -233,7 +235,15 @@ class SfBulkActions extends BulkActionsElement {
     // row would take a second line; _offerFold is the bar's width it was
     // folded at, so it comes back only on a wider bar (no flicker).
 
-    this._offerFold = null;
+    this._offerFold = null; // LV3-27, LV4-23: the fold by width. _fit is how many of the visible
+    // actions stand in the row (null: all of them), _fitAt the bar's width
+    // it last folded or tried at, _widths each action button's measured
+    // width (by id, words, size and phone), _fitSig what the row was made of.
+
+    this._fit = null;
+    this._fitAt = 0;
+    this._widths = new Map();
+    this._fitSig = '';
 
     this._onKey = event => this.onDocumentKey(event);
   }
@@ -250,6 +260,8 @@ class SfBulkActions extends BulkActionsElement {
     this._widthObserver = null;
     this._rowObserver?.disconnect();
     this._rowObserver = null;
+    cancelAnimationFrame(this._fitFrame);
+    cancelAnimationFrame(this._compactFrame);
     clearTimeout(this._sayTimer);
     clearTimeout(this._doneTimer);
     super.disconnectedCallback?.();
@@ -384,9 +396,15 @@ class SfBulkActions extends BulkActionsElement {
       if (compact === this._compact) return;
       this._compact = compact;
       this.requestComponentUpdate('compact');
-    };
+    }; // From the observer the switch is made in the next frame (BB-2): drawn
+    // inside its call, the new row resized the box it watches and the browser
+    // reported a «ResizeObserver loop» on every widening past the sm step.
 
-    this._widthObserver = new ResizeObserver(measure);
+
+    this._widthObserver = new ResizeObserver(() => {
+      cancelAnimationFrame(this._compactFrame);
+      this._compactFrame = requestAnimationFrame(measure);
+    });
 
     this._widthObserver.observe(box);
 
@@ -404,13 +422,24 @@ class SfBulkActions extends BulkActionsElement {
 
     if (root && typeof ResizeObserver === 'function' && this._rowRoot !== root) {
       this._rowObserver?.disconnect();
-      this._rowRoot = root;
-      this._rowObserver = new ResizeObserver(() => this.fitRow());
+      this._rowRoot = root; // The fit is made in the next frame, not inside the observer's call: a
+      // fold changes the bar's height, and a change made while the observer
+      // delivers is reported as a «ResizeObserver loop» error (LV3-27).
+
+      this._rowObserver = new ResizeObserver(() => {
+        cancelAnimationFrame(this._fitFrame);
+        this._fitFrame = requestAnimationFrame(() => this.fitRow());
+      });
 
       this._rowObserver.observe(root);
     }
 
-    this.fitRow();
+    this.fitRow(); // The held row keeps its size when a button comes in late (a new action
+    // button draws after the bar, and clipped it moves no edge the observer
+    // sees): the fit is read again in the next frame, once it has drawn.
+
+    cancelAnimationFrame(this._fitFrame);
+    this._fitFrame = requestAnimationFrame(() => this.fitRow());
   }
 
   rowWraps(root) {
@@ -418,32 +447,149 @@ class SfBulkActions extends BulkActionsElement {
     if (parts.length < 2) return false;
     const middles = parts.map(box => box.top + box.height / 2);
     return Math.max(...middles) - Math.min(...middles) > Math.min(...parts.map(box => box.height)) / 2;
+  } // The width the row needs on one line (BB-1): the held row never wraps, its
+  // parts shrink and overflow instead, so the need is the parts' own widths --
+  // a group (the start, the end, the actions) is the sum of its items and its
+  // gaps, a host drawn as display: contents is its button.
+
+
+  rowNeed(element) {
+    const items = [];
+
+    const take = node => {
+      for (const child of node.children) {
+        const style = getComputedStyle(child);
+        if (style.display === 'none') continue;
+        if (style.display === 'contents') take(child);else items.push(child);
+      }
+    };
+
+    take(element);
+    const gap = Number.parseFloat(getComputedStyle(element).columnGap) || 0;
+    const widths = items.map(item => item.matches('.sf-bulk-actions__lead, .sf-bulk-actions__end, .sf-bulk-actions__actions') ? this.rowNeed(item) : item.getBoundingClientRect().width).filter(width => width > 0);
+    return widths.reduce((sum, width) => sum + width, 0) + Math.max(0, widths.length - 1) * gap;
+  } // Whether the row does not fit: on the held row (sf-bulk-actions--held,
+  // one line, clipped) by width; on a row that may wrap (a done line or a
+  // result) by its parts' lines.
+
+
+  rowOverflows(root) {
+    if (!root.classList.contains('sf-bulk-actions--held')) return this.rowWraps(root);
+    const style = getComputedStyle(root);
+    const inner = root.clientWidth - (Number.parseFloat(style.paddingInlineStart) || 0) - (Number.parseFloat(style.paddingInlineEnd) || 0);
+    return this.rowNeed(root) > inner + 0.5;
   }
 
   fitRow() {
     const root = this._rowRoot;
     if (!root || !root.isConnected || root.hidden) return;
     const width = root.getBoundingClientRect().width;
-    const offerShown = Boolean(root.querySelector('.sf-bulk-actions__offer'));
+    if (!(width > 0)) return; // Nothing is measured before the bar's own sheet draws it as a row: an
+    // unstyled bar stacks its parts and would fold every action (and keep
+    // their unstyled widths). The sheet's arrival resizes the bar, and the
+    // observer fits it then.
+
+    if (getComputedStyle(root).display !== 'flex') return;
+    this.measureActions(root);
 
     if (!this._compact) {
       if (this._offerFold !== null) {
         this._offerFold = null;
         this.requestComponentUpdate('offer-fold');
+        return;
+      }
+    } else {
+      // C309 (1): on a phone the offer goes first, then the actions.
+      const offerShown = Boolean(root.querySelector('.sf-bulk-actions__offer'));
+
+      if (this._offerFold === null) {
+        if (offerShown && this.rowOverflows(root)) {
+          this._offerFold = width;
+          this.requestComponentUpdate('offer-fold');
+          return;
+        }
+      } else if (width > this._offerFold + 1) {
+        this._offerFold = null;
+        this.requestComponentUpdate('offer-fold');
+        return;
+      }
+    }
+
+    this.fitActions(root, width);
+  }
+
+  widthKey(action) {
+    return `${action.id}|${action.text}|${this.size}|${this._compact ? 'icon' : 'text'}`;
+  } // The width of each action button drawn now, kept for when it is in «⋯».
+
+
+  measureActions(root) {
+    for (const host of root.querySelectorAll('.sf-bulk-actions__actions > .sf-bulk-actions__action')) {
+      const id = host.getAttribute('data-sf-bulk-action') ?? host.querySelector('[data-sf-bulk-action]')?.getAttribute('data-sf-bulk-action');
+      const button = host.localName === 'button' ? host : host.querySelector('button');
+      const action = id ? this.findAction(id) : null;
+      const box = button?.getBoundingClientRect(); // A button without its sheet yet is not a width to keep.
+
+      const styled = button && getComputedStyle(button).display.includes('flex');
+      if (action && styled && box.width > 0) this._widths.set(this.widthKey(action), box.width);
+    }
+  } // The free width of the row beside what stands in it: the start slot, the
+  // count and the offer, and the end group (the actions, «⋯», ×).
+
+
+  rowRoom(root) {
+    const style = getComputedStyle(root);
+    const inner = root.clientWidth - (Number.parseFloat(style.paddingInlineStart) || 0) - (Number.parseFloat(style.paddingInlineEnd) || 0);
+    return inner - this.rowNeed(root);
+  } // LV3-27, LV4-23: the actions fold by width. While the row wraps the last
+  // visible action goes into «⋯», one by one (the words never wrap and
+  // «Выбрано N» stays on the line); when the row has room for the next one
+  // by its measured width it comes back. One not measured yet is tried once
+  // the bar is wider than where it last folded.
+
+
+  fitActions(root, width) {
+    const actions = root.querySelector('.sf-bulk-actions__actions');
+    if (!actions) return;
+    const shown = actions.querySelectorAll(':scope > .sf-bulk-actions__action').length;
+
+    if (this.rowOverflows(root)) {
+      if (shown > 0) {
+        this._fit = shown - 1;
+        this._fitAt = width;
+        this.requestComponentUpdate('fit');
       }
 
       return;
     }
 
-    if (this._offerFold === null) {
-      if (offerShown && this.rowWraps(root)) {
-        this._offerFold = width;
-        this.requestComponentUpdate('offer-fold');
-      }
-    } else if (width > this._offerFold + 1) {
-      this._offerFold = null;
-      this.requestComponentUpdate('offer-fold');
+    if (this._fit === null) return;
+    const base = this.baseSplit();
+    const next = base.visible.slice(this._fit);
+
+    if (!next.length) {
+      this._fit = null;
+      return;
     }
+
+    const widths = next.map(action => this._widths.get(this.widthKey(action)));
+    if (!Number.isFinite(widths[0]) && width <= this._fitAt + 1) return;
+    const gap = Number.parseFloat(getComputedStyle(actions).columnGap) || 0;
+    const more = actions.querySelector(':scope > .sf-bulk-actions__more > button')?.getBoundingClientRect().width ?? 0;
+    const freed = !base.rest.length && !this.offerFolded ? more + gap : 0; // A pixel of slack: a measured width that rounds over the edge is not
+    // taken back to wrap and fold again.
+
+    const take = (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_7__.actionsThatFit)({
+      room: this.rowRoom(root) - 1,
+      widths,
+      gap,
+      freed
+    });
+    if (take <= 0) return;
+    const fit = this._fit + take;
+    this._fit = fit >= base.visible.length ? null : fit;
+    this._fitAt = width;
+    this.requestComponentUpdate('fit');
   }
 
   get offerFolded() {
@@ -950,12 +1096,27 @@ class SfBulkActions extends BulkActionsElement {
     if (action) this.runAction(action, {
       retry: true
     });
-  }
+  } // Up to three labelled actions (one icon button on a phone), by priority.
 
-  split() {
+
+  baseSplit() {
     return this._compact ? (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_7__.splitActions)(this.actionList, _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.VISIBLE_COMPACT, {
       iconOnly: true
     }) : (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_7__.splitActions)(this.actionList, _js_actions_js__WEBPACK_IMPORTED_MODULE_7__.VISIBLE);
+  } // What the row shows: the split, less what the width folds (LV3-27).
+
+
+  split() {
+    return (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_7__.foldActions)(this.baseSplit(), this._fit);
+  } // A new set of actions, another size or the phone's row is measured anew.
+
+
+  resetFit() {
+    const sig = [this.size, this._compact ? 'icon' : 'text', ...this.actionList.map((item, index) => (0,_js_actions_js__WEBPACK_IMPORTED_MODULE_7__.normalizeAction)(item, index)).filter(Boolean).map(action => `${action.id}:${action.text}`)].join('|');
+    if (sig === this._fitSig) return;
+    this._fitSig = sig;
+    this._fit = null;
+    this._fitAt = 0;
   } // «Выбрать все N» once the whole page is selected and the total is larger;
   // «Только эта страница (N)» while all are; nothing while a run or a result
   // holds the start (a done line keeps it beside it while items are selected).
@@ -978,6 +1139,7 @@ class SfBulkActions extends BulkActionsElement {
   }
 
   templateContext() {
+    this.resetFit();
     const count = this.selectedCount;
     const effective = this.effectiveCount;
     const total = this.total;
@@ -1064,6 +1226,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   LONG_OVER: () => (/* binding */ LONG_OVER),
 /* harmony export */   VISIBLE: () => (/* binding */ VISIBLE),
 /* harmony export */   VISIBLE_COMPACT: () => (/* binding */ VISIBLE_COMPACT),
+/* harmony export */   actionsThatFit: () => (/* binding */ actionsThatFit),
+/* harmony export */   foldActions: () => (/* binding */ foldActions),
 /* harmony export */   isLongAction: () => (/* binding */ isLongAction),
 /* harmony export */   normalizeAction: () => (/* binding */ normalizeAction),
 /* harmony export */   number: () => (/* binding */ number),
@@ -1185,6 +1349,62 @@ function resultRoute({
     record: false
   };
 }
+/**
+ * The fold by width (LV3-27, LV4-23): of the visible actions the first fit
+ * stand in the row, the others go into «⋯» first, in their order, before the
+ * ones that were already there (the dangerous ones stay last). fit null: as
+ * split.
+ */
+
+function foldActions({
+  visible = [],
+  rest = []
+} = {}, fit = null) {
+  if (fit === null || fit === undefined || !Number.isFinite(Number(fit))) return {
+    visible,
+    rest
+  };
+  const keep = Math.max(0, Math.min(visible.length, Math.trunc(Number(fit))));
+  if (keep >= visible.length) return {
+    visible,
+    rest
+  };
+  return {
+    visible: visible.slice(0, keep),
+    rest: [...visible.slice(keep), ...rest]
+  };
+}
+/**
+ * How many more actions fit the row (LV3-27): room is the free width beside
+ * the count and the end group, widths the measured widths of the next folded
+ * actions (undefined: not measured yet), gap the space before each one, and
+ * freed what «⋯» gives back when the last one leaves it. An unmeasured action
+ * is tried once (the next drawing measures it, and folds it again when the
+ * row wraps). Answers the number of actions to take back.
+ */
+
+function actionsThatFit({
+  room = 0,
+  widths = [],
+  gap = 0,
+  freed = 0
+} = {}) {
+  let left = room;
+  let taken = 0;
+
+  for (let index = 0; index < widths.length; index += 1) {
+    const width = widths[index];
+    if (!Number.isFinite(width)) return taken + 1;
+    const last = index === widths.length - 1;
+
+    if (width + gap <= left + (last ? freed : 0)) {
+      left -= width + gap;
+      taken += 1;
+    } else break;
+  }
+
+  return taken;
+}
 
 /***/ },
 
@@ -1270,6 +1490,11 @@ function actionButton(context, action) {
   const description = action.reason || lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 
   if (compact) {
+    // A phone's action is an icon button: one without an icon never stands in
+    // the row (splitActions iconOnly puts it in «⋯» with its label). Drawn
+    // without one it would take a fallback glyph -- «⋯» before 1.2.1 -- and the
+    // bar would show two identical «⋯» (View round 14, msg-afb6bff8).
+    if (!action.icon) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
     return (0,lit_directives_keyed_js__WEBPACK_IMPORTED_MODULE_1__.keyed)(`${action.id}|icon|${action.status}`, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-bulk-actions__action" data-sf-bulk-action=${action.id}
       size=${size} appearance="ghost" scheme="on-surface" status=${action.status || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} icon=${action.icon}
       aria-label=${action.text} title=${action.reason ? `${action.text} — ${action.reason}` : action.text}
@@ -1351,8 +1576,12 @@ function renderBulkActionsTemplate(context) {
     component,
     size
   } = context;
-  const classes = ['sf-bulk-actions', `sf-bulk-actions--${context.place}`, `sf-bulk-actions--size-${size}`, context.compact ? 'sf-bulk-actions--compact' : '', context.rootClass].filter(Boolean).join(' ');
-  const busy = Boolean(context.run || context.result);
+  const busy = Boolean(context.run || context.result); // The count row is held on one line (BB-1): what does not fit yet is
+  // clipped at the end until the code folds it, never a second line for a
+  // frame. A run, a result or a done line may still wrap.
+
+  const held = !busy && !context.done;
+  const classes = ['sf-bulk-actions', `sf-bulk-actions--${context.place}`, `sf-bulk-actions--size-${size}`, context.compact ? 'sf-bulk-actions--compact' : '', held ? 'sf-bulk-actions--held' : '', context.rootClass].filter(Boolean).join(' ');
   const quiet = busy || Boolean(context.done && !context.done.actions);
   let lead;
   if (busy) lead = context.run ? run(context) : result(context);else if (context.done) lead = done(context);else {
@@ -1458,7 +1687,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "461b17ac357b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.bulk-actions","tag":"sf-bulk-actions","version":"1.2.3","kind":"leaf","settings":{"count":{"type":"number","integer":true,"min":0,"default":0},"page-count":{"type":"number","integer":true,"min":0,"default":0},"total":{"type":"number","optional":true,"min":0},"all-selected":{"type":"boolean","default":false},"count-text":{"type":"string","default":""},"place":{"type":"enum","values":["dock","top","float","inline"],"default":"dock"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default-from":"runtime.label-text"},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"status":{"type":"enum","values":["","danger"],"optional":true},"confirm":{"type":"object","optional":true},"undo":{"type":"boolean","optional":true},"long":{"type":"boolean","optional":true},"done-text":{"type":"string","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"reason":{"type":"string","optional":true},"priority":{"type":"number|string","optional":true},"disabled":{"type":"boolean","optional":true}}}},"events":{"action":{"own-verb":true,"cancelable":true,"carries":{"id":{"type":"id"},"scope":{"type":"enum","values":["selection","all"]},"count":{"type":"number"},"long":{"type":"boolean"}}},"undo":{"own-verb":true,"carries":{"id":{"type":"id"},"scope":{"type":"enum","values":["selection","all"]},"count":"number"}},"select-all":{"own-verb":true,"carries":{"total":"number","count":"number"}},"select-page":{"own-verb":true,"carries":{"count":"number"}},"clear":{"own-verb":true,"carries":{"count":"number","scope":{"type":"enum","values":["selection","all"]},"reason":{"type":"enum","values":["button","escape","api"]}}}},"actions":{"progress":{"with":{"done":"number","total":"number","text":{"type":"string","optional":true}}},"result":{"with":{"id":{"type":"id","optional":true},"ok":"number","failed":"list","text":{"type":"string","optional":true}}},"clear":{"with":{}}},"host-states":{"data-state":"string","data-place":"string"},"css-variables":{"--sf-bulk-actions-background":{"type":"color","state":"default"},"--sf-bulk-actions-border-color":{"type":"color","state":"default"},"--sf-bulk-actions-color":{"type":"color","state":"default"},"--sf-bulk-actions-gap":{"type":"length","state":"default"},"--sf-bulk-actions-radius":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.bulk-actions","tag":"sf-bulk-actions","version":"1.3.1","kind":"leaf","settings":{"count":{"type":"number","integer":true,"min":0,"default":0},"page-count":{"type":"number","integer":true,"min":0,"default":0},"total":{"type":"number","optional":true,"min":0},"all-selected":{"type":"boolean","default":false},"count-text":{"type":"string","default":""},"place":{"type":"enum","values":["dock","top","float","inline"],"default":"dock"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default-from":"runtime.label-text"},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"status":{"type":"enum","values":["","danger"],"optional":true},"confirm":{"type":"object","optional":true},"undo":{"type":"boolean","optional":true},"long":{"type":"boolean","optional":true},"done-text":{"type":"string","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"reason":{"type":"string","optional":true},"priority":{"type":"number|string","optional":true},"disabled":{"type":"boolean","optional":true}}}},"events":{"action":{"own-verb":true,"cancelable":true,"carries":{"id":{"type":"id"},"scope":{"type":"enum","values":["selection","all"]},"count":{"type":"number"},"long":{"type":"boolean"}}},"undo":{"own-verb":true,"carries":{"id":{"type":"id"},"scope":{"type":"enum","values":["selection","all"]},"count":"number"}},"select-all":{"own-verb":true,"carries":{"total":"number","count":"number"}},"select-page":{"own-verb":true,"carries":{"count":"number"}},"clear":{"own-verb":true,"carries":{"count":"number","scope":{"type":"enum","values":["selection","all"]},"reason":{"type":"enum","values":["button","escape","api"]}}}},"actions":{"progress":{"with":{"done":"number","total":"number","text":{"type":"string","optional":true}}},"result":{"with":{"id":{"type":"id","optional":true},"ok":"number","failed":"list","text":{"type":"string","optional":true}}},"clear":{"with":{}}},"host-states":{"data-state":"string","data-place":"string"},"css-variables":{"--sf-bulk-actions-background":{"type":"color","state":"default"},"--sf-bulk-actions-border-color":{"type":"color","state":"default"},"--sf-bulk-actions-color":{"type":"color","state":"default"},"--sf-bulk-actions-gap":{"type":"length","state":"default"},"--sf-bulk-actions-padding-block":{"type":"length","state":"default"},"--sf-bulk-actions-padding-inline":{"type":"length","state":"default"},"--sf-bulk-actions-radius":{"type":"length","state":"default"}}}');
 
 /***/ },
 

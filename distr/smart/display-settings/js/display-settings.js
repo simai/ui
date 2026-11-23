@@ -622,6 +622,101 @@ class SfDisplaySettings extends DisplaySettingsElement {
       this.open = false;
       this.querySelector('.sf-display-settings__trigger')?.focus?.();
     };
+
+    this._onResize = () => {
+      this.fitTrigger();
+      this.placePanel();
+    };
+
+    this._foldedTrigger = false;
+  }
+
+  afterRender(changed) {
+    const result = super.afterRender?.(changed);
+    this.fitTrigger();
+    this.placePanel();
+    return result;
+  } // layout=disclosure (DSA-3): the trigger folds to its glyph when its words
+  // do not fit the room it stands in. In sf-header-site's tools at 390 with
+  // the text at 200 % the whole button was 389 px in a 314 px row and the
+  // page scrolled sideways (557 px), against the reflow the panel exists for
+  // (WCAG 1.4.10). It folds through sf-button's own shrink="icon" (C370), the
+  // state a bar sets: a square of the button's height, ghost, its name and a
+  // tooltip with the words. A bar's request (sf-header-site collapse auto) is
+  // the bar's and is left alone; the panel undoes only its own fold. The
+  // whole button is measured with the fold lifted and put back in the same
+  // task, so no frame shows it.
+
+
+  fitTrigger() {
+    const trigger = this.querySelector(':scope > .sf-display-settings--disclosure > .sf-display-settings__trigger');
+    const button = trigger?.querySelector(':scope > button');
+    if (!trigger || !button) return;
+    const shrunk = trigger.getAttribute('data-shrunk') === 'true';
+    if (shrunk && !this._foldedTrigger) return;
+    if (shrunk) trigger.removeAttribute('data-shrunk');
+    const fold = this.overflows(button);
+    if (fold) trigger.setAttribute('data-shrunk', 'true');
+    this._foldedTrigger = fold;
+  } // Whether `element` crosses the screen or the content box of a box around
+  // it (the header's row; a wrapper sized by its content holds it exactly).
+
+
+  overflows(element) {
+    const view = this.ownerDocument.defaultView;
+    const rect = element.getBoundingClientRect();
+    if (!rect.width) return false;
+    if (rect.right > this.ownerDocument.documentElement.clientWidth + 0.5 || rect.left < -0.5) return true;
+
+    for (let node = this.parentElement; node && node !== this.ownerDocument.documentElement; node = node.parentElement) {
+      const style = view.getComputedStyle(node);
+      if (style.display === 'contents') continue;
+      const box = node.getBoundingClientRect();
+      const start = box.left + node.clientLeft + (parseFloat(style.paddingLeft) || 0);
+      const end = box.left + node.clientLeft + node.clientWidth - (parseFloat(style.paddingRight) || 0);
+      if (rect.right > end + 0.5 || rect.left < start - 0.5) return true;
+    }
+
+    return false;
+  } // layout=disclosure (DS-1): the open panel is a layer under its button
+  // (scss/); it is moved in along the inline axis when it would cross the
+  // screen's edge, or a scrolling parent's (the site header's phone sheet),
+  // less the gutter the sheet gives it as its scroll-margin, and capped to
+  // that room.
+
+
+  placePanel() {
+    const panel = this.querySelector(':scope > .sf-display-settings--disclosure > .sf-display-settings__panel');
+    if (!panel) return;
+    panel.style.removeProperty('--sf-display-settings--shift');
+    panel.style.removeProperty('--sf-display-settings--room');
+    if (panel.hidden) return;
+    const view = this.ownerDocument.defaultView;
+    const style = view.getComputedStyle(panel);
+    const gutterStart = parseFloat(style.scrollMarginInlineStart) || 0;
+    const gutterEnd = parseFloat(style.scrollMarginInlineEnd) || 0;
+    let left = 0;
+    let right = this.ownerDocument.documentElement.clientWidth;
+
+    for (let node = this.parentElement; node && node !== this.ownerDocument.documentElement; node = node.parentElement) {
+      // A parent clips unless its overflow is visible (matched by its stem,
+      // so the template-utilities scan reads no class here).
+      if (/^vis/u.test(view.getComputedStyle(node).overflowX)) continue;
+      const box = node.getBoundingClientRect();
+      left = Math.max(left, box.left + node.clientLeft);
+      right = Math.min(right, box.left + node.clientLeft + node.clientWidth);
+    }
+
+    const ltr = style.direction !== 'rtl';
+    const start = left + (ltr ? gutterStart : gutterEnd);
+    const end = right - (ltr ? gutterEnd : gutterStart);
+    const room = Math.max(0, end - start);
+    if (room < panel.getBoundingClientRect().width) panel.style.setProperty('--sf-display-settings--room', `${room}px`);
+    const rect = panel.getBoundingClientRect();
+    let shift = 0;
+    if (rect.right > end) shift = end - rect.right;
+    if (rect.left + shift < start) shift = start - rect.left;
+    if (Math.abs(shift) >= 0.5) panel.style.setProperty('--sf-display-settings--shift', `${Math.round(shift)}px`);
   }
 
   connectedCallback() {
@@ -632,6 +727,8 @@ class SfDisplaySettings extends DisplaySettingsElement {
     this._motion?.addEventListener?.('change', this._redraw);
     this.ownerDocument.addEventListener('sf-display-change', this._redraw);
     this.addEventListener('keydown', this._onKey);
+    const view = this.ownerDocument.defaultView;
+    if (view) view.addEventListener('resize', this._onResize);
   }
 
   disconnectedCallback() {
@@ -639,6 +736,8 @@ class SfDisplaySettings extends DisplaySettingsElement {
     this._motion?.removeEventListener?.('change', this._redraw);
     this.ownerDocument.removeEventListener('sf-display-change', this._redraw);
     this.removeEventListener('keydown', this._onKey);
+    const view = this.ownerDocument.defaultView;
+    if (view) view.removeEventListener('resize', this._onResize);
     super.disconnectedCallback?.();
   } // The value: the person's choice as core keeps it.
 
@@ -805,8 +904,9 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
  // sf-display-settings' markup (scss/ draws it; prototype
 // accessibility-panel-study, panel B).
 //
-// - disclosure: an outline sf-button (the label) with aria-expanded and
-//   aria-controls, and the panel under it, hidden while closed;
+// - disclosure: an outline sf-button (the eye glyph and the label) with
+//   aria-expanded and aria-controls, and the panel under it, hidden while
+//   closed; the button folds to its glyph when its words do not fit;
 // - panel: the panel alone.
 // The panel is a group named by the label; each setting a group named by its
 // word, its choices outline sf-buttons with aria-pressed (C12 pressed look on
@@ -818,7 +918,11 @@ const BUTTON = {
   size: '1/2',
   appearance: 'outline',
   scheme: 'on-surface'
-};
+}; // The trigger's glyph (DSA-3): the eye a reader looks for beside «Версия для
+// слабовидящих», and what the trigger folds to when its words do not fit
+// (sf-button shrink="icon", C370; index.js fitTrigger).
+
+const TRIGGER_ICON = 'visibility';
 
 function choice(context, group, option) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-display-settings__choice" size=${BUTTON.size} appearance=${BUTTON.appearance}
@@ -869,6 +973,7 @@ function renderDisplaySettingsTemplate(context) {
   if (context.layout === 'panel') return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${classes}>${panel(context)}</div>`;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class=${classes}>
     <sf-button class="sf-display-settings__trigger" size=${BUTTON.size} appearance=${BUTTON.appearance} scheme=${BUTTON.scheme}
+      icon-start=${TRIGGER_ICON} shrink="icon"
       text=${context.label} expanded=${context.shown ? 'true' : 'false'} aria-controls=${context.panelId}
       @click=${() => context.component.toggle()}></sf-button>
     ${panel(context)}
@@ -977,7 +1082,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"skip-link-text":"Skip to 
 /***/ "24030a2aa914"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.display-settings","tag":"sf-display-settings","version":"1.1.5","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label-text"},"layout":{"type":"enum","values":["disclosure","panel"],"default":"disclosure"},"open":{"type":"boolean","default":false},"show-font":{"type":"boolean","default":false},"show-links":{"type":"boolean","default":false}},"values":{"settings":{"type":"object"}},"events":{"change":{"x-native":false,"carries":{"settings":{"type":"object"},"previous":{"type":"object"},"setting":{"type":"string"}}}},"actions":{"reset":{}},"host-states":{"data-open":"boolean","data-forced-colors":"boolean"},"css-variables":{"--sf-display-settings-background":{"type":"color","state":"default"},"--sf-display-settings-border-color":{"type":"color","state":"default"},"--sf-display-settings-label-color":{"type":"color","state":"default"},"--sf-display-settings-gap":{"type":"length","state":"default"},"--sf-display-settings-group-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.display-settings","tag":"sf-display-settings","version":"1.3.0","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label-text"},"layout":{"type":"enum","values":["disclosure","panel"],"default":"disclosure"},"open":{"type":"boolean","default":false},"show-font":{"type":"boolean","default":false},"show-links":{"type":"boolean","default":false}},"values":{"settings":{"type":"object"}},"events":{"change":{"x-native":false,"carries":{"settings":{"type":"object"},"previous":{"type":"object"},"setting":{"type":"string"}}}},"actions":{"reset":{}},"host-states":{"data-open":"boolean","data-forced-colors":"boolean"},"css-variables":{"--sf-display-settings-background":{"type":"color","state":"default"},"--sf-display-settings-border-color":{"type":"color","state":"default"},"--sf-display-settings-label-color":{"type":"color","state":"default"},"--sf-display-settings-gap":{"type":"length","state":"default"},"--sf-display-settings-group-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

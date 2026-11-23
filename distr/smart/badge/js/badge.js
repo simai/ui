@@ -7,12 +7,14 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BADGE_HUES: () => (/* binding */ BADGE_HUES),
 /* harmony export */   BADGE_MAIN_TONAL: () => (/* binding */ BADGE_MAIN_TONAL),
 /* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
 /* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
 /* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
 /* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
 /* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
+/* harmony export */   canonicalBadgeHue: () => (/* binding */ canonicalBadgeHue),
 /* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
 /* harmony export */   isRetiredMain: () => (/* binding */ isRetiredMain),
 /* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
@@ -27,7 +29,18 @@ const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiar
 const BADGE_SCHEME_ALIASES = Object.freeze({
   danger: 'error'
 });
-const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The default look is tonal (owner decision C140 (1), badges study BG-1): a
+const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The hues of the static palette a badge takes as a class, sf-badge--<hue>
+// (owner decision C411): the sixteen names of src/core/scss/vars/_sf_var__hue.scss
+// ($sf-static-hues), in its order. The class draws tone 50 at the fill step 24
+// under --sf-on-surface in both themes; status colours stay with the status
+// classes, so a hue is never a status.
+
+const BADGE_HUES = Object.freeze(['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'pink', 'brown', 'gray']); // The hue for a name, '' when it is not one of BADGE_HUES.
+
+function canonicalBadgeHue(value) {
+  const name = String(value ?? '').trim().toLowerCase();
+  return BADGE_HUES.includes(name) ? name : '';
+} // The default look is tonal (owner decision C140 (1), badges study BG-1): a
 // badge without an appearance is the calm grey mark. It was main, the dark
 // grey fill nobody chose.
 
@@ -720,6 +733,7 @@ class SfBadge extends BadgeElement {
       type: this.appearance,
       scheme: this.scheme,
       status: this.status,
+      hue: this.hue,
       activity: this.activity,
       iconOnly: this.iconOnly,
       tight: this.tight,
@@ -811,7 +825,9 @@ function renderBadgeTemplate(context) {
   const isFigure = !hasTextSlot && leftIconContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing && rightIconContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing && [...String(context.drawnText ?? '').trim()].length === 1;
   const classes = ['sf-badge', `sf-badge--${context.appearance ?? context.type}`, // One colour name, as the styles expect: the run state's role, the status
   // or the colour role (the component's paintedScheme).
-  `sf-badge--${context.paintedScheme}`, `sf-badge--size-${context.size}`, context.line ? `sf-badge--line-${context.line}` : '', // The class sf-badge--icon-only, and until 2027-01-01 its former name
+  `sf-badge--${context.paintedScheme}`, // A colour from the static palette (owner decision C411): the class
+  // sf-badge--<hue>; the sheet lets a status win over it.
+  context.hue ? `sf-badge--${context.hue}` : '', `sf-badge--size-${context.size}`, context.line ? `sf-badge--line-${context.line}` : '', // The class sf-badge--icon-only, and until 2027-01-01 its former name
   // sf-badge--compact beside it, so a page selector that reached it still
   // does (journal class-badges-compact-to-icon-only).
   isIconOnly ? 'sf-badge--icon-only sf-badge--compact' : '', context.tight ? 'sf-badge--tight' : '', isFigure ? 'sf-badge--figure' : '', // Inline: a badge is as wide as its text. As a block-level flex box it
@@ -938,7 +954,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-badge
 /***/ "55155acfa4cc"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.7.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2","text"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"tonal"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed","paused","queued"],"default":""},"icon-only":{"type":"boolean","default":false},"tight":{"type":"boolean","default":false},"text":{"type":"string","default":""},"value":{"type":"string","default":""},"value-label":{"type":"string","default-from":"runtime.value-label"},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"},"--sf-badge-divider-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.badge","tag":"sf-badge","version":"1.8.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1"],"default":"1/3"},"line":{"type":"enum","values":["","1/2","1","2","text"],"default":""},"appearance":{"type":"enum","values":["main","tonal","outline"],"default":"tonal"},"scheme":{"type":"enum","values":["neutral","primary","secondary","tertiary","on-surface"],"default":"neutral"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"hue":{"type":"enum","values":["","red","orange","amber","yellow","lime","green","teal","cyan","sky","blue","indigo","violet","purple","pink","brown","gray"],"default":""},"activity":{"type":"enum","values":["","running","waiting","done","stopped","failed","paused","queued"],"default":""},"icon-only":{"type":"boolean","default":false},"tight":{"type":"boolean","default":false},"text":{"type":"string","default":""},"value":{"type":"string","default":""},"value-label":{"type":"string","default-from":"runtime.value-label"},"icon":{"type":"icon","default":""},"icon-start":{"type":"icon","optional":true},"icon-end":{"type":"icon","optional":true},"icon-position":{"type":"enum","values":["start","end"],"default":"start"}},"values":{},"events":{},"actions":{},"css-variables":{"--sf-badge-background-color":{"type":"color","state":"default"},"--sf-badge-color":{"type":"color","state":"default"},"--sf-badge-border-color":{"type":"color","state":"default"},"--sf-badge-border-width":{"type":"length","state":"default"},"--sf-badge-radius":{"type":"length","state":"default"},"--sf-badge-padding-inline":{"type":"length","state":"default"},"--sf-badge-padding-block":{"type":"length","state":"default"},"--sf-badge-gap":{"type":"length","state":"default"},"--sf-badge-ring-color":{"type":"color","state":"default"},"--sf-badge-divider-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

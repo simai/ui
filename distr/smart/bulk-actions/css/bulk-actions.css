@@ -4,10 +4,16 @@
   /* sf-bulk-actions (standard simai.smart-component 1.3.16 §6; owner decision
      C295; prototype sf-bulk-actions-study, variant A). One row: the count and
      the offer at the start, the actions, «⋯» and the clear cross at the end.
-     Its height is the rung's control height and the space-1/4 above and below
-     (C18: 42 at 1/2, 50 at 1 with the edge); the groups wrap 16 apart (the role --sf-gap--groups),
+     Its padding is the view settings panel's (LV3-26, the owner's list review):
+     space-1/3 above and below and at the end, space-1 at the start (8 / 16 / 8
+     on a desktop), so its height is the rung's control height and 2 x space-1/3
+     and its edges (50 at 1/2, 58 at 1, 66 at 2: inside the edge the 48, 56 and
+     64 steps); the groups wrap 16 apart (the role --sf-gap--groups),
      inside a group 8 (the role --sf-gap--actions, C105: one group 8). The buttons are sf-button's
-     own look (outline on-surface, C116); nothing here repaints a button.
+     own look (outline on-surface, C116); nothing here repaints a button. An
+     action's words never wrap (LV3-27, LV4-23): the code folds by width, the
+     actions that do not fit go into «⋯» one by one, and «Выбрано N» stays on
+     the bar's line.
 
      place: dock (default) stands over the list's bottom edge at the card's
      width and sticks to the bottom of the scroll; top is the toolbar's place
@@ -20,18 +26,14 @@
        --sf-bulk-actions-border-color   the bar's edge
        --sf-bulk-actions-color          the count's text
        --sf-bulk-actions-gap            between the groups
+       --sf-bulk-actions-padding-block  above and below the row
+       --sf-bulk-actions-padding-inline at the start and the end (one or two values)
        --sf-bulk-actions-radius         the bar's corners */
-  .sf-bulk-actions:where(:dir(ltr)){
-    padding-left: var(--sf-space-1\/2);
-    padding-right: var(--sf-space-1\/4);
-  }
-  .sf-bulk-actions:where(:dir(rtl)){
-    padding-right: var(--sf-space-1\/2);
-    padding-left: var(--sf-space-1\/4);
-  }
   .sf-bulk-actions {
     --sf-bulk-actions--gap: var(--sf-bulk-actions-gap, var(--sf-gap--groups));
     --sf-bulk-actions--group-gap: var(--sf-gap--actions);
+    --sf-bulk-actions--padding-block: var(--sf-bulk-actions-padding-block, var(--sf-space-1\/3));
+    --sf-bulk-actions--padding-inline: var(--sf-bulk-actions-padding-inline, var(--sf-space-1) var(--sf-space-1\/3));
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -42,10 +44,12 @@
     box-sizing: border-box;
     min-width: 0;
     min-inline-size: 0;
-    padding-top: var(--sf-space-1\/4);
-    padding-bottom: var(--sf-space-1\/4);
-    padding-block: var(--sf-space-1\/4);
-    padding-inline: var(--sf-space-1\/2) var(--sf-space-1\/4);
+    padding-top: var(--sf-bulk-actions--padding-block);
+    padding-bottom: var(--sf-bulk-actions--padding-block);
+    padding-block: var(--sf-bulk-actions--padding-block);
+    padding-left: var(--sf-bulk-actions--padding-inline);
+    padding-right: var(--sf-bulk-actions--padding-inline);
+    padding-inline: var(--sf-bulk-actions--padding-inline);
     border-width: var(--sf-px);
     border-style: solid;
     border-radius: var(--sf-bulk-actions-radius, var(--sf-radius--surface));
@@ -54,12 +58,28 @@
   .sf-bulk-actions[hidden] {
     display: none;
   }
+  /* One line (LV3-27, BB-1): the static row and the drawn count row are held
+     on one line at any width; until the code folds what does not fit into «⋯»
+     (the next frame after a jump narrower, the first frame out of the phone
+     row, an action tried back) it is clipped at the end, so the bar keeps its
+     height in every frame. The code measures the overflow by width. A run, a
+     result or a done line (no --held) still wraps. */
+  .sf-bulk-actions[data-sf-static],
+  .sf-bulk-actions--held {
+    flex-wrap: nowrap;
+    overflow: clip;
+  }
+  .sf-bulk-actions--held .sf-bulk-actions__lead {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
   /* The first paint (C55): the static markup is the wide row; where the code
      will draw the phone's row (the bar narrower than sm, C181: a container
      step) it shows the same row before the code comes -- the first action as
      its icon, «⋯» and × -- so the bar is already its drawn height. */
   @container sf-bulk-actions (width < 32rem) {
-    .sf-bulk-actions[data-sf-static] .sf-bulk-actions__action ~ .sf-bulk-actions__action > button,
+    .sf-bulk-actions[data-sf-static] .sf-bulk-actions__action > button:not(:has(.sf-icon)),
+    .sf-bulk-actions[data-sf-static] .sf-bulk-actions__action:has(> button .sf-icon) ~ .sf-bulk-actions__action > button,
     .sf-bulk-actions[data-sf-static] .sf-bulk-actions__action .sf-button-text-container {
       display: none;
     }
@@ -105,6 +125,14 @@
   .sf-bulk-actions__end {
     -webkit-margin-start: auto;
             margin-inline-start: auto;
+  }
+  .sf-bulk-actions__actions {
+    flex-wrap: nowrap;
+  }
+  .sf-bulk-actions__actions > * > button,
+  .sf-bulk-actions__lead:not([data-sf-bulk-done]) .sf-bulk-actions__offer > button {
+    flex-shrink: 0;
+    white-space: nowrap;
   }
   .sf-bulk-actions__count,
   .sf-bulk-actions__say {
@@ -185,16 +213,9 @@
     z-index: var(--sf-layer--sticky);
   }
   /* A phone: the actions are icon buttons named in their tooltips; the start
-     steps in to the screen's edge. */
-  .sf-bulk-actions--compact:where(:dir(ltr)){
-    padding-left: var(--sf-space-1\/3);
-  }
-  .sf-bulk-actions--compact:where(:dir(rtl)){
-    padding-right: var(--sf-space-1\/3);
-  }
+     steps in to the screen's edge, as the end. */
   .sf-bulk-actions--compact {
-    -webkit-padding-start: var(--sf-space-1\/3);
-            padding-inline-start: var(--sf-space-1\/3);
+    --sf-bulk-actions--padding-inline: var(--sf-bulk-actions-padding-inline, var(--sf-space-1\/3));
   }
   .sf-bulk-actions--compact.sf-bulk-actions--dock {
     border-radius: var(--sf-bulk-actions-radius, var(--sf-radius--ui));

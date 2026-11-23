@@ -30,7 +30,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("8489d1f5bab4");
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("421676f72963");
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("4a85acfb05c1");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("b0314d85fd3a");
+/* harmony import */ var _icon_buttons_js_name_tooltip_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("2abe37330ca5");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("b0314d85fd3a");
 
 
 
@@ -40,6 +41,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+ // The flag button shows its name as the Framework's tooltip (FS-11, C144).
 
  // The words live in the component's language files (localization study LC-4):
 // one place for every language, as the Smart components keep them.
@@ -48,7 +51,7 @@ __webpack_require__.r(__webpack_exports__);
 // SF.language.register('sf-input-country', code, words); the locale here is
 // also what the number itself is formatted by, which is why it stays.
 
-const COUNTRY_CODE_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__["default"]; // Prefer the helper Core published; an isolated bundle uses its own copy.
+const COUNTRY_CODE_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__["default"]; // Prefer the helper Core published; an isolated bundle uses its own copy.
 
 const positioning = () => globalThis.SF?.Position || _core_js_position_js__WEBPACK_IMPORTED_MODULE_6__["default"];
 
@@ -159,12 +162,18 @@ function syncCountryAccessibility(root) {
       toggle.setAttribute('role', 'button');
       toggle.setAttribute('aria-haspopup', 'listbox');
       toggle.setAttribute('aria-controls', ensureCountryId(itemsWrap || list));
-      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-expanded', String(open)); // A flag is no words (C144): the button's name -- «Код страны: Россия
+      // (+7)», the chosen country in the page's language -- is its tooltip
+      // too, as an icon button's is, and follows the choice (FS-11).
+
+      toggle.setAttribute('data-sf-name-tip', '');
     } else {
-      // With one fixed country the flag and code are a picture, not a control.
+      toggle.removeAttribute('data-sf-name-tip');
+      (0,_icon_buttons_js_name_tooltip_js__WEBPACK_IMPORTED_MODULE_11__.unlinkNameTip)(toggle); // With one fixed country the flag and code are a picture, not a control.
       // A span without a role does not get a name: an aria-label or
       // aria-disabled left on it is not allowed there and is never read. The
       // dial code stays in the field's own value, which is what is read.
+
       toggle.removeAttribute('aria-haspopup');
       toggle.removeAttribute('aria-controls');
       toggle.removeAttribute('aria-expanded');
@@ -2469,6 +2478,246 @@ function bindFormReset(input, synchronize) {
 
 /***/ },
 
+/***/ "2abe37330ca5"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   nameTarget: () => (/* binding */ nameTarget),
+/* harmony export */   unlinkNameTip: () => (/* binding */ unlinkNameTip)
+/* harmony export */ });
+// The name tooltip of the class icon button (owner decision C248,
+// 2026-11-16; C160 (1), C224, C48): a .sf-icon-button the page wrote with an
+// aria-label and no visible label shows that name as the Framework's tooltip
+// by itself, as <sf-button-icon> does -- the same 0.5 s, the neighbours at
+// once, keyboard focus at once, a long press on a touch screen, the flip at
+// the edge (component.tooltip). It showed nothing: a page wrote fourteen
+// lines of sf-tooltip-anchor + data-tooltip, or the browser's title.
+//
+// Nothing is drawn or fetched before the first hover, keyboard focus or long
+// press on such a button, so the first paint is unchanged: then the tooltip
+// surface (the tooltip composition, a .sf-tooltip the button names by
+// data-tooltip) is made beside the button, the tooltip controller is asked
+// for (the Loader's lazy plugin), and the event that woke it is handed over
+// once the controller has linked the button.
+//
+// Left alone: data-tooltip="off" (the page's opt-out) and any data-tooltip of
+// the page's own (its own link is stronger); a button with a title, its own
+// or a host's around it (the page chose the browser's tooltip, or a component
+// wrote its hint there -- the plain theme button, C244; drop the title for
+// the Framework's): never a second tooltip; a button
+// with visible words; a close button (sf-button-close, C14: it carries no
+// name tooltip, as the Smart one does not); a button inside <sf-button-icon>,
+// which shows its own; a disabled or hidden one.
+const NAME_TIP = 'sf-icon-button-tooltip'; // What draws a glyph, not words: the icon (a ligature is text), the cross,
+// an SVG, the loading spinner.
+
+const GLYPHS = '.sf-icon, sf-icon, i, svg, .sf-close, sf-button-close, .sf-icon-button-spinner, [class*="sf-loader"]';
+const SKIP_HOSTS = 'sf-button-icon, sf-icon-button, .sf-tooltip-anchor, [aria-hidden="true"], [inert]'; // A title on the button or on a host around it (the theme button writes its
+// next-theme hint there, C244) is a tooltip of the page's own: the browser
+// would draw it beside ours, so the button is left alone.
+
+function hasTitle(button) {
+  for (let node = button; node && node.nodeType === 1; node = node.parentElement) {
+    if ((node.getAttribute('title') || '').trim()) return true;
+  }
+
+  return false;
+} // The surfaces' numbers are counted on the page, not in this file, and under
+// a name of their own: every bundle that carries this file has its own copy
+// of it (sf-button since C370, the icon buttons), and <sf-button-icon>
+// numbers its own tooltips «sf-icon-button-tooltip-N» from 1 too; two
+// counters from 1 made a second «sf-icon-button-tooltip-1», and the language
+// glyph in the docs header showed the shrunk search's «Поиск ⌘K».
+
+
+const MADE = Symbol.for('sf.icon-button.name-tooltip.made');
+
+function nextTipId(doc) {
+  let id = '';
+
+  do {
+    globalThis[MADE] = (globalThis[MADE] || 0) + 1;
+    id = `sf-name-tooltip-${globalThis[MADE]}`;
+  } while (doc.getElementById(id));
+
+  return id;
+}
+
+function tooltipController() {
+  return globalThis.SF?.ComponentRegistry?.Tooltip || globalThis.SF?.Loader?.ComponentRegistry?.Tooltip || null;
+} // The controller is there: run now; else ask the Loader for it (a lazy
+// plugin) and run once it registered -- as <sf-button-icon> does.
+
+
+function whenTooltipReady(run) {
+  if (tooltipController()) {
+    run();
+    return;
+  }
+
+  const loader = globalThis.SF?.Loader;
+  loader?.ensurePlugin?.('tooltip');
+  if (typeof loader?.ready === 'function') loader.ready('Tooltip', () => run());else globalThis.addEventListener?.('Tooltip:ready', () => run(), {
+    once: true
+  });
+} // Whether the button shows words of its own beside (or instead of) its icon.
+
+
+function hasVisibleLabel(button) {
+  const walker = button.ownerDocument.createTreeWalker(button, NodeFilter.SHOW_TEXT);
+
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (!node.data.trim()) continue;
+    if (node.parentElement?.closest(GLYPHS)) continue;
+    return true;
+  }
+
+  return false;
+}
+
+function nameOf(button) {
+  return String(button.getAttribute('data-sf-shrink-tip') || button.getAttribute('aria-label') || '').replace(/\s+/gu, ' ').trim();
+} // An sf-button drawn as its glyph by its bar (shrink="icon", data-shrunk;
+// owner decision C370): its words are hidden, so it shows its text and keys
+// as this tooltip, «Поиск ⌘K» (data-sf-shrink-tip), as an icon button shows
+// its name. Whole again, it shows none.
+
+
+const SHRUNK = 'sf-button[shrink="icon"][data-shrunk="true"] > .sf-button[data-sf-shrink-tip]'; // A control a component draws with no words of its own and marks with
+// data-sf-name-tip (a role=button part, not an .sf-icon-button: the phone
+// field's country flag, sf-input-country, FS-11) shows its name the same way.
+
+const MARKED = '[data-sf-name-tip]'; // The button a name tooltip is for, or null.
+
+function nameTarget(node) {
+  const marked = node instanceof Element ? node.closest(MARKED) : null;
+
+  if (marked) {
+    if (!nameOf(marked) || marked.hasAttribute('data-tooltip') || hasTitle(marked)) return null;
+    if (marked.matches(':disabled, [aria-disabled="true"]') || marked.closest('[aria-hidden="true"], [inert]')) return null;
+    return marked;
+  }
+
+  const shrunk = node instanceof Element ? node.closest(SHRUNK) : null;
+
+  if (shrunk) {
+    if (shrunk.hasAttribute('data-tooltip') || hasTitle(shrunk) || shrunk.matches(':disabled, [aria-disabled="true"]')) return null;
+    return nameOf(shrunk) ? shrunk : null;
+  }
+
+  const button = node instanceof Element ? node.closest('.sf-icon-button') : null;
+  if (!button || !nameOf(button)) return null;
+  if (!(button.localName === 'button' || button.localName === 'a' && button.hasAttribute('href') || button.getAttribute('role') === 'button')) return null;
+  if (button.hasAttribute('data-tooltip') || hasTitle(button)) return null;
+  if (button.matches('.sf-button-close, .sf-icon-button--close, :disabled, [aria-disabled="true"]')) return null;
+  if (button.parentElement?.closest(SKIP_HOSTS) || button.matches(SKIP_HOSTS)) return null;
+  if (hasVisibleLabel(button)) return null;
+  return button;
+} // A tooltip this file made keeps the button's name: an aria-label changed
+// later (a toggle's «Показать» / «Скрыть») is said on the next hover.
+
+
+function syncMadeTip(button) {
+  const id = button?.getAttribute?.('data-tooltip');
+  if (!id) return;
+  const tip = button.ownerDocument.getElementById(id);
+  if (!tip?.classList.contains(NAME_TIP)) return;
+  const text = tip.querySelector('.sf-tooltip-text');
+  const name = nameOf(button);
+  if (text && name && text.textContent !== name) text.textContent = name;
+}
+
+function wake(event) {
+  const origin = event.target;
+  if (origin instanceof Element) syncMadeTip(origin.closest(`.sf-icon-button[data-tooltip], .sf-button[data-sf-shrink-tip][data-tooltip], ${MARKED}[data-tooltip]`));
+  if (event.type === 'pointerdown' && event.pointerType !== 'touch') return;
+  if (event.type === 'pointerover' && event.pointerType === 'touch') return;
+  const button = nameTarget(origin);
+  if (!button) return;
+
+  if (event.type === 'focusin') {
+    let shown = true;
+
+    try {
+      shown = button.matches(':focus-visible');
+    } catch {
+      shown = true;
+    }
+
+    if (!shown) return;
+  }
+
+  const doc = button.ownerDocument;
+  const tip = doc.createElement('span');
+  tip.className = `sf-tooltip sf-tooltip--dark ${NAME_TIP}`;
+  tip.id = button.id ? `${button.id}--tooltip` : nextTipId(doc);
+  tip.hidden = true;
+  const content = doc.createElement('span');
+  content.className = 'sf-tooltip-content';
+  const text = doc.createElement('span');
+  text.className = 'sf-tooltip-text';
+  text.textContent = nameOf(button);
+  content.append(text);
+  tip.append(content);
+  button.after(tip);
+  button.setAttribute('data-tooltip', tip.id);
+  const kind = event.type;
+  const pointerType = event.pointerType;
+  let released = false;
+  if (kind === 'pointerdown') button.addEventListener('pointerup', () => {
+    released = true;
+  }, {
+    once: true
+  });
+  whenTooltipReady(() => setTimeout(() => {
+    if (button.getAttribute('data-tooltip') !== tip.id) return; // The controller links the button on its own (its observer); the event
+    // is handed over only while it still holds.
+
+    if (kind === 'pointerover' && button.matches(':hover')) {
+      button.dispatchEvent(new PointerEvent('pointerenter', {
+        pointerType
+      }));
+    } else if (kind === 'focusin' && doc.activeElement === button) {
+      button.dispatchEvent(new FocusEvent('focusin'));
+    } else if (kind === 'pointerdown' && !released) {
+      button.dispatchEvent(new PointerEvent('pointerdown', {
+        pointerType
+      }));
+    }
+  }, 0));
+} // One listener set per page, shared by every bundle that carries this file.
+
+
+const BOUND = Symbol.for('sf.icon-button.name-tooltip');
+
+if (typeof document !== 'undefined' && !globalThis[BOUND]) {
+  globalThis[BOUND] = true;
+
+  for (const type of ['pointerover', 'focusin', 'pointerdown']) {
+    document.addEventListener(type, wake, {
+      capture: true,
+      passive: true
+    });
+  }
+} // A name tooltip this file made for a button is taken away (an sf-button
+// whole again, shrink="icon"): the button no longer names it, and the
+// surface goes.
+
+
+function unlinkNameTip(button) {
+  const id = button?.getAttribute?.('data-tooltip');
+  if (!id) return;
+  const tip = button.ownerDocument.getElementById(id);
+  if (!tip?.classList.contains(NAME_TIP)) return;
+  button.removeAttribute('data-tooltip');
+  tip.remove();
+}
+
+
+
+/***/ },
+
 /***/ "0ab12d47912a"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -3070,6 +3319,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   lockPageScroll: () => (/* binding */ lockPageScroll),
 /* harmony export */   openLayer: () => (/* binding */ openLayer),
 /* harmony export */   openLayers: () => (/* binding */ openLayers),
+/* harmony export */   pressInLayerAbove: () => (/* binding */ pressInLayerAbove),
 /* harmony export */   raiseLayer: () => (/* binding */ raiseLayer),
 /* harmony export */   returnLayerFocus: () => (/* binding */ returnLayerFocus),
 /* harmony export */   startClosedLayerContent: () => (/* binding */ startClosedLayerContent),
@@ -3314,6 +3564,23 @@ function hasLayerAbove(owner, kinds = ['modal', 'panel']) {
   const at = layers.findIndex(entry => entry.owner === owner);
   if (at < 0) return false;
   return layers.slice(at + 1).some(entry => isLive(entry) && kinds.includes(entry.kind));
+}
+/**
+ * Whether a press lands in a layer that stands above this owner, of any kind:
+ * a menu, a list or a calendar opened from a popover is drawn beside the page
+ * (SF.menu.open's one menu on the body, a portalled list), so the press on
+ * its row is outside the popover's own box, and the popover must not take it
+ * as an outside press (GB17 Y1: a saved-set menu in a filter window closed the
+ * window on its row's press). A press outside every layer is still outside.
+ */
+
+function pressInLayerAbove(owner, event) {
+  const {
+    layers
+  } = stack();
+  const at = layers.findIndex(entry => entry.owner === owner);
+  if (at < 0) return false;
+  return layers.slice(at + 1).some(entry => isLive(entry) && takesInput(entry) && !pressedOutside(entry, event));
 }
 /** The place of this owner in the stack, -1 when it is not open. */
 

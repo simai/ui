@@ -441,6 +441,15 @@
   :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))).sf-tabs--size-2 > .sf-tabs-top-container > .sf-tabs-top .sf-button {
     --sf-tabs--padding-inline: var(--sf-tabs-padding-inline, var(--sf-ui-2--space-x));
   }
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container > .sf-tabs-top > span[role=tab] {
+    --sf-tabs--padding-inline: var(--sf-tabs-padding-inline, var(--sf-ui-1--space-x));
+  }
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))).sf-tabs--size-1-2 > .sf-tabs-top-container > .sf-tabs-top > span[role=tab] {
+    --sf-tabs--padding-inline: var(--sf-tabs-padding-inline, var(--sf-ui-1\/2--space-x));
+  }
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))).sf-tabs--size-2 > .sf-tabs-top-container > .sf-tabs-top > span[role=tab] {
+    --sf-tabs--padding-inline: var(--sf-tabs-padding-inline, var(--sf-ui-2--space-x));
+  }
   :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container > .sf-tabs-top .sf-button .sf-button-text-container {
     padding-left: calc(var(--sf-px) * 0);
     padding-right: calc(var(--sf-px) * 0);
@@ -707,7 +716,7 @@
   }
   .sf-tabs-top-container[data-sf-tabs-fit] > .sf-tabs-top > span[role=tab] {
     display: flex;
-    flex: 1 1 0;
+    flex: 1 1 calc(2 * var(--sf-tabs--padding-inline, calc(var(--sf-px) * 0)));
     min-width: -webkit-max-content;
     min-width: -moz-max-content;
     min-width: max-content;
@@ -1047,6 +1056,21 @@
   .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):hover {
     --sf-button--background-color: var(--sf-surface-state-hover);
     --sf-icon-button--background-color: var(--sf-surface-state-hover);
+  }
+  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled).focus-visible,
+  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled).focus-visible {
+    --sf-button--background-color: var(--sf-surface-state-select);
+    --sf-icon-button--background-color: var(--sf-surface-state-select);
+  }
+  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):focus-visible,
+  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):focus-visible {
+    --sf-button--background-color: var(--sf-surface-state-select);
+    --sf-icon-button--background-color: var(--sf-surface-state-select);
+  }
+  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled):is(:active, .active),
+  .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-icon-button:not(.selected):not(:disabled):not(.disabled):is(:active, .active) {
+    --sf-button--background-color: var(--sf-surface-state-active);
+    --sf-icon-button--background-color: var(--sf-surface-state-active);
   }
   .sf-tabs.sf-tabs--vertical > .sf-tabs-top-container > .sf-tabs-top .sf-button:not(.selected):not(:disabled):not(.disabled) .sf-button-text-container {
     --sf-button-text-container--color: var(--sf-tabs-color, var(--sf-on-surface));

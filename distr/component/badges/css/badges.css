@@ -377,6 +377,98 @@
     --sf-badge--border-color: var(--sf-badge-border-color, var(--sf-error-outline));
     --sf-badge--color: var(--sf-badge-color, var(--sf-error));
   }
+  /* A colour from the static palette (owner decision C411, 2026-11-22; C17
+     palette, C140 (2) BG-7): sf-badge--<hue> for the sixteen hues of
+     vars/_sf_var__hue.scss. The class sets the fill, tone 50 at the fill step
+     24 (the alpha scale's fill family, C43: no new tones or steps), and the
+     text --sf-on-surface, the same pair in light and dark, as a page wrote
+     through the public variables before (the docs example «Цвет из палитры»).
+     The public --sf-badge-background-color and --sf-badge-color still win.
+     Drawn only on the tonal looks (the selector of every tonal colour above);
+     an outline or the error count keep their own. A status class on the same
+     badge wins: status colours stay with the status classes (:not() below), so
+     a hue never paints a status. The edge on an inverse place (C208) is the
+     hue's graphic ink, tone 50 light and 70 dark (core/_sf_css__hue.scss). */
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--red:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-red-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-red-50), var(--sf-red-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--orange:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-orange-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-orange-50), var(--sf-orange-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--amber:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-amber-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-amber-50), var(--sf-amber-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--yellow:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-yellow-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-yellow-50), var(--sf-yellow-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--lime:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-lime-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-lime-50), var(--sf-lime-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--green:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-green-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-green-50), var(--sf-green-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--teal:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-teal-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-teal-50), var(--sf-teal-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--cyan:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-cyan-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-cyan-50), var(--sf-cyan-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--sky:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-sky-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-sky-50), var(--sf-sky-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--blue:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-blue-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-blue-50), var(--sf-blue-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--indigo:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-indigo-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-indigo-50), var(--sf-indigo-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--violet:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-violet-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-violet-50), var(--sf-violet-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--purple:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-purple-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-purple-50), var(--sf-purple-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--pink:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-pink-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-pink-50), var(--sf-pink-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--brown:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-brown-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-brown-50), var(--sf-brown-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
+  .sf-badge:where(.sf-badge--tonal, .sf-badge--main:not(.sf-badge--error):not(.sf-badge--danger), :not(.sf-badge--main):not(.sf-badge--tonal):not(.sf-badge--outline)).sf-badge--gray:not(.sf-badge--info):not(.sf-badge--success):not(.sf-badge--warning):not(.sf-badge--error):not(.sf-badge--danger) {
+    --sf-badge--background-color: var(--sf-badge-background-color, var(--sf-gray-50--alfa-24));
+    --sf-badge--tonal-edge: light-dark(var(--sf-gray-50), var(--sf-gray-70));
+    --sf-badge--color: var(--sf-badge-color, var(--sf-on-surface));
+  }
   .sf-badge--size-1 {
     --sf-badge-spinner--size: var(--sf-text-size-1);
     --sf-badge--font-size: var(--sf-text-size-1);

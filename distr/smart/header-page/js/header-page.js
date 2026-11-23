@@ -732,7 +732,7 @@ const PageHeaderElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_
   aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_7__
 }); // The header's slots. A child naming one of them is the page's content for it.
 
-const HOST_SLOTS = new Set(['path', 'start', 'media', 'heading', 'actions', 'tabs']); // The nearest box that scrolls the header (overflow auto or scroll on the
+const HOST_SLOTS = new Set(['path', 'path-end', 'start', 'media', 'heading', 'actions', 'tabs']); // The nearest box that scrolls the header (overflow auto or scroll on the
 // block axis), or null for the window: the work area a sticky header stays
 // at the top of.
 
@@ -1360,6 +1360,13 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // heading element in place of the heading's words, and a description line
 // under the heading (whether the person is online). heading-level changes the
 // heading element's tag only; its look stays the fourth heading step.
+//
+// A head with no actions has nothing to keep the line beside its heading, so
+// a long heading wraps whole (1.12.0, C324: the page's whole name) instead of
+// closing down to its ellipsis; the count, the marks and the star stand
+// beside its last line, on its centre line. HD-12's ellipsis stays for a head with actions. The
+// path-end slot (1.12.0) stands at the end of the path's row -- the admin's
+// activity indicator beside the crumbs -- and is drawn only when given.
 
 function renderPageHeaderTemplate(context) {
   const {
@@ -1376,19 +1383,21 @@ function renderPageHeaderTemplate(context) {
   const headingLevel = context.headingLevel || 1;
   const tag = (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_1__.unsafeStatic)(`h${headingLevel}`);
   const slotted = hasHostSlot('heading');
+  const wrap = !hasHostSlot('actions');
+  const fit = wrap ? 'sf-page-header-heading--wrap' : 'truncate';
   const headingBody = slotted ? hostSlot('heading') : heading;
-  const headingClass = slotted ? 'sf-page-header-heading sf-page-header-heading--slot sf-h-4 m-0 min-w-0 flex items-cross-center' : 'sf-page-header-heading sf-h-4 m-0 min-w-0 truncate';
-  const headingElement = headingLevel === 1 && !slotted ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<h1 class="sf-page-header-heading sf-h-4 m-0 min-w-0 truncate">${heading}</h1>` : (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_1__.html)`<${tag} class=${headingClass}>${headingBody}</${tag}>`;
+  const headingClass = slotted ? 'sf-page-header-heading sf-page-header-heading--slot sf-h-4 m-0 min-w-0 flex items-cross-center' : `sf-page-header-heading sf-h-4 m-0 min-w-0 ${fit}`;
+  const headingElement = headingLevel === 1 && !slotted ? wrap ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<h1 class="sf-page-header-heading sf-h-4 m-0 min-w-0 sf-page-header-heading--wrap">${heading}</h1>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<h1 class="sf-page-header-heading sf-h-4 m-0 min-w-0 truncate">${heading}</h1>` : (0,lit_static_html_js__WEBPACK_IMPORTED_MODULE_1__.html)`<${tag} class=${headingClass}>${headingBody}</${tag}>`;
   const description = context.description;
-  const name = description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-page-header-name flex flex-col min-w-0">${headingElement}<p class="sf-page-header-description m-0 min-w-0 truncate">${description}</p></div>` : headingElement;
-  const classes = ['sf-page-header', 'flex', 'flex-col', 'min-w-0', context.expressive ? 'sf-page-header--expressive' : '', context.sticky ? 'sf-page-header--sticky' : '', rootClass].filter(Boolean).join(' ');
+  const name = description ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-page-header-name flex flex-col min-w-0">${headingElement}<p class=${`sf-page-header-description m-0 min-w-0 ${fit}`}>${description}</p></div>` : headingElement;
+  const classes = ['sf-page-header', 'flex', 'flex-col', 'min-w-0', wrap && !slotted ? 'sf-page-header--wrap' : '', context.expressive ? 'sf-page-header--expressive' : '', context.sticky ? 'sf-page-header--sticky' : '', rootClass].filter(Boolean).join(' ');
   const on = star === true;
   const actions = context.actions ? context.actions() : {
     rest: hostSlot('actions'),
     main: lit__WEBPACK_IMPORTED_MODULE_0__.nothing
   };
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<header class=${classes} style=${context.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
-    ${hasHostSlot('path') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-page-header-path flex items-cross-center min-w-0">${hostSlot('path')}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${hasHostSlot('path') || hasHostSlot('path-end') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-page-header-path flex items-cross-center min-w-0">${hasHostSlot('path') ? hostSlot('path') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${hasHostSlot('path-end') ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-page-header-path-end flex items-cross-center">${hostSlot('path-end')}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     <div class="sf-page-header-line flex items-cross-center flex-wrap min-w-0">
       ${hasHostSlot('start') ? hostSlot('start') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       <div class="sf-page-header-title flex items-cross-center min-w-0">
@@ -1567,7 +1576,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-heade
 /***/ "96b1e08482fd"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-page","tag":"sf-header-page","version":"1.11.2","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"number","integer":true,"min":1,"max":6,"default":1},"description":{"type":"string","default":""},"count":{"type":"string","default":""},"level":{"type":"enum","values":["site","install"],"default":"site"},"expressive":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["more","wrap"],"default":"more"},"sticky":{"type":"boolean","default":false},"star":{"type":"boolean","optional":true}},"values":{},"events":{"toggle":{"carries":{"on":"boolean"},"cancelable":true}},"actions":{},"host-states":{"data-scrolled":"boolean"},"css-variables":{"--sf-page-header-gap":{"type":"length","state":"default"},"--sf-page-header-line-gap":{"type":"length","state":"default"},"--sf-page-header-actions-gap":{"type":"length","state":"default"},"--sf-page-header-heading-color":{"type":"color","state":"default"},"--sf-page-header-star-color":{"type":"color","state":"on"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-page","tag":"sf-header-page","version":"1.12.0","kind":"leaf","settings":{"heading":{"type":"string","default":""},"heading-level":{"type":"number","integer":true,"min":1,"max":6,"default":1},"description":{"type":"string","default":""},"count":{"type":"string","default":""},"level":{"type":"enum","values":["site","install"],"default":"site"},"expressive":{"type":"boolean","default":false},"overflow":{"type":"enum","values":["more","wrap"],"default":"more"},"sticky":{"type":"boolean","default":false},"star":{"type":"boolean","optional":true}},"values":{},"events":{"toggle":{"carries":{"on":"boolean"},"cancelable":true}},"actions":{},"host-states":{"data-scrolled":"boolean"},"css-variables":{"--sf-page-header-gap":{"type":"length","state":"default"},"--sf-page-header-line-gap":{"type":"length","state":"default"},"--sf-page-header-actions-gap":{"type":"length","state":"default"},"--sf-page-header-heading-color":{"type":"color","state":"default"},"--sf-page-header-star-color":{"type":"color","state":"on"}}}');
 
 /***/ },
 

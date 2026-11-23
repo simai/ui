@@ -669,14 +669,15 @@ function normalizeItems(value, seen = new Set(), depth = 0) {
   return items;
 }
 /**
- * The events in runs of one calendar day (in the reader's time zone), in
- * their order: [{day, at, items}]. An event without a time joins the run
- * before it; grouping none is one run with no day.
+ * The events in runs of one calendar day (in `timeZone`, an IANA name, else
+ * the reader's zone), in their order: [{day, at, items}]. An event without a
+ * time joins the run before it; grouping none is one run with no day.
  */
 
 function groupByDay(items, {
   group = 'day',
-  now = new Date()
+  now = new Date(),
+  timeZone = ''
 } = {}) {
   if (group !== 'day') return items.length ? [{
     day: null,
@@ -687,7 +688,8 @@ function groupByDay(items, {
 
   for (const item of items) {
     const day = item.at ? (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__.calendarDayOffset)(item.at, {
-      now
+      now,
+      timeZone
     }) : null;
     const last = runs[runs.length - 1];
     if (last && (day === null || day === last.day)) last.items.push(item);else runs.push({
@@ -733,9 +735,16 @@ class SfListTimeline extends ListTimelineElement {
 
   get list() {
     return normalizeItems(this.items);
-  } // The days move at the reader's midnight: one timer to it, with the
-  // reader's clock and day headings. The times are sf-time's, which keeps its
-  // own clock.
+  } // The zone the list is written in (time-zone, C183 (3); Larena msg-17f0adf3:
+  // a History list said the reader's browser zone while its card said the
+  // site's): a name the browser knows, else '' -- the reader's own zone.
+
+
+  get zone() {
+    return (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__.knownTimeZone)(text(this.timeZone)) ? text(this.timeZone) : '';
+  } // The days move at the list's midnight (its zone's, else the reader's): one
+  // timer to it, with the day headings. The times are sf-time's, which keeps
+  // its own clock.
 
 
   syncTimer() {
@@ -744,7 +753,9 @@ class SfListTimeline extends ListTimelineElement {
     this._timer = setTimeout(() => {
       this._timer = 0;
       this.requestComponentUpdate('day');
-    }, (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__.msUntilNextDay)(new Date()) + 1000);
+    }, (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_2__.msUntilNextDay)(new Date(), {
+      timeZone: this.zone
+    }) + 1000);
   }
 
   stopTimer() {
@@ -857,15 +868,18 @@ class SfListTimeline extends ListTimelineElement {
       statusWord: item.state ? [this.sfWord(`state-${item.state}`), TONES[item.status] ? this.sfWord(`step-status-${item.status}`) : ''].filter(Boolean).join(', ') : item.status === 'neutral' ? '' : this.sfWord(`status-${item.status}`)
     });
 
+    const timeZone = this.zone;
     const runs = groupByDay(list, {
       group,
-      now
+      now,
+      timeZone
     }).map((run, at) => ({
       id: `${this._uid}-day-${at}`,
       day: run.day === null || !run.at ? '' : (0,_core_js_format_relative_js__WEBPACK_IMPORTED_MODULE_3__.formatRelativeDay)(run.at, {
         now,
         capital: true,
         node: this,
+        timeZone,
         today: this.sfWord('today'),
         yesterday: this.sfWord('yesterday'),
         tomorrow: this.sfWord('tomorrow')
@@ -896,6 +910,7 @@ class SfListTimeline extends ListTimelineElement {
       label: this.label,
       runs,
       now: text(this.now),
+      zone: timeZone,
       // itemFormat, not timeFormat: the time-format prop keeps its own value (auto) in the context.
       itemFormat: this.timeFormatFor(group === 'day'),
       sticky: Boolean(this.stickyHeadings),
@@ -1046,7 +1061,8 @@ function title(context, item) {
 }
 
 function meta(context, item) {
-  const time = item.iso ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-time class="sf-list-timeline-time" datetime=${item.iso} format=${context.itemFormat} now=${context.now || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const time = item.iso ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-time class="sf-list-timeline-time" datetime=${item.iso} format=${context.itemFormat} now=${context.now || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+        time-zone=${context.zone || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const words = item.kind === 'comment' ? '' : item.text;
   if (!item.iso && !words) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-list-timeline-meta">${time}${item.iso && words ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span aria-hidden="true"> · </span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}${words ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-list-timeline-text">${words}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</p>`;
@@ -1112,7 +1128,7 @@ function run(context, day) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-list-timeline-group">
     <div class=${`sf-group-heading sf-list-timeline-day${context.size === '1' ? '' : ` sf-group-heading--size-${context.size}`}${context.sticky ? ' sf-group-heading--sticky' : ''}`}
       role="heading" aria-level=${String(context.level)} id=${day.id}>${day.day}${day.date ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)` <sf-time class="sf-group-heading-date" format="date" tooltip="none" datetime=${day.date}
-            now=${context.now || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</div>
+            now=${context.now || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} time-zone=${context.zone || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-time>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</div>
     <ol class=${classes} aria-labelledby=${day.id}>${entries(context, day.entries)}</ol>
   </div>`;
 }
@@ -1254,7 +1270,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "39829f681e1c"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-timeline","tag":"sf-list-timeline","version":"1.5.6","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"time":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"},"actor":{"anyOf":[{"type":"string"},{"type":"object","properties":{"name":{"type":"string"},"avatar":{"type":"string"},"hue":{"type":"string"},"system":{"type":"boolean"}},"required":["name"]}]},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"icon":{"type":"string"},"href":{"type":"string"},"kind":{"type":"string","enum":["event","comment","sms"]},"state":{"type":"string","enum":["done","current","upcoming"]},"change":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}},"changes":{"type":"array","items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}}},"slot":{"type":"string"},"items":{"type":"array","items":{"type":"object"}}},"required":["id","title"]}},"default":[]},"label":{"type":"string","default":""},"group":{"type":"enum","values":["day","none"],"default":"day"},"time-format":{"type":"enum","values":["auto","relative","exact"],"default":"auto"},"now":{"type":"string","default":""},"collapse":{"type":"number","integer":true,"min":0,"default":5},"sticky-headings":{"type":"boolean","default":false},"density":{"type":"enum","values":["normal","compact"],"default":"normal"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"load-more":{"carries":{"direction":"string","after":"string"}},"expand":{"carries":{"run":"string","ids":"array","count":"number"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean","data-loading":"boolean"},"css-variables":{"--sf-list-timeline-line-color":{"type":"color","state":"default"},"--sf-list-timeline-marker-color":{"type":"color","state":"default"},"--sf-list-timeline-time-color":{"type":"color","state":"default"},"--sf-list-timeline-day-color":{"type":"color","state":"default"},"--sf-list-timeline-gap":{"type":"length","state":"default"},"--sf-list-timeline-padding-inline":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-timeline","tag":"sf-list-timeline","version":"1.6.0","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"time":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"},"actor":{"anyOf":[{"type":"string"},{"type":"object","properties":{"name":{"type":"string"},"avatar":{"type":"string"},"hue":{"type":"string"},"system":{"type":"boolean"}},"required":["name"]}]},"status":{"type":"string","enum":["neutral","success","warning","error","info"]},"icon":{"type":"string"},"href":{"type":"string"},"kind":{"type":"string","enum":["event","comment","sms"]},"state":{"type":"string","enum":["done","current","upcoming"]},"change":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}},"changes":{"type":"array","items":{"type":"object","properties":{"label":{"type":"string"},"before":{"type":["string","number","null"]},"after":{"type":["string","number","null"]}}}},"slot":{"type":"string"},"items":{"type":"array","items":{"type":"object"}}},"required":["id","title"]}},"default":[]},"label":{"type":"string","default":""},"group":{"type":"enum","values":["day","none"],"default":"day"},"time-format":{"type":"enum","values":["auto","relative","exact"],"default":"auto"},"time-zone":{"type":"string","default":""},"now":{"type":"string","default":""},"collapse":{"type":"number","integer":true,"min":0,"default":5},"sticky-headings":{"type":"boolean","default":false},"density":{"type":"enum","values":["normal","compact"],"default":"normal"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{},"events":{"navigate":{"carries":{"id":"string","href":"string"},"cancelable":true},"load-more":{"carries":{"direction":"string","after":"string"}},"expand":{"carries":{"run":"string","ids":"array","count":"number"}}},"actions":{},"presentation":{"skeleton":{"late":["items"]}},"host-states":{"data-empty":"boolean","data-loading":"boolean"},"css-variables":{"--sf-list-timeline-line-color":{"type":"color","state":"default"},"--sf-list-timeline-marker-color":{"type":"color","state":"default"},"--sf-list-timeline-time-color":{"type":"color","state":"default"},"--sf-list-timeline-day-color":{"type":"color","state":"default"},"--sf-list-timeline-gap":{"type":"length","state":"default"},"--sf-list-timeline-padding-inline":{"type":"length","state":"default"}}}');
 
 /***/ },
 

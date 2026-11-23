@@ -262,6 +262,31 @@ function ensureScaleText(root) {
 
   text.classList.add('sf-progress-scale-text');
   return text;
+} // The value's text written into the node that holds it (1.7.3, PS-1): the
+// Smart element's template (lit) drew that node and keeps a reference to it
+// and to its marker; textContent replaced both, and the next drawing (a
+// resize, a new value) threw «Cannot set properties of null (setting
+// 'data')». Only a text written by hand inside elements is replaced whole.
+
+
+function writeScaleText(text, value) {
+  const nodes = [...text.childNodes];
+
+  if (nodes.some(node => node.nodeType === 1)) {
+    text.textContent = value;
+    return;
+  }
+
+  const words = nodes.filter(node => node.nodeType === 3);
+
+  if (!words.length) {
+    text.append(document.createTextNode(value));
+    return;
+  }
+
+  if (words[0].data !== value) words[0].data = value;
+
+  for (const node of words.slice(1)) if (node.data) node.data = '';
 }
 
 function syncScaleClasses(root, step, size, tone) {
@@ -315,11 +340,17 @@ function renderProgressScale(root) {
   root.setAttribute('aria-valuemax', level ? String(steps) : '100');
   root.setAttribute('aria-valuenow', level ? String(lit) : String(value));
   if (root.dataset.label) root.setAttribute('aria-label', root.dataset.label);
-  if (root.dataset.valueText || words) root.setAttribute('aria-valuetext', root.dataset.valueText || words);else root.removeAttribute('aria-valuetext');
-  const text = ensureScaleText(root); // «72 %»: one spelling of a per cent (owner decision C203 (3)); a level keeps its words (C185 (5)).
+  if (root.dataset.valueText || words) root.setAttribute('aria-valuetext', root.dataset.valueText || words);else root.removeAttribute('aria-valuetext'); // A scale without its text writes none (the Smart element draws no text
+  // node then; one made here would stand beside the one it draws later).
 
-  text.textContent = level ? root.dataset.valueText || words : (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_2__.percentText)(value, root);
-  text.hidden = !showText;
+  const text = showText ? ensureScaleText(root) : root.querySelector('.sf-progress-scale-text, .sf-scale-text');
+
+  if (text) {
+    // «72 %»: one spelling of a per cent (owner decision C203 (3)); a level keeps its words (C185 (5)).
+    writeScaleText(text, level ? root.dataset.valueText || words : (0,_core_js_format_number_js__WEBPACK_IMPORTED_MODULE_2__.percentText)(value, root));
+    text.hidden = !showText;
+  }
+
   return true;
 }
 
@@ -1148,10 +1179,14 @@ class SfProgressScale extends ProgressScaleElement {
       remove_after: _aliases_json__WEBPACK_IMPORTED_MODULE_8__.remove_after
     });
     return normalizeProgressValue(this.value);
-  }
+  } // A new value, status or name is patched into the drawn scale; whether the
+  // text is drawn at all (show-text) changes what the template holds, so it
+  // is drawn again (1.4.3, PS-1: a text made by the patch stood beside the
+  // one the template drew next).
+
 
   resolveUpdateMode(changedAttributes = []) {
-    const directPatchAttributes = ['value', 'show-text', 'status', 'tone', 'warning-at', 'error-at', 'meter', 'label', 'value-text', 'aria-label'];
+    const directPatchAttributes = ['value', 'status', 'tone', 'warning-at', 'error-at', 'meter', 'label', 'value-text', 'aria-label'];
 
     if (changedAttributes.length > 0 && changedAttributes.every(attr => directPatchAttributes.includes(attr))) {
       return 'dom';
@@ -1393,7 +1428,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-progr
 /***/ "14aa46a01a05"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-scale","tag":"sf-progress-scale","version":"1.4.2","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"value":{"type":"number","default":0,"min":0,"max":100},"steps":{"type":"number","optional":true,"min":2,"max":10},"show-text":{"type":"boolean","default":true},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"meter":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-scale-fill-color":{"type":"color","state":"default"},"--sf-progress-scale-track-color":{"type":"color","state":"default"},"--sf-progress-scale-segment-gap":{"type":"length","state":"default"},"--sf-progress-scale-radius":{"type":"length","state":"default"},"--sf-progress-scale-color":{"type":"color","state":"default"},"--sf-progress-scale-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.progress-scale","tag":"sf-progress-scale","version":"1.4.3","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"value":{"type":"number","default":0,"min":0,"max":100},"steps":{"type":"number","optional":true,"min":2,"max":10},"show-text":{"type":"boolean","default":true},"status":{"type":"enum","values":["","neutral","info","success","warning","error"],"default":""},"warning-at":{"type":"number","optional":true,"min":0,"max":100},"error-at":{"type":"number","optional":true,"min":0,"max":100},"meter":{"type":"boolean","default":false},"label":{"type":"string","default":""},"value-text":{"type":"string","default":""}},"values":{},"events":{},"actions":{"chunk":{"with":{"done":"number","total":"number"}}},"css-variables":{"--sf-progress-scale-fill-color":{"type":"color","state":"default"},"--sf-progress-scale-track-color":{"type":"color","state":"default"},"--sf-progress-scale-segment-gap":{"type":"length","state":"default"},"--sf-progress-scale-radius":{"type":"length","state":"default"},"--sf-progress-scale-color":{"type":"color","state":"default"},"--sf-progress-scale-gap":{"type":"length","state":"default"}},"host-states":{"data-status":"string"}}');
 
 /***/ },
 

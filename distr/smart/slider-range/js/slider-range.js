@@ -1772,8 +1772,10 @@ class SfRangeSlider extends RangeSliderElement {
     }
 
     if (changedAttributes.includes('style') || changedAttributes.includes('root-style')) {
+      // The drawn root is the group (F3): the style goes where root-class does.
+      const group = root.closest('.sf-range-slider-group') || root;
       const style = this.getRootStyle();
-      if (style) root.setAttribute('style', style);else root.removeAttribute('style');
+      if (style) group.setAttribute('style', style);else group.removeAttribute('style');
     }
 
     if (changedAttributes.includes('value') && this.shouldRebuildForValue(this.getAttribute('value') || this.start || '0')) {
@@ -2327,16 +2329,19 @@ function renderField(context) {
 }
 
 function renderRangeSliderTemplate(context) {
-  const groupClasses = joinClasses('sf-range-slider-group', `sf-range-slider-group--size-${context.size}`, context.field ? 'sf-range-slider-group--field' : '', context.disabled ? 'disabled' : '', context.readonly && !context.disabled ? 'readonly' : '');
-  const rootClasses = joinClasses('sf-range-slider', 'flex-1', `sf-range-slider--size-${context.size}`, context.rootClass, context.disabled ? 'disabled' : '', context.readonly && !context.disabled ? 'readonly' : '');
+  const groupClasses = joinClasses('sf-range-slider-group', `sf-range-slider-group--size-${context.size}`, context.field ? 'sf-range-slider-group--field' : '', context.disabled ? 'disabled' : '', context.readonly && !context.disabled ? 'readonly' : '', // root-class and root-style land on the drawn root, the group that
+  // holds the name, the track and the from/to field, and whose width
+  // picks the field's layout (DEV F3, 2026-11-22: they went to the
+  // track, so a measure-narrow there left the group wide).
+  context.rootClass);
+  const rootClasses = joinClasses('sf-range-slider', 'flex-1', `sf-range-slider--size-${context.size}`, context.disabled ? 'disabled' : '', context.readonly && !context.disabled ? 'readonly' : '');
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <div class=${groupClasses}>
+        <div class=${groupClasses} style=${valueOrNothing(context.rootStyle)}>
             ${renderHead(context)}
             <div class="sf-range-slider-line">
               <div class="sf-range-slider-track-column">
                 <div
                         class=${rootClasses}
-                        style=${valueOrNothing(context.rootStyle)}
                         data-min=${valueOrNothing(context.min)}
                         data-max=${valueOrNothing(context.max)}
                         data-start=${valueOrNothing(context.start)}
@@ -2449,7 +2454,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "c73b7ddd1da4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.7.4","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"page-step":{"type":"number","nullable":true},"ticks":{"type":"boolean","default":false},"scale":{"type":"boolean","default":false},"marks":{"type":"string","default":""},"field":{"type":"boolean","default":false},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"value-display":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true,"default":null},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled"},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.slider-range","tag":"sf-slider-range","version":"1.8.0","kind":"leaf","settings":{"min":{"type":"number","default":0},"max":{"type":"number","default":100},"start":{"type":"string","default":""},"multiple":{"type":"boolean","default":false},"step":{"type":"number","nullable":true,"default":null},"page-step":{"type":"number","nullable":true},"ticks":{"type":"boolean","default":false},"scale":{"type":"boolean","default":false},"marks":{"type":"string","default":""},"field":{"type":"boolean","default":false},"margin":{"type":"string","default":""},"connect":{"type":"string","default":""},"keyboard":{"type":"boolean","default":true},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"value-display":{"type":"enum","values":["none","text","tooltip"],"default":"none"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"prefix-text":{"type":"string","default":""},"suffix":{"type":"string","default":""},"lower-label":{"type":"string","default":""},"upper-label":{"type":"string","default":""},"precision":{"type":"number","integer":true,"min":0,"max":20,"nullable":true,"default":null},"grouping":{"type":"boolean","default":true},"locale":{"type":"string","default":""},"tooltip-position":{"type":"string","default":""},"text-position":{"type":"string","default":""},"label-position":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"values":{"type":"list","schema":{"items":{"type":"number"}}},"value":{"type":"object","schema":{"items":{"type":"number"}}},"handle-count":"number","handle":{"type":"number"}}}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled"},"css-variables":{"--sf-range-slider-track-color":{"type":"color","state":"rest"},"--sf-range-slider-fill-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-color":{"type":"color","state":"rest"},"--sf-range-slider-handle-inner-color":{"type":"color","state":"rest"},"--sf-range-slider-value-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

@@ -7,12 +7,14 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BADGE_HUES: () => (/* binding */ BADGE_HUES),
 /* harmony export */   BADGE_MAIN_TONAL: () => (/* binding */ BADGE_MAIN_TONAL),
 /* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
 /* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
 /* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
 /* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
 /* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
+/* harmony export */   canonicalBadgeHue: () => (/* binding */ canonicalBadgeHue),
 /* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
 /* harmony export */   isRetiredMain: () => (/* binding */ isRetiredMain),
 /* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
@@ -27,7 +29,18 @@ const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiar
 const BADGE_SCHEME_ALIASES = Object.freeze({
   danger: 'error'
 });
-const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The default look is tonal (owner decision C140 (1), badges study BG-1): a
+const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The hues of the static palette a badge takes as a class, sf-badge--<hue>
+// (owner decision C411): the sixteen names of src/core/scss/vars/_sf_var__hue.scss
+// ($sf-static-hues), in its order. The class draws tone 50 at the fill step 24
+// under --sf-on-surface in both themes; status colours stay with the status
+// classes, so a hue is never a status.
+
+const BADGE_HUES = Object.freeze(['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'pink', 'brown', 'gray']); // The hue for a name, '' when it is not one of BADGE_HUES.
+
+function canonicalBadgeHue(value) {
+  const name = String(value ?? '').trim().toLowerCase();
+  return BADGE_HUES.includes(name) ? name : '';
+} // The default look is tonal (owner decision C140 (1), badges study BG-1): a
 // badge without an appearance is the calm grey mark. It was main, the dark
 // grey fill nobody chose.
 
@@ -174,6 +187,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   ShownValidity: () => (/* binding */ ShownValidity),
 /* harmony export */   VALIDITY_FLAGS: () => (/* binding */ VALIDITY_FLAGS),
 /* harmony export */   VALIDITY_WORDS: () => (/* binding */ VALIDITY_WORDS),
+/* harmony export */   afterPress: () => (/* binding */ afterPress),
 /* harmony export */   claimFirstInvalid: () => (/* binding */ claimFirstInvalid),
 /* harmony export */   forgetFormTried: () => (/* binding */ forgetFormTried),
 /* harmony export */   formTried: () => (/* binding */ formTried),
@@ -442,13 +456,72 @@ function fieldCheck() {
   }
 
   return shared;
+} // A pointer pressed on the page (FO-4, module.smart-helpers 1.20.0): a field
+// it leaves holds its leave check until the press is over and a task after
+// it, so the error line drawn under that field does not move the button the
+// pointer is on before the click lands (at 390 a cleared required field's
+// line moved «Сохранить» 20 px down and the save was lost). The press's own
+// click checks every field when it submits. A release the page never hears
+// ends the hold after PRESS_HOLD_MS. One record for every bundle's copy.
+
+
+const PRESS_KEY = Symbol.for('simai.framework.field-press');
+const PRESS_HOLD_MS = 4000;
+
+function fieldPress() {
+  const shared = globalThis[PRESS_KEY] || (globalThis[PRESS_KEY] = {
+    down: false,
+    queue: [],
+    timer: 0
+  });
+
+  if (!shared.listening && typeof document !== 'undefined') {
+    shared.listening = true;
+
+    const end = () => {
+      if (!shared.down) return;
+      shared.down = false;
+      clearTimeout(shared.timer);
+      setTimeout(() => {
+        if (shared.down) return;
+
+        for (const run of shared.queue.splice(0)) {
+          try {
+            run();
+          } catch {
+            /* a field taken out of the page while the press lasted */
+          }
+        }
+      }, 0);
+    };
+
+    const start = () => {
+      if (shared.down) return;
+      shared.down = true;
+      clearTimeout(shared.timer);
+      shared.timer = setTimeout(end, PRESS_HOLD_MS);
+    };
+
+    document.addEventListener('pointerdown', start, true);
+    document.addEventListener('mousedown', start, true);
+
+    for (const type of ['pointerup', 'pointercancel', 'mouseup', 'dragend']) document.addEventListener(type, end, true);
+  }
+
+  return shared;
+}
+/** Runs `check` now, or once a pointer press in progress is over (FO-4). */
+
+
+function afterPress(check) {
+  const shared = fieldPress();
+  if (shared.down) shared.queue.push(check);else check();
 }
 /**
  * Says that `element` failed a check now. Returns true when it is the first
  * wrong field of a pass the person started, the one that takes the focus.
  * Every member of the field family calls it from its `invalid` listener.
  */
-
 
 function claimFirstInvalid(element) {
   const check = fieldCheck();
@@ -580,9 +653,10 @@ const ShownValidity = Base => class extends Base {
     super();
     this.__sfErrorShown = false;
     this.__sfTouched = false; // The page-wide pass listens from the first field on, so the press that
-    // submits is seen before the check it starts.
+    // submits is seen before the check it starts; so does the press record.
 
-    fieldCheck(); // Capture: the host's own `invalid` and its native control's, which
+    fieldCheck();
+    fieldPress(); // Capture: the host's own `invalid` and its native control's, which
     // would draw a second bubble; neither bubbles, so only capture sees both.
 
     this.addEventListener('invalid', event => {
@@ -609,16 +683,21 @@ const ShownValidity = Base => class extends Base {
       if (event.relatedTarget && this.contains(event.relatedTarget)) return; // A layer of the field (a list, a picker) holds the focus for it.
 
       if (this.matches?.(':focus-within')) return;
-      if (!this.__sfTouched && !formTried(this)) return;
-      this.sfSyncValidity?.();
-      const wrong = this.validity ? !this.validity.valid : false;
+      if (!this.__sfTouched && !formTried(this)) return; // A press that left the field holds the check until it is over (FO-4);
+      // what the press did meanwhile (a reset, a submit) is read then.
 
-      if (wrong !== this.__sfErrorShown) {
-        this.__sfErrorShown = wrong;
-        this.requestComponentUpdate?.('validity');
-      } else if (wrong) {
-        this.requestComponentUpdate?.('validity');
-      }
+      afterPress(() => {
+        if (!this.isConnected || !this.__sfTouched && !formTried(this)) return;
+        this.sfSyncValidity?.();
+        const wrong = this.validity ? !this.validity.valid : false;
+
+        if (wrong !== this.__sfErrorShown) {
+          this.__sfErrorShown = wrong;
+          this.requestComponentUpdate?.('validity');
+        } else if (wrong) {
+          this.requestComponentUpdate?.('validity');
+        }
+      });
     });
   }
   /** The first wrong field of a submit takes the focus, as the browser's check did. */
@@ -710,6 +789,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   OPTION_BADGE_HUES: () => (/* binding */ OPTION_BADGE_HUES),
 /* harmony export */   OPTION_BADGE_PALETTE: () => (/* binding */ OPTION_BADGE_PALETTE),
 /* harmony export */   nearestPaletteHue: () => (/* binding */ nearestPaletteHue),
+/* harmony export */   optionBadgeClass: () => (/* binding */ optionBadgeClass),
+/* harmony export */   optionBadgeLook: () => (/* binding */ optionBadgeLook),
 /* harmony export */   optionBadgeProps: () => (/* binding */ optionBadgeProps),
 /* harmony export */   optionDotColor: () => (/* binding */ optionDotColor)
 /* harmony export */ });
@@ -804,6 +885,11 @@ const paletteStyle = hue => `--sf-badge-background-color: var(--sf-${hue}-50--al
 // The data view port names the badge look `scheme` on a column's options; a
 // filter option has always said `color`. Both are read: reading only `color`
 // left every port column's scheme unread and its badges neutral.
+//
+// optionBadgeProps is the former form: the hue written as the badge's two
+// public variables in a style. The Framework's own parts draw a hue through
+// optionBadgeLook and the badge's hue class (C411); this one stays for hosts
+// until 2027-01-01 (journal class-option-badge-hue-class).
 
 
 function optionBadgeProps(option = {}) {
@@ -847,6 +933,47 @@ function optionDotColor(option = {}) {
   if (OPTION_BADGE_PALETTE.includes(name)) return `var(--sf-${name}-50)`;
   return color;
 }
+/**
+ * The badge look of an option as the badge's own settings (owner decision
+ * C411): {scheme, hue}. scheme is a Framework badge scheme (a former name read
+ * as its canonical one), else neutral; hue is a name of the static palette
+ * (red, teal, gray...; C17), a hex drawn in the palette hue nearest it, else
+ * ''. A part gives the hue to sf-badge as hue="<name>", or to class markup as
+ * the class sf-badge--<name>: the class sets the fill (tone 50 at the fill
+ * step 24) and the text --sf-on-surface in both themes, so nothing is written
+ * in a style.
+ */
+
+function optionBadgeLook(option = {}) {
+  const raw = option?.scheme ?? option?.color;
+  const color = typeof raw === "string" ? raw.trim() : "";
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return {
+    scheme,
+    hue: ""
+  };
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return {
+    scheme: "neutral",
+    hue: name
+  };
+  if (HEX_COLOR.test(color)) return {
+    scheme: "neutral",
+    hue: nearestPaletteHue(color)
+  };
+  return {
+    scheme: "neutral",
+    hue: ""
+  };
+}
+/** The hue class of an option's badge for class markup ('' without a hue): sf-badge--<hue> (C411). */
+
+const optionBadgeClass = (option = {}) => {
+  const {
+    hue
+  } = optionBadgeLook(option);
+  return hue ? `sf-badge--${hue}` : "";
+};
 
 /***/ },
 
@@ -1644,15 +1771,20 @@ function renderVisual(context, item, {
   }
 
   return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-}
+} // The name badge is the row's own text (LV4-8, group build 17 F3): line text
+// takes the size and line of the name it stands in (C95 point 6), so an
+// option drawn as a badge reads as large as a plain option beside it (16, 14
+// compact; line 1 drew it a step down, 14 in a 16 list). A palette hue is the
+// badge's hue class (C411), not two variables in a style.
+
 
 function renderName(context, item, disabled, id = '') {
   if (!item.color || (0,_choice_model_mjs__WEBPACK_IMPORTED_MODULE_3__.optionLook)(item, context.optionLook) !== 'badge') return id ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-choice-title-text" id=${id}>${item.label}</span>` : item.label;
-  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)({
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)({
     color: item.color
   });
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-choice-name-badge" id=${id || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} appearance="tonal" tight line="1" scheme=${badge.scheme}
-                        root-style=${badge.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} root-class=${disabled ? 'sf-badge--disabled' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge class="sf-choice-name-badge" id=${id || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} appearance="tonal" tight line="text" scheme=${badge.scheme}
+                        hue=${badge.hue || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} root-class=${disabled ? 'sf-badge--disabled' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                         text=${item.label}></sf-badge>`;
 }
 
@@ -2127,7 +2259,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "0c1826bbbeb3"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-choice","tag":"sf-input-choice","version":"1.11.2","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"value":"string","label":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"price":{"type":"string","optional":true},"term":{"type":"string","optional":true},"image":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"avatar":{"type":"object","optional":true},"swatch":{"type":"string","optional":true},"scheme":{"type":"string","optional":true}}},"searchable":{"type":"boolean","default":false},"provider":{"type":"object","default":null},"option-look":{"type":"enum","values":["badge","dot"]},"control-position":{"type":"enum","values":["start","end"],"default":"start"},"panel":{"type":"boolean","default":false},"multiple":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["cards","list"],"default":"cards"},"layout":{"type":"enum","values":["tile","list","picture"],"default":"tile"},"flow":{"type":"enum","values":["auto","row","column"],"default":"auto"},"columns":{"type":"enum","values":["auto","1","2","3","4"],"default":"auto"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-choice-gap":{"type":"length","state":"default"},"--sf-choice-min-inline-size":{"type":"length","state":"default"},"--sf-choice-padding":{"type":"length","state":"default"},"--sf-choice-radius":{"type":"length","state":"default"},"--sf-choice-background-color":{"type":"color","state":"default"},"--sf-choice-border-color":{"type":"color","state":"default"},"--sf-choice-selected-background-color":{"type":"color","state":"selected"},"--sf-choice-selected-border-color":{"type":"color","state":"selected"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-choice","tag":"sf-input-choice","version":"1.12.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"value":"string","label":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"price":{"type":"string","optional":true},"term":{"type":"string","optional":true},"image":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"avatar":{"type":"object","optional":true},"swatch":{"type":"string","optional":true},"scheme":{"type":"string","optional":true}}},"searchable":{"type":"boolean","default":false},"provider":{"type":"object","default":null},"option-look":{"type":"enum","values":["badge","dot"]},"control-position":{"type":"enum","values":["start","end"],"default":"start"},"panel":{"type":"boolean","default":false},"multiple":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["cards","list"],"default":"cards"},"layout":{"type":"enum","values":["tile","list","picture"],"default":"tile"},"flow":{"type":"enum","values":["auto","row","column"],"default":"auto"},"columns":{"type":"enum","values":["auto","1","2","3","4"],"default":"auto"},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","validity":["value-missing","custom-error"]},"css-variables":{"--sf-choice-gap":{"type":"length","state":"default"},"--sf-choice-min-inline-size":{"type":"length","state":"default"},"--sf-choice-padding":{"type":"length","state":"default"},"--sf-choice-radius":{"type":"length","state":"default"},"--sf-choice-background-color":{"type":"color","state":"default"},"--sf-choice-border-color":{"type":"color","state":"default"},"--sf-choice-selected-background-color":{"type":"color","state":"selected"},"--sf-choice-selected-border-color":{"type":"color","state":"selected"}}}');
 
 /***/ },
 

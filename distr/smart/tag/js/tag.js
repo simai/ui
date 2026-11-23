@@ -7,12 +7,14 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BADGE_HUES: () => (/* binding */ BADGE_HUES),
 /* harmony export */   BADGE_MAIN_TONAL: () => (/* binding */ BADGE_MAIN_TONAL),
 /* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
 /* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
 /* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
 /* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
 /* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
+/* harmony export */   canonicalBadgeHue: () => (/* binding */ canonicalBadgeHue),
 /* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
 /* harmony export */   isRetiredMain: () => (/* binding */ isRetiredMain),
 /* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
@@ -27,7 +29,18 @@ const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiar
 const BADGE_SCHEME_ALIASES = Object.freeze({
   danger: 'error'
 });
-const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The default look is tonal (owner decision C140 (1), badges study BG-1): a
+const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The hues of the static palette a badge takes as a class, sf-badge--<hue>
+// (owner decision C411): the sixteen names of src/core/scss/vars/_sf_var__hue.scss
+// ($sf-static-hues), in its order. The class draws tone 50 at the fill step 24
+// under --sf-on-surface in both themes; status colours stay with the status
+// classes, so a hue is never a status.
+
+const BADGE_HUES = Object.freeze(['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'pink', 'brown', 'gray']); // The hue for a name, '' when it is not one of BADGE_HUES.
+
+function canonicalBadgeHue(value) {
+  const name = String(value ?? '').trim().toLowerCase();
+  return BADGE_HUES.includes(name) ? name : '';
+} // The default look is tonal (owner decision C140 (1), badges study BG-1): a
 // badge without an appearance is the calm grey mark. It was main, the dark
 // grey fill nobody chose.
 
@@ -1237,6 +1250,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   OPTION_BADGE_HUES: () => (/* binding */ OPTION_BADGE_HUES),
 /* harmony export */   OPTION_BADGE_PALETTE: () => (/* binding */ OPTION_BADGE_PALETTE),
 /* harmony export */   nearestPaletteHue: () => (/* binding */ nearestPaletteHue),
+/* harmony export */   optionBadgeClass: () => (/* binding */ optionBadgeClass),
+/* harmony export */   optionBadgeLook: () => (/* binding */ optionBadgeLook),
 /* harmony export */   optionBadgeProps: () => (/* binding */ optionBadgeProps),
 /* harmony export */   optionDotColor: () => (/* binding */ optionDotColor)
 /* harmony export */ });
@@ -1331,6 +1346,11 @@ const paletteStyle = hue => `--sf-badge-background-color: var(--sf-${hue}-50--al
 // The data view port names the badge look `scheme` on a column's options; a
 // filter option has always said `color`. Both are read: reading only `color`
 // left every port column's scheme unread and its badges neutral.
+//
+// optionBadgeProps is the former form: the hue written as the badge's two
+// public variables in a style. The Framework's own parts draw a hue through
+// optionBadgeLook and the badge's hue class (C411); this one stays for hosts
+// until 2027-01-01 (journal class-option-badge-hue-class).
 
 
 function optionBadgeProps(option = {}) {
@@ -1374,6 +1394,47 @@ function optionDotColor(option = {}) {
   if (OPTION_BADGE_PALETTE.includes(name)) return `var(--sf-${name}-50)`;
   return color;
 }
+/**
+ * The badge look of an option as the badge's own settings (owner decision
+ * C411): {scheme, hue}. scheme is a Framework badge scheme (a former name read
+ * as its canonical one), else neutral; hue is a name of the static palette
+ * (red, teal, gray...; C17), a hex drawn in the palette hue nearest it, else
+ * ''. A part gives the hue to sf-badge as hue="<name>", or to class markup as
+ * the class sf-badge--<name>: the class sets the fill (tone 50 at the fill
+ * step 24) and the text --sf-on-surface in both themes, so nothing is written
+ * in a style.
+ */
+
+function optionBadgeLook(option = {}) {
+  const raw = option?.scheme ?? option?.color;
+  const color = typeof raw === "string" ? raw.trim() : "";
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return {
+    scheme,
+    hue: ""
+  };
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return {
+    scheme: "neutral",
+    hue: name
+  };
+  if (HEX_COLOR.test(color)) return {
+    scheme: "neutral",
+    hue: nearestPaletteHue(color)
+  };
+  return {
+    scheme: "neutral",
+    hue: ""
+  };
+}
+/** The hue class of an option's badge for class markup ('' without a hue): sf-badge--<hue> (C411). */
+
+const optionBadgeClass = (option = {}) => {
+  const {
+    hue
+  } = optionBadgeLook(option);
+  return hue ? `sf-badge--${hue}` : "";
+};
 
 /***/ },
 
@@ -1700,8 +1761,10 @@ function bareToggle(element) {
   if (isInteractive(element)) return false;
   const original = element?._sfOriginal;
   if (original && original !== element) return original.kind === 'checkbox';
-  const group = element?.parentElement;
-  const selecting = group?.localName === 'sf-tag-group' && normalize(group.getAttribute('selection') || 'many') !== 'none';
+  const group = element?.parentElement; // A group selects only when asked (its selection defaults to none): a bare
+  // tag in a plain group is a plain tag (1.13.0, TG-4).
+
+  const selecting = group?.localName === 'sf-tag-group' && normalize(group.getAttribute('selection') || 'none') !== 'none';
   if (!element?._sfChangeHeard && !selecting) return false;
 
   if (!element._sfBareToggleNoted) {
@@ -1937,6 +2000,25 @@ class SfTag extends TagElement {
   cutText() {
     const label = this.querySelector(':scope > .sf-tag .sf-tag-container');
     return String(label?.textContent ?? this.text ?? '').trim();
+  } // The remove action's name (1.13.0, TG-1): close-label when the page gave
+  // one; else «Удалить Москва», the tag's own name in the words of
+  // sf-input-lookup's chips, so the crosses of a row are told apart; a tag
+  // with no name keeps «Удалить».
+
+
+  get closeLabel() {
+    const given = this.getAttribute('close-label');
+    if (given !== null) return given;
+    const name = String(this.text || this.getAttribute('aria-label') || '').trim();
+    return name ? this.sfWord('remove-named', {
+      vars: {
+        label: name
+      }
+    }) : this.sfWord('remove');
+  }
+
+  set closeLabel(value) {
+    super.closeLabel = value;
   } // The tag's id in a group (sf-tag-group's selected and selected-ids): its
   // key, else its text.
 
@@ -2956,14 +3038,14 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tag f
 /***/ "7eee137ec5ff"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.12.7","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"default"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","outline","ghost","surface"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"href":{"type":"string","default":""},"key":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"color":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tag","tag":"sf-tag","version":"1.13.0","kind":"leaf","settings":{"kind":{"type":"enum","values":["checkbox","icon","default","color","avatar"],"default":"default"},"status":{"type":"enum","values":["","info","success","warning","error"],"default":""},"appearance":{"type":"enum","values":["default","outline","ghost","surface"],"default":"default"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1/2"},"line":{"type":"enum","values":["","1/2","1","2"],"default":""},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"inline":{"type":"boolean","default":false},"text":{"type":"string","default":""},"href":{"type":"string","default":""},"key":{"type":"string","default":""},"count":{"type":"string","default":""},"icon":{"type":"icon","default":""},"color-class":{"type":"string","default":""},"color":{"type":"string","default":""},"avatar-image-url":{"type":"string","default":""},"avatar-text":{"type":"string","default":""},"avatar-status":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"closable":{"type":"boolean","optional":true},"interactive":{"type":"boolean","default":false},"close-label":{"type":"string","default-from":"runtime.remove"}},"values":{"active":{"type":"boolean","default":false}},"events":{"change":{"carries":{"active":"boolean"}},"close":{"carries":{}}},"actions":{},"css-variables":{"--sf-tag-background-color":{"type":"color","state":"default"},"--sf-tag-color":{"type":"color","state":"default"},"--sf-tag-radius":{"type":"length","state":"default"},"--sf-tag-padding-inline":{"type":"length","state":"default"},"--sf-tag-padding-block":{"type":"length","state":"default"},"--sf-tag-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 
 /***/ "d65b1989605d"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Tags","runtime":{"remove":"Remove","more":{"one":"{n} more: {names}","other":"{n} more: {names}"},"position":"{label}, {position} of {total}, Delete to remove"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Tags","runtime":{"remove":"Remove","remove-named":"Remove {label}","more":{"one":"{n} more: {names}","other":"{n} more: {names}"},"position":"{label}, {position} of {total}, Delete to remove"}}');
 
 /***/ }
 

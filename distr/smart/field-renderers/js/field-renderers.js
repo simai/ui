@@ -7,12 +7,14 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BADGE_HUES: () => (/* binding */ BADGE_HUES),
 /* harmony export */   BADGE_MAIN_TONAL: () => (/* binding */ BADGE_MAIN_TONAL),
 /* harmony export */   BADGE_SCHEMES: () => (/* binding */ BADGE_SCHEMES),
 /* harmony export */   BADGE_SCHEME_ALIASES: () => (/* binding */ BADGE_SCHEME_ALIASES),
 /* harmony export */   BADGE_SIZES: () => (/* binding */ BADGE_SIZES),
 /* harmony export */   BADGE_TYPES: () => (/* binding */ BADGE_TYPES),
 /* harmony export */   BADGE_VARIANTS: () => (/* binding */ BADGE_VARIANTS),
+/* harmony export */   canonicalBadgeHue: () => (/* binding */ canonicalBadgeHue),
 /* harmony export */   canonicalBadgeScheme: () => (/* binding */ canonicalBadgeScheme),
 /* harmony export */   isRetiredMain: () => (/* binding */ isRetiredMain),
 /* harmony export */   normalizeBadgeContract: () => (/* binding */ normalizeBadgeContract)
@@ -27,7 +29,18 @@ const BADGE_SCHEMES = Object.freeze(['neutral', 'primary', 'secondary', 'tertiar
 const BADGE_SCHEME_ALIASES = Object.freeze({
   danger: 'error'
 });
-const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The default look is tonal (owner decision C140 (1), badges study BG-1): a
+const BADGE_SIZES = Object.freeze(['1/3', '1/2', '1']); // The hues of the static palette a badge takes as a class, sf-badge--<hue>
+// (owner decision C411): the sixteen names of src/core/scss/vars/_sf_var__hue.scss
+// ($sf-static-hues), in its order. The class draws tone 50 at the fill step 24
+// under --sf-on-surface in both themes; status colours stay with the status
+// classes, so a hue is never a status.
+
+const BADGE_HUES = Object.freeze(['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'pink', 'brown', 'gray']); // The hue for a name, '' when it is not one of BADGE_HUES.
+
+function canonicalBadgeHue(value) {
+  const name = String(value ?? '').trim().toLowerCase();
+  return BADGE_HUES.includes(name) ? name : '';
+} // The default look is tonal (owner decision C140 (1), badges study BG-1): a
 // badge without an appearance is the calm grey mark. It was main, the dark
 // grey fill nobody chose.
 
@@ -3053,6 +3066,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isNumericType: () => (/* binding */ isNumericType),
 /* harmony export */   meterStatus: () => (/* binding */ meterStatus),
 /* harmony export */   normalizeFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.normalizeFilterEntry),
+/* harmony export */   numberValue: () => (/* binding */ numberValue),
 /* harmony export */   openFilterWindow: () => (/* binding */ openFilterWindow),
 /* harmony export */   propertyModes: () => (/* binding */ propertyModes),
 /* harmony export */   renderCellField: () => (/* binding */ renderCellField),
@@ -4003,7 +4017,16 @@ function renderFilterField(field = {}, host) {
 // with size-1/2 components a default row went from 57 to 61 on desktop and 45 to
 // 51 on mobile.
 
-const CELL_LINE = '1/2'; // A choice badge in a cell is tonal (sf-badge's default since 1.6.0, C140; it
+const CELL_LINE = '1/2'; // A value's badge in a row is the row's text (owner remark LV4-11, View list
+// register VL-54: «Tags small» -- 12 beside a row's 16). sf-badge's line of
+// the text beside it (line="text", C95 (6)): the badge inherits the cell's
+// size and line, so it is the row's text at every density and in every table
+// size, its height the text's line, no block padding. That mode keeps a
+// count's quarter at the sides; a word keeps the badge's own room, the space
+// system's half step (12, 8 on a phone), through its public variable.
+
+const CELL_BADGE_LINE = 'text';
+const CELL_BADGE_ROOM = '--sf-badge-padding-inline: var(--sf-space-1\\/2)'; // A choice badge in a cell is tonal (sf-badge's default since 1.6.0, C140; it
 // was main, so the cells shipped filled and the consumer's owner asked for the
 // calmer one) -- and a table row is the place for it: a column of
 // filled badges reads as a column of buttons. A field may still ask for another
@@ -4192,21 +4215,22 @@ function renderChoicesBadgesCell(field, value) {
   return value.map(item => {
     const key = item && typeof item === 'object' ? item.value : item;
     const option = Array.isArray(options) ? options.find(candidate => String(candidate?.value) === String(key)) : null;
-    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option) : null;
+    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option) : null;
     const text = item && typeof item === 'object' && item.text !== undefined ? String(item.text) : String(option?.label ?? option?.text ?? key);
     return {
       component: {
         type: 'badge',
         props: {
-          line: CELL_LINE,
+          line: CELL_BADGE_LINE,
           text,
           appearance: badgeAppearanceOf(field),
           ...(badge?.scheme ? {
             scheme: badge.scheme
           } : {}),
-          ...(badge?.rootStyle ? {
-            rootStyle: badge.rootStyle
-          } : {})
+          ...(badge?.hue ? {
+            hue: badge.hue
+          } : {}),
+          rootStyle: CELL_BADGE_ROOM
         }
       }
     };
@@ -4272,20 +4296,21 @@ function renderChoiceCell(field, value) {
   if (!Array.isArray(options)) return null;
   const option = options.find(item => String(item?.value) === String(value));
   if (!option) return null;
-  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option);
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option);
   return {
     component: {
       type: 'badge',
       props: {
-        line: CELL_LINE,
+        line: CELL_BADGE_LINE,
         text: option.label ?? option.text ?? String(value),
         appearance: badgeAppearanceOf(field),
         ...(badge?.scheme ? {
           scheme: badge.scheme
         } : {}),
-        ...(badge?.rootStyle ? {
-          rootStyle: badge.rootStyle
-        } : {})
+        ...(badge?.hue ? {
+          hue: badge.hue
+        } : {}),
+        rootStyle: CELL_BADGE_ROOM
       }
     }
   };
@@ -5336,10 +5361,11 @@ function renderStepperEdit(field, value, host, {
 // is created, is how many digits it keeps after the point, 0 for a whole
 // number (an integer field reads as decimals 0); more is a field error,
 // never rounded, and a whole number has the digit keyboard. A number field
-// whose value arrives as a string, or that declares its decimals, is a
-// decimal-string field: it writes the canonical decimal string («1500.50»),
-// never a float. Any other number field -- an integer field among them --
-// writes a number, as before. Text that is not a number is reported as a
+// whose value arrives as a string, or that declares its decimals above 0, is
+// a decimal-string field: it writes the canonical decimal string («1500.50»),
+// never a float. A whole number (decimals 0, an integer field) writes a
+// number, or null when emptied, whatever its value came as (FS-9,
+// numberValue below); any other number field writes a number, as before. Text that is not a number is reported as a
 // masked string's incomplete entry is: through setFieldError, which holds the
 // save, and under the field once the person leaves it.
 
@@ -5349,14 +5375,38 @@ function declaresDecimals(field) {
 }
 
 function isDecimalStringField(field, value) {
+  if ((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field, {
+    quiet: true
+  }).decimals === 0) return false;
   return typeof value === 'string' || declaresDecimals(field);
+} // A whole number (decimals 0, an integer field) is one type wherever its value
+// comes from (FS-9, C303 (2): number and integer are one type): a number, or
+// null when it is empty. It was a decimal string when typed («30») and a
+// number when set from code (50), so a form's value changed type with the
+// first keystroke. A whole number past Number.MAX_SAFE_INTEGER stays its
+// decimal string: a float would change its digits. A number with digits
+// after the point keeps the decimal string of the property-view port
+// («12.30», never a float); any other field, its value as it came.
+
+
+function numberValue(field, value) {
+  const resolved = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field, {
+    quiet: true
+  });
+  if (resolved.type !== 'number' || resolved.decimals !== 0 || typeof value !== 'string') return value;
+  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readDecimal)(value); // Text that is not a whole number is the field's error, kept as typed.
+
+  if (!read.ok) return value;
+  if (read.value === null) return null;
+  if ((0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.fractionDigits)(read.value) > 0) return value;
+  const number = Number(read.value);
+  return Number.isSafeInteger(number) ? number : read.value;
 } // A number's unit (`unit`, «шт», «кг») in every place the field is drawn
 // (C302 (2): the template knows every place; cards study CV-7): after the
 // number in the view and the compact place, inside the box after the value
 // when it is edited or filtered -- in the hint's ink, not part of the value.
 // It was only the view's: the edit box and the filter box showed a bare
 // «13» where the record said «13 шт». A field with no unit draws none.
-
 
 function fieldUnit(field) {
   return typeof field?.unit === 'string' ? field.unit.trim() : '';
@@ -5404,7 +5454,7 @@ function renderNumberEdit(field, value, host) {
     }
 
     host.setFieldError?.(field, null);
-    if (read.value === null) host.setFieldValue(field, null);else host.setFieldValue(field, asString ? read.value : Number(read.value));
+    if (read.value === null) host.setFieldValue(field, null);else host.setFieldValue(field, asString ? read.value : decimals === 0 ? numberValue(field, read.value) : Number(read.value));
   };
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -7224,7 +7274,7 @@ function renderChoiceView(field, value) {
   const options = field.options || field.filter?.options || field.constraints?.options;
   const option = Array.isArray(options) ? options.find(item => String(item?.value) === String(value)) : null;
   if (!option) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option); // A table cell is a dense place: the badge keeps the tight side room
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option); // A table cell is a dense place: the badge keeps the tight side room
   // (sf-badge tight), as it had before sf-badge 1.3.0 widened the default.
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -7233,7 +7283,7 @@ function renderChoiceView(field, value) {
                 tight
                 appearance=${badgeAppearanceOf(field)}
                 scheme=${badge.scheme}
-                style=${badge.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                hue=${badge.hue || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 text=${String(option.label ?? option.text ?? value)}
         ></sf-badge>
     `;
@@ -7267,9 +7317,9 @@ function renderChoicesView(field, value) {
             ${value.map(item => {
     if (!badges) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" line=${VIEW_LINE} kind="default" text=${label(item)}></sf-tag>`;
     const option = optionOf(item);
-    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeProps)(option) : null;
+    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option) : null;
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge line=${VIEW_LINE} tight appearance=${badgeAppearanceOf(field)}
-                        scheme=${badge?.scheme || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} style=${badge?.rootStyle || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${label(item)}></sf-badge>`;
+                        scheme=${badge?.scheme || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} hue=${badge?.hue || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${label(item)}></sf-badge>`;
   })}
         </span>
     `;
@@ -9007,6 +9057,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   OPTION_BADGE_HUES: () => (/* binding */ OPTION_BADGE_HUES),
 /* harmony export */   OPTION_BADGE_PALETTE: () => (/* binding */ OPTION_BADGE_PALETTE),
 /* harmony export */   nearestPaletteHue: () => (/* binding */ nearestPaletteHue),
+/* harmony export */   optionBadgeClass: () => (/* binding */ optionBadgeClass),
+/* harmony export */   optionBadgeLook: () => (/* binding */ optionBadgeLook),
 /* harmony export */   optionBadgeProps: () => (/* binding */ optionBadgeProps),
 /* harmony export */   optionDotColor: () => (/* binding */ optionDotColor)
 /* harmony export */ });
@@ -9101,6 +9153,11 @@ const paletteStyle = hue => `--sf-badge-background-color: var(--sf-${hue}-50--al
 // The data view port names the badge look `scheme` on a column's options; a
 // filter option has always said `color`. Both are read: reading only `color`
 // left every port column's scheme unread and its badges neutral.
+//
+// optionBadgeProps is the former form: the hue written as the badge's two
+// public variables in a style. The Framework's own parts draw a hue through
+// optionBadgeLook and the badge's hue class (C411); this one stays for hosts
+// until 2027-01-01 (journal class-option-badge-hue-class).
 
 
 function optionBadgeProps(option = {}) {
@@ -9144,6 +9201,47 @@ function optionDotColor(option = {}) {
   if (OPTION_BADGE_PALETTE.includes(name)) return `var(--sf-${name}-50)`;
   return color;
 }
+/**
+ * The badge look of an option as the badge's own settings (owner decision
+ * C411): {scheme, hue}. scheme is a Framework badge scheme (a former name read
+ * as its canonical one), else neutral; hue is a name of the static palette
+ * (red, teal, gray...; C17), a hex drawn in the palette hue nearest it, else
+ * ''. A part gives the hue to sf-badge as hue="<name>", or to class markup as
+ * the class sf-badge--<name>: the class sets the fill (tone 50 at the fill
+ * step 24) and the text --sf-on-surface in both themes, so nothing is written
+ * in a style.
+ */
+
+function optionBadgeLook(option = {}) {
+  const raw = option?.scheme ?? option?.color;
+  const color = typeof raw === "string" ? raw.trim() : "";
+  const scheme = (0,_component_badges_js_contract_js__WEBPACK_IMPORTED_MODULE_0__.canonicalBadgeScheme)(color);
+  if (scheme) return {
+    scheme,
+    hue: ""
+  };
+  const name = color.toLowerCase();
+  if (OPTION_BADGE_PALETTE.includes(name)) return {
+    scheme: "neutral",
+    hue: name
+  };
+  if (HEX_COLOR.test(color)) return {
+    scheme: "neutral",
+    hue: nearestPaletteHue(color)
+  };
+  return {
+    scheme: "neutral",
+    hue: ""
+  };
+}
+/** The hue class of an option's badge for class markup ('' without a hue): sf-badge--<hue> (C411). */
+
+const optionBadgeClass = (option = {}) => {
+  const {
+    hue
+  } = optionBadgeLook(option);
+  return hue ? `sf-badge--${hue}` : "";
+};
 
 /***/ },
 

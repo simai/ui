@@ -469,6 +469,14 @@
        primary-container (C23); the pressed plate (20) is above every state.
        The tinted containers keep their steps (12-20 light, 24-32 dark). */
     --sf-surface-container: light-dark(var(--sf-neutral-50--alfa-12), var(--sf-neutral-90--alfa-12));
+    /* The quiet plate (owner decision C397, View list register VL-43, remark
+       LV4-13): a band that heads a window -- the filter window's condition
+       head -- is grey and paler than a control's plate (a chip, a tonal
+       button, 12), so the head does not weigh what the controls weigh. The
+       state family's 8, in both themes, as the disabled plate: under the
+       lightest working plate, above the hover state, and the pointer's hover
+       laid over it stays under the plate's hover (16). */
+    --sf-surface-container-low: light-dark(var(--sf-neutral-50--alfa-8), var(--sf-neutral-90--alfa-8));
     --sf-surface-container-hover: light-dark(var(--sf-neutral-50--alfa-16), var(--sf-neutral-90--alfa-16));
     --sf-surface-container-active: light-dark(var(--sf-neutral-50--alfa-20), var(--sf-neutral-90--alfa-20));
     --sf-on-surface: light-dark(var(--sf-neutral-10), var(--sf-neutral-90));
@@ -498,6 +506,18 @@
        60 gave Lc 42 on the page against Lc 82 for the light pair, and a quiet
        key (its fill an 8 % of this ink) 4.25:1 on a card. Light unchanged. */
     --sf-on-surface-variant: light-dark(var(--sf-neutral-40), var(--sf-neutral-70));
+    /* A value that is not set (owner decision C402, 2026-11-21; View list
+       register VL-65): the words that stand for it -- «не заполнено», «Не
+       указан» -- are paler than a field's label (--sf-on-surface-variant)
+       and still read as text. The text ink at the ink family's 64: light
+       5.17:1 on the page, 5.07 on the area, 4.91 on surface-2 (the label
+       6.47, 6.17, 5.71); dark 6.49 on the page, 5.18 on surface-3, 4.61 on
+       the popup's step (the label 8.26, 5.76, and the popup's own 6.57).
+       --sf-on-surface-muted, which C402 names, is the disabled ink since C43
+       (3.10:1), below text's 4.5:1. On a strong colour and on glass the
+       alpha scale has no readable step under the dim ink, so the role is the
+       place's dim ink there (mix/_mix__places.scss, _sf_css__surface_places.scss). */
+    --sf-on-surface-not-set: light-dark(var(--sf-neutral-10--alfa-64), var(--sf-neutral-90--alfa-64));
     /* Dimmed text on a container fill (--sf-surface-container over any of the
        surfaces 0 to 3). The fill is translucent, so the text lies on the fill
        and the surface together: neutral-60 measured 4.0:1 in the dark theme,
@@ -882,6 +902,7 @@
     --sf-on-surface-hover: var(--sf-on-surface-media);
     --sf-on-surface-active: var(--sf-on-surface-media);
     --sf-on-surface-variant: var(--sf-white--alfa-80);
+    --sf-on-surface-not-set: var(--sf-white--alfa-80);
     --sf-on-surface-container-variant: var(--sf-white--alfa-80);
     --sf-surface-state-hover: var(--sf-white--alfa-4);
     --sf-surface-state-select: var(--sf-white--alfa-8);
@@ -1525,6 +1546,9 @@
     --sf-neutral-90--alfa-24: rgba(227,226,231,0.23922);
     --sf-neutral-90--alfa-32: rgba(227,226,231,0.32157);
     --sf-neutral-90--alfa-48: rgba(227,226,231,0.47843);
+    /* The dark text ink at the ink family's 64 (C402, --sf-on-surface-not-set):
+       6.49:1 on the page, 4.61 on the popup's step. */
+    --sf-neutral-90--alfa-64: rgba(227,226,231,0.63922);
     --sf-neutral-85: #d4d4d9;
     --sf-neutral-80: #c6c6cb;
     --sf-neutral-70: #ababb0;
@@ -1567,6 +1591,9 @@
     --sf-neutral-20: #2f3035;
     --sf-neutral-15: #24262a;
     --sf-neutral-10: #1a1b1f;
+    /* The text ink at the ink family's 64: a value that is not set (C402,
+       --sf-on-surface-not-set). 5.17:1 on the page, 4.91 on surface-2. */
+    --sf-neutral-10--alfa-64: rgba(26,27,31,0.63922);
     --sf-neutral-5: #0f1115;
     --sf-primary-98: #f9f9ff;
     --sf-secondary-98: #f9f9ff;
@@ -5784,6 +5811,83 @@ body {
   }
 }
 @layer sf.base {
+  /* sf-button-icon before it draws (GB17A-1, 2026-11-23: a bare
+     <sf-button-icon size="1/2"> in a table row had no box until its code came,
+     and the row then grew 22 -> 30 at 390 and pushed everything below it down
+     8 px; the first-paint gate saw it under the file-download «table»
+     example). The box is known from the attributes alone, from the same steps
+     the icon-buttons sheet draws with: an icon button is square, the line of
+     its size (--sf-text-height-<size>) plus its height step on each side
+     (--sf-ui-<size>--space-y-tightness-<height>; low, high and highest exist
+     for sizes 1, 2 and 3), the public --sf-icon-button-padding-block and
+     -inline still winning. Drawn, the host is display: contents over a
+     button or a link that is block-level (flex), so the bare host is a block:
+     as wide as the square, or for a link (href) as wide as its container, as
+     the drawn link is. Static markup printed inside (data-sf-static) is its
+     own box; a hidden button has none. sf-icon-button is the tag's alias.
+     Every selector is :where (no weight): sf-language's parts keep their own
+     box below (the trigger's), and any page or component rule wins. */
+  :where(:is(sf-button-icon, sf-icon-button)):where(:not(:defined)) {
+    --sf-button-icon--box-line: var(--sf-text-height-1);
+    --sf-button-icon--box-step: var(--sf-ui-1--space-y-tightness-default);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([size="1/3"]:not(:defined)) {
+    --sf-button-icon--box-line: var(--sf-text-height-1\/3);
+    --sf-button-icon--box-step: var(--sf-ui-1\/3--space-y-tightness-default);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([size="1/2"]:not(:defined)) {
+    --sf-button-icon--box-line: var(--sf-text-height-1\/2);
+    --sf-button-icon--box-step: var(--sf-ui-1\/2--space-y-tightness-default);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([size="2"]:not(:defined)) {
+    --sf-button-icon--box-line: var(--sf-text-height-2);
+    --sf-button-icon--box-step: var(--sf-ui-2--space-y-tightness-default);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([size="3"]:not(:defined)) {
+    --sf-button-icon--box-line: var(--sf-text-height-3);
+    --sf-button-icon--box-step: var(--sf-ui-3--space-y-tightness-default);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([height=low]:not(:defined):not([size="1/3"]):not([size="1/2"]):not([size="2"]):not([size="3"])) {
+    --sf-button-icon--box-step: var(--sf-ui-1--space-y-tightness-low);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([size="2"][height=low]:not(:defined)) {
+    --sf-button-icon--box-step: var(--sf-ui-2--space-y-tightness-low);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([size="3"][height=low]:not(:defined)) {
+    --sf-button-icon--box-step: var(--sf-ui-3--space-y-tightness-low);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([height=high]:not(:defined):not([size="1/3"]):not([size="1/2"]):not([size="2"]):not([size="3"])) {
+    --sf-button-icon--box-step: var(--sf-ui-1--space-y-tightness-high);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([size="2"][height=high]:not(:defined)) {
+    --sf-button-icon--box-step: var(--sf-ui-2--space-y-tightness-high);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([size="3"][height=high]:not(:defined)) {
+    --sf-button-icon--box-step: var(--sf-ui-3--space-y-tightness-high);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([height=highest]:not(:defined):not([size="1/3"]):not([size="1/2"]):not([size="2"]):not([size="3"])) {
+    --sf-button-icon--box-step: var(--sf-ui-1--space-y-tightness-highest);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([size="2"][height=highest]:not(:defined)) {
+    --sf-button-icon--box-step: var(--sf-ui-2--space-y-tightness-highest);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([size="3"][height=highest]:not(:defined)) {
+    --sf-button-icon--box-step: var(--sf-ui-3--space-y-tightness-highest);
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where(:not(:defined):not([hidden]):not(:has(> [data-sf-static]))) {
+    display: block;
+    box-sizing: border-box;
+    height: calc(var(--sf-button-icon--box-line) + 2 * var(--sf-icon-button-padding-block, var(--sf-button-icon--box-step)));
+    block-size: calc(var(--sf-button-icon--box-line) + 2 * var(--sf-icon-button-padding-block, var(--sf-button-icon--box-step)));
+    width: calc(var(--sf-button-icon--box-line) + 2 * var(--sf-icon-button-padding-inline, var(--sf-button-icon--box-step)));
+    inline-size: calc(var(--sf-button-icon--box-line) + 2 * var(--sf-icon-button-padding-inline, var(--sf-button-icon--box-step)));
+  }
+  :where(:is(sf-button-icon, sf-icon-button)):where([href]:not(:defined):not([hidden]):not(:has(> [data-sf-static]))) {
+    width: auto;
+    inline-size: auto;
+  }
+}
+@layer sf.base {
   /* sf-language before it draws (Docara, 2026-11-07: the header tools moved
      left by 40 px when the trigger appeared; C142, 2026-11-14: they moved by
      63-78 px once the trigger became «RU ▾»). The element knows its box before
@@ -7584,6 +7688,11 @@ body {
   :where(:is(sf-header-page, sf-page-header)):has(> [slot=path], > header > .sf-page-header-path > [slot=path]) {
     --sf-page-header--box-path: calc(var(--sf-ui-1\/3--control-height) + var(--sf-page-header-gap, var(--sf-space-1\/2)));
   }
+  /* A part at the path row's end (sf-header-page 1.12.0, path-end): the row
+     holds the 1/2 control height, as the head's sheet does. */
+  :where(:is(sf-header-page, sf-page-header)):has(> [slot=path-end], > header > .sf-page-header-path > .sf-page-header-path-end > [slot=path-end]) {
+    --sf-page-header--box-path: calc(var(--sf-ui-1\/2--control-height) + var(--sf-page-header-gap, var(--sf-space-1\/2)));
+  }
   /* The actions are buttons of the default size 1 unless every one says 1/2;
      one of size 2 makes the line that tall. The slot content is the host's
      child until the element draws, then a child of the drawn head's rows:
@@ -8245,6 +8354,49 @@ body {
     --sf-on-tone-indigo-container: var(--sf-scheme-text);
     --sf-tone-violet-container: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
     --sf-on-tone-violet-container: var(--sf-scheme-text);
+    --sf-shadow-overlay: 0 0 0 var(--sf-px) var(--sf-scheme-text), 0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color), 0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color);
+    --sf-shadow-overlay-filter: drop-shadow(var(--sf-px) 0 0 var(--sf-scheme-text)) drop-shadow(calc(-1 * var(--sf-px)) 0 0 var(--sf-scheme-text)) drop-shadow(0 var(--sf-px) 0 var(--sf-scheme-text)) drop-shadow(0 calc(-1 * var(--sf-px)) 0 var(--sf-scheme-text)) drop-shadow(0 var(--sf-a2) var(--sf-a4) var(--sf-shadow-key-color)) drop-shadow(0 var(--sf-a8) var(--sf-b6) var(--sf-shadow-ambient-color));
+    --sf-shadow-modal: 0 0 0 var(--sf-px) var(--sf-scheme-text), 0 var(--sf-a4) var(--sf-a8) var(--sf-shadow-key-color), 0 var(--sf-b6) var(--sf-c6) var(--sf-shadow-ambient-color);
+    --sf-surface-media: var(--sf-scheme-text);
+    --sf-surface-media-hover: color-mix(in srgb, var(--sf-scheme-text), var(--sf-scheme-ground) 8%);
+    --sf-surface-media-active: color-mix(in srgb, var(--sf-scheme-text), var(--sf-scheme-ground) 12%);
+    --sf-on-surface-media: var(--sf-scheme-ground);
+    --sf-scrim-control-state-hover: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-ground) 8%);
+    --sf-scrim-control-state-active: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-ground) 12%);
+    --sf-surface-veil: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-ground) 64%);
+    --sf-surface-overlay: var(--sf-surface-veil);
+    --sf-chart-1-fill: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-chart-1-fill-hover: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-chart-1-fill-active: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-chart-2-fill: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-chart-2-fill-hover: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 28%);
+    --sf-chart-2-fill-active: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 32%);
+    --sf-chart-3-fill: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-chart-3-fill-hover: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-chart-3-fill-active: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-chart-4-fill: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-chart-4-fill-hover: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 28%);
+    --sf-chart-4-fill-active: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 32%);
+    --sf-chart-5-fill: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-chart-5-fill-hover: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-chart-5-fill-active: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-chart-6-fill: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-chart-6-fill-hover: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 28%);
+    --sf-chart-6-fill-active: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 32%);
+    --sf-chart-7-fill: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-chart-7-fill-hover: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-chart-7-fill-active: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-chart-8-fill: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 24%);
+    --sf-chart-8-fill-hover: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 28%);
+    --sf-chart-8-fill-active: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 32%);
+    --sf-chart-brand-fill: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
+    --sf-chart-brand-fill-hover: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 16%);
+    --sf-chart-brand-fill-active: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 20%);
+    --sf-chart-diverging-bad: var(--sf-scheme-text);
+    --sf-chart-diverging-low: var(--sf-scheme-text);
+    --sf-chart-diverging-good: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 64%);
+    --sf-chart-diverging-high: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 64%);
+    --sf-chart-midpoint: color-mix(in srgb, var(--sf-transparent), var(--sf-scheme-text) 12%);
   }
   :root[data-sf-scheme=black-on-white], :root[data-sf-scheme=black-on-white] body, :root[data-sf-scheme=white-on-black], :root[data-sf-scheme=white-on-black] body, :root[data-sf-scheme=yellow-on-black], :root[data-sf-scheme=yellow-on-black] body, :root[data-sf-scheme=blue-on-sky], :root[data-sf-scheme=blue-on-sky] body, :root[data-sf-scheme=brown-on-cream], :root[data-sf-scheme=brown-on-cream] body {
     background-color: var(--sf-surface-page);
@@ -8282,17 +8434,22 @@ body {
     max-inline-size: 100%;
     overflow-x: auto;
   }
-  :root[data-sf-text-spacing=wide] body {
-    letter-spacing: 0.12em;
-    word-spacing: 0.16em;
+  :root[data-sf-text-spacing=wide] body,
+  :root[data-sf-text-spacing=wide] body *:not(.sf-icon):not(sf-icon),
+  :root[data-sf-text-spacing=wide] input,
+  :root[data-sf-text-spacing=wide] textarea,
+  :root[data-sf-text-spacing=wide] select,
+  :root[data-sf-text-spacing=wide] button {
+    letter-spacing: 0.12em !important;
+    word-spacing: 0.16em !important;
   }
   :root[data-sf-text-spacing=wide] p, :root[data-sf-text-spacing=wide] li, :root[data-sf-text-spacing=wide] dd, :root[data-sf-text-spacing=wide] dt, :root[data-sf-text-spacing=wide] blockquote, :root[data-sf-text-spacing=wide] figcaption, :root[data-sf-text-spacing=wide] td, :root[data-sf-text-spacing=wide] th, :root[data-sf-text-spacing=wide] label {
-    line-height: 1.5;
+    line-height: 1.5 !important;
   }
   :root[data-sf-text-spacing=wide] p {
-    margin-bottom: 2em;
-    -webkit-margin-after: 2em;
-            margin-block-end: 2em;
+    margin-bottom: 2em !important;
+    -webkit-margin-after: 2em !important;
+            margin-block-end: 2em !important;
   }
   :root[data-sf-font=sans] {
     --sf-text--family: var(--sf-sans);
@@ -8310,17 +8467,17 @@ body {
             text-decoration-line: underline;
   }
   :root[data-sf-images=grey] img, :root[data-sf-images=grey] picture, :root[data-sf-images=grey] video, :root[data-sf-images=grey] iframe, :root[data-sf-images=grey] canvas, :root[data-sf-images=grey] svg[role=img], :root[data-sf-images=grey] [data-bg] {
-    -webkit-filter: grayscale(1);
-            filter: grayscale(1);
+    -webkit-filter: grayscale(1) !important;
+            filter: grayscale(1) !important;
   }
   :root[data-sf-images=hide] img, :root[data-sf-images=hide] picture, :root[data-sf-images=hide] video, :root[data-sf-images=hide] iframe, :root[data-sf-images=hide] canvas, :root[data-sf-images=hide] svg[role=img], :root[data-sf-images=hide] [data-bg] {
-    display: none;
+    display: none !important;
   }
   .sf-image-caption {
     display: none;
   }
   :root[data-sf-images=hide] .sf-image-caption {
-    display: block;
+    display: block !important;
     box-sizing: border-box;
     max-width: 100%;
     max-inline-size: 100%;

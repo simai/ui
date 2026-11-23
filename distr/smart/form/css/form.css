@@ -18,7 +18,7 @@
 
      The host is display: contents; the native form is the root and the
      container its own width is read from (C182 (4), (5)): two columns from
-     44rem, the label beside from 40rem.
+     44rem, the label beside from 20rem (C401, as sf-list-description).
 
      The public variables are read with the role token as their fallback and
      never set here:
@@ -217,29 +217,72 @@
       grid-column: 1/-1;
     }
   }
-  /* C182 (5): labels="start" from 40rem (its rows do not pair: the label
-     takes the room a second column would) -- the label in a third of the row,
-     on the control's line; the control, the hint and the error in the rest. */
-  @container (min-width: 40rem) {
-    .sf-form[data-labels=start] .sf-form-field {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-      grid-column-gap: var(--sf-space-2);
-      -webkit-column-gap: var(--sf-space-2);
-         -moz-column-gap: var(--sf-space-2);
-              column-gap: var(--sf-space-2);
-      grid-row-gap: var(--sf-space-1\/4);
-      row-gap: var(--sf-space-1\/4);
-      align-items: start;
-    }
-    .sf-form[data-labels=start] .sf-form-field > .sf-form-label {
-      grid-row: 1/span 3;
-      padding-top: calc((var(--sf-ui-1--control-height) - var(--sf-form--label-line)) / 2);
-      -webkit-padding-before: calc((var(--sf-ui-1--control-height) - var(--sf-form--label-line)) / 2);
-              padding-block-start: calc((var(--sf-ui-1--control-height) - var(--sf-form--label-line)) / 2);
-    }
-    .sf-form[data-labels=start] .sf-form-field > :not(.sf-form-label) {
-      grid-column: 2;
+  /* C182 (5), C401: labels="start" -- the label at the start of its field's
+     row, the control, the hint and the error after it. The switch is
+     sf-list-description's layout auto (C180 (3)), so a record's group turned
+     into its form («Изменить») keeps each label where reading had it: beside
+     from a form wider than 20rem (g0; a narrow side panel too), over the field
+     in a narrower one and on a phone (below md, whatever the width; C401 «на
+     телефоне подпись над полем»). It was 40rem: every side panel stood the
+     labels over the fields and the rows jumped. The labels of a group share
+     one column, as wide as the longest label up to 40 % of the row (as
+     sf-list-description's label column), the rows a subgrid of it, so every
+     control starts on one axis; the rows do not pair. */
+  .sf-form[data-labels=start] {
+    --sf-form--label-width: 40%;
+    --sf-form--label-gap: var(--sf-ui-1--space-x);
+  }
+  .sf-form[data-labels=start][data-size="1/2"] {
+    --sf-form--label-gap: var(--sf-ui-1\/2--space-x);
+  }
+  /* C401 (dispatcher F1b, group build 17): the left-label form takes the read
+     list's label -- sf-list-description's, the rung below's type at every width
+     (12 below 60rem, 14 from it) -- not the field label's 14 on a phone and a
+     tablet (C153 (1)). The label column is as wide as its longest label, so a
+     larger label moved every control 16 px after the value it replaces at 768
+     (141 / 125): labels and values stay in place between read and edit. */
+  .sf-form[data-labels=start] {
+    --sf-form--label-size: var(--sf-text-size-1\/2);
+    --sf-form--label-line: var(--sf-text-height-1\/2);
+  }
+  @media (min-width: 44rem) {
+    @container not (max-width: 20rem) {
+      .sf-form[data-labels=start] .sf-form-fields {
+        grid-template-columns: fit-content(var(--sf-form--label-width)) minmax(0, 1fr);
+        -webkit-column-gap: var(--sf-form--label-gap);
+           -moz-column-gap: var(--sf-form--label-gap);
+                column-gap: var(--sf-form--label-gap);
+      }
+      .sf-form[data-labels=start] .sf-form-field {
+        display: grid;
+        grid-column: 1/-1;
+        grid-template-columns: subgrid;
+        /* A subgrid keeps its own gap: the field's 4 would take 6 px off the
+           label column on each side and set every control 12 px before the
+           value it replaces. */
+        grid-column-gap: var(--sf-form--label-gap);
+        -webkit-column-gap: var(--sf-form--label-gap);
+           -moz-column-gap: var(--sf-form--label-gap);
+                column-gap: var(--sf-form--label-gap);
+        grid-row-gap: var(--sf-space-1\/4);
+        row-gap: var(--sf-space-1\/4);
+        align-items: start;
+      }
+      .sf-form[data-labels=start] .sf-form-field > .sf-form-label {
+        grid-column: 1;
+        grid-row: 1/span 3;
+        padding-top: calc((var(--sf-ui-1--control-height) - var(--sf-form--label-line)) / 2);
+        -webkit-padding-before: calc((var(--sf-ui-1--control-height) - var(--sf-form--label-line)) / 2);
+                padding-block-start: calc((var(--sf-ui-1--control-height) - var(--sf-form--label-line)) / 2);
+      }
+      .sf-form[data-labels=start][data-size="1/2"] .sf-form-field > .sf-form-label {
+        padding-top: calc((var(--sf-ui-1\/2--control-height) - var(--sf-form--label-line)) / 2);
+        -webkit-padding-before: calc((var(--sf-ui-1\/2--control-height) - var(--sf-form--label-line)) / 2);
+                padding-block-start: calc((var(--sf-ui-1\/2--control-height) - var(--sf-form--label-line)) / 2);
+      }
+      .sf-form[data-labels=start] .sf-form-field > :not(.sf-form-label) {
+        grid-column: 2;
+      }
     }
   }
   /* C182 (7): the buttons under the fields, the main one first at the start,
