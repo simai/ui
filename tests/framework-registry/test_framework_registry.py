@@ -215,7 +215,6 @@ class FrameworkContractRegistryTest(unittest.TestCase):
                 "pro": {
                     "owner": "simai/ui-pro",
                     "provides": [
-                        "smart.admin-menu",
                         "smart.chat-composer",
                         "smart.chat-interlocutor",
                         "smart.chat-message",
