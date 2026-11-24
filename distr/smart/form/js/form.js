@@ -242,6 +242,319 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "c8d66dd2c299"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   INITIAL_FOCUS: () => (/* binding */ INITIAL_FOCUS),
+/* harmony export */   focusModalInitial: () => (/* binding */ focusModalInitial),
+/* harmony export */   getModalTabStops: () => (/* binding */ getModalTabStops),
+/* harmony export */   holdFieldsReadOnly: () => (/* binding */ holdFieldsReadOnly),
+/* harmony export */   isFieldElement: () => (/* binding */ isFieldElement),
+/* harmony export */   isOneLineField: () => (/* binding */ isOneLineField),
+/* harmony export */   syncModalFocusGuards: () => (/* binding */ syncModalFocusGuards),
+/* harmony export */   trapModalFocus: () => (/* binding */ trapModalFocus),
+/* harmony export */   windowFields: () => (/* binding */ windowFields)
+/* harmony export */ });
+// The fields of a window (owner decision C159, 2026-11-14): a window that
+// holds fields is one form -- a press on its scrim never closes it (6), it
+// asks before its changes go (6), its main answer submits it and Enter in a
+// one-line field presses that answer (9), its first field takes the focus
+// (9), and on a phone a form of more than three fields takes the whole
+// screen (2). Shared by sf-modal and the class modal, and by sf-drawer. They live here,
+// beside the first focus that reads them, so the focus module stays one file
+// with no imports (the unit tests load it as one module).
+//
+// A field is a native control a person types or picks in, or a Framework
+// field element (sf-input*, sf-dropdown, sf-checkbox, sf-switch, sf-radio)
+// whether it has drawn its control yet or not; a field element counts once,
+// whatever it draws inside.
+const NATIVE_FIELD = ['input:not([type="hidden"], [type="button"], [type="submit"], [type="reset"], [type="image"])', 'select', 'textarea', '[contenteditable=""]', '[contenteditable="true"]'].join(', ');
+const FIELD_ELEMENTS = new Set(['sf-dropdown', 'sf-checkbox', 'sf-switch', 'sf-radio', 'sf-segmented']);
+
+const isFieldElement = node => node.localName?.startsWith('sf-input') || FIELD_ELEMENTS.has(node.localName); // One-line fields: Enter in them presses the main answer (9).
+
+
+const ONE_LINE = new Set(['', 'text', 'search', 'email', 'tel', 'url', 'password', 'number', 'date', 'datetime-local', 'month', 'time', 'week']); // The outermost field element a node stands in, under `root`.
+
+function fieldElementOf(node, root) {
+  let host = null;
+
+  for (let at = node; at && at !== root; at = at.parentElement) {
+    if (isFieldElement(at)) host = at;
+  }
+
+  return host;
+} // The window's fields in document order, each once.
+
+
+function windowFields(root) {
+  if (!root?.querySelectorAll) return [];
+  const units = [];
+  const seen = new Set();
+
+  for (const node of root.querySelectorAll('*')) {
+    if (!isFieldElement(node) && !node.matches(NATIVE_FIELD)) continue;
+    if (node.closest('[hidden]')) continue;
+    const unit = fieldElementOf(node, root) || node;
+    if (seen.has(unit)) continue;
+    seen.add(unit);
+    units.push(unit);
+  }
+
+  return units;
+}
+
+function isOneLineField(node) {
+  return node?.localName === 'input' && ONE_LINE.has((node.getAttribute('type') || '').toLowerCase());
+} // Makes the fields read-only while the window saves (9) and answers the undo:
+// only what it changed goes back.
+
+
+function holdFieldsReadOnly(fields) {
+  const changed = [];
+
+  for (const unit of fields) {
+    if (unit.localName?.startsWith('sf-')) {
+      if (!unit.hasAttribute('readonly')) {
+        unit.setAttribute('readonly', '');
+        changed.push(() => unit.removeAttribute('readonly'));
+      }
+
+      continue;
+    }
+
+    if ('readOnly' in unit && !unit.readOnly && unit.localName !== 'select') {
+      unit.readOnly = true;
+      changed.push(() => {
+        unit.readOnly = false;
+      });
+    } else if (unit.localName === 'select' && !unit.hasAttribute('aria-readonly')) {
+      unit.setAttribute('aria-readonly', 'true');
+      unit.inert = true;
+      changed.push(() => {
+        unit.removeAttribute('aria-readonly');
+        unit.inert = false;
+      });
+    }
+  }
+
+  return () => changed.forEach(undo => undo());
+}
+
+const FOCUSABLE_SELECTOR = ['a[href]', 'area[href]', 'button', 'input', 'select', 'textarea', 'iframe', 'summary', 'audio[controls]', 'video[controls]', '[contenteditable]', '[tabindex]'].join(',');
+const GUARDS_KEY = Symbol.for('simai.modal.focus-guards');
+
+function syncModalFocusGuards(modal) {
+  const root = (modal && 'modalRoot' in modal ? modal.modalRoot : modal?.getModalRoot?.()) || modal?.template;
+  const panel = root?.querySelector?.('[data-sf-modal-panel]');
+  const previous = document[GUARDS_KEY];
+  if (previous && previous.panel === panel && previous.before.isConnected && previous.after.isConnected) return;
+  previous?.before.remove();
+  previous?.after.remove();
+  delete document[GUARDS_KEY];
+  if (!panel?.parentNode) return;
+  const guards = {
+    panel,
+    relaying: false
+  };
+
+  for (const edge of ['before', 'after']) {
+    const guard = panel.ownerDocument.createElement('span');
+    guard.tabIndex = 0;
+    guard.className = 'sf-modal-focus-guard';
+    guard.setAttribute('aria-hidden', 'true');
+    guard.addEventListener('focus', () => {
+      if (guards.relaying || !panel.isConnected || root.inert || root.getAttribute('aria-hidden') === 'true') return;
+      const backward = edge === 'before';
+      const stops = getModalTabStops(panel, backward);
+      const destination = backward ? stops.at(-1) : stops[0]; // A frame's child document owns the outgoing key event. If both edges are
+      // frames, return to the meaningful dialog boundary; the next native Tab
+      // enters the requested end of the document without inspecting its origin.
+
+      if (!destination || destination.tagName === 'IFRAME') panel.focus({
+        preventScroll: true
+      });else destination.focus({
+        preventScroll: true
+      });
+    });
+    guards[edge] = guard;
+  }
+
+  panel.before(guards.before);
+  panel.after(guards.after);
+  document[GUARDS_KEY] = guards;
+}
+
+function sameRadioGroup(a, b) {
+  return a?.tagName === 'INPUT' && b?.tagName === 'INPUT' && a.type === 'radio' && b.type === 'radio' && !!a.name && a.name === b.name && a.form === b.form && a.getRootNode() === b.getRootNode();
+} // Shared by ordinary and Smart Modal. Read the current DOM on each Tab so
+// hidden, inert or disabled controls never become stale focus boundaries.
+
+
+function getModalTabStops(panel, backward = false) {
+  const view = panel.ownerDocument.defaultView;
+  const candidates = Array.from(panel.querySelectorAll(FOCUSABLE_SELECTOR)).filter(node => node.tabIndex >= 0 && !node.matches(':disabled') && !node.closest('[inert]') && node.getClientRects().length > 0 && view.getComputedStyle(node).visibility === 'visible').sort((a, b) => (a.tabIndex || Infinity) - (b.tabIndex || Infinity)); // Native radio groups contribute one sequential stop, not every input.
+  // Do not rewrite checked/tabindex or intercept their native arrow-key handling.
+
+  return candidates.filter(node => {
+    if (!sameRadioGroup(node, node)) return true;
+    const group = candidates.filter(candidate => sameRadioGroup(node, candidate));
+    const selected = group.find(candidate => candidate.checked);
+    return node === (selected || group.at(backward ? -1 : 0));
+  });
+}
+
+function trapModalFocus(panel, event) {
+  if (!panel) return;
+  const nodes = getModalTabStops(panel, event.shiftKey);
+  const active = panel.ownerDocument.activeElement;
+
+  if (!nodes.length) {
+    event.preventDefault();
+    panel.focus();
+    return;
+  }
+
+  const first = nodes[0];
+  const last = nodes[nodes.length - 1];
+  const boundary = event.shiftKey ? first : last;
+
+  if (!panel.contains(active) || active === panel || active === boundary || sameRadioGroup(active, boundary)) {
+    const destination = event.shiftKey ? last : first;
+    const guards = panel.ownerDocument[GUARDS_KEY];
+
+    if (destination.tagName === 'IFRAME' && guards?.panel === panel) {
+      // Let the trusted browser Tab action traverse the iframe itself. Calling
+      // iframe.focus() cannot choose its last child in an opaque document.
+      guards.relaying = true;
+
+      try {
+        (event.shiftKey ? guards.after : guards.before).focus({
+          preventScroll: true
+        });
+      } finally {
+        guards.relaying = false;
+      }
+
+      return;
+    }
+
+    event.preventDefault();
+    destination.focus();
+  }
+} // The first focus of an opened window (decisions C25, C39), by name
+// (sf-modal initial-focus):
+//
+// - auto (the default): the element the page marked with the standard
+//   `autofocus` attribute, as a native <dialog> does; else, in a question
+//   window -- one whose answers hold a dangerous one (an sf-button with
+//   status="danger", its drawn .sf-button--danger, or an sf-confirm) -- its
+//   safe answer, «Отмена»; else, in a window with fields, its first field
+//   (owner decision C159 (9), 2026-11-14, as WAI-ARIA's dialog pattern
+//   advises); else the panel, as before. Only answers count: a red
+//   sf-badge or an error message in the body does not make a window a question;
+// - safe: the safe answer whenever there is one;
+// - first: the first control of the window's content (the header's buttons,
+//   the × among them, excluded);
+// - panel: the panel itself.
+//
+// The safe answer is the declining answer of an sf-confirm in the window
+// ([data-action="decline"]) or the page's own answer that closes the window
+// ([data-sf-modal-close], the header's × excluded): a stray Enter or Space then
+// only closes the question. An element that is not focusable itself
+// (sf-button, whose host is display: contents) hands the focus to its first
+// tab stop. Content drawn after the window opened -- an sf-button draws its
+// <button> on its own schedule, an sf-confirm its answers, either perhaps
+// while its script is still loading -- is waited for, frame by frame for up
+// to two seconds, while the focus is still on the panel; anything the person
+// does in between wins. Answers the element that took the focus.
+
+
+const INITIAL_FOCUS = ['auto', 'safe', 'first', 'panel']; // status="error" on an sf-button is danger's dated alias (C13).
+
+const DANGER_SELECTOR = 'sf-button[status="danger"], sf-button[status="error"], .sf-button--danger, sf-confirm'; // The header's × is excluded: its button (.sf-modal-close-button) and, since
+// sf-modal draws it as sf-button-close (C14), that element (.sf-modal-close).
+
+const SAFE_SELECTOR = '[data-action="decline"], [data-sf-modal-close]:not(.sf-modal-close-button):not(.sf-modal-close)';
+
+function takesFocus(node) {
+  if (!node || node.closest('[inert]') || node.closest('[hidden]')) return null;
+  if (node.matches(FOCUSABLE_SELECTOR) && node.tabIndex >= 0 && !node.matches(':disabled')) return node;
+  return getModalTabStops(node)[0] || null;
+}
+
+function isDanger(node) {
+  return node.matches('sf-button[status="danger"], sf-button[status="error"], .sf-button--danger') || Boolean(node.querySelector('.sf-button--danger'));
+} // The element that takes the safe answer's focus, or null while there is none
+// (or it is not drawn yet).
+
+
+function safeAnswer(panel) {
+  for (const host of panel.querySelectorAll(SAFE_SELECTOR)) {
+    if (host.closest('[inert], [hidden]') || isDanger(host)) continue;
+    const target = takesFocus(host);
+    if (target) return target;
+  }
+
+  return null;
+}
+
+function firstFocus(panel, mode) {
+  if (mode === 'panel') return panel;
+  if (mode === 'first') return getModalTabStops(panel).find(node => !node.closest('.sf-modal-header-action')) || panel;
+
+  if (mode === 'auto') {
+    const marked = panel.querySelector('[autofocus]');
+    if (marked && !marked.closest('[inert], [hidden]')) return takesFocus(marked) || panel;
+
+    if (!panel.querySelector(DANGER_SELECTOR)) {
+      const body = panel.querySelector('[data-sf-modal-body-scroll]') || panel;
+      const field = windowFields(body)[0];
+      return field && takesFocus(field) || panel;
+    }
+  }
+
+  return safeAnswer(panel) || panel;
+}
+
+const WAIT_FOR_CONTENT_MS = 2000;
+
+function focusModalInitial(panel, mode = 'auto') {
+  if (!panel) return null;
+  const name = INITIAL_FOCUS.includes(mode) ? mode : 'auto';
+  const target = firstFocus(panel, name);
+  target.focus({
+    preventScroll: true
+  });
+  const doc = panel.ownerDocument;
+  if (doc.activeElement !== target && target !== panel) panel.focus({
+    preventScroll: true
+  });
+
+  if (target === panel && name !== 'panel') {
+    const view = doc.defaultView;
+    const until = (view?.performance?.now() ?? 0) + WAIT_FOR_CONTENT_MS;
+
+    const retry = () => {
+      if (doc.activeElement !== panel || !panel.isConnected) return;
+      const late = firstFocus(panel, name);
+      if (late !== panel) late.focus({
+        preventScroll: true
+      });else if (view.performance.now() < until) view.requestAnimationFrame(retry);
+    };
+
+    view?.requestAnimationFrame(retry);
+  }
+
+  return doc.activeElement === target ? target : panel;
+}
+
+
+
+/***/ },
+
 /***/ "1412c5875b4d"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -3965,6 +4278,8 @@ const FILTER_RENDERERS = {
   // url, link (its text and its address) and ru.inn are searched as text
   // (catalogue step 3).
   url: renderTextFilterControl,
+  // email (FS-7): searched as text, as a string is.
+  email: renderTextFilterControl,
   link: renderTextFilterControl,
   'ru.inn': renderTextFilterControl,
   user: renderMultiSelectFilterControl,
@@ -4244,6 +4559,7 @@ const CELL_RENDERERS = {
   phone: renderPhoneCell,
   password: renderPasswordCell,
   url: renderUrlCell,
+  email: renderEmailCell,
   link: renderLinkCell,
   'ru.inn': renderInnCell,
   // A date in a row used to be whatever the host had stored, printed --
@@ -4604,6 +4920,7 @@ const EDIT_RENDERERS = {
   phone: renderPhoneEdit,
   password: renderPasswordEdit,
   url: renderUrlEdit,
+  email: renderEmailEdit,
   link: renderLinkEdit,
   'ru.inn': renderInnEdit,
   text: renderTextAreaEdit,
@@ -4849,6 +5166,38 @@ function renderUrlCell(field, value, host) {
   const href = scalarValue(value);
   if (!(0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isWebAddress)(href)) return typeof formatted === 'string' ? formatted : null;
   return addressLink(href, typeof formatted === 'string' ? formatted : (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.shortAddress)(href));
+} // An email address (FS-7, C422): the edit is sf-input of type email with the
+// email keyboard and the browser's address book (autocomplete email, or the
+// field's own autocomplete: «username» for a sign-in, «off»), checked as one
+// mailbox (text-types.js isEmailAddress) the way a url is; the view and the row
+// a mailto: link, an address that is not one as text.
+
+
+function renderEmailEdit(field, value, host) {
+  return checkedTextEdit(field, value, host, {
+    check: text => (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isEmailAddress)(text) ? null : 'emailInvalid',
+    inputType: 'email',
+    inputmode: 'email',
+    autocomplete: typeof field.autocomplete === 'string' && field.autocomplete.trim() ? field.autocomplete.trim() : 'email'
+  });
+}
+
+function emailLink(address, text) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class="sf-link" href=${`mailto:${address}`}><bdi dir="ltr">${text}</bdi></a>`;
+}
+
+function renderEmailView(field, value, host) {
+  const text = viewText(field, value, host);
+  if (!text) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const address = scalarValue(value);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${(0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isEmailAddress)(address) ? emailLink(address, text) : text}</span>`;
+}
+
+function renderEmailCell(field, value, host) {
+  const formatted = host?.formatFieldValue?.(field, value);
+  const address = scalarValue(value);
+  if (!(0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isEmailAddress)(address)) return typeof formatted === 'string' ? formatted : typeof address === 'string' && address ? address : null;
+  return emailLink(address, typeof formatted === 'string' ? formatted : address);
 } // A link with its text (link@1): {href, text?}. The view and the row are the
 // text as a link (the address where there is no text); a site path or an
 // anchor opens in place, an http(s) address in a new tab; an address that is
@@ -7089,7 +7438,12 @@ function inDensity(content, density) {
 // The line a viewed value is drawn on: 1, or 1/2 with {size: '1/2'}, as above.
 
 
-let VIEW_LINE = '1'; // A scalar may arrive as the value itself or as {value, text}: the data and the
+let VIEW_LINE = '1'; // A value's tag or badge is the value's text (owner remark 13, View list
+// register VL-73: record tags 14 beside a value of 16): a badge takes the line
+// of the text beside it (line="text"), a tag sits inline on the field's own
+// size (sf-tag's line is one size down, the table's step); secondary by ink only.
+
+const VALUE_BADGE_LINE = 'text'; // A scalar may arrive as the value itself or as {value, text}: the data and the
 // host's own formatting of it. The consumer asked for the second and they are
 // right -- the Framework has no locale and should not acquire one through a field
 // renderer. They already hold the localised text, the viewer's locale and the
@@ -7274,13 +7628,15 @@ function renderChoiceView(field, value) {
   const options = field.options || field.filter?.options || field.constraints?.options;
   const option = Array.isArray(options) ? options.find(item => String(item?.value) === String(value)) : null;
   if (!option) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option); // A table cell is a dense place: the badge keeps the tight side room
-  // (sf-badge tight), as it had before sf-badge 1.3.0 widened the default.
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option); // On the value's own text (owner remark 13, View list register VL-73): the
+  // badge takes the text it stands beside, its size and line (line="text"),
+  // as the table's cell does since VL-54; it was a size down (14 beside a
+  // value of 16). Secondary by its ink only. A word keeps the cell's room.
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-badge
-                line=${VIEW_LINE}
-                tight
+                line=${VALUE_BADGE_LINE}
+                root-style=${CELL_BADGE_ROOM}
                 appearance=${badgeAppearanceOf(field)}
                 scheme=${badge.scheme}
                 hue=${badge.hue || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -7315,10 +7671,10 @@ function renderChoicesView(field, value) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <span class="sf-field-view flex flex-wrap items-cross-center gap-1/4 min-w-0">
             ${value.map(item => {
-    if (!badges) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" line=${VIEW_LINE} kind="default" text=${label(item)}></sf-tag>`;
+    if (!badges) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" inline size=${VIEW_LINE} kind="default" text=${label(item)}></sf-tag>`;
     const option = optionOf(item);
     const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option) : null;
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge line=${VIEW_LINE} tight appearance=${badgeAppearanceOf(field)}
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge line=${VALUE_BADGE_LINE} root-style=${CELL_BADGE_ROOM} appearance=${badgeAppearanceOf(field)}
                         scheme=${badge?.scheme || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} hue=${badge?.hue || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${label(item)}></sf-badge>`;
   })}
         </span>
@@ -7365,7 +7721,7 @@ function renderLookupView(field, value) {
   if (items.length === 1 && field.multiple !== true) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${items[0].label}</span>`;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <span class="sf-field-view flex flex-wrap items-cross-center gap-1/3 min-w-0">
-            ${items.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" line=${VIEW_LINE} kind="default" text=${item.label}></sf-tag>`)}
+            ${items.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" inline size=${VIEW_LINE} kind="default" text=${item.label}></sf-tag>`)}
         </span>
     `;
 } // The one place the view template is not a smaller edit control: a stored file
@@ -7407,6 +7763,7 @@ const VIEW_RENDERERS = {
   phone: renderPhoneView,
   password: renderPasswordView,
   url: renderUrlView,
+  email: renderEmailView,
   link: renderLinkView,
   'ru.inn': renderInnView,
   text: renderTextView,
@@ -8315,6 +8672,17 @@ entry({
     params: ['width']
   })],
   params: ['placeholder', 'required', 'readonly']
+}), // email (admin settings study FS-7, owner decision C422): one mailbox,
+// «name@example.ru», checked by text-types.js isEmailAddress; the edit
+// has the email keyboard and autocomplete (the field's own autocomplete,
+// else «email»), the view a mailto: link; searched as text.
+entry({
+  type: 'email',
+  label: typeLabel('type-email'),
+  templates: [byDefault('email', 'input', {
+    params: ['width']
+  })],
+  params: ['placeholder', 'autocomplete', 'required', 'readonly']
 }), entry({
   type: 'link',
   label: typeLabel('type-link'),
@@ -8871,6 +9239,7 @@ __webpack_async_result__();
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EMAIL_MOST: () => (/* binding */ EMAIL_MOST),
 /* harmony export */   INN_HOLDERS: () => (/* binding */ INN_HOLDERS),
 /* harmony export */   LINK_TEXT_MOST: () => (/* binding */ LINK_TEXT_MOST),
 /* harmony export */   URL_MOST_BYTES: () => (/* binding */ URL_MOST_BYTES),
@@ -8878,6 +9247,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   composeLink: () => (/* binding */ composeLink),
 /* harmony export */   innError: () => (/* binding */ innError),
 /* harmony export */   innHolder: () => (/* binding */ innHolder),
+/* harmony export */   isEmailAddress: () => (/* binding */ isEmailAddress),
 /* harmony export */   isLinkAddress: () => (/* binding */ isLinkAddress),
 /* harmony export */   isWebAddress: () => (/* binding */ isWebAddress),
 /* harmony export */   readLink: () => (/* binding */ readLink),
@@ -8953,6 +9323,30 @@ function shortAddress(value, most = 40) {
   const rest = `${url.pathname === '/' ? '' : url.pathname}${url.search}${url.hash}`;
   const text = `${host}${url.port ? `:${url.port}` : ''}${rest}`;
   return text.length > most ? `${text.slice(0, most - 1)}…` : text;
+} // email (admin settings study FS-7, owner decision C422): an address of one
+// mailbox, «name@example.ru» -- a local part of at most 64 characters of the
+// letters, digits and .!#$%&'*+/=?^_`{|}~- that HTML's own email check takes
+// (no dot at either end, no two dots in a row), «@», and a domain of at least
+// two labels (letters of any script, digits and inner hyphens, each at most 63),
+// at most 254 characters in all, no spaces. Trimmed on the way in; stored as
+// typed otherwise (the domain is not lower-cased: the host may).
+
+const EMAIL_MOST = 254;
+const EMAIL_LOCAL = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*$/u;
+const EMAIL_LABEL = /^[\p{L}\p{N}](?:[\p{L}\p{N}-]{0,61}[\p{L}\p{N}])?$/u;
+/** Whether a text is an email address this type stores. */
+
+function isEmailAddress(value) {
+  if (typeof value !== 'string') return false;
+  const text = value.trim();
+  if (!text || text !== value || /\s/u.test(text) || [...text].length > EMAIL_MOST) return false;
+  const at = text.lastIndexOf('@');
+  if (at < 1 || at !== text.indexOf('@')) return false;
+  const local = text.slice(0, at);
+  const domain = text.slice(at + 1);
+  if (local.length > 64 || !EMAIL_LOCAL.test(local)) return false;
+  const labels = domain.split('.');
+  return labels.length >= 2 && labels.every(label => EMAIL_LABEL.test(label)) && !/^\d+$/u.test(labels[labels.length - 1]);
 } // link: {href, text?}. href is an http(s) address, a path from the site's
 // root («/about», never «//host») or an anchor («#prices»); text is at most
 // 255 characters (Larena link@1).
@@ -9056,6 +9450,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FIELD_HOST_METHODS: () => (/* binding */ FIELD_HOST_METHODS),
+/* harmony export */   ORIGIN_LEVELS: () => (/* binding */ ORIGIN_LEVELS),
 /* harmony export */   SPEAKING_TAGS: () => (/* binding */ SPEAKING_TAGS),
 /* harmony export */   SfForm: () => (/* binding */ SfForm),
 /* harmony export */   WIDTHS: () => (/* binding */ WIDTHS),
@@ -9065,8 +9460,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   fieldWidth: () => (/* binding */ fieldWidth),
 /* harmony export */   groupFields: () => (/* binding */ groupFields),
 /* harmony export */   hasValue: () => (/* binding */ hasValue),
+/* harmony export */   linkLeaves: () => (/* binding */ linkLeaves),
 /* harmony export */   normalizeFields: () => (/* binding */ normalizeFields),
 /* harmony export */   optionsPage: () => (/* binding */ optionsPage),
+/* harmony export */   originLevel: () => (/* binding */ originLevel),
+/* harmony export */   readOrigin: () => (/* binding */ readOrigin),
 /* harmony export */   speaksError: () => (/* binding */ speaksError),
 /* harmony export */   ticksToAnswer: () => (/* binding */ ticksToAnswer)
 /* harmony export */ });
@@ -9076,20 +9474,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e92fd2d1a38c");
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("2a080a730149");
 /* harmony import */ var _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e5483002f3ea");
-/* harmony import */ var _helpers_form_field_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("adbddb2f4d35");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("219db2ce051d");
-/* harmony import */ var _js_choice_list_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("20014fad50c0");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("ae2fca904cab");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("75937516ef9b");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("db3a39d580e9");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, lit__WEBPACK_IMPORTED_MODULE_4__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_9__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, lit__WEBPACK_IMPORTED_MODULE_4__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_modal_js_focus__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("c8d66dd2c299");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _helpers_form_field_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("adbddb2f4d35");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("219db2ce051d");
+/* harmony import */ var _js_choice_list_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("20014fad50c0");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("ae2fca904cab");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("75937516ef9b");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("db3a39d580e9");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, lit__WEBPACK_IMPORTED_MODULE_4__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_7__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_9__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_11__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, lit__WEBPACK_IMPORTED_MODULE_4__, _field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_7__, _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_9__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__, _js_choice_list_js__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__);
 // sf-form: a form drawn from field descriptions (owner decision C182,
 // 2026-11-14; study control/research/2026-11-14-form.md, prototype
 // prototypes/form-study.html).
@@ -9110,6 +9511,8 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // From its component.json (standard simai.smart-component 1.3.15 §3, §4, §8,
 // §17.4): the settings and values are made by core/js/element-manifest.js;
 // value, valid, check-validity and reset are the aggregating form's contract.
+
+
 
 
 
@@ -9288,6 +9691,44 @@ function ticksToAnswer(field) {
   if ((field?.propertyType || field?.type || field?.dataType) !== 'boolean') return false;
   const drawn = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.fieldTemplate)(field);
   return drawn.type === 'boolean' && drawn.template === 'checkbox';
+} // Where a field's value comes from (admin settings study FS-1, owner decision
+// C422): the descriptor's `origin` -- {value, level, locked, reason} and the
+// words own, above, inherited, over the form's `origin` words. With `value`,
+// the upper level's value, the level follows the field: equal to it the value
+// is inherited, any other is the site's own. `locked` (or level locked) closes
+// the field above: read-only, the reason under it.
+
+const ORIGIN_LEVELS = Object.freeze(['own', 'inherited', 'locked']);
+/** A field's origin as given, or null: {level?, value?, hasValue, locked, reason, own, above, inherited}. */
+
+function readOrigin(field) {
+  const origin = field?.origin;
+  if (!isObject(origin)) return null;
+  const level = ORIGIN_LEVELS.includes(origin.level) ? origin.level : '';
+  return {
+    level,
+    hasValue: Object.prototype.hasOwnProperty.call(origin, 'value'),
+    value: origin.value,
+    locked: origin.locked === true || level === 'locked',
+    reason: text(origin.reason),
+    own: text(origin.own),
+    above: text(origin.above),
+    inherited: text(origin.inherited)
+  };
+}
+/**
+ * The level of a field's value now: locked when closed above; with the upper
+ * level's value, inherited while the value equals it (in the field's own
+ * type: a whole number typed as «20» is 20) and own otherwise; else the level
+ * given; '' without an origin.
+ */
+
+function originLevel(field, value) {
+  const origin = readOrigin(field);
+  if (!origin) return '';
+  if (origin.locked) return 'locked';
+  if (origin.hasValue) return same((0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.numberValue)(field, value), (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.numberValue)(field, origin.value)) ? 'inherited' : 'own';
+  return origin.level;
 }
 /** The fields as given, made safe: objects with a key and a type, each key once, width one of short, medium, full or none (s, m read as short, medium). */
 
@@ -9335,10 +9776,60 @@ function groupFields(fields, groups) {
     fields: rest
   });
   return out;
+} // The leave guard (FS-4, C422, C166 (6), C159 (6)). Every guarded form of
+// the page, on a global so that the forms of two bundles share it; one
+// question at a time for all of them.
+
+const GUARDED = Symbol.for('sf.form.guarded');
+const LEAVE_ASKED = Symbol.for('sf.form.leave-asked');
+const LEAVE_SEEN = Symbol.for('sf.form.leave-seen');
+
+const guardedForms = () => globalThis[GUARDED] ??= new Set();
+/** Whether a press on a link leaves the page: another document, or an address in it that names no element (a route). */
+
+
+function linkLeaves(anchor, doc = globalThis.document) {
+  let url;
+
+  try {
+    url = new URL(anchor.href, doc?.baseURI);
+  } catch {
+    return false;
+  }
+
+  if (!/^https?:$|^file:$/u.test(url.protocol)) return false;
+  const here = new URL(doc?.location?.href ?? url.href);
+  if (url.origin !== here.origin || url.pathname !== here.pathname || url.search !== here.search) return true;
+  if (!url.hash || url.hash === '#') return url.href !== here.href;
+  let id = url.hash.slice(1);
+
+  try {
+    id = decodeURIComponent(id);
+  } catch {
+    /* kept as written */
+  }
+
+  return !doc?.getElementById?.(id);
+} // The upper level's value in the origin line (FS-1): words in the line's text,
+// as the study draws it -- a choice is its option's label (the view would
+// draw a badge), any other type what the view draws.
+
+function originValueText(field, value, host) {
+  const options = field?.options || field?.filter?.options || field?.constraints?.options;
+
+  if (Array.isArray(options)) {
+    const option = options.find(item => String(item?.value) === String(value));
+    if (option) return String(option.label ?? option.text ?? value);
+  }
+
+  return (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.renderViewField)(field, value, host, {
+    size: '1/2'
+  });
 }
-const FormElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
+
+const FormElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__.files,
   source: 'ru',
   actions: {
     'check-validity'() {
@@ -9363,6 +9854,21 @@ const FormElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.el
     'set-errors'(args = {}) {
       const errors = isObject(args?.errors) ? args.errors : isObject(args) && !('errors' in args) ? args : {};
       return this.applyHostErrors(errors);
+    },
+
+    // FS-2, FS-3: the host's answer to a save it took over (it cancelled
+    // submit): the values are saved -- clean, not busy, «Сохранено в HH:MM».
+    saved(args = {}) {
+      if (!this.isEditing || this.isAnswer || this.isInstant) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('mode');
+      this.markSaved(text(args?.at));
+      return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)();
+    },
+
+    // FS-4: a host's own route asks before it leaves: applied when the form
+    // has no unsaved changes or the person chose «Не сохранять» (the fields
+    // are back to the saved state), refused {reason: stayed} otherwise.
+    async 'confirm-leave'() {
+      return (await this.askLeave()) ? (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)() : (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('stayed');
     }
 
   }
@@ -9399,7 +9905,17 @@ class SfForm extends FormElement {
     this._pressing = false;
     this._held = new Set();
 
-    this._onSubmit = event => this.onNativeSubmit(event);
+    this._onSubmit = event => this.onNativeSubmit(event); // FS-4: the browser's own question on closing the tab, and a press on a
+    // link that leaves the page while there are unsaved changes.
+
+
+    this._onBeforeUnload = event => {
+      if (!this.guards()) return;
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    this._onLeavePress = event => this.onLeavePress(event);
 
     this._onPress = event => this.onSubmitPress(event);
 
@@ -9436,6 +9952,10 @@ class SfForm extends FormElement {
     this.addEventListener('pointerdown', this._onPressStart, true);
     this.addEventListener('mousedown', this._onPressStart, true);
     this.addEventListener('sf-after-render', this._onControlDrawn);
+    guardedForms().add(this);
+    globalThis.addEventListener?.('beforeunload', this._onBeforeUnload); // On the window in capture, before a menu or a page's router hears it.
+
+    globalThis.addEventListener?.('click', this._onLeavePress, true);
   }
 
   onDisconnected() {
@@ -9448,7 +9968,118 @@ class SfForm extends FormElement {
     this.removeEventListener('pointerdown', this._onPressStart, true);
     this.removeEventListener('mousedown', this._onPressStart, true);
     this.removeEventListener('sf-after-render', this._onControlDrawn);
+    guardedForms().delete(this);
+    globalThis.removeEventListener?.('beforeunload', this._onBeforeUnload);
+    globalThis.removeEventListener?.('click', this._onLeavePress, true);
+    this._releaseBusy?.();
+    this._releaseBusy = null;
     this.releaseChecks();
+  } // ---------------------------------------------------------------- leaving (FS-4)
+  // Whether leaving now would lose changes this form guards: guard on, edited,
+  // changed and not saved.
+
+
+  guards() {
+    return this.guard === true && this.isConnected && this._dirty && this.isEditing && !this.isInstant && !this.isAnswer;
+  } // A press on a link that leaves the page (another page, or a route the page
+  // draws in place) while a guarded form holds changes: the press is held --
+  // neither the menu nor the page's router hears it -- the cancelable leave
+  // event goes out, and unless a host took it the form asks «Уйти без
+  // сохранения?». «Не сохранять» puts the fields back and presses the link
+  // again; «Продолжить правку» stays. A link inside the form, one opening in
+  // another tab or downloading, or a press with a modifier key passes.
+
+
+  onLeavePress(event) {
+    if (event[LEAVE_SEEN] || !this.guards()) return;
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const anchor = event.composedPath?.().find(node => node?.localName === 'a' && node.hasAttribute?.('href'));
+    if (!anchor || this.contains(anchor) || anchor.hasAttribute('download')) return;
+    const target = anchor.getAttribute('target');
+    if (target && target !== '_self') return;
+    if (!linkLeaves(anchor, this.ownerDocument)) return;
+    event[LEAVE_SEEN] = true;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const href = anchor.href;
+    if (!this.sfEmit('leave', {
+      href
+    }, {
+      cancelable: true
+    })) return;
+    this.askLeave().then(left => {
+      if (left && anchor.isConnected) anchor.click();
+    });
+  } // The question of C159 (6) in a question window: «Не сохранять», red,
+  // first; «Продолжить правку», quiet, with the focus. One at a time for the
+  // page; true when nothing is lost or the person chose not to save, and then
+  // every guarded form's changes are dropped.
+
+
+  askLeave() {
+    const dirty = [...guardedForms()].filter(form => form.isConnected && form._dirty && form.isEditing && !form.isInstant && !form.isAnswer);
+    if (!dirty.includes(this) && this._dirty && this.isEditing && !this.isInstant && !this.isAnswer) dirty.push(this);
+    if (!dirty.length) return Promise.resolve(true);
+    if (globalThis[LEAVE_ASKED]) return globalThis[LEAVE_ASKED];
+    const doc = this.ownerDocument;
+    const asked = new Promise(resolve => {
+      const question = doc.createElement('sf-modal');
+      question.setAttribute('size', 'question');
+      question.setAttribute('initial-focus', 'safe');
+      question.setAttribute('data-sf-form-leave', '');
+      question.setAttribute('heading', this.sfWord('leave-heading'));
+      const body = doc.createElement('p');
+      body.setAttribute('slot', 'content');
+      body.className = 'sf-form-leave-text';
+      body.textContent = this.sfWord('leave-text');
+      const footer = doc.createElement('div');
+      footer.setAttribute('slot', 'footer');
+      const discard = doc.createElement('sf-button');
+      discard.setAttribute('status', 'danger');
+      discard.setAttribute('text', this.sfWord('leave-discard'));
+      discard.setAttribute('data-sf-form-leave-answer', 'discard');
+      const keep = doc.createElement('sf-button');
+      keep.setAttribute('appearance', 'ghost');
+      keep.setAttribute('scheme', 'on-surface');
+      keep.setAttribute('text', this.sfWord('leave-keep'));
+      keep.setAttribute('data-sf-modal-close', '');
+      keep.setAttribute('data-sf-form-leave-answer', 'keep');
+      footer.append(discard, keep);
+      question.append(body, footer);
+      let answer = null;
+
+      const settle = left => {
+        if (answer !== null) return;
+        answer = left;
+        globalThis[LEAVE_ASKED] = null;
+        if (left) for (const form of dirty) form.restore();
+        resolve(left);
+      };
+
+      discard.addEventListener('click', () => {
+        settle(true);
+        question.close?.({
+          reason: 'api'
+        });
+      });
+      question.addEventListener('sf-modal-close', () => settle(false));
+      question.addEventListener('sf-modal-closed', () => {
+        settle(false);
+        question.remove();
+      }); // The window is fetched when the question opens (lazy relations, GB18 L3):
+      // the press waits for it, and opens it as it is if the wait gives up. Its
+      // two answers are sf-button, a relation the form draws with already.
+
+      const opened = globalThis.SF?.Loader?.ensure?.(['sf-modal'], {
+        press: true
+      });
+      Promise.resolve(opened).catch(() => {}).then(() => {
+        question.setAttribute('open', '');
+        doc.body.append(question);
+      });
+    });
+    globalThis[LEAVE_ASKED] = asked;
+    return asked;
   } // The ids the template writes come from the instance path (§7.1.1), never
   // from a counter.
 
@@ -9511,7 +10142,9 @@ class SfForm extends FormElement {
 
     this._applied.clear();
 
-    this.forget();
+    this.forget(); // The host's answer to a save it took over (FS-2): the form is not busy.
+
+    if (this.busy) this.busy = false;
     this.requestComponentUpdate('value');
   }
 
@@ -9559,7 +10192,11 @@ class SfForm extends FormElement {
 
 
   conditioned(field) {
-    if (!field?.when) return field;
+    // A field closed above (FS-1) is read-only whatever its conditions say.
+    const locked = readOrigin(field)?.locked === true;
+    if (!field?.when) return locked && field.readonly !== true ? { ...field,
+      readonly: true
+    } : field;
     const {
       visible,
       required,
@@ -9568,7 +10205,7 @@ class SfForm extends FormElement {
     return { ...field,
       visible,
       required,
-      readonly: field.readonly === true || !enabled
+      readonly: field.readonly === true || !enabled || locked
     };
   } // The field of a key as it stands now (its conditions applied).
 
@@ -9597,8 +10234,16 @@ class SfForm extends FormElement {
   }
 
   get isEditing() {
-    if (this.isAnswer) return ANSWERING.has(this.answerState);
+    if (this.isAnswer) return ANSWERING.has(this.answerState); // A form without the right to change it (FS-5, C348) is read, never edited.
+
+    if (this.isReadOnly) return false;
     return this.mode !== 'view';
+  } // readonly (FS-5): the values as text, no «Изменить», no «Сохранить», the
+  // reason where the buttons stand. Not for apply answer (its own states).
+
+
+  get isReadOnly() {
+    return this.readonly === true && !this.isAnswer;
   } // apply answer: a form a person answers once (C291 (3)); mode is not read.
 
 
@@ -9607,7 +10252,7 @@ class SfForm extends FormElement {
   }
 
   get answerState() {
-    return _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_7__.CONFIRM_STATES.includes(this.state) ? this.state : 'open';
+    return _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_9__.CONFIRM_STATES.includes(this.state) ? this.state : 'open';
   }
 
   get isInstant() {
@@ -9717,7 +10362,9 @@ class SfForm extends FormElement {
 
     this._hostErrors.delete(key);
 
-    this.setDirty(!same(this.typed(this._values), this.typed(this._saved)));
+    this.setDirty(!same(this.typed(this._values), this.typed(this._saved))); // «Сохранено в HH:MM» gives way to the next change (FS-3).
+
+    if (this.savedAt) this.savedAt = '';
     this.sfEmit('input', {
       key,
       value
@@ -9819,7 +10466,7 @@ class SfForm extends FormElement {
           label: field.label
         }
       }) : '';
-      return (0,_helpers_form_field_js__WEBPACK_IMPORTED_MODULE_6__.validityWords)(control) || control.validationMessage || '';
+      return (0,_helpers_form_field_js__WEBPACK_IMPORTED_MODULE_8__.validityWords)(control) || control.validationMessage || '';
     }
 
     return '';
@@ -9880,6 +10527,9 @@ class SfForm extends FormElement {
   }
 
   applyHostErrors(errors) {
+    if (this.isReadOnly) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('readonly'); // The host's answer to a save it took over (FS-2): the form is not busy.
+
+    if (this.busy) this.busy = false;
     const shown = new Set(this.list.map(field => field.key));
     const entries = Object.entries(errors).map(([key, message]) => [text(key), text(message)]).filter(([key, message]) => key && message);
     if (entries.length && !entries.some(([key]) => shown.has(key))) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('missing'); // apply answer: the host's errors answer a Send that could not be taken;
@@ -9979,23 +10629,63 @@ class SfForm extends FormElement {
   submit() {
     if (this.isAnswer) return this.answer(true);
     if (!this.isEditing || this.isInstant) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('mode');
+    if (this.busy) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('busy');
     if (!this.checkFields({
       focus: true
     })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('invalid');
-    const value = this.value;
+    const value = this.value; // The keys whose value is the upper level's again (FS-1): the host may
+    // store them as inherited rather than as an own value equal to it.
+
+    const inherited = this.list.filter(field => field.key in value && originLevel(field, value[field.key]) === 'inherited').map(field => field.key);
     if (!this.sfEmit('submit', {
+      value,
+      inherited
+    }, {
+      cancelable: true
+    })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('prevented');
+    this.markSaved();
+    return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)();
+  } // The values are the saved state now (a submit not cancelled, or the host's
+  // `saved` after a save it took over): clean, not busy, «Сохранено в HH:MM»
+  // in the state line (FS-2, FS-3); a form opened from view returns to view.
+
+
+  markSaved(at = '') {
+    this._saved = clone(this._values);
+
+    this._applied.clear();
+
+    this.forget();
+    if (this.busy) this.busy = false;
+    const when = at ? new Date(at) : new Date();
+    this.savedAt = Number.isNaN(when.getTime()) ? new Date().toISOString() : when.toISOString();
+    if (this._fromView) this.toView();else this.requestComponentUpdate('saved');
+  } // «Вернуть общее» (FS-1): the field takes the upper level's value as the
+  // person's change -- dirty until «Сохранить», applied at once in an instant
+  // form -- after the cancelable reset-field event; the focus goes to the field.
+
+
+  inheritField(key) {
+    const field = this.fieldOf(key);
+    const origin = readOrigin(field);
+    if (!field || !origin?.hasValue || origin.locked || !this.isEditing || field.readonly === true || this.busy) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('mode');
+    const value = clone({
+      v: origin.value
+    }).v;
+    if (!this.sfEmit('reset-field', {
+      key,
       value
     }, {
       cancelable: true
     })) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.refused)('prevented');
-    this._saved = clone(this._values);
-    this.forget();
-    if (this._fromView) this.toView();else this.requestComponentUpdate('saved');
+    this.writeValue(key, value);
+    this.whenDrawn(() => this.focusField(key));
     return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.applied)();
   }
 
   cancel() {
     if (this.isAnswer) return this.answer(false);
+    if (this.busy) return;
     this.restore();
     this.sfEmit('cancel', {
       value: this.value
@@ -10057,6 +10747,7 @@ class SfForm extends FormElement {
   }
 
   toEdit() {
+    if (this.isReadOnly) return;
     this._fromView = true;
     this.mode = 'edit';
     this.sfHostState('data-mode', 'edit');
@@ -10182,7 +10873,24 @@ class SfForm extends FormElement {
   renderTemplateResult(templateResult) {
     const result = super.renderTemplateResult(templateResult);
     this.syncControls();
+    this.syncBusy();
     return result;
+  } // busy (FS-2, C159 (9)): while the host saves, «Сохранить» shows its
+  // loading (its colour kept), «Отмена» waits, and every field is read-only --
+  // the same hold as a window that saves; it all comes back with the answer.
+
+
+  syncBusy() {
+    const busy = this.busy === true && this.isEditing;
+
+    if (busy && !this._releaseBusy) {
+      const body = this.querySelector('.sf-form-body');
+      this._releaseBusy = (0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_6__.holdFieldsReadOnly)((0,_component_modal_js_focus__WEBPACK_IMPORTED_MODULE_6__.windowFields)(body));
+    } else if (!busy && this._releaseBusy) {
+      const release = this._releaseBusy;
+      this._releaseBusy = null;
+      release();
+    }
   } // A yes/no drawn as a checkbox has no label row (C165 (4)), and its «?»
   // went with the row (FS-6): the form hands the checkbox the same mark it
   // draws after a text field's label -- sf-help-mark size 1/2, the field's
@@ -10334,6 +11042,11 @@ class SfForm extends FormElement {
       // From two errors, or one a hidden field holds (FO3-1), the summary.
       errorList: editing && (this._submitted && errors.length + hiddenErrors.length > 1 || hiddenErrors.length) ? [...errors, ...hiddenErrors] : null,
       dirty: answer ? false : this._dirty,
+      // FS-2, FS-3, FS-5.
+      busy: this.busy === true && editing && !answer,
+      saved: !answer && !this._dirty && editing ? this.savedText() : '',
+      // The reason line, not readonly: the template's context key readonly would read the getter's name (template-context).
+      readonlyLine: this.isReadOnly ? text(this.readonlyReason) || this.sfWord('readonly-reason') : '',
       words: {
         send: word('send'),
         requiredNote: word('required-note'),
@@ -10347,6 +11060,29 @@ class SfForm extends FormElement {
         })
       },
       rootClass: this.getRootClass()
+    });
+  } // «Сохранено в 14:35» (FS-3): the time of the last save in the page's
+  // language, the hours and minutes of the reader's clock; '' without one.
+
+
+  savedText() {
+    const at = this.savedAt ? new Date(this.savedAt) : null;
+    if (!at || Number.isNaN(at.getTime())) return '';
+    let time;
+
+    try {
+      time = new Intl.DateTimeFormat((0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_7__.pageLocale)(this), {
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(at);
+    } catch {
+      time = `${String(at.getHours()).padStart(2, '0')}:${String(at.getMinutes()).padStart(2, '0')}`;
+    }
+
+    return this.sfWord('saved-at', {
+      vars: {
+        time
+      }
     });
   } // apply answer: the state, the line under the fields and its glyph (the
   // confirm surface's: schedule, check_circle, timer_off).
@@ -10366,7 +11102,7 @@ class SfForm extends FormElement {
       pending: state === 'pending',
       pressed: state === 'pending' ? this._pressed : null,
       text: line ? this.sfWord(line) : '',
-      icon: line ? _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_7__.CONFIRM_ICON[state] : ''
+      icon: line ? _helpers_confirm_surface_js__WEBPACK_IMPORTED_MODULE_9__.CONFIRM_ICON[state] : ''
     };
   } // The value in the read view; an empty one says the quiet word of
   // sf-list-description (C33: «Не указан», en «Not set»; one word in both
@@ -10419,7 +11155,7 @@ class SfForm extends FormElement {
         size
       }) ?? null;
     } else if (editing) {
-      control = (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_9__.isListChoice)(field) ? (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_9__.renderChoiceList)(field, value, host) : (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.renderEditField)(field, value, host, this.renderOptions()); // A control the renderers cannot build here (a picker nobody pages)
+      control = (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_11__.isListChoice)(field) ? (0,_js_choice_list_js__WEBPACK_IMPORTED_MODULE_11__.renderChoiceList)(field, value, host) : (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.renderEditField)(field, value, host, this.renderOptions()); // A control the renderers cannot build here (a picker nobody pages)
       // shows the value it holds, read-only, as the renderers' own fallback.
 
       if (control === null || control === undefined) control = (0,_field_renderers_index_js__WEBPACK_IMPORTED_MODULE_5__.renderViewField)(field, value, host, size === '1/2' ? {
@@ -10457,12 +11193,70 @@ class SfForm extends FormElement {
       errorId: `${id}--error-${field.key}`,
       width: field.width,
       control,
+      origin: this.originContext(field, value, host, editing),
       focus: () => this.focusField(field.key)
     };
+  } // The line under a field that says where its value comes from (FS-1,
+  // C422): only an own value -- «Своё для simai.ru · у всех сайтов: Москва»
+  // and «Вернуть общее» while editing -- and a field closed above, with its
+  // reason. An inherited value says the host's words when it gives them («Как
+  // у всех сайтов»), nothing by default. None in a read-only form (FS-5: the
+  // reason line says why for the whole form).
+
+
+  originContext(field, value, host, editing) {
+    const origin = readOrigin(field);
+    if (!origin || this.isReadOnly || this.isAnswer) return null;
+    const words = isObject(this.origin) ? this.origin : {};
+    const level = originLevel(field, value);
+
+    if (level === 'locked') {
+      return {
+        level,
+        lead: origin.reason || text(words.locked) || this.sfWord('origin-locked'),
+        upper: null,
+        reset: null
+      };
+    }
+
+    if (level === 'own') {
+      let upper = null;
+
+      if (origin.hasValue) {
+        const shown = originValueText(field, origin.value, host);
+        upper = {
+          above: origin.above || text(words.above) || this.sfWord('origin-above'),
+          value: shown === null || shown === undefined || shown === lit__WEBPACK_IMPORTED_MODULE_4__.nothing || shown === '' ? this.sfWord('empty-value') : shown
+        };
+      }
+
+      const reset = editing && origin.hasValue && field.readonly !== true ? {
+        text: this.sfWord('origin-reset'),
+        press: () => this.inheritField(field.key)
+      } : null;
+      return {
+        level,
+        lead: origin.own || text(words.own) || this.sfWord('origin-own'),
+        upper,
+        reset
+      };
+    }
+
+    if (level === 'inherited') {
+      const quiet = origin.inherited || text(words.inherited);
+      return quiet ? {
+        level,
+        lead: quiet,
+        upper: null,
+        reset: null
+      } : null;
+    }
+
+    return null;
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_8__.renderFormTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_10__.renderFormTemplate)(this.templateContext());
   }
 
 }
@@ -10619,6 +11413,14 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 //   when the buttons go. pending locks the fields and the pressed button
 //   waits; accepted is the read view with the line «Отправлено» and its glyph,
 //   no «Изменить»; expired is the line alone; declined draws nothing.
+// - Under a field whose descriptor says where its value comes from (FS-1,
+//   C422), the origin line: an own value with the upper level's value and
+//   «Вернуть общее» (a plain button, 1/3), or the reason a field is closed
+//   above; a polite status, so the line that appears after a change is heard.
+// - busy (FS-2): «Сохранить» shows its loading, «Отмена» waits, the form is
+//   aria-busy. After a save the state line says «Сохранено в 14:35» (FS-3)
+//   until the next change. readonly (FS-5): no buttons, the reason line in
+//   their place.
 
 function labelRow(field) {
   if (!field.labelRow) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
@@ -10628,11 +11430,21 @@ function labelRow(field) {
   </div>`;
 }
 
+function originLine(origin) {
+  if (!origin) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-origin" data-level=${origin.level} role="status">
+    <span class="sf-form-origin-text">${origin.lead}${origin.upper ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)` · ${origin.upper.above}: <b class="sf-form-origin-value">${origin.upper.value}</b>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</span>
+    ${origin.reset ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button class="sf-form-origin-reset" appearance="plain" size="1/3" text=${origin.reset.text}
+      @click=${origin.reset.press}></sf-button>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+  </div>`;
+}
+
 function fieldBlock(field) {
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-field" id=${field.id} data-key=${field.key} data-width=${field.width || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-field" id=${field.id} data-key=${field.key} data-width=${field.width || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-origin=${field.origin?.level || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
     ${labelRow(field)}
     <div class="sf-form-control">${field.control}</div>
     ${field.error ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-form-error" id=${field.errorId}>${field.error}</p>` : field.hint ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-form-hint" id=${field.hintId}>${field.hint}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    ${originLine(field.origin)}
   </div>`;
 }
 
@@ -10680,6 +11492,12 @@ function footerBlock(context) {
   if (context.instant) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   if (context.answer) return answerFooter(context);
 
+  if (context.readonlyLine) {
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-footer">
+      <p class="sf-form-state sf-form-reason">${context.readonlyLine}</p>
+    </div>`;
+  }
+
   if (!context.editing) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-footer">
       <sf-button class="sf-form-edit" appearance="outline" scheme="primary" text=${context.words.edit}
@@ -10689,11 +11507,12 @@ function footerBlock(context) {
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-footer" data-sticky=${context.footer === 'sticky' ? '' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
     <div class="sf-form-actions">
-      <sf-button class="sf-form-submit" scheme="primary" size=${context.size === '1/2' ? '1/2' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} native-type="submit" text=${context.words.submit}></sf-button>
+      <sf-button class="sf-form-submit" scheme="primary" size=${context.size === '1/2' ? '1/2' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} native-type="submit" text=${context.words.submit}
+        ?loading=${context.busy}></sf-button>
       <sf-button class="sf-form-cancel" appearance="ghost" scheme="on-surface" size=${context.size === '1/2' ? '1/2' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${context.words.cancel}
-        @click=${() => context.component.cancel()}></sf-button>
+        ?disabled=${context.busy} @click=${() => context.component.cancel()}></sf-button>
     </div>
-    <p class="sf-form-state" role="status">${context.dirty ? context.words.unsaved : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</p>
+    <p class="sf-form-state" role="status">${context.dirty ? context.words.unsaved : context.saved || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}</p>
   </div>`;
 }
 
@@ -10703,7 +11522,8 @@ function renderFormTemplate(context) {
     aria-label=${context.label || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     data-labels=${context.labels}
     data-apply=${context.answer ? 'answer' : context.instant ? 'instant' : 'submit'}
-    data-size=${context.size === '1/2' ? '1/2' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
+    data-size=${context.size === '1/2' ? '1/2' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+    aria-busy=${context.busy ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>
     ${context.editing && context.requiredNote ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-form-note">${context.words.requiredNote}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ${summaryBlock(context)}
     ${context.answer && !context.groups.length ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-form-body" ?inert=${Boolean(context.answer?.pending)}>${context.groups.map(groupBlock)}</div>`}
@@ -13278,21 +14098,21 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "f050502c25f8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","condition":"Condition","numberOperator_eq":"Equals","numberOperator_neq":"Not equal","numberOperator_gt":"Greater than","numberOperator_gte":"At least","numberOperator_lt":"Less than","numberOperator_lte":"At most","numberOperator_between":"Between","numberOperator_empty":"Empty","numberOperator_not-empty":"Not empty","filterNumber":"Number","filterAmount":"Amount","filterPercent":"Percent","dateCondition":"Condition","dateByDayIn":"Compared by day, time zone {zone}","dateGroup_date":"Date","dateGroup_period":"Period","dateGroup_filled":"Filled","dateGroup_range":"The record\'s period","dateCondition_eq":"Exact date","dateCondition_between":"Between","dateCondition_lt":"Before","dateCondition_gt":"After","dateCondition_gte":"On or after","dateCondition_lte":"On or before","dateCondition_lastDays":"Last N days","dateCondition_nextDays":"Next N days","dateCondition_empty":"Empty","dateCondition_notEmpty":"Not empty","dateCondition_overlaps":"Runs in","dateCondition_within":"Entirely in","dateCondition_starts":"Starts in","dateCondition_ends":"Ends in","dateCondition_contains":"Runs on the day","datePeriod_today":"Today","datePeriod_yesterday":"Yesterday","datePeriod_thisWeek":"This week","datePeriod_lastWeek":"Last week","datePeriod_last7Days":"Last 7 days","datePeriod_thisMonth":"This month","datePeriod_lastMonth":"Last month","datePeriod_thisYear":"This year","datePeriod_tomorrow":"Tomorrow","datePeriod_nextWeek":"Next week","datePeriod_nextMonth":"Next month","datePeriodIn_today":"today","datePeriodIn_yesterday":"yesterday","datePeriodIn_thisWeek":"this week","datePeriodIn_lastWeek":"last week","datePeriodIn_last7Days":"in the last 7 days","datePeriodIn_thisMonth":"this month","datePeriodIn_lastMonth":"last month","datePeriodIn_thisYear":"this year","datePeriodIn_tomorrow":"tomorrow","datePeriodIn_nextWeek":"next week","datePeriodIn_nextMonth":"next month","dateChip":"{field}: {condition}","dateChip_lt":"before {date}","dateChip_gt":"after {date}","dateChip_gte":"on or after {date}","dateChip_lte":"on or before {date}","dateChip_lastDays":{"one":"in the last day","other":"in the last {n} days"},"dateChip_nextDays":{"one":"in the next day","other":"in the next {n} days"},"dateChip_empty":"empty","dateChip_notEmpty":"not empty","dateChip_overlaps":"runs {when}","dateChip_within":"entirely {when}","dateChip_withinDays":"entirely within {when}","dateChip_starts":"starts {when}","dateChip_ends":"ends {when}","dateChip_contains":"runs on {date}","dateCountLast":"Days, today included","dateCountNext":"Days ahead, today included","dateCountUnit":"days","dateValueDate":"Date","dateValueDay":"Day","dateValuePeriod":"Period","dateWhen":"When","dateOwnDays":"Own dates","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","phoneExtension":"ext.","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":{"one":"At most {n} digit after the point","other":"At most {n} digits after the point"},"fractionNone":"A whole amount, no digits after the point","boundBetween":"From {min} to {max}","boundAtLeast":"At least {min}","boundAtMost":"At most {max}","currency":"Currency","chooseCurrency":"Choose a currency","rowCount":{"one":"{n} row","other":"{n} rows"},"filterApply":"Apply","filterReset":"Reset","operatorAny":"Any date","operatorBetween":"Range","operatorContains":"Contains","operatorEq":"Exactly","operatorGt":"Greater than","operatorGte":"Greater or equal","operatorIn":"In the list","operatorLt":"Less than","operatorLte":"Less or equal","operatorMonth":"This month","operatorStartsWith":"Starts with","operatorToday":"Today","operatorWeek":"This week","type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-meter":"Share of a limit","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)","type-phone":"Phone","type-password":"Password","type-complex":"Compound","wholeNumber":"A whole number, no digits after the point","template-string-input":"Input","template-phone-phone_input":"Phone with country code","template-password-input":"Hidden input","template-text-textarea":"Multiline input","template-html-editor":"Editor","template-number-input":"Number input","template-number-stepper":"«−» and «+» buttons","template-number-scale":"Level scale","template-number-meter":"Share of a limit","template-date-datepicker":"Date with a calendar","template-datetime-datepicker":"Date and time","template-time-timepicker":"Time","template-boolean-switch":"Switch","template-boolean-checkbox":"Checkbox","template-boolean-buttons":"«Yes / No» buttons","template-choice-dropdown":"Dropdown","template-choice-buttons":"Buttons","template-choices-dropdown":"Dropdown","template-choices-checklist":"Checklist","template-choices-badges":"Badges","template-user-reference_picker":"User picker","template-record-reference_picker":"Record picker","template-relation-reference_picker":"Record picker","template-lookup-source_picker":"Reference list picker","template-file-upload":"File upload","template-file-image":"Image","template-file-image_card":"Image card","template-file-image_list":"Image list","template-color-color_picker":"Colour picker","template-include-script":"Code","template-money-money_input":"Amount with currency","template-percent-input":"Number input","template-items-rows":"Rows table","template-complex-parts":"Parts","template-ru.requisites-requisites":"Requisites block","type-url":"Web address","type-link":"Link with text","type-ru.inn":"INN (Russian taxpayer number)","template-url-input":"Address input","template-link-link":"Link","template-ru.inn-input":"Digits input","template-percent-stepper":"«−» and «+» buttons","template-percent-scale":"Level scale","template-percent-meter":"Share of a limit","urlInvalid":"Enter a full address: https://…","linkAddress":"Address","linkText":"Link text","linkNeedsAddress":"Enter the address","linkInvalid":"An address is https://…, a site path /… or #anchor","linkTextLong":"No more than 255 characters","innDigits":"An INN is 10 digits (an organisation) or 12 (a person)","innOrganization":"An organisation’s INN is 10 digits","innPerson":"A person’s INN is 12 digits","innChecksum":"The INN check digit does not match","dateGroup_time":"Time","timeCondition_eq":"Equals","timeValue":"Time","operatorAnyOf":"any of","operatorAllOf":"all of","operatorNoneOf":"none of","operatorEmpty":"not set","operatorFilled":"set","filterNotSet":"Not set","filterCondition":"Condition","operatorContainsWord":"contains","operatorStartsWithWord":"starts with","operatorEqualWord":"equals","operatorMoreWord":"more than","operatorLessWord":"less than","operatorFromTo":"from – to","operatorMoreOrEqualWord":"at least","operatorLessOrEqualWord":"at most","rangeFromWord":"from","rangeToWord":"to","filterTextPlaceholder":"Text","filterRemoveCondition":"Remove condition"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","condition":"Condition","numberOperator_eq":"Equals","numberOperator_neq":"Not equal","numberOperator_gt":"Greater than","numberOperator_gte":"At least","numberOperator_lt":"Less than","numberOperator_lte":"At most","numberOperator_between":"Between","numberOperator_empty":"Empty","numberOperator_not-empty":"Not empty","filterNumber":"Number","filterAmount":"Amount","filterPercent":"Percent","dateCondition":"Condition","dateByDayIn":"Compared by day, time zone {zone}","dateGroup_date":"Date","dateGroup_period":"Period","dateGroup_filled":"Filled","dateGroup_range":"The record\'s period","dateCondition_eq":"Exact date","dateCondition_between":"Between","dateCondition_lt":"Before","dateCondition_gt":"After","dateCondition_gte":"On or after","dateCondition_lte":"On or before","dateCondition_lastDays":"Last N days","dateCondition_nextDays":"Next N days","dateCondition_empty":"Empty","dateCondition_notEmpty":"Not empty","dateCondition_overlaps":"Runs in","dateCondition_within":"Entirely in","dateCondition_starts":"Starts in","dateCondition_ends":"Ends in","dateCondition_contains":"Runs on the day","datePeriod_today":"Today","datePeriod_yesterday":"Yesterday","datePeriod_thisWeek":"This week","datePeriod_lastWeek":"Last week","datePeriod_last7Days":"Last 7 days","datePeriod_thisMonth":"This month","datePeriod_lastMonth":"Last month","datePeriod_thisYear":"This year","datePeriod_tomorrow":"Tomorrow","datePeriod_nextWeek":"Next week","datePeriod_nextMonth":"Next month","datePeriodIn_today":"today","datePeriodIn_yesterday":"yesterday","datePeriodIn_thisWeek":"this week","datePeriodIn_lastWeek":"last week","datePeriodIn_last7Days":"in the last 7 days","datePeriodIn_thisMonth":"this month","datePeriodIn_lastMonth":"last month","datePeriodIn_thisYear":"this year","datePeriodIn_tomorrow":"tomorrow","datePeriodIn_nextWeek":"next week","datePeriodIn_nextMonth":"next month","dateChip":"{field}: {condition}","dateChip_lt":"before {date}","dateChip_gt":"after {date}","dateChip_gte":"on or after {date}","dateChip_lte":"on or before {date}","dateChip_lastDays":{"one":"in the last day","other":"in the last {n} days"},"dateChip_nextDays":{"one":"in the next day","other":"in the next {n} days"},"dateChip_empty":"empty","dateChip_notEmpty":"not empty","dateChip_overlaps":"runs {when}","dateChip_within":"entirely {when}","dateChip_withinDays":"entirely within {when}","dateChip_starts":"starts {when}","dateChip_ends":"ends {when}","dateChip_contains":"runs on {date}","dateCountLast":"Days, today included","dateCountNext":"Days ahead, today included","dateCountUnit":"days","dateValueDate":"Date","dateValueDay":"Day","dateValuePeriod":"Period","dateWhen":"When","dateOwnDays":"Own dates","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","phoneExtension":"ext.","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":{"one":"At most {n} digit after the point","other":"At most {n} digits after the point"},"fractionNone":"A whole amount, no digits after the point","boundBetween":"From {min} to {max}","boundAtLeast":"At least {min}","boundAtMost":"At most {max}","currency":"Currency","chooseCurrency":"Choose a currency","rowCount":{"one":"{n} row","other":"{n} rows"},"filterApply":"Apply","filterReset":"Reset","operatorAny":"Any date","operatorBetween":"Range","operatorContains":"Contains","operatorEq":"Exactly","operatorGt":"Greater than","operatorGte":"Greater or equal","operatorIn":"In the list","operatorLt":"Less than","operatorLte":"Less or equal","operatorMonth":"This month","operatorStartsWith":"Starts with","operatorToday":"Today","operatorWeek":"This week","type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-meter":"Share of a limit","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)","type-phone":"Phone","type-password":"Password","type-complex":"Compound","wholeNumber":"A whole number, no digits after the point","template-string-input":"Input","template-phone-phone_input":"Phone with country code","template-password-input":"Hidden input","template-text-textarea":"Multiline input","template-html-editor":"Editor","template-number-input":"Number input","template-number-stepper":"«−» and «+» buttons","template-number-scale":"Level scale","template-number-meter":"Share of a limit","template-date-datepicker":"Date with a calendar","template-datetime-datepicker":"Date and time","template-time-timepicker":"Time","template-boolean-switch":"Switch","template-boolean-checkbox":"Checkbox","template-boolean-buttons":"«Yes / No» buttons","template-choice-dropdown":"Dropdown","template-choice-buttons":"Buttons","template-choices-dropdown":"Dropdown","template-choices-checklist":"Checklist","template-choices-badges":"Badges","template-user-reference_picker":"User picker","template-record-reference_picker":"Record picker","template-relation-reference_picker":"Record picker","template-lookup-source_picker":"Reference list picker","template-file-upload":"File upload","template-file-image":"Image","template-file-image_card":"Image card","template-file-image_list":"Image list","template-color-color_picker":"Colour picker","template-include-script":"Code","template-money-money_input":"Amount with currency","template-percent-input":"Number input","template-items-rows":"Rows table","template-complex-parts":"Parts","template-ru.requisites-requisites":"Requisites block","type-url":"Web address","type-email":"Email address","type-link":"Link with text","type-ru.inn":"INN (Russian taxpayer number)","template-url-input":"Address input","template-link-link":"Link","template-ru.inn-input":"Digits input","template-percent-stepper":"«−» and «+» buttons","template-percent-scale":"Level scale","template-percent-meter":"Share of a limit","urlInvalid":"Enter a full address: https://…","emailInvalid":"Enter an email address: name@example.com","linkAddress":"Address","linkText":"Link text","linkNeedsAddress":"Enter the address","linkInvalid":"An address is https://…, a site path /… or #anchor","linkTextLong":"No more than 255 characters","innDigits":"An INN is 10 digits (an organisation) or 12 (a person)","innOrganization":"An organisation’s INN is 10 digits","innPerson":"A person’s INN is 12 digits","innChecksum":"The INN check digit does not match","dateGroup_time":"Time","timeCondition_eq":"Equals","timeValue":"Time","operatorAnyOf":"any of","operatorAllOf":"all of","operatorNoneOf":"none of","operatorEmpty":"not set","operatorFilled":"set","filterNotSet":"Not set","filterCondition":"Condition","operatorContainsWord":"contains","operatorStartsWithWord":"starts with","operatorEqualWord":"equals","operatorMoreWord":"more than","operatorLessWord":"less than","operatorFromTo":"from – to","operatorMoreOrEqualWord":"at least","operatorLessOrEqualWord":"at most","rangeFromWord":"from","rangeToWord":"to","filterTextPlaceholder":"Text","filterRemoveCondition":"Remove condition","template-email-input":"Email field"}}');
 
 /***/ },
 
 /***/ "ae2fca904cab"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.form","tag":"sf-form","version":"1.14.2","kind":"leaf","settings":{"fields":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"propertyType":{"type":"string"},"variant":{"type":"string"},"template":{"type":"string"},"templateParams":{"type":"object"},"required":{"type":"boolean"},"readonly":{"type":"boolean"},"hint":{"type":"string"},"help":{"type":"string"},"width":{"type":"string","enum":["short","medium","full","s","m"]},"group":{"type":"string"},"placeholder":{"type":"string"},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"decimals":{"type":"number"},"currency":{"type":"string"},"currencies":{"type":"array"},"currencyDisplay":{"type":"string","enum":["symbol","code","name"]},"holder":{"type":"string","enum":["any","organization","person"]},"defaultCountry":{"type":"string","pattern":"^[A-Za-z]{2}$"}},"required":["key","label","propertyType"]}},"default":[]},"groups":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"}},"required":["key"]}},"default":[]},"field-host":{"type":"object","default":null},"apply":{"type":"enum","values":["submit","instant","answer"],"default":"submit"},"size":{"type":"enum","values":["1","1/2"],"default":"1"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"labels":{"type":"enum","values":["top","start"],"default":"top"},"footer":{"type":"enum","values":["static","sticky"],"default":"static"},"label":{"type":"string","default":""}},"values":{"value":{"type":"object","default":{}},"mode":{"type":"enum","values":["edit","view"],"default":"edit"},"valid":{"type":"boolean"},"dirty":{"type":"boolean"}},"events":{"input":{"carries":{"key":"string","value":"any"},"x-native":false},"change":{"carries":{"key":"string","value":"any"},"x-native":false},"submit":{"carries":{"value":"object"},"cancelable":true},"answer":{"carries":{"accepted":"boolean","value":{"type":"object","optional":true}},"cancelable":true},"invalid":{"carries":{"fields":"list"}},"cancel":{"carries":{"value":"object"}}},"actions":{"check-validity":{},"reset":{},"refresh-fields":{},"set-errors":{"with":{"errors":"object"}}},"presentation":{"skeleton":{"late":["fields","groups"]}},"host-states":{"data-dirty":"boolean","data-invalid":"boolean","data-mode":"string","data-state":"string"},"css-variables":{"--sf-form-field-gap":{"type":"length","state":"default"},"--sf-form-group-gap":{"type":"length","state":"default"},"--sf-form-label-color":{"type":"color","state":"default"},"--sf-form-summary-background-color":{"type":"color","state":"default"},"--sf-form-footer-background-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.form","tag":"sf-form","version":"1.15.2","kind":"leaf","settings":{"fields":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"propertyType":{"type":"string"},"variant":{"type":"string"},"template":{"type":"string"},"templateParams":{"type":"object"},"required":{"type":"boolean"},"readonly":{"type":"boolean"},"hint":{"type":"string"},"help":{"type":"string"},"width":{"type":"string","enum":["short","medium","full","s","m"]},"group":{"type":"string"},"placeholder":{"type":"string"},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"decimals":{"type":"number"},"currency":{"type":"string"},"currencies":{"type":"array"},"currencyDisplay":{"type":"string","enum":["symbol","code","name"]},"holder":{"type":"string","enum":["any","organization","person"]},"defaultCountry":{"type":"string","pattern":"^[A-Za-z]{2}$"},"autocomplete":{"type":"string"},"origin":{"type":"object","properties":{"value":{},"level":{"type":"string","enum":["own","inherited","locked"]},"locked":{"type":"boolean"},"reason":{"type":"string"},"own":{"type":"string"},"above":{"type":"string"},"inherited":{"type":"string"}}}},"required":["key","label","propertyType"]}},"default":[]},"groups":{"type":"list","schema":{"items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"}},"required":["key"]}},"default":[]},"field-host":{"type":"object","default":null},"apply":{"type":"enum","values":["submit","instant","answer"],"default":"submit"},"size":{"type":"enum","values":["1","1/2"],"default":"1"},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"labels":{"type":"enum","values":["top","start"],"default":"top"},"footer":{"type":"enum","values":["static","sticky"],"default":"static"},"label":{"type":"string","default":""},"origin":{"type":"object","default":{}},"guard":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"readonly-reason":{"type":"string","default":""}},"values":{"value":{"type":"object","default":{}},"mode":{"type":"enum","values":["edit","view"],"default":"edit"},"valid":{"type":"boolean"},"dirty":{"type":"boolean"},"busy":{"type":"boolean","default":false},"saved-at":{"type":"string","default":""}},"events":{"input":{"carries":{"key":"string","value":"any"},"x-native":false},"change":{"carries":{"key":"string","value":"any"},"x-native":false},"submit":{"carries":{"value":"object","inherited":{"type":"list"}},"cancelable":true},"answer":{"carries":{"accepted":"boolean","value":{"type":"object","optional":true}},"cancelable":true},"invalid":{"carries":{"fields":"list"}},"cancel":{"carries":{"value":"object"}},"reset-field":{"carries":{"key":"string","value":"any"},"cancelable":true},"leave":{"carries":{"href":"string"},"cancelable":true}},"actions":{"check-validity":{},"reset":{},"refresh-fields":{},"set-errors":{"with":{"errors":"object"}},"saved":{"with":{"at":{"type":"string","optional":true}}},"confirm-leave":{}},"presentation":{"skeleton":{"late":["fields","groups"]}},"host-states":{"data-dirty":"boolean","data-invalid":"boolean","data-mode":"string","data-state":"string"},"css-variables":{"--sf-form-field-gap":{"type":"length","state":"default"},"--sf-form-group-gap":{"type":"length","state":"default"},"--sf-form-label-color":{"type":"color","state":"default"},"--sf-form-summary-background-color":{"type":"color","state":"default"},"--sf-form-footer-background-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 
 /***/ "2438c5fc3777"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"title":"Form","runtime":{"required-note":"* — required fields","submit":"Save","cancel":"Cancel","edit":"Edit","send":"Send","answer-sending":"Sending…","answer-cancelling":"Cancelling…","answer-sent":"Sent","answer-expired":"The time to answer has passed","unsaved":"You have unsaved changes","errors-title":{"one":"Fix {n} field","other":"Fix {n} fields"},"value-missing":"Fill in the field “{label}”","help-label":"More about {label}","empty-value":"Not set"},"events":{"submit":{"label":"Save"},"answer":{"label":"Answer"},"cancel":{"label":"Cancel"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"title":"Form","runtime":{"required-note":"* — required fields","submit":"Save","cancel":"Cancel","edit":"Edit","send":"Send","answer-sending":"Sending…","answer-cancelling":"Cancelling…","answer-sent":"Sent","answer-expired":"The time to answer has passed","unsaved":"You have unsaved changes","errors-title":{"one":"Fix {n} field","other":"Fix {n} fields"},"value-missing":"Fill in the field “{label}”","help-label":"More about {label}","empty-value":"Not set","origin-own":"Own value","origin-above":"shared","origin-reset":"Use shared","origin-locked":"Locked at a higher level","saved-at":"Saved at {time}","readonly-reason":"Read only","leave-heading":"Leave without saving?","leave-text":"The changes on this page will be lost.","leave-discard":"Don’t save","leave-keep":"Keep editing"},"events":{"submit":{"label":"Save"},"answer":{"label":"Answer"},"cancel":{"label":"Cancel"}}}');
 
 /***/ }
 

@@ -6120,14 +6120,17 @@ SFLoaderPlugin.prototype.loadRelationPlugins = function (name, plugins, module, 
       jsFile,
       skipJs,
       completed: {}
-    }; // An element waits for its relations before its script runs, and it used
-    // to wait for them before its script was even asked for: the admin's
-    // table was fetched after its relations had run, and the data view after
-    // the table (2026-10-13). The browser is told about the script now; it
-    // still runs after the relations, from the cache.
+    };
+  } // An element waits for its relations before its script runs, and it used
+  // to wait for them before its script was even asked for: the admin's
+  // table was fetched after its relations had run, and the data view after
+  // the table (2026-10-13). The browser is told about the script now; it
+  // still runs after the relations, from the cache. Here the element is the
+  // one being loaded: a relation that came first (isRelationPlugin) does not
+  // preload it for it (FS-10).
 
-    if (!skipJs && jsFile) this.preloadScript(jsFile);
-  }
+
+  if (!this.totalRelationsPlugins[name].canLoad && !skipJs && jsFile) this.preloadScript(jsFile);
 
   if (this.totalRelationsPlugins[name].canLoad) {
     if (this.totalRelationsPlugins[name].skipJs || !jsFile) {
@@ -6407,10 +6410,17 @@ SFLoaderPlugin.prototype.isRelationPlugin = function (pluginName, jsFile, smart,
           skipJs: typeof relationMainRule?.js === 'undefined' || relationMainRule?.js === false || relationMainSmart && smartTagsDefined(relationMainRule)
         }; // The element that waits on this relation is fetched now too (the
         // same reason as in loadRelationPlugins: a data view waiting on its
-        // table was asked for only once the table had run).
+        // table was asked for only once the table had run) -- when it is on
+        // its way. Every rule naming this relation is listed here, also one
+        // whose element was loaded by another path (ensurePlugin, a lazy
+        // relation) or is not asked for at all: a preload for it was never
+        // used and Chrome warned of it (FS-10, modal.min.js).
 
         const waiting = this.totalRelationsPlugins[relationMainPlugin];
-        if (!waiting.skipJs && waiting.jsFile) this.preloadScript(waiting.jsFile);
+
+        if (!waiting.skipJs && waiting.jsFile && this.pendingLoadPlugins.has(relationMainPlugin) && !this.loadedPlugins[relationMainPlugin]?.js) {
+          this.preloadScript(waiting.jsFile);
+        }
       }
 
       if (skipJs || !jsFile) {
@@ -7641,21 +7651,67 @@ function onceByUrl(kind, src, insert) {
   loads.set(key, load);
   load.catch(() => {
     if (loads.get(key) === load) loads.delete(key);
-  });
+  }); // Still on its way: SF.Loader.ensure(tags, {press: true}) does not give up
+  // while one is (GB18 L2).
+
+  const registry = assetRegistry();
+  if (!registry.inFlight) registry.inFlight = new Map();
+  registry.inFlight.set(key, load);
+
+  const settle = () => {
+    if (registry.inFlight.get(key) === load) registry.inFlight.delete(key);
+  };
+
+  load.then(settle, settle);
   return load;
+} // A script that waits (for its relations, for the page's language words) is
+// preloaded meanwhile, so it is fetched beside what it waits for and runs from
+// the cache (2026-10-13). A script is preloaded once per URL on the page, by
+// every Loader (the set is in the shared asset registry), and never once it has
+// been asked for, is in the page or has been fetched: such a preload nothing
+// will use (FS-10, group build 18). Before and after the window's load event
+// alike (dispatcher, group build 18: holding a preload after the load event
+// made elements added later appear 0.2-0.6 s later). Chrome checks the page's
+// link preloads about 3 s after the load event and after each quiet network
+// spell, and may warn of one added shortly before ("preloaded using link
+// preload but not used within a few seconds"): accepted as harmless, the
+// script is fetched once. The browser fetches each script once: no request of
+// our own.
+
+
+function scriptAskedFor(key) {
+  if (assetRegistry().scripts.has(key)) return true;
+  const doc = globalThis.document;
+
+  for (const script of doc?.scripts || []) {
+    if (script.src === key) return true;
+  }
+
+  try {
+    return (globalThis.performance?.getEntriesByName?.(key)?.length || 0) > 0;
+  } catch {
+    return false;
+  }
 }
 
-SFLoaderPlugin.prototype.preloadScript = function (pluginURL) {
-  if (typeof document === 'undefined' || !pluginURL) return;
-  const href = this.versionAssetUrl(pluginURL);
-  this.preloadedScripts = this.preloadedScripts || new Set();
-  if (this.preloadedScripts.has(href)) return;
-  this.preloadedScripts.add(href);
+function appendScriptPreload(href) {
   const link = document.createElement('link');
   link.rel = 'preload';
   link.as = 'script';
   link.href = href;
   document.head.append(link);
+}
+
+SFLoaderPlugin.prototype.preloadScript = function (pluginURL) {
+  if (typeof document === 'undefined' || !pluginURL) return;
+  const href = this.versionAssetUrl(pluginURL);
+  const key = assetKey(href);
+  const registry = assetRegistry();
+  if (!registry.preloaded) registry.preloaded = new Set();
+  this.preloadedScripts = registry.preloaded;
+  if (registry.preloaded.has(key) || scriptAskedFor(key)) return;
+  registry.preloaded.add(key);
+  appendScriptPreload(href);
 }; // The page's language file while it is on its way (owner decision C282,
 // 2026-11-17). English is the only language built into the components; a page
 // in any other language takes its words from a language file. When the page
@@ -8731,22 +8787,41 @@ function ensureTagName(input, rules) {
   if (name.startsWith('sf-') || rules[name]) return name;
   if (rules[`sf-${name}`] || !name.includes('-')) return `sf-${name}`;
   return name;
-} // SF.Loader.ensure(tags, {timeout}): what a component calls before it draws an
-// element it did not have in its markup -- a menu it appends to the page, an
-// editor a window shows. Each tag's code is asked for the way the page would
-// ask for it (its rule, the rule's package and relations, a lazy relation at
-// once), and the promise settles when every tag is defined or the timeout
-// (3 s by default; a non-finite one waits) has passed, with the tags that are
-// defined and those that are not: it never rejects, so a caller draws what it
-// can and falls back for the rest. A tag already defined costs nothing. The
-// fetch is asked for once per rule however many callers wait, and callers of
-// one tag share one wait. This replaces "ask the Loader, race whenDefined
-// against 3 s", copied at eleven call sites (reuse audit 2026-11-02, finding 4).
+} // The press wait of SF.Loader.ensure(tags, {press: true}) (GB18 L2): a person
+// pressed and waits for what the press opens. On a slow network the first
+// press of an admin's person menu took 18.8 s (DevTools Slow 3G; ui-control
+// evidence 2026-11-23-admin-lazy-menu-accept, LM-R2); 3 s gave it up.
+
+
+const PRESS_WAIT_MS = 30000; // The Loader's own loads (scripts and sheets) still on their way.
+
+function loadsInFlight() {
+  const registry = globalThis[Symbol.for('simai.sf.loader.assets')];
+  return registry?.inFlight ? [...registry.inFlight.values()] : [];
+} // SF.Loader.ensure(tags, {timeout, press}): what a component calls before it
+// draws an element it did not have in its markup -- a menu it appends to the
+// page, an editor a window shows. Each tag's code is asked for the way the
+// page would ask for it (its rule, the rule's package and relations, a lazy
+// relation at once), and the promise settles when every tag is defined or the
+// timeout (3 s by default; a non-finite one waits) has passed, with the tags
+// that are defined and those that are not: it never rejects, so a caller draws
+// what it can and falls back for the rest. A tag already defined costs
+// nothing. The fetch is asked for once per rule however many callers wait,
+// and callers of one tag share one wait. This replaces "ask the Loader, race
+// whenDefined against 3 s", copied at eleven call sites (reuse audit
+// 2026-11-02, finding 4).
+// press: true is a wait a person's press started (a menu, a window, a viewer
+// the press opens): the timeout is 30 s by default, a failed module still
+// settles at once, and when the timeout passes while a load of the Loader's is
+// still on its way the wait goes on until those loads settle (GB18 L2). A
+// drawing path keeps the 3 s default and its fallback.
 
 
 SFLoaderPlugin.prototype.ensure = function (tags, {
-  timeout = 3000
+  timeout,
+  press = false
 } = {}) {
+  if (timeout === undefined || timeout === null) timeout = press ? PRESS_WAIT_MS : 3000;
   const registry = globalThis.customElements;
   const rules = this.getCustomElementRules();
   const names = [...new Set((Array.isArray(tags) ? tags : [tags]).map(tag => ensureTagName(tag, rules)).filter(Boolean))];
@@ -8778,10 +8853,22 @@ SFLoaderPlugin.prototype.ensure = function (tags, {
   const all = Promise.all(waits);
   if (!Number.isFinite(timeout)) return all.then(report);
   let timer = null;
+  let done = false;
+  all.then(() => {
+    done = true;
+  });
   const expired = new Promise(settle => {
     timer = setTimeout(settle, Math.max(0, timeout));
-  });
-  return Promise.race([all, expired]).then(() => {
+  }); // A press is not given up while a load is on its way: wait for those loads
+  // (and for any they start), then report.
+
+  const untilLoadsSettle = async () => {
+    for (let flight = loadsInFlight(); press && !done && flight.length; flight = loadsInFlight()) {
+      await Promise.race([all, Promise.allSettled(flight)]);
+    }
+  };
+
+  return Promise.race([all, expired]).then(untilLoadsSettle).then(() => {
     clearTimeout(timer);
     return report();
   });

@@ -7593,10 +7593,10 @@ class SfBaseElement extends HTMLElement {
     const dataAttributes = this[storageKey] || new Map();
     const previous = target[targetStorageKey] || new Set();
     const dataAttributeNamesToRemove = [];
-    const nextKeys = new Set();
-    previous.forEach(name => {
-      target.removeAttribute(name);
-    });
+    const nextKeys = new Set(); // What the control is given this time, name -> value, in the order the
+    // host holds it and then the record's.
+
+    const next = new Map();
     Array.from(this.attributes).forEach(attribute => {
       const {
         name,
@@ -7622,13 +7622,33 @@ class SfBaseElement extends HTMLElement {
       }
 
       nextKeys.add(name);
-      target.setAttribute(name, value);
+      next.set(name, value);
     }); // The record outlives the host attribute, because the attribute is taken
     // off the host: it is what the control is given again on every render.
 
     dataAttributes.forEach((value, name) => {
       nextKeys.add(name);
-      target.setAttribute(name, value);
+      next.set(name, value);
+    }); // In place, so a forward that changes nothing changes nothing on the
+    // control (group build 18). Removing every forwarded name and setting it
+    // again moved each one behind what others had written on the control
+    // since -- sf-tabs' id, role and aria-*, the tooltip's aria-describedby --
+    // so the control's attribute order depended on who ran last, and a
+    // printed first paint held one order while a render could land in the
+    // other (ui-control control/evidence/2026-11-23-gb18-tabs, VO-1 residual:
+    // data-tooltip moved behind aria-describedby on 12 of 120 tab buttons
+    // after a forced forward). Only a name the host no longer gives is taken
+    // off; a value is written only when it differs; a new name is appended.
+
+    previous.forEach(name => {
+      if (!next.has(name)) {
+        target.removeAttribute(name);
+      }
+    });
+    next.forEach((value, name) => {
+      if (target.getAttribute(name) !== value) {
+        target.setAttribute(name, value);
+      }
     });
     target[targetStorageKey] = nextKeys;
     this[storageKey] = dataAttributes; // Where element.dataAttributes and removeHostDataAttribute() read and

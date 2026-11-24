@@ -3965,6 +3965,8 @@ const FILTER_RENDERERS = {
   // url, link (its text and its address) and ru.inn are searched as text
   // (catalogue step 3).
   url: renderTextFilterControl,
+  // email (FS-7): searched as text, as a string is.
+  email: renderTextFilterControl,
   link: renderTextFilterControl,
   'ru.inn': renderTextFilterControl,
   user: renderMultiSelectFilterControl,
@@ -4244,6 +4246,7 @@ const CELL_RENDERERS = {
   phone: renderPhoneCell,
   password: renderPasswordCell,
   url: renderUrlCell,
+  email: renderEmailCell,
   link: renderLinkCell,
   'ru.inn': renderInnCell,
   // A date in a row used to be whatever the host had stored, printed --
@@ -4604,6 +4607,7 @@ const EDIT_RENDERERS = {
   phone: renderPhoneEdit,
   password: renderPasswordEdit,
   url: renderUrlEdit,
+  email: renderEmailEdit,
   link: renderLinkEdit,
   'ru.inn': renderInnEdit,
   text: renderTextAreaEdit,
@@ -4849,6 +4853,38 @@ function renderUrlCell(field, value, host) {
   const href = scalarValue(value);
   if (!(0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isWebAddress)(href)) return typeof formatted === 'string' ? formatted : null;
   return addressLink(href, typeof formatted === 'string' ? formatted : (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.shortAddress)(href));
+} // An email address (FS-7, C422): the edit is sf-input of type email with the
+// email keyboard and the browser's address book (autocomplete email, or the
+// field's own autocomplete: «username» for a sign-in, «off»), checked as one
+// mailbox (text-types.js isEmailAddress) the way a url is; the view and the row
+// a mailto: link, an address that is not one as text.
+
+
+function renderEmailEdit(field, value, host) {
+  return checkedTextEdit(field, value, host, {
+    check: text => (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isEmailAddress)(text) ? null : 'emailInvalid',
+    inputType: 'email',
+    inputmode: 'email',
+    autocomplete: typeof field.autocomplete === 'string' && field.autocomplete.trim() ? field.autocomplete.trim() : 'email'
+  });
+}
+
+function emailLink(address, text) {
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class="sf-link" href=${`mailto:${address}`}><bdi dir="ltr">${text}</bdi></a>`;
+}
+
+function renderEmailView(field, value, host) {
+  const text = viewText(field, value, host);
+  if (!text) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const address = scalarValue(value);
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${(0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isEmailAddress)(address) ? emailLink(address, text) : text}</span>`;
+}
+
+function renderEmailCell(field, value, host) {
+  const formatted = host?.formatFieldValue?.(field, value);
+  const address = scalarValue(value);
+  if (!(0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isEmailAddress)(address)) return typeof formatted === 'string' ? formatted : typeof address === 'string' && address ? address : null;
+  return emailLink(address, typeof formatted === 'string' ? formatted : address);
 } // A link with its text (link@1): {href, text?}. The view and the row are the
 // text as a link (the address where there is no text); a site path or an
 // anchor opens in place, an http(s) address in a new tab; an address that is
@@ -7089,7 +7125,12 @@ function inDensity(content, density) {
 // The line a viewed value is drawn on: 1, or 1/2 with {size: '1/2'}, as above.
 
 
-let VIEW_LINE = '1'; // A scalar may arrive as the value itself or as {value, text}: the data and the
+let VIEW_LINE = '1'; // A value's tag or badge is the value's text (owner remark 13, View list
+// register VL-73: record tags 14 beside a value of 16): a badge takes the line
+// of the text beside it (line="text"), a tag sits inline on the field's own
+// size (sf-tag's line is one size down, the table's step); secondary by ink only.
+
+const VALUE_BADGE_LINE = 'text'; // A scalar may arrive as the value itself or as {value, text}: the data and the
 // host's own formatting of it. The consumer asked for the second and they are
 // right -- the Framework has no locale and should not acquire one through a field
 // renderer. They already hold the localised text, the viewer's locale and the
@@ -7274,13 +7315,15 @@ function renderChoiceView(field, value) {
   const options = field.options || field.filter?.options || field.constraints?.options;
   const option = Array.isArray(options) ? options.find(item => String(item?.value) === String(value)) : null;
   if (!option) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option); // A table cell is a dense place: the badge keeps the tight side room
-  // (sf-badge tight), as it had before sf-badge 1.3.0 widened the default.
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option); // On the value's own text (owner remark 13, View list register VL-73): the
+  // badge takes the text it stands beside, its size and line (line="text"),
+  // as the table's cell does since VL-54; it was a size down (14 beside a
+  // value of 16). Secondary by its ink only. A word keeps the cell's room.
 
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-badge
-                line=${VIEW_LINE}
-                tight
+                line=${VALUE_BADGE_LINE}
+                root-style=${CELL_BADGE_ROOM}
                 appearance=${badgeAppearanceOf(field)}
                 scheme=${badge.scheme}
                 hue=${badge.hue || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -7315,10 +7358,10 @@ function renderChoicesView(field, value) {
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <span class="sf-field-view flex flex-wrap items-cross-center gap-1/4 min-w-0">
             ${value.map(item => {
-    if (!badges) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" line=${VIEW_LINE} kind="default" text=${label(item)}></sf-tag>`;
+    if (!badges) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" inline size=${VIEW_LINE} kind="default" text=${label(item)}></sf-tag>`;
     const option = optionOf(item);
     const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option) : null;
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge line=${VIEW_LINE} tight appearance=${badgeAppearanceOf(field)}
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge line=${VALUE_BADGE_LINE} root-style=${CELL_BADGE_ROOM} appearance=${badgeAppearanceOf(field)}
                         scheme=${badge?.scheme || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} hue=${badge?.hue || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${label(item)}></sf-badge>`;
   })}
         </span>
@@ -7365,7 +7408,7 @@ function renderLookupView(field, value) {
   if (items.length === 1 && field.multiple !== true) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${items[0].label}</span>`;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <span class="sf-field-view flex flex-wrap items-cross-center gap-1/3 min-w-0">
-            ${items.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" line=${VIEW_LINE} kind="default" text=${item.label}></sf-tag>`)}
+            ${items.map(item => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" inline size=${VIEW_LINE} kind="default" text=${item.label}></sf-tag>`)}
         </span>
     `;
 } // The one place the view template is not a smaller edit control: a stored file
@@ -7407,6 +7450,7 @@ const VIEW_RENDERERS = {
   phone: renderPhoneView,
   password: renderPasswordView,
   url: renderUrlView,
+  email: renderEmailView,
   link: renderLinkView,
   'ru.inn': renderInnView,
   text: renderTextView,
@@ -8315,6 +8359,17 @@ entry({
     params: ['width']
   })],
   params: ['placeholder', 'required', 'readonly']
+}), // email (admin settings study FS-7, owner decision C422): one mailbox,
+// «name@example.ru», checked by text-types.js isEmailAddress; the edit
+// has the email keyboard and autocomplete (the field's own autocomplete,
+// else «email»), the view a mailto: link; searched as text.
+entry({
+  type: 'email',
+  label: typeLabel('type-email'),
+  templates: [byDefault('email', 'input', {
+    params: ['width']
+  })],
+  params: ['placeholder', 'autocomplete', 'required', 'readonly']
 }), entry({
   type: 'link',
   label: typeLabel('type-link'),
@@ -8871,6 +8926,7 @@ __webpack_async_result__();
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   EMAIL_MOST: () => (/* binding */ EMAIL_MOST),
 /* harmony export */   INN_HOLDERS: () => (/* binding */ INN_HOLDERS),
 /* harmony export */   LINK_TEXT_MOST: () => (/* binding */ LINK_TEXT_MOST),
 /* harmony export */   URL_MOST_BYTES: () => (/* binding */ URL_MOST_BYTES),
@@ -8878,6 +8934,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   composeLink: () => (/* binding */ composeLink),
 /* harmony export */   innError: () => (/* binding */ innError),
 /* harmony export */   innHolder: () => (/* binding */ innHolder),
+/* harmony export */   isEmailAddress: () => (/* binding */ isEmailAddress),
 /* harmony export */   isLinkAddress: () => (/* binding */ isLinkAddress),
 /* harmony export */   isWebAddress: () => (/* binding */ isWebAddress),
 /* harmony export */   readLink: () => (/* binding */ readLink),
@@ -8953,6 +9010,30 @@ function shortAddress(value, most = 40) {
   const rest = `${url.pathname === '/' ? '' : url.pathname}${url.search}${url.hash}`;
   const text = `${host}${url.port ? `:${url.port}` : ''}${rest}`;
   return text.length > most ? `${text.slice(0, most - 1)}…` : text;
+} // email (admin settings study FS-7, owner decision C422): an address of one
+// mailbox, «name@example.ru» -- a local part of at most 64 characters of the
+// letters, digits and .!#$%&'*+/=?^_`{|}~- that HTML's own email check takes
+// (no dot at either end, no two dots in a row), «@», and a domain of at least
+// two labels (letters of any script, digits and inner hyphens, each at most 63),
+// at most 254 characters in all, no spaces. Trimmed on the way in; stored as
+// typed otherwise (the domain is not lower-cased: the host may).
+
+const EMAIL_MOST = 254;
+const EMAIL_LOCAL = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*$/u;
+const EMAIL_LABEL = /^[\p{L}\p{N}](?:[\p{L}\p{N}-]{0,61}[\p{L}\p{N}])?$/u;
+/** Whether a text is an email address this type stores. */
+
+function isEmailAddress(value) {
+  if (typeof value !== 'string') return false;
+  const text = value.trim();
+  if (!text || text !== value || /\s/u.test(text) || [...text].length > EMAIL_MOST) return false;
+  const at = text.lastIndexOf('@');
+  if (at < 1 || at !== text.indexOf('@')) return false;
+  const local = text.slice(0, at);
+  const domain = text.slice(at + 1);
+  if (local.length > 64 || !EMAIL_LOCAL.test(local)) return false;
+  const labels = domain.split('.');
+  return labels.length >= 2 && labels.every(label => EMAIL_LABEL.test(label)) && !/^\d+$/u.test(labels[labels.length - 1]);
 } // link: {href, text?}. href is an http(s) address, a path from the site's
 // root («/about», never «//host») or an anchor («#prices»); text is at most
 // 255 characters (Larena link@1).
@@ -10396,7 +10477,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ "f050502c25f8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","condition":"Condition","numberOperator_eq":"Equals","numberOperator_neq":"Not equal","numberOperator_gt":"Greater than","numberOperator_gte":"At least","numberOperator_lt":"Less than","numberOperator_lte":"At most","numberOperator_between":"Between","numberOperator_empty":"Empty","numberOperator_not-empty":"Not empty","filterNumber":"Number","filterAmount":"Amount","filterPercent":"Percent","dateCondition":"Condition","dateByDayIn":"Compared by day, time zone {zone}","dateGroup_date":"Date","dateGroup_period":"Period","dateGroup_filled":"Filled","dateGroup_range":"The record\'s period","dateCondition_eq":"Exact date","dateCondition_between":"Between","dateCondition_lt":"Before","dateCondition_gt":"After","dateCondition_gte":"On or after","dateCondition_lte":"On or before","dateCondition_lastDays":"Last N days","dateCondition_nextDays":"Next N days","dateCondition_empty":"Empty","dateCondition_notEmpty":"Not empty","dateCondition_overlaps":"Runs in","dateCondition_within":"Entirely in","dateCondition_starts":"Starts in","dateCondition_ends":"Ends in","dateCondition_contains":"Runs on the day","datePeriod_today":"Today","datePeriod_yesterday":"Yesterday","datePeriod_thisWeek":"This week","datePeriod_lastWeek":"Last week","datePeriod_last7Days":"Last 7 days","datePeriod_thisMonth":"This month","datePeriod_lastMonth":"Last month","datePeriod_thisYear":"This year","datePeriod_tomorrow":"Tomorrow","datePeriod_nextWeek":"Next week","datePeriod_nextMonth":"Next month","datePeriodIn_today":"today","datePeriodIn_yesterday":"yesterday","datePeriodIn_thisWeek":"this week","datePeriodIn_lastWeek":"last week","datePeriodIn_last7Days":"in the last 7 days","datePeriodIn_thisMonth":"this month","datePeriodIn_lastMonth":"last month","datePeriodIn_thisYear":"this year","datePeriodIn_tomorrow":"tomorrow","datePeriodIn_nextWeek":"next week","datePeriodIn_nextMonth":"next month","dateChip":"{field}: {condition}","dateChip_lt":"before {date}","dateChip_gt":"after {date}","dateChip_gte":"on or after {date}","dateChip_lte":"on or before {date}","dateChip_lastDays":{"one":"in the last day","other":"in the last {n} days"},"dateChip_nextDays":{"one":"in the next day","other":"in the next {n} days"},"dateChip_empty":"empty","dateChip_notEmpty":"not empty","dateChip_overlaps":"runs {when}","dateChip_within":"entirely {when}","dateChip_withinDays":"entirely within {when}","dateChip_starts":"starts {when}","dateChip_ends":"ends {when}","dateChip_contains":"runs on {date}","dateCountLast":"Days, today included","dateCountNext":"Days ahead, today included","dateCountUnit":"days","dateValueDate":"Date","dateValueDay":"Day","dateValuePeriod":"Period","dateWhen":"When","dateOwnDays":"Own dates","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","phoneExtension":"ext.","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":{"one":"At most {n} digit after the point","other":"At most {n} digits after the point"},"fractionNone":"A whole amount, no digits after the point","boundBetween":"From {min} to {max}","boundAtLeast":"At least {min}","boundAtMost":"At most {max}","currency":"Currency","chooseCurrency":"Choose a currency","rowCount":{"one":"{n} row","other":"{n} rows"},"filterApply":"Apply","filterReset":"Reset","operatorAny":"Any date","operatorBetween":"Range","operatorContains":"Contains","operatorEq":"Exactly","operatorGt":"Greater than","operatorGte":"Greater or equal","operatorIn":"In the list","operatorLt":"Less than","operatorLte":"Less or equal","operatorMonth":"This month","operatorStartsWith":"Starts with","operatorToday":"Today","operatorWeek":"This week","type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-meter":"Share of a limit","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)","type-phone":"Phone","type-password":"Password","type-complex":"Compound","wholeNumber":"A whole number, no digits after the point","template-string-input":"Input","template-phone-phone_input":"Phone with country code","template-password-input":"Hidden input","template-text-textarea":"Multiline input","template-html-editor":"Editor","template-number-input":"Number input","template-number-stepper":"«−» and «+» buttons","template-number-scale":"Level scale","template-number-meter":"Share of a limit","template-date-datepicker":"Date with a calendar","template-datetime-datepicker":"Date and time","template-time-timepicker":"Time","template-boolean-switch":"Switch","template-boolean-checkbox":"Checkbox","template-boolean-buttons":"«Yes / No» buttons","template-choice-dropdown":"Dropdown","template-choice-buttons":"Buttons","template-choices-dropdown":"Dropdown","template-choices-checklist":"Checklist","template-choices-badges":"Badges","template-user-reference_picker":"User picker","template-record-reference_picker":"Record picker","template-relation-reference_picker":"Record picker","template-lookup-source_picker":"Reference list picker","template-file-upload":"File upload","template-file-image":"Image","template-file-image_card":"Image card","template-file-image_list":"Image list","template-color-color_picker":"Colour picker","template-include-script":"Code","template-money-money_input":"Amount with currency","template-percent-input":"Number input","template-items-rows":"Rows table","template-complex-parts":"Parts","template-ru.requisites-requisites":"Requisites block","type-url":"Web address","type-link":"Link with text","type-ru.inn":"INN (Russian taxpayer number)","template-url-input":"Address input","template-link-link":"Link","template-ru.inn-input":"Digits input","template-percent-stepper":"«−» and «+» buttons","template-percent-scale":"Level scale","template-percent-meter":"Share of a limit","urlInvalid":"Enter a full address: https://…","linkAddress":"Address","linkText":"Link text","linkNeedsAddress":"Enter the address","linkInvalid":"An address is https://…, a site path /… or #anchor","linkTextLong":"No more than 255 characters","innDigits":"An INN is 10 digits (an organisation) or 12 (a person)","innOrganization":"An organisation’s INN is 10 digits","innPerson":"A person’s INN is 12 digits","innChecksum":"The INN check digit does not match","dateGroup_time":"Time","timeCondition_eq":"Equals","timeValue":"Time","operatorAnyOf":"any of","operatorAllOf":"all of","operatorNoneOf":"none of","operatorEmpty":"not set","operatorFilled":"set","filterNotSet":"Not set","filterCondition":"Condition","operatorContainsWord":"contains","operatorStartsWithWord":"starts with","operatorEqualWord":"equals","operatorMoreWord":"more than","operatorLessWord":"less than","operatorFromTo":"from – to","operatorMoreOrEqualWord":"at least","operatorLessOrEqualWord":"at most","rangeFromWord":"from","rangeToWord":"to","filterTextPlaceholder":"Text","filterRemoveCondition":"Remove condition"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"yes":"Yes","no":"No","searchInList":"Find in the list","containsText":"Contains…","fileKind_image":"Images","fileKind_document":"Documents","fileKind_archive":"Archives","fileKind_other":"Other files","operator":"Operator","rangeFrom":"From","rangeTo":"To","condition":"Condition","numberOperator_eq":"Equals","numberOperator_neq":"Not equal","numberOperator_gt":"Greater than","numberOperator_gte":"At least","numberOperator_lt":"Less than","numberOperator_lte":"At most","numberOperator_between":"Between","numberOperator_empty":"Empty","numberOperator_not-empty":"Not empty","filterNumber":"Number","filterAmount":"Amount","filterPercent":"Percent","dateCondition":"Condition","dateByDayIn":"Compared by day, time zone {zone}","dateGroup_date":"Date","dateGroup_period":"Period","dateGroup_filled":"Filled","dateGroup_range":"The record\'s period","dateCondition_eq":"Exact date","dateCondition_between":"Between","dateCondition_lt":"Before","dateCondition_gt":"After","dateCondition_gte":"On or after","dateCondition_lte":"On or before","dateCondition_lastDays":"Last N days","dateCondition_nextDays":"Next N days","dateCondition_empty":"Empty","dateCondition_notEmpty":"Not empty","dateCondition_overlaps":"Runs in","dateCondition_within":"Entirely in","dateCondition_starts":"Starts in","dateCondition_ends":"Ends in","dateCondition_contains":"Runs on the day","datePeriod_today":"Today","datePeriod_yesterday":"Yesterday","datePeriod_thisWeek":"This week","datePeriod_lastWeek":"Last week","datePeriod_last7Days":"Last 7 days","datePeriod_thisMonth":"This month","datePeriod_lastMonth":"Last month","datePeriod_thisYear":"This year","datePeriod_tomorrow":"Tomorrow","datePeriod_nextWeek":"Next week","datePeriod_nextMonth":"Next month","datePeriodIn_today":"today","datePeriodIn_yesterday":"yesterday","datePeriodIn_thisWeek":"this week","datePeriodIn_lastWeek":"last week","datePeriodIn_last7Days":"in the last 7 days","datePeriodIn_thisMonth":"this month","datePeriodIn_lastMonth":"last month","datePeriodIn_thisYear":"this year","datePeriodIn_tomorrow":"tomorrow","datePeriodIn_nextWeek":"next week","datePeriodIn_nextMonth":"next month","dateChip":"{field}: {condition}","dateChip_lt":"before {date}","dateChip_gt":"after {date}","dateChip_gte":"on or after {date}","dateChip_lte":"on or before {date}","dateChip_lastDays":{"one":"in the last day","other":"in the last {n} days"},"dateChip_nextDays":{"one":"in the next day","other":"in the next {n} days"},"dateChip_empty":"empty","dateChip_notEmpty":"not empty","dateChip_overlaps":"runs {when}","dateChip_within":"entirely {when}","dateChip_withinDays":"entirely within {when}","dateChip_starts":"starts {when}","dateChip_ends":"ends {when}","dateChip_contains":"runs on {date}","dateCountLast":"Days, today included","dateCountNext":"Days ahead, today included","dateCountUnit":"days","dateValueDate":"Date","dateValueDay":"Day","dateValuePeriod":"Period","dateWhen":"When","dateOwnDays":"Own dates","loadingOptions":"Loading the options","optionsError":"The options could not be loaded","pickRecord":"Choose a record","pickFromList":"Choose from the list","searchRecords":"Find a record","loadingRecords":"Loading records","recordsError":"The records could not be loaded","retry":"Try again","loadMore":"Load more","removeFile":"Remove","fileRemoved":"File removed","undo":"Undo","passwordSet":"Set","passwordUnset":"Not set","phoneExtension":"ext.","passwordKeep":"Set; type a new one to replace it","maskIncomplete":"Complete the field","notNumber":"Enter a number","precisionMax":{"one":"At most {n} digit after the point","other":"At most {n} digits after the point"},"fractionNone":"A whole amount, no digits after the point","boundBetween":"From {min} to {max}","boundAtLeast":"At least {min}","boundAtMost":"At most {max}","currency":"Currency","chooseCurrency":"Choose a currency","rowCount":{"one":"{n} row","other":"{n} rows"},"filterApply":"Apply","filterReset":"Reset","operatorAny":"Any date","operatorBetween":"Range","operatorContains":"Contains","operatorEq":"Exactly","operatorGt":"Greater than","operatorGte":"Greater or equal","operatorIn":"In the list","operatorLt":"Less than","operatorLte":"Less or equal","operatorMonth":"This month","operatorStartsWith":"Starts with","operatorToday":"Today","operatorWeek":"This week","type-string":"String","variant-string-phone":"Phone","variant-string-password":"Password","type-text":"Text","type-html":"Formatted text","type-integer":"Integer","variant-integer-stepper":"With steppers","type-number":"Number","variant-number-scale":"Scale 0–100","variant-number-meter":"Share of a limit","variant-number-stepper":"With steppers","type-date":"Date","type-datetime":"Date and time","type-time":"Time","type-boolean":"Yes or no","type-choice":"One of a list","variant-choice-buttons":"As buttons","type-choices":"Several of a list","variant-choices-badges":"As badges","variant-choices-checklist":"As a checklist","variant-choices-select":"As a dropdown","type-user":"User","type-record":"Record","type-relation":"Relation","type-lookup":"From a reference list","type-file":"File","variant-file-image":"Image","variant-file-image-card":"Image card","variant-file-image-list":"Image list","type-color":"Colour","type-include":"Code","type-money":"Money","type-percent":"Percent","type-items":"Rows","type-compound":"Compound","type-ru.requisites":"Requisites (Russia)","type-phone":"Phone","type-password":"Password","type-complex":"Compound","wholeNumber":"A whole number, no digits after the point","template-string-input":"Input","template-phone-phone_input":"Phone with country code","template-password-input":"Hidden input","template-text-textarea":"Multiline input","template-html-editor":"Editor","template-number-input":"Number input","template-number-stepper":"«−» and «+» buttons","template-number-scale":"Level scale","template-number-meter":"Share of a limit","template-date-datepicker":"Date with a calendar","template-datetime-datepicker":"Date and time","template-time-timepicker":"Time","template-boolean-switch":"Switch","template-boolean-checkbox":"Checkbox","template-boolean-buttons":"«Yes / No» buttons","template-choice-dropdown":"Dropdown","template-choice-buttons":"Buttons","template-choices-dropdown":"Dropdown","template-choices-checklist":"Checklist","template-choices-badges":"Badges","template-user-reference_picker":"User picker","template-record-reference_picker":"Record picker","template-relation-reference_picker":"Record picker","template-lookup-source_picker":"Reference list picker","template-file-upload":"File upload","template-file-image":"Image","template-file-image_card":"Image card","template-file-image_list":"Image list","template-color-color_picker":"Colour picker","template-include-script":"Code","template-money-money_input":"Amount with currency","template-percent-input":"Number input","template-items-rows":"Rows table","template-complex-parts":"Parts","template-ru.requisites-requisites":"Requisites block","type-url":"Web address","type-email":"Email address","type-link":"Link with text","type-ru.inn":"INN (Russian taxpayer number)","template-url-input":"Address input","template-link-link":"Link","template-ru.inn-input":"Digits input","template-percent-stepper":"«−» and «+» buttons","template-percent-scale":"Level scale","template-percent-meter":"Share of a limit","urlInvalid":"Enter a full address: https://…","emailInvalid":"Enter an email address: name@example.com","linkAddress":"Address","linkText":"Link text","linkNeedsAddress":"Enter the address","linkInvalid":"An address is https://…, a site path /… or #anchor","linkTextLong":"No more than 255 characters","innDigits":"An INN is 10 digits (an organisation) or 12 (a person)","innOrganization":"An organisation’s INN is 10 digits","innPerson":"A person’s INN is 12 digits","innChecksum":"The INN check digit does not match","dateGroup_time":"Time","timeCondition_eq":"Equals","timeValue":"Time","operatorAnyOf":"any of","operatorAllOf":"all of","operatorNoneOf":"none of","operatorEmpty":"not set","operatorFilled":"set","filterNotSet":"Not set","filterCondition":"Condition","operatorContainsWord":"contains","operatorStartsWithWord":"starts with","operatorEqualWord":"equals","operatorMoreWord":"more than","operatorLessWord":"less than","operatorFromTo":"from – to","operatorMoreOrEqualWord":"at least","operatorLessOrEqualWord":"at most","rangeFromWord":"from","rangeToWord":"to","filterTextPlaceholder":"Text","filterRemoveCondition":"Remove condition","template-email-input":"Email field"}}');
 
 /***/ }
 

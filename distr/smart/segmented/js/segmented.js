@@ -2721,6 +2721,8 @@ class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.
     this._plateObserver = null;
     this._fitObserver?.disconnect();
     this._fitObserver = null;
+    if (this._fitFrame) cancelAnimationFrame(this._fitFrame);
+    this._fitFrame = 0;
     this._plateFor = null;
     clearTimeout(this._plateTimer);
     cancelAnimationFrame(this._plateShow);
@@ -2804,10 +2806,27 @@ class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.
     if (!root) return null;
 
     if (this.folded) {
+      // The dropdown's place, read as a track would get it (1.8.4, FL-1):
+      // the narrow is laid out for a moment at the track's one-line width
+      // (its inline size, so its flex basis), so it shrinks beside its
+      // neighbours as the track would. Read at its own full width, it got
+      // the row's spare room (508 px where the track had 462 for 491): the
+      // element unfolded, the track was squeezed and folded again, 25
+      // flips in a frame.
       const narrow = this.querySelector(':scope > .sf-button-group-narrow');
+      const need = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_9__.layoutWidth)(root);
+      if (!narrow) return {
+        need,
+        room: 0
+      };
+      const own = narrow.getAttribute('style');
+      narrow.style.inlineSize = `${need}px`;
+      narrow.style.maxInlineSize = '100%';
+      const room = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_9__.layoutWidth)(narrow);
+      if (own === null) narrow.removeAttribute('style');else narrow.setAttribute('style', own);
       return {
-        need: (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_9__.layoutWidth)(root),
-        room: narrow ? (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_9__.layoutWidth)(narrow) : 0
+        need,
+        room
       };
     } // Layout widths (1.8.1): inside rotate() a screen box is the rotated
     // bounding box, and need and room grew by different amounts.
@@ -2855,11 +2874,29 @@ class SfButtonGroup extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_6__.
     this.requestComponentUpdate?.('fit');
   }
 
+  scheduleFit() {
+    if (this._fitFrame) return;
+
+    if (typeof requestAnimationFrame !== 'function') {
+      this.checkFit();
+      return;
+    }
+
+    this._fitFrame = requestAnimationFrame(() => {
+      this._fitFrame = 0;
+      this.checkFit();
+    });
+  }
+
   observeFit() {
     if (typeof ResizeObserver === 'undefined') return;
 
     if (!this._fitObserver) {
-      this._fitObserver = new ResizeObserver(() => this.checkFit());
+      // A change of place is answered in the next frame (1.8.4, FL-1): a
+      // fold made inside the observer changes boxes the observer has
+      // already delivered, and the browser reports a ResizeObserver loop.
+      // The first drawing still folds at once (afterRender).
+      this._fitObserver = new ResizeObserver(() => this.scheduleFit());
       globalThis.document?.fonts?.ready?.then?.(() => this.checkFit());
     }
 
@@ -3340,7 +3377,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "9e8a0d4d39c8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.segmented","tag":"sf-segmented","version":"1.8.3","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","lang":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}}},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["track","buttons"],"default":"track"},"plate":{"type":"enum","values":["raised","scheme"],"default":"raised"},"backdrop":{"type":"enum","values":["surface","color","media"],"default":"surface"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":{"type":"string"},"item":{"type":"object","nullable":true}}}},"actions":{"select":{"with":{"value":"string"}},"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.segmented","tag":"sf-segmented","version":"1.8.4","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","value":"string","label":"string","lang":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"count":{"type":"string","optional":true},"icon-only":{"type":"boolean","optional":true},"loading":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true}}},"name":{"type":"string","default":""},"theme-switch":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"height":{"type":"enum","values":["low","default","high","highest"],"default":"default"},"spacing":{"type":"enum","values":["compact","normal","comfortable","spacious"],"default":"normal"},"tightness":{"type":"enum","values":["","low","high","highest"],"default":""},"scheme":{"type":"enum","values":["primary","secondary","on-surface"],"default":"primary"},"appearance":{"type":"enum","values":["track","buttons"],"default":"track"},"plate":{"type":"enum","values":["raised","scheme"],"default":"raised"},"backdrop":{"type":"enum","values":["surface","color","media"],"default":"surface"},"full-width":{"type":"boolean","default":false},"radius":{"type":"enum","values":["","default","square","rounded"],"default":""},"orientation":{"type":"enum","values":["horizontal","vertical"],"default":"horizontal"},"disabled":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"change":{"carries":{"previous":"string","value":{"type":"string"},"item":{"type":"object","nullable":true}}}},"actions":{"select":{"with":{"value":"string"}},"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-button-group-background-color":{"type":"color","state":"rest"},"--sf-button-group-padding":{"type":"length"},"--sf-button-group-radius":{"type":"length"},"--sf-button-group-color":{"type":"color","state":"rest"},"--sf-button-group-plate-background-color":{"type":"color","state":"selected"},"--sf-button-group-plate-color":{"type":"color","state":"selected"},"--sf-button-group-count-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

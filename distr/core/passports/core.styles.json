@@ -3,7 +3,7 @@
   "schema_version": 1,
   "id": "core.styles",
   "kind": "core",
-  "version": "1.23.0",
+  "version": "1.24.0",
   "owner": "simai/ui-source",
   "summary": "The core sheet around the token sets: the entry, the layer order, the base, presets, scrollbars, the loader, the logo, composition regions and the workspace layout, placeholders, touch fields, sr-only and not-sr-only (C212 (6)) and the display settings (the five colour schemes, text size and spacing, images, motion, the skip link, prefers-contrast and prefers-reduced-transparency).",
   "includes": [
@@ -37,7 +37,7 @@
     "src/core/scss/mix/_mix__window-footer.scss",
     "src/core/scss/vars/_sf_var__display.scss"
   ],
-  "content_sha256": "f126a94b91978db9b8004eb019f0a5ebc2b68133e41a5ac382e30391a5d4d14b",
+  "content_sha256": "b68539c1dae283e52662e48714078a7c1b44f84697b4e4e1e2b6de772f98c2de",
   "dependencies": [
     {
       "id": "font.inter",

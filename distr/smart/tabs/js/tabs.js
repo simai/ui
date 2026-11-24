@@ -1478,6 +1478,34 @@ function contentWidth(box) {
   const style = globalThis.getComputedStyle?.(box);
   const sides = ['paddingInlineStart', 'paddingInlineEnd', 'borderInlineStartWidth', 'borderInlineEndWidth'].reduce((sum, side) => sum + (Number.parseFloat(style?.[side]) || 0), 0);
   return Math.max(0, width - sides);
+} // One attribute order on a tab's button, whichever ran last (VO-1). The
+// button host (sf-button, sf-button-icon) forwards its data-* -- the tab's
+// data-sf-tab-index among them -- by taking them off and appending them, so
+// a forward after the tabs set id, role and aria-* left them at the end, and
+// one before left them in front: a printed page read «stale» by chance. When
+// a forwarded name stands before one the tabs write, the tabs append the
+// forwarded names again, in the host's order -- the order a later forward
+// writes. Names others add later (a tooltip's aria-describedby) stay after.
+
+
+const TAB_OWN_ATTRIBUTES = new Set(['id', 'role', 'aria-controls', 'aria-selected', 'aria-disabled', 'aria-labelledby', 'aria-label', 'aria-current', 'tabindex']);
+
+function settleForwardedAttributes(tab) {
+  const host = tab?.parentElement;
+  const keys = host && host.__sfHostDataAttributeTarget === tab ? tab[host.__sfHostDataAttributeTargetKeys] : null;
+  if (!keys?.size) return;
+  const names = Array.from(keys).filter(name => tab.hasAttribute(name) && !TAB_OWN_ATTRIBUTES.has(name));
+  if (!names.length) return;
+  const order = Array.from(tab.attributes).map(attribute => attribute.name);
+  const lastOwn = order.reduce((at, name, index) => TAB_OWN_ATTRIBUTES.has(name) ? index : at, -1);
+  const placed = names.map(name => order.indexOf(name));
+  if (placed.every((at, index) => at > lastOwn && (index === 0 || at > placed[index - 1]))) return;
+
+  for (const name of names) {
+    const value = tab.getAttribute(name);
+    tab.removeAttribute(name);
+    tab.setAttribute(name, value);
+  }
 }
 
 function tabIndexOf(element) {
@@ -2105,6 +2133,7 @@ class SfTabs extends TabsElement {
       }
 
       tab.tabIndex = item === tabStop ? 0 : -1;
+      settleForwardedAttributes(tab);
     });
   } // A strip of links: no tab roles and no roving tab stop; the current link
   // says aria-current="page". A disabled link is sf-button's: no href,
@@ -3932,7 +3961,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs 
 /***/ "84d032c55810"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.5.2","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"fold":{"type":"enum","values":["auto","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.5.3","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"fold":{"type":"enum","values":["auto","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

@@ -729,12 +729,15 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // vocabulary (.sf-checkbox-*, .sf-radio-button-*, .sf-switch-*): the class
 // markup is public and unchanged; the shared classes are .sf-checkable* on
 // what the Smart elements draw.
-// The help mark keeps the label's line: 1/3 beside the lines of sizes 1/2 and
-// 1, 1/2 beside size 2 (the mark adds no height of its own).
+// The help mark keeps the label's line (the mark adds no height of its own)
+// and is the field family's step (field-help.js, DEV msg-e73e6ee2, queue
+// msg-fc99b09e: one help size per field): 1/3 beside size 1/2, 1/2 beside
+// sizes 1 and 2 -- the «?» a text field and an sf-form field of size 1 draw
+// after their label (FS-6). Size 1 drew 1/3 before.
 
 const CHECKABLE_HELP_SIZE = Object.freeze({
   '1/2': '1/3',
-  1: '1/3',
+  1: '1/2',
   2: '1/2'
 }); // The help: what the help slot holds, or a «?» button (sf-help-mark) that
 // opens the help setting's explanation.
@@ -1646,7 +1649,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-switc
 /***/ "7577d7eb26f7"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.10.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"short":{"type":"boolean","default":false},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"icon":{"type":"icon","default":""},"icon-on":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-switch-color":{"type":"color","state":"default"},"--sf-switch-background-color":{"type":"color","state":"default"},"--sf-switch-border-color":{"type":"color","state":"default"},"--sf-switch-border-width":{"type":"length","state":"default"},"--sf-switch-radius":{"type":"length","state":"default"},"--sf-switch-gap":{"type":"length","state":"default"},"--sf-switch-checked-background-color":{"type":"color","state":"checked"},"--sf-switch-checked-thumb-color":{"type":"color","state":"checked"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.switch","tag":"sf-switch","version":"1.10.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"short":{"type":"boolean","default":false},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"icon":{"type":"icon","default":""},"icon-on":{"type":"icon","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"checked":{"type":"boolean","default":false,"optional":true},"effective-checked":{"type":"boolean"}},"events":{"change":{"carries":"native"},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-switch-color":{"type":"color","state":"default"},"--sf-switch-background-color":{"type":"color","state":"default"},"--sf-switch-border-color":{"type":"color","state":"default"},"--sf-switch-border-width":{"type":"length","state":"default"},"--sf-switch-radius":{"type":"length","state":"default"},"--sf-switch-gap":{"type":"length","state":"default"},"--sf-switch-checked-background-color":{"type":"color","state":"checked"},"--sf-switch-checked-thumb-color":{"type":"color","state":"checked"}}}');
 
 /***/ },
 

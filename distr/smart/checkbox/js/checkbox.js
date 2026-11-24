@@ -1264,12 +1264,15 @@ lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_dependencies_result__[0];
 // vocabulary (.sf-checkbox-*, .sf-radio-button-*, .sf-switch-*): the class
 // markup is public and unchanged; the shared classes are .sf-checkable* on
 // what the Smart elements draw.
-// The help mark keeps the label's line: 1/3 beside the lines of sizes 1/2 and
-// 1, 1/2 beside size 2 (the mark adds no height of its own).
+// The help mark keeps the label's line (the mark adds no height of its own)
+// and is the field family's step (field-help.js, DEV msg-e73e6ee2, queue
+// msg-fc99b09e: one help size per field): 1/3 beside size 1/2, 1/2 beside
+// sizes 1 and 2 -- the «?» a text field and an sf-form field of size 1 draw
+// after their label (FS-6). Size 1 drew 1/3 before.
 
 const CHECKABLE_HELP_SIZE = Object.freeze({
   '1/2': '1/3',
-  1: '1/3',
+  1: '1/2',
   2: '1/2'
 }); // The help: what the help slot holds, or a «?» button (sf-help-mark) that
 // opens the help setting's explanation.
@@ -2060,7 +2063,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-check
 /***/ "47e9950fb20b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.6.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"controls":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.checkbox","tag":"sf-checkbox","version":"1.6.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"label":{"type":"string","default":""},"description":{"type":"string","default":""},"help":{"type":"string","default":""},"position":{"type":"enum","values":["start","end"],"default":"start"},"controls":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"name":{"type":"string","default":""},"value":{"type":"string","default":"on"},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"checked":{"type":"boolean","default":false},"indeterminate":{"type":"boolean","default":false}},"events":{"change":{"carries":"native"}},"actions":{},"form":{"value":"checked","name":"name","default":"checked","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"css-variables":{"--sf-checkbox-background-color":{"type":"color","state":"default"},"--sf-checkbox-border-color":{"type":"color","state":"default"},"--sf-checkbox-border-width":{"type":"length","state":"default"},"--sf-checkbox-radius":{"type":"length","state":"default"},"--sf-checkbox-size":{"type":"length","state":"default"},"--sf-checkbox-gap":{"type":"length","state":"default"},"--sf-checkbox-checked-background-color":{"type":"color","state":"checked"},"--sf-checkbox-invalid-border-color":{"type":"color","state":"invalid"}}}');
 
 /***/ },
 

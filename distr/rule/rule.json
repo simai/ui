@@ -1384,6 +1384,14 @@
       },
       {
         "name": "cl-icon"
+      },
+      {
+        "lazy": true,
+        "name": "cl-modal"
+      },
+      {
+        "lazy": true,
+        "name": "modal"
       }
     ],
     "tags": [
