@@ -382,8 +382,12 @@ function installMenuOpen() {
     const atPoint = !(anchor instanceof Element);
     if (atPoint && !(Number.isFinite(Number(x)) && Number.isFinite(Number(y)))) return null;
     const doc = globalThis.document;
-    if (!doc) return null;
-    await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+    if (!doc) return null; // A press opens it: the wait does not give up while the menu's code is
+    // on its way (SF.Loader.ensure press, GB18 L2; GB19).
+
+    await globalThis.SF?.Loader?.ensure?.(['sf-menu-context'], {
+      press: true
+    });
     if (!globalThis.customElements?.get('sf-menu-context')) return null;
     const menu = sharedMenu(atPoint ? returnTo : anchor); // The same control again: its open menu closes (a toggle).
 
@@ -710,8 +714,8 @@ function triggerExtra(textBox, label) {
   const drawn = measure(textBox.textContent.trim());
   return count => measure(label(count)) - drawn;
 } // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
-// first used (SF.Loader.ensure: asked for, waited for up to 3 s, never
-// thrown), one per owner and field, on the body or in the open dialog. The
+// first used (SF.Loader.ensure with press: a press opens it, so the wait
+// goes on while its code is on its way, GB18 L2 / GB19; never thrown), one per owner and field, on the body or in the open dialog. The
 // one copy in core (defect TL-8): the sortable inserter and the handle's move
 // menu place theirs through it too. null when no sf-menu-context came (no
 // Loader, or the relation failed): an element that never upgrades opens
@@ -721,7 +725,9 @@ function triggerExtra(textBox, label) {
 async function standardMenu(owner, field, select, {
   setup
 } = {}) {
-  await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+  await globalThis.SF?.Loader?.ensure?.(['sf-menu-context'], {
+    press: true
+  });
   if (owner[field]?.isConnected) return owner[field];
   if (!globalThis.customElements?.get('sf-menu-context')) return null;
   const doc = owner.ownerDocument || globalThis.document;
@@ -3155,8 +3161,14 @@ class SfTabs extends TabsElement {
     if (this._settingsMenu?.isConnected) return this._settingsMenu; // The list's elements are asked for now, not waited for: the Loader also
     // finds them in the menu once it is drawn.
 
-    globalThis.SF?.Loader?.ensure?.(['sf-sortable', 'sf-checkbox']);
-    await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+    globalThis.SF?.Loader?.ensure?.(['sf-sortable', 'sf-checkbox'], {
+      press: true
+    }); // A press opens the settings: the wait goes on while the menu's code is
+    // on its way (SF.Loader.ensure press, GB18 L2; GB19).
+
+    await globalThis.SF?.Loader?.ensure?.(['sf-menu-context'], {
+      press: true
+    });
     const menu = document.createElement('sf-menu-context');
     menu.setAttribute('popup', '');
     menu.setAttribute('aria-label', this.text('customize'));
@@ -3961,7 +3973,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs 
 /***/ "84d032c55810"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.5.3","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"fold":{"type":"enum","values":["auto","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.5.6","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"fold":{"type":"enum","values":["auto","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

@@ -525,7 +525,7 @@
      panel with its own foot (slot footer) keeps that one alone. Core
      mix/_mix__window-footer.scss content-actions, shared with sf-modal's side
      window. */
-  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body .sf-confirm--window > .sf-confirm__footer {
+  :where(.sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body .sf-confirm--window > .sf-confirm__footer) {
     position: sticky;
     bottom: 0;
     inset-block-end: 0;
@@ -537,10 +537,10 @@
     -webkit-margin-after: calc(-1 * var(--sf-drawer--inset));
             margin-block-end: calc(-1 * var(--sf-drawer--inset));
   }
-  .sf-drawer[data-sf-drawer-more-end] .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body .sf-confirm--window > .sf-confirm__footer {
+  :where(.sf-drawer[data-sf-drawer-more-end] .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body .sf-confirm--window > .sf-confirm__footer) {
     box-shadow: 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
   }
-  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     position: sticky;
     bottom: 0;
     inset-block-end: 0;
@@ -552,10 +552,10 @@
     -webkit-margin-after: calc(-1 * var(--sf-drawer--inset));
             margin-block-end: calc(-1 * var(--sf-drawer--inset));
   }
-  .sf-drawer[data-sf-drawer-more-end] .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-drawer[data-sf-drawer-more-end] .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     box-shadow: 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
   }
-  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     position: sticky;
     bottom: 0;
     inset-block-end: 0;
@@ -567,10 +567,10 @@
     -webkit-margin-after: calc(-1 * var(--sf-drawer--inset));
             margin-block-end: calc(-1 * var(--sf-drawer--inset));
   }
-  .sf-drawer[data-sf-drawer-more-end] .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-drawer[data-sf-drawer-more-end] .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     box-shadow: 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
   }
-  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     position: sticky;
     bottom: 0;
     inset-block-end: 0;
@@ -582,7 +582,7 @@
     -webkit-margin-after: calc(-1 * var(--sf-drawer--inset));
             margin-block-end: calc(-1 * var(--sf-drawer--inset));
   }
-  .sf-drawer[data-sf-drawer-more-end] .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-drawer[data-sf-drawer-more-end] .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     box-shadow: 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
   }
   .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body .sf-confirm--window > * + .sf-confirm__footer {
@@ -1269,16 +1269,16 @@
   .sf-drawer-foot {
     background: inherit;
   }
-  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body .sf-confirm--window > .sf-confirm__footer {
+  :where(.sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body .sf-confirm--window > .sf-confirm__footer) {
     background-color: var(--sf-surface-place);
   }
-  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     background-color: var(--sf-surface-place);
   }
-  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     background-color: var(--sf-surface-place);
   }
-  .sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-drawer-panel:not(:has(> .sf-drawer-foot:not(:empty))) > .sf-drawer-body > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     background-color: var(--sf-surface-place);
   }
   .sf-drawer:not([data-sf-drawer-column=true]):not([data-sf-drawer-edge-in-head]) .sf-drawer-edge {

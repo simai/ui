@@ -781,7 +781,7 @@
      of buttons) stay at the window's foot while the body scrolls under them,
      as sf-drawer's do (core mix/_mix__window-footer.scss content-actions). A
      window with a footer slot keeps that one alone. */
-  .sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] .sf-confirm--window > .sf-confirm__footer {
+  :where(.sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] .sf-confirm--window > .sf-confirm__footer) {
     position: sticky;
     bottom: 0;
     inset-block-end: 0;
@@ -793,10 +793,10 @@
     -webkit-margin-after: calc(-1 * var(--sf-modal--body-inset));
             margin-block-end: calc(-1 * var(--sf-modal--body-inset));
   }
-  .sf-modal[data-sf-modal-more-end]:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] .sf-confirm--window > .sf-confirm__footer {
+  :where(.sf-modal[data-sf-modal-more-end]:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] .sf-confirm--window > .sf-confirm__footer) {
     box-shadow: 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
   }
-  .sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     position: sticky;
     bottom: 0;
     inset-block-end: 0;
@@ -808,10 +808,10 @@
     -webkit-margin-after: calc(-1 * var(--sf-modal--body-inset));
             margin-block-end: calc(-1 * var(--sf-modal--body-inset));
   }
-  .sf-modal[data-sf-modal-more-end]:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-modal[data-sf-modal-more-end]:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     box-shadow: 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
   }
-  .sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     position: sticky;
     bottom: 0;
     inset-block-end: 0;
@@ -823,10 +823,10 @@
     -webkit-margin-after: calc(-1 * var(--sf-modal--body-inset));
             margin-block-end: calc(-1 * var(--sf-modal--body-inset));
   }
-  .sf-modal[data-sf-modal-more-end]:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-modal[data-sf-modal-more-end]:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     box-shadow: 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
   }
-  .sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     position: sticky;
     bottom: 0;
     inset-block-end: 0;
@@ -838,7 +838,7 @@
     -webkit-margin-after: calc(-1 * var(--sf-modal--body-inset));
             margin-block-end: calc(-1 * var(--sf-modal--body-inset));
   }
-  .sf-modal[data-sf-modal-more-end]:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-modal[data-sf-modal-more-end]:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     box-shadow: 0 calc(-1 * var(--sf-px)) 0 var(--sf-outline-variant);
   }
   .sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] .sf-confirm--window > * + .sf-confirm__footer {
@@ -848,16 +848,16 @@
   }
 }
 @layer sf.paint {
-  .sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] .sf-confirm--window > .sf-confirm__footer {
+  :where(.sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] .sf-confirm--window > .sf-confirm__footer) {
     background-color: var(--sf-surface-place);
   }
-  .sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] form > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     background-color: var(--sf-surface-place);
   }
-  .sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     background-color: var(--sf-surface-place);
   }
-  .sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden]))) {
+  :where(.sf-modal:is([data-sf-modal-position=inline-start], [data-sf-modal-position=inline-end], [data-sf-modal-position=left], [data-sf-modal-position=right]):not(:has(.sf-modal-footer)) [data-sf-modal-body-scroll] > :only-child > :last-child:has(> :is(sf-button, button, input[type=submit])):not(:has(> :not(sf-button):not(button):not(a):not(input[type=submit]):not(input[type=button]):not(input[type=hidden])))) {
     background-color: var(--sf-surface-place);
   }
   .sf-modal[data-sf-modal-position=bottom]:not([data-sf-modal-fullscreen=true]) [data-sf-modal-surface]::before {

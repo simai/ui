@@ -802,9 +802,14 @@ function renderConfirmTemplate(context) {
   })}
         </section>
     `;
-} // The window form (appearance="window", decision C39): the question is the
-// window's title (sf-modal size="question"), so here it only names the group.
-// Under it the consequences on a quiet plate -- the description, then the
+} // The window form (appearance="window", decision C39): in a window the
+// question is the window's title (sf-modal size="question"); the question's
+// own line is drawn too and the window's header hides it (default.css), so
+// the same form standing on a page of its own -- the host's address for the
+// action, no window around it -- still says what it asks (sf-confirm 1.5.7,
+// Larena audit 2026-11-24: on such a page the question was nowhere and the
+// decisive sentence read as the question). The line names the group. Under
+// it the consequences on a quiet plate -- the description, then the
 // decisive sentence (consequence) on its own line in medium weight; the
 // page's options (a checkbox); the name to type (require) with its label
 // «Чтобы подтвердить, введите <code>name</code>» and a field; then the two
@@ -818,10 +823,12 @@ function renderConfirmWindow(context) {
         <section
                 class="sf-confirm sf-confirm--window sf-confirm--${context.state}"
                 role="group"
-                aria-label=${context.question || context.questionLabel}
+                aria-labelledby=${context.question ? context.headingId : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                aria-label=${context.question ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : context.questionLabel}
                 data-state=${context.state}
                 ?hidden=${context.collapsed}
         >
+            ${context.question ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-confirm__question" id=${context.headingId}>${context.question}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
             ${plate ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-confirm__consequences">
                     ${context.hasDescription ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-confirm__description">${context.descriptionContent}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                     ${context.consequence ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<p class="sf-confirm__consequence">${context.consequence}</p>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
@@ -1487,7 +1494,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "f70b067ace85"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.5.6","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card","window"],"default":"inline"},"consequence":{"type":"string","default":""},"require":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.confirm","tag":"sf-confirm","version":"1.5.7","kind":"leaf","settings":{"question":{"type":"string","default":""},"state":{"type":"enum","values":["open","pending","accepted","declined","expired"],"default":"open"},"expires-at":{"type":"date","optional":true},"confirm-id":{"type":"id","default":""},"disabled":{"type":"boolean","default":false},"status":{"type":"enum","values":["","danger"],"default":""},"destructive":{"type":"boolean","default":false},"appearance":{"type":"enum","values":["inline","card","window"],"default":"inline"},"consequence":{"type":"string","default":""},"require":{"type":"string","default":""},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1","x-scale":"control"},"accept-text":{"type":"string","default-from":"runtime.accept-text"},"decline-text":{"type":"string","default-from":"runtime.decline-text"}},"values":{},"events":{"answer":{"carries":{"id":{"type":"id"},"accepted":"boolean"},"cancelable":true},"expired":{"carries":{"id":{"type":"id"}},"own-verb":true}},"actions":{"open":{},"answer":{"with":{"accepted":"boolean"},"emits":"answer"},"confirm":{},"cancel":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{},"css-variables":{"--sf-confirm-gap":{"type":"length","state":"default"},"--sf-confirm-inset":{"type":"length","state":"default"},"--sf-confirm-radius":{"type":"length","state":"default"},"--sf-confirm-background-color":{"type":"color","state":"default"},"--sf-confirm-border-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

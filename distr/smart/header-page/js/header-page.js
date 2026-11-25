@@ -401,8 +401,8 @@ function triggerExtra(textBox, label) {
   const drawn = measure(textBox.textContent.trim());
   return count => measure(label(count)) - drawn;
 } // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
-// first used (SF.Loader.ensure: asked for, waited for up to 3 s, never
-// thrown), one per owner and field, on the body or in the open dialog. The
+// first used (SF.Loader.ensure with press: a press opens it, so the wait
+// goes on while its code is on its way, GB18 L2 / GB19; never thrown), one per owner and field, on the body or in the open dialog. The
 // one copy in core (defect TL-8): the sortable inserter and the handle's move
 // menu place theirs through it too. null when no sf-menu-context came (no
 // Loader, or the relation failed): an element that never upgrades opens
@@ -412,7 +412,9 @@ function triggerExtra(textBox, label) {
 async function standardMenu(owner, field, select, {
   setup
 } = {}) {
-  await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+  await globalThis.SF?.Loader?.ensure?.(['sf-menu-context'], {
+    press: true
+  });
   if (owner[field]?.isConnected) return owner[field];
   if (!globalThis.customElements?.get('sf-menu-context')) return null;
   const doc = owner.ownerDocument || globalThis.document;

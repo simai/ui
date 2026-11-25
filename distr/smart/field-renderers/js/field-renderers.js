@@ -3038,34 +3038,34 @@ function htmlText(value) {
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   CONDITION_OPS: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_15__.CONDITION_OPS),
-/* harmony export */   DATE_FUTURE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_FUTURE_PERIODS),
-/* harmony export */   DATE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_PERIODS),
+/* harmony export */   CONDITION_OPS: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_16__.CONDITION_OPS),
+/* harmony export */   DATE_FUTURE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.DATE_FUTURE_PERIODS),
+/* harmony export */   DATE_PERIODS: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.DATE_PERIODS),
 /* harmony export */   FILTER_RENDERERS: () => (/* binding */ FILTER_RENDERERS),
-/* harmony export */   NUMBER_FILTER_OPERATORS: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_5__.NUMBER_FILTER_OPERATORS),
+/* harmony export */   NUMBER_FILTER_OPERATORS: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_6__.NUMBER_FILTER_OPERATORS),
 /* harmony export */   OWN_ERROR_CONTROLS: () => (/* binding */ OWN_ERROR_CONTROLS),
-/* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES),
-/* harmony export */   buildFilterRequest: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.buildFilterRequest),
-/* harmony export */   conditionFields: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_15__.conditionFields),
-/* harmony export */   dateFilterChipText: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateFilterChipText),
-/* harmony export */   dateFilterConditions: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateFilterConditions),
+/* harmony export */   PROPERTY_TYPES: () => (/* reexport safe */ _registry_js__WEBPACK_IMPORTED_MODULE_6__.PROPERTY_TYPES),
+/* harmony export */   buildFilterRequest: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.buildFilterRequest),
+/* harmony export */   conditionFields: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_16__.conditionFields),
+/* harmony export */   dateFilterChipText: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.dateFilterChipText),
+/* harmony export */   dateFilterConditions: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.dateFilterConditions),
 /* harmony export */   dateTimeAttribute: () => (/* binding */ dateTimeAttribute),
-/* harmony export */   evaluateCondition: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_15__.evaluateCondition),
-/* harmony export */   fieldConditions: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_15__.fieldConditions),
-/* harmony export */   fieldEditable: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_15__.fieldEditable),
+/* harmony export */   evaluateCondition: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_16__.evaluateCondition),
+/* harmony export */   fieldConditions: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_16__.fieldConditions),
+/* harmony export */   fieldEditable: () => (/* reexport safe */ _conditions_js__WEBPACK_IMPORTED_MODULE_16__.fieldEditable),
 /* harmony export */   fieldTemplate: () => (/* binding */ fieldTemplate),
-/* harmony export */   filterActive: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterActive),
-/* harmony export */   filterConditionTone: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditionTone),
-/* harmony export */   filterConditions: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditions),
-/* harmony export */   filterCount: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterCount),
+/* harmony export */   filterActive: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterActive),
+/* harmony export */   filterConditionTone: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterConditionTone),
+/* harmony export */   filterConditions: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterConditions),
+/* harmony export */   filterCount: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterCount),
 /* harmony export */   filterFieldSummary: () => (/* binding */ filterFieldSummary),
-/* harmony export */   filterOperatorLabel: () => (/* reexport safe */ _filter_window_js__WEBPACK_IMPORTED_MODULE_16__.filterOperatorLabel),
-/* harmony export */   filterRequestContext: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.filterRequestContext),
-/* harmony export */   filterWidth: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterWidth),
-/* harmony export */   isEmptyFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.isEmptyFilterEntry),
+/* harmony export */   filterOperatorLabel: () => (/* reexport safe */ _filter_window_js__WEBPACK_IMPORTED_MODULE_17__.filterOperatorLabel),
+/* harmony export */   filterRequestContext: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.filterRequestContext),
+/* harmony export */   filterWidth: () => (/* reexport safe */ _filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterWidth),
+/* harmony export */   isEmptyFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.isEmptyFilterEntry),
 /* harmony export */   isNumericType: () => (/* binding */ isNumericType),
 /* harmony export */   meterStatus: () => (/* binding */ meterStatus),
-/* harmony export */   normalizeFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.normalizeFilterEntry),
+/* harmony export */   normalizeFilterEntry: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.normalizeFilterEntry),
 /* harmony export */   numberValue: () => (/* binding */ numberValue),
 /* harmony export */   openFilterWindow: () => (/* binding */ openFilterWindow),
 /* harmony export */   propertyModes: () => (/* binding */ propertyModes),
@@ -3075,34 +3075,37 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderFilterWindowField: () => (/* binding */ renderFilterWindowField),
 /* harmony export */   renderTotalField: () => (/* binding */ renderTotalField),
 /* harmony export */   renderViewField: () => (/* binding */ renderViewField),
-/* harmony export */   resolveDatePeriod: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.resolveDatePeriod)
+/* harmony export */   resolveDatePeriod: () => (/* reexport safe */ _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.resolveDatePeriod)
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
-/* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("073f05ff1a81");
-/* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("b30ec5bc0edb");
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("43090d1c8307");
-/* harmony import */ var _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e577837dd70a");
-/* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("fc654eb7fab0");
-/* harmony import */ var _text_types_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("f8901823ea4f");
-/* harmony import */ var _templates_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("22825a8607d0");
-/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e6d86f2cd058");
-/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("9ce1a42b2a85");
-/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("dd6973f77245");
-/* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("01ae054f01b4");
-/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _decimal_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("ab3947ea3647");
-/* harmony import */ var _phone_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("25be1c2df717");
-/* harmony import */ var _conditions_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("db080b4bfc2b");
-/* harmony import */ var _filter_window_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("5e0f4b4ddd3f");
-/* harmony import */ var _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("16fc79105455");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("354525e80715");
-/* harmony import */ var _date_filter_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("c11c730f061a");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _templates_js__WEBPACK_IMPORTED_MODULE_7__, _component_field_size__WEBPACK_IMPORTED_MODULE_8__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_12__, _decimal_js__WEBPACK_IMPORTED_MODULE_13__, _filter_window_js__WEBPACK_IMPORTED_MODULE_16__, _date_filter_js__WEBPACK_IMPORTED_MODULE_19__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__, _templates_js__WEBPACK_IMPORTED_MODULE_7__, _component_field_size__WEBPACK_IMPORTED_MODULE_8__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_12__, _decimal_js__WEBPACK_IMPORTED_MODULE_13__, _filter_window_js__WEBPACK_IMPORTED_MODULE_16__, _date_filter_js__WEBPACK_IMPORTED_MODULE_19__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("0816a19adc72");
+/* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("073f05ff1a81");
+/* harmony import */ var _helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("b30ec5bc0edb");
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("43090d1c8307");
+/* harmony import */ var _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("e577837dd70a");
+/* harmony import */ var _registry_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("fc654eb7fab0");
+/* harmony import */ var _text_types_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("f8901823ea4f");
+/* harmony import */ var _templates_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("22825a8607d0");
+/* harmony import */ var _component_field_size__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("e6d86f2cd058");
+/* harmony import */ var _datetime_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("9ce1a42b2a85");
+/* harmony import */ var _mask_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("dd6973f77245");
+/* harmony import */ var _html_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("01ae054f01b4");
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _decimal_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("ab3947ea3647");
+/* harmony import */ var _phone_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("25be1c2df717");
+/* harmony import */ var _conditions_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("db080b4bfc2b");
+/* harmony import */ var _filter_window_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("5e0f4b4ddd3f");
+/* harmony import */ var _filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("16fc79105455");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("354525e80715");
+/* harmony import */ var _date_filter_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("c11c730f061a");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directive_js__WEBPACK_IMPORTED_MODULE_1__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_5__, _templates_js__WEBPACK_IMPORTED_MODULE_8__, _component_field_size__WEBPACK_IMPORTED_MODULE_9__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_13__, _decimal_js__WEBPACK_IMPORTED_MODULE_14__, _filter_window_js__WEBPACK_IMPORTED_MODULE_17__, _date_filter_js__WEBPACK_IMPORTED_MODULE_20__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directive_js__WEBPACK_IMPORTED_MODULE_1__, lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_4__, _core_js_format_date_js__WEBPACK_IMPORTED_MODULE_5__, _templates_js__WEBPACK_IMPORTED_MODULE_8__, _component_field_size__WEBPACK_IMPORTED_MODULE_9__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_13__, _decimal_js__WEBPACK_IMPORTED_MODULE_14__, _filter_window_js__WEBPACK_IMPORTED_MODULE_17__, _date_filter_js__WEBPACK_IMPORTED_MODULE_20__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var lit_directive_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directive_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _core_js_page_language__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_13__);
+
 
 
 
@@ -3189,7 +3192,7 @@ function renderTextFilterControl(field, host) {
 
 
 function phoneFilterShown(sent) {
-  return String(sent || '').startsWith('+') ? (0,_phone_js__WEBPACK_IMPORTED_MODULE_14__.formatPhone)(sent) : String(sent || '');
+  return String(sent || '').startsWith('+') ? (0,_phone_js__WEBPACK_IMPORTED_MODULE_15__.formatPhone)(sent) : String(sent || '');
 }
 
 function renderPhoneFilterControl(field, host) {
@@ -3204,7 +3207,7 @@ function renderPhoneFilterControl(field, host) {
                 inputmode="tel"
                 @change=${event => {
     const input = event.currentTarget ?? event.target;
-    const sent = (0,_phone_js__WEBPACK_IMPORTED_MODULE_14__.phoneSearchText)(input?.value ?? '');
+    const sent = (0,_phone_js__WEBPACK_IMPORTED_MODULE_15__.phoneSearchText)(input?.value ?? '');
     const shown = phoneFilterShown(sent);
     if (input && input.value !== shown) input.value = shown;
     host.patchTempFilterValue(field.key, {
@@ -3288,25 +3291,25 @@ const NUMBER_NO_VALUE_OPERATORS = new Set(['empty', 'not-empty']);
 const operatorShape = operator => NUMBER_NO_VALUE_OPERATORS.has(operator) ? 'none' : operator === 'between' ? 'two' : 'one';
 
 function numberOperatorLabel(host, operator) {
-  return _registry_js__WEBPACK_IMPORTED_MODULE_5__.NUMBER_FILTER_OPERATORS.includes(operator) ? setText(host, `numberOperator_${operator}`) : host.getFilterOperatorLabel(operator);
+  return _registry_js__WEBPACK_IMPORTED_MODULE_6__.NUMBER_FILTER_OPERATORS.includes(operator) ? setText(host, `numberOperator_${operator}`) : host.getFilterOperatorLabel(operator);
 }
 
 function renderNumberFilterControl(field, host, look = {}) {
   const control = host.getFilterControlValue(field.key) || {};
-  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
-  const operators = field.filter?.operators || _registry_js__WEBPACK_IMPORTED_MODULE_5__.NUMBER_FILTER_OPERATORS;
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null);
+  const operators = field.filter?.operators || _registry_js__WEBPACK_IMPORTED_MODULE_6__.NUMBER_FILTER_OPERATORS;
   const selectedOperator = control.operator || field.filter?.defaultOperator || operators[0];
   const shape = operatorShape(selectedOperator);
   const rawValue = control.value;
   const rangeValue = Array.isArray(rawValue) ? rawValue : [rawValue ?? '', ''];
   const currencies = look.currencies || null;
   const currency = currencies ? currencies.includes(control.currency) ? control.currency : currencies[0] : look.currency || null;
-  const sign = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(currency, locale, (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyDisplayOf)(field)) : null;
+  const sign = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.currencyOf)(currency, locale, (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.currencyDisplayOf)(field)) : null;
   const textStart = isolatedSign(sign?.before ? sign.sign : '', locale);
   const textEnd = look.percent ? '%' : isolatedSign(sign && !sign.before ? sign.sign : '', locale) || (look.money ? '' : fieldUnit(field));
-  const minDigits = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(currency, locale).minor : 0;
+  const minDigits = look.money && currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.currencyOf)(currency, locale).minor : 0;
 
-  const shown = value => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.restingDecimal)(value, locale, value === '' || value === null || value === undefined ? 0 : minDigits);
+  const shown = value => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.restingDecimal)(value, locale, value === '' || value === null || value === undefined ? 0 : minDigits);
 
   const withCurrency = patch => currencies ? { ...patch,
     currency
@@ -3320,7 +3323,7 @@ function renderNumberFilterControl(field, host, look = {}) {
   const typed = (index, event) => {
     const input = event.currentTarget ?? event.target;
     const text = String(input?.value ?? '');
-    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(text, {
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.readTypedDecimal)(text, {
       locale,
       currency
     });
@@ -3354,7 +3357,7 @@ function renderNumberFilterControl(field, host, look = {}) {
                 root-class="flex-1 min-w-0"
                 label=${label}
                 value=${shown(value)}
-                inputmode=${look.integer || (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).decimals === 0 ? 'numeric' : 'decimal'}
+                inputmode=${look.integer || (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field).decimals === 0 ? 'numeric' : 'decimal'}
                 text-start=${textStart || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 text-end=${textEnd || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 name="sf_filter_${field.key || 'number'}${index ? '_second' : ''}"
@@ -3477,7 +3480,7 @@ function dateFilterPresets(field) {
   const presets = field.filter?.presets;
 
   if (presets === undefined || presets === null) {
-    return [..._date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_FUTURE_PERIODS : [])].join(',');
+    return [..._date_filter_js__WEBPACK_IMPORTED_MODULE_20__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.DATE_FUTURE_PERIODS : [])].join(',');
   }
 
   return Array.isArray(presets) ? presets : String(presets);
@@ -3487,9 +3490,9 @@ function defaultDateCondition(field, list) {
   const asked = field.filter?.defaultOperator;
 
   if (asked) {
-    const one = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateConditionOf)(field, {
+    const one = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_20__.dateConditionOf)(field, {
       operator: asked,
-      value: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.LEGACY_DATE_OPERATORS[asked] || asked
+      value: _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.LEGACY_DATE_OPERATORS[asked] || asked
     });
     const named = list.find(item => item.key === asked);
     if (named || one) return named || one;
@@ -3497,19 +3500,19 @@ function defaultDateCondition(field, list) {
   // field: «Идёт в».
 
 
-  return list.find(item => item.operator === ((0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateFilterKind)(field) === 'period' ? 'overlaps' : 'between')) ?? list[0];
+  return list.find(item => item.operator === ((0,_date_filter_js__WEBPACK_IMPORTED_MODULE_20__.dateFilterKind)(field) === 'period' ? 'overlaps' : 'between')) ?? list[0];
 }
 
 function dateFilterContext(host) {
-  return (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.filterRequestContext)(host ?? null, host?.getFilterContext?.() || {});
+  return (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_20__.filterRequestContext)(host ?? null, host?.getFilterContext?.() || {});
 }
 
 function renderDateFilterControl(field, host) {
   const control = host.getFilterControlValue(field.key) || {};
-  const list = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateFilterConditions)(field);
-  const asked = control.operator ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateConditionOf)(field, control) : null;
+  const list = (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_20__.dateFilterConditions)(field);
+  const asked = control.operator ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_20__.dateConditionOf)(field, control) : null;
   const current = asked ?? defaultDateCondition(field, list);
-  const value = asked ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.normalizeFilterEntry)(control).value : control.value;
+  const value = asked ? (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_20__.normalizeFilterEntry)(control).value : control.value;
   const size = filterSize(host);
 
   const patch = next => host.patchTempFilterValue(field.key, next);
@@ -3536,7 +3539,7 @@ function renderDateFilterControl(field, host) {
     if (!next || asked && next.key === current.key) return;
     patch({
       operator: next.operator,
-      value: (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateConditionValue)(next, {
+      value: (0,_date_filter_js__WEBPACK_IMPORTED_MODULE_20__.dateConditionValue)(next, {
         value
       })
     });
@@ -3546,8 +3549,8 @@ function renderDateFilterControl(field, host) {
                     <sf-list-item
                             kind="text"
                             size=${size}
-                            group=${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateGroupLabel)(host, item.group)}
-                            text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateConditionLabel)(host, item)}"
+                            group=${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_20__.dateGroupLabel)(host, item.group)}
+                            text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_20__.dateConditionLabel)(host, item)}"
                             value="${item.key}"
                             ?selected=${item.key === current.key}
                     ></sf-list-item>
@@ -3605,7 +3608,7 @@ function renderDateConditionValue(field, host, current, value, patch) {
   if (current.need === 'time' || current.need === 'times') return renderTimeConditionValue(field, host, current, value, patch); // «when» (a period field): a period by name, or two days of one's own.
 
   const own = Array.isArray(value);
-  const periods = [..._date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_FUTURE_PERIODS : [])];
+  const periods = [..._date_filter_js__WEBPACK_IMPORTED_MODULE_20__.DATE_PERIODS, ...(field.filter?.future === true ? _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.DATE_FUTURE_PERIODS : [])];
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
         <sf-dropdown
                 size=${size}
@@ -3634,7 +3637,7 @@ function renderDateConditionValue(field, host, current, value, patch) {
   }}
         >
             ${periods.map(period => (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-                <sf-list-item kind="text" size=${size} text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateConditionLabel)(host, {
+                <sf-list-item kind="text" size=${size} text="${(0,_date_filter_js__WEBPACK_IMPORTED_MODULE_20__.dateConditionLabel)(host, {
     period
   })}" value="${period}"
                         ?selected=${!own && value === period}></sf-list-item>
@@ -3659,12 +3662,12 @@ function renderTimeConditionValue(field, host, current, value, patch) {
                 size=${size}
                 root-class=${two ? 'flex-1 min-w-0' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 label="${label}"
-                .value=${(0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitTime)(times[index]).time}
+                .value=${(0,_datetime_js__WEBPACK_IMPORTED_MODULE_10__.splitTime)(times[index]).time}
                 minute-step=${minuteStepOf(field) || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 name="${name}${index ? '_second' : ''}"
                 @change=${event => {
     if (event.target !== event.currentTarget) return;
-    const time = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.normalizeTime)(String(event.detail?.value ?? ''));
+    const time = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_10__.normalizeTime)(String(event.detail?.value ?? ''));
     if (time === null) return;
 
     if (!two) {
@@ -3709,7 +3712,7 @@ function renderDateRangeValue(field, host, current, value, patch) {
     if (event.target !== event.currentTarget) return;
     const preset = event.detail?.preset?.id;
 
-    if (preset && (_date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_PERIODS.includes(preset) || _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_FUTURE_PERIODS.includes(preset))) {
+    if (preset && (_date_filter_js__WEBPACK_IMPORTED_MODULE_20__.DATE_PERIODS.includes(preset) || _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.DATE_FUTURE_PERIODS.includes(preset))) {
       patch(current.operator === 'between' ? {
         operator: 'period',
         value: preset
@@ -3990,7 +3993,7 @@ const FILTER_RENDERERS = {
 
 
 function renderFilterField(field = {}, host) {
-  const asked = field.filter?.control || (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).type || 'text';
+  const asked = field.filter?.control || (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field).type || 'text';
   const renderer = FILTER_RENDERERS[asked] || FILTER_RENDERERS.text;
   return renderer(field, host);
 } // The cell template. A cell is text unless the Framework has a component that
@@ -4049,7 +4052,7 @@ const CELL_BADGE_APPEARANCE = 'tonal'; // The template parameter badge (C302; ba
 const VALUE_BADGE_APPEARANCES = new Set(['tonal', 'outline']);
 
 function badgeAppearanceOf(field) {
-  const asked = String((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'badge') ?? '');
+  const asked = String((0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.templateParam)(field, 'badge') ?? '');
   return VALUE_BADGE_APPEARANCES.has(asked) ? asked : CELL_BADGE_APPEARANCE;
 } // A file cell is a reference link with an icon chosen from the mime type: the
 // consumer asked for an icon and the label and nothing else -- no size as text
@@ -4120,7 +4123,7 @@ function renderColorEdit(field, value, host) {
                 name=${fieldName(field)}
                 value=${hex ? String(hex) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 inherited-value=${inherited ? String(inherited) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
-                swatches=${(0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'swatches') ? String((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'swatches')) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
+                swatches=${(0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.templateParam)(field, 'swatches') ? String((0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.templateParam)(field, 'swatches')) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 ?clearable=${Boolean(inherited) || field.required !== true}
                 ?readonly=${field.readonly === true}
                 aria-label=${field.label || field.key || ''}
@@ -4217,7 +4220,7 @@ function renderChoicesBadgesCell(field, value) {
   return value.map(item => {
     const key = item && typeof item === 'object' ? item.value : item;
     const option = Array.isArray(options) ? options.find(candidate => String(candidate?.value) === String(key)) : null;
-    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option) : null;
+    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_3__.optionBadgeLook)(option) : null;
     const text = item && typeof item === 'object' && item.text !== undefined ? String(item.text) : String(option?.label ?? option?.text ?? key);
     return {
       component: {
@@ -4283,8 +4286,8 @@ const CELL_RENDERERS = {
 
 function booleanWords(field, host) {
   return {
-    yes: (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'trueText') ?? field.labels?.true ?? setText(host, 'yes'),
-    no: (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'falseText') ?? field.labels?.false ?? setText(host, 'no')
+    yes: (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.templateParam)(field, 'trueText') ?? field.labels?.true ?? setText(host, 'yes'),
+    no: (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.templateParam)(field, 'falseText') ?? field.labels?.false ?? setText(host, 'no')
   };
 }
 
@@ -4299,7 +4302,7 @@ function renderChoiceCell(field, value) {
   if (!Array.isArray(options)) return null;
   const option = options.find(item => String(item?.value) === String(value));
   if (!option) return null;
-  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option);
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_3__.optionBadgeLook)(option);
   return {
     component: {
       type: 'badge',
@@ -4348,7 +4351,7 @@ function renderHostFormattedCell(field, value, host) {
 function renderMoneyCell(field, value, host) {
   const formatted = renderHostFormattedCell(field, value, host);
   if (formatted !== null) return formatted;
-  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null));
   return text || null;
 }
 
@@ -4357,7 +4360,7 @@ function renderPercentCell(field, value, host) {
   if (level) return level;
   const formatted = renderHostFormattedCell(field, value, host);
   if (formatted !== null) return formatted;
-  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null));
   return text || null;
 }
 
@@ -4365,7 +4368,7 @@ function renderItemsCell(field, value, host) {
   const formatted = renderHostFormattedCell(field, value, host);
   if (formatted !== null) return formatted;
   if (!Array.isArray(value)) return null;
-  return value.length ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, 'rowCount', host ?? null, {
+  return value.length ? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageWord)(SET_TEXT, 'rowCount', host ?? null, {
     component: SET_NAME,
     count: value.length
   }) : '';
@@ -4470,7 +4473,7 @@ function renderNumericCell(field, value, host) {
     // field's unit follows it as it does in the view (cards study CV-7:
     // a card's stock read a bare «13» where the record said «13 шт»).
     const formatted = renderHostFormattedCell(field, value, host);
-    const text = formatted !== null ? formatted : carriesText(value) ? value.text || null : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || null;
+    const text = formatted !== null ? formatted : carriesText(value) ? value.text || null : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null)) || null;
     return text && field.unit ? `${text} ${field.unit}` : text;
   }
 
@@ -4547,7 +4550,7 @@ function renderLookupCell(field, value) {
 
 
 function renderHtmlCell(field, value) {
-  return (0,_html_js__WEBPACK_IMPORTED_MODULE_11__.htmlText)(value) || null;
+  return (0,_html_js__WEBPACK_IMPORTED_MODULE_12__.htmlText)(value) || null;
 } // What a cell should hold for a field, in the same shape a host would pass: a
 // string, an object with a component, or a list of those. Null means the value
 // is better off as itself. Returning the host's own shape is deliberate -- the
@@ -4556,7 +4559,7 @@ function renderHtmlCell(field, value) {
 
 
 function renderCellField(field = {}, value, host) {
-  const asked = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).type;
+  const asked = (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field).type;
   const renderer = CELL_RENDERERS[asked];
   if (!renderer) return null; // `host` is for one thing, as in the view: formatFieldValue, where a
   // consumer's own formatting of a number or a date belongs. A cell had no way
@@ -4651,7 +4654,7 @@ function renderPhoneEdit(field, value, host) {
   const {
     number: stored,
     extension
-  } = (0,_phone_js__WEBPACK_IMPORTED_MODULE_14__.splitPhone)(scalarValue(value) ?? '');
+  } = (0,_phone_js__WEBPACK_IMPORTED_MODULE_15__.splitPhone)(scalarValue(value) ?? '');
   const preferred = String(field.defaultCountry ?? '').trim().toUpperCase();
   const iso2 = /^[A-Z]{2}$/u.test(preferred) && !String(stored).trim() ? preferred : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -4675,7 +4678,7 @@ function renderPhoneEdit(field, value, host) {
 
 function phoneWritten(event, extension = '') {
   const control = event.currentTarget;
-  const number = typeof control?.sfFormValue === 'function' ? control.sfFormValue() ?? '' : (0,_phone_js__WEBPACK_IMPORTED_MODULE_14__.phoneE164)(event.detail?.value ?? event.target?.value ?? '');
+  const number = typeof control?.sfFormValue === 'function' ? control.sfFormValue() ?? '' : (0,_phone_js__WEBPACK_IMPORTED_MODULE_15__.phoneE164)(event.detail?.value ?? event.target?.value ?? '');
   return number && extension ? `${number};ext=${extension}` : number;
 } // A phone shown: the host's text first (formatFieldValue, or {value, text}),
 // as for any string; else the number
@@ -4687,7 +4690,7 @@ function phoneText(field, value, host) {
   const formatted = host?.formatFieldValue?.(field, value);
   if (typeof formatted === 'string') return formatted;
   if (carriesText(value)) return value.text;
-  return (0,_phone_js__WEBPACK_IMPORTED_MODULE_14__.formatPhone)(scalarValue(value), setText(host, 'phoneExtension'));
+  return (0,_phone_js__WEBPACK_IMPORTED_MODULE_15__.formatPhone)(scalarValue(value), setText(host, 'phoneExtension'));
 } // A password is a type the set never shows (owner, 2026-10-19; a type of its
 // own since C302 (1), a string with variant `password` before, read as it
 // until 2027-01-01). The host never sends one: the value of a `password`
@@ -4827,10 +4830,10 @@ function checkedTextEdit(field, value, host, {
 
 function renderUrlEdit(field, value, host) {
   return checkedTextEdit(field, value, host, {
-    check: text => (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isWebAddress)(text) ? null : 'urlInvalid',
+    check: text => (0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.isWebAddress)(text) ? null : 'urlInvalid',
     // «simai.io» is https://simai.io (dispatcher decision FO-5); a text
     // with a scheme of its own keeps it and is refused unless http(s).
-    complete: _text_types_js__WEBPACK_IMPORTED_MODULE_6__.completeWebAddress,
+    complete: _text_types_js__WEBPACK_IMPORTED_MODULE_7__.completeWebAddress,
     inputType: 'url',
     inputmode: 'url',
     autocomplete: 'url'
@@ -4845,14 +4848,14 @@ function renderUrlView(field, value, host) {
   const text = viewText(field, value, host);
   if (!text) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const href = scalarValue(value);
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${(0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isWebAddress)(href) ? addressLink(href, text) : text}</span>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${(0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.isWebAddress)(href) ? addressLink(href, text) : text}</span>`;
 }
 
 function renderUrlCell(field, value, host) {
   const formatted = host?.formatFieldValue?.(field, value);
   const href = scalarValue(value);
-  if (!(0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isWebAddress)(href)) return typeof formatted === 'string' ? formatted : null;
-  return addressLink(href, typeof formatted === 'string' ? formatted : (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.shortAddress)(href));
+  if (!(0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.isWebAddress)(href)) return typeof formatted === 'string' ? formatted : null;
+  return addressLink(href, typeof formatted === 'string' ? formatted : (0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.shortAddress)(href));
 } // An email address (FS-7, C422): the edit is sf-input of type email with the
 // email keyboard and the browser's address book (autocomplete email, or the
 // field's own autocomplete: «username» for a sign-in, «off»), checked as one
@@ -4862,7 +4865,7 @@ function renderUrlCell(field, value, host) {
 
 function renderEmailEdit(field, value, host) {
   return checkedTextEdit(field, value, host, {
-    check: text => (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isEmailAddress)(text) ? null : 'emailInvalid',
+    check: text => (0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.isEmailAddress)(text) ? null : 'emailInvalid',
     inputType: 'email',
     inputmode: 'email',
     autocomplete: typeof field.autocomplete === 'string' && field.autocomplete.trim() ? field.autocomplete.trim() : 'email'
@@ -4877,13 +4880,13 @@ function renderEmailView(field, value, host) {
   const text = viewText(field, value, host);
   if (!text) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const address = scalarValue(value);
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${(0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isEmailAddress)(address) ? emailLink(address, text) : text}</span>`;
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${(0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.isEmailAddress)(address) ? emailLink(address, text) : text}</span>`;
 }
 
 function renderEmailCell(field, value, host) {
   const formatted = host?.formatFieldValue?.(field, value);
   const address = scalarValue(value);
-  if (!(0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isEmailAddress)(address)) return typeof formatted === 'string' ? formatted : typeof address === 'string' && address ? address : null;
+  if (!(0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.isEmailAddress)(address)) return typeof formatted === 'string' ? formatted : typeof address === 'string' && address ? address : null;
   return emailLink(address, typeof formatted === 'string' ? formatted : address);
 } // A link with its text (link@1): {href, text?}. The view and the row are the
 // text as a link (the address where there is no text); a site path or an
@@ -4898,18 +4901,18 @@ function linkValue(value) {
 }
 
 function linkParts(value) {
-  const link = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.readLink)(linkValue(value));
+  const link = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.readLink)(linkValue(value));
   if (!link) return null;
   const words = link.text || link.href;
   return { ...link,
     words,
-    safe: (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isLinkAddress)(link.href)
+    safe: (0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.isLinkAddress)(link.href)
   };
 }
 
 function linkAnchor(link) {
   if (!link.safe) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${link.words}`;
-  const away = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.isWebAddress)(link.href);
+  const away = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.isWebAddress)(link.href);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class="sf-link" href=${link.href} target=${away ? '_blank' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} rel=${away ? 'noopener noreferrer' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${link.text ? link.text : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<bdi dir="ltr">${link.href}</bdi>`}</a>`;
 }
 
@@ -4935,7 +4938,7 @@ function renderLinkCell(field, value, host) {
 
 
 function renderLinkEdit(field, value, host) {
-  const stored = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.readLink)(linkValue(value)) ?? {
+  const stored = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.readLink)(linkValue(value)) ?? {
     href: '',
     text: ''
   };
@@ -4952,7 +4955,7 @@ function renderLinkEdit(field, value, host) {
       href: read(hrefInput, stored.href),
       text: read(textInput, stored.text)
     };
-    const result = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.composeLink)(next.href, next.text);
+    const result = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.composeLink)(next.href, next.text);
 
     if (result.error) {
       const message = setText(host, result.error);
@@ -5028,9 +5031,9 @@ function renderLinkEdit(field, value, host) {
 
 
 function renderInnEdit(field, value, host) {
-  const holder = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.innHolder)(field);
+  const holder = (0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.innHolder)(field);
   return checkedTextEdit(field, value, host, {
-    check: text => (0,_text_types_js__WEBPACK_IMPORTED_MODULE_6__.innError)(text, holder),
+    check: text => (0,_text_types_js__WEBPACK_IMPORTED_MODULE_7__.innError)(text, holder),
     inputmode: 'numeric',
     autocomplete: 'off'
   });
@@ -5121,7 +5124,7 @@ const IMAGE_TEMPLATES = new Set(['image', 'image_card', 'image_list']); // The t
 // reads the former variant and says a fallback once.
 
 function templateOf(field) {
-  return (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).template;
+  return (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field).template;
 }
 
 function isImageField(field) {
@@ -5138,14 +5141,53 @@ function isImageField(field) {
 // No syntax colouring. That needs an editor component, which is its own part with
 // its own decision; a monospace area that keeps indentation is honest, usable and
 // does not pretend to be more.
+//
+// The <pre><code> is not lit's (View round 19, include-w1): sf-highlight takes
+// every `pre code` on the page, writes the code's innerHTML and moves the pre
+// into its own frame, and a lit text part inside that code lost its node. The
+// next record wrote its text into nothing («Cannot set properties of null
+// (setting 'data')» from lit's commit in smart-base) and the record stopped
+// drawing. Lit owns an empty box here; the block inside it is written by the
+// directive below, again only when the text or the language changes, so
+// whatever a page's enhancer does inside the box is never lit's DOM.
 
+
+class IncludeBlock extends lit_directive_js__WEBPACK_IMPORTED_MODULE_1__.Directive {
+  constructor(partInfo) {
+    super(partInfo);
+    if (partInfo.type !== lit_directive_js__WEBPACK_IMPORTED_MODULE_1__.PartType.ELEMENT) throw new Error('includeBlock belongs on an element');
+  }
+
+  render() {
+    return lit__WEBPACK_IMPORTED_MODULE_0__.noChange;
+  }
+
+  update(part, [text, language]) {
+    const box = part.element;
+    if (this.text === text && this.language === language && box.firstChild) return lit__WEBPACK_IMPORTED_MODULE_0__.noChange;
+    this.text = text;
+    this.language = language;
+    const pre = box.ownerDocument.createElement('pre');
+    pre.className = 'sf-field-include';
+    if (language) pre.dataset.language = language;
+    const code = box.ownerDocument.createElement('code');
+    code.textContent = text;
+    pre.append(code);
+    box.replaceChildren(pre);
+    return lit__WEBPACK_IMPORTED_MODULE_0__.noChange;
+  }
+
+}
+
+const includeBlock = (0,lit_directive_js__WEBPACK_IMPORTED_MODULE_1__.directive)(IncludeBlock);
 
 function renderIncludeView(field, value) {
   const text = scalarValue(value);
   if (!text) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
-        <pre class="sf-field-include" data-language=${(0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'language') ? String((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'language')) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}><code>${String(text)}</code></pre>
-    `;
+  const language = (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.templateParam)(field, 'language') ? String((0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.templateParam)(field, 'language')) : ''; // display: contents -- the box is for ownership only; the block (or the
+  // frame a highlighter puts round it) lays out as the value's own child.
+
+  return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-field-include-box" style="display: contents" ${includeBlock(String(text), language)}></div>`;
 } // The include editor is code (C141 (8)): sf-input-textarea's text="code" --
 // the code font, spelling off, no wrapping -- at a fixed eight rows.
 
@@ -5171,7 +5213,7 @@ function renderIncludeEdit(field, value, host) {
 
 
 function rowsOf(field, fallback) {
-  const asked = Number((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'rows'));
+  const asked = Number((0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.templateParam)(field, 'rows'));
   return Number.isInteger(asked) && asked >= 1 && asked <= 50 ? String(asked) : fallback ? String(fallback) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 }
 
@@ -5185,7 +5227,7 @@ function renderIncludeCell(field, value) {
 }
 
 function renderTextEdit(field, value, host) {
-  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_10__.maskPattern)(field);
+  const mask = (0,_mask_js__WEBPACK_IMPORTED_MODULE_11__.maskPattern)(field);
   if (mask) return renderMaskedEdit(field, value, host, mask);
   value = scalarValue(value);
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
@@ -5238,7 +5280,7 @@ function renderMaskedEdit(field, value, host, mask) {
   const write = (event, left) => {
     const input = event.currentTarget;
     const text = String(input?.value ?? '');
-    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_10__.maskState)(text, mask);
+    const state = (0,_mask_js__WEBPACK_IMPORTED_MODULE_11__.maskState)(text, mask);
 
     if (state === 'incomplete') {
       const message = setText(host, 'maskIncomplete');
@@ -5361,13 +5403,13 @@ function renderStepperEdit(field, value, host, {
 } = {}) {
   const {
     decimals
-  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field);
+  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field);
   const step = stepperNumber(field.step);
   const precision = decimals !== null ? String(decimals) : step ? '' : '2';
 
   const written = raw => {
     if (!percent || raw === null || raw === undefined || raw === '') return raw ?? null;
-    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readDecimal)(String(raw));
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.readDecimal)(String(raw));
     return read.ok ? read.value : null;
   };
 
@@ -5411,7 +5453,7 @@ function declaresDecimals(field) {
 }
 
 function isDecimalStringField(field, value) {
-  if ((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field, {
+  if ((0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field, {
     quiet: true
   }).decimals === 0) return false;
   return typeof value === 'string' || declaresDecimals(field);
@@ -5426,15 +5468,15 @@ function isDecimalStringField(field, value) {
 
 
 function numberValue(field, value) {
-  const resolved = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field, {
+  const resolved = (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field, {
     quiet: true
   });
   if (resolved.type !== 'number' || resolved.decimals !== 0 || typeof value !== 'string') return value;
-  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readDecimal)(value); // Text that is not a whole number is the field's error, kept as typed.
+  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.readDecimal)(value); // Text that is not a whole number is the field's error, kept as typed.
 
   if (!read.ok) return value;
   if (read.value === null) return null;
-  if ((0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.fractionDigits)(read.value) > 0) return value;
+  if ((0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.fractionDigits)(read.value) > 0) return value;
   const number = Number(read.value);
   return Number.isSafeInteger(number) ? number : read.value;
 } // A number's unit (`unit`, «шт», «кг») in every place the field is drawn
@@ -5452,17 +5494,17 @@ function renderNumberEdit(field, value, host) {
   if (isStepperField(field)) return renderStepperEdit(field, value, host);
   const {
     decimals
-  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field);
+  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field);
   value = scalarValue(value);
   const asString = isDecimalStringField(field, value);
 
   const write = (event, left) => {
     const input = event.currentTarget ?? event.target;
     const text = String(input?.value ?? '');
-    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readDecimal)(text);
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.readDecimal)(text);
     let message = null;
-    if (!read.ok) message = setText(host, 'notNumber');else if (read.value !== null && decimals !== null && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.fractionDigits)(read.value) > decimals) {
-      message = decimals === 0 ? setText(host, 'wholeNumber') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, 'precisionMax', host ?? null, {
+    if (!read.ok) message = setText(host, 'notNumber');else if (read.value !== null && decimals !== null && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.fractionDigits)(read.value) > decimals) {
+      message = decimals === 0 ? setText(host, 'wholeNumber') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageWord)(SET_TEXT, 'precisionMax', host ?? null, {
         component: SET_NAME,
         count: decimals
       });
@@ -5542,7 +5584,7 @@ const OFFERED_CURRENCIES = ['RUB', 'USD', 'EUR', 'CNY', 'KZT', 'BYN', 'AED', 'TR
 function fieldCurrencies(field) {
   const asked = Array.isArray(field?.currencies) ? field.currencies : typeof field?.currencies === 'string' ? field.currencies.split(',') : [];
   const codes = asked.map(code => String(code).trim().toUpperCase()).filter(code => /^[A-Z]{3}$/u.test(code));
-  return codes.length ? [...new Set(codes)] : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyCodes)(OFFERED_CURRENCIES);
+  return codes.length ? [...new Set(codes)] : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.currencyCodes)(OFFERED_CURRENCIES);
 } // What a person is typing, per host and field: the value written is
 // canonical («12.5»), and drawn back as such it would move the caret under
 // «12,50» or swallow the comma of «12,». The typed text is shown while it
@@ -5574,8 +5616,8 @@ function decimalShown(host, key, value, {
   minDigits = 0
 } = {}) {
   if (value === null || value === undefined || value === '') return '';
-  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
-  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(value, {
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null);
+  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.readTypedDecimal)(value, {
     locale: 'en',
     currency
   });
@@ -5583,17 +5625,17 @@ function decimalShown(host, key, value, {
   const draft = draftOf(host, key);
 
   if (typeof draft === 'string') {
-    const typed = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(draft, {
+    const typed = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.readTypedDecimal)(draft, {
       locale,
       currency
     });
     if (typed.ok && typed.value === read.value) return draft;
   }
 
-  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.restingDecimal)(read.value, locale, minDigits);
+  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.restingDecimal)(read.value, locale, minDigits);
 }
 
-const hasBound = bound => bound !== null && bound !== undefined && bound !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readDecimal)(bound).ok; // What is wrong with a typed decimal, or '': not a number, more digits after
+const hasBound = bound => bound !== null && bound !== undefined && bound !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.readDecimal)(bound).ok; // What is wrong with a typed decimal, or '': not a number, more digits after
 // the point than `digits` (never rounded away: «1500,555» is an error, while
 // «1500,500» is 1500.5), outside min..max.
 
@@ -5604,27 +5646,27 @@ function decimalError(host, text, {
   max = null,
   currency = null
 } = {}) {
-  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(text, {
-    locale: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null),
+  const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.readTypedDecimal)(text, {
+    locale: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null),
     currency
   });
   if (!read.ok) return setText(host, 'notNumber');
   if (read.value === null) return '';
 
-  if (Number.isInteger(digits) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.fractionDigits)(read.value) > digits) {
-    return digits === 0 ? setText(host, 'fractionNone') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, 'precisionMax', host ?? null, {
+  if (Number.isInteger(digits) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.fractionDigits)(read.value) > digits) {
+    return digits === 0 ? setText(host, 'fractionNone') : (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageWord)(SET_TEXT, 'precisionMax', host ?? null, {
       component: SET_NAME,
       count: digits
     });
   }
 
-  const low = hasBound(min) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.compareDecimal)(read.value, min) === -1;
-  const high = hasBound(max) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.compareDecimal)(read.value, max) === 1;
+  const low = hasBound(min) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.compareDecimal)(read.value, min) === -1;
+  const high = hasBound(max) && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.compareDecimal)(read.value, max) === 1;
   if (!low && !high) return '';
-  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null);
   const vars = {
-    min: hasBound(min) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatDecimal)(min, locale) : '',
-    max: hasBound(max) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatDecimal)(max, locale) : ''
+    min: hasBound(min) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.formatDecimal)(min, locale) : '',
+    max: hasBound(max) ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.formatDecimal)(max, locale) : ''
   };
   if (hasBound(min) && hasBound(max)) return setWord(host, 'boundBetween', vars);
   return low ? setWord(host, 'boundAtLeast', vars) : setWord(host, 'boundAtMost', vars);
@@ -5659,7 +5701,7 @@ function decimalInput(field, value, host, {
   rootClass = ''
 }) {
   const own = EDIT_ERROR;
-  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null);
 
   const typed = (event, left) => {
     const input = event.currentTarget ?? event.target;
@@ -5677,7 +5719,7 @@ function decimalInput(field, value, host, {
       }
     }
 
-    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(text, {
+    const read = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.readTypedDecimal)(text, {
       locale,
       currency
     });
@@ -5715,7 +5757,7 @@ function decimalInput(field, value, host, {
 
 
 function isolatedSign(sign, locale) {
-  if (!sign || !(0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.isRtlLocale)(locale) || !/[A-Za-z]/u.test(sign)) return sign;
+  if (!sign || !(0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.isRtlLocale)(locale) || !/[A-Za-z]/u.test(sign)) return sign;
   return `\u2066${sign}\u2069`;
 }
 
@@ -5728,10 +5770,10 @@ function fixedCurrency(field) {
 function percentDigits(field) {
   const {
     decimals
-  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field);
+  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field);
   if (decimals !== null) return decimals;
-  const step = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readDecimal)(field.step);
-  return step.ok && step.value !== null && Number(step.value) > 0 ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.fractionDigits)(step.value) : null;
+  const step = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.readDecimal)(field.step);
+  return step.ok && step.value !== null && Number(step.value) > 0 ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.fractionDigits)(step.value) : null;
 } // A percent is the percent itself, «12.5» is 12,5 % (C294); it is bounded
 // only by the field's min and max -- a growth of 150 % or a change of −5 % is
 // a percent too (MP-11: the View set bounded it 0..100 without saying why).
@@ -5758,11 +5800,11 @@ function renderPercentEdit(field, value, host) {
 }
 
 function renderMoneyEdit(field, value, host) {
-  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null);
   const key = String(field.key ?? '');
   const fixed = fixedCurrency(field);
-  const display = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyDisplayOf)(field);
-  const parts = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.moneyParts)(scalarValue(value), fixed); // A currency chosen before an amount is typed waits here: a value is an
+  const display = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.currencyDisplayOf)(field);
+  const parts = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.moneyParts)(scalarValue(value), fixed); // A currency chosen before an amount is typed waits here: a value is an
   // amount and its currency, never a currency alone.
 
   const currencyKey = `${key}#currency`;
@@ -5772,13 +5814,13 @@ function renderMoneyEdit(field, value, host) {
 
   const check = (text, code) => {
     const message = decimalError(host, text, {
-      digits: code ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(code, locale).minor : null,
+      digits: code ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.currencyOf)(code, locale).minor : null,
       min,
       max,
       currency: code
     });
     if (message) return message;
-    return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(text, {
+    return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.readTypedDecimal)(text, {
       locale,
       currency: code
     }).value !== null && !code ? setText(host, 'chooseCurrency') : '';
@@ -5789,17 +5831,17 @@ function renderMoneyEdit(field, value, host) {
     currency: code ?? null
   }, message);
 
-  const sign = fixed ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(fixed, locale, display) : null; // The width (C396, WM-4): a fixed currency's amount is the field and takes
+  const sign = fixed ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.currencyOf)(fixed, locale, display) : null; // The width (C396, WM-4): a fixed currency's amount is the field and takes
   // it; with a currency to choose, the row of the two does, and the amount
   // fills the row as before.
 
-  const rowWidth = fixed ? '' : (0,_component_field_size__WEBPACK_IMPORTED_MODULE_8__.fieldWidthClass)(EDIT_WIDTH);
+  const rowWidth = fixed ? '' : (0,_component_field_size__WEBPACK_IMPORTED_MODULE_9__.fieldWidthClass)(EDIT_WIDTH);
   const fieldWidthOuter = EDIT_WIDTH;
   if (!fixed) EDIT_WIDTH = '';
   const amount = decimalInput(field, parts.amount, host, {
     key,
     currency,
-    minDigits: currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(currency, locale).minor : 0,
+    minDigits: currency ? (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.currencyOf)(currency, locale).minor : 0,
     textStart: sign?.before ? sign.sign : '',
     textEnd: sign && !sign.before ? sign.sign : '',
     rootClass: fixed ? '' : 'flex-1 min-w-0',
@@ -5817,7 +5859,7 @@ function renderMoneyEdit(field, value, host) {
   const optionText = code => {
     const {
       sign: mark
-    } = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(code, locale, display);
+    } = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.currencyOf)(code, locale, display);
     return mark === code ? code : `${code} ${mark}`;
   }; // C294 (b): the choice is a third of the row but never narrower than its
   // longest option and the field's own chrome -- the chevron's square (the
@@ -5856,7 +5898,7 @@ function renderMoneyEdit(field, value, host) {
     // only with an amount.
     // The stored amount is checked as the page would show it.
 
-    if (typed !== null && typed !== undefined && typed !== '') write(typed, check((0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.restingDecimal)(typed, locale), code), code);
+    if (typed !== null && typed !== undefined && typed !== '') write(typed, check((0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.restingDecimal)(typed, locale), code), code);
   }}
             ></sf-dropdown>
         </div>
@@ -5867,13 +5909,13 @@ function renderPercentView(field, value, host) {
   const level = levelView(field, value);
   if (level) return level;
   const formatted = host?.formatFieldValue?.(field, value);
-  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || viewText(field, value, null);
+  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.formatPercent)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null)) || viewText(field, value, null);
   return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 }
 
 function renderMoneyView(field, value, host) {
   const formatted = host?.formatFieldValue?.(field, value);
-  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null));
+  const text = typeof formatted === 'string' ? formatted : carriesText(value) ? value.text : (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.formatMoney)(scalarValue(value), field, (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null));
   return text ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-field-view">${text}</span>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // A date control has no clock. `sf-input-date` declares a format and a date,
 // and its parser is anchored (`^\d{4}-\d{2}-\d{2}$`), so a datetime value
@@ -5969,7 +6011,7 @@ function minuteStepOf(field) {
 }
 
 function renderDateTimeEdit(field, value, host) {
-  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitDateTime)(value);
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_10__.splitDateTime)(value);
   const shown = stored.date ? `${stored.date}${stored.time ? `T${stored.time}` : ''}` : '';
   const min = typeof field.min === 'string' ? field.min : '';
   const max = typeof field.max === 'string' ? field.max : '';
@@ -5993,7 +6035,7 @@ function renderDateTimeEdit(field, value, host) {
     // The picker's own change, not a native one from its field.
     if (event.target !== event.currentTarget) return;
     const [date = '', time = ''] = String(event.detail?.value ?? '').split('T');
-    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.composeDateTime)(stored, {
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_10__.composeDateTime)(stored, {
       date,
       time
     });
@@ -6010,7 +6052,7 @@ function renderDateTimeEdit(field, value, host) {
 
 
 function renderTimeEdit(field, value, host) {
-  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitTime)(value);
+  const stored = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_10__.splitTime)(value);
   const min = typeof field.min === 'string' ? field.min : '';
   const max = typeof field.max === 'string' ? field.max : '';
   const step = minuteStepOf(field);
@@ -6031,7 +6073,7 @@ function renderTimeEdit(field, value, host) {
                 error-message=${EDIT_ERROR || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                 @change=${event => {
     if (event.target !== event.currentTarget) return;
-    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.composeTime)(stored, String(event.detail?.value ?? ''));
+    const result = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_10__.composeTime)(stored, String(event.detail?.value ?? ''));
     if (result.error) return;
     const same = result.value === null ? stored.known && !stored.time : result.value === stored.raw;
     host.setFieldValue(field, same ? undefined : result.value);
@@ -6238,7 +6280,7 @@ function renderChoiceButtons(field, value, host) {
       disabled: true
     } : {})
   }));
-  const asked = String((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'size') ?? '');
+  const asked = String((0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.templateParam)(field, 'size') ?? '');
   const size = CHOICE_BUTTON_SIZES.has(asked) ? asked : EDIT_SIZE;
   const disabled = EDIT_DISABLED;
   const locked = !disabled && field.readonly === true;
@@ -6341,7 +6383,7 @@ function renderChoicesEdit(field, value, host) {
   const {
     template,
     former
-  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field);
+  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field);
 
   if (template === 'checklist' || former !== 'select' && options.length >= CHECKLIST_FROM) {
     return renderChoicesChecklist(field, value, host);
@@ -6395,7 +6437,7 @@ function renderChoicesEdit(field, value, host) {
 // keeps exactly what was published.
 
 
-const SET_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_18__["default"]; // The host's word wins, as it always did; the set's own fallback now follows
+const SET_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_19__["default"]; // The host's word wins, as it always did; the set's own fallback now follows
 // the page's language instead of being Russian whatever the page is. `host` is
 // the component that called the set, which is the node the rule reads from.
 // The set is not an element, so it is named here rather than taken from the
@@ -6405,7 +6447,7 @@ const SET_TEXT = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_18__["default"]; // Th
 const SET_NAME = 'sf-field-renderers';
 
 function setText(host, key) {
-  return host?.getFieldText?.(key) ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SET_TEXT, key, host ?? null, SET_NAME);
+  return host?.getFieldText?.(key) ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageText)(SET_TEXT, key, host ?? null, SET_NAME);
 } // A word with places in it ({zone}, {n}): the host's word wins, as setText's.
 
 
@@ -6416,7 +6458,7 @@ function setWord(host, key, vars) {
     return String(own).replace(/\{([a-z][\w-]*)\}/giu, (whole, name) => vars && name in vars ? String(vars[name]) : whole);
   }
 
-  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageWord)(SET_TEXT, key, host ?? null, {
+  return (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageWord)(SET_TEXT, key, host ?? null, {
     component: SET_NAME,
     vars
   });
@@ -6434,7 +6476,7 @@ let EDIT_PICKER = '';
 
 function dropdownPicker() {
   if (EDIT_PICKER !== 'dropdown') return false;
-  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_12__.noteDeprecated)({
+  (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_13__.noteDeprecated)({
     component: 'sf-field-renderers',
     kind: 'value',
     attribute: 'picker',
@@ -7053,7 +7095,7 @@ function renderEditField(field = {}, value, host, options = {}) {
   // there as in a form (FO3-4) -- hidden, nothing is drawn; not enabled,
   // its value as text; required as they say.
   if (field?.when && options?.values && typeof options.values === "object") {
-    const decided = (0,_conditions_js__WEBPACK_IMPORTED_MODULE_15__.fieldConditions)(field, options.values);
+    const decided = (0,_conditions_js__WEBPACK_IMPORTED_MODULE_16__.fieldConditions)(field, options.values);
     if (!decided.visible) return null;
     field = { ...field,
       required: decided.required,
@@ -7061,7 +7103,7 @@ function renderEditField(field = {}, value, host, options = {}) {
     };
   }
 
-  const asked = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).type;
+  const asked = (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field).type;
   const disabled = options?.disabled === true; // A field the person may not change is shown, not offered as a control that
   // refuses: the same rule for every type, so `readonly` means one thing
   // wherever the registry lists it.
@@ -7079,7 +7121,7 @@ function renderEditField(field = {}, value, host, options = {}) {
   const outerError = EDIT_ERROR;
   const outerWidth = EDIT_WIDTH;
   EDIT_SIZE = sizeOption(options);
-  EDIT_WIDTH = (0,_component_field_size__WEBPACK_IMPORTED_MODULE_8__.fieldWidth)((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.templateParam)(field, 'width'));
+  EDIT_WIDTH = (0,_component_field_size__WEBPACK_IMPORTED_MODULE_9__.fieldWidth)((0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.templateParam)(field, 'width'));
   EDIT_ERROR = typeof options?.error === 'string' ? options.error.trim() : '';
   EDIT_DISABLED = disabled; // `options.picker: 'dropdown'`: the record, relation, user and paged lookup
   // fields drawn as before C139, a searchable sf-dropdown (until 2027-01-01).
@@ -7164,8 +7206,8 @@ function renderTextView(field, value, host) {
 
 
 function renderHtmlView(field, value) {
-  const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_11__.cleanHtml)(value);
-  return clean ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-field-view sf-field-html">${(0,lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_1__.unsafeHTML)(clean)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  const clean = (0,_html_js__WEBPACK_IMPORTED_MODULE_12__.cleanHtml)(value);
+  return clean ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-field-view sf-field-html">${(0,lit_directives_unsafe_html_js__WEBPACK_IMPORTED_MODULE_2__.unsafeHTML)(clean)}</div>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // A number in the page's language (set boundary study, 2026-11-17): «12,5 кг»
 // on a Russian page, «12.5 kg» on an English one, through Intl with every
 // digit the value has (decimal.js formatDecimal, never through a float on the
@@ -7177,7 +7219,7 @@ function numberText(field, value, host) {
   const formatted = host?.formatFieldValue?.(field, value);
   if (typeof formatted === 'string') return formatted;
   if (carriesText(value)) return value.text;
-  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null)) || viewText(field, value, null);
+  return (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.formatDecimal)(scalarValue(value), (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null)) || viewText(field, value, null);
 } // A percent as the number's scale or meter (step 5), 0..100; else null.
 
 
@@ -7247,17 +7289,17 @@ function dateFormatOf(field) {
 
 function defaultDateText(field, value, host) {
   if (carriesText(value)) return null;
-  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitDateTime)(value);
+  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_10__.splitDateTime)(value);
   if (!parts.known || !parts.date) return null;
   const [year, month, day] = parts.date.split('-').map(Number);
-  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null);
 
   try {
     const date = new Date(0);
     date.setUTCFullYear(year, month - 1, day);
     const type = field?.propertyType || field?.type || field?.dataType;
     const dateStyle = dateFormatOf(field);
-    if (type !== 'datetime' || !parts.time) return (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__.formatDate)(date, {
+    if (type !== 'datetime' || !parts.time) return (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_5__.formatDate)(date, {
       intl: {
         dateStyle,
         timeZone: 'UTC'
@@ -7266,7 +7308,7 @@ function defaultDateText(field, value, host) {
     }) || null;
     const [hours, minutes] = parts.time.split(':').map(Number);
     date.setUTCHours(hours, minutes, 0, 0);
-    return (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_4__.formatDate)(date, {
+    return (0,_core_js_format_date_js__WEBPACK_IMPORTED_MODULE_5__.formatDate)(date, {
       intl: {
         dateStyle,
         timeStyle: 'short',
@@ -7292,7 +7334,7 @@ function dateText(field, value, host) {
 
 
 function dateTimeAttribute(field, value) {
-  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitDateTime)(value);
+  const parts = (0,_datetime_js__WEBPACK_IMPORTED_MODULE_10__.splitDateTime)(value);
   if (!parts.known || !parts.date) return '';
   const type = field?.propertyType || field?.type || field?.dataType;
   return type === 'datetime' && parts.time ? `${parts.date}T${parts.time}` : parts.date;
@@ -7315,7 +7357,7 @@ function renderChoiceView(field, value) {
   const options = field.options || field.filter?.options || field.constraints?.options;
   const option = Array.isArray(options) ? options.find(item => String(item?.value) === String(value)) : null;
   if (!option) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
-  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option); // On the value's own text (owner remark 13, View list register VL-73): the
+  const badge = (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_3__.optionBadgeLook)(option); // On the value's own text (owner remark 13, View list register VL-73): the
   // badge takes the text it stands beside, its size and line (line="text"),
   // as the table's cell does since VL-54; it was a size down (14 beside a
   // value of 16). Secondary by its ink only. A word keeps the cell's room.
@@ -7360,7 +7402,7 @@ function renderChoicesView(field, value) {
             ${value.map(item => {
     if (!badges) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-tag root-class="flex-none" inline size=${VIEW_LINE} kind="default" text=${label(item)}></sf-tag>`;
     const option = optionOf(item);
-    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_2__.optionBadgeLook)(option) : null;
+    const badge = option ? (0,_helpers_option_badge_js__WEBPACK_IMPORTED_MODULE_3__.optionBadgeLook)(option) : null;
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-badge line=${VALUE_BADGE_LINE} root-style=${CELL_BADGE_ROOM} appearance=${badgeAppearanceOf(field)}
                         scheme=${badge?.scheme || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} hue=${badge?.hue || lit__WEBPACK_IMPORTED_MODULE_0__.nothing} text=${label(item)}></sf-badge>`;
   })}
@@ -7482,36 +7524,36 @@ const VIEW_RENDERERS = {
 // not a number is left out.
 
 function renderTotalField(field = {}, values = [], host) {
-  const type = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).type;
-  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null);
+  const type = (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field).type;
+  const locale = (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null);
   const list = (Array.isArray(values) ? values : []).map(value => scalarValue(value));
 
   if (type === 'money') {
-    const totals = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.moneyTotals)(list, field, locale);
+    const totals = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.moneyTotals)(list, field, locale);
     return totals.length ? totals.map(total => total.text) : null;
   }
 
   if (type !== 'number') return null;
-  const numbers = list.filter(value => value !== null && value !== undefined && value !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(value).ok);
+  const numbers = list.filter(value => value !== null && value !== undefined && value !== '' && (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.readTypedDecimal)(value).ok);
   if (!numbers.length) return null;
-  const sum = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.addDecimal)(numbers);
+  const sum = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.addDecimal)(numbers);
   if (sum === null) return null; // The total keeps the field's unit as the cells print it («13 шт»): a
   // number keeps its unit in every place (cards study CV-7; DEV, group build
   // 12 acceptance: the table footer printed a bare «26»).
 
-  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatDecimal)(sum, locale);
+  const text = (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.formatDecimal)(sum, locale);
   const unit = fieldUnit(field);
   return [unit ? `${text} ${unit}` : text];
 } // Whether a type is a number a table aligns to the end of the line with
 // figures of one width (the registry's `numeric`, C294 MP-12).
 
 function isNumericType(type) {
-  return Boolean((0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.typeEntry)(type)?.numeric);
+  return Boolean((0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.typeEntry)(type)?.numeric);
 } // A former type name (integer, compound) has the modes of the type it reads as.
 
 function propertyModes(type) {
-  const own = _registry_js__WEBPACK_IMPORTED_MODULE_5__.TYPE_ALIASES[type]?.type ?? type;
-  return (0,_registry_js__WEBPACK_IMPORTED_MODULE_5__.modesOf)(own, {
+  const own = _registry_js__WEBPACK_IMPORTED_MODULE_6__.TYPE_ALIASES[type]?.type ?? type;
+  return (0,_registry_js__WEBPACK_IMPORTED_MODULE_6__.modesOf)(own, {
     view: VIEW_RENDERERS,
     edit: EDIT_RENDERERS,
     cell: CELL_RENDERERS,
@@ -7527,7 +7569,7 @@ function fieldTemplate(field = {}) {
     type,
     template,
     params
-  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field);
+  } = (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field);
   return {
     type,
     template,
@@ -7564,7 +7606,7 @@ function fieldTemplate(field = {}) {
 // One step, set once on the window (PH-7): FILTER_WINDOW_STEP.
 
 function windowStep() {
-  return _filter_window_js__WEBPACK_IMPORTED_MODULE_16__.FILTER_WINDOW_STEP;
+  return _filter_window_js__WEBPACK_IMPORTED_MODULE_17__.FILTER_WINDOW_STEP;
 }
 
 function renderConditionControl(field, host, conditions, selected) {
@@ -7573,7 +7615,7 @@ function renderConditionControl(field, host, conditions, selected) {
   // condition's words in the error ink; «задано» / «не задано» without a
   // colour; the menu without dots, the excluding rows in the same ink.
 
-  const excluding = operator => (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditionTone)(operator) === 'error';
+  const excluding = operator => (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterConditionTone)(operator) === 'error';
 
   const caption = JSON.stringify(`${setText(host, 'filterCondition')}: `);
   const style = `--sf-dropdown-band-caption: ${caption}${excluding(selected) ? '; --sf-dropdown-band-color: var(--sf-error); --sf-dropdown-band-hover-color: var(--sf-error-hover)' : ''}`;
@@ -7602,7 +7644,7 @@ function currencySign(field, host) {
   if (!code) return '';
 
   try {
-    return new Intl.NumberFormat((0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(host ?? null) || 'ru-RU', {
+    return new Intl.NumberFormat((0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(host ?? null) || 'ru-RU', {
       style: 'currency',
       currency: code
     }).formatToParts(0).find(part => part.type === 'currency')?.value || code;
@@ -7680,7 +7722,7 @@ function renderBooleanWindow(field, host, value) {
     yes: field.trueText ?? field.labels?.true ?? setText(host, 'yes'),
     no: field.falseText ?? field.labels?.false ?? setText(host, 'no')
   };
-  const operator = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterCondition)(field, value);
+  const operator = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterCondition)(field, value);
   const one = Array.isArray(value.values) ? value.values[0] : value.value;
   const chosen = operator === 'empty' ? 'empty' : one === true || String(one) === 'true' ? 'true' : one === false || String(one) === 'false' ? 'false' : '';
   const items = [{
@@ -7719,13 +7761,13 @@ function renderBooleanWindow(field, host, value) {
 
 
 function renderFilterWindowField(field = {}, host) {
-  const kind = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterKindOf)(field);
+  const kind = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterKindOf)(field);
   if (kind === 'own') return renderFilterField(field, host);
   const value = host.getFilterControlValue(field.key) || {};
   if (kind === 'boolean') return windowFields(host, renderBooleanWindow(field, host, value));
-  const conditions = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditions)(field);
-  const operator = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterCondition)(field, value);
-  const control = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterValueless)(operator) ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : kind === 'string' ? renderStringWindow(field, host, value, operator) : kind === 'number' ? renderNumberWindow(field, host, value, operator) : renderChoiceFilterControl(field, host);
+  const conditions = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterConditions)(field);
+  const operator = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterCondition)(field, value);
+  const control = (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterValueless)(operator) ? lit__WEBPACK_IMPORTED_MODULE_0__.nothing : kind === 'string' ? renderStringWindow(field, host, value, operator) : kind === 'number' ? renderNumberWindow(field, host, value, operator) : renderChoiceFilterControl(field, host);
   return windowFields(host, (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`${renderConditionControl(field, host, conditions, operator)}${control}`);
 } // The window's parts reach its edges (C313): the band, the search's and the
 // list's hairlines. A phone's sheet pads its body; there they reach past that
@@ -7742,15 +7784,15 @@ function windowFields(host, content) {
 
 function openFilterWindow(options = {}) {
   const field = options.field || {};
-  return (0,_filter_window_js__WEBPACK_IMPORTED_MODULE_16__.filterWindowOpen)({
-    width: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterWidth)(field),
-    kind: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterKindOf)(field),
+  return (0,_filter_window_js__WEBPACK_IMPORTED_MODULE_17__.filterWindowOpen)({
+    width: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterWidth)(field),
+    kind: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterKindOf)(field),
     ...options,
     renderControl: renderFilterWindowField,
     // A boolean applies on a press and has no footer (C312 (2)).
-    footer: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterKindOf)(field) !== 'boolean',
+    footer: (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterKindOf)(field) !== 'boolean',
     // «Применить (N)»: the chosen values of a list condition only (C310).
-    count: value => (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterKindOf)(field) === 'own' ? Array.isArray(value?.values) ? value.values.length : 0 : (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterCount)(field, value)
+    count: value => (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterKindOf)(field) === 'own' ? Array.isArray(value?.values) ? value.values.length : 0 : (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterCount)(field, value)
   });
 }
 /**
@@ -7762,16 +7804,16 @@ function openFilterWindow(options = {}) {
 function filterFieldSummary(field = {}, value = {}, node = null) {
   const options = Array.isArray(field.filter?.options) ? field.filter.options : [];
   const names = new Map(options.map(option => [String(option.value ?? option.id ?? option.key ?? option.label), option.label || option.title || String(option.value ?? '')]));
-  return (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterSummary)(field, value, {
-    label: operator => (0,_filter_window_js__WEBPACK_IMPORTED_MODULE_16__.filterOperatorLabel)(operator, node, (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterKindOf)(field)),
+  return (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterSummary)(field, value, {
+    label: operator => (0,_filter_window_js__WEBPACK_IMPORTED_MODULE_17__.filterOperatorLabel)(operator, node, (0,_filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterKindOf)(field)),
     name: one => names.get(one) ?? one,
-    yes: field.trueText ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SET_TEXT, 'yes', node, SET_NAME),
-    no: field.falseText ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SET_TEXT, 'no', node, SET_NAME)
+    yes: field.trueText ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageText)(SET_TEXT, 'yes', node, SET_NAME),
+    no: field.falseText ?? (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageText)(SET_TEXT, 'no', node, SET_NAME)
   });
 }
 
 function renderViewField(field = {}, value, host, options = {}) {
-  const asked = (0,_templates_js__WEBPACK_IMPORTED_MODULE_7__.resolveField)(field).type;
+  const asked = (0,_templates_js__WEBPACK_IMPORTED_MODULE_8__.resolveField)(field).type;
   const renderer = VIEW_RENDERERS[asked];
   if (!renderer) return null;
   const outer = VIEW_LINE;
@@ -7803,7 +7845,7 @@ if (typeof window !== 'undefined') {
     renderTotalField,
     FILTER_RENDERERS,
     // The nine number conditions in the filter's order (C294).
-    NUMBER_FILTER_OPERATORS: _registry_js__WEBPACK_IMPORTED_MODULE_5__.NUMBER_FILTER_OPERATORS,
+    NUMBER_FILTER_OPERATORS: _registry_js__WEBPACK_IMPORTED_MODULE_6__.NUMBER_FILTER_OPERATORS,
     isNumericType,
     // Decimal strings as the set reads and shows them (C294): the View
     // set's items, compound and ru.requisites call these instead of
@@ -7813,51 +7855,51 @@ if (typeof window !== 'undefined') {
     // compare(a, b) work by the digits; totals(values, field) sums money
     // per currency; currency(code, locale, display) is {sign, before, minor}.
     decimal: {
-      format: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatDecimal)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
-      money: (value, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatMoney)(value, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
-      percent: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.formatPercent)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
-      read: (text, options = {}) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.readTypedDecimal)(text, {
-        locale: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null),
+      format: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.formatDecimal)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(null)),
+      money: (value, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.formatMoney)(value, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(null)),
+      percent: (value, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.formatPercent)(value, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(null)),
+      read: (text, options = {}) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.readTypedDecimal)(text, {
+        locale: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(null),
         ...options
       }),
-      add: _decimal_js__WEBPACK_IMPORTED_MODULE_13__.addDecimal,
-      compare: _decimal_js__WEBPACK_IMPORTED_MODULE_13__.compareDecimal,
-      totals: (values, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.moneyTotals)(values, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null)),
-      currency: (code, locale, display) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_13__.currencyOf)(code, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(null), display)
+      add: _decimal_js__WEBPACK_IMPORTED_MODULE_14__.addDecimal,
+      compare: _decimal_js__WEBPACK_IMPORTED_MODULE_14__.compareDecimal,
+      totals: (values, field = {}, locale) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.moneyTotals)(values, field, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(null)),
+      currency: (code, locale, display) => (0,_decimal_js__WEBPACK_IMPORTED_MODULE_14__.currencyOf)(code, locale || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageLocale)(null), display)
     },
     // The date filter's rules (C293): the chip's words, when an entry is
     // empty, the request with its context, a period's days.
     dateFilter: {
-      conditions: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateFilterConditions,
-      chipText: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.dateFilterChipText,
-      isEmptyEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.isEmptyFilterEntry,
-      normalizeEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.normalizeFilterEntry,
-      requestContext: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.filterRequestContext,
-      buildRequest: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.buildFilterRequest,
-      resolvePeriod: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.resolveDatePeriod,
-      periods: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_PERIODS,
-      futurePeriods: _date_filter_js__WEBPACK_IMPORTED_MODULE_19__.DATE_FUTURE_PERIODS
+      conditions: _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.dateFilterConditions,
+      chipText: _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.dateFilterChipText,
+      isEmptyEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.isEmptyFilterEntry,
+      normalizeEntry: _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.normalizeFilterEntry,
+      requestContext: _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.filterRequestContext,
+      buildRequest: _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.buildFilterRequest,
+      resolvePeriod: _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.resolveDatePeriod,
+      periods: _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.DATE_PERIODS,
+      futurePeriods: _date_filter_js__WEBPACK_IMPORTED_MODULE_20__.DATE_FUTURE_PERIODS
     },
     // A datetime's value read and written back, for a host that draws its
     // own control: split(value), compose(stored, {date, time}),
     // normalizeTime(text); and a time of day's: splitTime(value),
     // composeTime(stored, text).
     dateTime: {
-      split: _datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitDateTime,
-      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_9__.composeDateTime,
-      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_9__.normalizeTime,
-      splitTime: _datetime_js__WEBPACK_IMPORTED_MODULE_9__.splitTime,
-      composeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_9__.composeTime
+      split: _datetime_js__WEBPACK_IMPORTED_MODULE_10__.splitDateTime,
+      compose: _datetime_js__WEBPACK_IMPORTED_MODULE_10__.composeDateTime,
+      normalizeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_10__.normalizeTime,
+      splitTime: _datetime_js__WEBPACK_IMPORTED_MODULE_10__.splitTime,
+      composeTime: _datetime_js__WEBPACK_IMPORTED_MODULE_10__.composeTime
     },
     // A field's when (FO-3): fieldConditions(field, values) answers
     // {visible, required, enabled} over the values on screen;
     // editable(field, values) whether a single-field edit opens (FO3-4).
     conditions: {
-      evaluate: _conditions_js__WEBPACK_IMPORTED_MODULE_15__.evaluateCondition,
-      field: _conditions_js__WEBPACK_IMPORTED_MODULE_15__.fieldConditions,
-      fields: _conditions_js__WEBPACK_IMPORTED_MODULE_15__.conditionFields,
-      ops: _conditions_js__WEBPACK_IMPORTED_MODULE_15__.CONDITION_OPS,
-      editable: _conditions_js__WEBPACK_IMPORTED_MODULE_15__.fieldEditable
+      evaluate: _conditions_js__WEBPACK_IMPORTED_MODULE_16__.evaluateCondition,
+      field: _conditions_js__WEBPACK_IMPORTED_MODULE_16__.fieldConditions,
+      fields: _conditions_js__WEBPACK_IMPORTED_MODULE_16__.conditionFields,
+      ops: _conditions_js__WEBPACK_IMPORTED_MODULE_16__.CONDITION_OPS,
+      editable: _conditions_js__WEBPACK_IMPORTED_MODULE_16__.fieldEditable
     },
     // A filter field's window from any control (FO-5): open({anchor,
     // field, value, size, placement}) settles {action, value} or null.
@@ -7865,23 +7907,23 @@ if (typeof window !== 'undefined') {
     // field button shows (C300, C310); conditions(field) what a window offers.
     filterWindow: {
       open: openFilterWindow,
-      operatorLabel: _filter_window_js__WEBPACK_IMPORTED_MODULE_16__.filterOperatorLabel,
+      operatorLabel: _filter_window_js__WEBPACK_IMPORTED_MODULE_17__.filterOperatorLabel,
       summary: filterFieldSummary,
-      conditions: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditions,
-      count: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterCount,
-      tone: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_17__.filterConditionTone
+      conditions: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterConditions,
+      count: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterCount,
+      tone: _filter_conditions_js__WEBPACK_IMPORTED_MODULE_18__.filterConditionTone
     },
     // The universal properties, each with the modes the set draws for it
     // and its templates, the default first (C302).
-    registry: _registry_js__WEBPACK_IMPORTED_MODULE_5__.PROPERTY_TYPES.map(entry => ({ ...entry,
+    registry: _registry_js__WEBPACK_IMPORTED_MODULE_6__.PROPERTY_TYPES.map(entry => ({ ...entry,
       modes: propertyModes(entry.type)
     })),
     // C302, C303: the four places a template draws in; the former type and
     // template names read until 2027-01-01; what a field is drawn with.
-    places: _registry_js__WEBPACK_IMPORTED_MODULE_5__.PLACES,
+    places: _registry_js__WEBPACK_IMPORTED_MODULE_6__.PLACES,
     aliases: {
-      types: _registry_js__WEBPACK_IMPORTED_MODULE_5__.TYPE_ALIASES,
-      templates: _registry_js__WEBPACK_IMPORTED_MODULE_5__.TEMPLATE_ALIASES
+      types: _registry_js__WEBPACK_IMPORTED_MODULE_6__.TYPE_ALIASES,
+      templates: _registry_js__WEBPACK_IMPORTED_MODULE_6__.TEMPLATE_ALIASES
     },
     fieldTemplate
   }; // The set's words in the page's language are asked for now, not at the
@@ -7892,7 +7934,7 @@ if (typeof window !== 'undefined') {
   // SF.whenFieldRenderers() waits for them (core.runtime, at most
   // SF_BOOT_CONFIG.languageWait ms).
 
-  (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageText)(SET_TEXT, 'containsText', null, SET_NAME); // SF.whenFieldRenderers() settles on this, whichever bundle published the set.
+  (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_4__.pageText)(SET_TEXT, 'containsText', null, SET_NAME); // SF.whenFieldRenderers() settles on this, whichever bundle published the set.
 
   globalThis.document?.dispatchEvent?.(new CustomEvent('sf-field-renderers-ready'));
 }
@@ -9487,6 +9529,13 @@ function formatPlaceholder(format, code) {
 (module) {
 
 module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("deprecations", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("deprecations", 1).then(resolve, reject), { once: true })));
+
+/***/ },
+
+/***/ "0816a19adc72"
+(module) {
+
+module.exports = (globalThis.SF && globalThis.SF.runtimeModule ? globalThis.SF.runtimeModule("lit/directive.js", 1) : new Promise((resolve, reject) => globalThis.addEventListener("sf-runtime-ready", () => globalThis.SF.runtimeModule("lit/directive.js", 1).then(resolve, reject), { once: true })));
 
 /***/ },
 

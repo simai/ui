@@ -136,6 +136,113 @@ __webpack_async_result__();
 
 /***/ },
 
+/***/ "9cf638c721f7"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   LONG_PRESS_MS: () => (/* binding */ LONG_PRESS_MS),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   watchLongPress: () => (/* binding */ watchLongPress)
+/* harmony export */ });
+// A long press under a finger (owner decision C148 (6), list item study
+// prototypes/list-item-study.html #q-swipe): held 0.5 s on a row, it opens the
+// same menu as the row's «⋯» and Shift+F10. No swipe: it is hidden and fights
+// the platform's back gesture. The press time is the tooltip's long press
+// (component tooltip, C59): times, not lengths -- the Framework has no delay
+// tokens. A touch the browser takes for a scroll ends in pointercancel and
+// opens nothing. The click the release sends afterwards is the press's, not a
+// press of the row: swallowed() answers it once.
+//
+// A core helper since group build 19 (study S-A, decision q-7097831f9f
+// (4); docs/foundation-touch-screens.md): cards and boards share it with the
+// list. On a surface with multiple selection a long press chooses the item
+// (sf-list selection="many", C150 (9)); without selection it opens the item's
+// «⋯» menu (C148 (6)). The caller's press() decides which.
+//
+// Stateless module: core publishes it as SF.longPress, and a component bundle
+// that imports it carries a copy; every watch keeps its state in its own
+// closure.
+const LONG_PRESS_MS = 500;
+/**
+ * Watches a held touch on `target`: press(event) after `ms` (500) when
+ * accepts(event) took the pointerdown. Returns {swallowed(), stop()}:
+ * swallowed() answers once, true, for the click that follows a fired press.
+ */
+
+function watchLongPress(target, {
+  accepts = () => true,
+  press,
+  ms = LONG_PRESS_MS
+} = {}) {
+  let timer = 0;
+  let pointer = null;
+  let fired = false;
+
+  const clear = () => {
+    clearTimeout(timer);
+    timer = 0;
+    pointer = null;
+  };
+
+  const onDown = event => {
+    fired = false;
+    if (event.pointerType !== 'touch' || !event.isPrimary || !accepts(event)) return;
+    clear();
+    pointer = event.pointerId;
+    timer = setTimeout(() => {
+      timer = 0;
+      press(event); // After the press: a click press() sends itself is not the release.
+
+      fired = true;
+    }, Number.isFinite(ms) && ms > 0 ? ms : LONG_PRESS_MS);
+  };
+
+  const onEnd = event => {
+    if (pointer === event.pointerId) clear();
+  }; // The browser's own long-press menu (text selection, «copy») would cover
+  // the row's menu.
+
+
+  const onContextMenu = event => {
+    if (pointer !== null || fired) event.preventDefault();
+  };
+
+  target.addEventListener('pointerdown', onDown);
+  target.addEventListener('pointerup', onEnd);
+  target.addEventListener('pointercancel', onEnd);
+  target.addEventListener('contextmenu', onContextMenu);
+  return {
+    swallowed() {
+      if (!fired) return false;
+      fired = false;
+      return true;
+    },
+
+    stop() {
+      clear();
+      target.removeEventListener('pointerdown', onDown);
+      target.removeEventListener('pointerup', onEnd);
+      target.removeEventListener('pointercancel', onEnd);
+      target.removeEventListener('contextmenu', onContextMenu);
+    }
+
+  };
+}
+const LongPress = Object.freeze({
+  ms: LONG_PRESS_MS,
+  watch: watchLongPress
+});
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.longPress) globalThis.SF.longPress = LongPress;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (LongPress);
+
+/***/ },
+
 /***/ "c69a3dc158df"
 (module, __webpack_exports__, __webpack_require__) {
 
@@ -949,78 +1056,13 @@ __webpack_async_result__();
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   watchLongPress: () => (/* binding */ watchLongPress)
+/* harmony export */   LONG_PRESS_MS: () => (/* reexport safe */ _core_js_long_press_js__WEBPACK_IMPORTED_MODULE_0__.LONG_PRESS_MS),
+/* harmony export */   watchLongPress: () => (/* reexport safe */ _core_js_long_press_js__WEBPACK_IMPORTED_MODULE_0__.watchLongPress)
 /* harmony export */ });
-// A long press under a finger (owner decision C148 (6), list item study
-// prototypes/list-item-study.html #q-swipe): held 0.5 s on a row, it opens the
-// same menu as the row's «⋯» and Shift+F10. No swipe: it is hidden and fights
-// the platform's back gesture. The press time is the tooltip's long press
-// (component tooltip, C59): times, not lengths -- the Framework has no delay
-// tokens. A touch the browser takes for a scroll ends in pointercancel and
-// opens nothing. The click the release sends afterwards is the press's, not a
-// press of the row: swallowed() answers it once.
-//
-// Stateless module: sf-list-item and sf-list each carry a copy in their own
-// bundle; every watch keeps its state in its own closure.
-const LONG_PRESS_MS = 500;
-function watchLongPress(target, {
-  accepts,
-  press
-}) {
-  let timer = 0;
-  let pointer = null;
-  let fired = false;
+/* harmony import */ var _core_js_long_press_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("9cf638c721f7");
+// The long press moved to core (core/js/long-press.js, group build 19,
+// study S-A): sf-list-item and sf-list import it from here as before.
 
-  const clear = () => {
-    clearTimeout(timer);
-    timer = 0;
-    pointer = null;
-  };
-
-  const onDown = event => {
-    fired = false;
-    if (event.pointerType !== 'touch' || !event.isPrimary || !accepts(event)) return;
-    clear();
-    pointer = event.pointerId;
-    timer = setTimeout(() => {
-      timer = 0;
-      press(event); // After the press: a click press() sends itself is not the release.
-
-      fired = true;
-    }, LONG_PRESS_MS);
-  };
-
-  const onEnd = event => {
-    if (pointer === event.pointerId) clear();
-  }; // The browser's own long-press menu (text selection, «copy») would cover
-  // the row's menu.
-
-
-  const onContextMenu = event => {
-    if (pointer !== null || fired) event.preventDefault();
-  };
-
-  target.addEventListener('pointerdown', onDown);
-  target.addEventListener('pointerup', onEnd);
-  target.addEventListener('pointercancel', onEnd);
-  target.addEventListener('contextmenu', onContextMenu);
-  return {
-    swallowed() {
-      if (!fired) return false;
-      fired = false;
-      return true;
-    },
-
-    stop() {
-      clear();
-      target.removeEventListener('pointerdown', onDown);
-      target.removeEventListener('pointerup', onEnd);
-      target.removeEventListener('pointercancel', onEnd);
-      target.removeEventListener('contextmenu', onContextMenu);
-    }
-
-  };
-}
 
 /***/ },
 
@@ -1467,7 +1509,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-list-
 /***/ "f4c129a27dd4"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-item","tag":"sf-list-item","version":"1.7.0","kind":"leaf","settings":{"value":{"type":"string","default":""},"kind":{"type":"enum","values":["text","icon","checkbox","avatar","color"],"default":"text"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"text":{"type":"string","default":""},"icon":{"type":"icon","default":"person"},"disabled":{"type":"boolean","default":false},"color-class":{"type":"string","default":"bg-tertiary"},"avatar-image-url":{"type":"string","default":""},"avatar-title":{"type":"string","default":""},"supporting":{"type":"string","default":""},"interactive":{"type":"boolean","default":false},"sortable-item":{"type":"string","default":""},"pinned":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"lines":{"type":"enum","values":["1","2"],"default":"1"}},"values":{"checked":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","trigger":{"type":"enum","values":["pointer","keyboard"]}}}},"actions":{},"css-variables":{"--sf-list-item-background-color":{"type":"color","state":"default"},"--sf-list-item-border-color":{"type":"color","state":"default"},"--sf-list-item-color":{"type":"color","state":"default"},"--sf-list-item-supporting-color":{"type":"color","state":"default"},"--sf-list-item-handle-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list-item","tag":"sf-list-item","version":"1.7.1","kind":"leaf","settings":{"value":{"type":"string","default":""},"kind":{"type":"enum","values":["text","icon","checkbox","avatar","color"],"default":"text"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"text":{"type":"string","default":""},"icon":{"type":"icon","default":"person"},"disabled":{"type":"boolean","default":false},"color-class":{"type":"string","default":"bg-tertiary"},"avatar-image-url":{"type":"string","default":""},"avatar-title":{"type":"string","default":""},"supporting":{"type":"string","default":""},"interactive":{"type":"boolean","default":false},"sortable-item":{"type":"string","default":""},"pinned":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"lines":{"type":"enum","values":["1","2"],"default":"1"}},"values":{"checked":{"type":"boolean","default":false},"selected":{"type":"boolean","default":false}},"events":{"open":{"carries":{"id":"string","trigger":{"type":"enum","values":["pointer","keyboard"]}}}},"actions":{},"css-variables":{"--sf-list-item-background-color":{"type":"color","state":"default"},"--sf-list-item-border-color":{"type":"color","state":"default"},"--sf-list-item-color":{"type":"color","state":"default"},"--sf-list-item-supporting-color":{"type":"color","state":"default"},"--sf-list-item-handle-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

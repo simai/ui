@@ -3,7 +3,7 @@
   "schema_version": 1,
   "id": "core.styles",
   "kind": "core",
-  "version": "1.24.0",
+  "version": "1.25.0",
   "owner": "simai/ui-source",
   "summary": "The core sheet around the token sets: the entry, the layer order, the base, presets, scrollbars, the loader, the logo, composition regions and the workspace layout, placeholders, touch fields, sr-only and not-sr-only (C212 (6)) and the display settings (the five colour schemes, text size and spacing, images, motion, the skip link, prefers-contrast and prefers-reduced-transparency).",
   "includes": [
@@ -27,6 +27,7 @@
     "src/core/scss/_sf_css__preset.scss",
     "src/core/scss/_sf_css__scroll.scss",
     "src/core/scss/_sf_css__touch_fields.scss",
+    "src/core/scss/_sf_css__touch_targets.scss",
     "src/core/scss/_sf_ext__common.scss",
     "src/core/scss/_sf_layer_order.scss",
     "src/core/scss/index.scss",
@@ -34,10 +35,11 @@
     "src/core/scss/mix/_mix__notice-link.scss",
     "src/core/scss/mix/_mix__paint.scss",
     "src/core/scss/mix/_mix__sheet.scss",
+    "src/core/scss/mix/_mix__touch.scss",
     "src/core/scss/mix/_mix__window-footer.scss",
     "src/core/scss/vars/_sf_var__display.scss"
   ],
-  "content_sha256": "b68539c1dae283e52662e48714078a7c1b44f84697b4e4e1e2b6de772f98c2de",
+  "content_sha256": "7ce781d2d88ed6afc6c8262f526713ea010d2f4c866fc7d2f1b8c6da401f24a2",
   "dependencies": [
     {
       "id": "font.inter",

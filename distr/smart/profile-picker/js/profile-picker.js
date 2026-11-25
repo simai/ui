@@ -162,13 +162,17 @@ const onPhone = () => !getComputedStyle(document.documentElement).getPropertyVal
 const tameButtons = panel => {
   for (const button of panel?.querySelectorAll('.sf-profile-picker-actions button') ?? []) button.tabIndex = -1;
 }; // Asks the Loader for a lazy relation and answers whether it is defined.
+// A press asks (the sheet, the change menu): the wait goes on while its code
+// is on its way (SF.Loader.ensure press, GB18 L2; GB19).
 
 
 const ensureElement = async tag => {
   if (globalThis.customElements?.get(tag)) return true;
 
   try {
-    await globalThis.SF?.Loader?.ensure?.([tag]);
+    await globalThis.SF?.Loader?.ensure?.([tag], {
+      press: true
+    });
   } catch {// Not on this page: the caller's fallback.
   }
 
@@ -1165,7 +1169,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-profi
 /***/ "816c0ad0728a"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.profile-picker","tag":"sf-profile-picker","version":"1.9.0","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"resettable":{"type":"boolean","default":false},"message":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"profiles":{"type":"list","of":{"id":"id","label":"string","shared":"boolean","builtin":"boolean","editable":"boolean"}},"rights":{"type":"object"}},"values":{"current":{"type":"string","default":""}},"events":{"select":{"carries":{"id":"string","ids":"list"}},"create":{"carries":{"label":"string","shared":"boolean","from":"string","kind":{"type":"enum","values":["personal","shared"]}}},"rename":{"carries":{"id":"string","label":"string","title":"string"}},"delete":{"carries":{"id":"string","ids":"list"}},"reset":{"carries":{"id":"string"}}},"actions":{"open":{},"close":{},"toggle":{}},"presentation":{"skeleton":{"file":"skeleton.html","late":["profiles"]}},"css-variables":{"--sf-profile-picker-background-color":{"type":"color","state":"default"},"--sf-profile-picker-border-color":{"type":"color","state":"default"},"--sf-profile-picker-radius":{"type":"length","state":"default"},"--sf-profile-picker-color":{"type":"color","state":"default"},"--sf-profile-picker-panel-background-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.profile-picker","tag":"sf-profile-picker","version":"1.9.1","kind":"leaf","settings":{"label":{"type":"string","default-from":"runtime.label"},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"resettable":{"type":"boolean","default":false},"message":{"type":"string","default":""},"disabled":{"type":"boolean","default":false},"profiles":{"type":"list","of":{"id":"id","label":"string","shared":"boolean","builtin":"boolean","editable":"boolean"}},"rights":{"type":"object"}},"values":{"current":{"type":"string","default":""}},"events":{"select":{"carries":{"id":"string","ids":"list"}},"create":{"carries":{"label":"string","shared":"boolean","from":"string","kind":{"type":"enum","values":["personal","shared"]}}},"rename":{"carries":{"id":"string","label":"string","title":"string"}},"delete":{"carries":{"id":"string","ids":"list"}},"reset":{"carries":{"id":"string"}}},"actions":{"open":{},"close":{},"toggle":{}},"presentation":{"skeleton":{"file":"skeleton.html","late":["profiles"]}},"css-variables":{"--sf-profile-picker-background-color":{"type":"color","state":"default"},"--sf-profile-picker-border-color":{"type":"color","state":"default"},"--sf-profile-picker-radius":{"type":"length","state":"default"},"--sf-profile-picker-color":{"type":"color","state":"default"},"--sf-profile-picker-panel-background-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

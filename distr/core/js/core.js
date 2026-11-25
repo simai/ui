@@ -2260,6 +2260,254 @@ if (typeof globalThis !== 'undefined') {
 
 /***/ },
 
+/***/ "cbcfcde04d12"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   COARSE_QUERY: () => (/* binding */ COARSE_QUERY),
+/* harmony export */   LAYOUTS: () => (/* binding */ LAYOUTS),
+/* harmony export */   PHONE_BELOW: () => (/* binding */ PHONE_BELOW),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   devicesOf: () => (/* binding */ devicesOf),
+/* harmony export */   inLayout: () => (/* binding */ inLayout),
+/* harmony export */   itemsInLayout: () => (/* binding */ itemsInLayout),
+/* harmony export */   layoutOf: () => (/* binding */ layoutOf),
+/* harmony export */   layoutOfWidth: () => (/* binding */ layoutOfWidth),
+/* harmony export */   layoutPlace: () => (/* binding */ layoutPlace),
+/* harmony export */   markDevices: () => (/* binding */ markDevices),
+/* harmony export */   pointerKind: () => (/* binding */ pointerKind),
+/* harmony export */   watchLayout: () => (/* binding */ watchLayout),
+/* harmony export */   watchPointer: () => (/* binding */ watchPointer)
+/* harmony export */ });
+// Device scope (study S-A, decision q-7097831f9f option 2, 2026-11-24; the
+// Touch screens page, docs/foundation-touch-screens.md). Two separate facts,
+// one word each, so no component measures them in a copy of its own:
+//
+//   layout   'phone' when the component's place is narrower than
+//            PHONE_BELOW (600 px), else 'desktop'. It decides which items a
+//            component shows: an item that carries `devices` is shown only in
+//            the layouts it names, and hidden -- not disabled -- in the other.
+//   pointer  'coarse' when the page has a touch pointer and no fine one,
+//            else 'fine'. It decides gestures and what replaces hover (a
+//            check box always shown, a hit area of 44).
+//
+// A tablet with a keyboard is a coarse pointer in a desktop layout; a narrow
+// desktop window a fine pointer in a phone layout. The two words never stand
+// for each other.
+//
+// The place is the nearest size container (an ancestor with a
+// `container-type`), as a container query reads it; without one, the page.
+// 600 is the width the View layouts already switch at (sf-view-board,
+// sf-view-calendar, the view head); it is not a step of the size scale
+// (C181 (2) pending), recorded on the page as a known gap.
+//
+// Marks: an author marks any item -- a setting, a menu item, a tab, a column
+// -- with `devices: ['phone']` or `devices: ['desktop']`; a component marks
+// its own items it knows are bound to a layout (markDevices). The author's
+// mark wins: a component's mark fills only an item that has none.
+
+/** Below this width (px) of its place a component draws its phone layout. */
+const PHONE_BELOW = 600;
+/** The layouts an item may name in `devices`. */
+
+const LAYOUTS = Object.freeze(['phone', 'desktop']);
+/** The coarse-pointer media query: a touch pointer and no fine one. */
+
+const COARSE_QUERY = '(pointer: coarse) and (not (any-pointer: fine))';
+const KNOWN = new Set(LAYOUTS);
+/** The layout of a width: 'phone' below PHONE_BELOW, else 'desktop'. */
+
+function layoutOfWidth(width) {
+  return Number.isFinite(width) && width > 0 && width < PHONE_BELOW ? 'phone' : 'desktop';
+}
+/**
+ * The box whose width decides an element's layout: the element itself or its
+ * nearest ancestor that is a size container, else null (the page).
+ */
+
+function layoutPlace(element) {
+  const view = element?.ownerDocument?.defaultView ?? globalThis;
+
+  for (let node = element instanceof Element ? element : null; node; node = node.parentElement ?? node.getRootNode?.()?.host ?? null) {
+    const type = view.getComputedStyle?.(node)?.containerType ?? '';
+    if (type && type !== 'normal') return node;
+  }
+
+  return null;
+}
+
+function placeWidth(element) {
+  const place = layoutPlace(element);
+  if (place) return place.getBoundingClientRect().width;
+  const doc = element?.ownerDocument ?? globalThis.document;
+  return doc?.documentElement?.clientWidth || globalThis.innerWidth || 0;
+}
+/**
+ * The layout an element is drawn in: 'phone' or 'desktop'. A number is read
+ * as a width; a written word ('phone' | 'desktop') is taken as given, so a
+ * host that knows its own layout says it.
+ */
+
+
+function layoutOf(target) {
+  if (KNOWN.has(target)) return target;
+  if (typeof target === 'number') return layoutOfWidth(target);
+  return layoutOfWidth(placeWidth(target));
+}
+/**
+ * Follows an element's layout: calls back with the new word when it changes
+ * (not at once). Returns stop(). Without ResizeObserver it follows the page.
+ */
+
+function watchLayout(element, callback) {
+  let last = layoutOf(element);
+
+  const check = () => {
+    const now = layoutOf(element);
+    if (now === last) return;
+    last = now;
+    callback(now);
+  };
+
+  const place = layoutPlace(element);
+  const view = element?.ownerDocument?.defaultView ?? globalThis;
+
+  if (place && typeof view.ResizeObserver === 'function') {
+    const observer = new view.ResizeObserver(check);
+    observer.observe(place);
+    return () => observer.disconnect();
+  }
+
+  view.addEventListener?.('resize', check);
+  return () => view.removeEventListener?.('resize', check);
+}
+/** The page's pointer: 'coarse' (touch, no fine pointer) or 'fine'. */
+
+function pointerKind(view = globalThis) {
+  return typeof view?.matchMedia === 'function' && view.matchMedia(COARSE_QUERY).matches ? 'coarse' : 'fine';
+}
+/** Follows the page's pointer word; returns stop(). */
+
+function watchPointer(callback, view = globalThis) {
+  const media = typeof view?.matchMedia === 'function' ? view.matchMedia(COARSE_QUERY) : null;
+  if (!media) return () => {};
+
+  const listener = () => callback(media.matches ? 'coarse' : 'fine');
+
+  media.addEventListener?.('change', listener);
+  return () => media.removeEventListener?.('change', listener);
+}
+/**
+ * The layouts an item is scoped to, or null (every layout). Unknown words are
+ * dropped; a list with no known word is no scope.
+ */
+
+function devicesOf(item) {
+  const list = Array.isArray(item?.devices) ? item.devices : typeof item?.devices === 'string' ? item.devices.split(/[\s,]+/u) : null;
+  if (!list) return null;
+  const known = [...new Set(list.filter(word => KNOWN.has(word)))];
+  return known.length ? known : null;
+}
+/** Whether an item is shown in a layout: unscoped, or scoped to it. */
+
+function inLayout(item, layout) {
+  const scope = devicesOf(item);
+  return !scope || scope.includes(KNOWN.has(layout) ? layout : 'desktop');
+}
+/**
+ * The items shown in a layout, nested lists (`items`, and `options` when
+ * `options: true`) filtered the same way. The items are not copied unless a
+ * nested list changes.
+ */
+
+function itemsInLayout(items, layout, {
+  options = false
+} = {}) {
+  if (!Array.isArray(items)) return [];
+  const out = [];
+
+  for (const item of items) {
+    if (!inLayout(item, layout)) continue;
+
+    if (!item || typeof item !== 'object') {
+      out.push(item);
+      continue;
+    }
+
+    let next = item;
+
+    if (Array.isArray(item.items)) {
+      const inner = itemsInLayout(item.items, layout, {
+        options
+      });
+      if (inner.length !== item.items.length || inner.some((one, at) => one !== item.items[at])) next = { ...next,
+        items: inner
+      };
+    }
+
+    if (options && Array.isArray(item.options)) {
+      const inner = item.options.filter(option => inLayout(option, layout));
+      if (inner.length !== item.options.length) next = { ...next,
+        options: inner
+      };
+    }
+
+    out.push(next);
+  }
+
+  return out;
+}
+/**
+ * A component's own marks over an author's items: `marks` maps an item id to
+ * its layouts (['desktop'] for a table-only setting). An item that carries
+ * its own `devices` keeps it -- the author's mark wins; nested `items` are
+ * marked the same way. Returns new items; the given ones are not changed.
+ */
+
+function markDevices(items, marks = {}) {
+  if (!Array.isArray(items)) return [];
+  const table = marks instanceof Map ? marks : new Map(Object.entries(marks ?? {}));
+  return items.map(item => {
+    if (!item || typeof item !== 'object') return item;
+    let next = item;
+    const own = Object.hasOwn(item, 'devices') && item.devices !== undefined && item.devices !== null;
+    if (!own && item.id !== undefined && table.has(String(item.id))) next = { ...next,
+      devices: [...table.get(String(item.id))]
+    };
+    if (Array.isArray(item.items)) next = { ...next,
+      items: markDevices(item.items, table)
+    };
+    return next;
+  });
+}
+const Device = Object.freeze({
+  PHONE_BELOW,
+  LAYOUTS,
+  COARSE_QUERY,
+  layoutOf,
+  layoutOfWidth,
+  layoutPlace,
+  watchLayout,
+  pointer: pointerKind,
+  watchPointer,
+  devicesOf,
+  inLayout,
+  itemsInLayout,
+  markDevices
+}); // Core publishes the helper; a component bundle that carries its own copy
+// reuses an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.device) globalThis.SF.device = Device;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Device);
+
+/***/ },
+
 /***/ "4fa740738112"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -6470,6 +6718,1124 @@ function publishFormat(root = typeof globalThis !== 'undefined' ? globalThis : u
 
 /***/ },
 
+/***/ "a348bbc8b9bf"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CONTRACT: () => (/* binding */ CONTRACT),
+/* harmony export */   CONTRACT_HEADER: () => (/* binding */ CONTRACT_HEADER),
+/* harmony export */   HEADER: () => (/* binding */ HEADER),
+/* harmony export */   MAX_DATA_BYTES: () => (/* binding */ MAX_DATA_BYTES),
+/* harmony export */   MODES: () => (/* binding */ MODES),
+/* harmony export */   MODE_HEADER: () => (/* binding */ MODE_HEADER),
+/* harmony export */   STATES: () => (/* binding */ STATES),
+/* harmony export */   TIMEOUT_MS: () => (/* binding */ TIMEOUT_MS),
+/* harmony export */   changedKeys: () => (/* binding */ changedKeys),
+/* harmony export */   claimsPop: () => (/* binding */ claimsPop),
+/* harmony export */   dataAnswerProblems: () => (/* binding */ dataAnswerProblems),
+/* harmony export */   disable: () => (/* binding */ disable),
+/* harmony export */   enable: () => (/* binding */ enable),
+/* harmony export */   headerProblems: () => (/* binding */ headerProblems),
+/* harmony export */   keyMap: () => (/* binding */ keyMap),
+/* harmony export */   linkSets: () => (/* binding */ linkSets),
+/* harmony export */   ownedChange: () => (/* binding */ ownedChange),
+/* harmony export */   readBlock: () => (/* binding */ readBlock),
+/* harmony export */   refresh: () => (/* binding */ refresh),
+/* harmony export */   syncedHref: () => (/* binding */ syncedHref),
+/* harmony export */   withKeys: () => (/* binding */ withKeys)
+/* harmony export */ });
+/* harmony import */ var _page_assets_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f4cefa2a00b9");
+/* harmony import */ var _page_language_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("8489d1f5bab4");
+/* harmony import */ var _lang_fragment_index_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("15b764c9972d");
+// Block refresh (simai.interface-fragment 1.1.0, refreshable-block and
+// block-refresh; Larena handoff ho-34086ca2988b, contract agreed 2026-11-23,
+// room decision dec-b7452769b3b9). A block on the page -- a chart, a table, a
+// counter -- refreshes itself when one of its own links or GET forms is used:
+// the same address is asked for with the block header, and only the block is
+// drawn again. The page, its other blocks and the shell stay. Without
+// JavaScript every control is the ordinary link or form it is.
+//
+// The block is declared in markup; a package writes no code for it:
+//
+//   <section data-sf-fragment="env.load-history"
+//            data-sf-fragment-keys="period scale"
+//            data-sf-fragment-mode="data"
+//            data-sf-fragment-contract="1">
+//     <a href="?period=7d&scale=linear">Неделя</a>
+//     <nav data-sf-fragment-history="replace"><a href="?period=7d&scale=log">Лог</a></nav>
+//     <sf-chart-line data-sf-fragment-part="network"></sf-chart-line>
+//     <script type="application/json" data-sf-fragment-data>{"parts": {...}}</script>
+//   </section>
+//
+//   SF.FragmentRefresh.enable({scope: '/admin'});   // once, by the page shell
+//
+// Request: GET the control's address with X-SIMAI-Fragment: <id>,
+// X-SIMAI-Fragment-Mode: data | html and X-SIMAI-Fragment-Contract: 1.
+// Answer, both modes: 200, not redirected, the same X-SIMAI-Fragment and
+// X-SIMAI-Fragment-Contract back. Data mode: JSON {fragment, contract, port,
+// state, url, keys, parts, controls}. HTML mode: the block's outer element
+// alone, one root with the same id.
+//
+// What the person sees when it goes wrong: a network failure, a timeout or a
+// 5xx is the error state inside the block with a retry; a 4xx, a redirect or
+// an answer that is not as declared loads the page in full, so the server
+// shows its own sign-in, no-access or not-found page. A half-drawn block is
+// never left. There is no timer refresh in contract 1.
+
+ // The words of the fragment boundary: «This block could not be shown».
+
+
+const CONTRACT = 1;
+const HEADER = 'X-SIMAI-Fragment';
+const MODE_HEADER = 'X-SIMAI-Fragment-Mode';
+const CONTRACT_HEADER = 'X-SIMAI-Fragment-Contract';
+const TIMEOUT_MS = 10000;
+const MAX_DATA_BYTES = 262144;
+const MODES = Object.freeze(['data', 'html']);
+const STATES = Object.freeze(['populated', 'empty', 'no-access']);
+const BLOCK = '[data-sf-fragment][data-sf-fragment-mode]';
+const ID = /^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+$/u;
+const URL_KEY = /^[a-z][a-z0-9_-]{0,63}$/u;
+const PART = /^[a-z][a-z0-9-]{0,31}$/u;
+const STANDARD = /^[a-z][a-z0-9.-]*$/u;
+const VERSION = /^([0-9]+)\.[0-9]+\.[0-9]+$/u;
+const ANSWER_FIELDS = ['fragment', 'contract', 'port', 'state', 'url', 'keys', 'parts', 'controls'];
+
+const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const words = value => String(value ?? '').trim().split(/\s+/u).filter(Boolean); // ---- What can be read without a page: the declaration, the keys, the answer.
+
+/** The block's declaration read from its attributes, with the problems found. */
+
+
+function readBlock(element) {
+  const id = element.getAttribute('data-sf-fragment') ?? '';
+  const keys = words(element.getAttribute('data-sf-fragment-keys'));
+  const reads = words(element.getAttribute('data-sf-fragment-reads'));
+  const mode = element.getAttribute('data-sf-fragment-mode') ?? '';
+  const contract = Number(element.getAttribute('data-sf-fragment-contract') ?? CONTRACT); // The data port the page expects, optional: <standard>@<major>.
+
+  const portMatch = /^([a-z][a-z0-9.-]*)@([0-9]+)$/u.exec(element.getAttribute('data-sf-fragment-port') ?? '');
+  const port = portMatch ? {
+    standard: portMatch[1],
+    major: Number(portMatch[2])
+  } : null;
+  const problems = [];
+  if (element.hasAttribute('data-sf-fragment-port') && !port) problems.push('port: <standard>@<major>');
+  if (!ID.test(id)) problems.push('id: a dotted identity');
+  if (keys.length > 16 || new Set(keys).size !== keys.length || !keys.every(key => URL_KEY.test(key))) problems.push('keys: up to sixteen query keys');
+  if (reads.length > 16 || !reads.every(key => URL_KEY.test(key)) || reads.some(key => keys.includes(key))) problems.push('reads: query keys the block does not own');
+  if (!MODES.includes(mode)) problems.push('mode: data or html');
+  if (contract !== CONTRACT) problems.push(`contract: ${CONTRACT}`);
+  return {
+    id,
+    keys,
+    reads,
+    mode,
+    contract,
+    port,
+    problems
+  };
+}
+/**
+ * The page's key map: one owner per key. A key two blocks declare makes both
+ * blocks plain (their controls load the page in full); a block whose
+ * declaration has problems, or whose id another block has, is plain too.
+ */
+
+function keyMap(blocks) {
+  const owners = new Map();
+  const plain = new Map();
+  const conflicts = [];
+  const ids = new Map();
+
+  for (const block of blocks) {
+    if (block.problems.length) plain.set(block, block.problems.join('; '));
+    ids.set(block.id, [...(ids.get(block.id) ?? []), block]);
+  }
+
+  for (const [id, same] of ids) {
+    if (same.length < 2) continue;
+
+    for (const block of same) plain.set(block, `id ${id} is not unique`);
+
+    conflicts.push({
+      kind: 'id',
+      name: id,
+      ids: [id]
+    });
+  }
+
+  const claims = new Map();
+
+  for (const block of blocks) for (const key of block.keys) claims.set(key, [...(claims.get(key) ?? []), block]);
+
+  for (const [key, claimants] of claims) {
+    if (claimants.length === 1) {
+      owners.set(key, claimants[0]);
+      continue;
+    }
+
+    for (const block of claimants) plain.set(block, `key ${key} has two owners`);
+
+    conflicts.push({
+      kind: 'key',
+      name: key,
+      ids: claimants.map(block => block.id)
+    });
+  }
+
+  for (const [key, block] of owners) if (plain.has(block)) owners.delete(key);
+
+  return {
+    owners,
+    plain,
+    conflicts
+  };
+}
+
+const paramsOf = url => {
+  const map = new Map();
+
+  for (const [key, value] of url.searchParams) map.set(key, [...(map.get(key) ?? []), value]);
+
+  return map;
+};
+/** The query keys whose values differ between two addresses (order of keys aside). */
+
+
+function changedKeys(from, to) {
+  const left = paramsOf(new URL(from));
+  const right = paramsOf(new URL(to));
+  const keys = new Set([...left.keys(), ...right.keys()]);
+  return [...keys].filter(key => JSON.stringify(left.get(key) ?? []) !== JSON.stringify(right.get(key) ?? []));
+}
+/**
+ * Whether a control's target is this block's to take: the same origin and
+ * path as the page, and only keys the block owns differ -- or keys other
+ * blocks own (`others`), whose values in a link printed before those blocks
+ * refreshed may be stale; the page's values are kept for them (withKeys). A
+ * key no block owns is the page's: a change there is not a block's. The hash
+ * is ignored.
+ */
+
+function ownedChange(target, here, keys, others = []) {
+  const to = new URL(target, here);
+  const from = new URL(here);
+  if (to.origin !== from.origin || to.pathname !== from.pathname) return false;
+  return changedKeys(from.href, to.href).every(key => keys.includes(key) || others.includes(key));
+}
+/** The address with the block's keys taken from `source` and every other key, and the hash, kept from `here`. */
+
+function withKeys(here, source, keys) {
+  const out = new URL(here);
+  const from = new URL(source, here);
+  const kept = [...out.searchParams].filter(([key]) => !keys.includes(key));
+  const taken = [...from.searchParams].filter(([key]) => keys.includes(key));
+  out.search = new URLSearchParams([...kept, ...taken]).toString();
+  return out.href;
+}
+/** The problems of the confirming headers of an answer (both modes); empty when they hold. */
+
+function headerProblems(response, block, mode) {
+  const problems = [];
+  if (response.redirected) problems.push('redirected');
+  if (response.status !== 200) problems.push(`status ${response.status}`);
+
+  const header = name => response.headers.get(name);
+
+  if (header(HEADER) !== block.id) problems.push('fragment-header');
+  if (header(CONTRACT_HEADER) !== String(CONTRACT)) problems.push('contract-header');
+  const type = header('content-type') ?? '';
+  if (mode === 'data' ? !/^application\/json\b/iu.test(type) : !/^text\/html\b/iu.test(type)) problems.push('content-type');
+  return problems;
+}
+/**
+ * The problems of a data answer against its block; empty when it holds.
+ * `parts` are the part names the block holds; `known(part, field)` says
+ * whether a part takes a field (a property of the element or a data-*
+ * attribute). A block that declares its port (data-sf-fragment-port) refuses
+ * an answer of another port or of a major it does not know.
+ */
+
+function dataAnswerProblems(answer, block, {
+  parts = [],
+  known = () => true,
+  origin,
+  path
+} = {}) {
+  if (!isObject(answer)) return ['answer: not an object'];
+  const problems = [];
+
+  for (const key of Object.keys(answer)) if (!ANSWER_FIELDS.includes(key)) problems.push(`${key}: undeclared`);
+
+  if (answer.fragment !== block.id) problems.push('fragment: another block');
+  if (answer.contract !== CONTRACT) problems.push('contract: another version');
+
+  if (answer.port !== undefined) {
+    const match = isObject(answer.port) && STANDARD.test(answer.port.standard ?? '') && VERSION.exec(answer.port.version ?? '');
+    if (!match) problems.push('port: {standard, version}');else if (block.port && (answer.port.standard !== block.port.standard || Number(match[1]) !== block.port.major)) problems.push('port: another standard or an unknown major');
+  } else if (block.port) problems.push('port: the block expects one');
+
+  if (!STATES.includes(answer.state)) problems.push('state: populated, empty or no-access');
+  if (typeof answer.url !== 'string') problems.push('url: the applied address');else {
+    try {
+      const url = new URL(answer.url, origin ?? 'http://invalid.invalid');
+      if (origin && url.origin !== origin || path && url.pathname !== path) problems.push('url: another page');
+    } catch {
+      problems.push('url: the applied address');
+    }
+  }
+  if (answer.keys !== undefined && !(isObject(answer.keys) && Object.keys(answer.keys).every(key => block.keys.includes(key)))) problems.push('keys: only the block\'s own');
+  if (answer.controls !== undefined && !(isObject(answer.controls) && Object.keys(answer.controls).every(key => block.keys.includes(key)))) problems.push('controls: only the block\'s own keys');
+
+  if (answer.parts !== undefined) {
+    if (!isObject(answer.parts)) problems.push('parts: an object');else {
+      for (const [name, fields] of Object.entries(answer.parts)) {
+        if (!PART.test(name) || !parts.includes(name)) {
+          problems.push(`parts.${name}: not in the block`);
+          continue;
+        }
+
+        if (!isObject(fields)) {
+          problems.push(`parts.${name}: an object`);
+          continue;
+        }
+
+        for (const field of Object.keys(fields)) if (!known(name, field)) problems.push(`parts.${name}.${field}: not an input of the part`);
+      }
+    }
+  }
+
+  return problems;
+} // ---- The runtime.
+
+let config = null;
+let lastHref = null;
+let observer = null;
+const live = new WeakMap();
+const reported = new Set();
+
+const document = () => globalThis.document;
+
+const ownParts = element => [...element.querySelectorAll('[data-sf-fragment-part]')].filter(part => part.parentElement?.closest(BLOCK) === element);
+
+function blocksOnPage() {
+  return [...document().querySelectorAll(BLOCK)].map(element => ({
+    element,
+    ...readBlock(element)
+  }));
+}
+
+function emit(target, name, detail, cancelable = false) {
+  return target.dispatchEvent(new CustomEvent(name, {
+    bubbles: true,
+    cancelable,
+    detail
+  }));
+} // The key map of the page as it stands now. A conflict is told once.
+
+
+function pageMap() {
+  const blocks = blocksOnPage();
+  const map = keyMap(blocks);
+
+  for (const conflict of map.conflicts) {
+    const signature = `${conflict.kind}:${conflict.name}:${conflict.ids.join(',')}`;
+    if (reported.has(signature)) continue;
+    reported.add(signature);
+    globalThis.console?.error?.(`SF.FragmentRefresh: ${conflict.kind} ${conflict.name} is declared by ${conflict.ids.join(' and ')}; ${conflict.kind === 'key' ? 'both blocks' : 'the blocks'} load the page in full`);
+    emit(document(), 'sf-fragment-conflict', conflict);
+  } // Keyed by element from here on: what a listener holds is the element.
+
+
+  const plain = new Map([...map.plain].map(([block, reason]) => [block.element, reason]));
+
+  for (const block of blocks) {
+    if (plain.has(block.element)) block.element.setAttribute('data-sf-fragment-plain', '');else block.element.removeAttribute('data-sf-fragment-plain');
+  }
+
+  return {
+    blocks,
+    owners: map.owners,
+    plain,
+    conflicts: map.conflicts
+  };
+}
+
+function state(element) {
+  if (!live.has(element)) live.set(element, {
+    controller: null,
+    sequence: 0,
+    skeleton: 0,
+    timeout: 0,
+    kept: null,
+    last: null
+  });
+  return live.get(element);
+}
+
+function fullLoad(url, reason, block) {
+  emit(block?.isConnected ? block : document(), 'sf-fragment-fallback', {
+    fragment: block?.getAttribute('data-sf-fragment') ?? null,
+    url,
+    reason
+  });
+
+  if (config?.onFullLoad) {
+    config.onFullLoad(url, reason);
+    return;
+  }
+
+  if (url === globalThis.location.href) globalThis.location.reload();else globalThis.location.assign(url);
+} // Whether a part takes a field: a data-* attribute, or a property its element
+// has (a Smart element's declared input), never a name it does not know.
+// Markup is never set from data: innerHTML and its kin, handlers and methods
+// are refused whatever the element has.
+
+
+const REFUSED_FIELDS = new Set(['innerHTML', 'outerHTML', 'innerText', 'outerText', 'srcdoc']);
+
+function knownField(part, field) {
+  if (/^data-[a-z][a-z0-9-]*$/u.test(field)) return true;
+  if (!part || typeof field !== 'string' || !/^[a-zA-Z][a-zA-Z0-9]*$/u.test(field)) return false;
+  if (REFUSED_FIELDS.has(field) || /^on/u.test(field)) return false;
+  return field in part && typeof part[field] !== 'function';
+} // A part that is a custom element not yet defined has no inputs to check or
+// set: wait for its definition (a value set before the upgrade would shadow
+// the element's own property), at most the block's time limit.
+
+
+function partsReady(parts) {
+  const waiting = parts.filter(part => part.localName.includes('-') && !globalThis.customElements?.get(part.localName)).map(part => globalThis.customElements.whenDefined(part.localName));
+  if (!waiting.length) return Promise.resolve();
+  return Promise.race([Promise.all(waiting), new Promise(resolve => setTimeout(resolve, config?.timeoutMs ?? TIMEOUT_MS))]);
+}
+
+function applyFields(part, fields) {
+  for (const [field, value] of Object.entries(fields)) {
+    if (field.startsWith('data-')) {
+      if (value === null || value === false) part.removeAttribute(field);else part.setAttribute(field, String(value));
+    } else {
+      part[field] = value;
+    }
+  }
+} // The keys a link of a data block sets itself: those named by
+// data-sf-fragment-sets on it or its group, else those the links of its group
+// (nav, role=group, fieldset, a history group) differ in. A link alone, or a
+// group whose links differ in nothing, sets every key it names. Pure: takes
+// the link's own keys and its group's links as addresses.
+
+
+function linkSets(keys, href, groupHrefs, named = null) {
+  if (named) return named.filter(key => keys.includes(key));
+
+  const own = address => new URL(address, 'http://invalid.invalid').searchParams;
+
+  const mine = own(href);
+  const named2 = keys.filter(key => mine.has(key));
+  if (groupHrefs.length < 2) return named2;
+  const varying = named2.filter(key => new Set(groupHrefs.map(address => own(address).get(key))).size > 1);
+  return varying.length ? varying : named2;
+}
+/** A link's address with every own key it does not set taken from the applied values. */
+
+function syncedHref(href, keys, sets, applied) {
+  const url = new URL(href, 'http://invalid.invalid');
+
+  for (const key of keys) {
+    if (sets.includes(key) || !url.searchParams.has(key)) continue; // A key the applied address does not name (a default the page did not
+    // write) keeps the link's own value.
+
+    if (applied.has(key)) url.searchParams.set(key, applied.get(key));
+  }
+
+  return `${url.search}${url.hash}` || '?';
+}
+const GROUP = 'nav, [role="group"], fieldset, [data-sf-fragment-history]'; // A data block's links are not drawn again by the host: after each answer
+// their other own keys take the applied values, so a scale link keeps the
+// period just chosen. A link of the block keeps its path; only the query moves.
+
+function syncLinks(element, address, echoed = {}) {
+  const keys = readBlock(element).keys;
+  const applied = new URL(address).searchParams; // The keys the host says it applied stand for the ones the address leaves out.
+
+  for (const [key, value] of Object.entries(echoed)) if (keys.includes(key) && !applied.has(key)) applied.set(key, String(value));
+
+  const links = [...element.querySelectorAll('a[href]')].filter(link => link.closest(BLOCK) === element);
+  const plans = links.map(link => {
+    const href = link.getAttribute('href');
+    const named = link.closest('[data-sf-fragment-sets]');
+    const group = link.closest(GROUP);
+    const inGroup = group && element.contains(group) && group !== element ? links.filter(other => group.contains(other)).map(other => other.getAttribute('href')) : [href];
+    const sets = linkSets(keys, href, inGroup, named && element.contains(named) ? words(named.getAttribute('data-sf-fragment-sets')) : null);
+    return {
+      link,
+      href,
+      sets
+    };
+  });
+
+  for (const {
+    link,
+    href,
+    sets
+  } of plans) {
+    const url = new URL(href, globalThis.location.href);
+    if (url.origin !== globalThis.location.origin || url.pathname !== globalThis.location.pathname) continue;
+    const next = syncedHref(href.startsWith('?') || href.startsWith('#') ? href : `${url.search}${url.hash}`, keys, sets, applied);
+    const kept = href.startsWith('?') || href.startsWith('#') ? next : `${url.pathname}${next === '?' ? '' : next}`;
+    if (kept !== href) link.setAttribute('href', kept);
+  }
+} // The data answer drawn in one step, after the whole answer was checked.
+
+
+function applyData(element, answer, address = globalThis.location.href) {
+  const parts = new Map(ownParts(element).map(part => [part.getAttribute('data-sf-fragment-part'), part]));
+
+  for (const [name, part] of parts) {
+    const fields = answer.parts?.[name];
+    if (fields) applyFields(part, fields); // The block's state reaches a part that does not say its own.
+
+    if (fields && 'data-state' in fields) continue;
+    if (answer.state !== 'populated') part.setAttribute('data-state', answer.state);else if (['loading', 'empty', 'no-access'].includes(part.getAttribute('data-state'))) part.removeAttribute('data-state');
+  }
+
+  if (answer.state === 'populated') element.removeAttribute('data-sf-fragment-state');else element.setAttribute('data-sf-fragment-state', answer.state);
+  syncLinks(element, address, answer.keys ?? {});
+  moveCurrent(element, { ...(answer.keys ?? {}),
+    ...(answer.controls ?? {})
+  });
+} // aria-current moves to the links whose own keys equal the applied ones.
+
+
+function moveCurrent(element, values) {
+  const keys = readBlock(element).keys;
+  if (!Object.keys(values).length) return;
+
+  for (const link of element.querySelectorAll('a[href]')) {
+    if (link.closest(BLOCK) !== element) continue;
+    const url = new URL(link.href, globalThis.location.href);
+    const own = keys.filter(key => url.searchParams.has(key) && key in values);
+    if (!own.length) continue;
+    if (own.every(key => url.searchParams.get(key) === String(values[key]))) link.setAttribute('aria-current', 'true');else link.removeAttribute('aria-current');
+  }
+}
+
+function readIsland(element) {
+  const island = [...element.querySelectorAll('script[data-sf-fragment-data]')].find(node => node.closest(BLOCK) === element);
+  if (!island || (0,_page_assets_js__WEBPACK_IMPORTED_MODULE_0__.isRunnableScript)(island)) return null;
+
+  try {
+    return JSON.parse(island.textContent ?? '');
+  } catch {
+    return null;
+  }
+} // The first data of a data block, drawn when it comes onto the page: the
+// island holds the same JSON a refresh answers, without the envelope's url.
+
+
+async function drawIsland(element) {
+  const block = readBlock(element);
+  if (block.mode !== 'data' || block.problems.length) return;
+  const data = readIsland(element);
+  if (!isObject(data)) return;
+  const answer = {
+    fragment: block.id,
+    contract: CONTRACT,
+    state: 'populated',
+    url: globalThis.location.pathname,
+    ...data
+  };
+  const parts = ownParts(element);
+  await partsReady(parts);
+  if (!element.isConnected) return;
+  const names = parts.map(part => part.getAttribute('data-sf-fragment-part')); // The island is the page's own markup: it need not repeat the port; one it names is checked.
+
+  const declared = data.port === undefined ? { ...block,
+    port: null
+  } : block;
+  const problems = dataAnswerProblems(answer, declared, {
+    parts: names,
+    known: (name, field) => knownField(parts.find(part => part.getAttribute('data-sf-fragment-part') === name), field)
+  });
+
+  if (problems.length) {
+    globalThis.console?.error?.(`SF.FragmentRefresh: the first data of ${block.id} is not as declared (${problems.join('; ')})`);
+    return;
+  }
+
+  applyData(element, answer);
+}
+
+function startSkeleton(element, mode, mine) {
+  const own = state(element);
+  clearTimeout(own.skeleton);
+  own.skeleton = setTimeout(() => {
+    if (mine !== own.sequence || !element.isConnected) return; // The block keeps its height while it waits: nothing below it moves.
+
+    element.style.minBlockSize = `${element.getBoundingClientRect().height}px`;
+    element.setAttribute('aria-busy', 'true');
+    element.setAttribute('data-sf-fragment-loading', mode);
+    if (mode === 'data') for (const part of ownParts(element)) if (!part.hasAttribute('data-state')) part.setAttribute('data-state', 'loading');
+  }, _page_assets_js__WEBPACK_IMPORTED_MODULE_0__.SKELETON_DELAY_MS);
+}
+
+function stopSkeleton(element) {
+  const own = state(element);
+  clearTimeout(own.skeleton);
+  clearTimeout(own.timeout);
+  if (!element.hasAttribute('data-sf-fragment-loading')) return;
+  element.style.minBlockSize = '';
+  if (!element.getAttribute('style')) element.removeAttribute('style');
+  element.removeAttribute('aria-busy');
+  element.removeAttribute('data-sf-fragment-loading');
+
+  for (const part of ownParts(element)) if (part.getAttribute('data-state') === 'loading') part.removeAttribute('data-state');
+} // The error state inside the block, with a retry. The block's own content is
+// kept aside and comes back for the retry, so its controls stay as they were.
+
+
+function showError(element, url, reason, options) {
+  const own = state(element);
+
+  if (!own.kept) {
+    own.kept = document().createDocumentFragment();
+    own.kept.append(...element.childNodes);
+  }
+
+  const lang = element.closest('[lang]')?.getAttribute('lang') || 'en';
+  const error = document().createElement('sf-empty-state');
+  error.setAttribute('kind', 'error');
+  error.setAttribute('heading', (0,_page_language_js__WEBPACK_IMPORTED_MODULE_1__.localeText)(_lang_fragment_index_mjs__WEBPACK_IMPORTED_MODULE_2__["default"], 'heading', lang, 'sf-fragment'));
+  error.setAttribute('data-sf-fragment-error', '');
+
+  const onAction = event => {
+    if (event.detail?.id !== 'retry') return;
+    event.stopPropagation();
+    error.removeEventListener('sf-empty-state-action', onAction);
+    restore(element);
+    refresh(element, url, { ...options,
+      retry: true
+    });
+  };
+
+  error.addEventListener('sf-empty-state-action', onAction);
+  element.replaceChildren(error);
+  element.setAttribute('data-sf-fragment-state', 'error');
+  emit(element, 'sf-fragment-error', {
+    fragment: element.getAttribute('data-sf-fragment'),
+    url,
+    reason
+  });
+}
+
+function restore(element) {
+  const own = state(element);
+  if (!own.kept) return;
+  element.replaceChildren(own.kept);
+  own.kept = null;
+  element.removeAttribute('data-sf-fragment-state');
+}
+
+function writeHistory(address, how) {
+  if (address === globalThis.location.href) {
+    lastHref = globalThis.location.href;
+    return;
+  } // Nothing else writes (Back, Forward, a linked block) and the host applied
+  // another address than the entry's: the entry is corrected in place.
+
+
+  if (how === 'none') how = 'replace';
+  const current = globalThis.history.state;
+
+  if (how === 'replace') {
+    // A product's own fields in the entry are kept as they are.
+    globalThis.history.replaceState({ ...(isObject(current) ? current : {}),
+      sfFragment: true
+    }, '', address);
+  } else {
+    // The entry left keeps the scroll, so region navigation can bring it back.
+    if (isObject(current) && (current.sfRegion || current.sfFragment)) {
+      globalThis.history.replaceState({ ...current,
+        scroll: globalThis.scrollY
+      }, '');
+    }
+
+    const region = isObject(current) && current.sfRegion ? {
+      sfRegion: true,
+      scroll: globalThis.scrollY
+    } : {};
+    globalThis.history.pushState({ ...region,
+      sfFragment: true
+    }, '', address);
+  }
+
+  lastHref = globalThis.location.href;
+}
+/**
+ * Refresh one block from `url` (the control's address). `history`: push,
+ * replace or none. Resolves true when the block was drawn again.
+ */
+
+
+async function refresh(element, url, {
+  history = 'push',
+  linked = true,
+  retry = false
+} = {}) {
+  if (!config || !element?.isConnected) return false;
+  const block = readBlock(element);
+  const map = pageMap();
+  const target = new URL(url, globalThis.location.href).href;
+
+  if (block.problems.length || map.plain.has(element)) {
+    fullLoad(target, block.problems.length ? 'declaration' : 'conflict', element);
+    return false;
+  }
+
+  if (!retry) restore(element);
+  const allowed = emit(element, 'sf-fragment-refresh', {
+    fragment: block.id,
+    url: target,
+    mode: block.mode
+  }, true);
+  if (!allowed) return false;
+  const own = state(element);
+  own.controller?.abort();
+  const controller = new AbortController();
+  own.controller = controller;
+  const mine = ++own.sequence;
+  const before = globalThis.location.href;
+  startSkeleton(element, block.mode, mine);
+  let timedOut = false;
+  own.timeout = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, config.timeoutMs);
+
+  const stale = () => mine !== own.sequence || !element.isConnected;
+
+  let response;
+  let body;
+
+  try {
+    response = await globalThis.fetch(target, {
+      method: 'GET',
+      credentials: 'same-origin',
+      headers: {
+        [HEADER]: block.id,
+        [MODE_HEADER]: block.mode,
+        [CONTRACT_HEADER]: String(CONTRACT),
+        Accept: block.mode === 'data' ? 'application/json' : 'text/html'
+      },
+      signal: controller.signal
+    });
+    if (!stale() && response.status >= 500) throw Object.assign(new Error(`status ${response.status}`), {
+      contained: true
+    });
+    body = await response.text();
+  } catch (error) {
+    if (stale()) return false;
+    stopSkeleton(element);
+    if (error?.name === 'AbortError' && !timedOut) return false;
+    showError(element, target, timedOut ? 'timeout' : error?.contained ? error.message : 'network', {
+      history,
+      linked
+    });
+    return false;
+  }
+
+  if (stale()) return false;
+  clearTimeout(own.timeout);
+
+  const fail = reason => {
+    stopSkeleton(element);
+    fullLoad(target, reason, element);
+    return false;
+  };
+
+  const headers = headerProblems(response, block, block.mode);
+  if (headers.length) return fail(headers.join('; '));
+  const here = new URL(globalThis.location.href);
+  let address;
+  let draw;
+  let drawn = element;
+
+  if (block.mode === 'data') {
+    if (body.length > MAX_DATA_BYTES) return fail('answer too large');
+    let answer;
+
+    try {
+      answer = JSON.parse(body);
+    } catch {
+      return fail('invalid JSON');
+    }
+
+    const parts = ownParts(element);
+    await partsReady(parts);
+    if (stale()) return false;
+    const names = parts.map(part => part.getAttribute('data-sf-fragment-part'));
+    const problems = dataAnswerProblems(answer, block, {
+      parts: names,
+      known: (name, field) => knownField(parts.find(part => part.getAttribute('data-sf-fragment-part') === name), field),
+      origin: here.origin,
+      path: here.pathname
+    });
+    if (problems.length) return fail(problems.join('; '));
+    address = withKeys(here.href, new URL(answer.url, here).href, block.keys);
+
+    draw = () => applyData(element, answer, address);
+  } else {
+    const parsed = (0,_page_assets_js__WEBPACK_IMPORTED_MODULE_0__.parseMarkup)(body);
+    const roots = [...parsed.content.childNodes].filter(node => node.nodeType === 1 || node.nodeType === 3 && node.textContent.trim());
+    const next = roots.length === 1 && roots[0].nodeType === 1 ? roots[0] : null;
+    if (!next) return fail('not one root');
+    if (next.getAttribute('data-sf-fragment') !== block.id || next.getAttribute('data-sf-fragment-mode') !== 'html') return fail('another root');
+    (0,_page_assets_js__WEBPACK_IMPORTED_MODULE_0__.noteAssets)(parsed.assets);
+    await Promise.all(parsed.assets.filter(asset => asset.kind === 'css').map(_page_assets_js__WEBPACK_IMPORTED_MODULE_0__.loadAsset));
+    if (stale()) return false;
+    address = withKeys(here.href, target, block.keys);
+
+    draw = () => {
+      // Replacing the block disconnects what leaves: its elements release
+      // their own listeners in their own disconnect.
+      element.replaceWith(next);
+      drawn = next;
+      return parsed.assets.filter(asset => asset.kind === 'javascript');
+    };
+  } // The answer is whole and as declared: draw it in one step, then the address.
+
+
+  stopSkeleton(element);
+  const focused = element.contains(document().activeElement) ? document().activeElement : null;
+
+  const controls = root => [...root.querySelectorAll('a[href], button, input, select, textarea')].filter(node => node.closest(BLOCK) === root);
+
+  const focusIndex = focused ? controls(element).indexOf(focused) : -1;
+  const scripts = draw() ?? [];
+
+  if (block.mode === 'html') {
+    for (const asset of scripts) await (0,_page_assets_js__WEBPACK_IMPORTED_MODULE_0__.loadAsset)(asset);
+
+    if (focused && !focused.isConnected) {
+      // Focus stays on the control that was used: the same control (by id,
+      // else by its place among the block's controls) in the new block.
+      const again = focused.id && drawn.querySelector(`#${CSS.escape(focused.id)}`) || controls(drawn)[focusIndex];
+      again?.focus({
+        preventScroll: true
+      });
+    }
+  }
+
+  writeHistory(address, history);
+  const answerState = drawn.getAttribute('data-sf-fragment-state') || 'populated';
+  emit(drawn, 'sf-fragment-load', {
+    fragment: block.id,
+    url: address,
+    mode: block.mode,
+    state: answerState
+  });
+  if (linked) publishParameters(drawn, block, before, address);
+  return true;
+} // Linked blocks (simai.interface-fragment 1.1.0, refreshable-block): a block
+// that changed its keys says so with a parameters-changed value; every block
+// that reads one of those keys refreshes itself with its own request. The
+// address was written once, by the owner.
+
+function publishParameters(element, block, before, after) {
+  const keys = changedKeys(before, after).filter(key => block.keys.includes(key));
+  if (!keys.length) return;
+  const url = new URL(after);
+  const value = {
+    keys,
+    url: `${url.pathname}${url.search}`
+  };
+  emit(element, 'sf-fragment-parameters', {
+    type: 'parameters-changed',
+    value,
+    fragment: block.id
+  });
+
+  for (const reader of pageMap().blocks) {
+    if (reader.element === element || !reader.reads.some(key => keys.includes(key))) continue;
+    refresh(reader.element, after, {
+      history: 'none',
+      linked: false
+    });
+  }
+}
+
+function controlOf(event) {
+  if (!config || event.defaultPrevented) return null;
+  const path = event.composedPath();
+  const element = path.find(node => node instanceof globalThis.Element && node.matches(BLOCK));
+  if (!element) return null;
+  const block = readBlock(element);
+  if (!globalThis.location.pathname.startsWith(config.scope)) return null;
+  return {
+    element,
+    block
+  };
+} // The keys the other blocks of the page own.
+
+
+const othersKeys = (map, element) => [...map.owners].filter(([, block]) => block.element !== element).map(([key]) => key);
+
+function historyRule(control, element) {
+  const marked = control.closest('[data-sf-fragment-history]');
+  if (!marked || !element.contains(marked)) return 'push';
+  return marked.getAttribute('data-sf-fragment-history') === 'replace' ? 'replace' : 'push';
+}
+
+function onClick(event) {
+  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const found = controlOf(event);
+  if (!found) return;
+  const link = event.composedPath().find(node => node instanceof globalThis.Element && node.matches('a[href]'));
+  if (!link || link.closest(BLOCK) !== found.element) return;
+  if (link.closest('[data-full-load]') || link.hasAttribute('download')) return;
+  const target = link.getAttribute('target');
+  if (target && target !== '_self') return;
+  const map = pageMap();
+
+  if (map.plain.has(found.element)) {
+    // A plain block (a key or an id declared twice): its controls load the
+    // page in full, never region navigation's partial swap.
+    if (!ownedChange(link.href, globalThis.location.href, found.block.keys)) return;
+    event.preventDefault();
+    fullLoad(link.href, 'conflict', found.element);
+    return;
+  }
+
+  if (!ownedChange(link.href, globalThis.location.href, found.block.keys, othersKeys(map, found.element))) return;
+  event.preventDefault();
+  lastHref = globalThis.location.href;
+  refresh(found.element, withKeys(globalThis.location.href, link.href, found.block.keys), {
+    history: historyRule(link, found.element)
+  });
+}
+
+function onSubmit(event) {
+  const found = controlOf(event);
+  if (!found) return;
+  const form = event.target;
+  if (!(form instanceof globalThis.HTMLFormElement) || form.closest(BLOCK) !== found.element) return;
+  const submitter = event.submitter ?? null;
+  const method = (submitter?.getAttribute('formmethod') || form.getAttribute('method') || 'get').toLowerCase();
+  if (method !== 'get' || form.closest('[data-full-load]') || submitter?.closest('[data-full-load]')) return;
+  const formTarget = submitter?.getAttribute('formtarget') || form.getAttribute('target');
+  if (formTarget && formTarget !== '_self') return;
+  const action = new URL(submitter?.getAttribute('formaction') || form.getAttribute('action') || globalThis.location.href, globalThis.location.href);
+  action.search = new URLSearchParams(new FormData(form, submitter)).toString();
+  action.hash = '';
+  const map = pageMap();
+
+  if (map.plain.has(found.element)) {
+    if (!ownedChange(action.href, globalThis.location.href, found.block.keys)) return;
+    event.preventDefault();
+    fullLoad(action.href, 'conflict', found.element);
+    return;
+  }
+
+  if (!ownedChange(action.href, globalThis.location.href, found.block.keys, othersKeys(map, found.element))) return;
+  event.preventDefault();
+  lastHref = globalThis.location.href;
+  refresh(found.element, withKeys(globalThis.location.href, action.href, found.block.keys), {
+    history: historyRule(submitter ?? form, found.element)
+  });
+} // Back and Forward: only entries this runtime marked (sfFragment). Another
+// marker's entries -- region navigation's sfRegion alone, a product's own --
+// are left to their owners. When only block keys differ between the entry
+// left and the entry reached, the blocks whose keys changed are drawn again
+// without a history write, and region navigation is told the entry is taken.
+
+
+const withoutHash = href => href.split('#')[0]; // Whether this Back or Forward is block refresh's (or nobody's) rather than
+// region navigation's. Region navigation asks through the shared global
+// before it acts, so the answer does not depend on the order of listeners.
+// It is:
+//  - 'blocks' when only keys blocks own differ between the entry left and the
+//    entry reached (the blocks are drawn again);
+//  - 'none' when the address reached is the one this runtime last knew: the
+//    entry left was not written by the Framework (a product's own entry, a
+//    hash jump), and leaving it is the product's to handle;
+//  - null otherwise.
+// One answer per popstate, whichever listener asks first.
+
+
+let popMemo = null;
+
+function popClaim(state) {
+  if (popMemo && popMemo.state === state && popMemo.href === globalThis.location.href) return popMemo.claim;
+  const claim = freshClaim(state);
+  popMemo = {
+    state,
+    href: globalThis.location.href,
+    claim,
+    from: lastHref
+  };
+  setTimeout(() => {
+    popMemo = null;
+  }, 0);
+  return claim;
+}
+
+function freshClaim(state) {
+  if (!config || !lastHref || !isObject(state) || !(state.sfFragment || state.sfRegion)) return null;
+  const from = new URL(lastHref);
+  const to = new URL(globalThis.location.href);
+  if (from.origin !== to.origin || from.pathname !== to.pathname) return null;
+  if (withoutHash(from.href) === withoutHash(to.href)) return 'none';
+  if (!state.sfFragment) return null;
+  const changed = changedKeys(from.href, to.href);
+  const map = pageMap();
+  return changed.every(key => map.owners.has(key)) ? 'blocks' : null;
+}
+/** For region navigation: whether the popstate now being handled is not its to take. */
+
+
+function claimsPop(state) {
+  return popClaim(state) !== null;
+}
+
+function onPopState(event) {
+  const claim = popClaim(event.state);
+  const left = popMemo?.from ?? lastHref;
+  lastHref = globalThis.location.href;
+  if (!claim) return;
+  event.sfFragment = true;
+  if (claim === 'none') return;
+  const from = new URL(left);
+  const to = new URL(globalThis.location.href);
+  const changed = changedKeys(from.href, to.href);
+  const map = pageMap();
+  const touched = new Set();
+
+  for (const key of changed) touched.add(map.owners.get(key).element);
+
+  for (const block of map.blocks) if (!map.plain.has(block.element) && block.reads.some(key => changed.includes(key))) touched.add(block.element);
+
+  for (const element of touched) refresh(element, to.href, {
+    history: 'none',
+    linked: false
+  });
+} // Blocks that come onto the page (a region swap, an html answer) draw their
+// first data; blocks that leave have their request dropped.
+
+
+function onMutations(records) {
+  let changed = false;
+
+  for (const record of records) {
+    for (const node of record.addedNodes) {
+      if (!(node instanceof globalThis.Element)) continue;
+      const added = node.matches(BLOCK) ? [node, ...node.querySelectorAll(BLOCK)] : [...node.querySelectorAll(BLOCK)];
+
+      for (const element of added) {
+        changed = true;
+        drawIsland(element);
+      }
+    }
+
+    for (const node of record.removedNodes) {
+      if (!(node instanceof globalThis.Element)) continue;
+      const removed = node.matches(BLOCK) ? [node, ...node.querySelectorAll(BLOCK)] : [...node.querySelectorAll(BLOCK)];
+
+      for (const element of removed) {
+        if (element.isConnected) continue;
+        changed = true;
+        const own = live.get(element);
+        if (!own) continue;
+        own.sequence += 1;
+        own.controller?.abort();
+        clearTimeout(own.skeleton);
+        clearTimeout(own.timeout);
+      }
+    }
+  }
+
+  if (changed) pageMap();
+}
+
+function onRegionLoad() {
+  lastHref = globalThis.location.href;
+}
+
+function enable(options = {}) {
+  if (config) disable();
+  config = {
+    scope: typeof options.scope === 'string' ? options.scope : '/',
+    onFullLoad: typeof options.onFullLoad === 'function' ? options.onFullLoad : null,
+    timeoutMs: Number.isFinite(options.timeoutMs) && options.timeoutMs > 0 ? options.timeoutMs : TIMEOUT_MS
+  };
+  lastHref = globalThis.location.href; // Capture: a block's control is taken before region navigation sees it,
+  // and its Back before region navigation's own listener runs.
+
+  document().addEventListener('click', onClick, true);
+  document().addEventListener('submit', onSubmit, true);
+  globalThis.addEventListener('popstate', onPopState, true);
+  document().addEventListener('sf-region-load', onRegionLoad); // The entry the page opened on is this runtime's too; a product's own
+  // fields in it are kept.
+
+  const current = globalThis.history.state;
+  globalThis.history.replaceState({ ...(isObject(current) ? current : {}),
+    sfFragment: true
+  }, '');
+  pageMap();
+
+  for (const element of document().querySelectorAll(BLOCK)) drawIsland(element);
+
+  if (typeof globalThis.MutationObserver === 'function') {
+    observer = new globalThis.MutationObserver(onMutations);
+    observer.observe(document().documentElement, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  return true;
+}
+function disable() {
+  if (!config) return;
+  document().removeEventListener('click', onClick, true);
+  document().removeEventListener('submit', onSubmit, true);
+  globalThis.removeEventListener('popstate', onPopState, true);
+  document().removeEventListener('sf-region-load', onRegionLoad);
+  observer?.disconnect();
+  observer = null;
+
+  for (const element of document().querySelectorAll(BLOCK)) {
+    const own = live.get(element);
+    if (!own) continue;
+    own.sequence += 1;
+    own.controller?.abort();
+    stopSkeleton(element);
+  }
+
+  config = null;
+}
+
+if (typeof window !== 'undefined') {
+  window.SF = window.SF || {};
+  window.SF.FragmentRefresh = Object.freeze({
+    enable,
+    disable,
+    refresh,
+    claimsPop,
+    contract: CONTRACT,
+
+    get enabled() {
+      return Boolean(config);
+    }
+
+  });
+}
+
+/***/ },
+
 /***/ "1b42c5117087"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -7341,30 +8707,33 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _preferences_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("51250bf01ab0");
 /* harmony import */ var _display_settings_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("4fa740738112");
 /* harmony import */ var _region_navigation_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__("9edc14a11fec");
-/* harmony import */ var _workspace_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("0730c3d86f4b");
-/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("4f52f56c9555");
-/* harmony import */ var _sets_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("a30ed252d965");
-/* harmony import */ var _on_view_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("43cada8855de");
-/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("b4bff8456ce0");
-/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("20db70d35f32");
-/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("5b8371b87515");
-/* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("1373e294ec38");
-/* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("e081a020262e");
-/* harmony import */ var _copy_feedback_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("1446153b1a96");
-/* harmony import */ var _code_copy_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("effedf2a2981");
-/* harmony import */ var _new_tab_link_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("a583dcca136f");
-/* harmony import */ var _menu_open_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("8d229b7c92e9");
-/* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("6978f1cc153b");
-/* harmony import */ var _scrollbars_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("e138ee90aa60");
-/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__("1b42c5117087");
-/* harmony import */ var _icon_glyphs_js__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__("a1e33ce15a5e");
-/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__("5effd0d9c238");
-/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__("de1f3481c667");
-/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__("cda569e6042b");
-/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__("55bd48f35b65");
-/* harmony import */ var _package_modules_js__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__("2240d10a72cb");
-/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__("3c79afd07eeb");
-/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__("6c7f357fe960");
+/* harmony import */ var _fragment_refresh_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__("a348bbc8b9bf");
+/* harmony import */ var _workspace_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__("0730c3d86f4b");
+/* harmony import */ var _effects_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__("4f52f56c9555");
+/* harmony import */ var _sets_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__("a30ed252d965");
+/* harmony import */ var _on_view_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__("43cada8855de");
+/* harmony import */ var _notify_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__("b4bff8456ce0");
+/* harmony import */ var _sanitize_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__("20db70d35f32");
+/* harmony import */ var _format_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__("5b8371b87515");
+/* harmony import */ var _breakpoints_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__("1373e294ec38");
+/* harmony import */ var _device_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__("cbcfcde04d12");
+/* harmony import */ var _long_press_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__("9cf638c721f7");
+/* harmony import */ var _clipboard_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__("e081a020262e");
+/* harmony import */ var _copy_feedback_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__("1446153b1a96");
+/* harmony import */ var _code_copy_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__("effedf2a2981");
+/* harmony import */ var _new_tab_link_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__("a583dcca136f");
+/* harmony import */ var _menu_open_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__("8d229b7c92e9");
+/* harmony import */ var _reading_position_js__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__("6978f1cc153b");
+/* harmony import */ var _scrollbars_js__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__("e138ee90aa60");
+/* harmony import */ var _icon_choices_js__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__("1b42c5117087");
+/* harmony import */ var _icon_glyphs_js__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__("a1e33ce15a5e");
+/* harmony import */ var _ready_js__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__("5effd0d9c238");
+/* harmony import */ var _icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__("de1f3481c667");
+/* harmony import */ var _page_storage_js__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__("cda569e6042b");
+/* harmony import */ var _early_port_js__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__("55bd48f35b65");
+/* harmony import */ var _package_modules_js__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__("2240d10a72cb");
+/* harmony import */ var _pending_tags_js__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__("3c79afd07eeb");
+/* harmony import */ var _preloader__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__("6c7f357fe960");
  // The text faces the page needs, started before anything else runs, so a
 // quick network brings Inter in before the first frame (core/js/text-fonts.js).
 
@@ -7395,6 +8764,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
  // Component sets: SF.package(name) before the Loader has started, and the
 // set declaration helpers the Loader uses (core/js/sets.js).
 
@@ -7407,6 +8777,11 @@ __webpack_require__.r(__webpack_exports__);
 // top-level side effects, so a bundle carries only the helpers it calls
 // (core.runtime 1.28.0).
 
+
+ // The two device words, layout (the place's width) and pointer (coarse or
+// fine), and the item scope `devices` (study S-A, q-7097831f9f): SF.device.
+
+ // A held touch, shared by lists, cards and boards (study S-A (4)): SF.longPress.
 
 
  // What a copy says, one feedback for sf-button-copy and the attribute route
@@ -7441,8 +8816,8 @@ __webpack_require__.r(__webpack_exports__);
 
  // SF.format, before anything below can be asked to format.
 
-(0,_format_js__WEBPACK_IMPORTED_MODULE_22__.publishFormat)();
-(0,_menu_open_js__WEBPACK_IMPORTED_MODULE_28__.publishMenu)(); // The shared Smart runtime: core/js/smart-base.js, a script of its own beside
+(0,_format_js__WEBPACK_IMPORTED_MODULE_23__.publishFormat)();
+(0,_menu_open_js__WEBPACK_IMPORTED_MODULE_31__.publishMenu)(); // The shared Smart runtime: core/js/smart-base.js, a script of its own beside
 // core.js, holding the modules the Smart bundles are built against (they carry
 // no lit or smart-base of their own). Asked for by the bundles and by the
 // Loader as soon as it queues a Smart element. A page that included the script
@@ -7457,10 +8832,10 @@ if (typeof window !== 'undefined') {
 
   if (SF.deprecations && !('warn' in SF.deprecations)) SF.deprecations.warn = false; // SF.ready, before the Loader chunk is even asked for (simai/ui-source#16).
 
-  (0,_ready_js__WEBPACK_IMPORTED_MODULE_33__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
+  (0,_ready_js__WEBPACK_IMPORTED_MODULE_36__.installReady)(window); // The ports declared on elements (data-sf-port islands): their first calls
   // leave now, while the components' code is still on its way (stand 27).
 
-  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_36__.installEarlyPort)(window);
+  (0,_early_port_js__WEBPACK_IMPORTED_MODULE_39__.installEarlyPort)(window);
 
   if (!SF.loadRuntime) {
     let loading = null;
@@ -7524,9 +8899,9 @@ if (typeof window !== 'undefined') {
 
     const coreLookup = SF.runtimeModule;
 
-    SF.runtimeModule = (id, abi) => (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_37__.packageModuleId)(id) ? (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_37__.packageModule)(id, abi) : coreLookup(id, abi);
+    SF.runtimeModule = (id, abi) => (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_40__.packageModuleId)(id) ? (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_40__.packageModule)(id, abi) : coreLookup(id, abi);
 
-    (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_37__.installPackageRegistration)(SF.runtimeModule, () => Object.keys(SF.__internal.runtimeModules || {})); // A page that already holds a Smart part (printed by the server, waiting
+    (0,_package_modules_js__WEBPACK_IMPORTED_MODULE_40__.installPackageRegistration)(SF.runtimeModule, () => Object.keys(SF.__internal.runtimeModules || {})); // A page that already holds a Smart part (printed by the server, waiting
     // for its definition) preloads the runtime now, with Core, rather than
     // when the Loader's own chunk arrives and queues the part (stand 25): the
     // bytes are fetched early, the script runs when the Loader asks for it.
@@ -7612,10 +8987,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
   if (subsetEnabled && document.head) {
     try {
-      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_34__.applyRememberedIconSubset)({
+      (0,_icon_subset_memory_js__WEBPACK_IMPORTED_MODULE_37__.applyRememberedIconSubset)({
         win: window,
         doc: document,
-        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_35__["default"])()
+        storage: (0,_page_storage_js__WEBPACK_IMPORTED_MODULE_38__["default"])()
       });
     } catch {
       /* Nothing remembered is nothing lost: the Loader asks as before. */
@@ -7721,12 +9096,12 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   // them at once and is left alone, as it was.
 
   const holdUndefinedUntilDefined = () => {
-    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_39__.pageHasPreloadedModules)(window)) {
+    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_42__.pageHasPreloadedModules)(window)) {
       return;
     }
 
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_38__.installPendingTags)(window);
-    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_38__.holdUndefinedElements)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_41__.installPendingTags)(window);
+    (0,_pending_tags_js__WEBPACK_IMPORTED_MODULE_41__.holdUndefinedElements)(window);
   };
 
   holdUndefinedUntilDefined();
@@ -7734,12 +9109,12 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
   const mountPreloader = () => {
     const cfg = {
       enabled: true,
-      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.getPreloaderBackground)(),
+      background: (0,_preloader__WEBPACK_IMPORTED_MODULE_42__.getPreloaderBackground)(),
       modifier: 'loader-default',
       tempStyles: 'inset: 0;position: fixed;width: 100%;height: 100vh;opacity: 1;z-index: var(--sf-layer--window, 9000);background-color: var(--sf-color--surface-highest, var(--sf-surface-page, #fff));text-align: center;',
-      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.getPreloaderColor)(),
-      width: _preloader__WEBPACK_IMPORTED_MODULE_39__.DEFAULT_PRELOADER.width,
-      height: _preloader__WEBPACK_IMPORTED_MODULE_39__.DEFAULT_PRELOADER.height,
+      color: (0,_preloader__WEBPACK_IMPORTED_MODULE_42__.getPreloaderColor)(),
+      width: _preloader__WEBPACK_IMPORTED_MODULE_42__.DEFAULT_PRELOADER.width,
+      height: _preloader__WEBPACK_IMPORTED_MODULE_42__.DEFAULT_PRELOADER.height,
       content: '',
       delay: 300,
       ...(window.SF_BOOT_CONFIG?.preloader || {})
@@ -7747,8 +9122,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     if (cfg.enabled === false || document.querySelector('.sf-loader')) return; // Preloaded modules draw their elements before this runs: nothing is
     // left for a preloader to stand in for (input-choice audit 2026-11-11).
 
-    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_39__.pageHasPreloadedModules)(window)) return;
-    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.createPreloaderContent)(cfg);
+    if ((0,_preloader__WEBPACK_IMPORTED_MODULE_42__.pageHasPreloadedModules)(window)) return;
+    const svgContent = cfg.content || (0,_preloader__WEBPACK_IMPORTED_MODULE_42__.createPreloaderContent)(cfg);
     let wrap = null;
     let preloaderWrap = null;
     let preloaderRun = false;
@@ -7768,7 +9143,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     const stopAnimation = () => {
       if (preloaderWrap) {
-        (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.stopPreloaderMotion)(preloaderWrap);
+        (0,_preloader__WEBPACK_IMPORTED_MODULE_42__.stopPreloaderMotion)(preloaderWrap);
       }
     };
 
@@ -7778,7 +9153,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // Read when the preloader would show, after its delay, when the
       // server's markup has been parsed.
 
-      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_39__.pageShowsContent)(document) || (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.pageHasPreloadedModules)(window)) return;
+      if ((0,_preloader__WEBPACK_IMPORTED_MODULE_42__.pageShowsContent)(document) || (0,_preloader__WEBPACK_IMPORTED_MODULE_42__.pageHasPreloadedModules)(window)) return;
       wrap = document.createElement('div');
       const inner = document.createElement('div');
       wrap.classList.add('sf-loader', cfg.modifier);
@@ -7800,10 +9175,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         wrap: wrap,
         preloaderActive: true
       };
-      (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg); // Up, it leaves at once when a component draws under it: never a
+      (0,_preloader__WEBPACK_IMPORTED_MODULE_42__.startPreloaderMotion)(preloaderWrap, () => preloaderRun, cfg); // Up, it leaves at once when a component draws under it: never a
       // preloader over drawn content (R216, any site).
 
-      stopWatch = (0,_preloader__WEBPACK_IMPORTED_MODULE_39__.watchForContent)(() => {
+      stopWatch = (0,_preloader__WEBPACK_IMPORTED_MODULE_42__.watchForContent)(() => {
         preloaderRun = false;
         stopAnimation();
         hide();
@@ -7848,7 +9223,7 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
-        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_39__.pageShowsContent)(document)) return;
+        if (!(0,_preloader__WEBPACK_IMPORTED_MODULE_42__.pageShowsContent)(document)) return;
         cancelBuild();
         preloaderRun = false;
         stopAnimation();
@@ -9225,6 +10600,114 @@ function whenClosedLayerOpens(element, signal) {
 
 /***/ },
 
+/***/ "9cf638c721f7"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   LONG_PRESS_MS: () => (/* binding */ LONG_PRESS_MS),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   watchLongPress: () => (/* binding */ watchLongPress)
+/* harmony export */ });
+// A long press under a finger (owner decision C148 (6), list item study
+// prototypes/list-item-study.html #q-swipe): held 0.5 s on a row, it opens the
+// same menu as the row's «⋯» and Shift+F10. No swipe: it is hidden and fights
+// the platform's back gesture. The press time is the tooltip's long press
+// (component tooltip, C59): times, not lengths -- the Framework has no delay
+// tokens. A touch the browser takes for a scroll ends in pointercancel and
+// opens nothing. The click the release sends afterwards is the press's, not a
+// press of the row: swallowed() answers it once.
+//
+// A core helper since group build 19 (study S-A, decision q-7097831f9f
+// (4); docs/foundation-touch-screens.md): cards and boards share it with the
+// list. On a surface with multiple selection a long press chooses the item
+// (sf-list selection="many", C150 (9)); without selection it opens the item's
+// «⋯» menu (C148 (6)). The caller's press() decides which.
+//
+// Stateless module: core publishes it as SF.longPress, and a component bundle
+// that imports it carries a copy; every watch keeps its state in its own
+// closure.
+const LONG_PRESS_MS = 500;
+/**
+ * Watches a held touch on `target`: press(event) after `ms` (500) when
+ * accepts(event) took the pointerdown. Returns {swallowed(), stop()}:
+ * swallowed() answers once, true, for the click that follows a fired press.
+ */
+
+function watchLongPress(target, {
+  accepts = () => true,
+  press,
+  ms = LONG_PRESS_MS
+} = {}) {
+  let timer = 0;
+  let pointer = null;
+  let fired = false;
+
+  const clear = () => {
+    clearTimeout(timer);
+    timer = 0;
+    pointer = null;
+  };
+
+  const onDown = event => {
+    fired = false;
+    if (event.pointerType !== 'touch' || !event.isPrimary || !accepts(event)) return;
+    clear();
+    pointer = event.pointerId;
+    timer = setTimeout(() => {
+      timer = 0;
+      press(event); // After the press: a click press() sends itself is not the release.
+
+      fired = true;
+    }, Number.isFinite(ms) && ms > 0 ? ms : LONG_PRESS_MS);
+  };
+
+  const onEnd = event => {
+    if (pointer === event.pointerId) clear();
+  }; // The browser's own long-press menu (text selection, «copy») would cover
+  // the row's menu.
+
+
+  const onContextMenu = event => {
+    if (pointer !== null || fired) event.preventDefault();
+  };
+
+  target.addEventListener('pointerdown', onDown);
+  target.addEventListener('pointerup', onEnd);
+  target.addEventListener('pointercancel', onEnd);
+  target.addEventListener('contextmenu', onContextMenu);
+  return {
+    swallowed() {
+      if (!fired) return false;
+      fired = false;
+      return true;
+    },
+
+    stop() {
+      clear();
+      target.removeEventListener('pointerdown', onDown);
+      target.removeEventListener('pointerup', onEnd);
+      target.removeEventListener('pointercancel', onEnd);
+      target.removeEventListener('contextmenu', onContextMenu);
+    }
+
+  };
+}
+const LongPress = Object.freeze({
+  ms: LONG_PRESS_MS,
+  watch: watchLongPress
+});
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.longPress) globalThis.SF.longPress = LongPress;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (LongPress);
+
+/***/ },
+
 /***/ "9770341d4bfa"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -9842,8 +11325,12 @@ function installMenuOpen() {
     const atPoint = !(anchor instanceof Element);
     if (atPoint && !(Number.isFinite(Number(x)) && Number.isFinite(Number(y)))) return null;
     const doc = globalThis.document;
-    if (!doc) return null;
-    await globalThis.SF?.Loader?.ensure?.(['sf-menu-context']);
+    if (!doc) return null; // A press opens it: the wait does not give up while the menu's code is
+    // on its way (SF.Loader.ensure press, GB18 L2; GB19).
+
+    await globalThis.SF?.Loader?.ensure?.(['sf-menu-context'], {
+      press: true
+    });
     if (!globalThis.customElements?.get('sf-menu-context')) return null;
     const menu = sharedMenu(atPoint ? returnTo : anchor); // The same control again: its open menu closes (a toggle).
 
@@ -11362,6 +12849,147 @@ function installPackageRegistration(runtimeModule, coreIds) {
     })
   });
   return runtimeModule;
+}
+
+/***/ },
+
+/***/ "f4cefa2a00b9"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SKELETON_DELAY_MS: () => (/* binding */ SKELETON_DELAY_MS),
+/* harmony export */   isRunnableScript: () => (/* binding */ isRunnableScript),
+/* harmony export */   loadAsset: () => (/* binding */ loadAsset),
+/* harmony export */   noteAssets: () => (/* binding */ noteAssets),
+/* harmony export */   parseMarkup: () => (/* binding */ parseMarkup)
+/* harmony export */ });
+// The assets a swapped part of the page brings, asked for once for the life
+// of the page (simai.interface-fragment, assets-once). Region navigation and
+// block refresh share one registry, and it lives on the shared global
+// SF.__assets, not in this module: every bundle carries its own copy of a
+// module, so a registry held in module scope would not be shared at runtime.
+// The wait before a skeleton is drawn: an answer that comes sooner shows none.
+const SKELETON_DELAY_MS = 150;
+
+const absolute = href => {
+  try {
+    return new URL(href, globalThis.location.href).href;
+  } catch {
+    return null;
+  }
+};
+
+function registry() {
+  const sf = globalThis.SF = globalThis.SF || {};
+
+  if (!(sf.__assets instanceof Map)) {
+    Object.defineProperty(sf, '__assets', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return sf.__assets;
+}
+
+function isPresent(url, kind) {
+  const document = globalThis.document;
+  const nodes = kind === 'css' ? document.querySelectorAll('link[rel~="stylesheet"][href]') : document.querySelectorAll('script[src]');
+  return [...nodes].some(node => absolute(node.getAttribute(kind === 'css' ? 'href' : 'src')) === url);
+} // One request per asset: a second part that needs the same file waits on the
+// first request, it does not make another.
+
+
+function loadAsset({
+  href,
+  kind,
+  key
+}) {
+  const url = absolute(href);
+  if (!url || !['css', 'javascript'].includes(kind)) return Promise.resolve();
+  const requests = registry();
+  if (requests.has(url)) return requests.get(url);
+
+  if (isPresent(url, kind)) {
+    requests.set(url, Promise.resolve());
+    return requests.get(url);
+  }
+
+  const document = globalThis.document;
+  const node = document.createElement(kind === 'css' ? 'link' : 'script');
+
+  if (kind === 'css') {
+    node.rel = 'stylesheet';
+    node.href = url;
+  } else {
+    node.src = url;
+    node.async = false;
+  }
+
+  if (key) node.setAttribute('data-sf-asset', key);
+  const loaded = new Promise(resolve => {
+    node.addEventListener('load', () => resolve(), {
+      once: true
+    }); // A file that does not come is the part's loss, not the page's: the part
+    // is shown, and the component that needed it reports its own state.
+
+    node.addEventListener('error', () => resolve(), {
+      once: true
+    });
+  });
+  document.head.append(node);
+  requests.set(url, loaded);
+  return loaded;
+} // A script element the browser would run. A data island
+// (<script type="application/json" data-sf-fragment-data>) is not one: it is
+// the block's first data and stays in the markup.
+
+const RUNNABLE = /^(?:|module|text\/javascript|application\/javascript|text\/ecmascript|application\/ecmascript)$/iu;
+const isRunnableScript = script => RUNNABLE.test((script.getAttribute('type') ?? '').trim()); // Before a swap takes the old markup away: every asset the new markup names
+// that is on the page now is recorded as loaded, so the <script src> or
+// <link> that leaves with the old markup is not asked for again.
+
+function noteAssets(assets) {
+  const requests = registry();
+
+  for (const {
+    href,
+    kind
+  } of assets) {
+    const url = absolute(href);
+    if (url && !requests.has(url) && isPresent(url, kind)) requests.set(url, Promise.resolve());
+  }
+} // Markup parsed but not yet placed: its stylesheets and scripts are taken out
+// and returned as assets (a script set by innerHTML never runs).
+
+function parseMarkup(html) {
+  const template = globalThis.document.createElement('template');
+  template.innerHTML = String(html ?? '');
+  const assets = [];
+
+  for (const link of template.content.querySelectorAll('link[rel~="stylesheet"][href]')) {
+    assets.push({
+      href: link.getAttribute('href'),
+      kind: 'css'
+    });
+    link.remove();
+  }
+
+  for (const script of template.content.querySelectorAll('script')) {
+    if (!isRunnableScript(script)) continue;
+    if (script.getAttribute('src')) assets.push({
+      href: script.getAttribute('src'),
+      kind: 'javascript'
+    });
+    script.remove();
+  }
+
+  return {
+    content: template.content,
+    assets
+  };
 }
 
 /***/ },
@@ -14055,6 +15683,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   navigate: () => (/* binding */ navigate)
 /* harmony export */ });
 /* harmony import */ var _motion_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2ee7a47e9b10");
+/* harmony import */ var _page_assets_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f4cefa2a00b9");
 // Region navigation (simai.interface-fragment 1.0.0, region-navigation and
 // full-load-fallback; Larena handoff 2026-10-15). A link inside the shell
 // changes one region of the page instead of the page: the shell (a menu, a
@@ -14082,14 +15711,21 @@ __webpack_require__.r(__webpack_exports__);
 // again, whether it came in `assets` or as a <link>/<script src> in the html;
 // the elements that leave are disconnected, so their routes and listeners go
 // with them.
+//
+// History entries carry the runtime's own marker (simai.interface-fragment
+// 1.1.0, history-markers): this one takes only entries marked sfRegion, block
+// refresh marks its own sfFragment, and a product's own entries carry the
+// product's marker and are left alone. A link inside a refreshable block that
+// changes only the block's keys, and a Back or Forward that block refresh has
+// taken (it changed only block keys), are not this navigator's.
 // The device's reduced motion or the site's «остановить движение» (C196).
+ // One asset registry and one skeleton delay with block refresh (assets-once).
 
-const SKELETON_DELAY_MS = 150;
+
 const TIMEOUT_MS = 15000;
 let config = null;
 let controller = null;
 let sequence = 0;
-const assetRequests = new Map();
 
 const absolute = href => {
   try {
@@ -14135,8 +15771,11 @@ function onClick(event) {
 }
 
 function onPopState(event) {
-  const state = event.state;
-  if (!config || !state?.sfRegion) return;
+  const state = event.state; // Block refresh's Back (only block keys changed), or one leaving an entry the
+  // Framework did not write: not this navigator's. Asked through the shared
+  // global, so the order of the two listeners does not matter.
+
+  if (!config || !state?.sfRegion || event.sfFragment === true || globalThis.SF?.FragmentRefresh?.claimsPop?.(state)) return;
   navigate(globalThis.location.href, {
     history: 'none',
     scroll: state.scroll ?? 0
@@ -14166,84 +15805,6 @@ function fullLoad(url, reason) {
   }
 
   if (url === globalThis.location.href) globalThis.location.reload();else globalThis.location.assign(url);
-}
-
-function isPresent(url, kind) {
-  const document = globalThis.document;
-  const nodes = kind === 'css' ? document.querySelectorAll('link[rel~="stylesheet"][href]') : document.querySelectorAll('script[src]');
-  return [...nodes].some(node => absolute(node.getAttribute(kind === 'css' ? 'href' : 'src')) === url);
-} // One request per asset for the life of the page: a second region that needs
-// the same file waits on the first request, it does not make another.
-
-
-function loadAsset({
-  href,
-  kind,
-  key
-}) {
-  const url = absolute(href);
-  if (!url || !['css', 'javascript'].includes(kind)) return Promise.resolve();
-  if (assetRequests.has(url)) return assetRequests.get(url);
-
-  if (isPresent(url, kind)) {
-    assetRequests.set(url, Promise.resolve());
-    return assetRequests.get(url);
-  }
-
-  const document = globalThis.document;
-  const node = document.createElement(kind === 'css' ? 'link' : 'script');
-
-  if (kind === 'css') {
-    node.rel = 'stylesheet';
-    node.href = url;
-  } else {
-    node.src = url;
-    node.async = false;
-  }
-
-  if (key) node.setAttribute('data-sf-asset', key);
-  const loaded = new Promise(resolve => {
-    node.addEventListener('load', () => resolve(), {
-      once: true
-    }); // A file that does not come is the region's loss, not the page's: the
-    // region is shown, and the component that needed it reports its own state.
-
-    node.addEventListener('error', () => resolve(), {
-      once: true
-    });
-  });
-  document.head.append(node);
-  assetRequests.set(url, loaded);
-  return loaded;
-} // The region's html, parsed but not yet placed: its stylesheets and scripts
-// are taken out and loaded as assets (a script set by innerHTML never runs).
-
-
-function parseRegion(html) {
-  const template = globalThis.document.createElement('template');
-  template.innerHTML = String(html ?? '');
-  const assets = [];
-
-  for (const link of template.content.querySelectorAll('link[rel~="stylesheet"][href]')) {
-    assets.push({
-      href: link.getAttribute('href'),
-      kind: 'css'
-    });
-    link.remove();
-  }
-
-  for (const script of template.content.querySelectorAll('script')) {
-    if (script.getAttribute('src')) assets.push({
-      href: script.getAttribute('src'),
-      kind: 'javascript'
-    });
-    script.remove();
-  }
-
-  return {
-    content: template.content,
-    assets
-  };
 }
 
 function validAnswer(answer, revision) {
@@ -14282,7 +15843,7 @@ async function navigate(url, {
     if (mine !== sequence) return;
     root.setAttribute('aria-busy', 'true');
     root.setAttribute('data-sf-region-loading', '');
-  }, SKELETON_DELAY_MS);
+  }, _page_assets_js__WEBPACK_IMPORTED_MODULE_1__.SKELETON_DELAY_MS);
   const timeout = setTimeout(() => controller?.abort(), TIMEOUT_MS);
   let answer;
 
@@ -14322,11 +15883,12 @@ async function navigate(url, {
   clearTimeout(timeout);
   if (mine !== sequence) return false;
   const address = typeof answer.url === 'string' && absolute(answer.url)?.startsWith(globalThis.location.origin) ? absolute(answer.url) : url;
-  const parsed = parseRegion(answer.html);
-  const assets = [...(answer.assets ?? []), ...parsed.assets]; // Stylesheets before the swap, so the new content never shows unstyled;
+  const parsed = (0,_page_assets_js__WEBPACK_IMPORTED_MODULE_1__.parseMarkup)(answer.html);
+  const assets = [...(answer.assets ?? []), ...parsed.assets];
+  (0,_page_assets_js__WEBPACK_IMPORTED_MODULE_1__.noteAssets)(assets); // Stylesheets before the swap, so the new content never shows unstyled;
   // scripts after, so the elements they define upgrade in place.
 
-  await Promise.all(assets.filter(asset => asset.kind === 'css').map(loadAsset));
+  await Promise.all(assets.filter(asset => asset.kind === 'css').map(_page_assets_js__WEBPACK_IMPORTED_MODULE_1__.loadAsset));
   if (mine !== sequence) return false;
 
   if (history === 'push') {
@@ -14355,7 +15917,7 @@ async function navigate(url, {
   const transition = typeof globalThis.document.startViewTransition === 'function' && !(0,_motion_js__WEBPACK_IMPORTED_MODULE_0__.reducedMotion)() ? globalThis.document.startViewTransition(swap) : null;
   if (transition) await transition.updateCallbackDone.catch(() => {});else swap();
 
-  for (const asset of assets.filter(entry => entry.kind === 'javascript')) await loadAsset(asset);
+  for (const asset of assets.filter(entry => entry.kind === 'javascript')) await (0,_page_assets_js__WEBPACK_IMPORTED_MODULE_1__.loadAsset)(asset);
 
   globalThis.scrollTo(0, history === 'none' ? scroll : 0);
   const heading = root.querySelector('h1');
@@ -15428,7 +16990,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.68.0';
+const CORE_RUNTIME = '1.69.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -26714,6 +28276,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   FRAGMENT_DESCRIPTOR_SCHEMA: () => (/* binding */ FRAGMENT_DESCRIPTOR_SCHEMA),
 /* harmony export */   checkFragmentDescriptor: () => (/* binding */ checkFragmentDescriptor),
+/* harmony export */   checkRefreshPage: () => (/* binding */ checkRefreshPage),
 /* harmony export */   defineFragmentBoundary: () => (/* binding */ defineFragmentBoundary),
 /* harmony export */   definePageHost: () => (/* binding */ definePageHost),
 /* harmony export */   publishEffects: () => (/* binding */ publishEffects)
@@ -26736,6 +28299,9 @@ __webpack_require__.r(__webpack_exports__);
 const FRAGMENT_DESCRIPTOR_SCHEMA = 'simai.interface-fragment.v1';
 
 const FIELDS = ['schema', 'id', 'element', 'regions', 'port', 'outputs', 'inputs', 'operation', 'url_state', 'budget'];
+// Optional: schema_version (the format name without a version) and refresh
+// (descriptor 1.3.0, simai.interface-fragment 1.1.0, block refresh contract 1).
+const OPTIONAL = ['schema_version', 'refresh'];
 const ID = /^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+$/u;
 const ELEMENT = /^[a-z][a-z0-9]*-[a-z0-9-]+$/u;
 const NAME = /^[a-z][a-z0-9-]{0,31}$/u;
@@ -26767,7 +28333,7 @@ function checkFragmentDescriptor(descriptor) {
   const problems = [];
   const keys = Object.keys(descriptor);
   for (const field of FIELDS) if (!keys.includes(field)) problems.push(`${field}: required`);
-  for (const key of keys) if (!FIELDS.includes(key) && key !== 'schema_version') problems.push(`${key}: undeclared`);
+  for (const key of keys) if (!FIELDS.includes(key) && !OPTIONAL.includes(key)) problems.push(`${key}: undeclared`);
   // Either form of the format name: simai.interface-fragment.v1, or
   // simai.interface-fragment with schema_version 1 (schema-name.mjs).
   if (!(0,_schema_name_mjs__WEBPACK_IMPORTED_MODULE_3__.isSchema)(descriptor, 'simai.interface-fragment', 1)) problems.push('schema: not simai.interface-fragment, schema_version 1');
@@ -26784,6 +28350,44 @@ function checkFragmentDescriptor(descriptor) {
   if (!closed(budget, ['kb', 'first_answer_ms'])
     || !Number.isSafeInteger(budget.kb) || budget.kb < 0 || budget.kb > 2048
     || !Number.isSafeInteger(budget.first_answer_ms) || budget.first_answer_ms < 0 || budget.first_answer_ms > 10000) problems.push('budget: {kb 0-2048, first_answer_ms 0-10000}');
+  if ('refresh' in descriptor) problems.push(...refreshProblems(descriptor.refresh, descriptor.url_state));
+  return problems;
+}
+
+// The block refresh part of a descriptor: the mode, the wire contract, the
+// keys it reads (never its own: those are url_state) and its part names.
+function refreshProblems(refresh, own) {
+  if (!closed(refresh, ['mode', 'contract', 'reads', 'parts'])) return ['refresh: {mode, contract, reads?, parts?}'];
+  const problems = [];
+  if (!['data', 'html'].includes(refresh.mode)) problems.push('refresh.mode: data or html');
+  if (refresh.contract !== 1) problems.push('refresh.contract: 1');
+  if ('reads' in refresh && (!uniqueList(refresh.reads, 16, (key) => typeof key === 'string' && URL_KEY.test(key))
+    || (Array.isArray(own) && refresh.reads.some((key) => own.includes(key))))) problems.push('refresh.reads: up to sixteen query keys the fragment does not own');
+  if ('parts' in refresh && !uniqueList(refresh.parts, 32, (name) => typeof name === 'string' && NAME.test(name))) problems.push('refresh.parts: up to thirty-two part names');
+  if (refresh.mode === 'html' && Array.isArray(refresh.parts) && refresh.parts.length) problems.push('refresh.parts: a data block only');
+  return problems;
+}
+
+/**
+ * The page's refreshable blocks checked together (a package gate): ids
+ * unique, each key owned once, every key read owned by some block. Takes
+ * descriptors (or {id, url_state, refresh}); returns the problems.
+ */
+function checkRefreshPage(descriptors) {
+  const problems = [];
+  const ids = new Set();
+  const owners = new Map();
+  for (const descriptor of descriptors) {
+    if (ids.has(descriptor.id)) problems.push(`${descriptor.id}: id twice on the page`);
+    ids.add(descriptor.id);
+    for (const key of descriptor.url_state ?? []) {
+      if (owners.has(key)) problems.push(`${key}: owned by ${owners.get(key)} and ${descriptor.id}`);
+      else owners.set(key, descriptor.id);
+    }
+  }
+  for (const descriptor of descriptors) {
+    for (const key of descriptor.refresh?.reads ?? []) if (!owners.has(key)) problems.push(`${descriptor.id}: reads ${key}, which no block owns`);
+  }
   return problems;
 }
 
@@ -32355,7 +33959,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-built-in","s
 (module) {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-pack-index","schema_version":1,"delivery":"framework","languages":["ar","de","es","fr","it","ja","ko","pt-br","ru","zh-hans"],"aliases":{"pt":"pt-br","zh":"zh-hans","zh-cn":"zh-hans","zh-sg":"zh-hans"},"parts":{"ar":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"de":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"es":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"fr":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"it":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ja":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ko":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"pt-br":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ru":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"zh-hans":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]}},"coverage":{"ar":{"words":2288,"translated":2288,"share":100},"de":{"words":2288,"translated":2288,"share":100},"es":{"words":2288,"translated":2288,"share":100},"fr":{"words":2288,"translated":2288,"share":100},"it":{"words":2288,"translated":2288,"share":100},"ja":{"words":2288,"translated":2288,"share":100},"ko":{"words":2288,"translated":2288,"share":100},"pt-br":{"words":2288,"translated":2288,"share":100},"ru":{"words":2288,"translated":2288,"share":100},"zh-hans":{"words":2288,"translated":2288,"share":100}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"schema":"simai.language-pack-index","schema_version":1,"delivery":"framework","languages":["ar","de","es","fr","it","ja","ko","pt-br","ru","zh-hans"],"aliases":{"pt":"pt-br","zh":"zh-hans","zh-cn":"zh-hans","zh-sg":"zh-hans"},"parts":{"ar":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"de":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"es":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"fr":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"it":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ja":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ko":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"pt-br":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"ru":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]},"zh-hans":{"accordion":["sf-accordion"],"admin-menu":["sf-admin-menu"],"alert":["sf-alert","sf-alert-bar"],"avatar":["sf-avatar","sf-avatar-group"],"badge":["sf-badge"],"breadcrumbs":["sf-breadcrumbs"],"bulk":["sf-bulk-actions"],"button":["sf-button","sf-button-close","sf-button-copy","sf-button-icon"],"button-group":["sf-button-group"],"change":["sf-change"],"checkbox":["sf-checkbox"],"confirm":["sf-confirm","sf-confirm-change"],"contents":["sf-contents"],"core":["sf-button-copy","sf-composition","sf-display-settings","sf-file-download","sf-file-size","sf-fragment","sf-notify","sf-relative-day"],"display":["sf-display-settings"],"download-file":["download-file"],"drawer":["sf-drawer"],"dropdown":["sf-dropdown"],"editor":["sf-composition","sf-editor-inline","sf-editor-overlay"],"empty":["sf-empty-state"],"fab":["sf-fab"],"field-renderers":["sf-field-renderers"],"file":["sf-file-download","sf-file-preview","sf-file-upload"],"form":["sf-form"],"gallery":["sf-gallery"],"header":["sf-header-page","sf-header-site"],"help":["sf-help-mark"],"highlight":["sf-highlight"],"icon":["sf-icon"],"icon-search":["sf-icon-search"],"include":["sf-include"],"input":["sf-input","sf-input-choice","sf-input-code","sf-input-color","sf-input-country","sf-input-date","sf-input-image","sf-input-lookup","sf-input-quantity","sf-input-rich","sf-input-textarea"],"kbd":["sf-kbd"],"language":["sf-language"],"list":["sf-list","sf-list-attention","sf-list-description","sf-list-feed","sf-list-timeline"],"menu":["sf-menu","sf-menu-context"],"modal":["sf-modal"],"pager":["sf-pager"],"pagination":["sf-pagination"],"profile":["sf-profile-picker"],"progress":["sf-progress-bar","sf-progress-run","sf-progress-scale"],"quantity":["sf-quantity"],"radio":["sf-radio"],"reference":["sf-reference-link"],"resizer":["sf-resizer"],"scrollbar":["sf-scrollbar"],"search":["sf-search"],"segmented":["sf-segmented"],"settings":["sf-settings"],"slider":["sf-slider","sf-slider-range"],"sortable":["sf-sortable"],"spinner":["sf-spinner"],"steps":["sf-steps"],"swiper":["sf-swiper"],"switch":["sf-switch"],"tabs":["sf-tabs"],"tag":["sf-tag","sf-tag-group"],"theme":["sf-theme-generator"],"theme-button":["sf-theme-button"],"tile":["sf-tile-metric"],"time":["sf-time"],"toast":["sf-toast"],"tree":["sf-tree","sf-tree-item"],"wizard":["sf-wizard"]}},"coverage":{"ar":{"words":2290,"translated":2290,"share":100},"de":{"words":2290,"translated":2290,"share":100},"es":{"words":2290,"translated":2290,"share":100},"fr":{"words":2290,"translated":2290,"share":100},"it":{"words":2290,"translated":2290,"share":100},"ja":{"words":2290,"translated":2290,"share":100},"ko":{"words":2290,"translated":2290,"share":100},"pt-br":{"words":2290,"translated":2290,"share":100},"ru":{"words":2290,"translated":2290,"share":100},"zh-hans":{"words":2290,"translated":2290,"share":100}}}');
 
 /***/ }
 

@@ -36,6 +36,14 @@
       "reason": "CSSOM and DOM measurements are expressed in CSS pixels by the browser and must retain their exact measured value."
     },
     {
+      "id": "fragment-refresh-block-keeps-its-height",
+      "category": "runtime-review",
+      "filePattern": "^core/js/fragment-refresh\\.js$",
+      "contextPattern": "minBlockSize",
+      "status": "accepted-runtime-geometry",
+      "reason": "Block refresh (simai.interface-fragment 1.1.0): while a block waits for its answer it keeps its own measured height in CSS pixels, so nothing below it moves; the value is the block's current layout, not a size of the ladder, and is removed with the answer."
+    },
+    {
       "id": "display-settings-panel-placed-in-room",
       "category": "runtime-review",
       "filePattern": "^smart/display-settings/index\\.js$",
@@ -370,6 +378,14 @@
       "contextPattern": ".*",
       "status": "accepted-generated-snapshot",
       "reason": "First-paint snapshots record what a template rendered (an attribute it was given, an inline transform of a slider track); the value is reviewed at its template or example."
+    },
+    {
+      "id": "first-paint-kit-copies",
+      "category": "script-data-template-review",
+      "filePattern": "^core/js/composition/first-paint/(?:page|lib)\\.mjs$",
+      "contextPattern": ".*",
+      "status": "accepted-non-executable",
+      "reason": "The first-paint render kit's copy of scripts/first-paint-page.js as one string (scripts/build-first-paint-kit.mjs, group build 19): a length in it is a comment of that script. And its copy of scripts/first-paint-lib.mjs: the 16px there is the font shorthand document.fonts.load() is asked with to load Inter, no size of the page. Both are generated and checked against their sources (--check), which sit outside src/."
     },
     {
       "id": "content-column-steps",
