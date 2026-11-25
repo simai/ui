@@ -8,6 +8,14 @@
 
 ### Добавлено
 
+- Pair GB19 (group build 19, ui-source integration/gb19 58f9921f80b4: nine branches over ui-3963bfe39302 - gb19-five, gb19-device, gb19-fields, gb19-tools, gb19-refresh; built with ui-builder 524bf46; accepted, DEV GO on 58f9921f80b4).
+- Core: device scope (`SF.device`; sf-settings items declare `devices`, setting `device`, option `phone`) and the 500 ms press as `SF.longPress` (C426-C427); touch size: controls take a 44 px hit area on a coarse pointer from core.styles (C428); press waits at the remaining call sites; block refresh: `simai.interface-fragment` 1.1.0 and `SF.FragmentRefresh` (contract 1, C425).
+- Components: sf-form 1.16.0 and module.smart-field-renderers 1.30.2 (include field no longer throws); sf-settings 1.11.1, sf-tabs 1.5.6, sf-switch 1.10.3, component.icon-buttons 1.20.4, sf-button-copy 1.7.8, sf-tooltip 1.5.5, sf-modal 1.11.2, sf-drawer 1.22.1, sf-menu 1.15.2, sf-list-item 1.7.1, sf-confirm 1.5.7 and the press-wait and render patches listed in the journal.
+- Gates: first-paint snapshots print the printed parts' sheets; known reds unchanged (16).
+- Note for products (Larena): Back to a product's own history entry keeps the left record's values on screen until the product redraws its block, as the interface-fragment standard says (a product's own history entries carry their own marker and are left alone by the Framework).
+- Ports: unchanged against ui-3963bfe39302.
+- `core.runtime` 1.69.0, `core.styles` 1.25.0.
+
 - Pair next 20 (group build 18, ui-source integration/pair-next-20 d0152937c: six branches over ui-b4f79e1c58b7 with the items L1-L7, the pre-cut P1-P4 and the returns D1/D2; built with ui-builder 524bf46; accepted, DEV GO on d0152937c).
 - Core: the Loader preloads a script once per page across Loader copies and at once after the load event (L1); `SF.Loader.ensure(tags, {press: true})` waits up to 30 s and past it while a load is in flight (L2); `simai.linkage` 1.1.0 hashes a Smart manifest with the release pair marker read as zeros; `simai.component-set` 1.4.0 adds a component's `requires_on_demand` (`requires` is the first paint).
 - Components: sf-form 1.15.2 (leave question with a lazy modal, record-edit and record-view examples, 55 first-paint sheets; C422 form items FS-1..5, FS-7, FS-8 and the help mark size); module.smart-field-renderers 1.30.1 (record value tags and badges at the row text size, VL-73); sf-header-site 1.16.0 (public `--sf-site-header-brand-gap`, start mode only); sf-tabs 1.5.3, sf-segmented 1.8.4, sf-switch 1.10.1, sf-checkbox 1.6.1, sf-radio 1.4.5, sf-menu 1.15.1, component.menu 1.10.4, sf-reference-link 1.3.5, sf-tag 1.13.1, module.smart-helpers 1.21.1; Smart base forwards host attributes in place.
