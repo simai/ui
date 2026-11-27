@@ -19,11 +19,50 @@ _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_depende
  // A field's ids come from its instance's role path (standard 1.3.8 §7.1.1;
 // simai/ui-source#41), never from a counter: core/js/instance-path.js.
 
-const fieldIdentities = new WeakMap();
+const fieldIdentities = new WeakMap(); // The bases the page's fields hold, on a page-wide table (SF.__fieldIds):
+// every bundle that carries this file has its own module copy, so a table
+// here would be one per bundle. An id is kept per instance, and a path in
+// document order is read when the instance first settles, so an instance
+// that settles later in front of it reads the same index: sf-mail-library's
+// and sf-mail-letters' search fields were both sf-input-1--control (Mail set
+// 1.0.0, GB20). A base another connected instance holds, or that an element
+// outside this instance already carries, takes the next free «-<n>».
+
+function claimedBases() {
+  const sf = globalThis.SF ||= {};
+
+  if (!(sf.__fieldIds instanceof Map)) {
+    Object.defineProperty(sf, '__fieldIds', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return sf.__fieldIds;
+}
+
+function heldElsewhere(owner, base, claims) {
+  const holder = claims.get(base)?.deref?.();
+  if (holder && holder !== owner && holder.isConnected && holder.ownerDocument === owner.ownerDocument) return true;
+  const taken = owner?.ownerDocument?.getElementById?.(`${base}--control`);
+  return Boolean(taken && taken !== owner && !owner.contains?.(taken));
+}
+
+function freeBase(owner, path) {
+  const base = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path);
+  if (!(0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.pathIsSettled)(owner) || typeof globalThis.WeakRef !== 'function') return base;
+  const claims = claimedBases();
+  let free = base;
+
+  for (let n = 2; heldElsewhere(owner, free, claims); n += 1) free = `${base}-${n}`;
+
+  claims.set(free, new globalThis.WeakRef(owner));
+  return free;
+}
 
 function nextIdentity(owner, prefix) {
   if (owner && fieldIdentities.has(owner)) return fieldIdentities.get(owner);
-  const base = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.instancePath)(owner, {
+  const base = freeBase(owner, (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.instancePath)(owner, {
     kind: prefix
   }));
   const identity = {
@@ -2987,7 +3026,11 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.
   }
 
   onConnected() {
+    // The list the listener is added to is kept: each matchMedia() call
+    // answers a new list, and removing from another one left the listener
+    // behind after removal (GB20, instance-scope gate 36).
     const query = coarseQuery();
+    this._coarseQuery = query;
     this._coarse = Boolean(query?.matches);
     query?.addEventListener?.('change', this._onCoarse);
     this._phoneQuery = (0,_core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_6__.breakpointMedia)('md', {
@@ -3007,7 +3050,8 @@ class SfImageField extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_10__.
     this._filesDrop?.stop();
     this._filesDrop = null;
     clearTimeout(this._announceTimer);
-    coarseQuery()?.removeEventListener?.('change', this._onCoarse);
+    this._coarseQuery?.removeEventListener?.('change', this._onCoarse);
+    this._coarseQuery = null;
     this._phoneQuery?.removeEventListener?.('change', this._onPhone);
     this._phoneQuery = null;
     this.removeEventListener('invalid', this._invalidListener, true);
@@ -5171,7 +5215,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "1a493783d3b8"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-image","tag":"sf-input-image","version":"1.10.6","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"max-size":{"type":"number","default":0},"min-width":{"type":"number","default":0},"min-height":{"type":"number","default":0},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"layout":{"type":"enum","values":["row","preview"],"default":"row"},"shape":{"type":"enum","values":["square","circle"],"default":"square"},"aspect":{"type":"string","default":""},"fit":{"type":"enum","values":["cover","contain"],"default":"cover"},"sources":{"type":"string","default":"device"},"library-label":{"type":"string","default":""},"edit":{"type":"string","default":""},"alt":{"type":"enum","values":["none","field","required"],"default":"none"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop","paste"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","rejected":"list","accept":"string","source":"string"}},"library":{"carries":{"value":{"type":"object","nullable":true},"name":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-image","tag":"sf-input-image","version":"1.10.7","kind":"leaf","settings":{"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"accept":{"type":"string","default":"image/*"},"max-size":{"type":"number","default":0},"min-width":{"type":"number","default":0},"min-height":{"type":"number","default":0},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"layout":{"type":"enum","values":["row","preview"],"default":"row"},"shape":{"type":"enum","values":["square","circle"],"default":"square"},"aspect":{"type":"string","default":""},"fit":{"type":"enum","values":["cover","contain"],"default":"cover"},"sources":{"type":"string","default":"device"},"library-label":{"type":"string","default":""},"edit":{"type":"string","default":""},"alt":{"type":"enum","values":["none","field","required"],"default":"none"},"meta":{"type":"string","default":""},"empty-text":{"type":"string","default":""},"required":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"uploader":{"type":"object","default":null}},"values":{"value":{"type":"object","nullable":true,"default":null}},"events":{"change":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"input":{"carries":{"value":{"type":"object","nullable":true},"file":{"type":"object","nullable":true},"source":{"type":"enum","values":["input","drop","paste","url","alt","edit","remove","upload","cancel"]},"name":"string"}},"attach":{"carries":{"files":"list","file":"object","source":{"type":"enum","values":["input","drop","paste"]},"value":"object","name":"string"}},"detach":{"carries":{"value":"object","name":"string"}},"rejected":{"carries":{"files":"list","rejected":"list","accept":"string","source":"string"}},"library":{"carries":{"value":{"type":"object","nullable":true},"name":"string"}}},"actions":{"clear":{},"choose":{},"remove-image":{},"take-file":{"with":{"file":"object","source":{"type":"string","optional":true}}},"set-error":{"with":{"message":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","custom-error"]},"host-states":{"data-dragged-over":"boolean"},"css-variables":{"--sf-image-field-background-color":{"type":"color","state":"rest"},"--sf-image-field-border-color":{"type":"color","state":"rest"},"--sf-image-field-border-width":{"type":"length"},"--sf-image-field-radius":{"type":"length"},"--sf-image-field-padding-inline":{"type":"length"},"--sf-image-field-padding-block":{"type":"length"},"--sf-image-field-gap":{"type":"length"},"--sf-image-field-thumbnail-size":{"type":"length"},"--sf-image-field-thumbnail-radius":{"type":"length"},"--sf-image-field-thumbnail-background-color":{"type":"color","state":"rest"}}}');
 
 /***/ },
 

@@ -19,11 +19,50 @@ _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_depende
  // A field's ids come from its instance's role path (standard 1.3.8 §7.1.1;
 // simai/ui-source#41), never from a counter: core/js/instance-path.js.
 
-const fieldIdentities = new WeakMap();
+const fieldIdentities = new WeakMap(); // The bases the page's fields hold, on a page-wide table (SF.__fieldIds):
+// every bundle that carries this file has its own module copy, so a table
+// here would be one per bundle. An id is kept per instance, and a path in
+// document order is read when the instance first settles, so an instance
+// that settles later in front of it reads the same index: sf-mail-library's
+// and sf-mail-letters' search fields were both sf-input-1--control (Mail set
+// 1.0.0, GB20). A base another connected instance holds, or that an element
+// outside this instance already carries, takes the next free «-<n>».
+
+function claimedBases() {
+  const sf = globalThis.SF ||= {};
+
+  if (!(sf.__fieldIds instanceof Map)) {
+    Object.defineProperty(sf, '__fieldIds', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return sf.__fieldIds;
+}
+
+function heldElsewhere(owner, base, claims) {
+  const holder = claims.get(base)?.deref?.();
+  if (holder && holder !== owner && holder.isConnected && holder.ownerDocument === owner.ownerDocument) return true;
+  const taken = owner?.ownerDocument?.getElementById?.(`${base}--control`);
+  return Boolean(taken && taken !== owner && !owner.contains?.(taken));
+}
+
+function freeBase(owner, path) {
+  const base = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path);
+  if (!(0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.pathIsSettled)(owner) || typeof globalThis.WeakRef !== 'function') return base;
+  const claims = claimedBases();
+  let free = base;
+
+  for (let n = 2; heldElsewhere(owner, free, claims); n += 1) free = `${base}-${n}`;
+
+  claims.set(free, new globalThis.WeakRef(owner));
+  return free;
+}
 
 function nextIdentity(owner, prefix) {
   if (owner && fieldIdentities.has(owner)) return fieldIdentities.get(owner);
-  const base = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.instancePath)(owner, {
+  const base = freeBase(owner, (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.instancePath)(owner, {
     kind: prefix
   }));
   const identity = {
@@ -2841,7 +2880,10 @@ class SfColor extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_5__.ShownV
       view: this._view || "palette",
       offersPalette: this.offersPalette,
       offersCustom: this.offersCustom,
-      palette: _js_color_math_js__WEBPACK_IMPORTED_MODULE_7__.PALETTE,
+      // The sixteen hues of the static palette (C17). Named hues, not
+      // palette: the setting palette (a boolean) keeps its own name in the
+      // context's readers (GB20 triage, manifest defaults).
+      hues: _js_color_math_js__WEBPACK_IMPORTED_MODULE_7__.PALETTE,
       alpha: this.takesAlpha,
       brand: this.isBrand,
       checks: this.isBrand ? this.checkLines() : [],
@@ -3309,9 +3351,12 @@ function renderColorTemplate(context) {
   } = context;
   const component = context.component;
   const name = context.label || context.ariaLabel || (context.brand ? context.brandLabel : context.chooseLabel);
-  const shown = context.paintedName; // The value is read with the name: «Цвет метки: Синий».
+  const shown = context.paintedName; // The value is read with the name: «Цвет метки: Синий». While the
+  // inherited colour applies the name is the label alone: the inherited
+  // sentence in the description says the colour (GB20 triage,
+  // inherited-description), so it is not heard twice.
 
-  const spoken = shown ? `${name}: ${shown}` : name; // The line under the field is sf-input's (fields ladder, 2026-11-14): the
+  const spoken = shown && isSet ? `${name}: ${shown}` : name; // The line under the field is sf-input's (fields ladder, 2026-11-14): the
   // help, or the error in its place while the field is invalid and says why.
 
   const field = (0,_component_field_contract__WEBPACK_IMPORTED_MODULE_1__.createFieldContract)(component, {
@@ -3576,7 +3621,7 @@ function renderPalette(context) {
     component,
     word
   } = context;
-  const hues = context.palette.map(hue => ({
+  const hues = (context.hues ?? []).map(hue => ({
     value: hue,
     name: component.colourName(hue)
   }));
@@ -3844,7 +3889,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases for the shi
 /***/ "8a9b84fc1bd6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.20.0","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme","brand"],"default":"field"},"target":{"type":"string","default":""},"swatches":{"type":"string","default":""},"palette":{"type":"boolean","default":true},"custom":{"type":"boolean","default":true},"alpha":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"},"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"input":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-color","tag":"sf-input-color","version":"1.20.1","kind":"leaf","traits":["field-inherit@1"],"settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","outlined","plain"],"default":"bordered"},"variant":{"type":"enum","values":["field","theme","brand"],"default":"field"},"target":{"type":"string","default":""},"swatches":{"type":"string","default":""},"palette":{"type":"boolean","default":true},"custom":{"type":"boolean","default":true},"alpha":{"type":"boolean","default":false},"clearable":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"name":{"type":"string","default":""},"label":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""},"choose-label":{"type":"string","default-from":"runtime.choose"},"clear-label":{"type":"string","default-from":"runtime.clear"}},"values":{"value":{"type":"string","default":""},"effective-value":{"type":"string"},"theme":{"type":"object"},"checks":{"type":"list"}},"events":{"change":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"input":{"carries":{"value":"string","name":"string","theme":"object","variables":"object","css":"string","checks":"list"}},"field-reset":{"shared":"field-inherit@1","cancelable":true,"carries":{"tag":{"type":"string"},"value":{"type":"string"},"inherited-value":{"type":"string"},"name":{"type":"string"}}}},"actions":{"clear":{}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-inherited":"boolean"},"css-variables":{"--sf-color-gap":{"type":"length"},"--sf-color-chip-radius":{"type":"length"},"--sf-color-chip-border-color":{"type":"color","state":"rest"},"--sf-color-swatches-gap":{"type":"length"},"--sf-color-inherited-color":{"type":"color","state":"inherited"}}}');
 
 /***/ },
 

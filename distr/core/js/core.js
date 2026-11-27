@@ -2277,6 +2277,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   layoutOfWidth: () => (/* binding */ layoutOfWidth),
 /* harmony export */   layoutPlace: () => (/* binding */ layoutPlace),
 /* harmony export */   markDevices: () => (/* binding */ markDevices),
+/* harmony export */   markPageLayout: () => (/* binding */ markPageLayout),
 /* harmony export */   pointerKind: () => (/* binding */ pointerKind),
 /* harmony export */   watchLayout: () => (/* binding */ watchLayout),
 /* harmony export */   watchPointer: () => (/* binding */ watchPointer)
@@ -2502,8 +2503,34 @@ const Device = Object.freeze({
 if (typeof globalThis !== 'undefined') {
   globalThis.SF = globalThis.SF || {};
   if (!globalThis.SF.device) globalThis.SF.device = Device;
-}
+} // The page's layout word on <html> (data-sf-layout="phone" | "desktop"),
+// written while core boots and followed on resize (DEV answer 3 on group
+// build 20): static first-paint markup printed at one width carries its
+// items' scope (data-sf-devices), and core.styles hides the other layout's
+// items by this word until their element draws -- the signal's own width,
+// PHONE_BELOW of the page, not a width rule of the sheets. One mark per
+// page: a second copy of this module finds it and leaves it.
 
+
+const LAYOUT_MARK = Symbol.for('sf.device.page-layout');
+function markPageLayout(doc = globalThis.document) {
+  const root = doc?.documentElement;
+  const view = doc?.defaultView; // One mark per page, kept on the document under a registry symbol: every
+  // bundle carries its own copy of this module, the document is shared.
+
+  if (!root || !view || doc[LAYOUT_MARK]) return;
+  doc[LAYOUT_MARK] = true;
+
+  const write = () => {
+    const word = layoutOfWidth(root.clientWidth || view.innerWidth || 0);
+    if (root.getAttribute('data-sf-layout') !== word) root.setAttribute('data-sf-layout', word);
+  };
+
+  write();
+  view.addEventListener?.('resize', write, {
+    passive: true
+  });
+}
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Device);
 
 /***/ },
@@ -3603,7 +3630,10 @@ __webpack_require__.r(__webpack_exports__);
 // (simai/ui-effects), every file checked against the index's SHA-256, and
 // data-sf-effect / data-sf-effect-windows place one from markup.
 // Since 1.4 a placement answers a right-click on the effect's background with
-// a small menu that says what it is (the about menu).
+// a small menu that says what it is (the about menu). Since 1.5 a manifest
+// may declare interactive: true, and the effect's host then takes pointer
+// events (hover, press, click, wheel, touch) where nothing of the page's
+// content is over it; without it the host takes none, as before.
 //
 // What lives here is the part every product would otherwise write again:
 // checking a manifest, turning stored values into checked settings with the
@@ -3622,6 +3652,9 @@ __webpack_require__.r(__webpack_exports__);
 // (global-sf-effects-to-package, attribute-data-sf-effect-to-sf-effect,
 // option-sf-boot-config-effects-to-package). Only security fixes land here;
 // every other change goes to the set. Each use is noted in SF.deprecations.
+// Exception (GB20, msg-e1b4fbe2): simai.effect 1.5 interactive is added here,
+// because Docara's hero places its effect with data-sf-effect through this
+// copy; the set carries the same clause in its next release.
 
 
  // The device's reduced motion or the site's «остановить движение» (C196).
@@ -3669,7 +3702,7 @@ function webAddress(value) {
 function checkEffectManifest(manifest) {
   if (!isObject(manifest)) return ['manifest: not an object'];
   const problems = [];
-  const allowed = ['schema', 'schema_version', 'id', 'version', 'label', 'author', 'entry', 'styles', 'preview', 'surfaces', 'schemes', 'pair', 'capabilities', 'settings', 'needs', 'homepage'];
+  const allowed = ['schema', 'schema_version', 'id', 'version', 'label', 'author', 'entry', 'styles', 'preview', 'surfaces', 'schemes', 'pair', 'capabilities', 'settings', 'needs', 'homepage', 'interactive'];
 
   for (const key of Object.keys(manifest)) if (!allowed.includes(key)) problems.push(`${key}: undeclared`);
 
@@ -3691,7 +3724,9 @@ function checkEffectManifest(manifest) {
 
   if (manifest.capabilities !== undefined && (!Array.isArray(manifest.capabilities) || !manifest.capabilities.every(name => CAPABILITIES.has(name)) || new Set(manifest.capabilities).size !== manifest.capabilities.length)) problems.push('capabilities: known names, each once'); // simai.effect 1.4: where the effect's author shows it, named in the about menu.
 
-  if (manifest.homepage !== undefined && webAddress(manifest.homepage) === null) problems.push('homepage: an http or https address');
+  if (manifest.homepage !== undefined && webAddress(manifest.homepage) === null) problems.push('homepage: an http or https address'); // simai.effect 1.5: the effect takes pointer events in its own layer.
+
+  if (manifest.interactive !== undefined && typeof manifest.interactive !== 'boolean') problems.push('interactive: true or false');
   if (!isObject(manifest.needs) || manifest.needs.network !== false || Object.keys(manifest.needs).length !== 1) problems.push('needs: {network: false}');
 
   if (!Array.isArray(manifest.settings)) {
@@ -4243,10 +4278,15 @@ function mountModule(host, {
   const problems = checkEffectManifest(manifest);
   if (problems.length) throw new TypeError(`Effect manifest is invalid: ${problems.join('; ')}`);
   const mount = typeof module === 'function' ? module : module?.mount;
-  if (typeof mount !== 'function') throw new TypeError('An effect module exports mount(host, settings, context)'); // The host stands under the page: read by nobody, touched by no pointer.
+  if (typeof mount !== 'function') throw new TypeError('An effect module exports mount(host, settings, context)'); // The host stands under the page: read by nobody, touched by no pointer --
+  // unless the manifest says the effect answers the pointer (simai.effect
+  // 1.5 interactive) and it runs in the page: then the host takes the events
+  // that reach it, which is only where no content of the page is over it.
+  // A foreign effect's sandbox frame never takes them.
 
   host.setAttribute('aria-hidden', 'true');
-  host.style.pointerEvents = 'none';
+  const takesPointer = manifest.interactive === true && !isSandboxed(module);
+  host.style.pointerEvents = takesPointer ? 'auto' : 'none';
   const ownsName = !host.hasAttribute('data-sf-effect');
   if (ownsName) host.setAttribute('data-sf-effect', manifest.id); // A mounted host is never taken for a declared placement still to mount.
 
@@ -4360,6 +4400,7 @@ function mountModule(host, {
       call('destroy'); // Whatever the effect left behind goes with it.
 
       host.replaceChildren();
+      host.style.pointerEvents = 'none';
       if (ownsName) host.removeAttribute('data-sf-effect');
       if (ownsState) host.removeAttribute(STATE);
     }
@@ -4569,7 +4610,8 @@ function report(element, effect, reason, detail = {}) {
 // The effect's host and a foreign effect's sandbox frame take no pointer
 // events, so a right-click over either lands on the area in the page: the
 // test runs here for both, and the frame is told nothing it was not told
-// before.
+// before. An interactive effect's host (simai.effect 1.5) takes them: the
+// right-click lands in its layer, which counts as the background.
 
 
 const LISTED_REPOSITORY = 'simai/ui-effects';
@@ -8781,7 +8823,12 @@ __webpack_require__.r(__webpack_exports__);
  // The two device words, layout (the place's width) and pointer (coarse or
 // fine), and the item scope `devices` (study S-A, q-7097831f9f): SF.device.
 
- // A held touch, shared by lists, cards and boards (study S-A (4)): SF.longPress.
+ // The page's layout word on <html> (data-sf-layout, PHONE_BELOW of the page),
+// written by core alone as it boots and followed on resize: printed items of
+// the other layout wait hidden by it (GB20 I3), and compact density below
+// 60rem reads it with a fine pointer (C435).
+
+if (typeof document !== 'undefined') (0,_device_js__WEBPACK_IMPORTED_MODULE_25__.markPageLayout)(document); // A held touch, shared by lists, cards and boards (study S-A (4)): SF.longPress.
 
 
  // What a copy says, one feedback for sf-button-copy and the attribute route
@@ -16990,7 +17037,7 @@ __webpack_require__.r(__webpack_exports__);
 // core.runtime.json). A set's release says the lowest version it needs, and
 // the index lookup keeps the releases this Core satisfies. Moved by hand with
 // the passport; tests/component-set-loader.contract.test.mjs holds them equal.
-const CORE_RUNTIME = '1.69.0';
+const CORE_RUNTIME = '1.70.0';
 const SET_NAME = /^[a-z][a-z0-9-]*$/u;
 const SET_INDEX_FORMAT = 'simai.framework.set-index';
 const SET_INDEX_URL = 'https://cdn.jsdelivr.net/npm/@simai-studio/sets@1/index.json';
@@ -17816,7 +17863,9 @@ class Workspace {
     this.open = element.getAttribute(PANEL) === 'open';
     this.drawer = false;
     this.inerted = [];
-    this.layout = null; // What opened the panel, where focus goes back when its drawer closes.
+    this.layout = null; // Whether a sync has read a layout from the sheet yet.
+
+    this.laidOut = false; // What opened the panel, where focus goes back when its drawer closes.
 
     this.opener = null;
     this.resize = typeof globalThis.ResizeObserver === 'function' ? new globalThis.ResizeObserver(() => this.sync()) : null;
@@ -17831,10 +17880,15 @@ class Workspace {
 
 
   readLayout() {
+    return this.readSheetLayout() ?? 'wide';
+  } // The layout the sheet says, or null while no sheet has said one.
+
+
+  readSheetLayout() {
     const probe = region(this.element, 'main') ?? this.element.firstElementChild;
     if (!probe) return 'wide';
     const value = globalThis.getComputedStyle(probe).getPropertyValue('--sf-workspace--layout').trim();
-    return ['narrow', 'split', 'wide'].includes(value) ? value : 'wide';
+    return ['narrow', 'split', 'wide'].includes(value) ? value : null;
   }
 
   show(view) {
@@ -17867,10 +17921,21 @@ class Workspace {
       return;
     }
 
-    const layout = this.readLayout();
+    const said = this.readSheetLayout();
+    const layout = said ?? 'wide';
     const view = this.readView();
     const open = element.getAttribute(PANEL) === 'open';
-    const active = globalThis.document.activeElement; // The container narrowed: the region holding focus may have just been
+    const active = globalThis.document.activeElement; // A load never moves focus (GB20, DEV msg-b016982a: the docs Workspace
+    // page opened its panel and took focus on 7 of 7 loads). The drawer takes
+    // focus when this sync opens it (closed -> open), or when the container
+    // narrowed under a person whose focus is in a region the drawer makes
+    // inert. A panel open in the markup -- the state the page was loaded in --
+    // and a drawer that only appears because the sheet arrived (its first
+    // layout) leave focus where it is.
+
+    const opening = open && !this.open;
+    const laidOut = this.laidOut;
+    if (said) this.laidOut = true; // The container narrowed: the region holding focus may have just been
     // hidden. Nothing else moves focus on a change of width.
 
     const narrowed = layout === 'narrow' && this.layout && this.layout !== 'narrow';
@@ -17888,7 +17953,12 @@ class Workspace {
 
     if (open && !this.open) this.opener = region(element, 'panel')?.contains(active) ? null : active;
     const drawer = open && layout !== 'wide';
-    if (drawer && !this.drawer) this.openDrawer(); // Closed: focus goes back to the opener. Still open, as a column now: it
+
+    if (drawer && !this.drawer) {
+      const panel = region(element, 'panel');
+      const elsewhere = Boolean(active) && active !== globalThis.document.body && !panel?.contains(active);
+      this.openDrawer(opening || laidOut && elsewhere);
+    } // Closed: focus goes back to the opener. Still open, as a column now: it
     // stays where it is.
     else if (!drawer && this.drawer) this.closeDrawer(!open);
 
@@ -17925,7 +17995,7 @@ class Workspace {
     if (main) (0,_layer_stack_js__WEBPACK_IMPORTED_MODULE_0__.tryFocus)(main, true);
   }
 
-  openDrawer() {
+  openDrawer(takeFocus = true) {
     const panel = region(this.element, 'panel');
     if (!panel) return;
     this.drawer = true;
@@ -17950,7 +18020,7 @@ class Workspace {
       },
       onTab: event => this.keepTab(event, panel)
     });
-    if (!panel.contains(doc.activeElement)) focusInto(panel);
+    if (takeFocus && !panel.contains(doc.activeElement)) focusInto(panel);
   }
 
   closeDrawer(restoreFocus) {
@@ -26550,7 +26620,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.badge",
-    "version": "1.8.0"
+    "version": "1.9.0"
   },
   "sf-button": {
     "inputs": {
@@ -26952,7 +27022,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.button-icon",
-    "version": "1.14.1"
+    "version": "1.14.2"
   },
   "sf-checkbox": {
     "inputs": {
@@ -27028,7 +27098,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.checkbox",
-    "version": "1.6.1"
+    "version": "1.6.2"
   },
   "sf-divider": {
     "component": "component.content-divider",
@@ -27272,7 +27342,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.icon",
-    "version": "1.4.4"
+    "version": "1.4.5"
   },
   "sf-input": {
     "inputs": {
@@ -27770,7 +27840,7 @@ const PRINTED_ELEMENT_TABLE = Object.freeze({
     },
     "kind": "custom-element",
     "manifest": "smart.switch",
-    "version": "1.10.1"
+    "version": "1.10.3"
   }
 });
 
@@ -29553,6 +29623,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   extendRegistry: () => (/* binding */ extendRegistry),
 /* harmony export */   inlineText: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_12__.inlineText),
 /* harmony export */   instantiateVariant: () => (/* reexport safe */ _catalogue_mjs__WEBPACK_IMPORTED_MODULE_16__.instantiateVariant),
+/* harmony export */   isMediaReference: () => (/* binding */ isMediaReference),
 /* harmony export */   loadEditorWords: () => (/* reexport safe */ _editor_words_runtime_mjs__WEBPACK_IMPORTED_MODULE_3__.loadEditorWords),
 /* harmony export */   marksIn: () => (/* reexport safe */ _inline_model_mjs__WEBPACK_IMPORTED_MODULE_12__.marksIn),
 /* harmony export */   normalize: () => (/* binding */ normalize),
@@ -29660,6 +29731,14 @@ const FORBIDDEN_KEYS = new Set([
   'cssclass', 'style', 'secret', 'password', 'token', 'cookie', 'authorization', 'request',
 ]);
 const SAFE_SCHEMES = new Set(['http:', 'https:', 'mailto:', 'tel:']);
+// A media reference (simai.document-port: an opaque media:<id> string until the
+// media edition): a picture's src or a file's href a host keeps itself. It is
+// no address: render asks the host for one (context.media) and draws a
+// placeholder without it; it never refuses the page.
+const MEDIA_REFERENCE = /^media:[^\s<>"'`\\]{1,2042}$/u;
+function isMediaReference(value) {
+  return typeof value === 'string' && MEDIA_REFERENCE.test(value);
+}
 const DEFAULT_LIMITS = Object.freeze({
   maxDocumentBytes: 1024 * 1024,
   maxDepth: 32,
@@ -29854,8 +29933,10 @@ function validateContentRules(root, diagnostics, { hostSources = false } = {}) {
     if (!(0,_canonical_mjs__WEBPACK_IMPORTED_MODULE_6__.isPlainObject)(node)) return;
     for (const [content, contentPath] of inlineFields(node, path)) validateInlineContent(content, contentPath, diagnostics);
     // With a host source resolver the stored name is the host's (media:<id>),
-    // and the address it resolves to is checked where it is drawn.
-    if ((node.type === 'content.figure' || node.type === 'content.media') && typeof node.data?.src === 'string' && !hostSources && !validUrl(node.data.src)) {
+    // and the address it resolves to is checked where it is drawn. A media
+    // reference is the Document port's own form: valid without a resolver,
+    // resolved (context.media) or drawn as a placeholder at render.
+    if ((node.type === 'content.figure' || node.type === 'content.media') && typeof node.data?.src === 'string' && !hostSources && !isMediaReference(node.data.src) && !validUrl(node.data.src)) {
       diagnostics.push(diagnostic('unsafe_url', `${path}.data.src`, 'Image source protocol is not allowed'));
     }
     if (node.type === 'element.button' && typeof node.data?.href === 'string' && !validUrl(node.data.href)) {
@@ -29867,7 +29948,7 @@ function validateContentRules(root, diagnostics, { hostSources = false } = {}) {
     if (node.type === 'content.card' && typeof node.data?.action_href === 'string' && !validUrl(node.data.action_href)) {
       diagnostics.push(diagnostic('unsafe_url', `${path}.data.action_href`, 'Link protocol is not allowed'));
     }
-    if (node.type === 'content.file' && typeof node.data?.href === 'string' && !validUrl(node.data.href)) {
+    if (node.type === 'content.file' && typeof node.data?.href === 'string' && !isMediaReference(node.data.href) && !validUrl(node.data.href)) {
       diagnostics.push(diagnostic('unsafe_url', `${path}.data.href`, 'File address protocol is not allowed'));
     }
     const parent = _builtins_mjs__WEBPACK_IMPORTED_MODULE_0__.CONTENT_ITEM_PARENTS[node.type];
@@ -30576,11 +30657,43 @@ const BUILTIN_RENDERERS = {
 // origin (simai/ui-source#71). The address is held to the Document's URL rule
 // with that one addition; one that fails it draws nothing and is reported.
 const HOST_SOURCE_TYPES = new Set(['content.figure', 'content.media']);
+// context.media(ref, {node, field}) → address (simai.document-port media
+// references, 2026-11-27): a host that stores media:<id> in a picture's src
+// or a file's href gives the address to draw at render, here or on a server
+// (toHTML). It is asked before the URL check, and its answer is held to the
+// Document's URL rule (a blob: address of the page's origin too). Without it,
+// or when it knows no address (no string), the block draws its placeholder
+// and render reports media_unresolved; the page is drawn all the same.
+const MEDIA_FIELDS = Object.freeze({ 'content.figure': 'src', 'content.media': 'src', 'content.file': 'href' });
+
+// The block drawn for a media reference no address was given for: the
+// figure's empty media box (component.figure's placeholder, the container
+// fill) at the block's ratio, 16:9 when it has none, so the page keeps the
+// picture's place; a file's row with its name and no link.
+function unresolvedMedia(node, slots) {
+  const reference = ` data-sf-media-unresolved="${escapeHtml(node.data[MEDIA_FIELDS[node.type]])}"`;
+  if (node.type === 'content.file') {
+    // No address, so no name from one: the label, else the reference itself.
+    const name = node.data.label || node.data.href;
+    return `<span class="sf-download-file" aria-disabled="true"${reference}${id(node)}><span class="sf-download-file__body sf-download-file-wrap"><span class="sf-download-file__main sf-download-file-container"><i class="sf-download-file__icon sf-icon" aria-hidden="true">${(0,_file_size_mjs__WEBPACK_IMPORTED_MODULE_5__.fileIcon)(node.data.mime)}</i><span class="sf-download-file__name sf-download-file-file-name">${escapeHtml(name)}</span></span></span></span>`;
+  }
+  const alt = typeof node.data.alt === 'string' && node.data.alt ? ` role="img" aria-label="${escapeHtml(node.data.alt)}"` : ' aria-hidden="true"';
+  const ratio = node.props?.ratio && node.props.ratio !== 'auto' ? node.props.ratio : '16/9';
+  if (node.type === 'content.media') {
+    const figure = `<figure class="sf-figure${ratioClass(ratio)}"${reference}><div class="sf-figure-media"${alt}></div></figure>`;
+    const text = `<div class="min-w-0">${slots.default || ''}</div>`;
+    const parts = node.props?.side === 'left' ? figure + text : text + figure;
+    return `<div class="grid grid-col-1 md:grid-col-2 gap-3 items-cross-center"${id(node)}>${parts}</div>`;
+  }
+  const caption = Array.isArray(node.data.caption) ? `<figcaption class="sf-figure-caption">${renderInline(node.data.caption)}</figcaption>` : '';
+  return `<figure class="sf-figure${ratioClass(ratio)}"${reference}${id(node)}><div class="sf-figure-media"${alt}></div>${caption}</figure>`;
+}
 
 async function render(document, context = {}) {
   const registry = normalizeRegistry(context.registry);
   renderEmbedded(context.options);
   const resolveSource = typeof context.resolveSource === 'function' ? context.resolveSource : null;
+  const resolveMedia = typeof context.media === 'function' ? context.media : null;
   const normalized = await normalize(document, registry, { ...(context.options || {}), ...(resolveSource ? { resolveSource } : {}) });
   if (!normalized.document) return { html: '', assets: [], hydration: [], diagnostics: normalized.diagnostics, digest: null };
   const diagnostics = [];
@@ -30617,7 +30730,21 @@ async function render(document, context = {}) {
   // container and its own frame keeps the gutter (2026-11-04).
   const renderNode = async (given, depth = 0, inside = false) => {
     let node = given;
-    if (resolveSource && HOST_SOURCE_TYPES.has(node.type) && typeof node.data?.src === 'string') {
+    let unresolved = false;
+    const mediaField = MEDIA_FIELDS[node.type];
+    if (mediaField && isMediaReference(node.data?.[mediaField]) && (resolveMedia || !(resolveSource && HOST_SOURCE_TYPES.has(node.type)))) {
+      const reference = node.data[mediaField];
+      const address = resolveMedia ? await resolveMedia(reference, { node, field: mediaField }) : undefined;
+      if (typeof address !== 'string' || !address) {
+        diagnostics.push(diagnostic('media_unresolved', `node:${node.id}.data.${mediaField}`, resolveMedia ? `The host gave no address for ${reference}` : `A media reference is drawn from an address the render option media(ref) gives`, { reference }));
+        unresolved = true;
+      } else if (!(validUrl(address) || hostBlobUrl(address))) {
+        diagnostics.push(diagnostic('unsafe_url', `node:${node.id}.data.${mediaField}`, mediaField === 'src' ? 'The resolved image source is not allowed' : 'The resolved file address is not allowed'));
+        return '';
+      } else {
+        node = { ...node, data: { ...node.data, [mediaField]: address } };
+      }
+    } else if (resolveSource && HOST_SOURCE_TYPES.has(node.type) && typeof node.data?.src === 'string') {
       const address = await resolveSource(node.data.src, { node });
       if (typeof address !== 'string' || !(validUrl(address) || hostBlobUrl(address))) {
         diagnostics.push(diagnostic('unsafe_url', `node:${node.id}.data.src`, 'The resolved image source is not allowed'));
@@ -30672,7 +30799,9 @@ async function render(document, context = {}) {
     const own = (0,_utilities_mjs__WEBPACK_IMPORTED_MODULE_15__.modifierNotices)(node, { rules: context.options?.utilityRules });
     notices.push(...own.notices);
     const utilities = [...new Set([...(byPart[''] || []), ...modifierUtilities(node, manifest), ...own.kept])];
-    let renderer = registry.renderers.get(manifest.renderer.name) || BUILTIN_RENDERERS[manifest.renderer.name];
+    let renderer = unresolved
+      ? ({ node: current, slots: currentSlots }) => unresolvedMedia(current, currentSlots)
+      : registry.renderers.get(manifest.renderer.name) || BUILTIN_RENDERERS[manifest.renderer.name];
     if (!renderer && manifest.renderer.kind === 'custom-element' && manifest.renderer.name) {
       renderer = ({ node: current, slots: currentSlots, endpoint }) => {
         const endpointAttribute = endpoint ? ` data-sf-endpoint="${escapeHtml(endpoint)}"` : '';
@@ -32583,6 +32712,8 @@ const isToken = (value) => typeof value === 'string' && TOKEN.test(value);
 const isCollection = (value) => typeof value === 'string' && value.length > 0 && value.length <= 128 && !CONTROL.test(value);
 const isRevision = (value) => (typeof value === 'string' && value.length > 0 && value.length <= 128 && !CONTROL.test(value)) || Number.isSafeInteger(value);
 const PREFERENCE_KEY = /^[\w.*:-]+(?:\/[\w.*:/-]+)?$/u;
+// A query key of a refreshable block (SF.FragmentRefresh URL_KEY).
+const QUERY_KEY = /^[a-z][a-z0-9_-]{0,63}$/u;
 // An address inside the same site: a path, never a scheme of its own, never
 // another origin's protocol-relative form.
 const isLocalUrl = (value) => typeof value === 'string' && value.length > 0 && value.length <= 2048
@@ -32718,6 +32849,29 @@ const VALUE_TYPES = Object.freeze({
       closedObject(value, ['key'], [], 'preference-changed.v1');
       if (typeof value.key !== 'string' || value.key.length > 256 || !PREFERENCE_KEY.test(value.key)) throw new TypeError('preference-changed.v1 value is invalid');
       return Object.freeze({ key: value.key });
+    },
+  }),
+  // simai.interface-fragment 1.1 (block refresh): a block that changed its
+  // query keys says which and the address it now stands at; every block that
+  // reads one of them refreshes with its own request (SF.FragmentRefresh,
+  // the sf-fragment-parameters event). Closed here in GB20 (gb19-refresh
+  // open item): the keys are the descriptor's own (refresh.keys form).
+  'parameters-changed.v1': Object.freeze({
+    summary: 'A block changed its query keys: the keys that changed (1 to 16 unique names, a lowercase letter then up to 63 of a-z, 0-9, _ and -) and the address it stands at now, a path of this site with its query. Says which keys, never their values beyond the address.',
+    schema: {
+      type: 'object', additionalProperties: false, required: ['keys', 'url'],
+      properties: {
+        keys: { type: 'array', minItems: 1, maxItems: 16, uniqueItems: true, items: { type: 'string', pattern: '^[a-z][a-z0-9_-]{0,63}$' } },
+        url: { type: 'string', minLength: 1, maxLength: 2048, pattern: '^/(?!/)' },
+      },
+    },
+    check(value) {
+      closedObject(value, ['keys', 'url'], [], 'parameters-changed.v1');
+      const keys = value.keys;
+      if (!Array.isArray(keys) || keys.length === 0 || keys.length > 16 || !keys.every((key) => typeof key === 'string' && QUERY_KEY.test(key))
+        || new Set(keys).size !== keys.length) throw new TypeError('parameters-changed.v1 keys are invalid');
+      if (!isLocalUrl(value.url)) throw new TypeError('parameters-changed.v1 url is invalid');
+      return Object.freeze({ keys: freezeList(keys), url: value.url });
     },
   }),
 });

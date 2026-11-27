@@ -149,6 +149,280 @@ function sizeStep(size) {
 
 /***/ },
 
+/***/ "cbcfcde04d12"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   COARSE_QUERY: () => (/* binding */ COARSE_QUERY),
+/* harmony export */   LAYOUTS: () => (/* binding */ LAYOUTS),
+/* harmony export */   PHONE_BELOW: () => (/* binding */ PHONE_BELOW),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   devicesOf: () => (/* binding */ devicesOf),
+/* harmony export */   inLayout: () => (/* binding */ inLayout),
+/* harmony export */   itemsInLayout: () => (/* binding */ itemsInLayout),
+/* harmony export */   layoutOf: () => (/* binding */ layoutOf),
+/* harmony export */   layoutOfWidth: () => (/* binding */ layoutOfWidth),
+/* harmony export */   layoutPlace: () => (/* binding */ layoutPlace),
+/* harmony export */   markDevices: () => (/* binding */ markDevices),
+/* harmony export */   markPageLayout: () => (/* binding */ markPageLayout),
+/* harmony export */   pointerKind: () => (/* binding */ pointerKind),
+/* harmony export */   watchLayout: () => (/* binding */ watchLayout),
+/* harmony export */   watchPointer: () => (/* binding */ watchPointer)
+/* harmony export */ });
+// Device scope (study S-A, decision q-7097831f9f option 2, 2026-11-24; the
+// Touch screens page, docs/foundation-touch-screens.md). Two separate facts,
+// one word each, so no component measures them in a copy of its own:
+//
+//   layout   'phone' when the component's place is narrower than
+//            PHONE_BELOW (600 px), else 'desktop'. It decides which items a
+//            component shows: an item that carries `devices` is shown only in
+//            the layouts it names, and hidden -- not disabled -- in the other.
+//   pointer  'coarse' when the page has a touch pointer and no fine one,
+//            else 'fine'. It decides gestures and what replaces hover (a
+//            check box always shown, a hit area of 44).
+//
+// A tablet with a keyboard is a coarse pointer in a desktop layout; a narrow
+// desktop window a fine pointer in a phone layout. The two words never stand
+// for each other.
+//
+// The place is the nearest size container (an ancestor with a
+// `container-type`), as a container query reads it; without one, the page.
+// 600 is the width the View layouts already switch at (sf-view-board,
+// sf-view-calendar, the view head); it is not a step of the size scale
+// (C181 (2) pending), recorded on the page as a known gap.
+//
+// Marks: an author marks any item -- a setting, a menu item, a tab, a column
+// -- with `devices: ['phone']` or `devices: ['desktop']`; a component marks
+// its own items it knows are bound to a layout (markDevices). The author's
+// mark wins: a component's mark fills only an item that has none.
+
+/** Below this width (px) of its place a component draws its phone layout. */
+const PHONE_BELOW = 600;
+/** The layouts an item may name in `devices`. */
+
+const LAYOUTS = Object.freeze(['phone', 'desktop']);
+/** The coarse-pointer media query: a touch pointer and no fine one. */
+
+const COARSE_QUERY = '(pointer: coarse) and (not (any-pointer: fine))';
+const KNOWN = new Set(LAYOUTS);
+/** The layout of a width: 'phone' below PHONE_BELOW, else 'desktop'. */
+
+function layoutOfWidth(width) {
+  return Number.isFinite(width) && width > 0 && width < PHONE_BELOW ? 'phone' : 'desktop';
+}
+/**
+ * The box whose width decides an element's layout: the element itself or its
+ * nearest ancestor that is a size container, else null (the page).
+ */
+
+function layoutPlace(element) {
+  const view = element?.ownerDocument?.defaultView ?? globalThis;
+
+  for (let node = element instanceof Element ? element : null; node; node = node.parentElement ?? node.getRootNode?.()?.host ?? null) {
+    const type = view.getComputedStyle?.(node)?.containerType ?? '';
+    if (type && type !== 'normal') return node;
+  }
+
+  return null;
+}
+
+function placeWidth(element) {
+  const place = layoutPlace(element);
+  if (place) return place.getBoundingClientRect().width;
+  const doc = element?.ownerDocument ?? globalThis.document;
+  return doc?.documentElement?.clientWidth || globalThis.innerWidth || 0;
+}
+/**
+ * The layout an element is drawn in: 'phone' or 'desktop'. A number is read
+ * as a width; a written word ('phone' | 'desktop') is taken as given, so a
+ * host that knows its own layout says it.
+ */
+
+
+function layoutOf(target) {
+  if (KNOWN.has(target)) return target;
+  if (typeof target === 'number') return layoutOfWidth(target);
+  return layoutOfWidth(placeWidth(target));
+}
+/**
+ * Follows an element's layout: calls back with the new word when it changes
+ * (not at once). Returns stop(). Without ResizeObserver it follows the page.
+ */
+
+function watchLayout(element, callback) {
+  let last = layoutOf(element);
+
+  const check = () => {
+    const now = layoutOf(element);
+    if (now === last) return;
+    last = now;
+    callback(now);
+  };
+
+  const place = layoutPlace(element);
+  const view = element?.ownerDocument?.defaultView ?? globalThis;
+
+  if (place && typeof view.ResizeObserver === 'function') {
+    const observer = new view.ResizeObserver(check);
+    observer.observe(place);
+    return () => observer.disconnect();
+  }
+
+  view.addEventListener?.('resize', check);
+  return () => view.removeEventListener?.('resize', check);
+}
+/** The page's pointer: 'coarse' (touch, no fine pointer) or 'fine'. */
+
+function pointerKind(view = globalThis) {
+  return typeof view?.matchMedia === 'function' && view.matchMedia(COARSE_QUERY).matches ? 'coarse' : 'fine';
+}
+/** Follows the page's pointer word; returns stop(). */
+
+function watchPointer(callback, view = globalThis) {
+  const media = typeof view?.matchMedia === 'function' ? view.matchMedia(COARSE_QUERY) : null;
+  if (!media) return () => {};
+
+  const listener = () => callback(media.matches ? 'coarse' : 'fine');
+
+  media.addEventListener?.('change', listener);
+  return () => media.removeEventListener?.('change', listener);
+}
+/**
+ * The layouts an item is scoped to, or null (every layout). Unknown words are
+ * dropped; a list with no known word is no scope.
+ */
+
+function devicesOf(item) {
+  const list = Array.isArray(item?.devices) ? item.devices : typeof item?.devices === 'string' ? item.devices.split(/[\s,]+/u) : null;
+  if (!list) return null;
+  const known = [...new Set(list.filter(word => KNOWN.has(word)))];
+  return known.length ? known : null;
+}
+/** Whether an item is shown in a layout: unscoped, or scoped to it. */
+
+function inLayout(item, layout) {
+  const scope = devicesOf(item);
+  return !scope || scope.includes(KNOWN.has(layout) ? layout : 'desktop');
+}
+/**
+ * The items shown in a layout, nested lists (`items`, and `options` when
+ * `options: true`) filtered the same way. The items are not copied unless a
+ * nested list changes.
+ */
+
+function itemsInLayout(items, layout, {
+  options = false
+} = {}) {
+  if (!Array.isArray(items)) return [];
+  const out = [];
+
+  for (const item of items) {
+    if (!inLayout(item, layout)) continue;
+
+    if (!item || typeof item !== 'object') {
+      out.push(item);
+      continue;
+    }
+
+    let next = item;
+
+    if (Array.isArray(item.items)) {
+      const inner = itemsInLayout(item.items, layout, {
+        options
+      });
+      if (inner.length !== item.items.length || inner.some((one, at) => one !== item.items[at])) next = { ...next,
+        items: inner
+      };
+    }
+
+    if (options && Array.isArray(item.options)) {
+      const inner = item.options.filter(option => inLayout(option, layout));
+      if (inner.length !== item.options.length) next = { ...next,
+        options: inner
+      };
+    }
+
+    out.push(next);
+  }
+
+  return out;
+}
+/**
+ * A component's own marks over an author's items: `marks` maps an item id to
+ * its layouts (['desktop'] for a table-only setting). An item that carries
+ * its own `devices` keeps it -- the author's mark wins; nested `items` are
+ * marked the same way. Returns new items; the given ones are not changed.
+ */
+
+function markDevices(items, marks = {}) {
+  if (!Array.isArray(items)) return [];
+  const table = marks instanceof Map ? marks : new Map(Object.entries(marks ?? {}));
+  return items.map(item => {
+    if (!item || typeof item !== 'object') return item;
+    let next = item;
+    const own = Object.hasOwn(item, 'devices') && item.devices !== undefined && item.devices !== null;
+    if (!own && item.id !== undefined && table.has(String(item.id))) next = { ...next,
+      devices: [...table.get(String(item.id))]
+    };
+    if (Array.isArray(item.items)) next = { ...next,
+      items: markDevices(item.items, table)
+    };
+    return next;
+  });
+}
+const Device = Object.freeze({
+  PHONE_BELOW,
+  LAYOUTS,
+  COARSE_QUERY,
+  layoutOf,
+  layoutOfWidth,
+  layoutPlace,
+  watchLayout,
+  pointer: pointerKind,
+  watchPointer,
+  devicesOf,
+  inLayout,
+  itemsInLayout,
+  markDevices
+}); // Core publishes the helper; a component bundle that carries its own copy
+// reuses an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.device) globalThis.SF.device = Device;
+} // The page's layout word on <html> (data-sf-layout="phone" | "desktop"),
+// written while core boots and followed on resize (DEV answer 3 on group
+// build 20): static first-paint markup printed at one width carries its
+// items' scope (data-sf-devices), and core.styles hides the other layout's
+// items by this word until their element draws -- the signal's own width,
+// PHONE_BELOW of the page, not a width rule of the sheets. One mark per
+// page: a second copy of this module finds it and leaves it.
+
+
+const LAYOUT_MARK = Symbol.for('sf.device.page-layout');
+function markPageLayout(doc = globalThis.document) {
+  const root = doc?.documentElement;
+  const view = doc?.defaultView; // One mark per page, kept on the document under a registry symbol: every
+  // bundle carries its own copy of this module, the document is shared.
+
+  if (!root || !view || doc[LAYOUT_MARK]) return;
+  doc[LAYOUT_MARK] = true;
+
+  const write = () => {
+    const word = layoutOfWidth(root.clientWidth || view.innerWidth || 0);
+    if (root.getAttribute('data-sf-layout') !== word) root.setAttribute('data-sf-layout', word);
+  };
+
+  write();
+  view.addEventListener?.('resize', write, {
+    passive: true
+  });
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Device);
+
+/***/ },
+
 /***/ "3180ca98c567"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -2754,18 +3028,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("5b8371b87515");
 /* harmony import */ var _core_js_reading_position_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6978f1cc153b");
 /* harmony import */ var _core_js_menu_open_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("8d229b7c92e9");
-/* harmony import */ var _core_js_rows_window_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("d3f52a822348");
-/* harmony import */ var _core_js_files_drop_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("3180ca98c567");
-/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("1c69b52a2c3c");
-/* harmony import */ var _list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("50e7fd61ac57");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("2677706b5ec9");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("31dd7f648272");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_8__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_device_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("cbcfcde04d12");
+/* harmony import */ var _core_js_rows_window_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("d3f52a822348");
+/* harmony import */ var _core_js_files_drop_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("3180ca98c567");
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("d3818183b14c");
+/* harmony import */ var _js_templates_default_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("1c69b52a2c3c");
+/* harmony import */ var _list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("50e7fd61ac57");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("2677706b5ec9");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("31dd7f648272");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_9__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_format_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__, _js_templates_default_js__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__);
 // A list a person acts on: a person's conversations, letters, templates,
 // files, members, versions -- rows from data, each one a title and a quiet
 // second line, which one is open, a few things one can do to a row. The block
@@ -2807,6 +3082,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // core/js/element-manifest.js, its words are lang/<locale>.json, the actions
 // answer outcomes, and the events take the vocabulary's verbs (open, apply,
 // rename, load-more).
+
 
 
 
@@ -2957,9 +3233,9 @@ const pageArguments = (first, second) => {
   };
 };
 
-const ListElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
+const ListElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_11__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__.files,
   source: "ru"
 });
 let listCount = 0;
@@ -2995,7 +3271,7 @@ class SfList extends ListElement {
     // (FO2-4). rows-window="off" draws every row (FO2-3).
 
     this._entries = [];
-    this._rowsWindow = (0,_core_js_rows_window_js__WEBPACK_IMPORTED_MODULE_5__.rowsWindow)({
+    this._rowsWindow = (0,_core_js_rows_window_js__WEBPACK_IMPORTED_MODULE_6__.rowsWindow)({
       body: () => this.querySelector(":scope > .sf-list__frame [data-sf-rows-window]"),
       rows: () => [...this.querySelectorAll([":scope > .sf-list__frame .sf-list__rows[data-sf-rows-window] > .sf-list__row", ":scope > .sf-list__frame .sf-list__body[data-sf-rows-window] > .sf-list__group > .sf-list__heading", ":scope > .sf-list__frame .sf-list__body[data-sf-rows-window] > .sf-list__group > .sf-list__rows > .sf-list__row"].join(", "))],
       onMove: () => this.requestComponentUpdate("window"),
@@ -3303,7 +3579,7 @@ class SfList extends ListElement {
 
     if (!this._ownMoreNoted) {
       this._ownMoreNoted = true;
-      (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__.noteDeprecated)({
+      (0,_core_js_deprecations__WEBPACK_IMPORTED_MODULE_8__.noteDeprecated)({
         component: "sf-list",
         tag: "sf-list",
         kind: "attribute",
@@ -3411,14 +3687,20 @@ class SfList extends ListElement {
   get menu() {
     return this.ownerDocument.querySelector("[data-sf-menu-shared]");
   } // The menu of one row: «Rename» when the list renames, then the host's
-  // actions the item allows.
+  // actions the item allows. An action that carries `devices` (study S-A,
+  // Touch screens rule 4) is offered only in the layouts it names, the
+  // layout of the list's place (core SF.device.layoutOf, phone below 600).
 
 
   menuEntries(item) {
     if (item.disabled === true) return [];
     const allowed = item.actions === false ? [] : Array.isArray(item.actions) ? new Set(item.actions.map(String)) : null;
 
-    const own = this._actions.filter(action => !allowed || allowed.has(action.id));
+    const scoped = this._actions.some(action => action.devices !== undefined && action.devices !== null);
+
+    const layout = scoped && this.isConnected ? (0,_core_js_device_js__WEBPACK_IMPORTED_MODULE_5__.layoutOf)(this) : "desktop";
+
+    const own = this._actions.filter(action => (!allowed || allowed.has(action.id)) && (0,_core_js_device_js__WEBPACK_IMPORTED_MODULE_5__.inLayout)(action, layout));
 
     return [...(this.renamable ? [{
       id: "rename",
@@ -3647,7 +3929,7 @@ class SfList extends ListElement {
     // C308 FO-2: from 1 000 entries, or the list's own rows-window-from;
     // rows-window="off" never.
     const own = Number.parseInt(this.getAttribute("rows-window-from") ?? "", 10);
-    this._rowsWindow.from = this.getAttribute("rows-window") === "off" ? Infinity : own > 0 ? own : _core_js_rows_window_js__WEBPACK_IMPORTED_MODULE_5__.ROWS_WINDOW_FROM;
+    this._rowsWindow.from = this.getAttribute("rows-window") === "off" ? Infinity : own > 0 ? own : _core_js_rows_window_js__WEBPACK_IMPORTED_MODULE_6__.ROWS_WINDOW_FROM;
     const flat = sections.length === 1 && sections[0].key === "all";
     const entries = [];
 
@@ -3736,7 +4018,7 @@ class SfList extends ListElement {
       window: range,
       // Drawn whole, a long list's rows skip layout and paint off
       // screen (content-visibility, C308 FO-2); find and print reach them.
-      rowsAll: !range && !loading && this._entries.length >= _core_js_rows_window_js__WEBPACK_IMPORTED_MODULE_5__.ROWS_VISIBILITY_FROM,
+      rowsAll: !range && !loading && this._entries.length >= _core_js_rows_window_js__WEBPACK_IMPORTED_MODULE_6__.ROWS_VISIBILITY_FROM,
       leading: this.leadingPlace(),
       avatarOf,
       countOf,
@@ -3791,7 +4073,7 @@ class SfList extends ListElement {
   }
 
   template() {
-    return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_8__.renderListTemplate)(this.templateContext());
+    return (0,_js_templates_default_js__WEBPACK_IMPORTED_MODULE_9__.renderListTemplate)(this.templateContext());
   } // The rows are drawn; the list's sheets may still be on their way. The
   // width is watched from now (C47): when the sheet comes, the observer
   // measures the frame before it is painted with it, so no frame of a
@@ -3859,7 +4141,7 @@ class SfList extends ListElement {
     // go; a zone inside the list (a row's own) wins. The list uploads
     // nothing itself: attach asks the host.
 
-    this._filesDrop ??= (0,_core_js_files_drop_js__WEBPACK_IMPORTED_MODULE_6__.filesDrop)(this, {
+    this._filesDrop ??= (0,_core_js_files_drop_js__WEBPACK_IMPORTED_MODULE_7__.filesDrop)(this, {
       target: () => this.acceptFiles === true || this.hasAttribute("accept-files") ? this : null,
       overlay: () => this.sfWord("files-drop-text", {
         vars: {
@@ -3880,7 +4162,7 @@ class SfList extends ListElement {
     // nothing. No swipe.
 
     if (!this._longPress) {
-      this._longPress = (0,_list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_9__.watchLongPress)(this, {
+      this._longPress = (0,_list_item_js_long_press_js__WEBPACK_IMPORTED_MODULE_10__.watchLongPress)(this, {
         // With selection many a long press chooses the row (C150 (9),
         // a phone has no hover); its menu stays on its «⋯».
         accepts: event => {
@@ -4969,7 +5251,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"runtime":{"b":"B","kb":"KB","mb":"MB
 /***/ "2677706b5ec9"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.25.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"unread":{"type":"boolean","optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true}}},"selection":{"type":"enum","values":["none","many"],"default":"none"},"selection-actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"status":{"type":"enum","values":["","danger"],"optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"leading":{"type":"enum","values":["auto","none","icon","avatar"],"default":"auto"},"lines":{"type":"enum","values":["auto","1","2"],"default":"auto"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"time-format":{"type":"enum","values":["none","auto","relative","exact"],"default":"none"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"sticky-headings":{"type":"boolean","default":false},"rows-window":{"type":"enum","values":["auto","off"],"default":"auto"},"rows-window-from":{"type":"number","default":1000},"accept-files":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{"chosen":{"type":"list","default":[],"of":"id"}},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry","selection"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true},"attach":{"carries":{"files":"list","skipped":"list"}},"select":{"carries":{"chosen":{"type":"list","of":"id"},"count":"number","total":"number"}}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{},"clear-selection":{},"toggle-chosen":{"with":{"id":"id","range":{"type":"boolean","optional":true}}}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.list","tag":"sf-list","version":"1.26.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","text":{"type":"string","optional":true},"supporting":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"object","optional":true},"date":{"type":"date","optional":true},"group":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"actions":{"type":"list","optional":true},"count":{"type":"number","integer":true,"min":0,"optional":true},"unread":{"type":"boolean","optional":true},"badge":{"type":"object","optional":true},"pinned":{"type":"boolean","optional":true}},"entries":{"key":"id","changes":"content"}},"selected":{"type":"id","default":""},"group-by":{"type":"enum","values":["none","day","key"],"default":"none"},"groups":{"type":"list","default":[],"of":{"key":"string","text":"string"}},"actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"destructive":{"type":"boolean","optional":true},"devices":{"type":"list","optional":true}}},"selection":{"type":"enum","values":["none","many"],"default":"none"},"selection-actions":{"type":"list","default":[],"of":{"id":"id","text":"string","icon":{"type":"icon","optional":true},"status":{"type":"enum","values":["","danger"],"optional":true}}},"renamable":{"type":"boolean","default":false},"has-more":{"type":"boolean","default":false},"loading":{"type":"boolean","default":false},"leading":{"type":"enum","values":["auto","none","icon","avatar"],"default":"auto"},"lines":{"type":"enum","values":["auto","1","2"],"default":"auto"},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"no-wrap":{"type":"boolean","default":false},"divided":{"type":"boolean","default":false},"time-format":{"type":"enum","values":["none","auto","relative","exact"],"default":"none"},"label":{"type":"string","default-from":"runtime.label"},"heading-level":{"type":"number","integer":true,"min":2,"max":6,"default":3},"sticky-headings":{"type":"boolean","default":false},"rows-window":{"type":"enum","values":["auto","off"],"default":"auto"},"rows-window-from":{"type":"number","default":1000},"accept-files":{"type":"boolean","default":false},"empty-text":{"type":"string","default-from":"runtime.empty-text"}},"values":{"chosen":{"type":"list","default":[],"of":"id"}},"events":{"open":{"carries":{"id":"id","trigger":{"type":"enum","values":["pointer","keyboard"]}}},"apply":{"carries":{"action":"string","scope":{"type":"enum","values":["entry","selection"]},"ids":{"type":"list","schema":{"items":{"type":"string"}}}}},"rename":{"carries":{"id":"id","text":{"type":"string","schema":{"minLength":1,"maxLength":200}}},"cancelable":true},"load-more":{"carries":{"direction":{"type":"enum","values":["after"]},"after":{"type":"id","nullable":true}},"cancelable":true},"attach":{"carries":{"files":"list","skipped":"list"}},"select":{"carries":{"chosen":{"type":"list","of":"id"},"count":"number","total":"number"}}},"actions":{"set-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"append-items":{"with":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}},"options":{"type":"object","optional":true,"schema":{"properties":{"hasMore":{"type":"boolean","default":false}}}}}},"upsert":{"with":{"item":{"type":"object","schema":{"type":"object","properties":{"id":{"type":["string","number"]},"text":{"type":"string"},"supporting":{"type":"string"},"icon":{"type":"string"},"date":{"type":"string"},"group":{"type":"string"},"disabled":{"type":"boolean"},"actions":{}},"required":["id"]}}}},"detach":{"with":{"id":"id"}},"rename":{"with":{"id":"id"}},"open-menu":{"with":{"id":"id"}},"request-more":{},"more-failed":{},"clear-selection":{},"toggle-chosen":{"with":{"id":"id","range":{"type":"boolean","optional":true}}}},"presentation":{"skeleton":{"late":["items"]}},"host-states":{},"css-variables":{"--sf-list-gap":{"type":"length","state":"default"},"--sf-list-radius":{"type":"length","state":"default"},"--sf-list-hover-background-color":{"type":"color","state":"hover"},"--sf-list-current-background-color":{"type":"color","state":"selected"},"--sf-list-heading-color":{"type":"color","state":"default"}}}');
 
 /***/ },
 

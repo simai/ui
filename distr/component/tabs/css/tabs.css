@@ -859,7 +859,8 @@
   .sf-tabs-more > button {
     white-space: nowrap;
   }
-  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container--tools > .sf-tabs-more > button {
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container--tools > .sf-tabs-more > button,
+  :is(.sf-tabs--underline, :where(.sf-tabs:not(.sf-tabs--pills):not(.sf-tabs--vertical))) > .sf-tabs-top-container--tools > .sf-tabs-settings > button {
     margin-bottom: calc(var(--sf-tabs-border-width, var(--sf-tabs--border-width, var(--sf-px))) * -1);
     -webkit-margin-after: calc(var(--sf-tabs-border-width, var(--sf-tabs--border-width, var(--sf-px))) * -1);
             margin-block-end: calc(var(--sf-tabs-border-width, var(--sf-tabs--border-width, var(--sf-px))) * -1);

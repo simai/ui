@@ -7485,13 +7485,26 @@ let VIEW_LINE = '1'; // A value's tag or badge is the value's text (owner remark
 // of the text beside it (line="text"), a tag sits inline on the field's own
 // size (sf-tag's line is one size down, the table's step); secondary by ink only.
 
-const VALUE_BADGE_LINE = 'text'; // A scalar may arrive as the value itself or as {value, text}: the data and the
+const VALUE_BADGE_LINE = 'text'; // A viewed scale's value is the value's text (group build 20, View register
+// VL-90: «Оценка клиента» 14 in a 16 line, 2 px off the label's baseline).
+// sf-progress-scale names the text a step below its size (size 1 writes 14
+// on a 20 line), so the value's line 1 (16 on 24) is the scale's size 2 and
+// the line 1/2 (14 on 20) its size 1. The track is 8 at both sizes, so only
+// the text and its line follow the row. A table cell keeps its line (CELL_LINE).
+
+const SCALE_SIZE = {
+  '1': '2',
+  '1/2': '1'
+};
+
+const scaleSize = () => SCALE_SIZE[VIEW_LINE] ?? '2'; // A scalar may arrive as the value itself or as {value, text}: the data and the
 // host's own formatting of it. The consumer asked for the second and they are
 // right -- the Framework has no locale and should not acquire one through a field
 // renderer. They already hold the localised text, the viewer's locale and the
 // format rules, and a second formatter here would disagree with theirs the first
 // time a format setting changed. `text` is the formatted value alone; a unit
 // stays its own field so a column of numbers can align its units.
+
 
 function carriesText(value) {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value) && typeof value.text === 'string';
@@ -7542,7 +7555,7 @@ function levelView(field, value) {
   const raw = scalarValue(value);
   const number = Number(raw);
   if (raw === null || raw === undefined || raw === '' || !Number.isFinite(number) || number < 0 || number > 100) return null;
-  if (variant === 'scale') return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-scale size="1" value=${String(number)}></sf-progress-scale>`;
+  if (variant === 'scale') return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-scale size=${scaleSize()} value=${String(number)}></sf-progress-scale>`;
   const {
     label
   } = meterProps(field, number);
@@ -7559,7 +7572,7 @@ function renderNumberView(field, value, host) {
   const number = Number(scalarValue(value));
 
   if (variant === 'scale' && Number.isFinite(number) && number >= 0 && number <= 100) {
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-scale size="1" value=${String(number)}></sf-progress-scale>`;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-progress-scale size=${scaleSize()} value=${String(number)}></sf-progress-scale>`;
   }
 
   if (variant === 'meter' && Number.isFinite(number) && number >= 0 && number <= 100) {

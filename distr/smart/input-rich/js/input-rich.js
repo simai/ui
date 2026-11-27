@@ -19,11 +19,50 @@ _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_async_depende
  // A field's ids come from its instance's role path (standard 1.3.8 §7.1.1;
 // simai/ui-source#41), never from a counter: core/js/instance-path.js.
 
-const fieldIdentities = new WeakMap();
+const fieldIdentities = new WeakMap(); // The bases the page's fields hold, on a page-wide table (SF.__fieldIds):
+// every bundle that carries this file has its own module copy, so a table
+// here would be one per bundle. An id is kept per instance, and a path in
+// document order is read when the instance first settles, so an instance
+// that settles later in front of it reads the same index: sf-mail-library's
+// and sf-mail-letters' search fields were both sf-input-1--control (Mail set
+// 1.0.0, GB20). A base another connected instance holds, or that an element
+// outside this instance already carries, takes the next free «-<n>».
+
+function claimedBases() {
+  const sf = globalThis.SF ||= {};
+
+  if (!(sf.__fieldIds instanceof Map)) {
+    Object.defineProperty(sf, '__fieldIds', {
+      value: new Map(),
+      configurable: true
+    });
+  }
+
+  return sf.__fieldIds;
+}
+
+function heldElsewhere(owner, base, claims) {
+  const holder = claims.get(base)?.deref?.();
+  if (holder && holder !== owner && holder.isConnected && holder.ownerDocument === owner.ownerDocument) return true;
+  const taken = owner?.ownerDocument?.getElementById?.(`${base}--control`);
+  return Boolean(taken && taken !== owner && !owner.contains?.(taken));
+}
+
+function freeBase(owner, path) {
+  const base = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)(path);
+  if (!(0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.pathIsSettled)(owner) || typeof globalThis.WeakRef !== 'function') return base;
+  const claims = claimedBases();
+  let free = base;
+
+  for (let n = 2; heldElsewhere(owner, free, claims); n += 1) free = `${base}-${n}`;
+
+  claims.set(free, new globalThis.WeakRef(owner));
+  return free;
+}
 
 function nextIdentity(owner, prefix) {
   if (owner && fieldIdentities.has(owner)) return fieldIdentities.get(owner);
-  const base = (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.partId)((0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.instancePath)(owner, {
+  const base = freeBase(owner, (0,_core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_0__.instancePath)(owner, {
     kind: prefix
   }));
   const identity = {
@@ -2853,8 +2892,13 @@ class SfRichText extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_4__.Sho
   }
 
   onDisconnected() {
-    this._lowerLinkPanel();
+    this._lowerLinkPanel(); // The toolbar's roving keys watch the bar (a MutationObserver): given
+    // back with the element, made again on the next drawing (GB20,
+    // instance-scope gate 36).
 
+
+    this._toolbarRow?.keys.destroy();
+    this._toolbarRow = null;
     this._toolbarObserver?.disconnect();
     this._toolbarObserver = null;
     this._toolbarObserved = null;
@@ -5515,7 +5559,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "d41b3b9112e6"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-rich","tag":"sf-input-rich","version":"1.11.0","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"overflow":{"type":"enum","values":["more","wrap"],"default":"more"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":6},"max-rows":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"counter":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-long","custom-error"]},"css-variables":{"--sf-rich-text-background-color":{"type":"color","state":"default"},"--sf-rich-text-border-color":{"type":"color","state":"default"},"--sf-rich-text-color":{"type":"color","state":"default"},"--sf-rich-text-radius":{"type":"length","state":"default"},"--sf-rich-text-padding-inline":{"type":"length","state":"default"},"--sf-rich-text-padding-block":{"type":"length","state":"default"},"--sf-rich-text-invalid-border-color":{"type":"color","state":"invalid"},"--sf-rich-text-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.input-rich","tag":"sf-input-rich","version":"1.11.1","kind":"leaf","settings":{"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"appearance":{"type":"enum","values":["bordered","filled"],"default":"bordered"},"overflow":{"type":"enum","values":["more","wrap"],"default":"more"},"label":{"type":"string","default":""},"required":{"type":"boolean","default":false},"placeholder":{"type":"string","default":""},"hint":{"type":"string","default":""},"help":{"type":"string","default":""},"name":{"type":"string","default":""},"rows":{"type":"number","default":6},"max-rows":{"type":"number","optional":true},"maxlength":{"type":"number","optional":true},"counter":{"type":"boolean","default":false},"disabled":{"type":"boolean","default":false},"readonly":{"type":"boolean","default":false},"invalid":{"type":"boolean","default":false},"error-message":{"type":"string","default":""}},"values":{"value":{"type":"string","default":""}},"events":{"input":{"carries":"native"},"change":{"carries":"native"}},"actions":{},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","required":"required","disabled":"disabled","readonly":"readonly","validity":["value-missing","too-long","custom-error"]},"css-variables":{"--sf-rich-text-background-color":{"type":"color","state":"default"},"--sf-rich-text-border-color":{"type":"color","state":"default"},"--sf-rich-text-color":{"type":"color","state":"default"},"--sf-rich-text-radius":{"type":"length","state":"default"},"--sf-rich-text-padding-inline":{"type":"length","state":"default"},"--sf-rich-text-padding-block":{"type":"length","state":"default"},"--sf-rich-text-invalid-border-color":{"type":"color","state":"invalid"},"--sf-rich-text-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

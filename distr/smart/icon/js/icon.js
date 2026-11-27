@@ -904,8 +904,16 @@ class SfIcon extends IconElement {
 
   syncLoadedState() {
     const loader = window.SF?.Loader;
-    const tracked = loader?.getTrackedIconAttrs?.(this) || null;
-    const loaded = this.isRegisteredGlyph || Boolean(tracked?.icon && loader?.isTrackedIconLoaded?.(tracked));
+    const tracked = loader?.getTrackedIconAttrs?.(this) || null; // The glyph goes with the question: a page that brings its own icon face
+    // (a Docara example frame, subset off, no plain-family face) draws it in
+    // that face, and the Loader answers for a glyph only when it can read its
+    // font (isIconDrawnByPageFace). Without it the admin menu's icons waited
+    // for the plain family's 6 s timer (GB20, 6.8 s on ui-doc.test and
+    // ui.simai.io); the Loader asks again while a page face is in
+    // (markPageFaceIcons).
+
+    const glyph = this.querySelector?.(":scope > i.sf-icon, :scope > .sf-badge-anchor > i.sf-icon") || null;
+    const loaded = this.isRegisteredGlyph || Boolean(tracked?.icon && loader?.isTrackedIconLoaded?.(tracked, glyph));
 
     if (loaded) {
       window.removeEventListener("sf-icons-subset:ready", this.onIconSubsetReady);
@@ -1002,7 +1010,12 @@ class SfIcon extends IconElement {
   afterRender(changed) {
     const result = super.afterRender(changed);
     const glyph = this.querySelector(":scope > i.sf-icon, :scope > .sf-badge-anchor > i.sf-icon");
-    if (glyph && this.isRegisteredGlyph) glyph.removeAttribute("data-sf-icon-missing");else if (glyph && this.getProp("loaded")) (0,_core_js_icon_glyphs_js__WEBPACK_IMPORTED_MODULE_4__.checkIconGlyph)(glyph);
+    if (glyph && this.isRegisteredGlyph) glyph.removeAttribute("data-sf-icon-missing");else if (glyph && this.getProp("loaded")) (0,_core_js_icon_glyphs_js__WEBPACK_IMPORTED_MODULE_4__.checkIconGlyph)(glyph); // The first drawing gives the glyph the Loader reads a page face from
+    // (syncLoadedState): asked once more now that it is there.
+    else if (glyph && !this._askedWithGlyph) {
+      this._askedWithGlyph = true;
+      this.syncLoadedState();
+    }
     return result;
   } // Classes someone else put on the glyph stay through a re-render: the
   // template writes the whole class attribute, and Docara's icon runtime lost
@@ -1234,7 +1247,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-icon 
 /***/ "756bf22cb853"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.4.4","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"mirror":{"type":"enum","values":["auto","on","off"],"default":"auto"},"type":{"type":"enum","values":["","outlined"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.icon","tag":"sf-icon","version":"1.4.5","kind":"leaf","settings":{"icon":{"type":"icon","default":""},"filled":{"type":"boolean","default":false},"weight":{"type":"number","integer":true,"min":100,"max":700,"step":100,"default":400},"size":{"type":"enum","values":["","1/4","1/3","1/2","1","2","3","4","5","6","7"],"default":""},"mirror":{"type":"enum","values":["auto","on","off"],"default":"auto"},"type":{"type":"enum","values":["","outlined"],"default":""},"grade":{"type":"number","integer":true,"min":-50,"max":200,"default":0},"optical-size":{"type":"number","min":20,"max":48,"default":24},"label":{"type":"string","default":""},"badge-count":{"type":"string","default":""},"badge-dot":{"type":"boolean","default":false},"badge-cap":{"type":"number","integer":true,"min":1,"default":99},"badge-label":{"type":"string","default":""}},"values":{"loaded":{"type":"boolean","default":false}},"events":{},"actions":{},"css-variables":{"--sf-icon-color":{"type":"color","state":"default"},"--sf-icon-glyph-size":{"type":"length","state":"default"},"--sf-icon-weight":{"type":"number","state":"default"},"--sf-icon-fill":{"type":"number","state":"default"},"--sf-icon-line-height":{"type":"number","state":"default"}}}');
 
 /***/ },
 

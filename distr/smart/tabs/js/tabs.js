@@ -235,6 +235,280 @@ function sizeStep(size) {
 
 /***/ },
 
+/***/ "cbcfcde04d12"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   COARSE_QUERY: () => (/* binding */ COARSE_QUERY),
+/* harmony export */   LAYOUTS: () => (/* binding */ LAYOUTS),
+/* harmony export */   PHONE_BELOW: () => (/* binding */ PHONE_BELOW),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   devicesOf: () => (/* binding */ devicesOf),
+/* harmony export */   inLayout: () => (/* binding */ inLayout),
+/* harmony export */   itemsInLayout: () => (/* binding */ itemsInLayout),
+/* harmony export */   layoutOf: () => (/* binding */ layoutOf),
+/* harmony export */   layoutOfWidth: () => (/* binding */ layoutOfWidth),
+/* harmony export */   layoutPlace: () => (/* binding */ layoutPlace),
+/* harmony export */   markDevices: () => (/* binding */ markDevices),
+/* harmony export */   markPageLayout: () => (/* binding */ markPageLayout),
+/* harmony export */   pointerKind: () => (/* binding */ pointerKind),
+/* harmony export */   watchLayout: () => (/* binding */ watchLayout),
+/* harmony export */   watchPointer: () => (/* binding */ watchPointer)
+/* harmony export */ });
+// Device scope (study S-A, decision q-7097831f9f option 2, 2026-11-24; the
+// Touch screens page, docs/foundation-touch-screens.md). Two separate facts,
+// one word each, so no component measures them in a copy of its own:
+//
+//   layout   'phone' when the component's place is narrower than
+//            PHONE_BELOW (600 px), else 'desktop'. It decides which items a
+//            component shows: an item that carries `devices` is shown only in
+//            the layouts it names, and hidden -- not disabled -- in the other.
+//   pointer  'coarse' when the page has a touch pointer and no fine one,
+//            else 'fine'. It decides gestures and what replaces hover (a
+//            check box always shown, a hit area of 44).
+//
+// A tablet with a keyboard is a coarse pointer in a desktop layout; a narrow
+// desktop window a fine pointer in a phone layout. The two words never stand
+// for each other.
+//
+// The place is the nearest size container (an ancestor with a
+// `container-type`), as a container query reads it; without one, the page.
+// 600 is the width the View layouts already switch at (sf-view-board,
+// sf-view-calendar, the view head); it is not a step of the size scale
+// (C181 (2) pending), recorded on the page as a known gap.
+//
+// Marks: an author marks any item -- a setting, a menu item, a tab, a column
+// -- with `devices: ['phone']` or `devices: ['desktop']`; a component marks
+// its own items it knows are bound to a layout (markDevices). The author's
+// mark wins: a component's mark fills only an item that has none.
+
+/** Below this width (px) of its place a component draws its phone layout. */
+const PHONE_BELOW = 600;
+/** The layouts an item may name in `devices`. */
+
+const LAYOUTS = Object.freeze(['phone', 'desktop']);
+/** The coarse-pointer media query: a touch pointer and no fine one. */
+
+const COARSE_QUERY = '(pointer: coarse) and (not (any-pointer: fine))';
+const KNOWN = new Set(LAYOUTS);
+/** The layout of a width: 'phone' below PHONE_BELOW, else 'desktop'. */
+
+function layoutOfWidth(width) {
+  return Number.isFinite(width) && width > 0 && width < PHONE_BELOW ? 'phone' : 'desktop';
+}
+/**
+ * The box whose width decides an element's layout: the element itself or its
+ * nearest ancestor that is a size container, else null (the page).
+ */
+
+function layoutPlace(element) {
+  const view = element?.ownerDocument?.defaultView ?? globalThis;
+
+  for (let node = element instanceof Element ? element : null; node; node = node.parentElement ?? node.getRootNode?.()?.host ?? null) {
+    const type = view.getComputedStyle?.(node)?.containerType ?? '';
+    if (type && type !== 'normal') return node;
+  }
+
+  return null;
+}
+
+function placeWidth(element) {
+  const place = layoutPlace(element);
+  if (place) return place.getBoundingClientRect().width;
+  const doc = element?.ownerDocument ?? globalThis.document;
+  return doc?.documentElement?.clientWidth || globalThis.innerWidth || 0;
+}
+/**
+ * The layout an element is drawn in: 'phone' or 'desktop'. A number is read
+ * as a width; a written word ('phone' | 'desktop') is taken as given, so a
+ * host that knows its own layout says it.
+ */
+
+
+function layoutOf(target) {
+  if (KNOWN.has(target)) return target;
+  if (typeof target === 'number') return layoutOfWidth(target);
+  return layoutOfWidth(placeWidth(target));
+}
+/**
+ * Follows an element's layout: calls back with the new word when it changes
+ * (not at once). Returns stop(). Without ResizeObserver it follows the page.
+ */
+
+function watchLayout(element, callback) {
+  let last = layoutOf(element);
+
+  const check = () => {
+    const now = layoutOf(element);
+    if (now === last) return;
+    last = now;
+    callback(now);
+  };
+
+  const place = layoutPlace(element);
+  const view = element?.ownerDocument?.defaultView ?? globalThis;
+
+  if (place && typeof view.ResizeObserver === 'function') {
+    const observer = new view.ResizeObserver(check);
+    observer.observe(place);
+    return () => observer.disconnect();
+  }
+
+  view.addEventListener?.('resize', check);
+  return () => view.removeEventListener?.('resize', check);
+}
+/** The page's pointer: 'coarse' (touch, no fine pointer) or 'fine'. */
+
+function pointerKind(view = globalThis) {
+  return typeof view?.matchMedia === 'function' && view.matchMedia(COARSE_QUERY).matches ? 'coarse' : 'fine';
+}
+/** Follows the page's pointer word; returns stop(). */
+
+function watchPointer(callback, view = globalThis) {
+  const media = typeof view?.matchMedia === 'function' ? view.matchMedia(COARSE_QUERY) : null;
+  if (!media) return () => {};
+
+  const listener = () => callback(media.matches ? 'coarse' : 'fine');
+
+  media.addEventListener?.('change', listener);
+  return () => media.removeEventListener?.('change', listener);
+}
+/**
+ * The layouts an item is scoped to, or null (every layout). Unknown words are
+ * dropped; a list with no known word is no scope.
+ */
+
+function devicesOf(item) {
+  const list = Array.isArray(item?.devices) ? item.devices : typeof item?.devices === 'string' ? item.devices.split(/[\s,]+/u) : null;
+  if (!list) return null;
+  const known = [...new Set(list.filter(word => KNOWN.has(word)))];
+  return known.length ? known : null;
+}
+/** Whether an item is shown in a layout: unscoped, or scoped to it. */
+
+function inLayout(item, layout) {
+  const scope = devicesOf(item);
+  return !scope || scope.includes(KNOWN.has(layout) ? layout : 'desktop');
+}
+/**
+ * The items shown in a layout, nested lists (`items`, and `options` when
+ * `options: true`) filtered the same way. The items are not copied unless a
+ * nested list changes.
+ */
+
+function itemsInLayout(items, layout, {
+  options = false
+} = {}) {
+  if (!Array.isArray(items)) return [];
+  const out = [];
+
+  for (const item of items) {
+    if (!inLayout(item, layout)) continue;
+
+    if (!item || typeof item !== 'object') {
+      out.push(item);
+      continue;
+    }
+
+    let next = item;
+
+    if (Array.isArray(item.items)) {
+      const inner = itemsInLayout(item.items, layout, {
+        options
+      });
+      if (inner.length !== item.items.length || inner.some((one, at) => one !== item.items[at])) next = { ...next,
+        items: inner
+      };
+    }
+
+    if (options && Array.isArray(item.options)) {
+      const inner = item.options.filter(option => inLayout(option, layout));
+      if (inner.length !== item.options.length) next = { ...next,
+        options: inner
+      };
+    }
+
+    out.push(next);
+  }
+
+  return out;
+}
+/**
+ * A component's own marks over an author's items: `marks` maps an item id to
+ * its layouts (['desktop'] for a table-only setting). An item that carries
+ * its own `devices` keeps it -- the author's mark wins; nested `items` are
+ * marked the same way. Returns new items; the given ones are not changed.
+ */
+
+function markDevices(items, marks = {}) {
+  if (!Array.isArray(items)) return [];
+  const table = marks instanceof Map ? marks : new Map(Object.entries(marks ?? {}));
+  return items.map(item => {
+    if (!item || typeof item !== 'object') return item;
+    let next = item;
+    const own = Object.hasOwn(item, 'devices') && item.devices !== undefined && item.devices !== null;
+    if (!own && item.id !== undefined && table.has(String(item.id))) next = { ...next,
+      devices: [...table.get(String(item.id))]
+    };
+    if (Array.isArray(item.items)) next = { ...next,
+      items: markDevices(item.items, table)
+    };
+    return next;
+  });
+}
+const Device = Object.freeze({
+  PHONE_BELOW,
+  LAYOUTS,
+  COARSE_QUERY,
+  layoutOf,
+  layoutOfWidth,
+  layoutPlace,
+  watchLayout,
+  pointer: pointerKind,
+  watchPointer,
+  devicesOf,
+  inLayout,
+  itemsInLayout,
+  markDevices
+}); // Core publishes the helper; a component bundle that carries its own copy
+// reuses an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.device) globalThis.SF.device = Device;
+} // The page's layout word on <html> (data-sf-layout="phone" | "desktop"),
+// written while core boots and followed on resize (DEV answer 3 on group
+// build 20): static first-paint markup printed at one width carries its
+// items' scope (data-sf-devices), and core.styles hides the other layout's
+// items by this word until their element draws -- the signal's own width,
+// PHONE_BELOW of the page, not a width rule of the sheets. One mark per
+// page: a second copy of this module finds it and leaves it.
+
+
+const LAYOUT_MARK = Symbol.for('sf.device.page-layout');
+function markPageLayout(doc = globalThis.document) {
+  const root = doc?.documentElement;
+  const view = doc?.defaultView; // One mark per page, kept on the document under a registry symbol: every
+  // bundle carries its own copy of this module, the document is shared.
+
+  if (!root || !view || doc[LAYOUT_MARK]) return;
+  doc[LAYOUT_MARK] = true;
+
+  const write = () => {
+    const word = layoutOfWidth(root.clientWidth || view.innerWidth || 0);
+    if (root.getAttribute('data-sf-layout') !== word) root.setAttribute('data-sf-layout', word);
+  };
+
+  write();
+  view.addEventListener?.('resize', write, {
+    passive: true
+  });
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Device);
+
+/***/ },
+
 /***/ "8d229b7c92e9"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1398,17 +1672,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("2db3a835ac11");
 /* harmony import */ var _core_js_menu_open_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("8d229b7c92e9");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("795a53b0bbe9");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("84d032c55810");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("51b106697124");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("c74d9c9cd2e0");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__]);
-([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_device_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("cbcfcde04d12");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("795a53b0bbe9");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("84d032c55810");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("51b106697124");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("c74d9c9cd2e0");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_11__]);
+([lit__WEBPACK_IMPORTED_MODULE_0__, _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_11__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_js_deprecations__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations__WEBPACK_IMPORTED_MODULE_7__);
+
 
 
 
@@ -1432,11 +1708,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // actions answer outcomes, and the old event name sf-tab-change is a dated
 // alias of sf-tabs-change.
 
-const TabsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
+const TabsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_1___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_14__.files,
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_12__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_13__,
   // setData(data, reason) and setPanels(panels, reason) take their fields in
   // order; the runtime gives them the object form of §4.4 as well.
   positional: ['set-data', 'set-panels']
@@ -1943,6 +2219,12 @@ class SfTabs extends TabsElement {
     }
 
     this.watchPlace();
+    this._deviceLayout = (0,_core_js_device_js__WEBPACK_IMPORTED_MODULE_10__.layoutOf)(this);
+    this._stopLayout?.();
+    this._stopLayout = (0,_core_js_device_js__WEBPACK_IMPORTED_MODULE_10__.watchLayout)(this, now => {
+      this._deviceLayout = now;
+      this.requestComponentUpdate('layout');
+    });
     super.connectedCallback?.(); // The address is read again when it changes (Back, Forward, a link to
     // #<id> on the page); the listener answers only with hash on.
 
@@ -1957,6 +2239,8 @@ class SfTabs extends TabsElement {
   }
 
   disconnectedCallback() {
+    this._stopLayout?.();
+    this._stopLayout = null;
     this._narrowMedia?.removeEventListener?.('change', this._onNarrow);
     this._narrowMedia = null;
     this._placeObserver?.disconnect();
@@ -2082,6 +2366,14 @@ class SfTabs extends TabsElement {
     const loose = this._pagePanels.filter(panel => !panel.hasAttribute('data-entry'));
 
     return loose[index] ?? null;
+  } // The label a page panel carries for its tab (aria-label), or none.
+
+
+  pagePanelLabel(key, index) {
+    const panel = this.pagePanelFor({
+      key
+    }, index);
+    return String(panel?.getAttribute('aria-label') ?? '').trim();
   } // Manual activation over deferred panels (§7.2.1): a panel holding a part
   // that starts later is opened by Enter or Space, never by the arrows alone.
 
@@ -2283,9 +2575,11 @@ class SfTabs extends TabsElement {
       const own = String(item.id ?? item.key ?? index);
       const errors = Number(this._errors?.has(own) ? this._errors.get(own) : item.errors);
       return { ...item,
-        // A tab without a label is named in the page's language (R184 T14:
-        // the English «Tab N» on every page).
-        label: item.label || this.sfWord('tab', {
+        // A tab without a label takes its page panel's aria-label (1.6.0: a
+        // server prints <div role="tabpanel" aria-label="…"> per tab and no
+        // items, Docara's :::tabs), else is named in the page's language
+        // (R184 T14: the English «Tab N» on every page).
+        label: item.label || this.pagePanelLabel?.(own, index) || this.sfWord('tab', {
           vars: {
             n: index + 1
           }
@@ -2655,11 +2949,23 @@ class SfTabs extends TabsElement {
   } // The tabs as the person arranged them: in their order, without the hidden
   // ones -- except the active one, which is shown in place while it is active,
   // so a panel never stands without its tab.
+  //
+  // A tab that carries `devices` (study S-A, Touch screens rule 4) is shown
+  // only in the layouts it names -- the layout of the tabs' place, core's
+  // word (phone below 600 px) -- and, like a hidden one, stays in place while
+  // it is the active tab.
 
 
   get displayItems() {
     const hidden = new Set(this._settings.hidden);
-    return this.arrangedItems.filter(item => item.pinned || item.selected || !hidden.has(item.key));
+    const layout = this.deviceLayout;
+    return this.arrangedItems.filter(item => item.selected || (item.pinned || !hidden.has(item.key)) && (0,_core_js_device_js__WEBPACK_IMPORTED_MODULE_10__.inLayout)(item, layout));
+  } // The layout the tabs are shown for, 'phone' or 'desktop' (core
+  // SF.device.layoutOf), followed while connected.
+
+
+  get deviceLayout() {
+    return this._deviceLayout || 'desktop';
   } // The arrangement as the settings list shows it: every tab, in order.
   // Pinned tabs stay first, in their declared order, whatever the stored
   // order says: the person arranges the others after them (docs trial 5: a
@@ -3079,7 +3385,7 @@ class SfTabs extends TabsElement {
       if (text) text.after(badge);else button.append(badge);
     }
 
-    badge.className = `${(0,_js_templates_default__WEBPACK_IMPORTED_MODULE_10__.errorBadgeClasses)(errors)} sf-tabs-more-errors`;
+    badge.className = `${(0,_js_templates_default__WEBPACK_IMPORTED_MODULE_11__.errorBadgeClasses)(errors)} sf-tabs-more-errors`;
     badge.querySelector('.sf-badge-text').textContent = String(errors);
     return badge.getBoundingClientRect().width !== before;
   }
@@ -3272,7 +3578,7 @@ class SfTabs extends TabsElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_10__.renderTabsTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_11__.renderTabsTemplate)(this.templateContext());
   }
 
   get state() {
@@ -3613,10 +3919,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("2a080a730149");
 /* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("efa66f8927d1");
+/* harmony import */ var _core_js_device_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("cbcfcde04d12");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lit_directives_repeat_js__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 
@@ -3720,10 +4028,22 @@ function renderIconLink(item, context) {
       aria-current=${item.selected ? 'page' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       aria-disabled=${item.disabled ? 'true' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       data-sf-tab-index=${String(item.index)}
+        data-sf-devices=${devicesMark(item)}
       data-tab-label=${item.label}
       data-tooltip=${item.hint ? hintId(item, context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
     ><sf-icon root-class="pointer-events-none" icon=${item.iconStart || item.icon || item.iconEnd || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
       weight="400" aria-hidden="true"></sf-icon></a>`;
+} // A tab that carries `devices` says them on its button (data-sf-devices,
+// DEV answer 3 on group build 20): the element leaves the other layout's tabs
+// out when it draws, but static first-paint markup is printed at one width,
+// and core.styles hides a printed «desktop» tab below the phone layout
+// signal (SF.device PHONE_BELOW) and a printed «phone» tab above it until
+// the element draws. The selected tab is always drawn, so it is not marked.
+
+
+function devicesMark(item) {
+  const scope = item.selected ? null : (0,_core_js_device_js__WEBPACK_IMPORTED_MODULE_2__.devicesOf)(item);
+  return scope ? scope.join(' ') : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 } // A tab is marked data-sf-tab-index only (R193 DP-11): the unprefixed
 // data-tab, its former name, was written for one minor (1.2.x) and is not
 // written from 1.3.0 -- a page selector [data-tab] caught these buttons.
@@ -3742,6 +4062,7 @@ function renderTab(item, context) {
     return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`
       <span
         data-sf-tab-index=${String(item.index)}
+        data-sf-devices=${devicesMark(item)}
         role="tab"
         aria-label=${item.label}
         aria-selected=${item.selected ? 'true' : 'false'}
@@ -3785,6 +4106,7 @@ function renderTab(item, context) {
                   icon-end=${item.iconRight || lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                   root-class=${tabClasses(item)}
                   data-sf-tab-index=${String(item.index)}
+        data-sf-devices=${devicesMark(item)}
                   data-tooltip=${item.hint ? hintId(item, context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           >
               ${tabContent === lit__WEBPACK_IMPORTED_MODULE_0__.nothing ? counted : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span slot="text">${tabContent}</span>`}
@@ -3806,6 +4128,7 @@ function renderTab(item, context) {
                   data-tab-label=${item.label}
                   root-class=${tabClasses(item)}
                   data-sf-tab-index=${String(item.index)}
+        data-sf-devices=${devicesMark(item)}
                   data-tooltip=${item.hint ? hintId(item, context) : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
           >
           </sf-button-icon>
@@ -3973,7 +4296,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-tabs 
 /***/ "84d032c55810"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.5.6","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"fold":{"type":"enum","values":["auto","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.tabs","tag":"sf-tabs","version":"1.6.2","kind":"leaf","settings":{"type":{"type":"enum","values":["underline","pills","full","vertical"],"optional":true},"size":{"type":"enum","values":["1/2","1","2"],"default":"1"},"variant":{"type":"string","default":"buttons"},"scheme":{"type":"string","default":"default"},"top-position":{"type":"string","default":"start"},"active-index":{"type":"number","integer":true,"min":0,"default":0},"items":{"type":"list","default":[],"of":{"id":"id","label":"string","icon":{"type":"icon","optional":true},"count":{"type":"number","optional":true},"errors":{"type":"number","optional":true},"href":{"type":"string","optional":true},"disabled":{"type":"boolean","optional":true},"hint":{"type":"string","optional":true},"pinned":{"type":"boolean","optional":true},"devices":{"type":"list","optional":true}}},"top-class":{"type":"string","default":""},"panel-class":{"type":"string","default":""},"overflow":{"type":"enum","values":["scroll","wrap","more"],"default":"more"},"fit":{"type":"enum","values":["auto","always","never"],"default":"auto"},"fold":{"type":"enum","values":["auto","never"],"default":"auto"},"configurable":{"type":"boolean","default":false},"lazy":{"type":"boolean","default":false},"hash":{"type":"boolean","default":false},"sticky":{"type":"boolean","default":false},"settings":{"type":"object"}},"values":{"selected":{"type":"id","default":""}},"events":{"change":{"x-native":false,"carries":{"selected":"id","previous":"number","current":"number","item":"object","items":"list"}},"settings-change":{"carries":{"order":{"type":"list","schema":{"items":{"type":"string"}}},"hidden":{"type":"list","schema":{"items":{"type":"string"}}},"reason":{"type":"enum","values":["order","visibility"],"optional":true}},"own-verb":true},"settings-reset":{"carries":{},"own-verb":true}},"actions":{"set-data":{"with":{"data":"object","reason":{"type":"string","optional":true}}},"set-panels":{"with":{"panels":"list","reason":{"type":"string","optional":true}}},"go-to":{"with":{"index":"number"}},"go-to-error":{"with":{}}},"css-variables":{"--sf-tabs-color":{"type":"color","state":"default"},"--sf-tabs-indicator-color":{"type":"color","state":"selected"},"--sf-tabs-indicator-width":{"type":"length","state":"selected"},"--sf-tabs-border-color":{"type":"color","state":"default"},"--sf-tabs-border-width":{"type":"length","state":"default"},"--sf-tabs-gap":{"type":"length","state":"default"},"--sf-tabs-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

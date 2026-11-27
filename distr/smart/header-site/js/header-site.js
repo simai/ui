@@ -818,7 +818,13 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 const SLOTS = ['brand', 'nav', 'actions', 'tools', 'sheet'];
 const TAGS = ['sf-header-site', 'sf-site-header'];
-const SWITCH_OPERATIONS = ['toggle', 'open', 'close']; // A tool that is a setting of the page rather than a tool of the site: the
+const SWITCH_OPERATIONS = ['toggle', 'open', 'close']; // The tools that give way first under the bar's own fitting: sf-button
+// shrink="icon" (its glyph alone) and sf-language shrink="code" (its code and
+// arrow, no glyph; group build 20).
+
+const SHRINKING_TOOLS = '[shrink="icon"], sf-language[shrink="code"]'; // The steps fit lifts the bar's own fitting above (group build 20).
+
+const FIT_STEPS = ['sm', 'md', 'lg', 'xl']; // A tool that is a setting of the page rather than a tool of the site: the
 // language (sf-language) and the theme switch (any element with theme-switch).
 // On a collapsed bar these stand in the panel under the sections (C161 (8)).
 
@@ -1019,10 +1025,13 @@ class SfSiteHeader extends SiteHeaderElement {
   attributeChangedCallback(name, oldValue, newValue) {
     super.attributeChangedCallback(name, oldValue, newValue);
 
-    if (name === 'collapse' && oldValue !== newValue && this._isMounted) {
+    if ((name === 'collapse' || name === 'fit') && oldValue !== newValue && this._isMounted) {
       this._collapsedNow = undefined;
       this.setFit(0);
       this.watchCollapse();
+      if (!this.fitsRow) this.setToolsCompact(false);
+      this.observeParts();
+      this.queueFit();
     }
 
     if (name === 'sticky' && oldValue !== newValue && this._isMounted) this.watchScroll();
@@ -1060,6 +1069,15 @@ class SfSiteHeader extends SiteHeaderElement {
 
   collapsedAnswerStale() {
     return this._collapsedNow === undefined || this._collapsedRow !== this.collapseRow() || this._collapsedStep !== this.collapse || this._collapsedMenusDefined !== this.navMenusDefined();
+  } // The bar fits its own row (C371, C372): collapse auto at every width, or a
+  // collapse step with fit (group build 20, the docs header): below the step
+  // the sheet collapses the bar as it always did -- the menu button and its
+  // panel -- and from the step up the bar fits its row as auto does.
+
+
+  get fitsRow() {
+    if (this.collapse === 'auto') return true;
+    return Boolean(this.fit) && FIT_STEPS.includes(this.collapse);
   }
 
   navMenusDefined() {
@@ -1086,7 +1104,7 @@ class SfSiteHeader extends SiteHeaderElement {
     if (!header || header === this._observedHeader || typeof ResizeObserver === 'undefined') return;
     this._sizeObserver?.disconnect();
     this._sizeObserver = new ResizeObserver(() => {
-      if (this.collapse === 'auto') {
+      if (this.fitsRow) {
         this.fitRow();
         return;
       }
@@ -1105,7 +1123,7 @@ class SfSiteHeader extends SiteHeaderElement {
 
 
   observeParts() {
-    if (!this._sizeObserver || this.collapse !== 'auto') return;
+    if (!this._sizeObserver || !this.fitsRow) return;
     const header = this.header();
 
     for (const part of header?.querySelectorAll(':scope > .sf-site-header-row > :is(.sf-site-header-brand, .sf-site-header-tools)') ?? []) {
@@ -1185,7 +1203,7 @@ class SfSiteHeader extends SiteHeaderElement {
   }
 
   syncFit() {
-    if (this.collapse === 'auto') {
+    if (this.fitsRow) {
       this.fitRow();
       return;
     }
@@ -1237,19 +1255,27 @@ class SfSiteHeader extends SiteHeaderElement {
 
 
   drivesRow(menu) {
-    return this.collapse === 'auto' && !this.collapsed && this.navMenus().includes(menu);
+    return this.fitsRow && !this.collapsed && this.navMenus().includes(menu);
   }
 
   shrinkingTools() {
     const tools = this.header()?.querySelector(':scope > .sf-site-header-row > .sf-site-header-tools');
-    return tools ? Array.from(tools.querySelectorAll('[shrink="icon"]')) : [];
+    return tools ? Array.from(tools.querySelectorAll(SHRINKING_TOOLS)) : [];
   }
 
   setToolsCompact(compact) {
-    for (const tool of this.shrinkingTools()) {
-      if (compact) tool.setAttribute('data-shrunk', 'true');else tool.removeAttribute('data-shrunk');
-    }
+    this.setToolsShrunk(compact ? this.shrinkingTools().length : 0);
+  } // The first `count` tools that can shrink are shrunk, in the page's order
+  // (group build 20): the row gives up only as much as it needs -- the docs
+  // header at 1440 shrinks its search and keeps the language whole when that
+  // is enough for every section. data-tools-compact says one is.
 
+
+  setToolsShrunk(count) {
+    this.shrinkingTools().forEach((tool, index) => {
+      if (index < count) tool.setAttribute('data-shrunk', 'true');else tool.removeAttribute('data-shrunk');
+    });
+    const compact = count > 0;
     if (compact === this._toolsCompact) return;
     this._toolsCompact = compact;
     this.sfHostState('data-tools-compact', compact);
@@ -1282,7 +1308,7 @@ class SfSiteHeader extends SiteHeaderElement {
   }
 
   fitRow() {
-    if (this.collapse !== 'auto' || this._fitting || typeof document === 'undefined') return;
+    if (!this.fitsRow || this._fitting || typeof document === 'undefined') return;
     const header = this.header();
     const row = header?.querySelector(':scope > .sf-site-header-row');
     if (!row) return;
@@ -1333,44 +1359,72 @@ class SfSiteHeader extends SiteHeaderElement {
     const tools = row.querySelector(':scope > .sf-site-header-tools');
     const parts = [brand, nav, actions, tools].filter(part => part && part.getClientRects().length);
     const besides = width(brand) + width(actions) + gap * Math.max(0, parts.length - 1);
-    const toolsNow = width(tools);
-    let whole = 0;
-    let glyph = 0;
+    const toolsNow = width(tools); // Each shrinking tool's width whole and shrunk, and the tools' row
+    // without them as they are drawn now.
+
+    const sizes = [];
+    let drawnNow = 0;
 
     for (const tool of this.shrinkingTools()) {
+      // A tool that knows its own boxes says them (sf-language: its trigger
+      // whole and without its glyph, read while whole); an sf-button's glyph
+      // is a square of its height.
+      // An sf-language whose code has not come yet is counted whole either
+      // way; its trigger's own boxes come with its first drawing, which the
+      // bar sees (the tools are watched) and decides the row again.
       const box = tool.querySelector(':scope > :is(button, a)') ?? tool;
-      const drawn = {
+      const own = typeof tool.shrinkBoxes === 'function' ? tool.shrinkBoxes() : tool.localName === 'sf-language' ? {
+        width: (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.layoutWidth)(box),
+        shrunk: (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.layoutWidth)(box)
+      } : null;
+      const shrunkNow = tool.getAttribute('data-shrunk') === 'true';
+      const drawn = own ? {
+        width: own.width,
+        height: own.shrunk
+      } : {
         width: (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.layoutWidth)(box),
         height: (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_3__.layoutHeight)(box)
       };
-      if (!this._toolsCompact) this._wholeWidths.set(tool, drawn.width);
-      whole += this._wholeWidths.get(tool) ?? drawn.width;
-      glyph += this._toolsCompact ? drawn.width : drawn.height;
+      if (!shrunkNow) this._wholeWidths.set(tool, drawn.width);
+      sizes.push({
+        whole: this._wholeWidths.get(tool) ?? drawn.width,
+        glyph: shrunkNow ? drawn.width : drawn.height
+      });
+      drawnNow += drawn.width;
     }
 
-    const shrinks = this.shrinkingTools().length > 0;
-    const toolsWhole = this._toolsCompact ? toolsNow - glyph + whole : toolsNow;
-    const toolsGlyph = this._toolsCompact ? toolsNow : toolsNow - whole + glyph;
+    const count = sizes.length; // The tools' row with the first k shrunk.
+
+    const toolsWith = k => toolsNow - drawnNow + sizes.reduce((sum, size, index) => sum + (index < k ? size.glyph : size.whole), 0);
+
+    const roomWith = k => room - besides - toolsWith(k);
 
     if (!nav || !nav.firstElementChild) {
-      this.setToolsCompact(shrinks && besides + toolsWhole > room + 0.5);
+      let k = 0;
+
+      while (k < count && besides + toolsWith(k) > room + 0.5) k += 1;
+
+      this.setToolsShrunk(k);
       return;
     }
 
     const needs = this.navNeeds(nav);
-    if (!needs) return;
-    const roomWhole = room - besides - toolsWhole;
-    const roomGlyph = room - besides - toolsGlyph;
+    if (!needs) return; // The fewest tools shrunk with every section in the row; else all of
+    // them, and the sections give way into «Ещё».
 
-    if (needs.whole <= roomWhole + 0.5) {
-      this.setToolsCompact(false);
-    } else if (needs.least <= (shrinks ? roomGlyph : roomWhole) + 0.5) {
-      this.setToolsCompact(shrinks);
+    let k = 0;
+
+    while (k < count && needs.whole > roomWith(k) + 0.5) k += 1;
+
+    if (needs.whole <= roomWith(k) + 0.5) {
+      this.setToolsShrunk(k);
+    } else if (needs.least <= roomWith(count) + 0.5) {
+      this.setToolsShrunk(count);
     } else {
       // Not even one section beside «Ещё»: the menu button and the panel,
       // until the row is as wide as that row needs.
-      this.setToolsCompact(shrinks);
-      this.setFit(Math.ceil(room + needs.least - (shrinks ? roomGlyph : roomWhole)) + 1);
+      this.setToolsShrunk(count);
+      this.setFit(Math.ceil(room + needs.least - roomWith(count)) + 1);
       this.syncCollapsed();
       return;
     } // The nav has its room now (the tools' state is drawn by the sheet at
@@ -1849,7 +1903,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-heade
 /***/ "3b2d3ad548e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-site","tag":"sf-header-site","version":"1.16.0","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","auto","always"],"default":"lg"},"menu-placement":{"type":"enum","values":["inline-start","inline-end"],"default":"inline-start"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"navigation-align":{"type":"enum","values":["start","center"],"default":"start"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean","data-scrolled":"boolean","data-nav-overflow":"boolean","data-tools-compact":"boolean","data-fitted":"boolean"},"css-variables":{"--sf-site-header-background-color":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-tools-gap":{"type":"length","state":"default"},"--sf-site-header-brand-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.header-site","tag":"sf-header-site","version":"1.17.0","kind":"leaf","settings":{"collapse":{"type":"enum","values":["none","sm","md","lg","xl","auto","always"],"default":"lg"},"fit":{"type":"boolean","default":false},"menu-placement":{"type":"enum","values":["inline-start","inline-end"],"default":"inline-start"},"sticky":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"navigation-align":{"type":"enum","values":["start","center"],"default":"start"},"label":{"type":"string","default-from":"runtime.label"},"menu-label":{"type":"string","default-from":"runtime.menu-label"},"close-label":{"type":"string","default-from":"runtime.close-label"}},"values":{},"events":{"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"open":{},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"toggle":{}},"layer":{"kind":"panel","locks-page":true,"traps-focus":true},"host-states":{"data-open":"boolean","data-collapsed":"boolean","data-scrolled":"boolean","data-nav-overflow":"boolean","data-tools-compact":"boolean","data-fitted":"boolean"},"css-variables":{"--sf-site-header-background-color":{"type":"color","state":"default"},"--sf-site-header-color":{"type":"color","state":"default"},"--sf-site-header-border-color":{"type":"color","state":"default"},"--sf-site-header-block-size":{"type":"length","state":"default"},"--sf-site-header-gap":{"type":"length","state":"default"},"--sf-site-header-tools-gap":{"type":"length","state":"default"},"--sf-site-header-brand-gap":{"type":"length","state":"default"},"--sf-site-header-brand-size":{"type":"length","state":"default"},"--sf-site-header-sheet-inline-size":{"type":"length","state":"open"},"--sf-site-header-z-index":{"type":"number","state":"default"}}}');
 
 /***/ },
 

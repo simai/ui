@@ -483,6 +483,280 @@ function sizeStep(size) {
 
 /***/ },
 
+/***/ "cbcfcde04d12"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   COARSE_QUERY: () => (/* binding */ COARSE_QUERY),
+/* harmony export */   LAYOUTS: () => (/* binding */ LAYOUTS),
+/* harmony export */   PHONE_BELOW: () => (/* binding */ PHONE_BELOW),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   devicesOf: () => (/* binding */ devicesOf),
+/* harmony export */   inLayout: () => (/* binding */ inLayout),
+/* harmony export */   itemsInLayout: () => (/* binding */ itemsInLayout),
+/* harmony export */   layoutOf: () => (/* binding */ layoutOf),
+/* harmony export */   layoutOfWidth: () => (/* binding */ layoutOfWidth),
+/* harmony export */   layoutPlace: () => (/* binding */ layoutPlace),
+/* harmony export */   markDevices: () => (/* binding */ markDevices),
+/* harmony export */   markPageLayout: () => (/* binding */ markPageLayout),
+/* harmony export */   pointerKind: () => (/* binding */ pointerKind),
+/* harmony export */   watchLayout: () => (/* binding */ watchLayout),
+/* harmony export */   watchPointer: () => (/* binding */ watchPointer)
+/* harmony export */ });
+// Device scope (study S-A, decision q-7097831f9f option 2, 2026-11-24; the
+// Touch screens page, docs/foundation-touch-screens.md). Two separate facts,
+// one word each, so no component measures them in a copy of its own:
+//
+//   layout   'phone' when the component's place is narrower than
+//            PHONE_BELOW (600 px), else 'desktop'. It decides which items a
+//            component shows: an item that carries `devices` is shown only in
+//            the layouts it names, and hidden -- not disabled -- in the other.
+//   pointer  'coarse' when the page has a touch pointer and no fine one,
+//            else 'fine'. It decides gestures and what replaces hover (a
+//            check box always shown, a hit area of 44).
+//
+// A tablet with a keyboard is a coarse pointer in a desktop layout; a narrow
+// desktop window a fine pointer in a phone layout. The two words never stand
+// for each other.
+//
+// The place is the nearest size container (an ancestor with a
+// `container-type`), as a container query reads it; without one, the page.
+// 600 is the width the View layouts already switch at (sf-view-board,
+// sf-view-calendar, the view head); it is not a step of the size scale
+// (C181 (2) pending), recorded on the page as a known gap.
+//
+// Marks: an author marks any item -- a setting, a menu item, a tab, a column
+// -- with `devices: ['phone']` or `devices: ['desktop']`; a component marks
+// its own items it knows are bound to a layout (markDevices). The author's
+// mark wins: a component's mark fills only an item that has none.
+
+/** Below this width (px) of its place a component draws its phone layout. */
+const PHONE_BELOW = 600;
+/** The layouts an item may name in `devices`. */
+
+const LAYOUTS = Object.freeze(['phone', 'desktop']);
+/** The coarse-pointer media query: a touch pointer and no fine one. */
+
+const COARSE_QUERY = '(pointer: coarse) and (not (any-pointer: fine))';
+const KNOWN = new Set(LAYOUTS);
+/** The layout of a width: 'phone' below PHONE_BELOW, else 'desktop'. */
+
+function layoutOfWidth(width) {
+  return Number.isFinite(width) && width > 0 && width < PHONE_BELOW ? 'phone' : 'desktop';
+}
+/**
+ * The box whose width decides an element's layout: the element itself or its
+ * nearest ancestor that is a size container, else null (the page).
+ */
+
+function layoutPlace(element) {
+  const view = element?.ownerDocument?.defaultView ?? globalThis;
+
+  for (let node = element instanceof Element ? element : null; node; node = node.parentElement ?? node.getRootNode?.()?.host ?? null) {
+    const type = view.getComputedStyle?.(node)?.containerType ?? '';
+    if (type && type !== 'normal') return node;
+  }
+
+  return null;
+}
+
+function placeWidth(element) {
+  const place = layoutPlace(element);
+  if (place) return place.getBoundingClientRect().width;
+  const doc = element?.ownerDocument ?? globalThis.document;
+  return doc?.documentElement?.clientWidth || globalThis.innerWidth || 0;
+}
+/**
+ * The layout an element is drawn in: 'phone' or 'desktop'. A number is read
+ * as a width; a written word ('phone' | 'desktop') is taken as given, so a
+ * host that knows its own layout says it.
+ */
+
+
+function layoutOf(target) {
+  if (KNOWN.has(target)) return target;
+  if (typeof target === 'number') return layoutOfWidth(target);
+  return layoutOfWidth(placeWidth(target));
+}
+/**
+ * Follows an element's layout: calls back with the new word when it changes
+ * (not at once). Returns stop(). Without ResizeObserver it follows the page.
+ */
+
+function watchLayout(element, callback) {
+  let last = layoutOf(element);
+
+  const check = () => {
+    const now = layoutOf(element);
+    if (now === last) return;
+    last = now;
+    callback(now);
+  };
+
+  const place = layoutPlace(element);
+  const view = element?.ownerDocument?.defaultView ?? globalThis;
+
+  if (place && typeof view.ResizeObserver === 'function') {
+    const observer = new view.ResizeObserver(check);
+    observer.observe(place);
+    return () => observer.disconnect();
+  }
+
+  view.addEventListener?.('resize', check);
+  return () => view.removeEventListener?.('resize', check);
+}
+/** The page's pointer: 'coarse' (touch, no fine pointer) or 'fine'. */
+
+function pointerKind(view = globalThis) {
+  return typeof view?.matchMedia === 'function' && view.matchMedia(COARSE_QUERY).matches ? 'coarse' : 'fine';
+}
+/** Follows the page's pointer word; returns stop(). */
+
+function watchPointer(callback, view = globalThis) {
+  const media = typeof view?.matchMedia === 'function' ? view.matchMedia(COARSE_QUERY) : null;
+  if (!media) return () => {};
+
+  const listener = () => callback(media.matches ? 'coarse' : 'fine');
+
+  media.addEventListener?.('change', listener);
+  return () => media.removeEventListener?.('change', listener);
+}
+/**
+ * The layouts an item is scoped to, or null (every layout). Unknown words are
+ * dropped; a list with no known word is no scope.
+ */
+
+function devicesOf(item) {
+  const list = Array.isArray(item?.devices) ? item.devices : typeof item?.devices === 'string' ? item.devices.split(/[\s,]+/u) : null;
+  if (!list) return null;
+  const known = [...new Set(list.filter(word => KNOWN.has(word)))];
+  return known.length ? known : null;
+}
+/** Whether an item is shown in a layout: unscoped, or scoped to it. */
+
+function inLayout(item, layout) {
+  const scope = devicesOf(item);
+  return !scope || scope.includes(KNOWN.has(layout) ? layout : 'desktop');
+}
+/**
+ * The items shown in a layout, nested lists (`items`, and `options` when
+ * `options: true`) filtered the same way. The items are not copied unless a
+ * nested list changes.
+ */
+
+function itemsInLayout(items, layout, {
+  options = false
+} = {}) {
+  if (!Array.isArray(items)) return [];
+  const out = [];
+
+  for (const item of items) {
+    if (!inLayout(item, layout)) continue;
+
+    if (!item || typeof item !== 'object') {
+      out.push(item);
+      continue;
+    }
+
+    let next = item;
+
+    if (Array.isArray(item.items)) {
+      const inner = itemsInLayout(item.items, layout, {
+        options
+      });
+      if (inner.length !== item.items.length || inner.some((one, at) => one !== item.items[at])) next = { ...next,
+        items: inner
+      };
+    }
+
+    if (options && Array.isArray(item.options)) {
+      const inner = item.options.filter(option => inLayout(option, layout));
+      if (inner.length !== item.options.length) next = { ...next,
+        options: inner
+      };
+    }
+
+    out.push(next);
+  }
+
+  return out;
+}
+/**
+ * A component's own marks over an author's items: `marks` maps an item id to
+ * its layouts (['desktop'] for a table-only setting). An item that carries
+ * its own `devices` keeps it -- the author's mark wins; nested `items` are
+ * marked the same way. Returns new items; the given ones are not changed.
+ */
+
+function markDevices(items, marks = {}) {
+  if (!Array.isArray(items)) return [];
+  const table = marks instanceof Map ? marks : new Map(Object.entries(marks ?? {}));
+  return items.map(item => {
+    if (!item || typeof item !== 'object') return item;
+    let next = item;
+    const own = Object.hasOwn(item, 'devices') && item.devices !== undefined && item.devices !== null;
+    if (!own && item.id !== undefined && table.has(String(item.id))) next = { ...next,
+      devices: [...table.get(String(item.id))]
+    };
+    if (Array.isArray(item.items)) next = { ...next,
+      items: markDevices(item.items, table)
+    };
+    return next;
+  });
+}
+const Device = Object.freeze({
+  PHONE_BELOW,
+  LAYOUTS,
+  COARSE_QUERY,
+  layoutOf,
+  layoutOfWidth,
+  layoutPlace,
+  watchLayout,
+  pointer: pointerKind,
+  watchPointer,
+  devicesOf,
+  inLayout,
+  itemsInLayout,
+  markDevices
+}); // Core publishes the helper; a component bundle that carries its own copy
+// reuses an already published one instead of replacing it.
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SF = globalThis.SF || {};
+  if (!globalThis.SF.device) globalThis.SF.device = Device;
+} // The page's layout word on <html> (data-sf-layout="phone" | "desktop"),
+// written while core boots and followed on resize (DEV answer 3 on group
+// build 20): static first-paint markup printed at one width carries its
+// items' scope (data-sf-devices), and core.styles hides the other layout's
+// items by this word until their element draws -- the signal's own width,
+// PHONE_BELOW of the page, not a width rule of the sheets. One mark per
+// page: a second copy of this module finds it and leaves it.
+
+
+const LAYOUT_MARK = Symbol.for('sf.device.page-layout');
+function markPageLayout(doc = globalThis.document) {
+  const root = doc?.documentElement;
+  const view = doc?.defaultView; // One mark per page, kept on the document under a registry symbol: every
+  // bundle carries its own copy of this module, the document is shared.
+
+  if (!root || !view || doc[LAYOUT_MARK]) return;
+  doc[LAYOUT_MARK] = true;
+
+  const write = () => {
+    const word = layoutOfWidth(root.clientWidth || view.innerWidth || 0);
+    if (root.getAttribute('data-sf-layout') !== word) root.setAttribute('data-sf-layout', word);
+  };
+
+  write();
+  view.addEventListener?.('resize', write, {
+    passive: true
+  });
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Device);
+
+/***/ },
+
 /***/ "42f1649d1a1b"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1485,9 +1759,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3818183b14c");
 /* harmony import */ var _component_panel_scrollbar_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("cb6d39a52a42");
 /* harmony import */ var _core_js_sheet_swipe_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("42f1649d1a1b");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("4ff97a05802b");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("68b68beb66a3");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("eab34f3f2b10");
+/* harmony import */ var _core_js_device_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("cbcfcde04d12");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("4ff97a05802b");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("68b68beb66a3");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("eab34f3f2b10");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__]);
 ([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _js_templates_default__WEBPACK_IMPORTED_MODULE_4__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_6__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
@@ -1495,6 +1770,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 /* harmony import */ var _core_js_position_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_core_js_position_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__);
+
 
 
 
@@ -1516,11 +1792,11 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 // core/js/element-manifest.js, its words are lang/<locale>.json, and its events
 // go out by their verbs through sfEmit. aria-label and role stay the host's.
 
-const ContextMenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_10__, {
+const ContextMenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_2__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__.files,
   source: "ru",
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_11__,
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_12__,
   // openFor(anchor, options), toggleFor(anchor, options), openAt(x, y, options) and chooseTab(index)
   // take their fields in order; the runtime gives them the object form of
   // §4.4 as well: openFor({anchor, options}), chooseTab({index}).
@@ -1987,6 +2263,19 @@ class SfContextMenu extends ContextMenuElement {
           reason: "outside"
         });
       }
+    };
+
+    this._onStackEscape = () => {
+      if (!this._owned) return false;
+
+      if (this._drill.length) {
+        this.drillBack();
+        return true;
+      }
+
+      return this.close({
+        reason: "escape"
+      }) !== false;
     };
 
     this.addEventListener("focusin", event => {
@@ -2931,7 +3220,29 @@ class SfContextMenu extends ContextMenuElement {
   // open afterwards; refused {reason: prevented} when a listener kept it as it
   // was, {reason: invalid} for an anchor that is not an element; unavailable
   // when the menu has no surface to open.
+  // The layout the entries are drawn for, 'phone' or 'desktop': the place
+  // the menu opens from while open, else the menu's own place.
 
+
+  get deviceLayout() {
+    if (!this._layout && this.isConnected) this._layout = (0,_core_js_device_js__WEBPACK_IMPORTED_MODULE_10__.layoutOf)(this);
+    return this._layout || "desktop";
+  }
+
+  followLayout(place) {
+    this._stopLayout?.();
+    const now = (0,_core_js_device_js__WEBPACK_IMPORTED_MODULE_10__.layoutOf)(place instanceof Element && place.isConnected ? place : this);
+
+    if (now !== this._layout) {
+      this._layout = now;
+      this.requestComponentUpdate("layout");
+    }
+
+    this._stopLayout = (0,_core_js_device_js__WEBPACK_IMPORTED_MODULE_10__.watchLayout)(place instanceof Element ? place : this, next => {
+      this._layout = next;
+      this.requestComponentUpdate("layout");
+    });
+  }
 
   toggleFor(anchor, options = {}) {
     if (this._owned?.anchor === anchor) {
@@ -3322,7 +3633,11 @@ class SfContextMenu extends ContextMenuElement {
     // a menu without a size of its own is drawn where it stands -- often on
     // <body> -- so the row menu of a table of size 1 opened at 1/2.
 
-    this.followOpenerSize(place);
+    this.followOpenerSize(place); // The layout of the place it opens from (core SF.device): an entry that
+    // carries `devices` is drawn only there, and the menu follows it while
+    // open (a window narrowed to a phone).
+
+    this.followLayout(place);
     await this.whenRendered();
     const surface = this.surface();
     if (!surface) return {
@@ -3468,10 +3783,17 @@ class SfContextMenu extends ContextMenuElement {
     // panel listening on the document in capture runs before the menu's own
     // listener and would otherwise close with it. The outside press comes from
     // the stack.
+    // Escape reaches the menu wherever the focus stands (GB20, View row menu
+    // «≡» after a mouse open): a press on a trigger leaves the focus on it
+    // when the host fills the rows in its open listener, and the menu heard
+    // Escape only on its own keydown. The stack's one document listener asks
+    // the top layer after the page had the key: a row or a field inside
+    // that took Escape already (a drilling level, a submenu) keeps it.
 
 
     (0,_core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_5__.holdOpenSurfaceMark)(this, true, {
-      onOutsidePress: this._onOutsidePress
+      onOutsidePress: this._onOutsidePress,
+      onEscape: this._onStackEscape
     });
     this.sfEmit("opened", {});
 
@@ -3535,6 +3857,8 @@ class SfContextMenu extends ContextMenuElement {
     }
 
     clearTimeout(this._hoverTimer);
+    this._stopLayout?.();
+    this._stopLayout = null;
     owned.position?.stop();
     if (owned.onResize) window.removeEventListener("resize", owned.onResize);
 
@@ -4037,6 +4361,7 @@ class SfContextMenu extends ContextMenuElement {
       // drew an empty panel. JSON in the attribute is still the props' reading.
       items: this.hasAttribute("items") ? props.items : this.items,
       entries: this.entries,
+      layout: this.deviceLayout,
       search: level.search ?? this.search,
       query: this.query,
       tabs: this.tabs,
@@ -4091,9 +4416,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _avatar_js_picture__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("c69a3dc158df");
 /* harmony import */ var _component_kbd_js_shortcut__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("151a293c8c90");
 /* harmony import */ var _helpers_control_status__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("60a3f9a6662c");
+/* harmony import */ var _core_js_device_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("cbcfcde04d12");
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit__WEBPACK_IMPORTED_MODULE_0__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_1__]);
 ([lit__WEBPACK_IMPORTED_MODULE_0__, _avatar_js_picture__WEBPACK_IMPORTED_MODULE_1__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var lit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lit__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 
@@ -4454,10 +4781,33 @@ function renderTile(entry, path, context) {
 // tiles a panel's quick settings are. Its items carry paths of their own, the
 // step the submenu grammar already had, and a search narrows them as it
 // narrows the level.
+// The rows of the layout the menu stands in (study S-A, Touch screens rule
+// 4): an entry that carries `devices` is drawn only in the layouts it names,
+// and keeps its index, so a row's path still finds its entry. A separator left
+// first, last or after another one by a hidden row is dropped.
 
+
+function inMenuLayout(pairs, context) {
+  const layout = context.layout || "desktop";
+  const kept = pairs.filter(([entry]) => (0,_core_js_device_js__WEBPACK_IMPORTED_MODULE_4__.inLayout)(entry, layout));
+  if (kept.length === pairs.length) return pairs;
+
+  const separator = pair => pair[0]?.type === "separator";
+
+  const out = [];
+
+  for (const pair of kept) {
+    if (separator(pair) && (!out.length || separator(out[out.length - 1]))) continue;
+    out.push(pair);
+  }
+
+  while (out.length && separator(out[out.length - 1])) out.pop();
+
+  return out;
+}
 
 function renderGroup(entry, path, context, query) {
-  const items = (entry.items ?? []).map((item, index) => [item, index]).filter(([item]) => matches(item, query));
+  const items = inMenuLayout((entry.items ?? []).map((item, index) => [item, index]), context).filter(([item]) => matches(item, query));
   if (!items.length) return lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   const name = entry.text ?? lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 
@@ -4649,7 +4999,7 @@ function renderEntries(context) {
   // query can arrive after the field was cleared -- so its note shows then too.
 
   const remote = Boolean(context.search?.remote);
-  let shown = actionOrder(entries.map((entry, index) => [entry, index]).filter(([entry]) => remote || matches(entry, query))); // On a selection the top level says how many rows it acts on, «Выбрано N»,
+  let shown = actionOrder(inMenuLayout(entries.map((entry, index) => [entry, index]), context).filter(([entry]) => remote || matches(entry, query))); // On a selection the top level says how many rows it acts on, «Выбрано N»,
   // in place of a heading the host gave the one object (C164 (3)).
 
   const selection = level.depth === 0 && context.selectionLabel;
@@ -4945,7 +5295,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu-
 /***/ "4ff97a05802b"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.27.3","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"width":{"type":"string","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true},"value-text":{"type":"string","optional":true},"warning-at":{"type":"number","optional":true},"error-at":{"type":"number","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false},"for":{"type":"string","default":""}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{"target":{"type":"object","nullable":true},"targets":{"type":"list"}},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"open-at":{"with":{"x":"number","y":"number","options":{"type":"object","optional":true,"schema":{"properties":{"target":{"type":"object"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"}}}}},"waits":true,"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu-context","tag":"sf-menu-context","version":"1.28.0","kind":"leaf","settings":{"position":{"type":"enum","values":["","inline-start","inline-start-top","inline-start-bottom","inline-end","inline-end-top","inline-end-bottom","top","top-inline-start","top-inline-end","bottom","bottom-inline-start","bottom-inline-end","start","end","top-start","top-end","bottom-start","bottom-end","left","left-top","left-bottom","right","right-top","right-bottom","top-left","top-center","top-right","bottom-left","bottom-center","bottom-right","left-start","left-end","right-start","right-end","inline-start-start","inline-start-end","inline-end-start","inline-end-end"],"default":""},"tooltip":{"type":"boolean","default":true},"text":{"type":"string","default":""},"items":{"type":"list","default":[],"of":{"text":"string","value":"string"}},"content-class":{"type":"string","default":""},"entries":{"type":"list","default":[],"of":{"id":"string","text":"string","caption":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"avatar":{"type":"string","optional":true},"initials":{"type":"string","optional":true},"shortcut":{"type":"string","optional":true},"kind":{"type":"string","optional":true},"type":{"type":"string","optional":true},"value":{"type":"string","optional":true},"lang":{"type":"string","optional":true},"keywords":{"type":"string","optional":true},"checked":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"danger":{"type":"boolean","optional":true},"status":{"type":"string","optional":true},"current":{"type":"boolean","optional":true},"href":{"type":"string","optional":true},"keep-open":{"type":"boolean","optional":true},"submenu":{"type":"list","optional":true},"search":{"type":"object","optional":true},"width":{"type":"string","optional":true},"options":{"type":"list","optional":true},"items":{"type":"list","optional":true},"min":{"type":"number","optional":true},"max":{"type":"number","optional":true},"step":{"type":"number","optional":true},"unit":{"type":"string","optional":true},"view":{"type":"string","optional":true},"value-text":{"type":"string","optional":true},"warning-at":{"type":"number","optional":true},"error-at":{"type":"number","optional":true},"devices":{"type":"list","optional":true}}},"popup":{"type":"boolean","default":false},"search":{"type":"object","optional":true},"submenu":{"type":"enum","values":["flyout","drill"],"default":"flyout"},"size":{"type":"enum","values":["1/2","1"],"default":"1/2"},"width":{"type":"string","default":"content"},"tabs":{"type":"string","default":""},"active-tab":{"type":"string","default":""},"closable":{"type":"boolean","default":false},"for":{"type":"string","default":""}},"values":{},"events":{"select":{"carries":{"id":{"type":"string","nullable":true},"entry":"object","checked":{"type":"boolean","nullable":true},"group":{"type":"string","nullable":true}},"cancelable":true},"change":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string","nullable":true},"value":{"type":"id"},"previous":{"type":"id"},"entry":"object"}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{"target":{"type":"object","nullable":true},"targets":{"type":"list"}},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"search":{"carries":{"query":"string"},"own-verb":true},"tab":{"carries":{"id":"string","index":"number"},"own-verb":true}},"actions":{"open-for":{"with":{"anchor":"object","options":{"type":"object","optional":true,"schema":{"properties":{"side":{"type":"string","default":"block-end"},"align":{"type":"string","default":"start"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"},"offset":{"type":"string"}}}}},"waits":true,"emits":"open"},"toggle-for":{"with":{"anchor":"object","options":{"type":"object","optional":true}},"waits":true},"open-at":{"with":{"x":"number","y":"number","options":{"type":"object","optional":true,"schema":{"properties":{"target":{"type":"object"},"focus":{"type":"string","enum":["first","last","none"],"default":"first"}}}}},"waits":true,"emits":"open"},"close":{"with":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"emits":"close"},"choose-tab":{"with":{"index":"number"}},"request-close":{},"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"}},"reset":{"emits":"reset"}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"css-variables":{"--sf-context-menu-background-color":{"type":"color","state":"default"},"--sf-context-menu-color":{"type":"color","state":"default"},"--sf-context-menu-border-color":{"type":"color","state":"default"},"--sf-context-menu-border-width":{"type":"length","state":"default"},"--sf-context-menu-radius":{"type":"length","state":"default"},"--sf-context-menu-padding-inline":{"type":"length","state":"default"},"--sf-context-menu-padding-block":{"type":"length","state":"default"},"--sf-context-menu-gap":{"type":"length","state":"default"},"--sf-context-menu-inline-size":{"type":"length","state":"default"}}}');
 
 /***/ },
 

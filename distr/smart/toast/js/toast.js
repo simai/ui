@@ -186,8 +186,24 @@ function resumeToastTimer(root, reason) {
 
 const TOAST_UNDER_ATTRIBUTE = 'data-sf-toast-under';
 const TOAST_FIT_TEXT = '.sf-toast-text, .sf-toast-supporting-text';
-let toastMeasure = null;
-let toastFitObserver = null;
+let toastMeasure = null; // One fit watch for the page, on a shared global: the class bundle and the
+// Smart bundle each carry a copy of this module, and a toast one copy observed
+// must be unobserved by the other (GB20, gate 36: the class copy's observer
+// kept every Smart toast it had bound after the element left).
+
+const TOAST_FIT = Symbol.for('sf.toast.fit-observer');
+
+const fitObserver = make => {
+  const shared = globalThis;
+
+  if (!shared[TOAST_FIT] && make) {
+    shared[TOAST_FIT] = new ResizeObserver(entries => {
+      for (const entry of entries) fitToastAction(entry.target);
+    });
+  }
+
+  return shared[TOAST_FIT] ?? null;
+};
 
 function widestWord(element) {
   const text = String(element?.textContent || '').trim();
@@ -241,16 +257,13 @@ function watchToastFit(root) {
     return;
   }
 
-  toastFitObserver = toastFitObserver || new ResizeObserver(entries => {
-    for (const entry of entries) fitToastAction(entry.target);
-  });
-  toastFitObserver.observe(root);
+  fitObserver(true).observe(root);
   fitToastAction(root);
   document.fonts?.ready?.then(() => fitToastAction(root));
 }
 
 function unwatchToastFit(root) {
-  toastFitObserver?.unobserve(root);
+  fitObserver(false)?.unobserve(root);
 }
 
 function bindToast(root, removalTarget = root) {
@@ -612,7 +625,10 @@ if (document.readyState === 'loading') {
 const toastObserver = new MutationObserver(mutations => {
   mutations.forEach(mutation => {
     mutation.addedNodes.forEach(node => {
-      if (!(node instanceof Element)) return;
+      // A node taken out again before its record is read (sf-toast placed
+      // and removed in one task) is not bound: its host has already unbound
+      // it, and a binding now would keep it in the fit watch for good.
+      if (!(node instanceof Element) || !node.isConnected) return;
       initToastTree(node);
     });
   });
@@ -1231,7 +1247,16 @@ class SfToast extends ToastElement {
     // (§8), so the class events stop here.
 
     this.addEventListener('sf-toast-close', this._onRootClose, true);
-    this.addEventListener('sf-toast-action', this._onRootAction, true);
+    this.addEventListener('sf-toast-action', this._onRootAction, true); // Placed again without a new render, the drawn toast is bound again by the
+    // host, so the host's own removal unbinds it (the class observer would bind
+    // it with nobody to unbind it).
+
+    const drawn = this.querySelector('.sf-toast');
+
+    if (drawn && drawn !== this._boundRoot) {
+      this._boundRoot = drawn;
+      (0,_component_toast_js_toast__WEBPACK_IMPORTED_MODULE_3__.bindToast)(drawn, this);
+    }
   }
 
   _onRootClose = event => {
@@ -1303,10 +1328,9 @@ class SfToast extends ToastElement {
   }
 
   onDisconnected() {
-    if (this._boundRoot) {
-      (0,_component_toast_js_toast__WEBPACK_IMPORTED_MODULE_3__.unbindToast)(this._boundRoot);
-      this._boundRoot = null;
-    }
+    const root = this._boundRoot || this.querySelector('.sf-toast');
+    if (root) (0,_component_toast_js_toast__WEBPACK_IMPORTED_MODULE_3__.unbindToast)(root);
+    this._boundRoot = null;
   }
 
   dismiss() {
@@ -1629,7 +1653,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-toast
 /***/ "b3afcae54093"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.toast","tag":"sf-toast","version":"1.4.9","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"action-href":{"type":"string","default":""},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"actions-layout":{"type":"enum","values":["auto","under"],"default":"auto"},"closable":{"type":"boolean","default":true},"close-label":{"type":"string","default-from":"runtime.close-label"},"duration":{"type":"number","default":0,"min":0}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"close":{"emits":"close"},"show":{"with":{"text":{"type":"string","optional":true},"code":{"type":"string","optional":true},"count":{"type":"number","optional":true},"tone":{"type":"enum","values":["info","success","warning","error"],"optional":true}}}},"layer":{"kind":"toast","locks-page":false,"traps-focus":false},"css-variables":{"--sf-toast-background-color":{"type":"color","state":"default"},"--sf-toast-color":{"type":"color","state":"default"},"--sf-toast-border-color":{"type":"color","state":"default"},"--sf-toast-border-width":{"type":"length","state":"default"},"--sf-toast-radius":{"type":"length","state":"default"},"--sf-toast-padding-inline":{"type":"length","state":"default"},"--sf-toast-padding-block":{"type":"length","state":"default"},"--sf-toast-gap":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.toast","tag":"sf-toast","version":"1.4.10","kind":"leaf","settings":{"status":{"type":"enum","values":["neutral","info","success","warning","error"],"default":"neutral"},"icon":{"type":"icon","default":""},"heading":{"type":"string","default":""},"supporting-text":{"type":"string","default":""},"action-text":{"type":"string","default":""},"action":{"type":"string","default":"action"},"action-href":{"type":"string","default":""},"secondary-action-text":{"type":"string","default":""},"secondary-action":{"type":"string","default":"secondary"},"actions-layout":{"type":"enum","values":["auto","under"],"default":"auto"},"closable":{"type":"boolean","default":true},"close-label":{"type":"string","default-from":"runtime.close-label"},"duration":{"type":"number","default":0,"min":0}},"values":{},"events":{"action":{"carries":{"action":{"type":"string"}},"own-verb":true},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}}},"actions":{"close":{"emits":"close"},"show":{"with":{"text":{"type":"string","optional":true},"code":{"type":"string","optional":true},"count":{"type":"number","optional":true},"tone":{"type":"enum","values":["info","success","warning","error"],"optional":true}}}},"layer":{"kind":"toast","locks-page":false,"traps-focus":false},"css-variables":{"--sf-toast-background-color":{"type":"color","state":"default"},"--sf-toast-color":{"type":"color","state":"default"},"--sf-toast-border-color":{"type":"color","state":"default"},"--sf-toast-border-width":{"type":"length","state":"default"},"--sf-toast-radius":{"type":"length","state":"default"},"--sf-toast-padding-inline":{"type":"length","state":"default"},"--sf-toast-padding-block":{"type":"length","state":"default"},"--sf-toast-gap":{"type":"length","state":"default"}}}');
 
 /***/ },
 

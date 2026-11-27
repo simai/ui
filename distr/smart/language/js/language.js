@@ -2,6 +2,674 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "1412c5875b4d"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   RELATIVE: () => (/* binding */ RELATIVE),
+/* harmony export */   densityOf: () => (/* binding */ densityOf),
+/* harmony export */   drawing: () => (/* binding */ drawing),
+/* harmony export */   followDensity: () => (/* binding */ followDensity),
+/* harmony export */   markRelativeSizes: () => (/* binding */ markRelativeSizes),
+/* harmony export */   noteAuthored: () => (/* binding */ noteAuthored),
+/* harmony export */   sizeOf: () => (/* binding */ sizeOf),
+/* harmony export */   sizeStep: () => (/* binding */ sizeStep),
+/* harmony export */   sizedBefore: () => (/* binding */ sizedBefore)
+/* harmony export */ });
+// Density (owner decision C22, 2026-11-09). data-sf-density="compact" on the
+// root or on a container moves every component one ladder step down; the CSS
+// does it (core/scss/_sf_css__density.scss): each step variable holds the step
+// below. An explicit size is a step on the region's ladder (owner decision
+// C79, 2026-11-12, changing C22): it comes down with the region, and only
+// data-sf-density="normal" takes the normal ladder back.
+//
+// A size a component's template gives an element it draws (sf-input's clear
+// button, a pager's buttons, a submenu) is relative to the component's own
+// size; those are still marked data-sf-size-relative once the component has
+// drawn. Since C79 the density CSS treats both alike; the mark stays a
+// published runtime mark (host-runtime-marks) for hosts that read it.
+//
+// What a component holds of the page's own (captured slot content, children
+// left in place) keeps its size explicit. The store is on the shared global:
+// every bundle carries its own copy of this module.
+const store = () => {
+  const SF = globalThis.SF = globalThis.SF || {};
+  const internal = SF.__internal || (SF.__internal = {});
+  return internal.density ||= {
+    authored: new WeakSet(),
+    depth: 0
+  };
+};
+
+const RELATIVE = 'data-sf-size-relative'; // Page content a component captured to place in its own drawing. Content a
+// template hands to a child while it draws is the template's, not the page's.
+
+function noteAuthored(nodes) {
+  const state = store();
+  if (state.depth > 0) return;
+
+  for (const node of nodes) if (node && typeof node === 'object') state.authored.add(node);
+}
+function drawing(callback) {
+  const state = store();
+  state.depth += 1;
+
+  try {
+    return callback();
+  } finally {
+    state.depth -= 1;
+  }
+} // The sized elements present before a host first draws are the page's.
+// A printed first-paint picture is the drawing's, not the page's.
+
+function sizedBefore(host) {
+  return new Set(Array.from(host.querySelectorAll?.('[size]') ?? []).filter(element => {
+    const picture = element.closest('[data-sf-static]');
+    return !picture || !host.contains(picture);
+  }));
+} // After a host drew: every sized element its drawing holds that is not the
+// page's is relative to the host.
+
+function markRelativeSizes(host, before = null) {
+  const {
+    authored
+  } = store();
+
+  for (const element of host.querySelectorAll?.('[size]') ?? []) {
+    if (element.hasAttribute(RELATIVE) || before?.has(element)) continue;
+    let node = element;
+    let page = false;
+
+    while (node && node !== host) {
+      if (authored.has(node)) {
+        page = true;
+        break;
+      }
+
+      node = node.parentNode;
+    }
+
+    if (!page) element.setAttribute(RELATIVE, '');
+  }
+} // A popup a component builds itself and places outside its own box (a menu on
+// <body>, in an open dialog): sized from the component, so relative, and in
+// the component's density, not the density of where it was placed.
+
+function followDensity(element, from) {
+  if (!element?.setAttribute) return element;
+  if (element.hasAttribute('size')) element.setAttribute(RELATIVE, '');
+  const density = densityOf(from);
+  if (density) element.setAttribute('data-sf-density', density);else element.removeAttribute('data-sf-density');
+  return element;
+} // The density an element stands in: the nearest region's (an explicit size
+// follows its region since C79); null outside any.
+
+function densityOf(from) {
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('data-sf-density')) return node.getAttribute('data-sf-density');
+  }
+
+  return null;
+} // The size step of the control a popup opens from (owner remark 2026-11-15:
+// the row menu of a table of size 1 opened at 1/2). A popup a component
+// builds outside itself -- a menu on <body> or in the open dialog -- stood on
+// the default step whatever opened it. The step is the first size written
+// from the opener up: the opener's own (a row's «⋯», the native button an
+// sf-button draws), else its component's, else the Smart component that
+// holds it (sf-view-table size="1"). A size a template gave a part it draws
+// (data-sf-size-relative) follows its host, so the walk goes on past it. It
+// ends on the default step (null) at the second custom element without a
+// size: the opener's own component may stand on its default, the host
+// holding it decides.
+
+function sizeOf(from) {
+  let own = true;
+
+  for (let node = from; node?.nodeType === 1; node = node.parentElement) {
+    if (node.hasAttribute('size')) {
+      if (!node.hasAttribute(RELATIVE)) return node.getAttribute('size');
+      continue;
+    }
+
+    if (!node.localName.includes('-')) continue;
+    if (!own) return null;
+    own = false;
+  }
+
+  return null;
+} // A size step as a number of the ladder ("1/2" is 0.5, "2" is 2); NaN for
+// anything else.
+
+function sizeStep(size) {
+  const [top, bottom = '1'] = String(size ?? '').trim().split('/');
+  const step = Number(top) / Number(bottom);
+  return top !== '' && Number.isFinite(step) && step > 0 ? step : Number.NaN;
+}
+
+/***/ },
+
+/***/ "2db3a835ac11"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   actionEntry: () => (/* binding */ actionEntry),
+/* harmony export */   chooseBeside: () => (/* binding */ chooseBeside),
+/* harmony export */   controlOf: () => (/* binding */ controlOf),
+/* harmony export */   drawnBox: () => (/* binding */ drawnBox),
+/* harmony export */   fitBesideMore: () => (/* binding */ fitBesideMore),
+/* harmony export */   fitByPriority: () => (/* binding */ fitByPriority),
+/* harmony export */   fitInOrder: () => (/* binding */ fitInOrder),
+/* harmony export */   isMainAction: () => (/* binding */ isMainAction),
+/* harmony export */   isPressed: () => (/* binding */ isPressed),
+/* harmony export */   layoutActionRow: () => (/* binding */ layoutActionRow),
+/* harmony export */   layoutHeight: () => (/* binding */ layoutHeight),
+/* harmony export */   layoutRowRoom: () => (/* binding */ layoutRowRoom),
+/* harmony export */   layoutWidth: () => (/* binding */ layoutWidth),
+/* harmony export */   measureShown: () => (/* binding */ measureShown),
+/* harmony export */   openRowMenu: () => (/* binding */ openRowMenu),
+/* harmony export */   readPriority: () => (/* binding */ readPriority),
+/* harmony export */   rowRoom: () => (/* binding */ rowRoom),
+/* harmony export */   spanOf: () => (/* binding */ spanOf),
+/* harmony export */   spanOfUnits: () => (/* binding */ spanOfUnits),
+/* harmony export */   squeezeStep: () => (/* binding */ squeezeStep),
+/* harmony export */   standardMenu: () => (/* binding */ standardMenu),
+/* harmony export */   textWidth: () => (/* binding */ textWidth),
+/* harmony export */   triggerExtra: () => (/* binding */ triggerExtra)
+/* harmony export */ });
+/* harmony import */ var _density_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("1412c5875b4d");
+// One row of items that do not all fit, and a trailing «Ещё (n)» that holds
+// the rest (owner decision C54): the items in their order up to the first
+// that does not fit, each whole in the row or in «Ещё»; the items that must
+// stay (the current one, the pinned ones) stay, the last kept others giving
+// way to them; the room is taken with the width «Ещё (n)» will have with its
+// own count. Only the arithmetic and the measuring are here -- the element
+// keeps its markup, its classes and its menu entries.
+//
+// Taken out of sf-tabs (fix/tabs-overflow-more, C54 and its returns D1, D2)
+// so a second row (sf-contents layout="bar", CT-05) lays out by the same
+// rules instead of a copy of them. Every number is a width in CSS pixels,
+// fractional; half a pixel is the tolerance, as the tabs measured it.
+
+const TOLERANCE = 0.5; // The items in their order up to the first that does not fit in available:
+// their indices, or null when every item fits.
+
+function fitInOrder(widths, gap, available) {
+  const kept = [];
+  let used = 0;
+
+  for (let at = 0; at < widths.length; at += 1) {
+    const next = used + (kept.length ? gap : 0) + widths[at];
+    if (next > available + TOLERANCE) break;
+    kept.push(at);
+    used = next;
+  }
+
+  return kept.length === widths.length ? null : kept;
+} // The width of some items laid side by side.
+
+function spanOf(widths, gap, indices) {
+  return indices.reduce((sum, at, n) => sum + widths[at] + (n ? gap : 0), 0);
+} // The row beside «Ещё», in available: the items in order, then the items that
+// must stay put back in -- the last kept items that need not stay give way to
+// them, and when the must-stay items alone do not fit, they give way too, the
+// last first, but never the current one.
+
+function chooseBeside({
+  widths,
+  gap = 0,
+  available,
+  must = [],
+  current = -1
+}) {
+  let chosen = fitInOrder(widths, gap, available) ?? widths.map((_, at) => at);
+  const missing = must.filter(at => !chosen.includes(at));
+  if (!missing.length) return chosen;
+  const next = [...chosen, ...missing];
+
+  while (spanOf(widths, gap, next) > available + TOLERANCE) {
+    const dropAt = next.slice().reverse().find(at => !must.includes(at)) ?? next.slice().reverse().find(at => at !== current);
+    if (dropAt === undefined) break;
+    next.splice(next.indexOf(dropAt), 1);
+  }
+
+  chosen = next.sort((a, b) => a - b);
+  return chosen;
+} // The row beside «Ещё (n)»: room is the row's room with the trigger standing
+// as it is drawn now; extra(count) is how much wider (or narrower) the
+// trigger will be with count in it. Of the rows that fit beside their own
+// count, the one with the most items; when no count agrees with its row, the
+// row that fits beside the widest. squeezed is the current item when it alone
+// is left and still wider than the room (it alone may be shortened), else -1.
+
+function fitBesideMore({
+  widths,
+  gap = 0,
+  room,
+  must = [],
+  current = -1,
+  extra = null
+}) {
+  let kept = null;
+
+  if (typeof extra === 'function') {
+    const besides = [];
+
+    for (let count = 1; count < widths.length && !kept; count += 1) {
+      const more = extra(count);
+      besides.push(more);
+      const chosen = chooseBeside({
+        widths,
+        gap,
+        available: room - more,
+        must,
+        current
+      });
+      if (widths.length - chosen.length === count) kept = chosen;
+    }
+
+    if (!kept && besides.length) kept = chooseBeside({
+      widths,
+      gap,
+      available: room - Math.max(...besides),
+      must,
+      current
+    });
+  }
+
+  kept ??= chooseBeside({
+    widths,
+    gap,
+    available: room,
+    must,
+    current
+  });
+  const squeezed = kept.length === 1 && kept[0] === current && spanOf(widths, gap, kept) > room + TOLERANCE ? current : -1;
+  return {
+    kept,
+    squeezed
+  };
+} // The current tab alone beside «Ещё» and still wider than the row (squeezed
+// above): how it gives way (group build 16 returns GB16-1 and GB16-2, DEV's
+// answer to question 1, 2026-11-22). It is shortened with an ellipsis while at
+// least two letters stay before it; below that a tab with an icon draws its
+// icon alone -- the whole glyph and the tab's padding, never a cut glyph or a
+// one-letter stub -- and a tab of words keeps two letters and the ellipsis.
+// When even that does not stand beside «Ещё (n)», the trigger gives way: it
+// draws its glyph alone as a square (its words stay its name, as shrink="icon"
+// does, C370). The current tab never goes into «Ещё».
+//   tabRoom: the width the tab can have beside the trigger as it will be;
+//   textRoom: the label's own width there; twoLetters: the label's width with
+//   two letters and the ellipsis; iconOnly: the tab's width with its icon
+//   alone, or null for a tab without one; moreGain: how much narrower the
+//   trigger is with its glyph alone; compactTextRoom: the label's width
+//   beside the trigger drawn as its glyph alone (measured; else textRoom and
+//   the gain).
+// The label is decided again beside the glyph-alone trigger before the tab
+// gives up its words (group build 16 return GB16-5, 2026-11-22): the trigger
+// keeps its name out of sight and as a tooltip, the current tab's name is the
+// row's content -- an icon beside a bare chevron with 40-96 px empty and the
+// whole name fitting there read as a fault. So: two letters or more beside
+// «Ещё (n)»; else two letters or more (up to the whole word) beside the
+// glyph alone; else the icon alone, the trigger keeping its words while the
+// icon stands beside them; a tab of words keeps two letters.
+// Answers {icon, compact}: the tab draws its icon alone; the trigger its glyph.
+
+function squeezeStep({
+  tabRoom,
+  textRoom,
+  twoLetters,
+  iconOnly = null,
+  moreGain = 0,
+  compactTextRoom = null
+}) {
+  if (textRoom + TOLERANCE >= twoLetters) return {
+    icon: false,
+    compact: false
+  };
+  const besideGlyph = compactTextRoom ?? textRoom + moreGain;
+  if (moreGain > 0 && besideGlyph + TOLERANCE >= twoLetters) return {
+    icon: false,
+    compact: true
+  };
+  if (iconOnly !== null) return {
+    icon: true,
+    compact: tabRoom + TOLERANCE < iconOnly && moreGain > 0
+  };
+  return {
+    icon: false,
+    compact: moreGain > 0
+  };
+} // The content box of a row that clips and has no scrollbar, in fractional
+// pixels: clientWidth is a whole pixel, and a row 383.6 px wide read as 383 or
+// 384 laid out differently (C54 return).
+
+function rowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return list.getBoundingClientRect().width - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // The width an element is laid out at, in fractional CSS pixels, before any
+// transform of it or of an ancestor (its border box). getBoundingClientRect is
+// a screen box: inside scale(.7) a 90 px tab reads 63, inside rotate() it reads
+// the width of its rotated bounding box, and a row that compares such widths
+// with its padding, a text measured in canvas or a ResizeObserver size mixes
+// screen and layout pixels (docs hero study 2026-11-19, section 9). The used
+// width of the computed style is the layout's own, with its fractions; a box
+// without one (an inline box, an element not drawn) gives offsetWidth.
+
+function layoutWidth(element) {
+  if (!element) return 0;
+  const style = getComputedStyle(element);
+  const width = parseFloat(style.width);
+  if (!Number.isFinite(width)) return element.offsetWidth || 0;
+  if (style.boxSizing === 'border-box') return width;
+  return ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), width);
+} // The block size of the same box (layoutWidth's other axis).
+
+function layoutHeight(element) {
+  if (!element) return 0;
+  const style = getComputedStyle(element);
+  const height = parseFloat(style.height);
+  if (!Number.isFinite(height)) return element.offsetHeight || 0;
+  if (style.boxSizing === 'border-box') return height;
+  return ['paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth'].reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), height);
+} // rowRoom in layout pixels: the row's content box before any transform, for a
+// row whose items are measured with layoutWidth.
+
+function layoutRowRoom(list) {
+  const style = getComputedStyle(list);
+  const edges = ['borderInlineStartWidth', 'borderInlineEndWidth', 'paddingInlineStart', 'paddingInlineEnd'];
+  return layoutWidth(list) - edges.reduce((sum, edge) => sum + (parseFloat(style[edge]) || 0), 0);
+} // A text measurer in an element's own face, or null without a canvas: the
+// width «Ещё (7)» will have before its button draws it.
+
+let measureCanvas = null;
+function textWidth(element) {
+  const style = getComputedStyle(element);
+  measureCanvas ??= globalThis.document?.createElement('canvas') ?? null;
+  const context = measureCanvas?.getContext?.('2d');
+  if (!context) return null;
+  context.font = style.font;
+  if ('letterSpacing' in context) context.letterSpacing = style.letterSpacing === 'normal' ? '0px' : style.letterSpacing;
+  return text => context.measureText(text).width;
+} // extra(count) for a trigger whose text box shows label(count) now.
+
+function triggerExtra(textBox, label) {
+  const measure = textBox ? textWidth(textBox) : null;
+  if (!measure) return null;
+  const drawn = measure(textBox.textContent.trim());
+  return count => measure(label(count)) - drawn;
+} // The standard menu «Ещё» opens: sf-menu-context, a relation fetched when
+// first used (SF.Loader.ensure with press: a press opens it, so the wait
+// goes on while its code is on its way, GB18 L2 / GB19; never thrown), one per owner and field, on the body or in the open dialog. The
+// one copy in core (defect TL-8): the sortable inserter and the handle's move
+// menu place theirs through it too. null when no sf-menu-context came (no
+// Loader, or the relation failed): an element that never upgrades opens
+// nothing. setup(menu) runs once on a new menu, for the listeners an owner
+// adds beside select.
+
+async function standardMenu(owner, field, select, {
+  setup
+} = {}) {
+  await globalThis.SF?.Loader?.ensure?.(['sf-menu-context'], {
+    press: true
+  });
+  if (owner[field]?.isConnected) return owner[field];
+  if (!globalThis.customElements?.get('sf-menu-context')) return null;
+  const doc = owner.ownerDocument || globalThis.document;
+  const menu = doc.createElement('sf-menu-context');
+  menu.setAttribute('popup', '');
+  if (select) menu.addEventListener('sf-menu-context-select', event => select(event.detail?.id, event));
+  setup?.(menu);
+  (owner.closest('dialog[open]') || doc.body).append(menu);
+  owner[field] = menu;
+  return menu;
+} // ─── Rows of actions and tools (owner decision C155, 2026-11-14) ─────────────
+// The one row engine of the Framework: the navigation rows above (sf-tabs,
+// sf-contents, sf-menu) and the action and tool rows below (sf-header-page's
+// actions, sf-input-rich's toolbar, .sf-button-group) share the measuring and
+// the rule. What does not fit leaves for «Ещё»: from the end by default, by
+// an author's priority where one is given (priority="1" is the most important,
+// a bigger number leaves sooner, an item without one before every numbered
+// item); the main action, a pressed or current item and priority="pin" never
+// leave (C155 (3)). A toolbar's units are its groups: a group leaves whole and
+// takes its separator with it (C155 (4)).
+// An author's priority as the engine reads it: a whole number from 1, pin, or
+// nothing (leaves first, the last first).
+
+function readPriority(value) {
+  if (value === null || value === undefined) return {
+    rank: Infinity,
+    pin: false
+  };
+  const text = String(value).trim().toLowerCase();
+  if (text === 'pin') return {
+    rank: 0,
+    pin: true
+  };
+  const number = Number(text);
+  return Number.isFinite(number) && text !== '' ? {
+    rank: number,
+    pin: false
+  } : {
+    rank: Infinity,
+    pin: false
+  };
+} // The span of some units laid side by side: their widths, the row's gap
+// between neighbours and, where two neighbours belong to different groups, a
+// separator with the gap on each of its sides.
+
+function spanOfUnits(units, gap, separator, indices) {
+  let span = 0;
+  indices.forEach((at, n) => {
+    if (n) {
+      span += gap;
+      if (separator && units[indices[n - 1]].group !== units[at].group) span += separator + gap;
+    }
+
+    span += units[at].width;
+  });
+  return span;
+} // Which units stay in a row that is room wide. units: [{width, rank, pin,
+// group}] in the row's order; more: the width «Ещё» adds when it shows (its
+// own width, the gap before it and, in a toolbar, its separator). Answers the
+// indices that stay, in order, and the ones that left; every unit stays when
+// all fit. The units that leave go by rank, the biggest first, and among equal
+// ranks the last first; a pinned unit never leaves, even when the pinned ones
+// alone do not fit (the row then clips, as a current tab is squeezed).
+
+function fitByPriority({
+  units,
+  gap = 0,
+  separator = 0,
+  room,
+  more = 0
+}) {
+  const all = units.map((_, at) => at);
+  const whole = spanOfUnits(units, gap, separator, all);
+  if (whole <= room + TOLERANCE) return {
+    kept: all,
+    out: [],
+    span: whole,
+    fits: true
+  };
+  const order = all.filter(at => !units[at].pin).sort((a, b) => units[b].rank - units[a].rank || b - a);
+  const kept = all.slice();
+  const out = [];
+
+  const used = () => spanOfUnits(units, gap, separator, kept) + (kept.length ? more : more - gap);
+
+  while (order.length && used() > room + TOLERANCE) {
+    const at = order.shift();
+    kept.splice(kept.indexOf(at), 1);
+    out.push(at);
+  }
+
+  const span = used();
+  return {
+    kept,
+    out: out.sort((a, b) => a - b),
+    span,
+    fits: span <= room + TOLERANCE
+  };
+} // The box an element draws: a Framework host with display: contents (sf-button,
+// sf-button-icon) has none of its own, so its first drawn child's.
+
+function drawnBox(element) {
+  let box = element;
+
+  while (box && getComputedStyle(box).display === 'contents') box = box.firstElementChild;
+
+  return box ? box.getBoundingClientRect() : {
+    width: 0,
+    height: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0
+  };
+} // Every element's drawn width with all of them shown, in one task: the class
+// that takes an element out of the row is lifted for the measure and put back
+// before anything is painted (the row never draws all its items at once).
+
+function measureShown(elements, outClass) {
+  const was = elements.map(element => element.classList.contains(outClass));
+
+  for (const element of elements) element.classList.remove(outClass);
+
+  const widths = elements.map(element => drawnBox(element).width);
+  elements.forEach((element, at) => element.classList.toggle(outClass, was[at]));
+  return widths;
+} // A row of actions or tools laid out by the rule above, in one task.
+// row: the flex row; units: [{element, rank, pin, group}]; more: the «Ещё»
+// element (inside the row, last); moreSeparator: a separator before it (a
+// toolbar's), separators: [{element, after: group}] -- a separator standing
+// after a group, shown only between two groups that keep something; outClass:
+// the row's own class that takes an element out (display: none); room: the
+// room the row has, when it is not the row's own content box (a row sized by
+// its content). Answers {out: the indices that left, fits: whether what
+// stays fits the room}.
+
+function layoutActionRow({
+  row,
+  units,
+  more,
+  moreSeparator = null,
+  separators = [],
+  outClass,
+  room = null
+}) {
+  const style = getComputedStyle(row);
+  const gap = parseFloat(style.columnGap) || 0;
+  const elements = units.map(unit => unit.element);
+  const extra = [more, moreSeparator, ...separators.map(one => one.element)].filter(Boolean);
+  const widths = measureShown([...elements, ...extra], outClass);
+  const moreWidth = widths[elements.length];
+  const separatorWidth = separators.length || moreSeparator ? Math.max(0, ...widths.slice(elements.length + 1)) : 0;
+  const measured = units.map((unit, at) => ({ ...unit,
+    width: widths[at]
+  }));
+  const {
+    out,
+    fits
+  } = fitByPriority({
+    units: measured,
+    gap,
+    separator: separatorWidth,
+    room: room ?? rowRoom(row),
+    more: moreWidth + gap + (moreSeparator ? separatorWidth + gap : 0)
+  });
+  const gone = new Set(out);
+  elements.forEach((element, at) => element.classList.toggle(outClass, gone.has(at))); // A separator stands after its group only while that group and a group
+  // after it both keep something: an emptied group leaves with its separator,
+  // and none stands first or last.
+
+  const keeps = group => units.some((unit, at) => unit.group === group && !gone.has(at));
+
+  const groups = [...new Set(units.map(unit => unit.group))];
+
+  for (const {
+    element,
+    after
+  } of separators) {
+    const later = groups.slice(groups.indexOf(after) + 1);
+    element.classList.toggle(outClass, !(keeps(after) && later.some(keeps)));
+  }
+
+  more?.classList.toggle(outClass, !out.length);
+  moreSeparator?.classList.toggle(outClass, !out.length || gone.size === units.length);
+  return {
+    out,
+    fits
+  };
+} // ─── «Ещё» of an action or tool row ──────────────────────────────────────────
+// Whether an action is the row's main one: a filled sf-button (no appearance,
+// or default) -- one per row (C116, C161 (3)).
+
+function isMainAction(element) {
+  if (!element?.matches?.('sf-button, .sf-button')) return false;
+  const look = element.getAttribute('appearance') ?? element.getAttribute('variant');
+  return look === null || look === '' || look === 'default' || look === 'filled';
+} // Whether a toggle in a row is on: a pressed sf-button or icon button, or a
+// button saying aria-pressed="true".
+
+function isPressed(element) {
+  if (!element) return false;
+  const value = element.getAttribute('pressed');
+  if (value !== null && value !== 'false') return true;
+  return element.getAttribute('aria-pressed') === 'true' || element.querySelector?.(':scope > button[aria-pressed="true"]') != null;
+} // The control a row item is pressed through: its own button or link.
+
+function controlOf(element) {
+  if (!element) return null;
+  if (element.matches('button, a[href]')) return element;
+  return element.querySelector(':scope > button, :scope > a[href], button, a[href]') || element;
+} // The menu row an action of a row becomes in «Ещё»: its words, its icon, and
+// a check when it is a pressed toggle (C155 (6), (7)).
+
+function actionEntry(element, id) {
+  const control = controlOf(element);
+  const text = (element.getAttribute('text') || element.getAttribute('aria-label') || element.getAttribute('title') || control?.getAttribute('aria-label') || element.textContent || '').trim();
+  const icon = element.getAttribute('icon-start') || element.getAttribute('icon') || element.getAttribute('icon-end') || control?.querySelector?.('.sf-icon')?.textContent.trim() || undefined;
+  const entry = {
+    id: String(id),
+    text,
+    icon: icon || undefined
+  };
+  const toggle = element.hasAttribute('pressed') || control?.hasAttribute?.('aria-pressed');
+
+  if (toggle) {
+    entry.kind = 'check';
+    entry.checked = isPressed(element);
+  }
+
+  if (element.hasAttribute('disabled') || control?.disabled || control?.getAttribute?.('aria-disabled') === 'true') entry.disabled = true;
+  return entry;
+} // The «Ещё» menu of a row: the standard sf-menu-context (standardMenu), named
+// «Ещё», on the row's size and density, listing entries; toggled from anchor.
+
+async function openRowMenu(owner, {
+  anchor,
+  entries,
+  select,
+  label,
+  size = '1'
+}) {
+  if (!entries.length) return null;
+  const menu = await standardMenu(owner, '_sfRowMoreMenu', (id, event) => owner._sfRowMoreSelect?.(id, event));
+  if (!menu) return null;
+  owner._sfRowMoreSelect = select;
+  if (label) menu.setAttribute('aria-label', label);
+  menu.setAttribute('size', size);
+  (0,_density_js__WEBPACK_IMPORTED_MODULE_0__.followDensity)(menu, owner);
+  menu.entries = entries;
+  menu.toggleFor(anchor);
+  return menu;
+}
+
+/***/ },
+
 /***/ "51250bf01ab0"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -1278,7 +1946,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SfLanguage: () => (/* binding */ SfLanguage),
-/* harmony export */   languageRows: () => (/* reexport safe */ _js_languages__WEBPACK_IMPORTED_MODULE_9__.languageRows),
+/* harmony export */   languageRows: () => (/* reexport safe */ _js_languages__WEBPACK_IMPORTED_MODULE_10__.languageRows),
 /* harmony export */   rememberKey: () => (/* binding */ rememberKey)
 /* harmony export */ });
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("deb1a4d61565");
@@ -1288,14 +1956,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("51250bf01ab0");
 /* harmony import */ var _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("4a85acfb05c1");
 /* harmony import */ var _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e92fd2d1a38c");
-/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("38ea8d53f301");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("688582849827");
-/* harmony import */ var _js_languages__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("464bf30e7c23");
-/* harmony import */ var _data_names_json__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("9937e6b314d1");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("11b7e7a66992");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("0161a89699b6");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _js_languages__WEBPACK_IMPORTED_MODULE_9__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__, _js_languages__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("2db3a835ac11");
+/* harmony import */ var _helpers_form_field__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("38ea8d53f301");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("688582849827");
+/* harmony import */ var _js_languages__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("464bf30e7c23");
+/* harmony import */ var _data_names_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("9937e6b314d1");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("11b7e7a66992");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("0161a89699b6");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_9__, _js_languages__WEBPACK_IMPORTED_MODULE_10__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__, _core_js_page_language__WEBPACK_IMPORTED_MODULE_3__, _core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__, _core_js_instance_path_js__WEBPACK_IMPORTED_MODULE_6__, _js_templates_default__WEBPACK_IMPORTED_MODULE_9__, _js_languages__WEBPACK_IMPORTED_MODULE_10__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_2__);
@@ -1338,21 +2007,33 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+
  // Only the words on screen ship in the bundle, English only (owner decision
 // C282): Russian and every other language come from a language file. The
 // title, settings and events stay in the language files for the Studio and the
 // docs (localization study LC-2).
 
-const en = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__.files.en;
-(0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.useNames)(_data_names_json__WEBPACK_IMPORTED_MODULE_10__); // The parts it draws, found under their current names and their former ones.
+const en = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__.files.en;
+(0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.useNames)(_data_names_json__WEBPACK_IMPORTED_MODULE_11__); // The parts it draws, found under their current names and their former ones.
 
 const MENU = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-menu-context')}`; // The trigger: sf-button «文A RU ▾» (trigger code), or sf-button-icon, the
 // glyph alone (trigger icon, owner decision C369).
 
 const TRIGGER = `:scope > .sf-language-parts > :is(${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-button')}, ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-button-icon')}, button.sf-language-name)`;
 const TRACK = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-segmented')}`;
-const FIELD = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-dropdown')}`; // A phone: below the md breakpoint, where core declares --sf-breakpoint-md
+const FIELD = `:scope > .sf-language-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-dropdown')}`; // The bar that may ask this element to give way (shrink): the nearest
+// ancestor that fits its row (queueFit). The language does not draw it, so it
+// names no bar tag.
+
+const fittingBar = element => {
+  let node = element.parentElement;
+
+  while (node && typeof node.queueFit !== 'function') node = node.parentElement;
+
+  return node;
+}; // A phone: below the md breakpoint, where core declares --sf-breakpoint-md
 // (sf-menu-context's own test for its sheet).
+
 
 const onPhone = node => {
   const root = node?.ownerDocument?.documentElement;
@@ -1388,9 +2069,9 @@ const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js_
 
 
 const rememberKey = name => text(name) ? `sf-language/${text(name)}` : '';
-const LanguageElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
+const LanguageElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_12__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__.files,
   source: 'ru',
   actions: {
     select(args = {}) {
@@ -1401,7 +2082,7 @@ const LanguageElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1_
   }
 });
 
-class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.FormField)(LanguageElement) {
+class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_8__.FormField)(LanguageElement) {
   constructor() {
     super(); // What the element last drew, so a change of the page's language that
     // this element did not make moves the shown value with it.
@@ -1426,7 +2107,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
 
   get languageList() {
-    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.normalizeLanguages)(this.languages, this.items, this.href, {
+    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.normalizeLanguages)(this.languages, this.items, this.href, {
       missing: this.missing,
       home: this.home
     });
@@ -1439,7 +2120,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
     if (!list.length) return null;
     const own = this.getAttribute('value');
     const doc = this.ownerDocument?.documentElement;
-    return (own && (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, own)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, doc?.getAttribute('lang') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(doc)) ?? list[0];
+    return (own && (0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.matchLanguage)(list, own)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.matchLanguage)(list, doc?.getAttribute('lang') || (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(doc)) ?? list[0];
   } // The value is a language code of the list; the chosen one is read through
   // current, so an element written without value says the page's language.
 
@@ -1449,7 +2130,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
   }
 
   set value(next) {
-    const code = (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.canonicalCode)(next);
+    const code = (0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.canonicalCode)(next);
     if (code) this.setAttribute('value', code);else this.removeAttribute('value');
     this.sfSyncFormState?.();
   } // What the segments say: name or code. labels wins; without it the dated
@@ -1490,7 +2171,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
 
   get look() {
-    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.lookFor)(this.languageList.length, {
+    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.lookFor)(this.languageList.length, {
       mode: this.mode,
       inlineMax: this.inlineMax,
       searchFrom: this.searchFrom
@@ -1513,7 +2194,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
   choose(next, reason = 'press') {
     const list = this.languageList;
-    const language = (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, next);
+    const language = (0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.matchLanguage)(list, next);
     if (!language) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('unknown');
     if (this.disabled || this.sfFormDisabled) return (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.refused)('disabled');
     const previous = this.value;
@@ -1631,6 +2312,28 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
   get triggerButton() {
     return this.querySelector(TRIGGER);
+  }
+  /**
+   * The trigger's boxes for a bar that fits its row (the site header, collapse
+   * auto, or a step with fit): its width as drawn and its width shrunk, the
+   * code trigger less its translate glyph (shrink="code", group build 20).
+   * Read while whole, the glyph is drawn; read while shrunk, both widths are
+   * the drawn one. Layout boxes, as the bar reads its row. A trigger that
+   * does not shrink says the same width twice.
+   */
+
+
+  shrinkBoxes() {
+    const host = this.triggerButton;
+    const box = host?.querySelector(':scope > button') ?? host ?? this;
+    const width = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_7__.layoutWidth)(box);
+    const shrinks = this.getAttribute('shrink') === 'code' && host?.matches((0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-button'));
+    const glyph = shrinks ? box.querySelector(':scope > sf-icon:first-child') : null;
+    const glyphWidth = glyph && glyph.getClientRects().length ? (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_7__.layoutWidth)(glyph) : 0;
+    return {
+      width,
+      shrunk: width - glyphWidth
+    };
   }
   /**
    * Opens or closes the menu of a menu or search look. Open, the chosen
@@ -1776,7 +2479,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
 
 
   menuEntries(list, current, query = '') {
-    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.languageRows)(list, current, {
+    return (0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.languageRows)(list, current, {
       page: (0,_core_js_page_language__WEBPACK_IMPORTED_MODULE_3__.pageLocale)(this),
       query,
       missing: this.sfWord('missing')
@@ -1796,12 +2499,12 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
   templateContext() {
     const list = this.languageList;
     const current = this.current;
-    const look = (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.lookFor)(list.length, {
+    const look = (0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.lookFor)(list.length, {
       mode: this.mode,
       inlineMax: this.inlineMax,
       searchFrom: this.searchFrom
     });
-    const size = _js_languages__WEBPACK_IMPORTED_MODULE_9__.SIZES.includes(this.size) ? this.size : '1';
+    const size = _js_languages__WEBPACK_IMPORTED_MODULE_10__.SIZES.includes(this.size) ? this.size : '1';
     this.sfHostState('data-look', look);
     this._shownLook = look;
     const label = this.label;
@@ -1857,7 +2560,7 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_8__.renderLanguageTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_9__.renderLanguageTemplate)(this.templateContext());
   }
 
   afterRender() {
@@ -1875,6 +2578,16 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_7__.For
     if (!this._tipAsked && this.querySelector('.sf-language-tooltip')) {
       this._tipAsked = true;
       globalThis.SF?.Loader?.ensurePlugin?.('tooltip');
+    } // shrink="code" (group build 20): the bar that fits its row counted this
+    // trigger whole until it was drawn (its glyph is what it gives up); once
+    // the trigger button has drawn, the bar decides its row again.
+
+
+    const trigger = this.getAttribute('shrink') === 'code' ? this.triggerButton : null;
+
+    if (trigger && trigger !== this._shrinkAskedFor && typeof trigger.whenRendered === 'function') {
+      this._shrinkAskedFor = trigger;
+      trigger.whenRendered(() => fittingBar(this)?.queueFit());
     }
 
     this.sfSyncFormState();
@@ -1905,7 +2618,7 @@ SfLanguage.menuEntry = function menuEntry({
   href = '',
   searchFrom = 8
 } = {}) {
-  const list = (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.normalizeLanguages)(languages, items, href, {
+  const list = (0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.normalizeLanguages)(languages, items, href, {
     missing,
     home
   });
@@ -1925,13 +2638,13 @@ SfLanguage.menuEntry = function menuEntry({
       ...(registered?.get?.(one) ?? {})
     }), {})
   };
-  const current = (value && (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, value)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.matchLanguage)(list, pageCode) ?? list[0] ?? null;
+  const current = (value && (0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.matchLanguage)(list, value)) ?? (0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.matchLanguage)(list, pageCode) ?? list[0] ?? null;
   const entry = {
     id: 'language',
     text: label || words.label,
     icon: 'translate',
     value: current?.label,
-    submenu: (0,_js_languages__WEBPACK_IMPORTED_MODULE_9__.languageRows)(list, current, {
+    submenu: (0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.languageRows)(list, current, {
       page: pageCode,
       missing: words.missing,
       prefix: 'language:'
@@ -2705,7 +3418,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "11b7e7a66992"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.7.2","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"trigger":{"type":"enum","values":["code","icon","name"],"default":"code"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.8.0","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"trigger":{"type":"enum","values":["code","icon","name"],"default":"code"},"shrink":{"type":"enum","values":["none","code"],"default":"none"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string","data-shrunk":"boolean"}}');
 
 /***/ },
 

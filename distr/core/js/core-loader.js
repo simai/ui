@@ -296,7 +296,14 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
   }; // Once: when a page face loads later (loadingdone), or is
   // added already loaded (no font event; looked for every 100 ms for 10 s),
   // the static icons are synced, so an icon drawn in it gets the class once
-  // and keeps it. A sync runs only when the set of page faces grew.
+  // and keeps it. A full sync runs only when the set of page faces grew.
+  // Between those, an icon still unmarked whose own font turned into a page
+  // face is marked on the next look (markPageFaceIcons): in a Docara example
+  // frame the icon is scanned in the plain family, and Docara's stylesheet
+  // gives it its subset family a few tens of ms later, while that family was
+  // already loaded -- the set did not grow, nothing looked again, and the
+  // icon waited at font-size 0 for the plain family's 6 s timer (GB20,
+  // admin-menu rail on ui-doc.test and ui.simai.io: 6.8 s).
 
 
   SFLoaderPlugin.prototype.watchPageIconFaces = function () {
@@ -308,7 +315,12 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     const check = () => {
       this.pageIconFaceFamilies = null;
       const size = this.getPageIconFaceFamilies().size;
-      if (size <= seen) return;
+
+      if (size <= seen) {
+        if (size) this.markPageFaceIcons();
+        return;
+      }
+
       seen = size;
       this.syncStaticIconLoadedState();
     };
@@ -316,6 +328,43 @@ function installIconSubsetRuntime(SFLoaderPlugin, {
     fonts.addEventListener?.("loadingdone", check);
     const poll = setInterval(check, 100);
     setTimeout(() => clearInterval(poll), 10000);
+  }; // The class-markup icons not marked yet that a page face now draws: read
+  // every one first, then set the classes (as syncStaticIconLoadedState).
+  // Only adds the class; an icon handed over by adoptStaticIcons leaves its
+  // pending set. Answers the number of class-markup icons marked; every
+  // <sf-icon> whose glyph is not marked is asked to check itself.
+
+
+  SFLoaderPlugin.prototype.markPageFaceIcons = function () {
+    const glyphs = globalThis.document?.getElementsByClassName?.("sf-icon");
+    if (!glyphs?.length) return 0;
+    const shown = [];
+
+    for (let index = 0; index < glyphs.length; index++) {
+      const el = glyphs[index];
+      if (el.classList.contains("sf-icon-loaded")) continue;
+      if (el.tagName?.toLowerCase?.() === "sf-icon" || el.closest?.("sf-icon")) continue;
+      const tracked = this.getTrackedStaticIconAttrs(el);
+      if (tracked && this.isIconDrawnByPageFace(el)) shown.push(el);
+    }
+
+    shown.forEach(el => {
+      el.classList.add("sf-icon-loaded");
+      (0,_icon_glyphs_js__WEBPACK_IMPORTED_MODULE_2__.checkIconGlyph)(el);
+      this.adoptedIconsPending?.delete?.(el);
+    }); // An <sf-icon> answers for its own glyph: it is asked to look again
+    // (smart.icon syncLoadedState reads the glyph's font through the Loader).
+
+    const elements = globalThis.document?.getElementsByTagName?.("sf-icon") || [];
+
+    for (let index = 0; index < elements.length; index++) {
+      const element = elements[index];
+      const glyph = element.querySelector?.(":scope > i.sf-icon, :scope > .sf-badge-anchor > i.sf-icon");
+      if (!glyph || glyph.classList.contains("sf-icon-loaded")) continue;
+      element.syncLoadedState?.();
+    }
+
+    return shown.length;
   };
 
   SFLoaderPlugin.prototype.waitForLocalIconFont = function (type = "") {
@@ -5046,7 +5095,13 @@ SFLoaderPlugin.prototype.deferClosedSmartElement = function (el) {
 
 SFLoaderPlugin.prototype.watchClosedContainer = function (container) {
   if (!this.closedContainers) {
-    this.closedContainers = new WeakSet();
+    // The containers watched, in a list of their own (a MutationObserver
+    // cannot stop observing one target): a container that leaves the page
+    // closed is dropped from it and the observer watches the rest again
+    // (dropClosedContainersOutOfPage), so a removed component that held one
+    // -- sf-gallery's closed panel -- leaves no observation behind (gate 36,
+    // instance scope; group build 20 I5).
+    this.closedContainers = new Set();
     this.closedContainerObserver = new MutationObserver(records => {
       const opened = new Set();
       records.forEach(({
@@ -5054,8 +5109,10 @@ SFLoaderPlugin.prototype.watchClosedContainer = function (container) {
       }) => {
         if (this.closedContainers.has(target) && !isClosedContainer(target)) opened.add(target);
       });
+      if (!opened.size) return;
+      opened.forEach(target => this.closedContainers.delete(target));
+      this.observeClosedContainers();
       opened.forEach(target => {
-        this.closedContainers.delete(target);
         if (target.isConnected) this.scanCustomElements(target);
       });
     });
@@ -5067,6 +5124,31 @@ SFLoaderPlugin.prototype.watchClosedContainer = function (container) {
     attributes: true,
     attributeFilter: CLOSED_CONTAINER_ATTRIBUTES
   });
+}; // The observer watches the listed containers again from nothing.
+
+
+SFLoaderPlugin.prototype.observeClosedContainers = function () {
+  const observer = this.closedContainerObserver;
+  if (!observer) return;
+  observer.disconnect();
+  this.closedContainers.forEach(container => observer.observe(container, {
+    attributes: true,
+    attributeFilter: CLOSED_CONTAINER_ATTRIBUTES
+  }));
+}; // Called when nodes leave the page: a watched container no longer in it is
+// dropped. A container that comes back is watched again when the Loader
+// meets its elements (deferClosedSmartElement).
+
+
+SFLoaderPlugin.prototype.dropClosedContainersOutOfPage = function () {
+  if (!this.closedContainers?.size) return;
+  let dropped = false;
+  this.closedContainers.forEach(container => {
+    if (container.isConnected) return;
+    this.closedContainers.delete(container);
+    dropped = true;
+  });
+  if (dropped) this.observeClosedContainers();
 }; // The tag's elements stay invisible while its module is on the way, unless
 // they carry static markup or a skeleton shape (pending-tags.js).
 
@@ -5755,6 +5837,11 @@ SFLoaderPlugin.prototype.search = function () {
 
     if (!relevantChanges.length) {
       return;
+    } // Nodes left the page: a closed container among them is no longer watched.
+
+
+    if (this.closedContainers?.size && relevantChanges.some(change => change.type === 'childList' && change.removedNodes.length)) {
+      this.dropClosedContainersOutOfPage();
     } // A static icon whose name changed to one the font does not draw yet
     // loses its loaded mark now, before the next paint: the changes below
     // wait out a debounce, and meanwhile the new name was drawn as text in a
