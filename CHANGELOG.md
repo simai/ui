@@ -8,6 +8,18 @@
 
 ### Добавлено
 
+- Pair GB20 (group build 20, ui-source integration/gb20 3a190e9765a5: four area branches over ui-73df5d1b4d4c - gb20-menus, gb20-loader, gb20-render, gb20-display - and the integration items I1-I6; built with ui-builder 58fc730; accepted, DEV GO on 3a190e9765a5).
+- Menus and touch: sf-menu-context 1.28.0 closes on Escape from the layer stack (a View row menu included) and returns focus; sf-tabs 1.6.2, sf-list 1.26.0 device scope; coarse menu rows stand without a gap (component.menu 1.10.6, sf-menu 1.15.3, C429).
+- Loader and page load: icons in Docara frames are marked at once (sf-icon 1.4.5); a page load moves no focus (SF.workspace, C432); field ids are unique per page (module.component-shared 1.7.1, C433); `simai.effect` 1.5.0 adds the `interactive` layer (C430); `simai.interface-fragment` 1.1.1 lists `parameters-changed` among the value types (C431).
+- Server render and Docara parts: sf-badge 1.9.0 / component.badges 1.15.0 and sf-tabs printed panels; first-paint render tool reads box attributes.
+- Header and data display: sf-header-site 1.17.0 `fit`, sf-language 1.8.0 `shrink="code"`, sf-progress-scale 1.5.0 text variables, module.smart-field-renderers 1.30.3.
+- Integration: sf-input-choice 1.12.1 (the panel reserves the scrollbar gutter), tokens.typography 1.8.10 (table words stay whole, code breaks inside its cell, C434), component.tabs 1.5.10, the Loader drops a closed container that left the page, compact density below 60rem only with a fine pointer on a desktop-layout page (C435).
+- Core writes the page layout word `data-sf-layout` on `<html>` as it boots and on resize; core.styles hides a printed device-only item (C3 static) in the other layout before its element is defined. Pages that print first-paint markup keep core.js in the page; authors never write the word themselves.
+- Notes for consumers: Docara's header needs `collapse="lg" fit` on sf-header-site, `shrink="icon"` on the search and `shrink="code"` on the language for the docs header fix; the ui-effects engine must read the manifest's `interactive` field (simai.effect 1.5.0); compact density (C435) applies only with a fine pointer wider than a phone.
+- smart.theme-generator 1.4.7: its first-paint snapshots carry sf-input-color 1.20.1's trigger name (bytes only).
+- Gates: known browser reds 9 -> 4.
+- `core.runtime` 1.70.0, `core.styles` 1.26.0.
+
 - Pair GB19 (group build 19, ui-source integration/gb19 58f9921f80b4: nine branches over ui-3963bfe39302 - gb19-five, gb19-device, gb19-fields, gb19-tools, gb19-refresh; built with ui-builder 524bf46; accepted, DEV GO on 58f9921f80b4).
 - Core: device scope (`SF.device`; sf-settings items declare `devices`, setting `device`, option `phone`) and the 500 ms press as `SF.longPress` (C426-C427); touch size: controls take a 44 px hit area on a coarse pointer from core.styles (C428); press waits at the remaining call sites; block refresh: `simai.interface-fragment` 1.1.0 and `SF.FragmentRefresh` (contract 1, C425).
 - Components: sf-form 1.16.0 and module.smart-field-renderers 1.30.2 (include field no longer throws); sf-settings 1.11.1, sf-tabs 1.5.6, sf-switch 1.10.3, component.icon-buttons 1.20.4, sf-button-copy 1.7.8, sf-tooltip 1.5.5, sf-modal 1.11.2, sf-drawer 1.22.1, sf-menu 1.15.2, sf-list-item 1.7.1, sf-confirm 1.5.7 and the press-wait and render patches listed in the journal.
