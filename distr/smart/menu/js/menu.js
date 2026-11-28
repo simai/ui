@@ -2,6 +2,276 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "2abe37330ca5"
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   nameTarget: () => (/* binding */ nameTarget),
+/* harmony export */   unlinkNameTip: () => (/* binding */ unlinkNameTip)
+/* harmony export */ });
+// The name tooltip of the class icon button (owner decision C248,
+// 2026-11-16; C160 (1), C224, C48): a .sf-icon-button the page wrote with an
+// aria-label and no visible label shows that name as the Framework's tooltip
+// by itself, as <sf-button-icon> does -- the same 0.5 s, the neighbours at
+// once, keyboard focus at once, a long press on a touch screen, the flip at
+// the edge (component.tooltip). It showed nothing: a page wrote fourteen
+// lines of sf-tooltip-anchor + data-tooltip, or the browser's title.
+//
+// Nothing is drawn or fetched before the first hover, keyboard focus or long
+// press on such a button, so the first paint is unchanged: then the tooltip
+// surface (the tooltip composition, a .sf-tooltip the button names by
+// data-tooltip) is made beside the button, the tooltip controller is asked
+// for (the Loader's lazy plugin), and the event that woke it is handed over
+// once the controller has linked the button.
+//
+// Left alone: data-tooltip="off" (the page's opt-out) and any data-tooltip of
+// the page's own (its own link is stronger); a button with a title, its own
+// or a host's around it (the page chose the browser's tooltip, or a component
+// wrote its hint there -- the plain theme button, C244; drop the title for
+// the Framework's): never a second tooltip; a button
+// with visible words; a close button (sf-button-close, C14: it carries no
+// name tooltip, as the Smart one does not); a button inside <sf-button-icon>,
+// which shows its own; a disabled or hidden one.
+const NAME_TIP = 'sf-icon-button-tooltip'; // What draws a glyph, not words: the icon (a ligature is text), the cross,
+// an SVG, the loading spinner.
+
+const GLYPHS = '.sf-icon, sf-icon, i, svg, .sf-close, sf-button-close, .sf-icon-button-spinner, [class*="sf-loader"]';
+const SKIP_HOSTS = 'sf-button-icon, sf-icon-button, .sf-tooltip-anchor, [aria-hidden="true"], [inert]'; // A title on the button or on a host around it (the theme button writes its
+// next-theme hint there, C244) is a tooltip of the page's own: the browser
+// would draw it beside ours, so the button is left alone.
+
+function hasTitle(button) {
+  for (let node = button; node && node.nodeType === 1; node = node.parentElement) {
+    if ((node.getAttribute('title') || '').trim()) return true;
+  }
+
+  return false;
+} // The surfaces' numbers are counted on the page, not in this file, and under
+// a name of their own: every bundle that carries this file has its own copy
+// of it (sf-button since C370, the icon buttons), and <sf-button-icon>
+// numbers its own tooltips «sf-icon-button-tooltip-N» from 1 too; two
+// counters from 1 made a second «sf-icon-button-tooltip-1», and the language
+// glyph in the docs header showed the shrunk search's «Поиск ⌘K».
+
+
+const MADE = Symbol.for('sf.icon-button.name-tooltip.made');
+
+function nextTipId(doc) {
+  let id = '';
+
+  do {
+    globalThis[MADE] = (globalThis[MADE] || 0) + 1;
+    id = `sf-name-tooltip-${globalThis[MADE]}`;
+  } while (doc.getElementById(id));
+
+  return id;
+}
+
+function tooltipController() {
+  return globalThis.SF?.ComponentRegistry?.Tooltip || globalThis.SF?.Loader?.ComponentRegistry?.Tooltip || null;
+} // The controller is there: run now; else ask the Loader for it (a lazy
+// plugin) and run once it registered -- as <sf-button-icon> does.
+
+
+function whenTooltipReady(run) {
+  if (tooltipController()) {
+    run();
+    return;
+  }
+
+  const loader = globalThis.SF?.Loader;
+  loader?.ensurePlugin?.('tooltip');
+  if (typeof loader?.ready === 'function') loader.ready('Tooltip', () => run());else globalThis.addEventListener?.('Tooltip:ready', () => run(), {
+    once: true
+  });
+} // Whether the button shows words of its own beside (or instead of) its icon.
+
+
+function hasVisibleLabel(button) {
+  const walker = button.ownerDocument.createTreeWalker(button, NodeFilter.SHOW_TEXT);
+
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (!node.data.trim()) continue;
+    if (node.parentElement?.closest(GLYPHS)) continue;
+    return true;
+  }
+
+  return false;
+} // What a reader takes from a control's content, roughly: its text, without
+// what is hidden from assistive technology (a glyph, a badge's digits) and
+// with the visually hidden words that close it (a status, a count's phrase).
+
+
+function readableName(node) {
+  if (node.nodeType === 3) return node.data;
+  if (node.nodeType !== 1) return '';
+  if (node.getAttribute('aria-hidden') === 'true' || node.hidden || node.localName === 'template') return '';
+  if (node.hasAttribute('aria-label')) return ` ${node.getAttribute('aria-label')} `;
+  return Array.from(node.childNodes).map(child => readableName(child)).join(' ');
+}
+
+function nameOf(button) {
+  const own = button.getAttribute('data-sf-shrink-tip') || button.getAttribute('aria-label') || ''; // A marked control with no name of its own (a rail row of sf-menu: an
+  // icon, its words out of sight) shows the name read from its content, its
+  // status and count words included (group build 21).
+
+  const name = own || (button.matches(MARKED) ? readableName(button) : '');
+  return String(name).replace(/\s+/gu, ' ').replace(/\s+([,.;:])/gu, '$1').trim();
+} // An sf-button drawn as its glyph by its bar (shrink="icon", data-shrunk;
+// owner decision C370): its words are hidden, so it shows its text and keys
+// as this tooltip, «Поиск ⌘K» (data-sf-shrink-tip), as an icon button shows
+// its name. Whole again, it shows none.
+
+
+const SHRUNK = 'sf-button[shrink="icon"][data-shrunk="true"] > .sf-button[data-sf-shrink-tip]'; // A control a component draws with no words of its own and marks with
+// data-sf-name-tip (a role=button part, not an .sf-icon-button: the phone
+// field's country flag, sf-input-country, FS-11) shows its name the same way.
+// The value inline-end stands the tooltip beside the control, at its inline
+// end, its tail pointing back at it: a vertical rail's rows (sf-menu
+// appearance rail, group build 21), as sf-admin-menu's rail tooltips stand
+// (arrow inline-start, C320), so the tooltip does not cover the next row.
+
+const MARKED = '[data-sf-name-tip]';
+const BESIDE = 'inline-end'; // The button a name tooltip is for, or null.
+
+function nameTarget(node) {
+  const marked = node instanceof Element ? node.closest(MARKED) : null;
+
+  if (marked) {
+    if (!nameOf(marked) || marked.hasAttribute('data-tooltip') || hasTitle(marked)) return null;
+    if (marked.matches(':disabled, [aria-disabled="true"]') || marked.closest('[aria-hidden="true"], [inert]')) return null;
+    return marked;
+  }
+
+  const shrunk = node instanceof Element ? node.closest(SHRUNK) : null;
+
+  if (shrunk) {
+    if (shrunk.hasAttribute('data-tooltip') || hasTitle(shrunk) || shrunk.matches(':disabled, [aria-disabled="true"]')) return null;
+    return nameOf(shrunk) ? shrunk : null;
+  }
+
+  const button = node instanceof Element ? node.closest('.sf-icon-button') : null;
+  if (!button || !nameOf(button)) return null;
+  if (!(button.localName === 'button' || button.localName === 'a' && button.hasAttribute('href') || button.getAttribute('role') === 'button')) return null;
+  if (button.hasAttribute('data-tooltip') || hasTitle(button)) return null;
+  if (button.matches('.sf-button-close, .sf-icon-button--close, :disabled, [aria-disabled="true"]')) return null;
+  if (button.parentElement?.closest(SKIP_HOSTS) || button.matches(SKIP_HOSTS)) return null;
+  if (hasVisibleLabel(button)) return null;
+  return button;
+} // A tooltip this file made keeps the button's name: an aria-label changed
+// later (a toggle's «Показать» / «Скрыть») is said on the next hover.
+
+
+function syncMadeTip(button) {
+  const id = button?.getAttribute?.('data-tooltip');
+  if (!id) return;
+  const tip = button.ownerDocument.getElementById(id);
+  if (!tip?.classList.contains(NAME_TIP)) return;
+  const text = tip.querySelector('.sf-tooltip-text');
+  const name = nameOf(button);
+  if (text && name && text.textContent !== name) text.textContent = name;
+}
+
+function wake(event) {
+  const origin = event.target;
+  if (origin instanceof Element) syncMadeTip(origin.closest(`.sf-icon-button[data-tooltip], .sf-button[data-sf-shrink-tip][data-tooltip], ${MARKED}[data-tooltip]`));
+  if (event.type === 'pointerdown' && event.pointerType !== 'touch') return;
+  if (event.type === 'pointerover' && event.pointerType === 'touch') return;
+  const button = nameTarget(origin);
+  if (!button) return;
+
+  if (event.type === 'focusin') {
+    let shown = true;
+
+    try {
+      shown = button.matches(':focus-visible');
+    } catch {
+      shown = true;
+    }
+
+    if (!shown) return;
+  }
+
+  const doc = button.ownerDocument;
+  const tip = doc.createElement('span');
+  const beside = button.matches(MARKED) && button.getAttribute('data-sf-name-tip') === BESIDE;
+  tip.className = `sf-tooltip sf-tooltip--dark${beside ? ' sf-tooltip--arrow-inline-start' : ''} ${NAME_TIP}`;
+  tip.id = button.id ? `${button.id}--tooltip` : nextTipId(doc);
+  tip.hidden = true;
+  const content = doc.createElement('span');
+  content.className = 'sf-tooltip-content';
+  const text = doc.createElement('span');
+  text.className = 'sf-tooltip-text';
+  text.textContent = nameOf(button);
+  content.append(text);
+  tip.append(content);
+
+  if (beside) {
+    const tail = doc.createElement('span');
+    tail.className = 'sf-tooltip-tail';
+    tail.setAttribute('aria-hidden', 'true');
+    tip.append(tail);
+  }
+
+  button.after(tip);
+  button.setAttribute('data-tooltip', tip.id);
+  const kind = event.type;
+  const pointerType = event.pointerType;
+  let released = false;
+  if (kind === 'pointerdown') button.addEventListener('pointerup', () => {
+    released = true;
+  }, {
+    once: true
+  });
+  whenTooltipReady(() => setTimeout(() => {
+    if (button.getAttribute('data-tooltip') !== tip.id) return; // The controller links the button on its own (its observer); the event
+    // is handed over only while it still holds.
+
+    if (kind === 'pointerover' && button.matches(':hover')) {
+      button.dispatchEvent(new PointerEvent('pointerenter', {
+        pointerType
+      }));
+    } else if (kind === 'focusin' && doc.activeElement === button) {
+      button.dispatchEvent(new FocusEvent('focusin'));
+    } else if (kind === 'pointerdown' && !released) {
+      button.dispatchEvent(new PointerEvent('pointerdown', {
+        pointerType
+      }));
+    }
+  }, 0));
+} // One listener set per page, shared by every bundle that carries this file.
+
+
+const BOUND = Symbol.for('sf.icon-button.name-tooltip');
+
+if (typeof document !== 'undefined' && !globalThis[BOUND]) {
+  globalThis[BOUND] = true;
+
+  for (const type of ['pointerover', 'focusin', 'pointerdown']) {
+    document.addEventListener(type, wake, {
+      capture: true,
+      passive: true
+    });
+  }
+} // A name tooltip this file made for a button is taken away (an sf-button
+// whole again, shrink="icon"): the button no longer names it, and the
+// surface goes.
+
+
+function unlinkNameTip(button) {
+  const id = button?.getAttribute?.('data-tooltip');
+  if (!id) return;
+  const tip = button.ownerDocument.getElementById(id);
+  if (!tip?.classList.contains(NAME_TIP)) return;
+  button.removeAttribute('data-tooltip');
+  tip.remove();
+}
+
+
+
+/***/ },
+
 /***/ "1373e294ec38"
 (__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
@@ -772,14 +1042,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_js_breakpoints_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("1373e294ec38");
 /* harmony import */ var _core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("2db3a835ac11");
 /* harmony import */ var _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("d3818183b14c");
-/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e29406217b0b");
-/* harmony import */ var _items_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("7332c9a6d69c");
-/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("831ef45545b2");
-/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("e0fa46ed075f");
-/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("97168578e30d");
-/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("6524dc930b5f");
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__]);
-([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_8__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _component_icon_buttons_js_name_tooltip_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("2abe37330ca5");
+/* harmony import */ var _js_templates_default__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("e29406217b0b");
+/* harmony import */ var _items_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("7332c9a6d69c");
+/* harmony import */ var _scss_index_scss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("831ef45545b2");
+/* harmony import */ var _component_json__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("e0fa46ed075f");
+/* harmony import */ var _aliases_json__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__("97168578e30d");
+/* harmony import */ var _lang_index_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__("6524dc930b5f");
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_9__]);
+([_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__, _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__, _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__, _core_js_position_js__WEBPACK_IMPORTED_MODULE_3__, _core_js_open_surface_mark__WEBPACK_IMPORTED_MODULE_4__, _core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__, _js_templates_default__WEBPACK_IMPORTED_MODULE_9__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
 /* harmony import */ var _core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _core_js_instance_path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_core_js_instance_path__WEBPACK_IMPORTED_MODULE_2__);
@@ -809,13 +1080,17 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
+ // The icon buttons' shared name tooltip: a rail row (data-sf-name-tip) shows
+// its name beside it on hover, keyboard focus and a long press (group build
+// 21). One listener set per page, whatever bundles carry the file.
+
 
 
  // An item spelled the first release's way (key, text, title) is noted on the
 // page's deprecation list until the date it leaves (journal record
 // sf-menu-item-field-aliases).
 
-(0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.onItemAlias)((from, to) => (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__.noteDeprecated)({
+(0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.onItemAlias)((from, to) => (0,_core_js_deprecations_js__WEBPACK_IMPORTED_MODULE_7__.noteDeprecated)({
   component: 'sf-menu',
   kind: 'property',
   attribute: 'items',
@@ -839,11 +1114,11 @@ const positioning = () => globalThis.SF?.Position || (_core_js_position_js__WEBP
 // sf-menu:toggle are dated aliases of sf-menu-navigate and sf-menu-toggle.
 
 
-const MenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_11__, {
+const MenuElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_12__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
-  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__.files,
+  lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_14__.files,
   source: 'ru',
-  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_12__
+  aliases: _aliases_json__WEBPACK_IMPORTED_MODULE_13__
 }); // open('catalog') and open({id: 'catalog'}) both name an item (§4.4).
 // How many levels of panels an item opens: 0 for a leaf.
 
@@ -863,11 +1138,11 @@ class SfSmartMenu extends MenuElement {
       },
       orientation: {
         default: 'vertical',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MENU_ORIENTATIONS
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_10__.MENU_ORIENTATIONS
       },
       appearance: {
         default: 'default',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MENU_APPEARANCES
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_10__.MENU_APPEARANCES
       },
       current: {
         default: ''
@@ -879,11 +1154,11 @@ class SfSmartMenu extends MenuElement {
       },
       collapse: {
         default: 'auto',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MENU_COLLAPSE
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_10__.MENU_COLLAPSE
       },
       overflow: {
         default: 'collapse',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MENU_OVERFLOW
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_10__.MENU_OVERFLOW
       },
       moreLabel: {
         attribute: 'more-label',
@@ -897,11 +1172,11 @@ class SfSmartMenu extends MenuElement {
       openOn: {
         attribute: 'open-on',
         default: 'hover',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MENU_OPEN_ON
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_10__.MENU_OPEN_ON
       },
       indicator: {
         default: 'line',
-        values: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MENU_INDICATORS
+        values: _items_mjs__WEBPACK_IMPORTED_MODULE_10__.MENU_INDICATORS
       },
       label: {
         default: ''
@@ -970,7 +1245,7 @@ class SfSmartMenu extends MenuElement {
     if (Object.prototype.hasOwnProperty.call(this, 'items')) {
       const early = this.items;
       delete this.items;
-      this._items = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseItems)(early);
+      this._items = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseItems)(early);
     }
 
     this.addEventListener('click', this.onClick);
@@ -1004,7 +1279,7 @@ class SfSmartMenu extends MenuElement {
     const nav = children.find(child => child.localName === 'nav');
     const list = children.find(child => child.localName === 'ul') || nav?.querySelector(':scope > ul');
     if (!list) return;
-    this._childItems = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseItems)((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.itemsFromList)(list));
+    this._childItems = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseItems)((0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.itemsFromList)(list));
     this._childLabel = nav?.getAttribute('aria-label') || list.getAttribute('aria-label') || '';
     (list.parentElement === nav ? nav : list).remove();
   }
@@ -1080,11 +1355,11 @@ class SfSmartMenu extends MenuElement {
 
   get items() {
     if (this._items !== undefined) return this._items;
-    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseItems)(this.getAttribute('items'));
+    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseItems)(this.getAttribute('items'));
   }
 
   set items(next) {
-    this._items = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.normaliseItems)(next);
+    this._items = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.normaliseItems)(next);
     this._autoCollapsed = false;
     this.requestComponentUpdate('items');
   }
@@ -1114,17 +1389,17 @@ class SfSmartMenu extends MenuElement {
   get treeItems() {
     const items = this.menuItems;
     if (!this.moreActive) return items;
-    const row = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.withoutGroups)(items);
+    const row = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.withoutGroups)(items);
     const hidden = new Set(this._overflowHidden);
     return [...row.filter(item => !hidden.has(item.id)), this.moreItem(row.filter(item => hidden.has(item.id)))];
   } // «Ещё» -- the more-label words -- or «Меню» when no item stays in the row.
 
 
   moreItem(children = []) {
-    const none = children.length > 0 && children.length === (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.withoutGroups)(this.menuItems).length;
+    const none = children.length > 0 && children.length === (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.withoutGroups)(this.menuItems).length;
     const label = none ? this.getAttribute('toggle-label') || this.sfWord('toggle-label') : this.getAttribute('more-label') || this.sfWord('more-label');
     return {
-      id: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MORE_ID,
+      id: _items_mjs__WEBPACK_IMPORTED_MODULE_10__.MORE_ID,
       label,
       href: '',
       icon: '',
@@ -1148,7 +1423,7 @@ class SfSmartMenu extends MenuElement {
 
 
   get horizontal() {
-    return this.orientation === 'horizontal' && _items_mjs__WEBPACK_IMPORTED_MODULE_9__.ROW_APPEARANCES.includes(this.appearance);
+    return this.orientation === 'horizontal' && _items_mjs__WEBPACK_IMPORTED_MODULE_10__.ROW_APPEARANCES.includes(this.appearance);
   } // The row became a button that opens the same links as a column.
 
 
@@ -1176,7 +1451,7 @@ class SfSmartMenu extends MenuElement {
 
   get currentId() {
     const here = globalThis.location;
-    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.currentItemId)(this.menuItems, {
+    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.currentItemId)(this.menuItems, {
       current: this.getProp('current'),
       pathname: here?.pathname || '',
       hash: here?.hash || '',
@@ -1188,7 +1463,7 @@ class SfSmartMenu extends MenuElement {
 
   get openIds() {
     this.syncMode();
-    return [...(0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.openBranches)(this.treeItems, this._openState, this.currentId, !this.flyouts)];
+    return [...(0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.openBranches)(this.treeItems, this._openState, this.currentId, !this.flyouts)];
   }
 
   isOpen(id) {
@@ -1196,7 +1471,7 @@ class SfSmartMenu extends MenuElement {
   }
 
   item(id) {
-    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.findItem)(this.treeItems, id);
+    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.findItem)(this.treeItems, id);
   } // The actions open, close and toggle {id} and close-all (§4.4): each
   // answers an outcome, applied or refused with a reason.
 
@@ -1266,7 +1541,7 @@ class SfSmartMenu extends MenuElement {
     const after = new Set(before);
 
     if (this.flyouts) {
-      const above = new Set((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.pathTo)(this.treeItems, item.id) || []);
+      const above = new Set((0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.pathTo)(this.treeItems, item.id) || []);
 
       for (const other of before) if (!above.has(other)) after.delete(other);
 
@@ -1293,7 +1568,7 @@ class SfSmartMenu extends MenuElement {
 
   applyOpen(before, after, source, asked) {
     const changed = [];
-    (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.walkItems)(this.treeItems, one => {
+    (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.walkItems)(this.treeItems, one => {
       if (one.children.length && before.has(one.id) !== after.has(one.id)) changed.push(one);
     });
     if (!changed.length) return false;
@@ -1302,7 +1577,7 @@ class SfSmartMenu extends MenuElement {
 
     this.requestComponentUpdate('open'); // The branch asked for first, then the ones it closed, innermost first.
 
-    const depth = one => ((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.pathTo)(this.treeItems, one.id) || []).length;
+    const depth = one => ((0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.pathTo)(this.treeItems, one.id) || []).length;
 
     changed.sort((a, b) => a.id === asked ? -1 : b.id === asked ? 1 : depth(b) - depth(a)); // sf-menu-toggle, then its old name sf-menu:toggle with the same detail
     // (aliases.json, until 2026-12-01).
@@ -1446,7 +1721,7 @@ class SfSmartMenu extends MenuElement {
     const [id] = chain;
     const item = id ? this.item(id) : null;
     if (!item?.children.length || item.disabled || this.isOpen(id)) return;
-    const delay = this.flyoutRegion(item) ? _items_mjs__WEBPACK_IMPORTED_MODULE_9__.HOVER_REGION_OPEN_DELAY : _items_mjs__WEBPACK_IMPORTED_MODULE_9__.HOVER_OPEN_DELAY;
+    const delay = this.flyoutRegion(item) ? _items_mjs__WEBPACK_IMPORTED_MODULE_10__.HOVER_REGION_OPEN_DELAY : _items_mjs__WEBPACK_IMPORTED_MODULE_10__.HOVER_OPEN_DELAY;
     this.hoverTimer(`open\u0000${id}`, delay, () => this.setOpen(id, true, 'user'));
   };
   onPointerOut = event => {
@@ -1460,7 +1735,7 @@ class SfSmartMenu extends MenuElement {
 
     for (const id of this.openIds) {
       if (next.has(id)) continue;
-      this.hoverTimer(`close\u0000${id}`, _items_mjs__WEBPACK_IMPORTED_MODULE_9__.HOVER_CLOSE_DELAY, () => {
+      this.hoverTimer(`close\u0000${id}`, _items_mjs__WEBPACK_IMPORTED_MODULE_10__.HOVER_CLOSE_DELAY, () => {
         if (this.isOpen(id)) this.setOpen(id, false, 'user');
       });
     }
@@ -1699,7 +1974,7 @@ class SfSmartMenu extends MenuElement {
     const open = new Set(this.openIds);
     if (!open.size) return null;
 
-    const depth = id => ((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.pathTo)(this.treeItems, id) || []).length;
+    const depth = id => ((0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.pathTo)(this.treeItems, id) || []).length;
 
     const focused = document.activeElement;
     const ids = [...open].sort((a, b) => depth(b) - depth(a));
@@ -1735,7 +2010,7 @@ class SfSmartMenu extends MenuElement {
     const query = this.searchQuery;
     if (!query) return null;
     const all = this.menuItems;
-    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.filterItems)(this.groupsDrawn ? all : (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.withoutGroups)(all), query);
+    return (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.filterItems)(this.groupsDrawn ? all : (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.withoutGroups)(all), query);
   }
 
   searchField() {
@@ -1832,7 +2107,7 @@ class SfSmartMenu extends MenuElement {
 
 
   syncSearchHighlight() {
-    const query = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.foldWords)(this.searchQuery).trim();
+    const query = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.foldWords)(this.searchQuery).trim();
     const ranges = [];
 
     if (query) {
@@ -1840,7 +2115,7 @@ class SfSmartMenu extends MenuElement {
         // The words are a text node between the template's markers.
         for (const words of node.childNodes) {
           if (words.nodeType !== 3) continue;
-          const folded = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.foldWords)(words.data);
+          const folded = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.foldWords)(words.data);
           let at = folded.indexOf(query);
 
           while (at !== -1) {
@@ -2189,7 +2464,7 @@ class SfSmartMenu extends MenuElement {
     const gap = parseFloat(getComputedStyle(list).columnGap) || 0;
     const ids = tops.map(li => li.dataset.sfMenuItem || li.dataset.sfMenuPlaceholder);
     const currentId = this.currentId;
-    const above = currentId ? [currentId, ...((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.pathTo)(this.menuItems, currentId) || [])] : []; // keep-current false: the current section leaves the row in its turn,
+    const above = currentId ? [currentId, ...((0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.pathTo)(this.menuItems, currentId) || [])] : []; // keep-current false: the current section leaves the row in its turn,
     // and «Ещё» holding it says so (its mark and its name).
 
     const keep = this.keepCurrent === false ? -1 : ids.findIndex(id => above.includes(id)); // The room in fractional pixels (the row engine's rowRoom; clientWidth
@@ -2259,7 +2534,7 @@ class SfSmartMenu extends MenuElement {
 
     const rowSize = `${Math.ceil(whole)}px`;
     if (nav.style.getPropertyValue('--sf-menu--row-size') !== rowSize) nav.style.setProperty('--sf-menu--row-size', rowSize);
-    const stays = new Set((0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.fitRow)(widths, moreWidth, room, gap, keep));
+    const stays = new Set((0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.fitRow)(widths, moreWidth, room, gap, keep));
     this.setOverflowHidden(ids.filter((_, at) => !stays.has(at)), nav.clientWidth, driven);
   }
 
@@ -2301,7 +2576,7 @@ class SfSmartMenu extends MenuElement {
     if (this.flyouts) this.closeFlyouts('method');
     this._overflowHidden = hidden;
     this.requestComponentUpdate('overflow');
-    const all = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.withoutGroups)(this.menuItems).length;
+    const all = (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.withoutGroups)(this.menuItems).length;
     this.sfEmit('overflow', {
       hidden: [...hidden],
       fits: hidden.length < all || all === 0
@@ -2323,7 +2598,7 @@ class SfSmartMenu extends MenuElement {
     this.syncMode();
     const all = this.menuItems;
     const result = this.searchResult();
-    const items = result ? result.items : this.groupsDrawn ? all : (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.withoutGroups)(all);
+    const items = result ? result.items : this.groupsDrawn ? all : (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.withoutGroups)(all);
     const currentId = this.currentId;
     const tree = this.treeItems;
     const moreActive = this.moreActive;
@@ -2341,20 +2616,20 @@ class SfSmartMenu extends MenuElement {
       open: result ? result.open : new Set(this.openIds),
       currentId,
       // The branches above the current page: a closed one draws the bar (C23).
-      holding: new Set(currentId ? (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.pathTo)(tree, currentId) || [] : []),
+      holding: new Set(currentId ? (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.pathTo)(tree, currentId) || [] : []),
       // overflow more: the first-level items that left the row (drawn there
       // as placeholders) and the «Ещё» branch that holds them.
       hidden: new Set(moreActive ? this._overflowHidden : []),
       moreItem: moreActive ? tree[tree.length - 1] : null,
       moreShown: moreActive && this._overflowHidden.length > 0,
-      moreId: _items_mjs__WEBPACK_IMPORTED_MODULE_9__.MORE_ID,
+      moreId: _items_mjs__WEBPACK_IMPORTED_MODULE_10__.MORE_ID,
       // «Ещё» holding the current page says so in its name (C371, with
       // keep-current false or a current section too wide to stay).
       holdsCurrentName: label => `${label}, ${this.sfWord('holds-current')}`,
       regionContent: name => this.regionNodes(name),
       // collapse narrow: the button is a selector showing the current item.
       selector,
-      selectedItem: selector && currentId ? (0,_items_mjs__WEBPACK_IMPORTED_MODULE_9__.findItem)(all, currentId) : null,
+      selectedItem: selector && currentId ? (0,_items_mjs__WEBPACK_IMPORTED_MODULE_10__.findItem)(all, currentId) : null,
       statusWord: status => this.sfWord(`status-${status}`),
       // A split row's chevron is named after its section: «Каталог: подразделы».
       subsectionsName: label => `${label}: ${this.sfWord('subsections')}`,
@@ -2395,7 +2670,7 @@ class SfSmartMenu extends MenuElement {
   }
 
   template() {
-    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_8__.renderMenuTemplate)(this.templateContext());
+    return (0,_js_templates_default__WEBPACK_IMPORTED_MODULE_9__.renderMenuTemplate)(this.templateContext());
   }
 
 }
@@ -2507,7 +2782,12 @@ function renderRow(context, item, level, branch, open, submenuId, placeholder = 
 
   const holds = item.children.length > 0 && context.holding.has(item.id) && (!open || context.flyouts);
   const classes = joinClasses('sf-menu-element', levelClass(level), branch ? 'sf-menu-element--has-submenu' : '', open ? 'open' : '', holds ? 'sf-menu-element--holds-current' : '', item.disabled ? 'disabled' : '');
-  const linked = Boolean(item.href) && !item.disabled;
+  const linked = Boolean(item.href) && !item.disabled; // A rail row is its icon alone: its name -- with its status and count
+  // words -- is the Framework's tooltip beside it on hover, keyboard focus
+  // and a long press (C59 timing, as the admin set's rail, C320; group build
+  // 21), through the icon buttons' shared name tooltip (data-sf-name-tip).
+
+  const tip = context.rail && !placeholder ? 'inline-end' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
 
   if (!branch) {
     // A destination is a link; an unavailable one keeps its place as a link
@@ -2516,11 +2796,11 @@ function renderRow(context, item, level, branch, open, submenuId, placeholder = 
     if (linked) {
       return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${classes} href=${item.href} aria-current=${current ? 'page' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}
                      target=${targetOf(item)} rel=${relOf(item)}
-                     data-sf-menu-link=${own(item.id)}>${renderWrap(context, item)}</a>`;
+                     data-sf-menu-link=${own(item.id)} data-sf-name-tip=${tip}>${renderWrap(context, item)}</a>`;
     }
 
     if (item.disabled) return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<a class=${classes} aria-disabled="true">${renderWrap(context, item)}</a>`;
-    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${classes} aria-current=${current ? 'page' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}>${renderWrap(context, item)}</span>`;
+    return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class=${classes} aria-current=${current ? 'page' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing} data-sf-name-tip=${tip}>${renderWrap(context, item)}</span>`;
   }
 
   const glyph = branchGlyph(context, level, open); // A branch that is also a destination: the link and the disclosure button
@@ -3255,7 +3535,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-menu 
 /***/ "e0fa46ed075f"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.15.3","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"count":{"type":"number","optional":true},"status":{"type":"enum","values":["success","warning","error","info","neutral"],"optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true},"region":{"type":"string","optional":true},"target":{"type":"string","optional":true},"external":{"type":"boolean","optional":true},"group":{"type":"boolean","optional":true},"collapsible":{"type":"boolean","optional":true},"items":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","rail","navigation","framed"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","narrow","none"],"default":"auto"},"overflow":{"type":"enum","values":["more","collapse","none"],"default":"collapse"},"more-label":{"type":"string","default-from":"runtime.more-label"},"keep-current":{"type":"boolean","default":true},"open-on":{"type":"enum","values":["click","hover"],"default":"hover"},"indicator":{"type":"enum","values":["line","fill"],"default":"line"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"},"sticky":{"type":"boolean","default":false},"bordered":{"type":"boolean","default":false},"search":{"type":"boolean","default":false},"search-placeholder":{"type":"string","default-from":"runtime.search-placeholder"}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}},"overflow":{"carries":{"hidden":{"type":"list","of":"id"},"fits":{"type":"boolean"}}},"search":{"carries":{"query":"string","count":"number"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"},"--sf-menu-sticky-top":{"type":"length","state":"default"}}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.menu","tag":"sf-menu","version":"1.16.0","kind":"leaf","settings":{"items":{"type":"list","default":[],"of":{"id":"id","label":"string","href":{"type":"string","optional":true},"icon":{"type":"icon","optional":true},"badge":{"type":"string","optional":true},"count":{"type":"number","optional":true},"status":{"type":"enum","values":["success","warning","error","info","neutral"],"optional":true},"current":{"type":"boolean","optional":true},"disabled":{"type":"boolean","optional":true},"open":{"type":"boolean","optional":true},"children":{"type":"list","optional":true},"region":{"type":"string","optional":true},"target":{"type":"string","optional":true},"external":{"type":"boolean","optional":true},"group":{"type":"boolean","optional":true},"collapsible":{"type":"boolean","optional":true},"items":{"type":"list","optional":true}}},"orientation":{"type":"enum","values":["vertical","horizontal"],"default":"vertical"},"appearance":{"type":"enum","values":["default","documentation-tree","rail","navigation","framed"],"default":"default"},"current-from-location":{"type":"boolean","default":false},"collapse":{"type":"enum","values":["auto","always","narrow","none"],"default":"auto"},"overflow":{"type":"enum","values":["more","collapse","none"],"default":"collapse"},"more-label":{"type":"string","default-from":"runtime.more-label"},"keep-current":{"type":"boolean","default":true},"open-on":{"type":"enum","values":["click","hover"],"default":"hover"},"indicator":{"type":"enum","values":["line","fill"],"default":"line"},"label":{"type":"string","default":""},"toggle-label":{"type":"string","default-from":"runtime.toggle-label"},"sticky":{"type":"boolean","default":false},"bordered":{"type":"boolean","default":false},"search":{"type":"boolean","default":false},"search-placeholder":{"type":"string","default-from":"runtime.search-placeholder"}},"values":{"current":{"type":"string","default":""}},"events":{"navigate":{"carries":{"id":"id","href":"string","item":"object"},"cancelable":true},"toggle":{"carries":{"id":{"type":"id","nullable":true},"open":"boolean","source":{"type":"enum","values":["user","method"]},"item":{"type":"object","nullable":true}}},"overflow":{"carries":{"hidden":{"type":"list","of":"id"},"fits":{"type":"boolean"}}},"search":{"carries":{"query":"string","count":"number"}}},"actions":{"open":{"with":{"id":"id"}},"close":{"with":{"id":"id"}},"toggle":{"with":{"id":"id"}},"close-all":{}},"presentation":{"skeleton":{"late":["items"]}},"css-variables":{"--sf-menu-background-color":{"type":"color","state":"default"},"--sf-menu-gap":{"type":"length","state":"default"},"--sf-menu-item-color":{"type":"color","state":"default"},"--sf-menu-item-background-color":{"type":"color","state":"default"},"--sf-menu-item-border-color":{"type":"color","state":"default"},"--sf-menu-item-radius":{"type":"length","state":"default"},"--sf-menu-submenu-background-color":{"type":"color","state":"open"},"--sf-menu-submenu-border-color":{"type":"color","state":"open"},"--sf-menu-submenu-radius":{"type":"length","state":"open"},"--sf-menu-sticky-top":{"type":"length","state":"default"}}}');
 
 /***/ },
 

@@ -7,6 +7,8 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PREPAINT_READER: () => (/* binding */ PREPAINT_READER),
+/* harmony export */   STORAGE_PREFIX: () => (/* binding */ STORAGE_PREFIX),
 /* harmony export */   createPreferences: () => (/* binding */ createPreferences),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
@@ -263,7 +265,17 @@ if (typeof globalThis !== 'undefined') {
 
 const Preferences = globalThis.SF?.Preferences;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Preferences);
+ // Before the first paint (GB21, Docara K-13, decision C438): the browser's
+// copy of a preference is a public format -- localStorage `sf-pref:<key>`,
+// the JSON of its value -- so a page reads it in <head>, before the Framework
+// has run, and applies it without a copy of its own (the theme-first-paint
+// pattern). PREPAINT_READER is the reader to print there, word for word (ES5,
+// no module): sfPreference(key) answers the kept value or null. It reads the
+// browser's copy only: a host that keeps preferences for its user prints them
+// with the page (preload, the data-sf-preferences block).
 
+const STORAGE_PREFIX = PREFIX;
+const PREPAINT_READER = "function sfPreference(key){try{return JSON.parse(localStorage.getItem('sf-pref:'+key)||'null')}catch(e){return null}}";
 
 /***/ },
 

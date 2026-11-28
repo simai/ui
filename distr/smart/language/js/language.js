@@ -675,6 +675,8 @@ async function openRowMenu(owner, {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PREPAINT_READER: () => (/* binding */ PREPAINT_READER),
+/* harmony export */   STORAGE_PREFIX: () => (/* binding */ STORAGE_PREFIX),
 /* harmony export */   createPreferences: () => (/* binding */ createPreferences),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
@@ -931,7 +933,17 @@ if (typeof globalThis !== 'undefined') {
 
 const Preferences = globalThis.SF?.Preferences;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Preferences);
+ // Before the first paint (GB21, Docara K-13, decision C438): the browser's
+// copy of a preference is a public format -- localStorage `sf-pref:<key>`,
+// the JSON of its value -- so a page reads it in <head>, before the Framework
+// has run, and applies it without a copy of its own (the theme-first-paint
+// pattern). PREPAINT_READER is the reader to print there, word for word (ES5,
+// no module): sfPreference(key) answers the kept value or null. It reads the
+// browser's copy only: a host that keeps preferences for its user prints them
+// with the page (preload, the data-sf-preferences block).
 
+const STORAGE_PREFIX = PREFIX;
+const PREPAINT_READER = "function sfPreference(key){try{return JSON.parse(localStorage.getItem('sf-pref:'+key)||'null')}catch(e){return null}}";
 
 /***/ },
 
@@ -2008,10 +2020,19 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 
 
 
- // Only the words on screen ship in the bundle, English only (owner decision
+ // The width an element is drawn at: its own layout box, or -- an element
+// with display: contents (the sf-icon host) has none -- the boxes of what it
+// draws, side by side. 0 when nothing is drawn.
+
+function renderedWidth(element) {
+  if (!element || !element.getClientRects().length && getComputedStyle(element).display !== 'contents') return 0;
+  if (getComputedStyle(element).display !== 'contents') return (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_7__.layoutWidth)(element);
+  return Array.from(element.children).reduce((sum, child) => sum + renderedWidth(child), 0);
+} // Only the words on screen ship in the bundle, English only (owner decision
 // C282): Russian and every other language come from a language file. The
 // title, settings and events stay in the language files for the Studio and the
 // docs (localization study LC-2).
+
 
 const en = _lang_index_mjs__WEBPACK_IMPORTED_MODULE_13__.files.en;
 (0,_js_languages__WEBPACK_IMPORTED_MODULE_10__.useNames)(_data_names_json__WEBPACK_IMPORTED_MODULE_11__); // The parts it draws, found under their current names and their former ones.
@@ -2319,7 +2340,11 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_8__.For
    * code trigger less its translate glyph (shrink="code", group build 20).
    * Read while whole, the glyph is drawn; read while shrunk, both widths are
    * the drawn one. Layout boxes, as the bar reads its row. A trigger that
-   * does not shrink says the same width twice.
+   * does not shrink says the same width twice. The glyph is measured as it
+   * is drawn (group build 21, Docara msg-cd7ddadb): the sf-icon host is
+   * display: contents and has no box of its own, so its width read 0, the
+   * bar counted no gain from shrinking the language and moved a section into
+   * «Ещё» first (the docs header at 1280); its drawn face is the box now.
    */
 
 
@@ -2329,10 +2354,9 @@ class SfLanguage extends (0,_helpers_form_field__WEBPACK_IMPORTED_MODULE_8__.For
     const width = (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_7__.layoutWidth)(box);
     const shrinks = this.getAttribute('shrink') === 'code' && host?.matches((0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_5__.tagSelector)('sf-button'));
     const glyph = shrinks ? box.querySelector(':scope > sf-icon:first-child') : null;
-    const glyphWidth = glyph && glyph.getClientRects().length ? (0,_core_js_overflow_row_js__WEBPACK_IMPORTED_MODULE_7__.layoutWidth)(glyph) : 0;
     return {
       width,
-      shrunk: width - glyphWidth
+      shrunk: width - renderedWidth(glyph)
     };
   }
   /**
@@ -3418,7 +3442,7 @@ const files = { en: { runtime: _en_json__WEBPACK_IMPORTED_MODULE_0__.runtime } }
 /***/ "11b7e7a66992"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.8.0","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"trigger":{"type":"enum","values":["code","icon","name"],"default":"code"},"shrink":{"type":"enum","values":["none","code"],"default":"none"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string","data-shrunk":"boolean"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.language","tag":"sf-language","version":"1.8.1","kind":"leaf","settings":{"languages":{"type":"string","default":""},"items":{"type":"list","schema":{"items":{"type":"object","properties":{"code":{"type":"string"},"label":{"type":"string"},"short":{"type":"string"},"href":{"type":"string"},"missing":{"type":"boolean"}},"required":["code"]}},"default":[]},"href":{"type":"string","default":""},"missing":{"type":"string","default":""},"home":{"type":"string","default":""},"mode":{"type":"enum","values":["auto","inline","menu","search","field"],"default":"auto"},"inline-max":{"type":"number","integer":true,"min":1,"default":1},"search-from":{"type":"number","integer":true,"min":2,"default":8},"labels":{"type":"enum","values":["name","code"],"default":"name"},"size":{"type":"enum","values":["1/3","1/2","1","2","3"],"default":"1"},"trigger":{"type":"enum","values":["code","icon","name"],"default":"code"},"shrink":{"type":"enum","values":["none","code"],"default":"none"},"apply":{"type":"enum","values":["page","none"],"default":"page"},"remember":{"type":"string","default":""},"label":{"type":"string","default-from":"runtime.label"},"name":{"type":"string","default":""},"disabled":{"type":"boolean","default":false}},"values":{"value":{"type":"string","default":""},"look":{"type":"enum","values":["none","inline","menu","search","field"]}},"events":{"change":{"carries":{"value":{"type":"string"},"previous":{"type":"string"},"href":{"type":"string"},"dir":{"type":"enum","values":["ltr","rtl"]},"reason":{"type":"enum","values":["press","api"]}},"cancelable":true}},"actions":{"select":{"with":{"value":"string"}}},"form":{"value":"value","name":"name","default":"value","submits":"value","reset":"default","disabled":"disabled","validity":["custom-error"]},"host-states":{"data-look":"string","data-shrunk":"boolean"}}');
 
 /***/ },
 

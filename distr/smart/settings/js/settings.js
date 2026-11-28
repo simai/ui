@@ -498,6 +498,8 @@ function markPageLayout(doc = globalThis.document) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PREPAINT_READER: () => (/* binding */ PREPAINT_READER),
+/* harmony export */   STORAGE_PREFIX: () => (/* binding */ STORAGE_PREFIX),
 /* harmony export */   createPreferences: () => (/* binding */ createPreferences),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
@@ -754,7 +756,17 @@ if (typeof globalThis !== 'undefined') {
 
 const Preferences = globalThis.SF?.Preferences;
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Preferences);
+ // Before the first paint (GB21, Docara K-13, decision C438): the browser's
+// copy of a preference is a public format -- localStorage `sf-pref:<key>`,
+// the JSON of its value -- so a page reads it in <head>, before the Framework
+// has run, and applies it without a copy of its own (the theme-first-paint
+// pattern). PREPAINT_READER is the reader to print there, word for word (ES5,
+// no module): sfPreference(key) answers the kept value or null. It reads the
+// browser's copy only: a host that keeps preferences for its user prints them
+// with the page (preload, the data-sf-preferences block).
 
+const STORAGE_PREFIX = PREFIX;
+const PREPAINT_READER = "function sfPreference(key){try{return JSON.parse(localStorage.getItem('sf-pref:'+key)||'null')}catch(e){return null}}";
 
 /***/ },
 
@@ -1474,7 +1486,51 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_cor
 const MENU = `:scope > .sf-settings-parts > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__.tagSelector)('sf-menu-context')}`; // The colour window of the colour rows (C85): sf-input-color's own, opened on «Своё».
 
 const PICKER = `:scope > .sf-settings-parts > .sf-settings-color > ${(0,_core_js_tag_aliases_js__WEBPACK_IMPORTED_MODULE_3__.tagSelector)('sf-input-color')}`;
-const FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex]';
+const FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex]'; // The page's window a panel in the flow may stand in (GB21, Docara K-13): the
+// Framework's window and side sheet, found by the panel each draws round its
+// content (data-sf-modal-panel, data-sf-drawer-panel) and the portal each
+// moves that panel into (data-sf-modal-portal, data-sf-drawer-portal, named
+// by the window's id), or the platform's <dialog>. A panel that stands in one
+// draws the close button a popup draws, and its press closes that window by
+// the window's own close.
+
+const SHELL = '[data-sf-modal-panel], [data-sf-drawer-panel], dialog';
+const PORTAL = '[data-sf-modal-portal], [data-sf-drawer-portal]';
+
+const closes = node => node instanceof HTMLElement && node.localName.includes('-') && typeof node.close === 'function'; // The window element round the element: the element whose close it calls.
+
+
+function shellHost(element) {
+  const marker = element?.closest(SHELL);
+  if (!marker) return null;
+  if (marker.localName === 'dialog') return marker;
+
+  for (let node = marker.parentElement; node; node = node.parentElement) if (closes(node)) return node; // Moved into the window's portal: the window that carries the portal's name.
+
+
+  const portal = marker.closest(PORTAL);
+  const name = portal?.getAttribute('data-sf-modal-portal') ?? portal?.getAttribute('data-sf-drawer-portal');
+  if (!name) return null;
+  const quoted = CSS.escape(name);
+  return [...document.querySelectorAll(`[modal-id="${quoted}"], [drawer-id="${quoted}"], [id="${quoted}"]`)].find(node => closes(node) && (node.modalId === name || node.drawerId === name)) ?? null;
+} // Whether the window draws a close of its own (its settings): then the panel
+// draws none, so a window never shows two. A window with a header
+// (showHeader, the Framework window's) draws its close in that header.
+// Whether the window is a side sheet (its panel marker): a sheet reads a
+// close of its content's own (data-drawer="close") and then draws none --
+// on a phone-wide sheet that covers its opener as well (C104), so the
+// panel's close is marked as the sheet's own (GB21 return R1, C438 (1)).
+
+
+function inSheet(element) {
+  return Boolean(element?.closest(SHELL)?.matches('[data-sf-drawer-panel]'));
+}
+
+function shellDrawsClose(shell) {
+  if (shell.localName === 'dialog') return false;
+  if (typeof shell.showHeader === 'boolean' && !shell.showHeader) return false;
+  return shell.showClose !== false;
+}
 
 const text = value => value === undefined || value === null ? '' : String(value).trim();
 
@@ -1486,8 +1542,10 @@ const position = () => globalThis.SF?.Position || (_core_js_position_js__WEBPACK
 
 
 const onPhone = () => !getComputedStyle(document.documentElement).getPropertyValue('--sf-breakpoint-md').trim(); // The panel's own parts (templates/panel.js).
+// The element's own frame round what it draws (templates/default.js).
 
 
+const FRAME = 'sf-settings-parts';
 const PANEL = ':scope > .sf-settings-parts > .sf-settings-panel';
 const ROW = '.sf-settings-row-main'; // A pin is sf-button-icon (ST-2, C166): the host lays out as display:contents
 // and hands its data-* and tabindex to its native button, which is what takes
@@ -1516,10 +1574,10 @@ const rowKey = main => main?.dataset.sfOption ?? main?.dataset.sfSetting ?? ''; 
 
 
 const preferences = () => globalThis.SF?.Preferences || _core_js_preferences_js__WEBPACK_IMPORTED_MODULE_2__["default"];
-/** The SF.Preferences key a remember name keeps the values under. */
+/** The SF.Preferences key a remember name keeps the values under (settings.js rememberedKey: a public format, read before the first paint). */
 
 
-const rememberKey = name => text(name) ? `sf-settings/${text(name)}` : '';
+const rememberKey = _js_settings__WEBPACK_IMPORTED_MODULE_13__.rememberedKey;
 const SettingsElement = (0,_core_js_element_manifest__WEBPACK_IMPORTED_MODULE_1__.elementFromManifest)(_component_json__WEBPACK_IMPORTED_MODULE_14__, {
   base: (_core_js_smart_base__WEBPACK_IMPORTED_MODULE_0___default()),
   lang: _lang_index_mjs__WEBPACK_IMPORTED_MODULE_17__.files,
@@ -1684,7 +1742,12 @@ class SfSettings extends SettingsElement {
     const live = this._liveSlotNodes;
 
     if (live && !live.has('trigger')) {
-      const nodes = Array.from(this.children).filter(child => !child.hasAttribute('slot') && !child.hasAttribute('data-sf-static') && child.localName !== 'script' && child.localName !== 'template');
+      // Its own frame is not the page's: a panel drawn before a window took
+      // it into its panel (sf-drawer moves its content at its first drawing)
+      // connects again holding the frame, and the frame taken as the trigger
+      // was drawn into itself -- HierarchyRequestError, an empty panel (GB21
+      // return R2, ui-control evidence 2026-11-28-gb21-return).
+      const nodes = Array.from(this.children).filter(child => !child.hasAttribute('slot') && !child.hasAttribute('data-sf-static') && child.localName !== 'script' && child.localName !== 'template' && !child.classList.contains(FRAME));
 
       if (nodes.length) {
         nodes.forEach(node => node.remove());
@@ -2393,6 +2456,12 @@ class SfSettings extends SettingsElement {
       tab,
       query,
       nothingFound,
+      // A panel in the flow that stands in a page's window draws the close
+      // button a popup draws, unless the window draws its own (GB21, K-13).
+      shellClose: Boolean(this.shellCloses()),
+      // ... marked as the side sheet's own close, so the sheet draws none at
+      // any width (C438 (1): never two).
+      sheetClose: Boolean(this.shellCloses()) && inSheet(this.parentElement),
       open: Boolean(this._open),
       search: Boolean(this.search),
       apply: this.applyMode,
@@ -2400,12 +2469,13 @@ class SfSettings extends SettingsElement {
       // not rows of this panel), else what the panel counts.
       count: Number.isInteger(this.applyCount) && this.applyCount >= 0 ? this.applyCount : (0,_js_settings__WEBPACK_IMPORTED_MODULE_13__.applyCount)(items),
       current: this._current,
-      // The panel's words: the element's own (close-label, search-placeholder,
-      // empty-text, pin-label, unpin-label, move-label), else the page language's.
+      // The panel's words: the element's own (close-label, reset-label,
+      // search-placeholder, empty-text, pin-label, unpin-label, move-label),
+      // else the page language's.
       words: {
         label: this.sfWord('label'),
         close: this.closeLabel || this.sfWord('close'),
-        reset: this.sfWord('reset'),
+        reset: this.resetLabel || this.sfWord('reset'),
         apply: this.sfWord('apply'),
         search: this.searchPlaceholder || this.sfWord('search'),
         empty: this.emptyText || this.sfWord('empty'),
@@ -2580,9 +2650,12 @@ class SfSettings extends SettingsElement {
 
   onPanelClick(event, target) {
     if (target.closest('[data-sf-close]')) {
-      this.closePanel({
+      // The press is the panel's: a side sheet's document handler of its own
+      // close (data-drawer="close") leaves it, so a cancelled close keeps it open.
+      event.preventDefault();
+      if (this._open) this.closePanel({
         reason: 'close'
-      });
+      });else this.closeShell();
       return;
     }
 
@@ -3062,6 +3135,66 @@ class SfSettings extends SettingsElement {
       reason
     });
     return true;
+  } // ─── a panel in a page's window (GB21, Docara K-13)
+
+  /** The page's window this panel stands in (the Framework window or side sheet, a dialog element), when it is not a popup; else null. */
+
+
+  dialogShell() {
+    if (!this.isPanel || this.popup) return null;
+    return shellHost(this.parentElement);
+  } // The window whose close the panel draws: one it stands in that draws none
+  // of its own.
+
+
+  shellCloses() {
+    const shell = this.dialogShell();
+    return shell && !shellDrawsClose(shell) ? shell : null;
+  } // The close button of a panel in a page's window: close is asked (reason
+  // close, cancellable, unsaved as a popup's), then the window is closed by
+  // its own action -- the Framework window's and side sheet's close({reason: 'close'}),
+  // which ask the page in their turn, or a <dialog>'s close(); closed follows
+  // once the window agreed. What a draft of apply="button" held is dropped.
+
+
+  closeShell() {
+    const shell = this.dialogShell();
+    if (!shell) return false;
+    if (!this.sfEmit('close', {
+      reason: 'close',
+      unsaved: this.draftMoved()
+    }, {
+      cancelable: true
+    })) return false;
+    let answer;
+
+    try {
+      if (shell.localName === 'dialog') {
+        shell.close();
+        answer = {
+          outcome: 'applied'
+        };
+      } else {
+        answer = shell.close?.({
+          reason: 'close'
+        });
+      }
+    } catch {
+      answer = {
+        outcome: 'refused'
+      };
+    }
+
+    Promise.resolve(answer).then(result => {
+      if (result && typeof result === 'object' && result.outcome && result.outcome !== 'applied') return;
+      this._draft = null;
+      this._query = '';
+      this.requestComponentUpdate('open');
+      this.sfEmit('closed', {
+        reason: 'close'
+      });
+    });
+    return true;
   } // Whether the draft of apply="button" holds a value the items do not.
 
 
@@ -3223,6 +3356,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   panelGroups: () => (/* binding */ panelGroups),
 /* harmony export */   panelLayout: () => (/* binding */ panelLayout),
 /* harmony export */   placedField: () => (/* binding */ placedField),
+/* harmony export */   rememberedKey: () => (/* binding */ rememberedKey),
+/* harmony export */   rememberedValues: () => (/* binding */ rememberedValues),
 /* harmony export */   rewriteValues: () => (/* binding */ rewriteValues),
 /* harmony export */   sameValue: () => (/* binding */ sameValue),
 /* harmony export */   toggledField: () => (/* binding */ toggledField),
@@ -3894,6 +4029,42 @@ function toggledField(item, optionId, key = 'checked') {
   return arranged(item, options.map(one => one.id === optionId ? { ...one,
     [key]: !one[key]
   } : one));
+} // ─── remembered values before the first paint (GB21, Docara K-13) ─────────
+//
+// remember="<name>" keeps the values as one SF.Preferences value under the
+// key sf-settings/<name>; the browser's copy (core preferences.js, a public
+// format) is sf-pref:sf-settings/<name>, the JSON of {<id>: <value>} -- a
+// switch's boolean, a choice's option id, a range's number, a colour's hue
+// name or #rrggbb, a fields list's [{id, checked, pinned}] -- written whole
+// after every change. A site reads it in <head> with core's PREPAINT_READER,
+// sfPreference('sf-settings/<name>'), before the Framework has run and before
+// the first paint, and applies what the values mean (a reader's text size, a
+// theme). The docs print the reader word for word
+// (tests/settings-window-c438.contract.test.mjs).
+
+/** The SF.Preferences key a remember name keeps the values under. */
+
+const rememberedKey = name => {
+  const text = String(name ?? '').trim();
+  return text ? `sf-settings/${text}` : '';
+};
+/**
+ * The values a remember name keeps in a storage (an object with getItem: the
+ * browser's copy SF.Preferences writes), {id: value}, or null: nothing kept,
+ * storage refused, or not an object. What the head reader answers for the
+ * name, as a module function.
+ */
+
+function rememberedValues(name, storage) {
+  const key = rememberedKey(name);
+  if (!key || typeof storage?.getItem !== 'function') return null;
+
+  try {
+    const value = JSON.parse(storage.getItem(`sf-pref:${key}`) ?? 'null');
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : null;
+  } catch {
+    return null;
+  }
 }
 
 /***/ },
@@ -4022,6 +4193,7 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([lit_
 // (scss/_smart__settings.scss); the other looks stay sf-menu-context's.
 //
 //   head     the title, or the groups as tabs; the close button of a popup
+//            and of a panel in a page's window that draws none (GB21)
 //   search   the setting search: a header over the rows (C06), «from ten rows»
 //   body     the groups as sections in one scroll, or the chosen tab's rows;
 //            the only part that scrolls (the scroll-area inset rule)
@@ -4282,9 +4454,11 @@ function renderHead(context) {
                 @sf-tabs-change=${event => {
     event.stopPropagation();
     context.component.chooseGroup(Number(event.detail?.current ?? 0));
-  }}></sf-tabs>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-settings-panel-title">${context.label}</span>`;
-  const close = context.popup ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-settings-panel-close" appearance="ghost" scheme="on-surface" size=${buttonSize(context)} icon="close"
-                aria-label=${words.close} title=${words.close} data-sf-close></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
+  }}></sf-tabs>` : (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<span class="sf-settings-panel-title">${context.label}</span>`; // A popup's close, and a panel's in a page's window that draws none of
+  // its own (GB21, Docara K-13): the same button, named by close-label.
+
+  const close = context.popup || context.shellClose ? (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<sf-button-icon class="sf-settings-panel-close" appearance="ghost" scheme="on-surface" size=${buttonSize(context)} icon="close"
+                aria-label=${words.close} title=${words.close} data-sf-close data-drawer=${context.sheetClose ? 'close' : lit__WEBPACK_IMPORTED_MODULE_0__.nothing}></sf-button-icon>` : lit__WEBPACK_IMPORTED_MODULE_0__.nothing;
   return (0,lit__WEBPACK_IMPORTED_MODULE_0__.html)`<div class="sf-settings-panel-head">${tabs}${close}</div>`;
 }
 
@@ -4450,7 +4624,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$comment":"Dated aliases of sf-setti
 /***/ "72cabd0f91e5"
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.11.1","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","color","heading","separator","group","fields"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"custom":{"type":"boolean"},"disabled":{"type":"boolean"},"sortable":{"type":"boolean"},"pinnable":{"type":"boolean"},"keywords":{"type":"array"},"devices":{"type":"array","items":{"type":"string","enum":["phone","desktop"]}},"phoneSwitch":{"type":"boolean"},"phone":{"type":"boolean"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","panel"],"default":"drill"},"apply":{"type":"enum","values":["instant","button"],"default":"instant"},"search":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"device":{"type":"enum","values":["auto","phone","desktop"],"default":"auto"},"label":{"type":"string","default-from":"runtime.label"},"apply-count":{"type":"number","optional":true},"close-label":{"type":"string","default-from":"runtime.close"},"search-placeholder":{"type":"string","default-from":"runtime.search"},"empty-text":{"type":"string","default-from":"runtime.empty"},"pin-label":{"type":"string","default-from":"runtime.pin"},"unpin-label":{"type":"string","default-from":"runtime.unpin"},"move-label":{"type":"string","default-from":"runtime.move-hint"}},"values":{"values":{"type":"object"},"tab":{"type":"number"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"arrange":{"carries":{"id":{"type":"string"},"order":{"type":"list"},"previous":{"type":"list"},"value":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"arranged":{"carries":{"id":{"type":"string"},"order":{"type":"list"},"previous":{"type":"list"},"value":{"type":"id"},"item":{"type":"object"}}}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"},"open":{"with":{"tab":{"type":"number","optional":true}},"waits":true},"close":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"id":"smart.settings","tag":"sf-settings","version":"1.12.1","kind":"leaf","settings":{"items":{"type":"list","schema":{"items":{"type":"object","properties":{"id":{"type":"string"},"type":{"type":"string","enum":["switch","choice","range","color","heading","separator","group","fields"]},"text":{"type":"string"},"caption":{"type":"string"},"icon":{"type":"string"},"value":{},"options":{"type":"array"},"min":{"type":"number"},"max":{"type":"number"},"step":{"type":"number"},"unit":{"type":"string"},"items":{"type":"array"},"tile":{"type":"boolean"},"custom":{"type":"boolean"},"disabled":{"type":"boolean"},"sortable":{"type":"boolean"},"pinnable":{"type":"boolean"},"keywords":{"type":"array"},"devices":{"type":"array","items":{"type":"string","enum":["phone","desktop"]}},"phoneSwitch":{"type":"boolean"},"phone":{"type":"boolean"}},"required":["type"]}},"default":[]},"look":{"type":"enum","values":["drill","rows","panel"],"default":"drill"},"apply":{"type":"enum","values":["instant","button"],"default":"instant"},"search":{"type":"boolean","default":false},"size":{"type":"enum","values":["1/2","1"],"default":"1"},"for":{"type":"string","default":""},"remember":{"type":"string","default":""},"device":{"type":"enum","values":["auto","phone","desktop"],"default":"auto"},"label":{"type":"string","default-from":"runtime.label"},"apply-count":{"type":"number","optional":true},"close-label":{"type":"string","default-from":"runtime.close"},"reset-label":{"type":"string","default-from":"runtime.reset"},"search-placeholder":{"type":"string","default-from":"runtime.search"},"empty-text":{"type":"string","default-from":"runtime.empty"},"pin-label":{"type":"string","default-from":"runtime.pin"},"unpin-label":{"type":"string","default-from":"runtime.unpin"},"move-label":{"type":"string","default-from":"runtime.move-hint"}},"values":{"values":{"type":"object"},"tab":{"type":"number"}},"events":{"change":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"changed":{"x-native":false,"carries":{"id":{"type":"string"},"value":{"type":"id"},"previous":{"type":"id"},"item":{"type":"object"}}},"reset":{"carries":{},"cancelable":true,"own-verb":true},"open":{"carries":{},"cancelable":true},"opened":{"carries":{}},"close":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]},"unsaved":"boolean"},"cancelable":true},"closed":{"carries":{"reason":{"type":"enum","values":["close","escape","outside","cancelled","api"]}}},"arrange":{"carries":{"id":{"type":"string"},"order":{"type":"list"},"previous":{"type":"list"},"value":{"type":"id"},"item":{"type":"object"}},"cancelable":true},"arranged":{"carries":{"id":{"type":"string"},"order":{"type":"list"},"previous":{"type":"list"},"value":{"type":"id"},"item":{"type":"object"}}}},"actions":{"set-value":{"with":{"id":"string","value":{"type":"id"}}},"set-all":{"with":{"values":"object"}},"show":{"with":{"id":"string"},"waits":true},"reset":{"emits":"reset"},"open":{"with":{"tab":{"type":"number","optional":true}},"waits":true},"close":{}},"layer":{"kind":"surface","locks-page":false,"traps-focus":false},"host-states":{"data-look":"string"},"css-variables":{"--sf-settings-panel-width":{"type":"length","state":"default"},"--sf-settings-panel-height":{"type":"length","state":"default"}}}');
 
 /***/ },
 
